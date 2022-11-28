@@ -1,0 +1,76 @@
+{
+  "root": "apps/portals/admin",
+  "sourceRoot": "apps/portals/admin/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/portals/admin",
+        "index": "apps/portals/admin/src/index.html",
+        "baseHref": "/stjornbord/",
+        "main": "apps/portals/admin/src/main.tsx",
+        "polyfills": "apps/portals/admin/src/polyfills.ts",
+        "tsConfig": "apps/portals/admin/tsconfig.app.json",
+        "assets": [
+          "apps/portals/admin/src/favicon.ico",
+          "apps/portals/admin/src/mockServiceWorker.js",
+          "apps/portals/admin/src/assets"
+        ],
+        "styles": ["apps/portals/admin/src/styles.css"],
+        "scripts": [],
+        "webpackConfig": "apps/portals/admin/webpack.config.js"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "portals-admin:build",
+        "port": 4201,
+        "hmr": true
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "portals-admin:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/portals/admin/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/portals/admin"],
+      "options": {
+        "jestConfig": "apps/portals/admin/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/portals/admin/src/{screens,components}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "docker-static": {}
+  },
+  "tags": ["scope:portals-admin"]
+}

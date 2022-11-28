@@ -142,6 +142,13 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
+  multipleBirths: z.object({
+    hasMultipleBirths: z.enum([YES, NO]),
+    multipleBirths: z
+      .string()
+      .refine((v) => !isNaN(Number(v)))
+      .optional(),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

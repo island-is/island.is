@@ -1,17 +1,26 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { AlertMessage, Box, toast } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  toast,
+  useBreakpoint,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
-import { useDeleteAuthDelegationMutation } from '@island.is/service-portal/graphql'
-import { useState } from 'react'
+import {
+  useAuthScopeTreeLazyQuery,
+  useDeleteAuthDelegationMutation,
+} from '@island.is/service-portal/graphql'
+import { useEffect, useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { m } from '@island.is/service-portal/core'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
+import { AccessListContainer } from './AccessList/AccessListContainer'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
-  delegation: AuthCustomDelegation
+  delegation?: AuthCustomDelegation
   onDelete(): void
 }
 
@@ -21,13 +30,33 @@ export const AccessDeleteModal = ({
   onDelete,
   ...rest
 }: AccessDeleteModalProps) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { userInfo } = useAuth()
+  const { md } = useBreakpoint()
   const [error, setError] = useState(false)
   const [deleteAuthDelegation, { loading }] = useDeleteAuthDelegationMutation()
+  const [
+    getAuthScopeTree,
+    { data: scopeTreeData, loading: scopeTreeLoading },
+  ] = useAuthScopeTreeLazyQuery()
+
+  useEffect(() => {
+    if (delegation) {
+      getAuthScopeTree({
+        variables: {
+          input: {
+            domain: delegation.domain.name,
+            lang,
+          },
+        },
+      })
+    }
+  }, [delegation, getAuthScopeTree, lang])
+
+  const { authScopeTree } = scopeTreeData || {}
 
   const onDeleteHandler = async () => {
-    if (!delegation.id) return
+    if (!delegation?.id) return
 
     try {
       const { errors } = await deleteAuthDelegation({
@@ -63,18 +92,18 @@ export const AccessDeleteModal = ({
 
   return (
     <Modal
-      id={`access-delete-modal-${delegation?.id}`}
+      id={`access-delete-modal`}
       label={formatMessage(m.accessControl)}
       title={formatMessage({
         id: 'sp.settings-access-control:access-remove-modal-content',
         defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
       })}
       onClose={onClose}
+      noPaddingBottom
       {...rest}
     >
       <Box
-        marginTop={[2, 2, 8]}
-        marginBottom={[2, 2, 5]}
+        marginTop={[4, 4, 8]}
         display="flex"
         flexDirection="column"
         rowGap={3}
@@ -127,34 +156,32 @@ export const AccessDeleteModal = ({
               id: 'sp.access-control-delegations:domain',
               defaultMessage: 'Kerfi',
             })}
-            title={delegation.domain.name}
+            title={delegation.domain.displayName}
             imgSrc={delegation.domain.organisationLogoUrl}
           />
         )}
-        <AlertMessage
-          title={formatMessage({
-            id: 'sp.access-control-delegations:delete-warning-title',
-            defaultMessage: 'Athugið',
-          })}
-          message={formatMessage({
-            id: 'sp.access-control-delegations:delete-warning-message',
-            defaultMessage:
-              'Öllum réttindum sem þú hefur aðgang að í viðkomandi kerfi verður eytt.',
-          })}
-          type="info"
+        <AccessListContainer
+          delegation={delegation}
+          scopes={delegation?.scopes}
+          scopeTree={authScopeTree}
+          loading={scopeTreeLoading}
+          listMarginBottom={[0, 0, 10]}
         />
       </Box>
-      <DelegationsFormFooter
-        loading={loading}
-        showDivider={false}
-        confirmButtonColorScheme="destructive"
-        onCancel={onClose}
-        onConfirm={onDeleteHandler}
-        confirmLabel={formatMessage({
-          id: 'sp.access-control-delegations:delete-access',
-          defaultMessage: 'Eyða aðgangi',
-        })}
-      />
+      <Box position="sticky" bottom={0}>
+        <DelegationsFormFooter
+          loading={loading}
+          showShadow={md}
+          confirmButtonColorScheme="destructive"
+          onCancel={onClose}
+          onConfirm={onDeleteHandler}
+          containerPaddingBottom={[3, 3, 6]}
+          confirmLabel={formatMessage({
+            id: 'sp.access-control-delegations:delete-access',
+            defaultMessage: 'Eyða aðgangi',
+          })}
+        />
+      </Box>
     </Modal>
   )
 }

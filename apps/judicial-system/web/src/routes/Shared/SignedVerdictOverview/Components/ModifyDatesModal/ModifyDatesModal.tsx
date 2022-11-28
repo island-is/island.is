@@ -9,13 +9,13 @@ import {
   BlueBox,
   DateTime,
   Modal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { Case, UpdateCase, UserRole } from '@island.is/judicial-system/types'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface DateTime {

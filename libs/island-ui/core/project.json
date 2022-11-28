@@ -19,6 +19,6 @@
       "outputs": ["coverage/libs/island-ui/core"]
     }
   },
-  "tags": [],
+  "tags": ["lib:react"],
   "implicitDependencies": ["island-ui-theme"]
 }

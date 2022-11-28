@@ -130,8 +130,8 @@ export const RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
 export const RESTRICTION_CASE_COURT_OVERVIEW_ROUTE = '/domur/krafa'
 export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/fyrirtokutimi'
-export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_RULING_ROUTE = '/domur/urskurdur'
+export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_CONFIRMATION_ROUTE = '/domur/stadfesta'
 export const RESTRICTION_CASE_MODIFY_RULING_ROUTE = '/domur/urskurdur/leidretta'
 

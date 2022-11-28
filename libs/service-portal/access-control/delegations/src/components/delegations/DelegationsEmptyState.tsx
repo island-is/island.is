@@ -12,11 +12,12 @@ export const DelegationsEmptyState = () => {
       alignItems="center"
       flexDirection="column"
       rowGap={[6, 10]}
+      data-testid={'delegations-empty-state'}
     >
       <Text>
         {formatMessage({
           id: 'sp.access-control-delegations:empty',
-          defaultMessage: 'Þegar þú hefur veitt öðrum umboð birtast þau hér.',
+          defaultMessage: 'Umboð sem þú hefur veitt öðrum munu birtast hér.',
         })}
       </Text>
       <div>

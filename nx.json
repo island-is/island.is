@@ -66,8 +66,8 @@
     },
     "@nrwl/react": {
       "application": {
-        "linter": "eslint",
         "style": "scss",
+        "linter": "eslint",
         "pascalCaseFiles": true,
         "babel": true
       },

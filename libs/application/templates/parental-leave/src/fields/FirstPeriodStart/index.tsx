@@ -1,10 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import {
-  NO_ANSWER,
-  extractRepeaterIndexFromField,
-} from '@island.is/application/core'
+import { extractRepeaterIndexFromField } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -83,7 +80,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           id={field.id}
           error={error}
           defaultValue={
-            statefulAnswer !== undefined ? [statefulAnswer] : NO_ANSWER
+            statefulAnswer !== undefined
+              ? [statefulAnswer]
+              : StartDateOptions.SPECIFIC_DATE
           }
           options={[
             {
