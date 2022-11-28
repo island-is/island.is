@@ -628,7 +628,8 @@ export class ParentalLeaveService {
           paid: false,
           rightsCodePeriod: getRightsCode(application),
         })
-      } else if (otherParent === SINGLE) {   // single parent
+      } else if (otherParent === SINGLE) {
+        // single parent
         // Only using multiple births right
         if (isSingleParentUsingMultipleBirthsRights) {
           periods.push({

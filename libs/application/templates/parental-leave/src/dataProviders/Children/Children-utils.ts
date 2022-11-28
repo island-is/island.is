@@ -4,7 +4,6 @@ import type { DistributiveOmit } from '@island.is/shared/types'
 
 import { ParentalRelations } from '../../constants'
 import {
-  getApplicationAnswers,
   getMaxMultipleBirthsDays,
   getMultipleBirthRequestDays,
   getSelectedChild,
