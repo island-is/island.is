@@ -1,5 +1,5 @@
 import { PortalModule } from '@island.is/portals/core'
-import { delegationsModule } from '@island.is/service-portal/access-control/delegations'
+import { delegationsModule } from '@island.is/portals-modules-access-control-delegations'
 
 /**
  * NOTE:
