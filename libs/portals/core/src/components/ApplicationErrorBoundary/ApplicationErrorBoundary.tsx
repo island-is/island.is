@@ -26,11 +26,11 @@ export class ApplicationErrorBoundary extends PureComponent<
     return { hasError: true }
   }
 
-  override componentDidCatch(error: Error) {
+  componentDidCatch(error: Error) {
     console.error(error)
   }
 
-  override render() {
+  render() {
     const { children, imgSrc } = this.props
     const { hasError } = this.state
 
@@ -42,7 +42,7 @@ export class ApplicationErrorBoundary extends PureComponent<
   }
 }
 
-const Error: FC<{imgSrc: string}> = ({imgSrc}) => {
+const Error: FC<{ imgSrc: string }> = ({ imgSrc }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -80,11 +80,7 @@ const Error: FC<{imgSrc: string}> = ({imgSrc}) => {
       </Box>
 
       <Box display="flex" justifyContent="center" marginBottom={[1, 0]}>
-        <img
-          src={imgSrc}
-          alt=""
-          className={styles.img}
-        />
+        <img src={imgSrc} alt="" className={styles.img} />
       </Box>
     </Box>
   )
