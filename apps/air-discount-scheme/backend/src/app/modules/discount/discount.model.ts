@@ -74,7 +74,7 @@ export class ExplicitCode
   flightId?: string
 
   @BelongsTo(() => Flight)
-  flight: any
+  flight?: Flight
 
   @Column({
     type: DataType.STRING,
