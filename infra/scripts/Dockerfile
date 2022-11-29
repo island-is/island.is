@@ -9,7 +9,7 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 
 ADD infra/package.json infra/yarn.lock /app/infra/
 WORKDIR /app/infra
-RUN yarn install --immutable
+RUN yarn install --frozen-lock
 
 ADD infra/ /app/infra/
 ADD apps /app/apps/
