@@ -4,10 +4,10 @@ import { useIntl } from 'react-intl'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   MultipleValueList,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 

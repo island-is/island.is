@@ -817,6 +817,14 @@ export const m = defineMessages({
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
   },
+  yes: {
+    id: 'service.portal:yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'service.portal:no',
+    defaultMessage: 'Nei',
+  },
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',

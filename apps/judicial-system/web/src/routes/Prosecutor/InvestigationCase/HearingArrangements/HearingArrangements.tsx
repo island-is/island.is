@@ -9,6 +9,7 @@ import {
   Modal,
   PageLayout,
   FormContext,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -20,7 +21,6 @@ import {
   Institution,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
