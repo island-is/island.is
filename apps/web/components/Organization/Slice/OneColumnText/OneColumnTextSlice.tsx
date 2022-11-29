@@ -43,7 +43,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
               {slice.title}
             </Text>
           )}
-          {webRichText(slice.content as SliceType[])}
+          {slice.content && webRichText(slice.content as SliceType[])}
           {slice.link && slice.link.url && (
             <Link href={slice.link.url}>
               <Button
