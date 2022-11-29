@@ -2,7 +2,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FC, LazyExoticComponent } from 'react'
 import { MessageDescriptor } from 'react-intl'
 
-import { Features } from '@island.is/feature-flags'
+import type { Features } from '@island.is/react/feature-flags'
 import { IconProps } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 

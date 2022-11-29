@@ -28,6 +28,6 @@
   "tags": [
     "lib:portals-admin",
     "lib:portals-mypages",
-    "scope:react"
+    "scope:react-spa"
   ]
 }

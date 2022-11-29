@@ -1,7 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import flatten from 'lodash/flatten'
 import type { User } from '@island.is/shared/types'
-import { FeatureFlagClient } from '@island.is/feature-flags'
+import { FeatureFlagClient } from '@island.is/react/feature-flags'
 import type { PortalModule, PortalRoute } from '../types/portalCore'
 
 interface FilterEnabledModulesArgs<ModulesKeys extends string> {
