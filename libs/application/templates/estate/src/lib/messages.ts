@@ -93,7 +93,7 @@ export const m = defineMessages({
   },
   settingsInfoProviderSubtitle: {
     id: 'es.application:settingsInfoProviderSubtitle',
-    defaultMessage: 'Persónustillingar (sími og netfang) þínar frá Ísland.is.',
+    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
 
@@ -128,6 +128,16 @@ export const m = defineMessages({
   announcerNoProperty: {
     id: 'es.application:announcerNoProperty',
     defaultMessage: 'Yfirlýsandi eignaleysis',
+    description: '',
+  },
+  announcerResidencePermit: {
+    id: 'es.application:announcerResidencePermit',
+    defaultMessage: 'Umsækjandi um leyfi til setu í óskiptu búi',
+    description: '',
+  },
+  announcerRP: {
+    id: 'es.application:announcerRP',
+    defaultMessage: 'Umsækjandi',
     description: '',
   },
   applicantsInfoSubtitle: {
@@ -209,6 +219,11 @@ export const m = defineMessages({
     defaultMessage: 'Eignir',
     description: '',
   },
+  propertiesTitle: {
+    id: 'es.application:propertiesTitle',
+    defaultMessage: 'Innlendar og erlendar eignir á dánardegi hins látna',
+    description: '',
+  },
   propertiesDescription: {
     id: 'es.application:propertiesDescription',
     defaultMessage: 'Tilgreina skal allar hjúskapareignir beggja hjóna.',
@@ -261,19 +276,20 @@ export const m = defineMessages({
   },
   vehiclesDescription: {
     id: 'es.application:vehiclesDescription',
-    defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar',
+    defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
     description: '',
   },
 
   // Bank Info
   estateBankInfo: {
     id: 'es.application:estateBankInfo',
-    defaultMessage: 'Innistæður í bönkum',
+    defaultMessage: 'Innstæður í bönkum og sparisjóðum',
     description: '',
   },
   estateBankInfoDescription: {
     id: 'es.application:estateBankInfoDescription',
-    defaultMessage: 'Bæði í innlendum og erlendum bönkum og sparisjóður',
+    defaultMessage:
+      'Innstæður í bæði innlendum og erlendum bönkum og sparisjóðum',
     description: '',
   },
   bankAccount: {
@@ -458,7 +474,7 @@ export const m = defineMessages({
   },
   debtsRepeaterButton: {
     id: 'es.application:debtsRepeaterButton',
-    defaultMessage: 'Bæta við kröfuhafa',
+    defaultMessage: 'Bæta við skuldum',
     description: '',
   },
 
@@ -480,23 +496,23 @@ export const m = defineMessages({
     description: '',
   },
   overviewSubtitleResidencePermit: {
-    id: 'es.application:overviewSubtitleResidencePermit',
+    id: 'es.application:overviewSubtitleResidencePermit#markdown',
     defaultMessage:
-      'Þú hefur valið að sækja um búsetuleyfi. Með því að staðfesta þessar upplýsingar staðfestir umsækjandi að hann hafi í lifandi lífi eignarráð á fjármunum búsins og beri ábyrgð á skuldum hins látna sem um hans eigin skuldir væri að ræða, skv. 12. gr. efðalaga nr. 8/1962.',
+      'Þú hefur nú útfyllt beiðni um leyfi til setu í óskiptu búi.',
     description: '',
   },
 
   // Submit
   submitApplication: {
     id: 'es.application:submitApplication',
-    defaultMessage: 'Senda inn tilkynningu',
+    defaultMessage: 'Senda inn beiðni',
     description: '',
   },
 
   // Done
   doneTitle: {
     id: 'es.application:officialExchangeDoneTitle',
-    defaultMessage: 'Tilkynning móttekin',
+    defaultMessage: 'Beiðni móttekin',
     description: '',
   },
   officialExchangeDoneSubtitle: {
@@ -595,11 +611,6 @@ export const m = defineMessages({
   },
 
   // Properties
-  propertiesTitle: {
-    id: 'es.application:propertiesTitle',
-    defaultMessage: 'Eignir',
-    description: 'Properties title',
-  },
   realEstatesTitle: {
     id: 'es.application:realEstatesTitle',
     defaultMessage: 'Fasteignir',
