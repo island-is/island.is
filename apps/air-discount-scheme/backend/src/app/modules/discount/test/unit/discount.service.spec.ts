@@ -1,27 +1,18 @@
 import { Test } from '@nestjs/testing'
-import { CACHE_MANAGER, Logger } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/common'
 
 import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
 import { createTestUser } from '../../../../../../test/createTestUser'
 import { getModelToken } from '@nestjs/sequelize'
 import { ExplicitCode } from '../../discount.model'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { UserModule } from '../../../user'
 import {
-  NationalRegistryModule,
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { UserService } from '../../../user/user.service'
-import { FlightModule, FlightService } from '../../../flight'
-import { Flight, FlightLeg } from '../../../flight/flight.model'
-import {
-  NationalRegistryClientConfig,
-  NationalRegistryClientModule,
-} from '@island.is/clients/national-registry-v2'
-import { ConfigModule } from '@nestjs/config'
-import { XRoadConfig } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { FlightService } from '../../../flight'
+import { Flight } from '../../../flight/flight.model'
 
 function getAuthUser(nationalId: string): AuthUser {
   return {
