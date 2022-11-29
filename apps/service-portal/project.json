@@ -74,6 +74,26 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}'"
       }
     },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets service-portal",
+          "yarn nx run services-user-profile:dev-init"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-user-profile:dev",
+          "yarn start service-portal"
+        ],
+        "parallel": true
+      }
+    },
     "docker-static": {}
   },
   "tags": []

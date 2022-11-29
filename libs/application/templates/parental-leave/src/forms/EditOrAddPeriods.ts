@@ -1,4 +1,5 @@
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 
 import {
   buildCustomField,
@@ -103,7 +104,7 @@ export const EditOrAddPeriods: Form = buildForm({
                       expectedDateOfBirth &&
                       new Date(expectedDateOfBirth) > today
                     ) {
-                      const leastStartDate = addDays(
+                      const leastStartDate = addMonths(
                         new Date(expectedDateOfBirth),
                         -minimumPeriodStartBeforeExpectedDateOfBirth,
                       )

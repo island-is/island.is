@@ -31,6 +31,7 @@ import {
   NO_UNION,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  TransferRightsOption,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -42,6 +43,8 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getMaxMultipleBirthsDays,
+  getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
@@ -139,6 +142,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
           'removeNullPeriod',
           'setNavId',
+          'correctTransferRights',
         ],
         meta: {
           name: States.DRAFT,
@@ -1173,6 +1177,22 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      correctTransferRights: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { hasMultipleBirths } = getApplicationAnswers(answers)
+        const multipleBirthsRequestDays = getMultipleBirthRequestDays(answers)
+
+        if (
+          hasMultipleBirths === YES &&
+          multipleBirthsRequestDays !== getMaxMultipleBirthsDays(answers) &&
+          multipleBirthsRequestDays > 0
+        ) {
+          set(answers, 'transferRights', TransferRightsOption.NONE)
+        }
+
+        return context
+      }),
       setRightsToOtherParent: assign((context) => {
         const { application } = context
         const { answers, externalData } = application
@@ -1228,9 +1248,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(application.answers, 'periods')
           unset(application.answers, 'validatedPeriods')
           set(application.answers, 'requestRights.requestDays', '0')
-          set(application.answers, 'requestRights.isRequestingRights', 'no')
+          set(application.answers, 'requestRights.isRequestingRights', NO)
           set(application.answers, 'giveRights.giveDays', '0')
-          set(application.answers, 'giveRights.isGivingRights', 'no')
+          set(application.answers, 'giveRights.isGivingRights', NO)
         }
 
         if (answers.usePersonalAllowanceFromSpouse === YES) {

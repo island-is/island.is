@@ -30,6 +30,7 @@ export const serviceSetup = (services: {
   icelandicNameRegistryBackend: ServiceBuilder<'icelandic-names-registry-backend'>
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -43,6 +44,9 @@ export const serviceSetup = (services: {
       ),
       ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
+      ),
+      AIR_DISCOUNT_SCHEME_BACKEND_URL: ref(
+        (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
@@ -108,6 +112,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
+      AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
       SYSLUMENN_TIMEOUT: '40000',
@@ -150,6 +155,7 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
 
     .secrets({
