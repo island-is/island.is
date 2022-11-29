@@ -33,7 +33,7 @@ const ConstraintController: FC<Props> = ({
         <Controller
           name={checkboxId}
           defaultValue={defaultValue}
-          render={({ fields: { value, onChange } }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Checkbox
                 onChange={(e) => {

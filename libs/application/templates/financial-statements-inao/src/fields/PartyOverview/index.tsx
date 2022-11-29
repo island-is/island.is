@@ -10,7 +10,6 @@ import {
   InputError,
   Text,
 } from '@island.is/island-ui/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { getErrorViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -180,7 +179,7 @@ export const PartyOverview = ({
           name="applicationApprove"
           defaultValue={approveOverview}
           rules={{ required: true }}
-          render={({ fields: { value, onChange } }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Checkbox
                 onChange={(e) => {

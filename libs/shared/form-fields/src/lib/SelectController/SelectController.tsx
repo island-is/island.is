@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Controller, useFormContext, ValidationRule } from 'react-hook-form'
+import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
 import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
@@ -16,7 +16,7 @@ interface Props {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
-  rules?: ValidationRule
+  rules?: RegisterOptions
 }
 
 export const SelectController: FC<Props & TestSupport> = ({

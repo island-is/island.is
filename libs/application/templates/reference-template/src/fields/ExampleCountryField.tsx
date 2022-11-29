@@ -63,7 +63,7 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
         <Controller
           name={`${id}`}
           defaultValue=""
-          render={({ fields: { value, onChange } }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <AsyncSearch
                 options={options}

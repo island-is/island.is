@@ -24,7 +24,7 @@ const SummaryComment = ({ commentId, comment }: Props) => {
         <Controller
           name={commentId}
           defaultValue={comment}
-          render={({ fields: { value, onChange } }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Input
                 id={commentId}

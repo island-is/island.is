@@ -1,11 +1,6 @@
 import React, { FC, forwardRef } from 'react'
-import {
-  Input,
-  Icon,
-  InputBackgroundColor,
-  InputProps,
-} from '@island.is/island-ui/core'
-import { Controller, Control, ValidationRule } from 'react-hook-form'
+import { Input, Icon, InputBackgroundColor } from '@island.is/island-ui/core'
+import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 
@@ -15,7 +10,7 @@ interface Props {
   disabled?: boolean
   control?: Control
   icon?: React.ComponentProps<typeof Icon>['icon']
-  rules?: ValidationRule
+  rules?: RegisterOptions
   error?: string
   id: string
   label?: string
@@ -239,7 +234,7 @@ export const InputController = forwardRef(
         control={control}
         rules={rules}
         {...(defaultValue !== undefined && { defaultValue })}
-        render={renderChildInput}
+        render={({ field }) => renderChildInput(field)}
       />
     )
   },

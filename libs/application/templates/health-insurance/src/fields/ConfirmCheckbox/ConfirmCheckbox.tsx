@@ -20,7 +20,7 @@ const ConfirmCheckbox: FC<FieldBaseProps> = ({ error, field, application }) => {
     <Controller
       name={id}
       defaultValue={defaultValue}
-      render={({ fields: { value, onChange } }) => {
+      render={({ field: { onChange, value } }) => {
         return (
           <Box
             border="standard"

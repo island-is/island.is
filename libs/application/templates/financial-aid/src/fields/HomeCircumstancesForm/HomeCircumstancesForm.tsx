@@ -87,7 +87,7 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
         <Controller
           name={customInput.id}
           defaultValue={answers?.homeCircumstances?.custom}
-          render={({ fields: { value, onChange } }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Input
                 id={customInput.id}

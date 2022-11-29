@@ -223,7 +223,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     defaultValue={''}
                     control={control}
                     rules={{ required: true }}
-                    render={({ fields: { onChange } }) => (
+                    render={({ field: { onChange } }) => (
                       <Select
                         name="organization"
                         label={organizationLabel}
@@ -390,7 +390,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 defaultValue={false}
                 control={control}
                 rules={{ required: false }}
-                render={({ fields: { onChange, value } }) => (
+                render={({ field: { onChange, value } }) => (
                   <Checkbox
                     label={publicationAllowedLabel}
                     checked={value}
