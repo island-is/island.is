@@ -9,13 +9,13 @@ This application allows individuals to create general petitions
 To setup the docker environment run (this only needs to be run once):
 
 ```bash
-yarn nx run application-templates-general-petition:dev/init
+yarn dev-init application-templates-general-petition
 ```
 
 To start all required services:
 
 ```bash
-yarn nx run application-templates-general-petition:dev
+yarn dev application-templates-general-petition
 ```
 
 This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)

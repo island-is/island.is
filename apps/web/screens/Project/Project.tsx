@@ -179,6 +179,7 @@ const ProjectPage: Screen<PageProps> = ({
                 <TabSectionSlice
                   slice={slice}
                   contentColumnProps={{ span: '1/1' }}
+                  contentPaddingTop={0}
                 />
               ),
             },
