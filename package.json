@@ -59,6 +59,7 @@
     "@apollo/subgraph": "2.1.1",
     "@aws-sdk/client-sqs": "3.145.0",
     "@aws-sdk/credential-provider-node": "3.145.0",
+    "@azure/msal-node": "1.14.4",
     "@contentful/forma-36-react-components": "3.78.4",
     "@contentful/forma-36-tokens": "0.10.1",
     "@contentful/node-apps-toolkit": "2.0.2",

@@ -41,12 +41,12 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
       variant: 'red',
     },
     cta: {
-      label: coreMessages.cardButtonInProgress,
+      label: coreMessages.cardButtonRejected,
     },
   },
   [ApplicationStatus.COMPLETED]: {
     tag: {
-      variant: 'blueberry',
+      variant: 'mint',
       label: coreMessages.tagsDone,
     },
     progress: {
@@ -58,7 +58,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
   [ApplicationStatus.IN_PROGRESS]: {
     tag: {
-      variant: 'blue',
+      variant: 'blueberry',
       label: coreMessages.tagsInProgress,
     },
     progress: {
@@ -66,6 +66,30 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
     },
     cta: {
       label: coreMessages.cardButtonInProgress,
+    },
+  },
+  [ApplicationStatus.DRAFT]: {
+    tag: {
+      variant: 'blue',
+      label: coreMessages.tagsDraft,
+    },
+    progress: {
+      variant: 'blue',
+    },
+    cta: {
+      label: coreMessages.cardButtonDraft,
+    },
+  },
+  [ApplicationStatus.APPROVED]: {
+    tag: {
+      variant: 'mint',
+      label: coreMessages.tagsApproved,
+    },
+    progress: {
+      variant: 'mint',
+    },
+    cta: {
+      label: coreMessages.cardButtonApproved,
     },
   },
   [ApplicationStatus.NOT_STARTED]: {

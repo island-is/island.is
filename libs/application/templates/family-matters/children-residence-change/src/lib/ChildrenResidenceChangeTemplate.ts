@@ -44,6 +44,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     states: {
       [ApplicationStates.DRAFT]: {
         meta: {
+          status: 'draft',
           name: applicationName,
           actionCard: {
             description: stateDescriptions.draft,
@@ -92,6 +93,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.IN_REVIEW]: {
         entry: 'assignToOtherParent',
         meta: {
+          status: 'inprogress',
           name: applicationName,
           actionCard: {
             description: stateDescriptions.inReview,
@@ -153,6 +155,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: applicationName,
+          status: 'inprogress',
           actionCard: {
             description: stateDescriptions.submitted,
             tag: { label: stateLabels.submitted },
@@ -186,6 +189,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.REJECTEDBYPARENTB]: {
         meta: {
           name: applicationName,
+          status: 'rejected',
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
             tag: {
@@ -218,6 +222,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       },
       [ApplicationStates.REJECTED]: {
         meta: {
+          status: 'rejected',
           name: applicationName,
           actionCard: {
             description: stateDescriptions.rejected,
@@ -250,6 +255,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.COMPLETED]: {
         meta: {
           name: applicationName,
+          status: 'approved',
           actionCard: {
             description: stateDescriptions.approved,
             tag: { label: stateLabels.approved, variant: 'blueberry' },
