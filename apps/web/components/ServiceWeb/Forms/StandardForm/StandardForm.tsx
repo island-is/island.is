@@ -111,6 +111,10 @@ type CategoryId =
    */
   | '7LkzuYSzqwM7k8fJyeRbm6'
 
+const mannaudstorgTag = [
+  { key: 'mannaudstorg', type: SearchableTags.Organization },
+]
+
 const labels: Record<string, string> = {
   syslumadur: 'Sýslumannsembætti',
   nafn: 'Nafn',
@@ -268,14 +272,9 @@ export const StandardForm = ({
                 queryString,
                 size: 10,
                 types: [SearchableContentTypes['WebQna']],
-                tags: institutionSlugBelongsToMannaudstorg
-                  ? [
-                      {
-                        key: 'mannaudstorg',
-                        type: SearchableTags.Organization,
-                      },
-                    ]
-                  : [],
+                [institutionSlugBelongsToMannaudstorg
+                  ? 'tags'
+                  : 'excludedTags']: mannaudstorgTag,
               },
             },
           })
