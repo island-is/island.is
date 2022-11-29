@@ -9,7 +9,7 @@ When testing an app/project you need to first start the app, then test it with P
 ## ⚡ TL;DR
 
 - Start the application: `yarn dev-init <app> && yarn dev <app>`
-- Test the app: `yarn playwright menu --e2e --project <path/to/your/app>`
+- Test the app: `yarn playwright test 'system-e2e/.*/<name-of-your-app>'`
 
 ## 👨‍🍳 Prepare the app
 
@@ -19,70 +19,42 @@ For local development and testing start your app. Generally, first-time setup an
 2. `yarn dev-init <app>`
 3. `yarn dev <app>`
 
+{% hint style="example" %}
+
+1. `yarn get-secrets application-system-form`
+2. `yarn dev-init application-system-form`
+3. `yarn dev application-system-form`
+   {% endhint %}
+
 However, not all projects support this, or are incomplete in this setup. If this fails, find its `README.md` and follow the instructions given there. If that fails, reach out to the QA team and we’ll remedy the documentation and improve the initial setup.
 
 ## 🤖 Start Playwright
 
-First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, Playwright can be started in several ways:
+First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
 
-- Using our local script: `./scripts/local-e2e.sh --help`
-- Using playwright directly: `yarn playwright test --project <path/to/your/app>`
+- Using playwright directly: `yarn playwright test '<name-of-your-app>/.*/<smoke|acceptance>'`
+- Specific test file: `yarn playwright test '<path/to/your/test/file>'`
+- Using a pattern (regex): `yarn playwright test '<pattern>'`
 
-{% hint style="info" %}
-Add `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev-web](https://beta.dev01.devland.is/). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
+{% hint style="example" %}
+
+- smoke: `yarn playwright test 'application-system-form/smoke'`
+- acceptance: `yarn playwright test 'service-portal/acceptance'`
+- both: `yarn playwright test 'system-e2e/.*/web'`
+- pattern `yarn playwright test 'system-e2e/.*/s?port?'`
+
+Note that the pattern is a RegEx string in quotes.
 {% endhint %}
 
 {% hint style="info" %}
-You can append to the `test` command the path/name of your test case `yarn playwright test <path/to/spec/file>` to only test a specific spec.
+Run `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials for this (ask DevOps for access). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
 {% endhint %}
 
 # ✍️ Writing tests
 
 ## ⚡ TL;DR
 
-Copy to `apps/system-e2e/src/integration/<your-app>/acceptance/<thing-you-are-testing>.spec.ts` and modify:
-
-```jsx
-import { getFakeUser } from '../../../support/utils'
-import fakeUsers from '../../../fixtures/service-portal/users.json'
-import { Timeout } from '../../../lib/types'
-import { test, expect, type, Page } from '@playwright/test'
-
-test.describe('Thing you are testing', ({ page }) => {
-  const fakeUser = getFakeUser(fakeUsers, 'Gervimaður Fornlönd')
-  test.beforeEach(() => {
-    await idsLogin({ phoneNumber: fakeUser.phoneNumber })
-    await page.goto('/your/app-slug')
-    wait(Timeout.short)
-  })
-
-  test('specific scenario describing what is tested', ({ page }) => {
-		await page.locator('button[role="start"]').click()
-    await expect(page).toHaveUrl('/my-redirect')
-    page.locator('input[name="allergies"]').fill('tree nuts, crowds')
-    page.locator('input[type="checkbox"]')
-			.filter({ has: page.locator('my-attribute') })
-			.evaluateAll((box) => {
-				expect(box).toHaveAttribute('checked', 'true')
-			})
-		expect(page.locator('my-popup')).toContainText('Success')
-		await page.waitForSelector(page.locator(':nth-match(item, 3)'))
-  })
-})
-```
-
-Copy to `apps/system-e2e/src/fixtures/<your-app>/users.json` and modify:
-
-```jsx
-;[
-  {
-    name: 'Gervimaður Fornlönd',
-    phoneNumber: '0109999',
-    nationalId: '0101309999',
-    role: 'user',
-  },
-]
-```
+Run `yarn playwright codegen <url-to-your-app> --output <path/to/your/app/spec.ts>` and modify the output. The selectors need special attention; they should be transformed to use roles or `data-testid` attributes for stability (see below on how to).
 
 ## 🤔 What to test
 
@@ -96,9 +68,9 @@ You should therefore aim to write test for:
 
 ## 🏗️ Test structure
 
-Test cases are written spec files somewhere. Tests that do not modify anything (e.g. _create_ an application, _change_ the user’s name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project:
+Test cases are written spec files. Tests that do not modify anything (e.g. _create_ an application, _change_ the user’s name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project (within the system-e2e app):
 
-```bash
+```shell
 web/                      (app name)
 ├── smoke/                (test type)
 │   └── home-page.spec.ts (feature name, kebab-case)
@@ -116,6 +88,13 @@ test.describe('Overview part of banking app', () => {
     // Create/clear database
     // Seed database
   })
+
+  /* NOTE: there is no guarantee this will run */
+  test.afterAll(() => {
+    // Tear down database
+    // Log out
+  })
+
   test.beforeEach(() => {
     // Log in
     // Basic state reset, e.g. clear inbox
@@ -125,16 +104,10 @@ test.describe('Overview part of banking app', () => {
     // Make user get money using page.selector, page.click, etc.
     // Verify money is present
   })
-
-  /** NOTE: there is no guarantee this will run */
-  test.afterAll(() => {
-    // Tear down database
-    // Log out
-  })
 })
 ```
 
-Each test case (`test`) should test a specific scenario from end-to-end. Let’s take the operating licence application as an example. To test various routes/cases your test cases might include:
+Each test case (`test`) should test a specific scenario from end-to-end. If your test is getting long and complicated consider breaking it up within a `test` with `test.step`; each step will run in succession and the failure/success report is easier to read. Let’s take the operating licence application as an example; test various routes/cases:
 
 - Hotel permit with food, but no alcohol
 - Hotel permit with food and alcohol
@@ -143,11 +116,11 @@ Each test case (`test`) should test a specific scenario from end-to-end. Let’s
 
 ## 🧰 Using fixtures
 
-Fixtures are objects to use instead of real data when mocking something. You can use a fixture user to standardize between test cases in a spec. You can also define fixtures for static responses to use in `page.route` for more control over how you want the server to respond.
+Fixtures are objects to use instead of real data when mocking something. You can use a fixture user to standardize between test cases in a spec. You can also define fixtures for static responses to use in `page.route` for more control over how you want the server to respond. Full docs at [Playwright.dev](https://playwright.dev/docs/test-fixtures).
 
-Fixtures are located in `src/fixtures/<your-app>/<object-type>.json`. Currently, fixtures and `page.route`s are only relevant in the front-end app. Getting the back-end to use specific fixtures is a Work in Progress.
+Fixtures are located in `src/fixtures/<your-app>.ts`. Currently, fixtures and `page.route`s are only relevant in the front-end app. Getting the back-end to use specific fixtures is a Work in Progress (see [PR](https://github.com/island-is/island.is/pull/8862)).
 
-Fixtures can be any JSON object (in `.json` files) or a typed TypeScript object (in `.ts` files). If writing a typed object, place new types in `lib/types.ts`.
+Fixtures can be any JSON object (in `.json` files) or – preferably – a typed TypeScript object (in `.ts` files).
 
 ## ☕ Mocking server-responses
 
@@ -178,7 +151,7 @@ Check out the [official playwright documentation](https://playwright.dev/docs/ap
 
 Some apps, like service-portal and application-system-form, load their components _very_ asynchronously. This can be an issue when targeting some elements, but they do not appear on the first page load, but instead load after the basic page has loaded.
 
-In such cases you can wait for the elements to exist with `page.waitFor*`:
+In such cases you can wait for the elements to exist with `page.waitFor*` ([docs](https://playwright.dev/docs/api/class-page#page-wait-for-event)):
 
 ```jsx
 // Wait for there to be at least 3 checkboxes

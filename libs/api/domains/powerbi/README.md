@@ -2,7 +2,8 @@
 
 # API Domains Powerbi
 
-This library was generated with [Nx](https://nx.dev).
+This domain corresponds to Power Bi functionality for the web.
+The web can embed Power Bi reports and some reports require an embed token, which this api domain can provide if given a workspace id, report id and an owner (which is a unique string that's used to map to the correct secret values).
 
 ## Running unit tests
 
