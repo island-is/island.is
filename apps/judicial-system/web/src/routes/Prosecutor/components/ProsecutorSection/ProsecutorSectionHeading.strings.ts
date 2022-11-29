@@ -14,4 +14,11 @@ export const strings = defineMessages({
     description:
       'Notaður sem skýritexti fyrir "ákærandi" hlutann á óskir um fyrirtöku skrefi í öllum málstegundum.',
   },
+  indictmentTooltip: {
+    id: 'judicial.system.core:prosecutor_section_heading.indictment_tooltip',
+    defaultMessage:
+      'Ákærandi sem valinn er hér er skráður fyrir málinu og fær upplýsingaskeyti vegna málsmeðferðarinnar.',
+    description:
+      'Notaður sem skýritexti fyrir "ákærandi" hlutann á óskir um fyrirtöku skrefi í ákærum.',
+  },
 })
