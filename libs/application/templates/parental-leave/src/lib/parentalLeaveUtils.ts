@@ -50,6 +50,7 @@ import {
   additionalSingleParentMonths,
   daysInMonth,
   defaultMonths,
+  minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
 
@@ -991,6 +992,41 @@ export const getLastValidPeriodEndDate = (
   }
 
   return lastEndDate
+}
+
+export const getMinimumStartDate = (application: Application): Date => {
+  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+
+  const lastPeriodEndDate = getLastValidPeriodEndDate(application)
+
+  const today = new Date()
+  if (lastPeriodEndDate) {
+    return lastPeriodEndDate
+  } else if (expectedDateOfBirth) {
+    const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
+    const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+
+    if (expectedDateOfBirthDate.getTime() > today.getTime()) {
+      const leastStartDate = addMonths(
+        expectedDateOfBirthDate,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+      if (leastStartDate.getTime() < today.getTime()) {
+        return beginningOfMonth
+      }
+
+      return leastStartDate
+    }
+
+    if (
+      expectedDateOfBirthDate.getMonth() === today.getMonth() &&
+      expectedDateOfBirthDate.getFullYear() === today.getFullYear()
+    ) {
+      return beginningOfMonth
+    }
+  }
+
+  return today
 }
 
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>
