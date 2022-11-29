@@ -8,29 +8,31 @@ import { defaultLanguage } from '@island.is/shared/constants'
 import { Authenticator } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import { UserProfileLocale } from '@island.is/shared/components'
-import { modules, ModulesProvider } from '../lib/modules'
+import { ModulesProvider } from '../contexts/ModulesContext'
+import { modules } from '../lib/modules'
 import environment from '../environments/environment'
 import Layout from '../components/Layout/Layout'
+import { ApplicationErrorBoundary } from '@island.is/portals/core'
 
 export const App = () => {
   return (
     <ApolloProvider client={client}>
-      <ModulesProvider modules={modules}>
-        <LocaleProvider locale={defaultLanguage} messages={{}}>
-          {/*<ApplicationErrorBoundary>*/}
+      <LocaleProvider locale={defaultLanguage} messages={{}}>
+        <ApplicationErrorBoundary imgSrc="./assets/images/hourglass.svg">
           <Router basename="/stjornbord">
             <Authenticator>
               <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                <UserProfileLocale />
-                <Layout>
-                  <h1>Hello world</h1>
-                </Layout>
+                <ModulesProvider modules={modules}>
+                  <UserProfileLocale />
+                  <Layout>
+                    <h1>Hello world</h1>
+                  </Layout>
+                </ModulesProvider>
               </FeatureFlagProvider>
             </Authenticator>
           </Router>
-          {/*</ApplicationErrorBoundary>*/}
-        </LocaleProvider>
-      </ModulesProvider>
+        </ApplicationErrorBoundary>
+      </LocaleProvider>
     </ApolloProvider>
   )
 }

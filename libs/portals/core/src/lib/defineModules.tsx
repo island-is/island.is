@@ -1,10 +1,16 @@
+import {
+  useApolloClient,
+  NormalizedCacheObject,
+  ApolloClient,
+} from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { Context, createContext, useContext, useEffect, useState } from 'react'
+import { LoadingScreen } from '../components/LoadingScreen/LoadingScreen'
 import { PortalModule, PortalRoute } from '../types/portalCore'
-import { filterEnabledModules } from '../utils/modules'
+import { arrangeRoutes, filterEnabledModules } from '../utils/modules'
 
-type ModulesContextValues<ModuleKeys extends string> = {
+export type ModulesContextProps<ModuleKeys extends string> = {
   modules: Record<ModuleKeys, PortalModule>
   companyModules?: ModuleKeys[]
   routes: PortalRoute[]
@@ -12,7 +18,7 @@ type ModulesContextValues<ModuleKeys extends string> = {
 }
 
 const createUseModules = <ModulesKeys extends string>(
-  modulesContext: Context<ModulesContextValues<ModulesKeys>>,
+  modulesContext: Context<ModulesContextProps<ModulesKeys>>,
 ) => {
   return () => {
     const context = useContext(modulesContext)
@@ -20,14 +26,9 @@ const createUseModules = <ModulesKeys extends string>(
     if (context === undefined) {
       throw new Error('useModules must be used under ModulesProvider')
     }
+
     return context
   }
-}
-
-const createModulesContext = <ModulesKeys extends string>(
-  initialState: ModulesContextValues<ModulesKeys>,
-) => {
-  return createContext<ModulesContextValues<ModulesKeys>>(initialState)
 }
 
 interface ModuleProviderProps<ModulesKeys extends string> {
@@ -36,7 +37,7 @@ interface ModuleProviderProps<ModulesKeys extends string> {
 }
 
 const createModulesProvider = <ModulesKeys extends string>(
-  ModulesContext: Context<ModulesContextValues<ModulesKeys>>,
+  ModulesContext: Context<ModulesContextProps<ModulesKeys>>,
   companyModules?: ModulesKeys[],
 ) => {
   return ({
@@ -45,33 +46,54 @@ const createModulesProvider = <ModulesKeys extends string>(
   }: ModuleProviderProps<ModulesKeys>) => {
     const { userInfo } = useAuth()
     const featureFlagClient = useFeatureFlagClient()
+    const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>
+    const [error, setError] = useState(false)
     const [loading, setLoading] = useState(true)
     const [modules, setModules] = useState<Record<ModulesKeys, PortalModule>>(
       initialModules,
     )
+    const [routes, setRoutes] = useState<PortalRoute[]>([])
 
     useEffect(() => {
       setLoading(true)
 
-      filterEnabledModules({
-        modules,
-        companyModules,
-        userInfo,
-        featureFlagClient,
-      })
-        .then((filteredModules) => setModules(filteredModules))
-        .finally(() => setLoading(false))
-    }, [])
+      if (userInfo) {
+        filterEnabledModules({
+          modules,
+          companyModules,
+          userInfo,
+          featureFlagClient,
+        })
+          .then((filteredModules) => {
+            setModules(filteredModules)
+
+            return arrangeRoutes({
+              modules: Object.values(filteredModules),
+              featureFlagClient,
+              userInfo,
+              apolloClient,
+            })
+          })
+          .then((routes) => setRoutes(routes))
+          .catch((error) => setError(error))
+          .finally(() => setLoading(false))
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userInfo])
+
+    if (error) {
+      throw error
+    }
 
     return (
       <ModulesContext.Provider
         value={{
           modules,
-          routes: [],
+          routes,
           loading,
         }}
       >
-        {children}
+        {loading ? <LoadingScreen /> : children}
       </ModulesContext.Provider>
     )
   }
@@ -87,14 +109,15 @@ export const defineModules = <ModulesKeys extends string>({
   modules: Record<ModulesKeys, PortalModule>
   companyModules?: ModulesKeys[]
 }) => {
-  const ModulesContext = createModulesContext<ModulesKeys>({
+  const ModulesContext = createContext<ModulesContextProps<ModulesKeys>>({
     modules,
     companyModules,
     loading: false,
     routes: [],
   })
-  const useModules = createUseModules(ModulesContext)
+
   const ModulesProvider = createModulesProvider(ModulesContext, companyModules)
+  const useModules = createUseModules(ModulesContext)
 
   return {
     useModules,

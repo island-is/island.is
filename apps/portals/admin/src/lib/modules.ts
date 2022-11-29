@@ -1,5 +1,5 @@
-import { defineModules, PortalModule } from '@island.is/portals/core'
 import { delegationsModule } from '@island.is/portals-modules-access-control-delegations'
+import { PortalModule } from '@island.is/portals/core'
 
 /**
  * NOTE:
@@ -12,7 +12,3 @@ export type ModuleKeys = 'delegations'
 export const modules: Record<ModuleKeys, PortalModule> = {
   delegations: delegationsModule,
 }
-
-const { useModules, ModulesProvider } = defineModules({ modules })
-
-export { useModules, ModulesProvider }

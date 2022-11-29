@@ -1,8 +1,10 @@
-import { User } from '@island.is/shared/types'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import flatten from 'lodash/flatten'
+import type { User } from '@island.is/shared/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { PortalModule } from '../types/portalCore'
+import type { PortalModule, PortalRoute } from '../types/portalCore'
 
-type FilterEnabledModulesArgs<ModulesKeys extends string> = {
+interface FilterEnabledModulesArgs<ModulesKeys extends string> {
   modules: Record<ModulesKeys, PortalModule>
   featureFlagClient: FeatureFlagClient
   companyModules?: ModulesKeys[]
@@ -38,4 +40,49 @@ export const filterEnabledModules = async <ModulesKeys extends string>({
   }
 
   return filteredModules
+}
+
+interface ArrangeRoutesArgs {
+  userInfo: User
+  modules: PortalModule[]
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  featureFlagClient: FeatureFlagClient
+}
+
+export const arrangeRoutes = async ({
+  userInfo,
+  modules,
+  apolloClient,
+  featureFlagClient,
+}: ArrangeRoutesArgs) => {
+  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
+  const routes = await Promise.all(
+    Object.values(modules).map((module) => {
+      const routesObject =
+        module.companyRoutes && IS_COMPANY
+          ? module.companyRoutes
+          : module.routes
+      return routesObject({
+        userInfo,
+        client: apolloClient,
+      })
+    }),
+  )
+
+  const flatRoutes = flatten(routes)
+  const mappedRoutes = await Promise.all(
+    flatRoutes.map(async (route) => {
+      if (route.key) {
+        const ff = await featureFlagClient.getValue(
+          `isServicePortal${route.key}PageEnabled`,
+          false,
+        )
+        return ff ? route : false
+      }
+      return route
+    }),
+  )
+  const filteredRoutes = mappedRoutes.filter(Boolean) as PortalRoute[]
+
+  return filteredRoutes
 }
