@@ -23,7 +23,7 @@ export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
   title: employerFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'review',

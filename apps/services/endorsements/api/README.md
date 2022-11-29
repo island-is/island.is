@@ -9,8 +9,8 @@ This service manages endorsement lists within island.is.
 Simply run these two commands:
 
 ```
-yarn dev-init services-user-profile
-yarn dev services-user-profile
+yarn dev-init services-endorsements-api
+yarn dev services-endorsements-api
 ```
 
 ## Initial setup
