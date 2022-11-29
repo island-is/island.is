@@ -1,6 +1,6 @@
 services:
   localstack:
-    image: localstack/localstack
+    image: docker.io/localstack/localstack
     networks:
       - local
     ports:
