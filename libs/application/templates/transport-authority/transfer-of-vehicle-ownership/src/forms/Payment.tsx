@@ -99,7 +99,7 @@ export const Payment: Form = buildForm({
           id: 'subSectionPaymentPending',
           component: 'PaymentPending',
           title: conclusion.general.title,
-          condition: (_, externalData) => {
+          condition: (_) => {
             return !!window.document.location.href.match(/\?done$/)
           },
         }),
