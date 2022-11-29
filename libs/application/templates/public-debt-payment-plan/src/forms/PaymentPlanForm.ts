@@ -14,6 +14,7 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  FormValue,
 } from '@island.is/application/types'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
@@ -35,6 +36,11 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../types'
+
+const isApplicantPerson = (formValue: FormValue) => {
+  const { applicant } = formValue as PublicDebtPaymentPlan
+  return kennitala.isPerson(applicant.nationalId)
+}
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
@@ -166,10 +172,7 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'disposableIncomeSection',
       title: section.disposableIncome,
-      condition: (formValue) => {
-        const { applicant } = formValue as PublicDebtPaymentPlan
-        return kennitala.isPerson(applicant.nationalId)
-      },
+      condition: isApplicantPerson,
       children: [
         buildCustomField({
           id: 'disposableIncome',

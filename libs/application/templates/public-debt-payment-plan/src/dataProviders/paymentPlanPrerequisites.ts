@@ -1,4 +1,5 @@
 import {
+  PaymentScheduleCompanyConditions,
   PaymentScheduleConditions,
   PaymentScheduleDebts,
   PaymentScheduleEmployer,
@@ -13,20 +14,22 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
 import {
+  queryPaymentScheduleCompanyConditions,
   queryPaymentScheduleConditions,
   queryPaymentScheduleDebts,
   queryPaymentScheduleEmployer,
   queryPaymentScheduleInitialSchedule,
 } from '../graphql/queries'
+import * as kennitala from 'kennitala'
 import { errorModal } from '../lib/messages'
 import { NO, YES } from '../shared/constants'
 import { mockData } from './mockData'
 
 interface PaymentPlanPrerequisitesProps {
-  conditions: PaymentScheduleConditions
+  conditions: PaymentScheduleConditions | PaymentScheduleCompanyConditions
   debts: PaymentScheduleDebts[]
   allInitialSchedules: PaymentScheduleInitialSchedule[]
-  employer: PaymentScheduleEmployer
+  employer?: PaymentScheduleEmployer
 }
 
 export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
@@ -56,6 +59,20 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
         }
 
         return Promise.resolve(response.data.paymentScheduleConditions)
+      })
+      .catch((error) => this.handleError(error))
+  }
+
+  async queryPaymentScheduleCompanyConditions(): Promise<PaymentScheduleCompanyConditions> {
+    return this.useGraphqlGateway(queryPaymentScheduleCompanyConditions)
+      .then(async (res: Response) => {
+        const response = await res.json()
+
+        if (response.errors) {
+          return this.handleError(response.errors)
+        }
+
+        return Promise.resolve(response.data.paymentScheduleCompanyConditions)
       })
       .catch((error) => this.handleError(error))
   }
@@ -98,21 +115,49 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
       .catch((error) => this.handleError(error))
   }
 
-  async provide(
-    application: Application,
-  ): Promise<PaymentPlanPrerequisitesProps> {
-    const fakeData = getValueViaPath(application.answers, 'mock') as {
-      useMockData: typeof YES | typeof NO
+  private async companyProvider() {
+    const paymentScheduleConditions = await this.queryPaymentScheduleCompanyConditions()
+    const paymentScheduleDebts = await this.queryPaymentScheduleDebts()
+    const allInitialSchedules = [] as PaymentScheduleInitialSchedule[]
+
+    for (const debt of paymentScheduleDebts) {
+      const initialSchedule = await this.queryPaymentScheduleInitialSchedule(
+        debt.totalAmount,
+        0,
+        debt.type,
+      )
+
+      allInitialSchedules.push(initialSchedule)
     }
-    if (fakeData?.useMockData === YES) {
-      return {
-        conditions: mockData.data.conditions,
-        debts: mockData.data.debts as PaymentScheduleDebts[],
-        allInitialSchedules: mockData.data
-          .allInitialSchedules as PaymentScheduleInitialSchedule[],
-        employer: mockData.data.employer,
-      }
+
+    // If no debts are found inform the applicant that they will not be able to apply for a payment plan
+    if (
+      paymentScheduleConditions.maxDebt ||
+      !paymentScheduleConditions.taxReturns ||
+      !paymentScheduleConditions.vatReturns || // !paymentScheduleConditions.citReturns || TODO: Ask if we should include this check (corporate income tax)
+      !paymentScheduleConditions.accommodationTaxReturns ||
+      !paymentScheduleConditions.withholdingTaxReturns ||
+      paymentScheduleConditions.collectionActions ||
+      !paymentScheduleConditions.doNotOwe ||
+      paymentScheduleDebts.length <= 0
+    ) {
+      return Promise.reject({
+        reason: {
+          title: errorModal.noDebts.title,
+          summary: errorModal.noDebts.summary,
+        },
+        statusCode: 404,
+      })
     }
+
+    return {
+      conditions: paymentScheduleConditions,
+      debts: paymentScheduleDebts,
+      allInitialSchedules: allInitialSchedules,
+    }
+  }
+
+  private async personProvider() {
     const paymentScheduleConditions = await this.queryPaymentScheduleConditions()
     const paymentScheduleDebts = await this.queryPaymentScheduleDebts()
     const paymentScheduleEmployer = await this.queryPaymentScheduleEmployer()
@@ -156,6 +201,28 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
       allInitialSchedules: allInitialSchedules,
       employer: paymentScheduleEmployer,
     }
+  }
+
+  async provide(
+    application: Application,
+  ): Promise<PaymentPlanPrerequisitesProps> {
+    const fakeData = getValueViaPath(application.answers, 'mock') as {
+      useMockData: typeof YES | typeof NO
+    }
+    if (fakeData?.useMockData === YES) {
+      return {
+        conditions: mockData.data.conditions,
+        debts: mockData.data.debts as PaymentScheduleDebts[],
+        allInitialSchedules: mockData.data
+          .allInitialSchedules as PaymentScheduleInitialSchedule[],
+        employer: mockData.data.employer,
+      }
+    }
+
+    const isCompany = kennitala.isCompany(application.applicant)
+
+    if (isCompany) return this.companyProvider()
+    else return this.personProvider()
   }
 
   onProvideSuccess(

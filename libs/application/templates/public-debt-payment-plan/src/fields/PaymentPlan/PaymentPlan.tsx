@@ -34,6 +34,7 @@ import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
 import * as styles from './PaymentPlan.css'
 import { useDebouncedSliderValues } from './useDebouncedSliderValues'
+import * as kennitala from 'kennitala'
 
 // An array might not work for this schema
 // Might need to define specific fields for each one
@@ -78,9 +79,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
 
   const entry = `paymentPlans.${answerKey}`
   const currentAnswers = paymentPlans ? paymentPlans[answerKey] : undefined
+  const isPerson = kennitala.isPerson(application.applicant)
 
   const [paymentMode, setPaymentMode] = useState<PaymentModeState | undefined>(
-    currentAnswers?.paymentMode,
+    isPerson ? currentAnswers?.paymentMode : MONTHS,
   )
 
   const getDistributionCallback = useCallback(
@@ -248,24 +250,26 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       <Text variant="h4" marginBottom={3}>
         {formatMessage(paymentPlan.labels.paymentModeTitle)}
       </Text>
-      <RadioController
-        id={`${entry}.paymentMode`}
-        disabled={false}
-        name={`${entry}.paymentMode`}
-        largeButtons={true}
-        defaultValue={paymentMode}
-        onSelect={handleSelectPaymentMode}
-        options={[
-          {
-            value: AMOUNT,
-            label: formatMessage(paymentPlan.labels.payByAmount),
-          },
-          {
-            value: MONTHS,
-            label: formatMessage(paymentPlan.labels.payByMonths),
-          },
-        ]}
-      />
+      {isPerson && (
+        <RadioController
+          id={`${entry}.paymentMode`}
+          disabled={false}
+          name={`${entry}.paymentMode`}
+          largeButtons={true}
+          defaultValue={paymentMode}
+          onSelect={handleSelectPaymentMode}
+          options={[
+            {
+              value: AMOUNT,
+              label: formatMessage(paymentPlan.labels.payByAmount),
+            },
+            {
+              value: MONTHS,
+              label: formatMessage(paymentPlan.labels.payByMonths),
+            },
+          ]}
+        />
+      )}
       {paymentMode === AMOUNT && (
         <PlanSlider
           id={`${entry}.amountPerMonth`}
