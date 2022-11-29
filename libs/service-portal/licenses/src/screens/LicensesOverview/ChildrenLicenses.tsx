@@ -26,7 +26,7 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
         <LicenseCards
           key={i}
           passportData={item.passports || undefined}
-          name={item?.childNationalId || undefined}
+          name={true}
         />
       ))}
 

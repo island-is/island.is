@@ -6,7 +6,7 @@ import { IdentityDocumentModel } from '@island.is/api/schema'
 
 interface Props {
   passportData?: IdentityDocumentModel[]
-  name?: string
+  name?: boolean
 }
 
 const LicenseCards: FC<Props> = ({ passportData, name }) => {
@@ -21,7 +21,11 @@ const LicenseCards: FC<Props> = ({ passportData, name }) => {
               id={item.numberWithType}
               expireDate={item.expirationDate}
               isInvalid={item.status === 'INVALID'}
-              name={name || item.verboseType}
+              name={
+                item.displayFirstName && item.displayLastName && name
+                  ? item.displayFirstName + ' ' + item.displayLastName
+                  : item.verboseType
+              }
             />
           ))}
         </Stack>
