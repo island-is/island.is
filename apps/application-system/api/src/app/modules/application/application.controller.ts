@@ -243,23 +243,22 @@ export class ApplicationController {
       templates[application.typeId] = applicationTemplate
 
       if (
-        (await this.validationService.isTemplateReady(
-          user,
-          applicationTemplate,
-        )) &&
-        this.applicationAccessService.shouldShowApplicationOnOverview(
-          application as BaseApplication,
-          user,
-          applicationTemplate,
-        )
+        await this.validationService.isTemplateReady(user, applicationTemplate)
       ) {
         templateTypeToIsReady[application.typeId] = true
-        filteredApplications.push(application)
+        if (
+          this.applicationAccessService.shouldShowApplicationOnOverview(
+            application as BaseApplication,
+            user,
+            applicationTemplate,
+          )
+        ) {
+          filteredApplications.push(application)
+        }
       } else {
         templateTypeToIsReady[application.typeId] = false
       }
     }
-
     return filteredApplications
   }
 
@@ -313,7 +312,7 @@ export class ApplicationController {
       applicantActors: user.actor ? [user.actor.nationalId] : [],
       attachments: {},
       state: initialState,
-      status: ApplicationStatus.IN_PROGRESS,
+      status: ApplicationStatus.DRAFT,
       typeId: application.typeId,
     }
 
@@ -676,7 +675,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
-      true,
+      false,
       intl.formatMessage,
     )
 

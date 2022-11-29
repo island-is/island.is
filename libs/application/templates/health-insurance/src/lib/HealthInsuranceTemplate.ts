@@ -47,6 +47,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       [ApplicationStates.PREREQUESITES]: {
         meta: {
           name: applicationName,
+          status: 'draft',
           progress: 0,
           lifecycle: {
             shouldBeListed: false,
@@ -84,6 +85,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
       [ApplicationStates.DRAFT]: {
         meta: {
+          status: 'draft',
           name: applicationName,
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
@@ -114,6 +116,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
       [ApplicationStates.IN_REVIEW]: {
         meta: {
+          status: 'completed',
           name: applicationName,
           onEntry: defineTemplateApi({
             action: API_MODULE.sendApplyHealthInsuranceApplication,

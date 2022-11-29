@@ -32,6 +32,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
       [States.CONFIRM]: {
         meta: {
           name: 'Confirmations',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -72,6 +73,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: {
             shouldBeListed: false,
@@ -86,7 +88,6 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final',
       },
     },
   },

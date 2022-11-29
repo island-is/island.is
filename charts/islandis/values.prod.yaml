@@ -7,6 +7,7 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -78,6 +79,7 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    NO_UPDATE_NOTIFIER: 'true'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -139,6 +141,7 @@ air-discount-scheme-backend:
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'air_discount_scheme_backend'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
@@ -240,6 +243,8 @@ api:
     - 'node'
   enabled: true
   env:
+    AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
+    AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
@@ -264,6 +269,7 @@ api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NODE_OPTIONS: '--max-old-space-size=2000'
+    NO_UPDATE_NOTIFIER: 'true'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     SEND_FROM_EMAIL: 'island@island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -381,6 +387,9 @@ api:
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
     FISKISTOFA_API_URL: '/k8s/api/FISKISTOFA_API_URL'
+    FISKISTOFA_POWERBI_CLIENT_ID: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_ID'
+    FISKISTOFA_POWERBI_CLIENT_SECRET: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET'
+    FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID'
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
@@ -467,6 +476,7 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     NODE_OPTIONS: '--max-old-space-size=976'
     NOVA_USERNAME: 'IslandIs_User_Production'
+    NO_UPDATE_NOTIFIER: 'true'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -550,6 +560,7 @@ application-system-api:
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'application_system_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
@@ -906,6 +917,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
@@ -950,6 +962,7 @@ endorsement-system-api:
       DB_NAME: 'services_endorsements_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_endorsements_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
@@ -1004,6 +1017,7 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
@@ -1060,6 +1074,7 @@ icelandic-names-registry-backend:
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'icelandic_names_registry_backend'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
@@ -1350,6 +1365,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=976'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
   grantNamespaces:
@@ -1404,6 +1420,7 @@ service-portal-api:
       DB_NAME: 'service_portal_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'service_portal_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
@@ -1449,6 +1466,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
@@ -1492,6 +1510,7 @@ services-documents:
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_documents'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
@@ -1520,6 +1539,7 @@ skilavottord-web:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'prod'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1589,6 +1609,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1642,6 +1663,7 @@ skilavottord-ws:
       DB_NAME: 'skilavottord'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'skilavottord'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'

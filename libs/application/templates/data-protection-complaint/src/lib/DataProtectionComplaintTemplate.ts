@@ -34,6 +34,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           progress: 0.5,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -64,6 +65,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
       [States.IN_REVIEW]: {
         meta: {
           name: 'In Review',
+          status: 'completed',
           progress: 1,
           actionCard: {
             tag: { label: application.submittedTag, variant: 'blueberry' },

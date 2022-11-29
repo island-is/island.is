@@ -45,11 +45,10 @@ export enum FormItemTypes {
 export type Schema = ZodObject<any>
 
 export enum FormModes {
-  APPLYING = 'applying',
-  EDITING = 'editing',
+  DRAFT = 'draft',
+  IN_PROGRESS = 'inprogress',
+  COMPLETED = 'completed',
   APPROVED = 'approved',
-  PENDING = 'pending',
-  REVIEW = 'review',
   REJECTED = 'rejected',
 }
 

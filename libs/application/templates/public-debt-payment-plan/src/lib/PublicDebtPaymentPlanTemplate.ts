@@ -54,6 +54,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
     states: {
       [States.prerequisites]: {
         meta: {
+          status: 'draft',
           name: States.prerequisites,
           actionCard: {
             title: application.name,
@@ -88,6 +89,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
@@ -126,13 +128,14 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.closed]: {
         meta: {
           name: States.closed,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,
           },
           progress: 1,
           lifecycle: {
-            shouldBeListed: true,
+            shouldBeListed: false,
             shouldBePruned: true,
             whenToPrune: 0,
           },
@@ -141,6 +144,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,

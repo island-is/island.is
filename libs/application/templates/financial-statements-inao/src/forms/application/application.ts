@@ -34,7 +34,7 @@ export const getApplication = (allowFakeData = false): Form => {
     title: '',
     renderLastScreenButton: false,
     renderLastScreenBackButton: false,
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     logo: Logo,
     children: [
       buildSection({

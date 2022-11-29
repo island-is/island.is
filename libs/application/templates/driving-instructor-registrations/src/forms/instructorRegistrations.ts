@@ -17,7 +17,7 @@ export const getInstructorRegistrations = (): Form => {
   return buildForm({
     id: 'InstructorRegistrationsTemplate',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: false,
     children: [
       buildSection({

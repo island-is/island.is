@@ -45,6 +45,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um Umsokn',
+          status: 'draft',
           progress: 0.43,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -75,6 +76,7 @@ const template: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: 'Approved',
+          status: 'approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -91,7 +93,6 @@ const template: ApplicationTemplate<
             action: TEMPLATE_API_ACTIONS.sendApplication,
           }),
         },
-        type: 'final' as const,
       },
     },
   },

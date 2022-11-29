@@ -72,5 +72,5 @@
     },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:portals-admin"]
 }

@@ -20,7 +20,7 @@ export const getDrivingSchoolConfirmation = (): Form => {
   return buildForm({
     id: 'getDrivingSchoolConfirmation',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [

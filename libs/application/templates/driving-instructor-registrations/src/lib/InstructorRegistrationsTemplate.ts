@@ -35,6 +35,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
           actionCard: {
             title: m.applicationTitle,
           },
+          status: 'inprogress',
           progress: 0.33,
           lifecycle: {
             shouldBeListed: false,

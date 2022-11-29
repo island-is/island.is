@@ -22,7 +22,7 @@ import {
 export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',

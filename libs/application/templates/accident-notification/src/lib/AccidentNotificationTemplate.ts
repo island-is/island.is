@@ -60,6 +60,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           name: application.general.name.defaultMessage,
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
+          status: 'draft',
           roles: [
             {
               id: Roles.APPLICANT,
@@ -87,6 +88,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.REVIEW,
           progress: 0.8,
+          status: 'inprogress',
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
@@ -139,6 +141,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       },
       [States.REVIEW_ADD_ATTACHMENT]: {
         meta: {
+          status: 'inprogress',
           name: States.REVIEW_ADD_ATTACHMENT,
           progress: 0.8,
           lifecycle: {
@@ -189,6 +192,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       // State when assignee has approved or reject the appliction
       [States.IN_FINAL_REVIEW]: {
         meta: {
+          status: 'inprogress',
           name: States.IN_FINAL_REVIEW,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,

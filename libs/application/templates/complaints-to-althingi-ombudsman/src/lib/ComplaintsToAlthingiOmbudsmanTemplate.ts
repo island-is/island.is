@@ -44,6 +44,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -74,6 +75,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
         meta: {
           name: States.submitted,
           progress: 1,
+          status: 'completed',
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,

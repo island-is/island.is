@@ -26,7 +26,7 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: m.prerequisitesFormTitle,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'PrerequisitesInfoSection',

@@ -2,6 +2,21 @@ import type { DistributiveOmit } from '@island.is/shared/types'
 
 import { YES, NO, ParentalRelations } from './constants'
 
+export interface MultipleBirths {
+  hasMultipleBirths: YesOrNo
+  multipleBirths?: number
+}
+
+export interface RequestRightsObj {
+  isRequestingRights: YesOrNo
+  requestDays: number
+}
+
+export interface GiveRightsObj {
+  isGivingRights: YesOrNo
+  requestDays: number
+}
+
 export interface PersonInformation {
   fullName: string
   genderCode: string
@@ -81,6 +96,7 @@ interface BaseChildInformation {
    * Will be undefined if transferal was not requested
    */
   transferredDays?: number
+  multipleBirthsDays?: number
 }
 
 export type ChildInformation =

@@ -51,6 +51,7 @@ const PassportTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: m.formName.defaultMessage,
+          status: 'draft',
           progress: 0.33,
           lifecycle: pruneAfter(twoDays),
           onExit: defineTemplateApi({
@@ -101,6 +102,7 @@ const PassportTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
             description: m.payment,
           },
@@ -134,6 +136,7 @@ const PassportTemplate: ApplicationTemplate<
         entry: 'assignToParentB',
         meta: {
           name: 'ParentB',
+          status: 'inprogress',
           progress: 0.9,
           lifecycle: pruneAfter(sixtyDays),
           onEntry: defineTemplateApi({
@@ -184,6 +187,7 @@ const PassportTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
           actionCard: {
@@ -224,7 +228,6 @@ const PassportTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

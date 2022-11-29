@@ -49,6 +49,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
@@ -83,6 +84,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,

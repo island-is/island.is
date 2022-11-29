@@ -100,6 +100,9 @@ export class ChildrenService {
       const transferredDays =
         child.transferredDays === undefined ? 0 : child.transferredDays
 
+      const multipleBirthsDays =
+        child.multipleBirthsDays === undefined ? 0 : child.multipleBirthsDays
+
       // Transferred days are only added to remaining days for secondary parents
       // since the primary parent makes the choice for them
       const remainingDays =
@@ -107,7 +110,9 @@ export class ChildrenService {
           child.expectedDateOfBirth,
           parentalLeavesAndPregnancyStatus.getParentalLeaves,
           parentalLeavesEntitlements,
-        ) + transferredDays
+        ) +
+        transferredDays +
+        multipleBirthsDays
 
       childrenResult.push({
         ...child,

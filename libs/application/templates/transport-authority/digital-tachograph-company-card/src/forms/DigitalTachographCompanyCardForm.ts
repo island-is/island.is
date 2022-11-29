@@ -19,7 +19,7 @@ import { m } from '../lib/messages'
 export const DigitalTachographCompanyCardForm: Form = buildForm({
   id: 'DigitalTachographCompanyCardFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',

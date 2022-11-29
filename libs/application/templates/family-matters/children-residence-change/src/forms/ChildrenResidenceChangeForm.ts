@@ -62,7 +62,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
   title: m.application.name,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     // buildSection({
     //   id: 'mockData',

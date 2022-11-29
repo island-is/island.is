@@ -38,6 +38,7 @@ const EstateTemplate: ApplicationTemplate<
       [States.prerequisites]: {
         meta: {
           name: '',
+          status: 'draft',
           progress: 0,
           lifecycle: {
             shouldBeListed: false,
@@ -71,6 +72,7 @@ const EstateTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: '',
+          status: 'draft',
           actionCard: {
             title: '', //TBD
             description: '', //TBD
@@ -121,6 +123,7 @@ const EstateTemplate: ApplicationTemplate<
       [States.done]: {
         meta: {
           name: 'Approved',
+          status: 'approved',
           progress: 1,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
@@ -150,7 +153,6 @@ const EstateTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

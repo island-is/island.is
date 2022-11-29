@@ -77,6 +77,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Skilyrði',
           progress: 0,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
@@ -139,6 +140,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             description: m.draftDescription,
           },
           progress: 0.25,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -171,6 +173,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: ApiActions.createApplication,
           }),
+          status: 'inprogress',
           roles: [
             {
               id: Roles.APPLICANT,
@@ -201,6 +204,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
+          status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           onExit: defineTemplateApi({
             action: ApiActions.completeApplication,
@@ -241,6 +245,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          status: 'approved',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -253,12 +258,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.rejected]: {
         meta: {
           name: 'Rejected',
           progress: 1,
+          status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -270,7 +275,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

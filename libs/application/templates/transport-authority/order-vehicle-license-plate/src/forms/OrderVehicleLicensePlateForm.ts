@@ -19,7 +19,7 @@ import { m } from '../lib/messages'
 export const OrderVehicleLicensePlateForm: Form = buildForm({
   id: 'OrderVehicleLicensePlateFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',

@@ -41,6 +41,21 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Opna umsókn',
     description: 'Button label when application is in progress',
   },
+  cardButtonDraft: {
+    id: 'application.system:card.button.Draft',
+    defaultMessage: 'Opna umsókn',
+    description: 'Button label when application is in draft',
+  },
+  cardButtonRejected: {
+    id: 'application.system:card.button.Rejected',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is rejected',
+  },
+  cardButtonApproved: {
+    id: 'application.system:card.button.Approved',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is approved',
+  },
   cardButtonNotStarted: {
     id: 'application:card.button.notStarted',
     defaultMessage: 'Hefja umsókn',
@@ -140,6 +155,16 @@ export const coreMessages = defineMessages({
     id: 'application.system:tags.rejected',
     defaultMessage: 'Hafnað',
     description: 'Rejected status for an application',
+  },
+  tagsApproved: {
+    id: 'application.system:tags.approved',
+    defaultMessage: 'Samþykkt',
+    description: 'Approved status for an application',
+  },
+  tagsDraft: {
+    id: 'application.system:tags.draft',
+    defaultMessage: 'Umsókn í vinnslu hjá þér',
+    description: 'Draft status for an application',
   },
   tagsRequiresAction: {
     id: 'application.system:tags.requiresAction',

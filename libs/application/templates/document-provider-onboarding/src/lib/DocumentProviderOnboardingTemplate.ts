@@ -134,6 +134,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn skjalaveitu',
           progress: 0.25,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -164,6 +165,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign reviewer',
           progress: 0.4,
+          status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: API_MODULE_ACTIONS.assignReviewer,
@@ -188,6 +190,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: States.IN_REVIEW,
+          status: 'inprogress',
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -226,6 +229,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       [States.REJECTED]: {
         meta: {
           name: 'Rejected',
+          status: 'rejected',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
@@ -246,6 +250,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       [States.TEST_PHASE]: {
         meta: {
           name: 'TestPhase',
+          status: 'inprogress',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
@@ -271,6 +276,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
       [States.FINISHED]: {
         meta: {
+          status: 'completed',
           name: 'Finished',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
@@ -284,7 +290,6 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

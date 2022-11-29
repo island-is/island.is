@@ -25,7 +25,7 @@ import { ReferenceDataApi } from '../dataProviders'
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: 'Skilyrði',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'conditions',

@@ -16,7 +16,7 @@ import {
 export const NoDebtCertificateForm: Form = buildForm({
   id: 'NoDebtCertificateFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',
