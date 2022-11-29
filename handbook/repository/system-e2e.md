@@ -8,7 +8,7 @@ When testing an app/project you need to first start the app, then test it with P
 
 ## ⚡ TL;DR
 
-- Start the application: `yarn dev/init <app> && yarn dev <app>`
+- Start the application: `yarn dev-init <app> && yarn dev <app>`
 - Test the app: `yarn playwright menu --e2e --project <path/to/your/app>`
 
 ## 👨‍🍳 Prepare the app
@@ -16,7 +16,7 @@ When testing an app/project you need to first start the app, then test it with P
 For local development and testing start your app. Generally, first-time setup and running is simply:
 
 1. `yarn get-secrets <app>`
-2. `yarn dev/init <app>`
+2. `yarn dev-init <app>`
 3. `yarn dev <app>`
 
 However, not all projects support this, or are incomplete in this setup. If this fails, find its `README.md` and follow the instructions given there. If that fails, reach out to the QA team and we’ll remedy the documentation and improve the initial setup.
