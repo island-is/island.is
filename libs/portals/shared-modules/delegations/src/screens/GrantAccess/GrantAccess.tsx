@@ -35,7 +35,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants/domain'
-import { AccessControlDelegationPaths } from '../../lib/paths'
+import { DelegationPaths } from '../../lib/paths'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
@@ -126,7 +126,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
       })
       if (data) {
         history.push(
-          `${AccessControlDelegationPaths.AccessControlDelegations}/${data.createAuthDelegation.id}`,
+          `${DelegationPaths.Delegations}/${data.createAuthDelegation.id}`,
         )
       }
     } catch (error) {
@@ -304,11 +304,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 <DelegationsFormFooter
                   disabled={!name || !domainNameWatcher}
                   loading={mutationLoading}
-                  onCancel={() =>
-                    history.push(
-                      AccessControlDelegationPaths.AccessControlDelegations,
-                    )
-                  }
+                  onCancel={() => history.push(DelegationPaths.Delegations)}
                   showShadow={false}
                   confirmLabel={formatMessage({
                     id: 'sp.access-control-delegations:choose-access-rights',

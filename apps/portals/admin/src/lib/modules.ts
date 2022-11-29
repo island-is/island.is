@@ -1,4 +1,4 @@
-import { delegationsModule } from '@island.is/portals-shared-modules-delegations'
+import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 import { PortalModule } from '@island.is/portals/core'
 
 /**

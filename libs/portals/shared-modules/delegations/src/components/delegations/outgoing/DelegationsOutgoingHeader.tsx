@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { DomainOption } from '../../../hooks/useDomains'
 import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
 import * as styles from './DelegationsOutgoingHeader.css'
-import { AccessControlDelegationPaths } from '../../../lib/paths'
+import { DelegationPaths } from '../../../lib/paths'
 
 interface DelegationsOutgoingHeaderProps {
   domainName?: string | null
@@ -41,11 +41,7 @@ export const DelegationsOutgoingHeader = ({
       </Box>
       <Box className={styles.buttonContainer}>
         <Button
-          onClick={() =>
-            history.push(
-              AccessControlDelegationPaths.AccessControlDelegationsGrant,
-            )
-          }
+          onClick={() => history.push(DelegationPaths.DelegationsGrant)}
           size="small"
           fluid
         >

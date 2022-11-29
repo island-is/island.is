@@ -24,7 +24,7 @@ export const filterEnabledModules = async <ModulesKeys extends string>({
   for (const [moduleKey, module] of moduleEntries) {
     let enabled = true
 
-    if (enabled && isCompany && !companyModules?.includes(moduleKey)) {
+    if (isCompany && !companyModules?.includes(moduleKey)) {
       enabled = false
     }
 

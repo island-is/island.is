@@ -9,7 +9,7 @@ import { DelegationsIncoming } from '../components/delegations/incoming/Delegati
 import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { m } from '../lib/messages'
-import { AccessControlDelegationPaths } from '../lib/paths'
+import { DelegationPaths } from '../lib/paths'
 
 const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
 const TAB_DELEGATION_INCOMING_ID = 'incoming'
@@ -27,15 +27,15 @@ const AccessControl = () => {
   const location = useLocation()
   const firstPath = location?.pathname?.split('/')[1]
   const DELEGATIONS_INCOMING_PATH = `/${firstPath ?? ''}${
-    AccessControlDelegationPaths.AccessControlDelegationsIncoming
+    DelegationPaths.DelegationsIncoming
   }`
   const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
 
   const tabChangeHandler = (id: string) => {
     const url =
       id === TAB_DELEGATION_INCOMING_ID
-        ? AccessControlDelegationPaths.AccessControlDelegationsIncoming
-        : AccessControlDelegationPaths.AccessControlDelegations
+        ? DelegationPaths.DelegationsIncoming
+        : DelegationPaths.Delegations
 
     // Make sure not to add to history stack the same route twice in a row
     if (url !== location.pathname) {

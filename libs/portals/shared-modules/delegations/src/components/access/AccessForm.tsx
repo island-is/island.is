@@ -30,7 +30,7 @@ import { AccessDeleteModal } from './AccessDeleteModal'
 import { AccessListHeader } from './AccessList/AccessListHeader'
 import classNames from 'classnames'
 import * as commonAccessStyles from './access.css'
-import { AccessControlDelegationPaths } from '../../lib/paths'
+import { DelegationPaths } from '../../lib/paths'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -103,11 +103,9 @@ export const AccessForm = ({
       })
 
       if (data && !errors && !err) {
-        history.push(AccessControlDelegationPaths.AccessControlDelegations)
+        history.push(DelegationPaths.Delegations)
         servicePortalSaveAccessControl(
-          formatPlausiblePathToParams(
-            AccessControlDelegationPaths.AccessControlDelegationsGrant,
-          ),
+          formatPlausiblePathToParams(DelegationPaths.DelegationsGrant),
         )
       }
     } catch (error) {
@@ -162,11 +160,7 @@ export const AccessForm = ({
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter
-            onCancel={() =>
-              history.push(
-                AccessControlDelegationPaths.AccessControlDelegations,
-              )
-            }
+            onCancel={() => history.push(DelegationPaths.Delegations)}
             onConfirm={() => {
               // Only open confirm modal if there are scopes
               // else open delete modal
@@ -202,9 +196,7 @@ export const AccessForm = ({
         error={updateError}
       />
       <AccessDeleteModal
-        onDelete={() =>
-          history.push(AccessControlDelegationPaths.AccessControlDelegations)
-        }
+        onDelete={() => history.push(DelegationPaths.Delegations)}
         onClose={() => setOpenDeleteModal(false)}
         isVisible={openDeleteModal}
         delegation={delegation as AuthCustomDelegation}

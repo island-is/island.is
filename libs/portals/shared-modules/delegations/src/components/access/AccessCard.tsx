@@ -21,7 +21,7 @@ import { useMemo } from 'react'
 import { m as coreMessages } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
-import { AccessControlDelegationPaths } from '../../lib/paths'
+import { DelegationPaths } from '../../lib/paths'
 
 const isDateExpired = (date: string) => new Date(date) < new Date()
 
@@ -49,7 +49,7 @@ export const AccessCard = ({
   )
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
-  const href = `${AccessControlDelegationPaths.AccessControlDelegations}/${delegation.id}`
+  const href = `${DelegationPaths.Delegations}/${delegation.id}`
 
   const isExpired = useMemo(() => {
     if (delegation.validTo) {
