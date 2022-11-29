@@ -24,7 +24,11 @@ import {
   Input,
   toast,
 } from '@island.is/island-ui/core'
-import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
+import {
+  CaseFile as TCaseFile,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import {
   useFileList,
   useS3UploadV2,
@@ -35,6 +39,7 @@ import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAc
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 import { UpdateFileMutation } from './UpdateFiles.gql'
 import { useMeasure } from 'react-use'
+import IndictmentInfo from '../../IndictmentInfo/IndictmentInfo'
 
 const DDMMYYYY = 'dd.MM.yyyy'
 
@@ -43,6 +48,8 @@ interface Props {
   caseFiles: TCaseFile[]
   caseId: string
   shouldStartExpanded: boolean
+  subtypes?: IndictmentSubtypeMap
+  crimeScenes?: CrimeSceneMap
 }
 
 interface CaseFileProps {
@@ -384,7 +391,14 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
 }
 
 const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
-  const { policeCaseNumber, caseFiles, caseId, shouldStartExpanded } = props
+  const {
+    policeCaseNumber,
+    caseFiles,
+    caseId,
+    shouldStartExpanded,
+    subtypes,
+    crimeScenes,
+  } = props
   const { formatMessage } = useIntl()
   const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
     UpdateFileMutation,
@@ -577,6 +591,13 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       labelVariant="h3"
       startExpanded={shouldStartExpanded}
     >
+      <Box marginBottom={3}>
+        <IndictmentInfo
+          policeCaseNumber={policeCaseNumber}
+          subtypes={subtypes}
+          crimeScenes={crimeScenes}
+        />
+      </Box>
       <Box marginBottom={3}>
         <Text>{formatMessage(m.explanation)}</Text>
       </Box>

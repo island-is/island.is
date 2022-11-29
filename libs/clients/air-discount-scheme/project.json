@@ -1,0 +1,37 @@
+{
+  "root": "libs/clients/air-discount-scheme",
+  "sourceRoot": "libs/clients/air-discount-scheme/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/air-discount-scheme/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/air-discount-scheme"],
+      "options": {
+        "jestConfig": "libs/clients/air-discount-scheme/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/air-discount-scheme/backend/src/openapi-private.yaml",
+        "command": "cross-env INIT_SCHEMA=true ADS_PRIVATE_CLIENT=true yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.app.json apps/air-discount-scheme/backend/src/buildOpenApi.ts"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cross-env ADS_PRIVATE_CLIENT=1 yarn openapi-generator -o libs/clients/air-discount-scheme/gen/fetch -i apps/air-discount-scheme/backend/src/private-openapi.yaml"
+      }
+    }
+  },
+  "tags": []
+}

@@ -6,7 +6,7 @@ import { MockedProvider } from '@apollo/client/testing'
 
 import * as constants from '@island.is/judicial-system/consts'
 
-import UserProvider from '../UserProvider/UserProvider'
+import { UserProvider } from '../UserProvider/UserProvider'
 import { mockJudgeQuery } from '../../utils/mocks'
 
 import Logo from './Logo'

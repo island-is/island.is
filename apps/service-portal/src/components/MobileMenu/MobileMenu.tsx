@@ -11,7 +11,7 @@ import { useAuth } from '@island.is/auth/react'
 import NavItem from '../Sidebar/NavItem/NavItem'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
-
+import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/service-portal/constants'
 interface Props {
   position: number
 }
@@ -32,6 +32,8 @@ const MobileMenu = ({ position }: Props): ReactElement | null => {
 
   if (mobileMenuState === 'closed') return null
 
+  const topPosition = position + SERVICE_PORTAL_HEADER_HEIGHT_SM
+  // Inline style to dynamicly change position of header because of alert banners
   return (
     <Box
       position="fixed"
@@ -44,9 +46,8 @@ const MobileMenu = ({ position }: Props): ReactElement | null => {
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"
-      style={{ top: position }}
+      style={{ top: topPosition, maxHeight: `calc(100vh - ${topPosition})` }}
     >
-      {/*  Inline style to dynamicly change position of header because of alert banners */}
       {navigation.map((rootItem, rootIndex) => (
         <Box key={rootIndex} paddingX={0} marginTop={3}>
           <Stack space={2}>

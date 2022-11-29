@@ -122,6 +122,11 @@ export const m = defineMessages({
   // Applicant
   announcer: {
     id: 'es.application:announcer',
+    defaultMessage: 'Tilkynnandi',
+    description: '',
+  },
+  announcerNoProperty: {
+    id: 'es.application:announcerNoProperty',
     defaultMessage: 'Yfirlýsandi eignaleysis',
     description: '',
   },
@@ -327,7 +332,7 @@ export const m = defineMessages({
   },
   stocksDescription: {
     id: 'es.application:stocksDescription',
-    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
+    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
     description: '',
   },
   stocksOrganization: {
@@ -469,9 +474,9 @@ export const m = defineMessages({
     description: '',
   },
   overviewSubtitleOfficialEstate: {
-    id: 'es.application:overviewSubtitleOfficialEstate',
+    id: 'es.application:overviewSubtitleOfficialEstate#markdown',
     defaultMessage:
-      'Þú hefur valið að tilkynna um opinber skipti. Vinsamlega lesið yfir neðangreindar upplýsingar, uppfærið og staðfestið eftir því sem við á.',
+      'Þú hefur valið að lýsa því yfir að þú óskir eftir að ofangreint dánarbú verði tekið til opinberra skipta. Nánari upplýsingar um skilyrði opinberra skipta má finna á eftirfarandi vefslóð á Ísland.is',
     description: '',
   },
   overviewSubtitleResidencePermit: {
@@ -496,7 +501,8 @@ export const m = defineMessages({
   },
   officialExchangeDoneSubtitle: {
     id: 'es.application:officialExchangeDoneSubtitle#markdown',
-    defaultMessage: 'Sýslumaður hefur móttekið beiðni þína um opinber skipti.',
+    defaultMessage:
+      'Sýslumaður hefur móttekið yfirlýsingu þína um að þú óskir eftir að dánarbúið verði tekið til opinberra skipta. Yfirlýsingin verður nú tekin til meðferðar hjá sýslumanni. Reynist skilyrði til þess að senda dánarbúið í opinber skipti verður það gert í framhaldinu. Þér mun berast tilkynning um slíkt inn á pósthólf þitt á Ísland.is.',
     description: '',
   },
   estateWithNoPropertySubtitle: {

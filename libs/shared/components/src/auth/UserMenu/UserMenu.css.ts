@@ -1,15 +1,11 @@
-import { keyframes, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
-import {
-  SERVICE_PORTAL_HEADER_HEIGHT_SM,
-  zIndex,
-} from '@island.is/service-portal/constants'
 
 export const container = style({
-  top: SERVICE_PORTAL_HEADER_HEIGHT_SM,
-  zIndex: zIndex.mobileMenu,
-  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
+  top: theme.headerHeight.small,
+  zIndex: theme.zIndex.belowHeader,
+  maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
   overflowY: 'auto',
 
   ...themeUtils.responsiveStyle({
@@ -26,7 +22,7 @@ const dropdownBase: StyleWithSelectors = {
   right: spacing[0],
   left: spacing[0],
   borderRadius: 'unset',
-  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
+  maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
 }
 
 const dropdownBaseMD: StyleWithSelectors = {
