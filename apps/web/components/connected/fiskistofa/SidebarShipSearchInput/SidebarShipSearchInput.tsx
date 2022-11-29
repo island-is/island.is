@@ -23,7 +23,7 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
       !isNaN(Number(searchValue)) && searchValue.length > 0
     if (searchValueIsNumber) {
       router.push({
-        pathname: n('shipDetailsHref', '/v/maelabord-fiskistofu'),
+        pathname: n('shipDetailsHref', '/v/gagnasidur-fiskistofu'),
         query: { nr: Number(searchValue), selectedTab: 'skip' },
       })
     } else {
