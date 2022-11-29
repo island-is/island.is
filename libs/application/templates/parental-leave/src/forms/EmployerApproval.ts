@@ -16,8 +16,10 @@ import {
   employerFormMessages,
   otherParentApprovalFormMessages,
 } from '../lib/messages'
-import addDays from 'date-fns/addDays'
-import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getLastDayOfLastMonth,
+} from '../lib/parentalLeaveUtils'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
@@ -76,11 +78,7 @@ export const EmployerApproval: Form = buildForm({
                   description:
                     otherParentApprovalFormMessages.startDateInThePast,
                   condition: (answers) => {
-                    const today = new Date()
-                    const lastDateOfLastMonth = addDays(
-                      today,
-                      today.getDate() * -1,
-                    )
+                    const lastDateOfLastMonth = getLastDayOfLastMonth()
                     const startDateTime = new Date(
                       getApplicationAnswers(answers).periods[0].startDate,
                     ).getTime()

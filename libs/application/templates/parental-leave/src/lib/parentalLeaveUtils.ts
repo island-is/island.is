@@ -69,6 +69,16 @@ export function getExpectedDateOfBirth(
   return selectedChild.expectedDateOfBirth
 }
 
+export function getBeginningOfThisMonth(): Date {
+  const today = new Date()
+  return addDays(today, today.getDate() * -1 + 1)
+}
+
+export function getLastDayOfLastMonth(): Date {
+  const today = new Date()
+  return addDays(today, today.getDate() * -1)
+}
+
 // TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
   application: Application,
@@ -103,7 +113,7 @@ export function formatPeriods(
         startDateDateTime,
         startDateDateTime.getDate() * -1,
       )
-      const currentDateBeginOfMonth = addDays(today, today.getDate() * -1)
+      const currentDateBeginOfMonth = getBeginningOfThisMonth()
       if (
         startDateBeginOfMonth.getMonth() ===
           currentDateBeginOfMonth.getMonth() &&
@@ -968,7 +978,7 @@ export const getLastValidPeriodEndDate = (
   const lastEndDate = new Date(lastPeriodEndDate)
 
   const today = new Date()
-  const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+  const beginningOfMonth = getBeginningOfThisMonth()
 
   // LastPeriod's endDate is in current month then Applicant could only start from next month
   if (
@@ -1003,7 +1013,7 @@ export const getMinimumStartDate = (application: Application): Date => {
     return lastPeriodEndDate
   } else if (expectedDateOfBirth) {
     const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
-    const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+    const beginningOfMonth = getBeginningOfThisMonth()
     const leastStartDate = addMonths(
       expectedDateOfBirthDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,

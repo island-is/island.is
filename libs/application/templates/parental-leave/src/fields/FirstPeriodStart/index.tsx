@@ -13,6 +13,7 @@ import { useLocale } from '@island.is/localization'
 import {
   getExpectedDateOfBirth,
   getApplicationAnswers,
+  getBeginningOfThisMonth,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
@@ -20,7 +21,6 @@ import {
   PARENTAL_GRANT_STUDENTS,
   StartDateOptions,
 } from '../../constants'
-import { addDays } from 'date-fns'
 
 type ValidAnswers = StartDateOptions | undefined
 
@@ -41,8 +41,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   let isDisable = true
   if (expectedDateOfBirth) {
     const expectedDateTime = new Date(expectedDateOfBirth).getTime()
+    const beginningOfMonth = getBeginningOfThisMonth()
     const today = new Date()
-    const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
     isDisable =
       expectedDateTime < today.getTime() &&
       expectedDateTime < beginningOfMonth.getTime()
