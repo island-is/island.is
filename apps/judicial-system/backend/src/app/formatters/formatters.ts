@@ -5,7 +5,6 @@ import {
   formatDate,
   formatNationalId,
   getSupportedCaseCustodyRestrictions,
-  indictmentSubtypes,
   laws,
 } from '@island.is/judicial-system/formatters'
 
@@ -14,7 +13,6 @@ import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
-  IndictmentSubtype,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
