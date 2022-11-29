@@ -318,7 +318,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           content={mainInfo?.regno ?? ''}
           editLink={{
             title: messages.orderRegistrationNumber,
-            url: '',
+            url: SAMGONGUSTOFA_LINK,
             external: true,
           }}
           loading={loading}

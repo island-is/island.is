@@ -11,7 +11,7 @@ export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
   title: '',
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'externalData',

@@ -8,7 +8,7 @@ import { prerequisitesSection } from './prerequisitesSection'
 export const OrderVehicleLicensePlateForm: Form = buildForm({
   id: 'OrderVehicleLicensePlateFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

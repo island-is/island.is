@@ -73,13 +73,14 @@ export const JudicialSystem = new XroadConf({
       prod: '5309672079',
     },
     XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
-    XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
+    XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
   },
   secrets: {
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
     XROAD_COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
+    XROAD_POLICE_API_KEY: '/k8s/judicial-system/XROAD_POLICE_API_KEY',
   },
 })
 

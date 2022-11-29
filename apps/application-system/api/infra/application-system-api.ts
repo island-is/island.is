@@ -210,6 +210,7 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .xroad(
       Base,
@@ -261,6 +262,9 @@ export const serviceSetup = (services: {
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .postgres(postgresInfo)
     .liveness('/liveness')

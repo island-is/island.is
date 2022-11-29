@@ -8,7 +8,7 @@ import { prerequisitesSection } from './prerequisitesSection'
 export const TransferOfVehicleOwnershipForm: Form = buildForm({
   id: 'TransferOfVehicleOwnershipFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     prerequisitesSection,
     informationSection,

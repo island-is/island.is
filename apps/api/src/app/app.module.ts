@@ -70,6 +70,8 @@ import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certi
 import { DigitalTachographApiModule } from '@island.is/api/domains/transport-authority/digital-tachograph'
 import { TransferOfVehicleOwnershipApiModule } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
 import { AnonymityInVehicleRegistryApiModule } from '@island.is/api/domains/transport-authority/anonymity-in-vehicle-registry'
+import { PowerBiModule } from '@island.is/api/domains/powerbi'
+import { PowerBiConfig } from '@island.is/api/domains/powerbi'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -209,6 +211,7 @@ const autoSchemaFile = environment.production
     SyslumennModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
+    PowerBiModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -288,6 +291,7 @@ const autoSchemaFile = environment.production
         PassportsClientConfig,
         FileStorageConfig,
         FiskistofaClientConfig,
+        PowerBiConfig,
       ],
     }),
   ],

@@ -7,7 +7,7 @@ import { prerequisitesSection } from './prerequisitesSection'
 export const AnonymityInVehicleRegistryForm: Form = buildForm({
   id: 'AnonymityInVehicleRegistryFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

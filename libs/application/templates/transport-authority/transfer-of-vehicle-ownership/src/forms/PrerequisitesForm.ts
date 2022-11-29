@@ -15,7 +15,7 @@ import { information, externalData, payment, conclusion } from '../lib/messages'
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   children: [
     buildSection({

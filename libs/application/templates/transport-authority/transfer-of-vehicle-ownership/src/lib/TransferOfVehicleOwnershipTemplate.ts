@@ -45,6 +45,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
+          status: 'draft',
           actionCard: {
             tag: {
               label: application.actionCardDraft,
@@ -81,6 +82,7 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Greiðsla',
+          status: 'inprogress',
           actionCard: {
             tag: {
               label: application.actionCardPayment,
@@ -117,6 +119,7 @@ const template: ApplicationTemplate<
         entry: 'assignUsers',
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
+          status: 'inprogress',
           actionCard: {
             tag: {
               label: application.actionCardDraft,
@@ -189,6 +192,7 @@ const template: ApplicationTemplate<
       [States.REJECTED]: {
         meta: {
           name: 'Rejected',
+          status: 'rejected',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: {
@@ -231,6 +235,7 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: {
@@ -270,7 +275,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

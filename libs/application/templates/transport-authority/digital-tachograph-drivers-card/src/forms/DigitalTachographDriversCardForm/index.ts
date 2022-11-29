@@ -9,7 +9,7 @@ import { prerequisitesSection } from './prerequisitesSection'
 export const DigitalTachographDriversCardForm: Form = buildForm({
   id: 'DigitalTachographDriversCardFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
