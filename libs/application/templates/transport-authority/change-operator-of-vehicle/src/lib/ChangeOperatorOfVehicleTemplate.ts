@@ -49,7 +49,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ChangeOperatorOfVehicleForm').then((module) =>
+                import(
+                  '../forms/ChangeOperatorOfVehicleForm/index'
+                ).then((module) =>
                   Promise.resolve(module.ChangeOperatorOfVehicleForm),
                 ),
               actions: [

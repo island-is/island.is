@@ -70,12 +70,12 @@ export const externalData = {
   currentVehicles: defineMessages({
     title: {
       id: 'ta.cov.application:externalData.currentVehicles.title',
-      defaultMessage: 'Þín ökutæki úr ökutækjaskrá',
+      defaultMessage: 'Upplýsingar úr ökutækjaskrá',
       description: 'Your vehicles from the vehicle registry',
     },
     subTitle: {
       id: 'ta.cov.application:externalData.currentVehicles.subTitle',
-      defaultMessage: 'Til þess að einfalda val á ökutæki',
+      defaultMessage: 'Skjal sem inniheldur þau ökuréttindi sem þú hefur',
       description: 'To make stuff easier',
     },
     empty: {

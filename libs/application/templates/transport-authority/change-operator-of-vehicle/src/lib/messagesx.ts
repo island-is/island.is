@@ -28,7 +28,7 @@ export const m = defineMessages({
   },
   externalDataAgreement: {
     id: 'ta.cov.application:externalData.agreement',
-    defaultMessage: 'Ég hef kynnt mér ofangreint',
+    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
     description: 'I understand',
   },
   nationalRegistryTitle: {
