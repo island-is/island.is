@@ -80,7 +80,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'inventory',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -112,7 +112,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'realEstate',
-              title: m.vehicles,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -136,7 +136,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'estateBankInfo',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -179,7 +179,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'claims',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -220,7 +220,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'stocks',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -277,7 +277,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'moneyAndDedosit',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -309,7 +309,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'otherAssets',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({

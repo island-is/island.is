@@ -530,7 +530,7 @@ export const m = defineMessages({
   residencePermitSubtitle: {
     id: 'es.application:residencePermitSubtitle#markdown',
     defaultMessage:
-      'Sýslumaður hefur móttekið beiðni þína um búsetuleyfi. Hún verður nú yfirfarin og staðfesting á búsetuleyfi í kjölfar sent í pósthólf þitt á Ísland.is',
+      'Sýslumaður hefur móttekið beiðni þína um leyfi til setu í óskiptu búi. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
     description: '',
   },
 
