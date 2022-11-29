@@ -15,6 +15,7 @@ import {
   RulingInput,
   SigningModal,
   useRequestRulingSignature,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
@@ -43,7 +44,6 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

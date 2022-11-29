@@ -68,6 +68,8 @@ import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
+import { PowerBiModule } from '@island.is/api/domains/powerbi'
+import { PowerBiConfig } from '@island.is/api/domains/powerbi'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -207,6 +209,7 @@ const autoSchemaFile = environment.production
     SyslumennModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
+    PowerBiModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -284,6 +287,7 @@ const autoSchemaFile = environment.production
         PassportsClientConfig,
         FileStorageConfig,
         FiskistofaClientConfig,
+        PowerBiConfig,
       ],
     }),
   ],

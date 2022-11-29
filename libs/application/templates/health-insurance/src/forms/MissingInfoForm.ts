@@ -13,7 +13,7 @@ import { m } from './messages'
 export const MissingInfoForm: Form = buildForm({
   id: 'HealthInsuranceReview',
   title: m.formTitle,
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'missingInfoSection',

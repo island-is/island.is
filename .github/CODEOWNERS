@@ -174,6 +174,7 @@
 /libs/api/domains/content-search/                                                                   @island-is/stefna @island-is/juni
 /libs/api/domains/syslumenn/                                                                        @island-is/stefna
 /libs/api/domains/mailchimp/                                                                        @island-is/stefna
+/libs/api/domains/powerbi/                                                                          @island-is/stefna
 /libs/api/domains/electronic-registration-statistics/                                               @island-is/stefna
 /libs/clients/electronic-registration-statistics/                                                   @island-is/stefna
 /libs/api/domains/fiskistofa/                                                                       @island-is/stefna
