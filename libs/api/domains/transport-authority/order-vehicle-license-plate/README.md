@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # api-domains-transport-authority-order-vehicle-license-plate
 
 This library was generated with [Nx](https://nx.dev).
