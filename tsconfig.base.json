@@ -155,24 +155,6 @@
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
       ],
-      "@island.is/api/domains/transport-authority/anonymity-in-vehicle-registry": [
-        "libs/api/domains/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
-      ],
-      "@island.is/api/domains/transport-authority/change-co-owner-of-vehicle": [
-        "libs/api/domains/transport-authority/change-co-owner-of-vehicle/src/index.ts"
-      ],
-      "@island.is/api/domains/transport-authority/change-operator-of-vehicle": [
-        "libs/api/domains/transport-authority/change-operator-of-vehicle/src/index.ts"
-      ],
-      "@island.is/api/domains/transport-authority/digital-tachograph": [
-        "libs/api/domains/transport-authority/digital-tachograph/src/index.ts"
-      ],
-      "@island.is/api/domains/transport-authority/order-vehicle-license-plate": [
-        "libs/api/domains/transport-authority/order-vehicle-license-plate/src/index.ts"
-      ],
-      "@island.is/api/domains/transport-authority/order-vehicle-registration-certificate": [
-        "libs/api/domains/transport-authority/order-vehicle-registration-certificate/src/index.ts"
-      ],
       "@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership": [
         "libs/api/domains/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
       ],
@@ -453,26 +435,11 @@
         "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
-      "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
-        "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
-      ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
       ],
-      "@island.is/clients/transport-authority/vehicle-infolocks": [
-        "libs/clients/transport-authority/vehicle-infolocks/src/index.ts"
-      ],
-      "@island.is/clients/transport-authority/vehicle-operators": [
-        "libs/clients/transport-authority/vehicle-operators/src/index.ts"
-      ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
-      ],
-      "@island.is/clients/transport-authority/vehicle-plate-ordering": [
-        "libs/clients/transport-authority/vehicle-plate-ordering/src/index.ts"
-      ],
-      "@island.is/clients/transport-authority/vehicle-printing": [
-        "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"

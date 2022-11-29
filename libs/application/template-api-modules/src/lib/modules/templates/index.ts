@@ -32,8 +32,8 @@ import { ChangeOperatorOfVehicleModule } from './transport-authority/change-oper
 import { DigitalTachographCompanyCardModule } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.module'
 import { DigitalTachographDriversCardModule } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.module'
 import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
-import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
-import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
+import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
+import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 
 export const modules = [

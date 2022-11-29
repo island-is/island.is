@@ -8,15 +8,15 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import {
-  EphemeralStateLifeCycle,
-  pruneAfterDays,
-} from '@island.is/application/core'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { application } from './messages'
+import { z } from 'zod'
+import { m } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
-import { DigitalTachographDriversCardSchema } from './dataSchema'
+
+const DigitalTachographDriversCardSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+})
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -24,8 +24,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD,
-  name: application.name,
-  institution: application.institutionName,
+  name: m.name,
+  institution: m.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.DigitalTachographDriversCard.translation,
   ],
@@ -40,7 +40,7 @@ const template: ApplicationTemplate<
           status: 'draft',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: m.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -51,7 +51,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  '../forms/DigitalTachographDriversCardForm/index'
+                  '../forms/DigitalTachographDriversCardForm'
                 ).then((module) =>
                   Promise.resolve(module.DigitalTachographDriversCardForm),
                 ),
@@ -68,43 +68,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
-        },
-      },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: application.actionCardPayment,
-              variant: 'red',
-            },
-          },
-          progress: 0.8,
-          lifecycle: pruneAfterDays(1 / 24),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) => val.Payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {
@@ -112,10 +76,15 @@ const template: ApplicationTemplate<
           name: 'Completed',
           status: 'completed',
           progress: 1,
-          lifecycle: pruneAfterDays(3 * 30),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
+            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
+          },
           actionCard: {
             tag: {
-              label: application.actionCardDone,
+              label: m.actionCardDone,
               variant: 'blueberry',
             },
           },
@@ -123,8 +92,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Confirmation').then((val) =>
-                  Promise.resolve(val.Confirmation),
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
                 ),
               read: 'all',
             },

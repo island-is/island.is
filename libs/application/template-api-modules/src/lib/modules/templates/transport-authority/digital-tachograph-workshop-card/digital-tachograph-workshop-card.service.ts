@@ -17,7 +17,7 @@ export class DigitalTachographWorkshopCardService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        [ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_WORKSHOP_CARD],
+        [ChargeItemCode.TRANSPORT_AUTHORITY_XXX],
       )
       return result
     } catch (exeption) {
@@ -25,17 +25,14 @@ export class DigitalTachographWorkshopCardService {
     }
   }
 
-  async submitApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
     if (!paymentUrl) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
+      return {
+        success: false,
+      }
     }
 
     const isPayment:
@@ -45,7 +42,11 @@ export class DigitalTachographWorkshopCardService {
       application.id,
     )
 
-    if (!isPayment?.fulfilled) {
+    if (isPayment?.fulfilled) {
+      return {
+        success: true,
+      }
+    } else {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )

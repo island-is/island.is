@@ -54,9 +54,6 @@ export class ApplicationResolver {
     locale: Locale = 'is',
     @Args('applicationId') applicationId: string,
   ): Promise<ApplicationPayment | null> {
-    //TODOx disable payment validation while on feature deploy
-    return { fulfilled: true, paymentUrl: '' }
-
     const status = await this.applicationService.getPaymentStatus(
       applicationId,
       user,

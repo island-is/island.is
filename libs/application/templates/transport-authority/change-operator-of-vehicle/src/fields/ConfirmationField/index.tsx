@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { m } from '../../lib/messagesx'
+import { m } from '../../lib/messages'
 import { Bus } from '../../assets/Bus'
 
 export const ConfirmationField: FC<FieldBaseProps> = ({ application }) => {

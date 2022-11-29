@@ -8,15 +8,15 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import {
-  EphemeralStateLifeCycle,
-  pruneAfterDays,
-} from '@island.is/application/core'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
+import { z } from 'zod'
+import { m } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
-import { AnonymityInVehicleRegistrySchema } from './dataSchema'
-import { application } from './messages'
+
+const AnonymityInVehicleRegistrySchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+})
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -24,8 +24,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY,
-  name: application.name,
-  institution: application.institutionName,
+  name: m.name,
+  institution: m.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.AnonymityInVehicleRegistry.translation,
   ],
@@ -40,21 +40,18 @@ const template: ApplicationTemplate<
           status: 'draft',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: m.actionCardDraft,
               variant: 'blue',
             },
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  '../forms/AnonymityInVehicleRegistryForm/index'
+                  '../forms/AnonymityInVehicleRegistryForm'
                 ).then((module) =>
                   Promise.resolve(module.AnonymityInVehicleRegistryForm),
                 ),
@@ -79,10 +76,15 @@ const template: ApplicationTemplate<
           name: 'Completed',
           status: 'completed',
           progress: 1,
-          lifecycle: pruneAfterDays(3 * 30),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
+            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
+          },
           actionCard: {
             tag: {
-              label: application.actionCardDone,
+              label: m.actionCardDone,
               variant: 'blueberry',
             },
           },
@@ -90,8 +92,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Confirmation').then((val) =>
-                  Promise.resolve(val.Confirmation),
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
                 ),
               read: 'all',
             },

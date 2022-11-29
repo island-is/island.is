@@ -6,11 +6,9 @@ import {
   buildCustomField,
   buildSubmitField,
   buildSubSection,
-  buildMultiField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messagesx'
-import { payment, externalData } from '../lib/messages'
+import { m } from '../lib/messages'
 
 export const ChangeOperatorOfVehicleForm: Form = buildForm({
   id: 'ChangeOperatorOfVehicleFormDraft',
@@ -39,35 +37,12 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
             }),
-            buildDataProviderItem({
-              id: 'payment',
-              type: 'PaymentChargeInfoProvider',
-              title: '',
-            }),
-            buildDataProviderItem({
-              id: 'currentVehicleList',
-              type: 'CurrentVehiclesProvider',
-              title: externalData.currentVehicles.title,
-              subTitle: externalData.currentVehicles.subTitle,
-            }),
           ],
         }),
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: payment.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'paymentMultiField',
-          title: payment.general.pageTitle,
-          space: 1,
+        buildSubSection({
+          id: 'test',
+          title: 'Test',
           children: [
-            buildCustomField({
-              id: 'PaymentChargeOverview',
-              title: '',
-              component: 'PaymentChargeOverview',
-            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
