@@ -99,7 +99,7 @@ export interface NatRegResult extends SuccessfulDataProviderResult {
   }
 }
 
-interface IdsRegResult extends SuccessfulDataProviderResult {
+export interface IdsRegResult extends SuccessfulDataProviderResult {
   data: {
     name: string
     nationalId: string

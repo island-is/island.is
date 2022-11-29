@@ -250,7 +250,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       <Text variant="h4" marginBottom={3}>
         {formatMessage(paymentPlan.labels.paymentModeTitle)}
       </Text>
-      {isPerson && (
+      {isPerson ? (
         <RadioController
           id={`${entry}.paymentMode`}
           disabled={false}
@@ -268,6 +268,13 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
               label: formatMessage(paymentPlan.labels.payByMonths),
             },
           ]}
+        />
+      ) : (
+        <input
+          type="hidden"
+          name={`${entry}.paymentMode`}
+          ref={register({ required: true })}
+          value={paymentMode}
         />
       )}
       {paymentMode === AMOUNT && (
