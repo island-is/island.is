@@ -17,7 +17,7 @@ export const filterEnabledModules = async <ModulesKeys extends string>({
   featureFlagClient,
   userInfo,
 }: FilterEnabledModulesArgs<ModulesKeys>) => {
-  const filteredModules: Record<string, PortalModule> = {}
+  const filteredModules = {} as Record<ModulesKeys, PortalModule>
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
   const moduleEntries = Object.entries(modules) as [ModulesKeys, PortalModule][]
 
