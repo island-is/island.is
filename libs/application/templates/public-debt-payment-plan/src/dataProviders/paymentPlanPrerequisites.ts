@@ -138,6 +138,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
       !paymentScheduleConditions.accommodationTaxReturns ||
       !paymentScheduleConditions.withholdingTaxReturns ||
       paymentScheduleConditions.collectionActions ||
+      !paymentScheduleConditions.financialStatement ||
       !paymentScheduleConditions.doNotOwe ||
       paymentScheduleDebts.length <= 0
     ) {
