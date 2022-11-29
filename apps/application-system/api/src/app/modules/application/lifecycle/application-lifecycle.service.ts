@@ -7,6 +7,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
 import { FileService } from '@island.is/application/api/files'
+
 export interface ApplicationPruning {
   pruned: boolean
   application: Pick<
@@ -95,6 +96,7 @@ export class ApplicationLifeCycleService {
             },
           }
         }
+
         prune.pruned = false
         this.logger.error(
           `Application charge prune error on id ${prune.application.id}`,
