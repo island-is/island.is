@@ -33,7 +33,6 @@ import {
   isIndictmentCase,
   CaseState,
   Recipient,
-  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 import {
   caseTypes,
