@@ -80,6 +80,7 @@ export const JudicialSystem = new XroadConf({
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
     XROAD_COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
+    XROAD_POLICE_API_KEY: '/k8s/judicial-system/XROAD_POLICE_API_KEY',
   },
 })
 
