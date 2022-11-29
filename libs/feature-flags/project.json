@@ -7,9 +7,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "libs/feature-flags/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["libs/feature-flags/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
@@ -18,9 +16,7 @@
         "jestConfig": "libs/feature-flags/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": [
-        "coverage/libs/feature-flags"
-      ]
+      "outputs": ["coverage/libs/feature-flags"]
     }
   },
   "tags": []

@@ -5,29 +5,19 @@
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/portals/core/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["libs/portals/core/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/libs/portals/core"
-      ],
+      "outputs": ["coverage/libs/portals/core"],
       "options": {
         "jestConfig": "libs/portals/core/jest.config.js",
         "passWithNoTests": true
       }
     }
   },
-  "tags": [
-    "lib:portals-admin",
-    "lib:portals-mypages",
-    "scope:react-spa"
-  ]
+  "tags": ["lib:portals-admin", "lib:portals-mypages", "scope:react-spa"]
 }
