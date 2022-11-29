@@ -31,7 +31,7 @@ export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
   title: m.formTitle,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'applicantInfoSection',

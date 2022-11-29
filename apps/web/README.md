@@ -5,7 +5,7 @@
 Ensure docker is running, then run the following when running for the first time:
 
 ```bash
-yarn dev/init web
+yarn dev-init web
 ```
 
 To start the app:

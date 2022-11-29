@@ -143,6 +143,9 @@
       "@island.is/api/domains/payment-schedule": [
         "libs/api/domains/payment-schedule/src/index.ts"
       ],
+      "@island.is/api/domains/powerbi": [
+        "libs/api/domains/powerbi/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
