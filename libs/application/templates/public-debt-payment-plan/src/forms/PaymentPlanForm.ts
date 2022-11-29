@@ -150,7 +150,7 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'correctedEmployer',
               title: employer.labels.searchCompany,
               placeholder: employer.labels.searchCompanyPlaceholer,
-              checkIfEmployerIsOnForbiddenList: true,
+              checkIfEmployerIsOnForbiddenList: false,
             }),
           ],
         }),
