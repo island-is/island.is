@@ -105,6 +105,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ],
         meta: {
           name: States.PREREQUISITES,
+          status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
           roles: [
@@ -146,6 +147,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ],
         meta: {
           name: States.DRAFT,
+          status: 'draft',
           actionCard: {
             description: statesMessages.draftDescription,
           },
@@ -192,6 +194,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.otherParentApprovalDescription,
           },
@@ -263,6 +266,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'removePeriodsOrAllowanceOnSpouseRejection',
         meta: {
           name: States.OTHER_PARENT_ACTION,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.otherParentActionDescription,
           },
@@ -294,6 +298,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.employerWaitingToAssignDescription,
           },
@@ -327,6 +332,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVAL,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.employerApprovalDescription,
           },
@@ -390,6 +396,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_ACTION]: {
         meta: {
           name: States.EMPLOYER_ACTION,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.employerActionDescription,
           },
@@ -422,6 +429,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: ['clearAssignees', 'setNavId'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.vinnumalastofnunApprovalDescription,
           },
@@ -465,6 +473,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'assignToVMST',
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.vinnumalastofnunActionDescription,
           },
@@ -497,6 +506,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.ADDITIONAL_DOCUMENT_REQUIRED]: {
         entry: 'assignToVMST',
         meta: {
+          status: 'inprogress',
           name: States.ADDITIONAL_DOCUMENT_REQUIRED,
           actionCard: {
             description: statesMessages.additionalDocumentRequiredDescription,
@@ -565,6 +575,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'assignToVMST',
         meta: {
           name: States.APPROVED,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.approvedDescription,
           },
@@ -599,6 +610,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'clearAssignees',
         meta: {
           name: States.CLOSED,
+          status: 'completed',
           actionCard: {
             description: statesMessages.closedDescription,
           },
@@ -615,7 +627,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
@@ -628,6 +639,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.editOrAddPeriodsDescription,
           },
@@ -679,6 +691,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+          status: 'inprogress',
           actionCard: {
             description:
               statesMessages.employerWaitingToAssignForEditsDescription,
@@ -720,6 +733,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.employerApproveEditsDescription,
           },
@@ -792,6 +806,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.employerEditsActionDescription,
           },
@@ -834,6 +849,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.vinnumalastofnunApproveEditsDescription,
           },
@@ -880,6 +896,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.vinnumalastofnunEditsActionDescription,
           },

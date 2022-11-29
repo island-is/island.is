@@ -54,7 +54,7 @@ import {
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
   title: 'Kvörtun til umboðsmanns Alþingis',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   logo: Logo,
   children: [
     buildSection({

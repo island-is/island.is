@@ -18,7 +18,7 @@ export const EmployerApproveEdits: Form = buildForm({
   id: 'EmployerApprovEditsParentalLeave',
   title: employerFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'review',
