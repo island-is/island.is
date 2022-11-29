@@ -4,6 +4,7 @@ import { DefaultApi } from '../../gen/fetch'
 @Injectable()
 export class ChargeFjsV2ClientService {
   constructor(private api: DefaultApi) {}
+
   async deleteCharge(chargeId: string): Promise<string> {
     const response = await this.api.chargerequestIDDELETE2({
       requestID: chargeId,

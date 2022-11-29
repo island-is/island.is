@@ -44,9 +44,6 @@ export class DrivingLicenseProvider extends BasicDataProvider {
         return Promise.resolve(drivingLicenseData)
       },
     )
-    // .catch((error) => {
-    //   return Promise.reject(error)
-    // })
   }
 
   handleError(error: Error) {
