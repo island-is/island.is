@@ -13,7 +13,7 @@ import { m } from '../lib/messages'
 export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
   id: 'ChangeCoOwnerOfVehicleFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',
