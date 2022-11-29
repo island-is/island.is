@@ -487,11 +487,7 @@
         }
       },
       "Payments_DT": {
-        "required": [
-          "accumulated",
-          "dueDate",
-          "payment"
-        ],
+        "required": ["accumulated", "dueDate", "payment"],
         "type": "object",
         "properties": {
           "dueDate": {
@@ -510,10 +506,7 @@
         }
       },
       "WagesDetuction_DT": {
-        "required": [
-          "employerName",
-          "employerNationalId"
-        ],
+        "required": ["employerName", "employerNationalId"],
         "type": "object",
         "properties": {
           "employerNationalId": {
@@ -526,9 +519,7 @@
         }
       },
       "chargeTypes": {
-        "required": [
-          "chargeID"
-        ],
+        "required": ["chargeID"],
         "type": "object",
         "properties": {
           "chargeID": {
@@ -537,9 +528,7 @@
         }
       },
       "input": {
-        "required": [
-          "employer"
-        ],
+        "required": ["employer"],
         "type": "object",
         "properties": {
           "employer": {
@@ -548,12 +537,7 @@
         }
       },
       "inputSchedules": {
-        "required": [
-          "email",
-          "nationalId",
-          "phoneNumber",
-          "schedules"
-        ],
+        "required": ["email", "nationalId", "phoneNumber", "schedules"],
         "type": "object",
         "properties": {
           "nationalId": {
@@ -588,11 +572,7 @@
         }
       },
       "payments": {
-        "required": [
-          "accumulated",
-          "duedate",
-          "payment"
-        ],
+        "required": ["accumulated", "duedate", "payment"],
         "type": "object",
         "properties": {
           "duedate": {
@@ -609,9 +589,7 @@
         }
       },
       "wagesdeductionnationalId_GET_response": {
-        "required": [
-          "wagesDeduction"
-        ],
+        "required": ["wagesDeduction"],
         "type": "object",
         "properties": {
           "wagesDeduction": {
@@ -623,11 +601,7 @@
         }
       },
       "ProblemDetails_DT": {
-        "required": [
-          "detail",
-          "status",
-          "title"
-        ],
+        "required": ["detail", "status", "title"],
         "type": "object",
         "properties": {
           "type": {
@@ -700,11 +674,7 @@
         }
       },
       "EmployerValid_DT": {
-        "required": [
-          "employerName",
-          "employerNationalId",
-          "isEmployerValid"
-        ],
+        "required": ["employerName", "employerNationalId", "isEmployerValid"],
         "type": "object",
         "properties": {
           "employerNationalId": {
@@ -788,9 +758,7 @@
         }
       },
       "companyConditionsnationalId_GET_response": {
-        "required": [
-          "conditions"
-        ],
+        "required": ["conditions"],
         "type": "object",
         "properties": {
           "error": {
@@ -802,10 +770,7 @@
         }
       },
       "errors": {
-        "required": [
-          "detail",
-          "title"
-        ],
+        "required": ["detail", "title"],
         "type": "object",
         "properties": {
           "type": {
@@ -834,9 +799,7 @@
         }
       },
       "debtsandschedulesnationalId_GET_response": {
-        "required": [
-          "deptAndSchedules"
-        ],
+        "required": ["deptAndSchedules"],
         "type": "object",
         "properties": {
           "deptAndSchedules": {
@@ -859,14 +822,7 @@
         }
       },
       "ChargeTypes_DT": {
-        "required": [
-          "expenses",
-          "id",
-          "intrest",
-          "name",
-          "principal",
-          "total"
-        ],
+        "required": ["expenses", "id", "intrest", "name", "principal", "total"],
         "type": "object",
         "properties": {
           "id": {
@@ -894,9 +850,7 @@
         }
       },
       "paymentDistributionnationalIdscheduleType_GET_response": {
-        "required": [
-          "paymentDistribution"
-        ],
+        "required": ["paymentDistribution"],
         "type": "object",
         "properties": {
           "error": {
@@ -908,9 +862,7 @@
         }
       },
       "employerValidnationalIdemployerNationalId_GET_response": {
-        "required": [
-          "employerValid"
-        ],
+        "required": ["employerValid"],
         "type": "object",
         "properties": {
           "employerValid": {
@@ -922,9 +874,7 @@
         }
       },
       "employer": {
-        "required": [
-          "employerNationalId"
-        ],
+        "required": ["employerNationalId"],
         "type": "object",
         "properties": {
           "employerNationalId": {
@@ -942,9 +892,7 @@
         }
       },
       "distributionInitialPositionnationalIdscheduleType_GET_response": {
-        "required": [
-          "distributionInitialPosition"
-        ],
+        "required": ["distributionInitialPosition"],
         "type": "object",
         "properties": {
           "error": {
@@ -1048,12 +996,7 @@
         }
       },
       "schedules": {
-        "required": [
-          "chargeTypes",
-          "organizationID",
-          "payments",
-          "type"
-        ],
+        "required": ["chargeTypes", "organizationID", "payments", "type"],
         "type": "object",
         "properties": {
           "type": {
@@ -1078,11 +1021,7 @@
         }
       },
       "paymentDistribution_DT": {
-        "required": [
-          "nationalId",
-          "payments",
-          "scheduleType"
-        ],
+        "required": ["nationalId", "payments", "scheduleType"],
         "type": "object",
         "properties": {
           "nationalId": {
