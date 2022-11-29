@@ -65,7 +65,10 @@ export class PoliceService {
     }
 
     return fetch(url, {
-      headers: { 'X-Road-Client': this.config.clientId },
+      headers: {
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
       agent: this.agent,
     } as RequestInit)
   }
@@ -220,6 +223,7 @@ export class PoliceService {
         accept: '*/*',
         'Content-Type': 'application/json',
         'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
       },
       agent: this.agent,
       body: JSON.stringify({

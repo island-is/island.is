@@ -147,6 +147,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           if (nr) query['nr'] = nr
         }
 
+        router.query = query
+
         // Store via query params the state of the report
         router.push(
           {
