@@ -29,7 +29,10 @@ export class UserService {
     return this.nationalRegistryService.getRelations(authUser)
   }
 
-  async getFund(user: NationalRegistryUser, auth?: AuthUser): Promise<Fund> {
+  private async getFund(
+    user: NationalRegistryUser,
+    auth?: AuthUser,
+  ): Promise<Fund> {
     const {
       used,
       unused,
