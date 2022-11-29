@@ -14,7 +14,7 @@ import { chargeItemCodeRadioOptions } from '../lib/utils/chargeItemCodeRadioOpti
 export const draft: Form = buildForm({
   id: 'ExamplePaymentDraftForm',
   title: m.m.applicationTitle,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
