@@ -221,7 +221,7 @@
     "plausible": "libs/plausible",
     "portals-admin": "apps/portals/admin",
     "portals-core": "libs/portals/core",
-    "portals-modules-access-control-delegations": "libs/portals/modules/access-control/delegations",
+    "portals-shared-modules-delegations": "libs/portals/shared-modules/delegations",
     "react-feature-flags": "libs/react/feature-flags",
     "reference-backend": "apps/reference-backend",
     "reference-next-app": "apps/reference-next-app",
