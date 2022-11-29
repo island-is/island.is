@@ -1,10 +1,14 @@
-import { ApolloError } from 'apollo-client'
 import React, { FC } from 'react'
 import { defineMessage } from 'react-intl'
-
-import * as styles from './ChildView.css'
-
-import { NationalRegistryChild } from '@island.is/api/schema'
+import { ApolloError } from '@apollo/client/errors'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  formatNationalId,
+  NotFound,
+  UserInfoLine,
+  m,
+  IntroHeader,
+} from '@island.is/service-portal/core'
 import {
   Box,
   Button,
@@ -17,15 +21,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, withClientLocale } from '@island.is/localization'
 import {
-  formatNationalId,
-  IntroHeader,
-  m,
-  NotFound,
-  UserInfoLine,
-} from '@island.is/service-portal/core'
+  NationalRegistryChild,
+  NationalRegistryXRoadChildGuardianship,
+} from '@island.is/api/schema'
 
-import { Parents } from '../../components/Parents/Parents'
+import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
+import * as styles from './ChildView.css'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -37,6 +39,17 @@ const editLink = defineMessage({
   defaultMessage: 'Breyta hjá Þjóðskrá',
 })
 
+export function getLivesWithParent(
+  livingArrangementParents: Array<string> | undefined,
+  parent: string | undefined,
+) {
+  if (!parent || !livingArrangementParents) {
+    return
+  }
+
+  return livingArrangementParents.includes(parent)
+}
+
 interface Props {
   nationalId?: string
   userNationalId?: string
@@ -46,6 +59,7 @@ interface Props {
   loading?: boolean
   isChild?: boolean
   hasDetails?: boolean
+  guardianship?: NationalRegistryXRoadChildGuardianship | null
 }
 
 const ChildView: FC<Props> = ({
@@ -55,10 +69,20 @@ const ChildView: FC<Props> = ({
   person,
   isChild,
   hasDetails,
+  guardianship,
   userNationalId,
   userName,
 }) => {
   const { formatMessage } = useLocale()
+
+  const livingArrangment = (
+    livingArrangementParents: Array<string> | undefined,
+    parent: string | undefined,
+  ) => {
+    return getLivesWithParent(livingArrangementParents, parent)
+      ? formatMessage(m.yes)
+      : formatMessage(m.no)
+  }
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -69,6 +93,7 @@ const ChildView: FC<Props> = ({
         })}
       />
     )
+
   return (
     <Box className={styles.pageWrapper}>
       {loading ? (
@@ -266,87 +291,130 @@ const ChildView: FC<Props> = ({
             </>
           )}
         </Stack>
-        <Stack component="ul" space={2}>
-          {(person?.parent1 || person?.parent2 || loading) && (
-            <>
-              <Parents
-                title={formatMessage({
-                  id: 'sp.family:custody-and-parents',
-                  defaultMessage: 'Forsjá & foreldrar',
-                })}
-                label={formatMessage({
-                  id: 'sp.family:parents',
-                  defaultMessage: 'Foreldrar',
-                })}
-                parent1={person?.nameParent1}
-                parent2={person?.nameParent2}
-                loading={loading}
-                className={styles.printable}
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-              <Parents
-                label={formatMessage(m.natreg)}
-                parent1={
-                  person?.parent1 ? formatNationalId(person.parent1) : ''
-                }
-                parent2={
-                  person?.parent2 ? formatNationalId(person.parent2) : ''
-                }
-                loading={loading}
-                className={styles.printable}
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-            </>
-          )}
-          {!person?.fate && !error && hasDetails && (
-            <>
-              <Parents
-                label={formatMessage({
-                  id: 'sp.family:custody-parents',
-                  defaultMessage: 'Forsjáraðilar',
-                })}
-                parent1={person?.nameCustody1}
-                parent2={person?.nameCustody2}
-                loading={loading}
-                className={styles.printable}
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-              <Parents
-                label={formatMessage(m.natreg)}
-                parent1={
-                  person?.custody1 ? formatNationalId(person.custody1) : ''
-                }
-                parent2={
-                  person?.custody2 ? formatNationalId(person.custody2) : ''
-                }
-                loading={loading}
-                className={styles.printable}
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-              <Parents
-                label={formatMessage({
-                  id: 'sp.family:custody-status',
-                  defaultMessage: 'Staða forsjár',
-                })}
-                parent1={person?.custodyText1}
-                parent2={person?.custodyText2}
-                loading={loading}
-                className={styles.printable}
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-            </>
-          )}
-        </Stack>
+        {(person?.parent1 || person?.parent2 || loading) && (
+          <Stack component="ul" space={2}>
+            <TwoColumnUserInfoLine
+              title={formatMessage({
+                id: 'sp.family:parents',
+                defaultMessage: 'Foreldrar',
+              })}
+              label={formatMessage(m.name)}
+              firstValue={person?.nameParent1}
+              secondValue={person?.nameParent2}
+              loading={loading}
+              className={styles.printable}
+            />
+            <Box printHidden>
+              <Divider />
+            </Box>
+            <TwoColumnUserInfoLine
+              label={formatMessage(m.natreg)}
+              firstValue={
+                person?.parent1 ? formatNationalId(person.parent1) : ''
+              }
+              secondValue={
+                person?.parent2 ? formatNationalId(person.parent2) : ''
+              }
+              loading={loading}
+              className={styles.printable}
+            />
+            <Box printHidden>
+              <Divider />
+            </Box>
+          </Stack>
+        )}
+        {!person?.fate && !error && hasDetails && (
+          <Stack component="ul" space={2}>
+            <TwoColumnUserInfoLine
+              title={formatMessage({
+                id: 'sp.family:custody-parents',
+                defaultMessage: 'Forsjáraðilar',
+              })}
+              label={formatMessage({
+                id: 'sp.family:name',
+                defaultMessage: 'Nafn',
+              })}
+              firstValue={person?.nameCustody1}
+              secondValue={person?.nameCustody2}
+              loading={loading}
+              className={styles.printable}
+            />
+            <Box printHidden>
+              <Divider />
+            </Box>
+            <TwoColumnUserInfoLine
+              label={formatMessage(m.natreg)}
+              firstValue={
+                person?.custody1 ? formatNationalId(person.custody1) : ''
+              }
+              secondValue={
+                person?.custody2 ? formatNationalId(person.custody2) : ''
+              }
+              loading={loading}
+              className={styles.printable}
+            />
+            <Box printHidden>
+              <Divider />
+            </Box>
+            <TwoColumnUserInfoLine
+              label={formatMessage({
+                id: 'sp.family:custody-status',
+                defaultMessage: 'Staða forsjár',
+              })}
+              firstValue={person?.custodyText1}
+              secondValue={person?.custodyText2}
+              loading={loading}
+              className={styles.printable}
+            />
+            <Box printHidden>
+              <Divider />
+            </Box>
+            {guardianship && !loading && (
+              <>
+                {guardianship?.legalDomicileParent &&
+                  guardianship.legalDomicileParent.length > 0 && (
+                    <>
+                      <TwoColumnUserInfoLine
+                        label={formatMessage({
+                          id: 'sp.family:legal-domicile-parent',
+                          defaultMessage: 'Lögheimilsforeldri',
+                        })}
+                        firstValue={livingArrangment(
+                          guardianship?.legalDomicileParent ?? [],
+                          person?.parent1 ?? '',
+                        )}
+                        secondValue={livingArrangment(
+                          guardianship?.legalDomicileParent ?? [],
+                          person?.parent2 ?? '',
+                        )}
+                      />
+                      <Divider />
+                    </>
+                  )}
+                {guardianship?.residenceParent &&
+                  guardianship.residenceParent.length > 0 && (
+                    <>
+                      <TwoColumnUserInfoLine
+                        label={formatMessage({
+                          id: 'sp.family:residence-parent',
+                          defaultMessage: 'Búsetuforeldri',
+                        })}
+                        firstValue={livingArrangment(
+                          guardianship?.residenceParent ?? [],
+                          person?.parent1 ?? '',
+                        )}
+                        secondValue={livingArrangment(
+                          guardianship?.residenceParent ?? [],
+                          person?.parent2 ?? '',
+                        )}
+                      />
+                      <Divider />
+                    </>
+                  )}
+              </>
+            )}
+          </Stack>
+        )}
       </Stack>
     </Box>
   )

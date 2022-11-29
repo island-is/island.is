@@ -22,7 +22,6 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  IndictmentSubType,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -418,14 +417,22 @@ export class InternalCaseService {
           [],
         )
 
+        const caseType =
+          isIndictmentCase(theCase.type) &&
+          theCase.policeCaseNumbers.length > 0 &&
+          theCase.indictmentSubtypes &&
+          theCase.indictmentSubtypes[theCase.policeCaseNumbers[0]]
+            ? theCase.indictmentSubtypes[theCase.policeCaseNumbers[0]][0]
+            : theCase.type
+
         return this.policeService.updatePoliceCase(
           theCase.id,
-          isIndictmentCase(theCase.type)
-            ? (theCase.indictmentSubType as IndictmentSubType) // We know the sub type is set if the case is an indictment case
-            : theCase.type,
+          caseType,
           theCase.state,
           courtRecord,
-          theCase.policeCaseNumbers,
+          theCase.policeCaseNumbers.length > 0
+            ? theCase.policeCaseNumbers[0]
+            : '',
           defendantNationalIds,
           theCase.conclusion,
         )
@@ -466,6 +473,9 @@ export class InternalCaseService {
         .create(
           {
             ...caseToCreate,
+            state: isIndictmentCase(caseToCreate.type)
+              ? CaseState.DRAFT
+              : undefined,
             origin: CaseOrigin.LOKE,
             creatingProsecutorId: prosecutorId,
             prosecutorId,

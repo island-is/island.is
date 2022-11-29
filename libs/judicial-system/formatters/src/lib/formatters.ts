@@ -9,7 +9,8 @@ import {
   CaseType,
   isRestrictionCase,
   isIndictmentCase,
-  IndictmentSubType,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -121,8 +122,8 @@ export const caseTypes: CaseTypes = {
   OTHER: 'annað',
 }
 
-type IndictmentSubTypes = { [c in IndictmentSubType]: string }
-export const indictmentSubTypes: IndictmentSubTypes = {
+type IndictmentSubtypes = { [c in IndictmentSubtype]: string }
+export const indictmentSubtypes: IndictmentSubtypes = {
   ALCOHOL_LAWS: 'áfengislagabrot',
   CHILD_PROTECTION_LAWS: 'barnaverndarlög',
   INDECENT_EXPOSURE: 'blygðunarsemisbrot',
@@ -314,4 +315,32 @@ export const formatDefenderRoute = (
 
 export const splitStringByComma = (str?: string): string[] => {
   return str?.trim().split(/[, ]+/) || []
+}
+
+export const readableIndictmentSubtypes = (
+  policeCaseNumbers: string[],
+  rawIndictmentSubtypes?: IndictmentSubtypeMap,
+): string[] => {
+  if (!rawIndictmentSubtypes) {
+    return []
+  }
+
+  const returnValue: string[] = []
+
+  for (let i = 0; i < policeCaseNumbers.length; i++) {
+    const subtypesOfPoliceCaseNumber =
+      rawIndictmentSubtypes[policeCaseNumbers[i]]
+
+    if (!subtypesOfPoliceCaseNumber) {
+      break
+    }
+
+    returnValue.push(
+      ...subtypesOfPoliceCaseNumber.map(
+        (subtype) => indictmentSubtypes[subtype],
+      ),
+    )
+  }
+
+  return returnValue
 }

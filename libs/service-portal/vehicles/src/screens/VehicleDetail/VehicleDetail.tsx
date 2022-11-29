@@ -43,9 +43,9 @@ import {
   technicalInfoArray,
 } from '../../utils/createUnits'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import AxleTable from '../../components/DetailTable/AxleTable'
+import Dropdown from '../../components/Dropdown/Dropdown'
+import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -251,13 +251,13 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         </GridRow>
         {!loading && downloadServiceURL && (
           <GridRow marginTop={6}>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <GridColumn span="12/12">
               <Box display="flex" justifyContent="flexStart" printHidden>
                 <Box paddingRight={2}>
                   <Button
                     colorScheme="default"
                     icon="receipt"
-                    iconType="filled"
+                    iconType="outline"
                     size="default"
                     type="button"
                     variant="utility"
@@ -265,6 +265,46 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                   >
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
+                </Box>
+                <Box paddingRight={2}>
+                  <a
+                    href={SAMGONGUSTOFA_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      colorScheme="default"
+                      icon="open"
+                      iconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(messages.changeOfOwnership)}
+                    </Button>
+                  </a>
+                </Box>
+                <Box paddingRight={2}>
+                  <Dropdown
+                    dropdownItems={[
+                      {
+                        title: formatMessage(messages.orderRegistrationNumber),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.orderRegistrationLicense),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.addCoOwner),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.addOperator),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                    ]}
+                  />
                 </Box>
               </Box>
             </GridColumn>
@@ -275,6 +315,11 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         <UserInfoLine
           label={formatMessage(messages.numberPlate)}
           content={mainInfo?.regno ?? ''}
+          editLink={{
+            title: messages.orderRegistrationNumber,
+            url: SAMGONGUSTOFA_LINK,
+            external: true,
+          }}
           loading={loading}
         />
         <Divider />

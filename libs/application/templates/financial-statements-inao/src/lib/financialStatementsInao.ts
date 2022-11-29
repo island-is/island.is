@@ -54,9 +54,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
+          status: 'draft',
           onEntry: {
             apiModuleAction: ApiActions.getUserType,
             shouldPersistToExternalData: true,
@@ -86,6 +84,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
@@ -100,7 +99,6 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

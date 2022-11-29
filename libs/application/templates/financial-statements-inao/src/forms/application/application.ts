@@ -29,11 +29,11 @@ export const getApplication = (allowFakeData = false): Form => {
     title: '',
     renderLastScreenButton: false,
     renderLastScreenBackButton: false,
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     logo: Logo,
     children: [
       buildSection({
-        id: 'conditions',
+        id: 'ExternalDataSection',
         title: m.dataCollectionTitle,
         children: [
           buildExternalDataProvider({
@@ -52,12 +52,6 @@ export const getApplication = (allowFakeData = false): Form => {
                 type: 'UserProfileProvider',
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'currentUserType',
-                type: 'CurrentUserTypeProvider',
-                title: '',
-                subTitle: '',
               }),
             ],
           }),
@@ -85,20 +79,19 @@ export const getApplication = (allowFakeData = false): Form => {
               const applicationAnswers = answers as FinancialStatementsInao
               const careTakerLimit =
                 applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
-              const currentAssets =
+              const fixedAssetsTotal =
                 applicationAnswers.cemetryAsset?.fixedAssetsTotal
               const isCemetry = userType === FSIUSERTYPE.CEMETRY
               const totalIncome = isCemetry
-                ? applicationAnswers.operatingCost?.total
+                ? applicationAnswers.cemetryIncome?.total
                 : '0'
               const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
               const isUnderLimit =
                 currencyStringToNumber(totalIncome) < careTakerLimit
-
               if (
                 isCemetry &&
                 isUnderLimit &&
-                currentAssets === '0' &&
+                fixedAssetsTotal === '0' &&
                 longTermDebt === '0'
               ) {
                 return false

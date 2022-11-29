@@ -52,7 +52,7 @@ const getInnerText = (node: any): string => {
 
   return ''
 }
-export const defaultRenderNode: RenderNode = {
+export const defaultRenderNodeObject: RenderNode = {
   [BLOCKS.HEADING_1]: (_node, children) => (
     <Box
       id={slugify(getInnerText(children))}
