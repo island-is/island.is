@@ -86,11 +86,6 @@ export const errors = defineMessages({
     defaultMessage: 'Ekki tókst að eyða skrá',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða skrá',
   },
-  failedOpenFile: {
-    id: 'judicial.system.core:errors.failed_open_file',
-    defaultMessage: 'Ekki tókst að opna skrá',
-    description: 'Notaður sem villuskilaboð þegar ekki gengur að opna skrá',
-  },
   fileNotFoundModalTitle: {
     id: 'judicial.system.core:errors.file_not_found_modal_title',
     defaultMessage: 'Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt',
