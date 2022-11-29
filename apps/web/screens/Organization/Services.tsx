@@ -116,7 +116,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   groups = groups.filter((x) =>
     services
       .filter((x) => parameters.categories.includes(x.category?.slug))
-      .map((x) => x.group.slug)
+      .map((x) => x.group?.slug)
       .includes(x.value),
   )
 
