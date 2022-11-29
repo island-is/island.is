@@ -362,15 +362,12 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryDetails: {
-            careerHistoryCompanies: ['government'],
-          },
+          careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
       })
       .expect(200)
 
-    // Advance from draft state
     await server
       .put(`/applications/${response.body.id}/submit`)
       .send({
@@ -378,46 +375,28 @@ describe('Application system API', () => {
       })
       .expect(200)
 
-    // Advance from waitingToAssign state
     await server
       .put(`/applications/${response.body.id}/submit`)
       .send({
         event: 'SUBMIT',
       })
       .expect(200)
-
-    // Attempt to approve the application
-    await server
-      .put(`/applications/${response.body.id}/submit`)
-      .send({
-        event: 'APPROVE',
-        answers: {
-          careerHistoryDetails: {
-            careerHistoryCompanies: ['government', 'aranja', 'advania'],
-          },
-          dreamJob: 'firefighter',
-        },
-      })
-      .expect(403) // should fail because we are not allowed to update dreamJob
 
     const finalStateResponse = await server
       .put(`/applications/${response.body.id}/submit`)
       .send({
         event: 'APPROVE',
         answers: {
-          careerHistoryDetails: {
-            careerHistoryCompanies: ['government', 'aranja', 'advania'],
-          },
+          careerHistoryCompanies: ['government', 'aranja', 'advania'],
+          dreamJob: 'firefighter',
         },
       })
       .expect(200)
 
     expect(finalStateResponse.body.state).toBe('approved')
     expect(finalStateResponse.body.answers).toEqual({
-      careerHistoryDetails: {
-        careerHistoryCompanies: ['government', 'aranja', 'advania'],
-      },
-      dreamJob: 'pilot',
+      careerHistoryCompanies: ['government'],
+      dreamJob: 'pilot', // this answer is non-writable
     })
   })
 
