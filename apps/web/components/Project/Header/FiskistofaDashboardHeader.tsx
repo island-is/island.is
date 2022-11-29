@@ -22,8 +22,10 @@ export const FiskistofaDashboardHeader: React.FC<FiskistofaDashboardHeaderProps>
     <Box
       display="flex"
       justifyContent="flexEnd"
-      paddingTop={3}
+      paddingTop={2}
+      paddingBottom={2}
       paddingRight={3}
+      className={styles.background}
     >
       <Inline alignY="center" space={[1, 2, 3]} flexWrap="nowrap">
         <Text variant="h3" as="h1">

@@ -9,11 +9,11 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import InfoCard from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
 import { FormContext } from '../FormProvider/FormProvider'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 const InfoCardActiveIndictment: React.FC = () => {
   const { workingCase } = useContext(FormContext)

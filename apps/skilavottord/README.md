@@ -78,7 +78,7 @@ docker-compose up
 Then run migrations and seed the database:
 
 ```bash
-yarn nx run skilavottord-ws:migrate:undo:all
+yarn nx run skilavottord-ws:migrate/undo
 ```
 
 ```bash

@@ -9,52 +9,12 @@ export const root = style({
   minHeight: '-webkit-fill-available',
   display: 'flex',
   flexDirection: 'column',
+  background: theme.color.white,
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       minHeight: `calc(100vh - ${headerHeight}px)`,
-    },
-  },
-})
-
-export const rootApplying = style({
-  background: theme.color.white,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       background: theme.color.purple100,
-    },
-  },
-})
-
-export const rootApproved = style({
-  background: theme.color.white,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      background: theme.color.mint100,
-    },
-  },
-})
-export const rootPending = style({
-  background: theme.color.white,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      background: theme.color.roseTinted100,
-    },
-  },
-})
-export const rootRejected = style({
-  background: theme.color.white,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      background: theme.color.dark100,
-    },
-  },
-})
-export const rootReviewing = style({
-  background: theme.color.white,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      background: theme.color.blue100,
     },
   },
 })

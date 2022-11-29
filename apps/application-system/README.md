@@ -5,9 +5,9 @@
 Ensure docker is running, then run the following when running for the first time:
 
 ```bash
-yarn dev/init application-system-api
+yarn dev-init application-system-api
 or
-yarn dev/init application-system-form
+yarn dev-init application-system-form
 ```
 
 depending on whether you're working on the API or an application form.

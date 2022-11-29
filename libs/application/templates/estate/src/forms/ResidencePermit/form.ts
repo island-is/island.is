@@ -16,7 +16,7 @@ import { overview } from './overviewSection'
 export const form: Form = buildForm({
   id: 'residencePermitForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
