@@ -33,6 +33,7 @@ import {
   isIndictmentCase,
   CaseState,
   Recipient,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 import {
   caseTypes,
@@ -72,7 +73,7 @@ import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { notificationModuleConfig } from './notification.config'
-import { DefendantService } from '../defendant'
+import { Defendant, DefendantService } from '../defendant'
 
 interface Attachment {
   filename: string
@@ -115,27 +116,36 @@ export class NotificationService {
   private async existsRevokableNotification(
     caseId: string,
     recipientAddress?: string,
+    isIndictment?: boolean,
   ): Promise<boolean> {
     try {
       const notifications: Notification[] = await this.notificationModel.findAll(
         {
           where: {
             caseId,
-            type: [
-              NotificationType.HEADS_UP,
-              NotificationType.READY_FOR_COURT,
-              NotificationType.COURT_DATE,
-            ],
+            type: isIndictment
+              ? [NotificationType.DEFENDER_ASSIGNED]
+              : [
+                  NotificationType.HEADS_UP,
+                  NotificationType.READY_FOR_COURT,
+                  NotificationType.COURT_DATE,
+                ],
           },
         },
       )
 
-      return notifications.some(({ recipients }) =>
+      const a = notifications.some(({ recipients }) =>
         recipients.some(
           (recipient) =>
             recipient.address === recipientAddress && recipient.success,
         ),
       )
+      console.log(recipientAddress)
+      if (a) {
+        console.log(notifications)
+      }
+
+      return a
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error(
@@ -1135,36 +1145,29 @@ export class NotificationService {
   }
 
   private sendRevokedEmailNotificationToDefender(
-    theCase: Case,
+    caseType: CaseType,
+    defendant: Defendant,
+    defenderName?: string,
+    defenderEmail?: string,
+    courtDate?: Date,
+    courtName?: string,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.defenderRevokedEmail.subject,
-      { caseType: theCase.type },
+      { caseType },
     )
 
-    // Assume there is at most one defendant
     const html = formatDefenderRevokedEmailNotification(
       this.formatMessage,
-      theCase.type,
-      theCase.defendants && theCase.defendants.length > 0
-        ? theCase.defendants[0].nationalId
-        : undefined,
-      theCase.defendants && theCase.defendants.length > 0
-        ? theCase.defendants[0].name
-        : undefined,
-      theCase.defendants && theCase.defendants.length > 0
-        ? theCase.defendants[0].noNationalId
-        : undefined,
-      theCase.court?.name,
-      theCase.courtDate,
+      caseType,
+      defendant.nationalId,
+      defendant.name,
+      defendant.noNationalId,
+      courtName,
+      courtDate,
     )
 
-    return this.sendEmail(
-      subject,
-      html,
-      theCase.defenderName,
-      theCase.defenderEmail,
-    )
+    return this.sendEmail(subject, html, defenderName, defenderEmail)
   }
 
   private async sendRevokedNotifications(
@@ -1195,15 +1198,45 @@ export class NotificationService {
       promises.push(this.sendRevokedEmailNotificationToPrison(theCase))
     }
 
-    const defenderWasNotified =
-      !isIndictmentCase(theCase.type) &&
-      (await this.existsRevokableNotification(
+    if (isIndictmentCase(theCase.type)) {
+      for (const defendant of theCase.defendants ?? []) {
+        const defenderWasNotified = await this.existsRevokableNotification(
+          theCase.id,
+          defendant.defenderEmail,
+          isIndictmentCase(theCase.type),
+        )
+
+        if (defenderWasNotified) {
+          promises.push(
+            this.sendRevokedEmailNotificationToDefender(
+              theCase.type,
+              defendant,
+              defendant.defenderName,
+              defendant.defenderEmail,
+              theCase.courtDate,
+              theCase.court?.name,
+            ),
+          )
+        }
+      }
+    } else {
+      const defenderWasNotified = await this.existsRevokableNotification(
         theCase.id,
         theCase.defenderEmail,
-      ))
-
-    if (defenderWasNotified && theCase.defenderEmail) {
-      promises.push(this.sendRevokedEmailNotificationToDefender(theCase))
+        isIndictmentCase(theCase.type),
+      )
+      if (defenderWasNotified && theCase.defendants) {
+        promises.push(
+          this.sendRevokedEmailNotificationToDefender(
+            theCase.type,
+            theCase.defendants[0],
+            theCase.defenderName,
+            theCase.defenderEmail,
+            theCase.courtDate,
+            theCase.court?.name,
+          ),
+        )
+      }
     }
 
     const recipients = await Promise.all(promises)

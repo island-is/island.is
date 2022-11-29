@@ -473,6 +473,14 @@ export const notifications = {
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir að krafa sé afturkölluð',
     },
+    revokedIndictment: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.revoked_indictment',
+      defaultMessage:
+        'Ákæra sem taka átti fyrir hjá {courtText} {courtDateText}, hefur verið afturkölluð.',
+      description:
+        'Texti í pósti til verjanda/talsmanns sem tilgreinir að ákæra sé afturkölluð',
+    },
     defendant: {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defendant',
@@ -485,6 +493,14 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defender_assigned',
       defaultMessage: 'Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      description:
+        'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
+    },
+    defenderAssignedIndictments: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.defender_assigned_v2',
+      defaultMessage:
+        'Dómstóllinn hafði skráð þig sem skipaðan verjanda í málinu.',
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
     },
