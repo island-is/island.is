@@ -11,41 +11,49 @@ export class VehicleInfolocksClient {
     return this.infoLockApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async getAnonymityStatus(auth: User): Promise<AnonymityStatus> {
-    const anonymityInfoLockType = '2'
+  public async getAnonymityStatus(auth: User): Promise<AnonymityStatus | null> {
+    const infoLockTypeAnonymity = '2'
     const today = new Date()
 
-    const result = await this.infoLockApiWithAuth(auth).getInfoLock({
+    const result = await this.infoLockApiWithAuth(auth).persidnoGet({
       apiVersion: '1.0',
       apiVersion2: '1.0',
       persidno: auth.nationalId,
-      infolocktype: anonymityInfoLockType,
     })
 
-    return {
-      isValid: result.invalidDate ? result.invalidDate > today : true,
+    const item = result.find((x) => x.infoLockType === infoLockTypeAnonymity)
+
+    if (!item) {
+      return null
     }
+
+    let isValid: boolean
+    if (!item.invalidDate) {
+      isValid = true
+    } else {
+      isValid = item.invalidDate > today
+    }
+
+    return { isChecked: isValid }
   }
 
-  public async setAnonymityStatus(auth: User, isValid: boolean): Promise<void> {
-    const anonymityInfoLockType = '2'
+  public async setAnonymityStatus(
+    auth: User,
+    isChecked: boolean,
+  ): Promise<void> {
+    const infoLockTypeAnonymity = '2'
     const today = new Date()
 
-    const currentInfoLock = await this.infoLockApiWithAuth(auth).getInfoLock({
-      apiVersion: '1.0',
-      apiVersion2: '1.0',
-      persidno: auth.nationalId,
-      infolocktype: anonymityInfoLockType,
-    })
+    const anonymityStatus = await this.getAnonymityStatus(auth)
 
-    if (currentInfoLock) {
+    if (anonymityStatus) {
       await this.infoLockApiWithAuth(auth).rootPut({
         apiVersion: '1.0',
         apiVersion2: '1.0',
         putInfoLockModel: {
           persidno: auth.nationalId,
-          infoLockType: anonymityInfoLockType,
-          invalidDate: isValid ? null : today,
+          infoLockType: infoLockTypeAnonymity,
+          invalidDate: isChecked ? null : today,
           explanation: '',
         },
       })
@@ -55,8 +63,8 @@ export class VehicleInfolocksClient {
         apiVersion2: '1.0',
         postInfoLockModel: {
           persidno: auth.nationalId,
-          infoLockType: anonymityInfoLockType,
-          invalidDate: isValid ? null : today,
+          infoLockType: infoLockTypeAnonymity,
+          invalidDate: isChecked ? null : today,
           explanation: '',
         },
       })

@@ -11,7 +11,7 @@ export class AnonymityInVehicleRegistryApi {
 
   async getAnonymityStatus(user: User): Promise<Boolean> {
     const result = await this.vehicleInfolocksClient.getAnonymityStatus(user)
-    return result.isValid
+    return result?.isChecked || false
   }
 
   async setAnonymityStatus(user: User, isChecked: boolean): Promise<void> {

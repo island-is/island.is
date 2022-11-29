@@ -1,3 +1,3 @@
 export interface AnonymityStatus {
-  isValid: boolean
+  isChecked: boolean
 }
