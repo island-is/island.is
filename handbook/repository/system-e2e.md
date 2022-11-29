@@ -43,7 +43,7 @@ First time you run Playwright, you'll need to set up its runtime environment wit
 - both: `yarn playwright test 'system-e2e/.*/web'`
 - pattern `yarn playwright test 'system-e2e/.*/s?port?'`
 
-Note that you the pattern is a RegEx string in quotes.
+Note that the pattern is a RegEx string in quotes.
 {% endhint %}
 
 {% hint style="info" %}
