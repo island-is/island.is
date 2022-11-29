@@ -17,6 +17,7 @@ import {
 } from '@island.is/application/types'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
+import * as kennitala from 'kennitala'
 import {
   application,
   conclusion,
@@ -165,6 +166,10 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'disposableIncomeSection',
       title: section.disposableIncome,
+      condition: (formValue) => {
+        const { applicant } = formValue as PublicDebtPaymentPlan
+        return kennitala.isPerson(applicant.nationalId)
+      },
       children: [
         buildCustomField({
           id: 'disposableIncome',

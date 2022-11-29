@@ -1,0 +1,1106 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Payment schedule 1.1",
+    "version": "1.1"
+  },
+  "servers": [
+    {
+      "url": "http://wmdev03.Dev.local:5000/rad/TBRIslandis.api.v1:paymentSchedule_v1"
+    },
+    {
+      "url": "https://wmdev03.Dev.local:5000/rad/TBRIslandis.api.v1:paymentSchedule_v1"
+    }
+  ],
+  "paths": {
+    "/wagesdeduction/{nationalId}": {
+      "get": {
+        "operationId": "wagesdeductionnationalId_GET_1",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/wagesdeductionnationalId_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "description": "Set employer for input nationalid",
+        "operationId": "wagesdeductionnationalId_PUT_1",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/wagesdeductionnationalId_PUT_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "input"
+      },
+      "post": {
+        "description": "Set employer for input nationalid",
+        "operationId": "wagesdeductionnationalId_POST_1",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/wagesdeductionnationalId_POST_response"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/wagesdeductionnationalId_POST_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "input"
+      }
+    },
+    "/debtsandschedules/{nationalId}": {
+      "get": {
+        "operationId": "debtsandschedulesnationalId_GET_2",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/debtsandschedulesnationalId_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/conditions/{nationalId}": {
+      "get": {
+        "description": "Returns current condidtion for given nationalId.",
+        "operationId": "conditionsnationalId_GET_3",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/conditionsnationalId_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/distributionInitialPosition/{nationalId}/{scheduleType}": {
+      "get": {
+        "operationId": "distributionInitialPositionnationalIdscheduleType_GET_4",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scheduleType",
+            "in": "path",
+            "description": "schedule type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "totalAmount",
+            "in": "query",
+            "description": "total due amount ",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "disposableIncome",
+            "in": "query",
+            "description": "disposable income amount",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/distributionInitialPositionnationalIdscheduleType_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/paymentDistribution/{nationalId}/{scheduleType}": {
+      "get": {
+        "operationId": "paymentDistributionnationalIdscheduleType_GET_5",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scheduleType",
+            "in": "path",
+            "description": "schedule type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "totalAmount",
+            "in": "query",
+            "description": "total due amount ",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "monthAmount",
+            "in": "query",
+            "description": "disposable income amount",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "monthCount",
+            "in": "query",
+            "description": "disposable income amount",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/paymentDistributionnationalIdscheduleType_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/schedules": {
+      "post": {
+        "description": "store  schedules , return 201 if ok",
+        "operationId": "schedules_POST_6",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inputSchedules"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/schedules_POST_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "inputSchedules"
+      }
+    },
+    "/employerValid/{nationalId}/{employerNationalId}": {
+      "get": {
+        "operationId": "employerValidnationalIdemployerNationalId_GET_7",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "employerNationalId",
+            "in": "path",
+            "description": "Employer national identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/employerValidnationalIdemployerNationalId_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/companyConditions/{nationalId}": {
+      "get": {
+        "description": "Returns current condidtion for given nationalId.",
+        "operationId": "companyConditionsnationalId_GET_8",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/companyConditionsnationalId_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DebtsAndSchedules_DT": {
+        "required": [
+          "chargetypes",
+          "explanation",
+          "nationalId",
+          "organization",
+          "paymentSchedule",
+          "totalAmount",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "National identifier"
+          },
+          "type": {
+            "type": "string"
+          },
+          "paymentSchedule": {
+            "type": "string"
+          },
+          "organization": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "chargetypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChargeTypes_DT"
+            }
+          }
+        }
+      },
+      "Payments_DT": {
+        "required": [
+          "accumulated",
+          "dueDate",
+          "payment"
+        ],
+        "type": "object",
+        "properties": {
+          "dueDate": {
+            "type": "string",
+            "description": "due date"
+          },
+          "payment": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accumulated": {
+            "type": "integer",
+            "description": "accumulated",
+            "format": "int64"
+          }
+        }
+      },
+      "WagesDetuction_DT": {
+        "required": [
+          "employerName",
+          "employerNationalId"
+        ],
+        "type": "object",
+        "properties": {
+          "employerNationalId": {
+            "type": "string",
+            "description": "Employer national id"
+          },
+          "employerName": {
+            "type": "string"
+          }
+        }
+      },
+      "chargeTypes": {
+        "required": [
+          "chargeID"
+        ],
+        "type": "object",
+        "properties": {
+          "chargeID": {
+            "type": "string"
+          }
+        }
+      },
+      "input": {
+        "required": [
+          "employer"
+        ],
+        "type": "object",
+        "properties": {
+          "employer": {
+            "$ref": "#/components/schemas/employer"
+          }
+        }
+      },
+      "inputSchedules": {
+        "required": [
+          "email",
+          "nationalId",
+          "phoneNumber",
+          "schedules"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "Icelandic nationalID"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number"
+          },
+          "email": {
+            "type": "string",
+            "description": "e-mail"
+          },
+          "schedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/schedules"
+            }
+          }
+        }
+      },
+      "conditionsnationalId_GET_response": {
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "$ref": "#/components/schemas/Conditions_DT"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          }
+        }
+      },
+      "payments": {
+        "required": [
+          "accumulated",
+          "duedate",
+          "payment"
+        ],
+        "type": "object",
+        "properties": {
+          "duedate": {
+            "type": "string"
+          },
+          "payment": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accumulated": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "wagesdeductionnationalId_GET_response": {
+        "required": [
+          "wagesDeduction"
+        ],
+        "type": "object",
+        "properties": {
+          "wagesDeduction": {
+            "$ref": "#/components/schemas/WagesDetuction_DT"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          }
+        }
+      },
+      "ProblemDetails_DT": {
+        "required": [
+          "detail",
+          "status",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "A URI reference [RFC3986] that identifies the problem type. This specification encourages that, when dereferenced, it provide human-readable documentation for the problem type (e.g., using HTML [W3C.REC-html5-20141028]). When this member is not present, its value is assumed to be \"about:blank\"."
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type.It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization(e.g., using proactive content negotiation; see[RFC7231], Section 3.4)."
+          },
+          "status": {
+            "type": "string",
+            "description": "The HTTP status code([RFC7231], Section 6) generated by the origin server for this occurrence of the problem."
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem."
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem.It may or may not yield further information if dereferenced."
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/errors"
+            }
+          }
+        }
+      },
+      "DistributionInitialPosition_DT": {
+        "required": [
+          "maxCountMonth",
+          "maxPayment",
+          "minCountMonth",
+          "minPayment",
+          "nationalId",
+          "scheduleType"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "National identifier"
+          },
+          "scheduleType": {
+            "type": "string",
+            "description": "schedule type"
+          },
+          "minPayment": {
+            "type": "integer",
+            "description": "min Payment",
+            "format": "int64"
+          },
+          "maxPayment": {
+            "type": "integer",
+            "description": "max payment",
+            "format": "int64"
+          },
+          "minCountMonth": {
+            "type": "integer",
+            "description": "month min count",
+            "format": "int64"
+          },
+          "maxCountMonth": {
+            "type": "integer",
+            "description": "month max count",
+            "format": "int64"
+          }
+        }
+      },
+      "EmployerValid_DT": {
+        "required": [
+          "employerName",
+          "employerNationalId",
+          "isEmployerValid"
+        ],
+        "type": "object",
+        "properties": {
+          "employerNationalId": {
+            "type": "string",
+            "description": "Employer national id"
+          },
+          "employerName": {
+            "type": "string"
+          },
+          "isEmployerValid": {
+            "type": "string"
+          }
+        }
+      },
+      "CompanyConditions_DT": {
+        "required": [
+          "accommodationTaxReturns",
+          "citReturns",
+          "collectionActions",
+          "doNotOwe",
+          "financialStatement",
+          "maxDebt",
+          "maxDebtAmount",
+          "maxPayment",
+          "minPayment",
+          "nationalId",
+          "taxReturns",
+          "totalDebtAmount",
+          "vatReturns",
+          "withholdingTaxReturns"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "National identifier"
+          },
+          "maxDebtAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalDebtAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "minPayment": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxPayment": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "collectionActions": {
+            "type": "boolean"
+          },
+          "doNotOwe": {
+            "type": "boolean"
+          },
+          "maxDebt": {
+            "type": "boolean"
+          },
+          "taxReturns": {
+            "type": "boolean"
+          },
+          "vatReturns": {
+            "type": "boolean"
+          },
+          "citReturns": {
+            "type": "boolean"
+          },
+          "accommodationTaxReturns": {
+            "type": "boolean"
+          },
+          "withholdingTaxReturns": {
+            "type": "boolean"
+          },
+          "financialStatement": {
+            "type": "boolean"
+          }
+        }
+      },
+      "companyConditionsnationalId_GET_response": {
+        "required": [
+          "conditions"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "conditions": {
+            "$ref": "#/components/schemas/CompanyConditions_DT"
+          }
+        }
+      },
+      "errors": {
+        "required": [
+          "detail",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "param": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        }
+      },
+      "schedules_POST_response": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          }
+        }
+      },
+      "debtsandschedulesnationalId_GET_response": {
+        "required": [
+          "deptAndSchedules"
+        ],
+        "type": "object",
+        "properties": {
+          "deptAndSchedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DebtsAndSchedules_DT"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          }
+        }
+      },
+      "wagesdeductionnationalId_PUT_response": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          }
+        }
+      },
+      "ChargeTypes_DT": {
+        "required": [
+          "expenses",
+          "id",
+          "intrest",
+          "name",
+          "principal",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "principal": {
+            "type": "number",
+            "format": "double"
+          },
+          "intrest": {
+            "type": "number",
+            "format": "double"
+          },
+          "expenses": {
+            "type": "number",
+            "format": "double"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "paymentDistributionnationalIdscheduleType_GET_response": {
+        "required": [
+          "paymentDistribution"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "paymentDistribution": {
+            "$ref": "#/components/schemas/paymentDistribution_DT"
+          }
+        }
+      },
+      "employerValidnationalIdemployerNationalId_GET_response": {
+        "required": [
+          "employerValid"
+        ],
+        "type": "object",
+        "properties": {
+          "employerValid": {
+            "$ref": "#/components/schemas/EmployerValid_DT"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          }
+        }
+      },
+      "employer": {
+        "required": [
+          "employerNationalId"
+        ],
+        "type": "object",
+        "properties": {
+          "employerNationalId": {
+            "type": "string",
+            "description": "Employer national identifier"
+          }
+        }
+      },
+      "wagesdeductionnationalId_POST_response": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          }
+        }
+      },
+      "distributionInitialPositionnationalIdscheduleType_GET_response": {
+        "required": [
+          "distributionInitialPosition"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "distributionInitialPosition": {
+            "$ref": "#/components/schemas/DistributionInitialPosition_DT"
+          }
+        }
+      },
+      "Conditions_DT": {
+        "required": [
+          "accommodationTaxReturns",
+          "alimony",
+          "citReturns",
+          "collectionActions",
+          "disposableIncome",
+          "doNotOwe",
+          "maxDebt",
+          "maxDebtAmount",
+          "maxPayment",
+          "minPayment",
+          "minWagePayment",
+          "nationalId",
+          "oweTaxes",
+          "percent",
+          "taxReturns",
+          "totalDebtAmount",
+          "vatReturns",
+          "wageReturns",
+          "withholdingTaxReturns"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "National identifier"
+          },
+          "maxDebtAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalDebtAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "minPayment": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxPayment": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "minWagePayment": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "collectionActions": {
+            "type": "boolean"
+          },
+          "doNotOwe": {
+            "type": "boolean"
+          },
+          "maxDebt": {
+            "type": "boolean"
+          },
+          "oweTaxes": {
+            "type": "boolean",
+            "description": "true if taxes are owed"
+          },
+          "disposableIncome": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "taxReturns": {
+            "type": "boolean"
+          },
+          "vatReturns": {
+            "type": "boolean"
+          },
+          "citReturns": {
+            "type": "boolean"
+          },
+          "accommodationTaxReturns": {
+            "type": "boolean"
+          },
+          "withholdingTaxReturns": {
+            "type": "boolean"
+          },
+          "wageReturns": {
+            "type": "boolean"
+          },
+          "alimony": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "percent": {
+            "type": "string"
+          }
+        }
+      },
+      "schedules": {
+        "required": [
+          "chargeTypes",
+          "organizationID",
+          "payments",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "schedule type"
+          },
+          "organizationID": {
+            "type": "string"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/payments"
+            }
+          },
+          "chargeTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/chargeTypes"
+            }
+          }
+        }
+      },
+      "paymentDistribution_DT": {
+        "required": [
+          "nationalId",
+          "payments",
+          "scheduleType"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "National identifier"
+          },
+          "scheduleType": {
+            "type": "string",
+            "description": "schedule type"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Payments_DT"
+            }
+          }
+        }
+      }
+    }
+  }
+}
