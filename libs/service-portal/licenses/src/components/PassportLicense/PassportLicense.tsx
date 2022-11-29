@@ -17,7 +17,7 @@ export const PassportLicense = ({
   isInvalid?: boolean
 }) => {
   useNamespaces('sp.license')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [currentDate] = useState(new Date())
 
   const expiresIn = getExpiresIn(currentDate, new Date(expireDate))
@@ -46,7 +46,7 @@ export const PassportLicense = ({
           formatMessage(m.days)
     }
     if (expireDate) {
-      return `${formatMessage(m.validUntil)} ${formatDate(expireDate)}`
+      return `${formatMessage(m.validUntil)} ${formatDate(expireDate, lang)}`
     }
 
     return formatMessage(m.isValid)

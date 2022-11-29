@@ -40,7 +40,6 @@ export const UserLicenses: FC<Props> = ({
   isGenericLicenseEmpty,
   passportData,
   genericLicenses,
-  hasTab,
 }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()

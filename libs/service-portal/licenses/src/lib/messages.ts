@@ -254,4 +254,12 @@ export const m = defineMessages({
     id: 'sp.license:gender-other',
     defaultMessage: 'Kynsegin/Annað',
   },
+  licenseTabPrimary: {
+    id: 'sp.license:tab-primary',
+    defaultMessage: 'Þín skírteini',
+  },
+  licenseTabSecondary: {
+    id: 'sp.license:tab-secondary',
+    defaultMessage: 'Skírteini barna þinna',
+  },
 })

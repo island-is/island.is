@@ -55,13 +55,12 @@ const NotifyLostLink = (text: string) => (
 
 const PassportDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id }: { id: string | undefined } = useParams()
   const { data: passportData, loading, error } = usePassport()
   const {
     data: childPassportData,
     loading: childLoading,
-    error: childError,
   } = useChildrenPassport()
 
   const passportGender: Gender = {
@@ -173,7 +172,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           <Divider />
           <UserInfoLine
             label={m.issueDate}
-            content={data.issuingDate ? formatDate(data.issuingDate) : ''}
+            content={data.issuingDate ? formatDate(data.issuingDate, lang) : ''}
             loading={loading}
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
@@ -185,7 +184,9 @@ const PassportDetail: ServicePortalModuleComponent = () => {
             renderContent={() => (
               <Box display="flex" alignItems="center">
                 <Text>
-                  {data.expirationDate ? formatDate(data.expirationDate) : ''}
+                  {data.expirationDate
+                    ? formatDate(data.expirationDate, lang)
+                    : ''}
                 </Text>
                 <Box
                   marginLeft={3}
@@ -232,7 +233,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           <Divider />
           <UserInfoLine
             label={formatMessage(m.passportGender)}
-            content={passportGender[data.sex as GenderType] || data.sex || ''}
+            content={passportGender[data.sex as GenderType] || ''}
             loading={loading}
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}

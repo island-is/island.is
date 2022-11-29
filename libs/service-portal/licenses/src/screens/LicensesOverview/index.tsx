@@ -170,7 +170,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
             contentBackground="white"
             tabs={[
               {
-                label: 'Þín skírteini',
+                label: formatMessage(m.licenseTabPrimary),
                 content: (
                   <UserLicenses
                     isLoading={isLoading}
@@ -183,7 +183,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                 ),
               },
               {
-                label: 'Skírteini barna þinna',
+                label: formatMessage(m.licenseTabSecondary),
                 content: (
                   <ChildrenLicenses
                     data={childrenData}

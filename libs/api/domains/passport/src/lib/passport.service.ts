@@ -83,7 +83,10 @@ export class PassportService {
        * Passportnumber as displayed on icelandic passports.
        * With subtype in front.
        */
-      const numberWithType = `${passport.subType ?? ''}${passport.number ?? ''}`
+      const numberWithType =
+        passport.subType && passport.number
+          ? `${passport.subType}${passport.number}`
+          : undefined
 
       return {
         ...passport,
