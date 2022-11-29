@@ -1,4 +1,4 @@
-# portals-core
+# Portals Core
 
 This library was generated with [Nx](https://nx.dev).
 
