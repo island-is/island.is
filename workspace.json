@@ -44,6 +44,7 @@
     "api-domains-national-registry-x-road": "libs/api/domains/national-registry-x-road",
     "api-domains-payment": "libs/api/domains/payment",
     "api-domains-payment-schedule": "libs/api/domains/payment-schedule",
+    "api-domains-powerbi": "libs/api/domains/powerbi",
     "api-domains-regulations": "libs/api/domains/regulations",
     "api-domains-syslumenn": "libs/api/domains/syslumenn",
     "api-domains-user-profile": "libs/api/domains/user-profile",

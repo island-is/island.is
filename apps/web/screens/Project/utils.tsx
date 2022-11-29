@@ -7,7 +7,7 @@ import {
 import { Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
-const footerEnabled = ['opinbernyskopun', 'maelabord-fiskistofu']
+const footerEnabled = ['opinbernyskopun', 'gagnasidur-fiskistofu']
 
 const lightThemes = [
   'traveling-to-iceland',
@@ -28,7 +28,7 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (theme === 'maelabord-fiskistofu') {
+  if (theme === 'gagnasidur-fiskistofu') {
     showHeader = false
   }
 
