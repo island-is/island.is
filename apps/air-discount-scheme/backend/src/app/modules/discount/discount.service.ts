@@ -351,6 +351,7 @@ export class DiscountService {
       const isExplicit = await this.getCache<string>(explicitCacheKey)
 
       if (isExplicit) {
+        // Attach flight_id to explicit code record
         this.explicitModel.update(
           {
             flightId,
@@ -361,6 +362,8 @@ export class DiscountService {
             },
           },
         )
+
+        await this.cacheManager.del(explicitCacheKey)
       }
 
       const ttl = await this.cacheManager.ttl(cacheId)
