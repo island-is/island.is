@@ -14,6 +14,7 @@ import {
   useMotionValue,
 } from 'framer-motion'
 import { useMutation } from '@apollo/client'
+import { useMeasure } from 'react-use'
 
 import {
   AccordionItem,
@@ -34,14 +35,13 @@ import {
   useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 import { UpdateFileMutation } from './UpdateFiles.gql'
-import { useMeasure } from 'react-use'
 import IndictmentInfo from '../../IndictmentInfo/IndictmentInfo'
 import Modal from '../../Modal/Modal'
-import { core, errors } from '@island.is/judicial-system-web/messages'
+import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'
 
