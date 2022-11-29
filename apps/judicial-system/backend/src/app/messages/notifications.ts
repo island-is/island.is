@@ -489,6 +489,7 @@ export const notifications = {
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir sakborning',
     },
+    // TODO: Remove defenderAssigned
     defenderAssigned: {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defender_assigned',
@@ -496,11 +497,10 @@ export const notifications = {
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
     },
-    defenderAssignedIndictments: {
+    defenderAssignedV2: {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defender_assigned_v2',
-      defaultMessage:
-        'Dómstóllinn hafði skráð þig sem skipaðan verjanda í málinu.',
+      defaultMessage: 'Dómstóllinn hafði skráð þig sem verjanda í málinu.',
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
     },

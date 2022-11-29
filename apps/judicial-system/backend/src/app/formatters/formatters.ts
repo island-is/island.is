@@ -587,11 +587,7 @@ export function formatDefenderRevokedEmailNotification(
     defendantNationalId: defendantNationalIdText,
     defendantNoNationalId: defendantNoNationalId ? 'NONE' : 'SOME',
   })
-  const defenderAssignedText = formatMessage(
-    isIndictmentCase(type)
-      ? cf.defenderAssignedIndictments
-      : cf.defenderAssigned,
-  )
+  const defenderAssignedText = formatMessage(cf.defenderAssignedV2)
 
   return formatMessage(cf.body, {
     revokedText,

@@ -134,18 +134,12 @@ export class NotificationService {
         },
       )
 
-      const a = notifications.some(({ recipients }) =>
+      return notifications.some(({ recipients }) =>
         recipients.some(
           (recipient) =>
             recipient.address === recipientAddress && recipient.success,
         ),
       )
-      console.log(recipientAddress)
-      if (a) {
-        console.log(notifications)
-      }
-
-      return a
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error(
