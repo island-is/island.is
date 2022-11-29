@@ -1,4 +1,3 @@
-import { getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
