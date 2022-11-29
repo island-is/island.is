@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Core" -->
+
 # Portals Core
 
 This library is the core library for our portals, i.e. admin, my-pages.
