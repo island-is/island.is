@@ -177,6 +177,17 @@ describe('DiscountService', () => {
       const discountCode = 'ABCDEFG'
       const cacheManagerDelSpy = jest.spyOn(cacheManager, 'del')
       const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
+      jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation((cachekey: string | Record<string, unknown>) => {
+          if (
+            typeof cachekey === 'string' &&
+            cachekey.includes('explicit_code_lookup')
+          ) {
+            return Promise.resolve(null)
+          }
+          return Promise.resolve({})
+        })
 
       await discountService.useDiscount(
         discountCode,
