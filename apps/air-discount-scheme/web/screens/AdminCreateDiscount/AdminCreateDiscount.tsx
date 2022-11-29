@@ -53,8 +53,8 @@ const AdminCreateDiscount: Screen = () => {
               <>
                 <h1>{discountCode}</h1>
                 <p>
-                  Látið viðkomandi hafa kóðann hér að ofan. Takið skjáskot eða
-                  skrifið niður. Umsýsluviðmótið geymir þessa kóða ekki.
+                  Umsýsluviðmótið geymir þessa kóða ekki. Þeir munu birtast í
+                  viðmóti viðkomandi kennitöluhafa.
                 </p>
               </>
             ) : (
@@ -120,8 +120,7 @@ const AdminCreateDiscount: Screen = () => {
         }}
         t={{
           title: 'Búa til kóða handvirkt',
-          info:
-            'MIKILVÆGT: nótið niður kóða, og notanda ,því ekki er hægt að nálgast kóðann seinna. Sjáið til að allar upplýsingar séu réttar.',
+          info: 'MIKILVÆGT: Sjáið til að allar upplýsingar séu réttar.',
           buttons: {
             cancel: 'Hætta við',
             continue: 'Halda áfram',
