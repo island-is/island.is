@@ -316,6 +316,40 @@ export const getOtherParentOptions = (
   return options
 }
 
+export const getApplicationTypeOptions = (
+  formatMessage: FormatMessage,
+) => {
+  const options: Option[] = [
+    {
+      value: PARENTAL_LEAVE,
+      label:
+        parentalLeaveFormMessages.shared
+          .applicationParentalLeaveTitle,
+      subLabel: formatMessage( parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
+      ),  
+    },
+    {
+      value: PARENTAL_GRANT,
+      label:
+        parentalLeaveFormMessages.shared
+          .applicationParentalGrantUnemployedTitle,
+      subLabel: formatMessage( parentalLeaveFormMessages.shared
+        .applicationParentalGrantUnemployedSubTitle,
+      ),  
+    },
+    {
+      value: PARENTAL_GRANT_STUDENTS,
+      label:
+        parentalLeaveFormMessages.shared
+          .applicationParentalGrantStudentTitle,
+      subLabel: formatMessage( parentalLeaveFormMessages.shared
+        .applicationParentalGrantStudentSubTitle,
+      ),  
+    },
+  ]
+  return options
+}
+
 export const getAllPeriodDates = (periods: Period[]) => {
   const filledPeriods = periods.filter((p) => p.startDate && p.endDate)
 
