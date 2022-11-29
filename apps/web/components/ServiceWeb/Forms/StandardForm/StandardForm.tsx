@@ -38,7 +38,6 @@ import {
   SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
-import { ModifySearchTerms } from '../../SearchInput/SearchInput'
 import orderBy from 'lodash/orderBy'
 import { useNamespace } from '@island.is/web/hooks'
 import slugify from '@sindresorhus/slugify'
@@ -617,13 +616,13 @@ export const StandardForm = ({
                       >
                         <Text key={index} variant="small" color="blue600">
                           <a
-                            href={`${
-                              linkResolver('supportcategory', [
+                            href={
+                              linkResolver('supportqna', [
                                 organizationSlug,
                                 categorySlug,
                                 slug,
                               ]).href
-                            }?q=${slug}`}
+                            }
                           >
                             {title}
                           </a>
