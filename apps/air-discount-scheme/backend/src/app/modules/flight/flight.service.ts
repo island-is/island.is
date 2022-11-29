@@ -286,6 +286,9 @@ export class FlightService {
                 : {}),
             },
           ),
+          // If isExplicit is marked we do an INNER JOIN
+          // on flight records, acting as a filter
+          // hence, required: true
           ...(body.isExplicit
             ? {
                 include: [
