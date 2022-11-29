@@ -113,7 +113,7 @@ describe('Application system API', () => {
           },
           dreamJob: 'pilot',
         },
-        status: ApplicationStatus.IN_PROGRESS,
+        status: ApplicationStatus.DRAFT,
       })
       .expect(400)
 
@@ -677,7 +677,7 @@ describe('Application system API', () => {
 
     const getResponse = await server
       .get(
-        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.IN_PROGRESS}`,
+        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.DRAFT}`,
       )
       .expect(200)
 
@@ -687,7 +687,7 @@ describe('Application system API', () => {
         expect.objectContaining({
           applicant: nationalId,
           typeId: ApplicationTypes.PARENTAL_LEAVE,
-          status: ApplicationStatus.IN_PROGRESS,
+          status: ApplicationStatus.DRAFT,
         }),
       ]),
     )

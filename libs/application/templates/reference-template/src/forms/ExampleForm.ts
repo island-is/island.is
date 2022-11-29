@@ -24,7 +24,7 @@ import { m } from '../lib/messages'
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   title: 'Atvinnuleysisbætur',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'conditions',

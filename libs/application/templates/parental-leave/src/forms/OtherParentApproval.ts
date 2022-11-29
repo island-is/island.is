@@ -21,7 +21,7 @@ export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
   title: otherParentApprovalFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'review',
