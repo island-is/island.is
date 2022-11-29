@@ -16,7 +16,7 @@ import {
   employerFormMessages,
   otherParentApprovalFormMessages,
 } from '../lib/messages'
-import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
+import addDays from 'date-fns/addDays'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
 export const EmployerApproval: Form = buildForm({
@@ -75,10 +75,18 @@ export const EmployerApproval: Form = buildForm({
                   titleVariant: 'h4',
                   description:
                     otherParentApprovalFormMessages.startDateInThePast,
-                  condition: (answers) =>
-                    new Date(
+                  condition: (answers) => {
+                    const today = new Date()
+                    const lastDateOfLastMonth = addDays(
+                      today,
+                      today.getDate() * -1,
+                    )
+                    const startDateTime = new Date(
                       getApplicationAnswers(answers).periods[0].startDate,
-                    ).getTime() < currentDateStartTime(),
+                    ).getTime()
+
+                    return startDateTime < lastDateOfLastMonth.getTime()
+                  },
                 }),
                 buildSubmitField({
                   id: 'submit',

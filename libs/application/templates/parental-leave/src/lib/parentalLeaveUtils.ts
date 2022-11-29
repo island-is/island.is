@@ -996,7 +996,6 @@ export const getLastValidPeriodEndDate = (
 
 export const getMinimumStartDate = (application: Application): Date => {
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
 
   const today = new Date()
@@ -1005,25 +1004,15 @@ export const getMinimumStartDate = (application: Application): Date => {
   } else if (expectedDateOfBirth) {
     const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
     const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
-
-    if (expectedDateOfBirthDate.getTime() > today.getTime()) {
-      const leastStartDate = addMonths(
-        expectedDateOfBirthDate,
-        -minimumPeriodStartBeforeExpectedDateOfBirth,
-      )
-      if (leastStartDate.getTime() < today.getTime()) {
-        return beginningOfMonth
-      }
-
+    const leastStartDate = addMonths(
+      expectedDateOfBirthDate,
+      -minimumPeriodStartBeforeExpectedDateOfBirth,
+    )
+    if (leastStartDate.getTime() >= beginningOfMonth.getTime()) {
       return leastStartDate
     }
 
-    if (
-      expectedDateOfBirthDate.getMonth() === today.getMonth() &&
-      expectedDateOfBirthDate.getFullYear() === today.getFullYear()
-    ) {
-      return beginningOfMonth
-    }
+    return beginningOfMonth
   }
 
   return today

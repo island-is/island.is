@@ -20,6 +20,7 @@ import {
   PARENTAL_GRANT_STUDENTS,
   StartDateOptions,
 } from '../../constants'
+import { addDays } from 'date-fns'
 
 type ValidAnswers = StartDateOptions | undefined
 
@@ -36,6 +37,16 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   )
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
+
+  let isDisable = true
+  if (expectedDateOfBirth) {
+    const expectedDateTime = new Date(expectedDateOfBirth).getTime()
+    const today = new Date()
+    const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+    isDisable =
+      expectedDateTime < today.getTime() &&
+      expectedDateTime < beginningOfMonth.getTime()
+  }
 
   const [statefulAnswer, setStatefulAnswer] = useState<
     ValidAnswers | undefined
@@ -91,18 +102,14 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                   .estimatedDateOfBirthOption,
               ),
               value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-              disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth).getTime() < new Date().getTime()
-                : false,
+              disabled: isDisable,
             },
             {
               label: formatMessage(
                 parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
               ),
               value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
-              disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth).getTime() < new Date().getTime()
-                : false,
+              disabled: isDisable,
             },
             {
               label: formatMessage(

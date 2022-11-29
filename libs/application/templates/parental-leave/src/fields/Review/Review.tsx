@@ -68,7 +68,7 @@ import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
-import { currentDateStartTime } from '../../lib/parentalLeaveTemplateUtils'
+import addDays from 'date-fns/addDays'
 
 interface ReviewScreenProps {
   application: Application
@@ -216,6 +216,8 @@ export const Review: FC<ReviewScreenProps> = ({
   }
 
   const periods = formatPeriods(application, formatMessage)
+  const today = new Date()
+  const lastDateOfLastMonth = addDays(today, today.getDate() * -1)
 
   return (
     <>
@@ -984,7 +986,8 @@ export const Review: FC<ReviewScreenProps> = ({
       >
         <SummaryTimeline application={application} />
         {(!applicationFundId || applicationFundId === '') &&
-          new Date(periods[0].startDate).getTime() < currentDateStartTime() && (
+          new Date(periods[0].startDate).getTime() <
+            lastDateOfLastMonth.getTime() && (
             <p
               style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}
             >
