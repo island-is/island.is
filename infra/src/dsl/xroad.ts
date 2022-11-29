@@ -73,7 +73,7 @@ export const JudicialSystem = new XroadConf({
       prod: '5309672079',
     },
     XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
-    XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
+    XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
   },
   secrets: {
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
@@ -180,19 +180,12 @@ export const Finance = new XroadConf({
 
 export const Properties = new XroadConf({
   env: {
-    XROAD_PROPERTIES_SERVICE_PATH: {
-      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Fasteignir-v1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Fasteignir-v1',
-      prod: 'IS/GOV/6503760649/SKRA-Protected/Fasteignir-v1',
-    },
     XROAD_PROPERTIES_SERVICE_V2_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1',
       prod:
         'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
     },
-    // Deprecated:
-    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1',
   },
   secrets: {
     XROAD_PROPERTIES_CLIENT_SECRET:

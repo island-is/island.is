@@ -143,7 +143,8 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "yarn dev-services application-system-api",
+          "yarn get-secrets application-system-api",
+          "yarn nx run application-system-api:dev-services",
           "yarn nx run application-system-api:migrate",
           "yarn nx schemas/build-openapi application-system-api",
           "yarn nx schemas/openapi-generator api-domains-application",
@@ -157,10 +158,9 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "yarn start api",
-          "yarn dev services-user-profile",
+          "yarn nx run api:dev",
+          "yarn nx run services-user-profile:dev",
           "yarn start application-system-api",
-          "yarn start application-system-form",
           "scripts/run-soffia-proxy.sh",
           "scripts/run-xroad-proxy.sh"
         ],

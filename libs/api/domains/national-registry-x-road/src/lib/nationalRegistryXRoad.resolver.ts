@@ -1,5 +1,12 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  ResolveField,
+  Parent,
+  Context,
+  Args,
+} from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -15,6 +22,8 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
+import { ChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
+import { ChildGuardianshipInput } from '../dto/nationalRegistryChildGuardianshipInput'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 
@@ -37,6 +46,21 @@ export class NationalRegistryXRoadResolver {
   ): Promise<NationalRegistryPerson | null> {
     return this.nationalRegistryXRoadService.getNationalRegistryPerson(
       user.nationalId,
+    )
+  }
+
+  @Query(() => ChildGuardianship, {
+    name: 'nationalRegistryUserV2ChildGuardianship',
+    nullable: true,
+  })
+  @Audit()
+  async childGuardianship(
+    @Context('req') { user }: { user: User },
+    @Args('input') input: ChildGuardianshipInput,
+  ): Promise<ChildGuardianship | null> {
+    return this.nationalRegistryXRoadService.getChildGuardianship(
+      user,
+      input.childNationalId,
     )
   }
 

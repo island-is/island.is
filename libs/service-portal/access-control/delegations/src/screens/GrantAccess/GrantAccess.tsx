@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
-import { sharedMessages } from '@island.is/shared/translations'
 
 import {
   Box,
@@ -35,7 +34,7 @@ import {
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,
 } from '@island.is/service-portal/graphql'
-import { useDomains } from '../../hooks/useDomains'
+import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants/domain'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
@@ -45,7 +44,12 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const history = useHistory()
   const { md } = useBreakpoint()
-  const { options, selectedOption, loading: domainLoading } = useDomains(false)
+  const {
+    options,
+    selectedOption,
+    loading: domainLoading,
+    updateDomain,
+  } = useDomains(false)
 
   const [
     createAuthDelegation,
@@ -72,27 +76,21 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const { identity } = data || {}
 
-  const defaultValues = useMemo(
-    () => ({
-      toNationalId: '',
-      domainName: selectedOption?.value ?? null,
-    }),
-    [selectedOption?.value],
-  )
-
   const methods = useForm({
     mode: 'onChange',
-    defaultValues,
+    defaultValues: {
+      toNationalId: '',
+      domainName: selectedOption?.value ?? null,
+    },
   })
+  const { handleSubmit, control, errors, watch, reset } = methods
 
   useEffect(() => {
-    methods.reset(defaultValues)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption?.value, defaultValues])
+    reset({ domainName: selectedOption?.value ?? null })
+  }, [selectedOption?.value, reset])
 
-  const { handleSubmit, control, errors, watch, reset } = methods
   const watchToNationalId = watch('toNationalId')
-  const domainmNameWatcher = watch('domainName')
+  const domainNameWatcher = watch('domainName')
   const loading = queryLoading || mutationLoading
 
   const requestDelegation = (
@@ -174,8 +172,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
               <IdentityCard
                 label={formatMessage({
-                  id: 'sp.access-control-delegations:signed-in-user',
-                  defaultMessage: 'Innskráður notandi',
+                  id: 'sp.access-control-delegations:delegation-to',
+                  defaultMessage: 'Aðgangsveitandi',
                 })}
                 title={userInfo.profile.name}
                 description={formatNationalId(userInfo.profile.nationalId)}
@@ -273,6 +271,13 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     })}
                     error={errors.domainName?.message}
                     options={options}
+                    onSelect={(option) => {
+                      const opt = option as DomainOption
+
+                      if (opt) {
+                        updateDomain(opt)
+                      }
+                    }}
                     rules={{
                       required: {
                         value: true,
@@ -297,11 +302,12 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
               </Text>
               <Box marginBottom={7}>
                 <DelegationsFormFooter
-                  disabled={!name || !domainmNameWatcher}
+                  disabled={!name || !domainNameWatcher}
                   loading={mutationLoading}
                   onCancel={() =>
                     history.push(ServicePortalPath.AccessControlDelegations)
                   }
+                  showShadow={false}
                   confirmLabel={formatMessage({
                     id: 'sp.access-control-delegations:choose-access-rights',
                     defaultMessage: 'Velja réttindi',

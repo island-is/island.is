@@ -1,6 +1,6 @@
 import React from 'react'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { Box, InputError, Text } from '@island.is/island-ui/core'
+import { AlertBanner, Box, InputError, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
@@ -20,8 +20,8 @@ export const ElectionStatement = ({
   const { formatMessage } = useLocale()
   const { errors } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
-
-  const [submitApplication] = useSubmitApplication({
+  const email = getValueViaPath(answers, 'about.email')
+  const [submitApplication, { loading }] = useSubmitApplication({
     application,
     refetch,
     event: DefaultEvents.SUBMIT,
@@ -49,7 +49,7 @@ export const ElectionStatement = ({
           ${formatMessage(m.nationalId)}: ${formatNationalId(
             answers.about.nationalId,
           )}, ${formatMessage(m.participated)} 
-          ${answers.election.electionName}`}
+          ${answers.election.genitiveName}`}
         </Text>
       </Box>
       <Box paddingY={2}>
@@ -60,10 +60,18 @@ export const ElectionStatement = ({
       <Box paddingY={2}>
         <Text>{formatMessage(m.electionStatementLaw)}</Text>
       </Box>
+      <Box paddingY={2}>
+        <AlertBanner
+          title={`${formatMessage(m.SignatureTitle)}`}
+          description={`${formatMessage(m.SignatureMessage)} ${email}`}
+          variant="info"
+        />
+      </Box>
       {errors && getErrorViaPath(errors, 'applicationApprove') ? (
         <InputError errorMessage={formatMessage(m.errorApproval)} />
       ) : null}
       <BottomBar
+        loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
       />

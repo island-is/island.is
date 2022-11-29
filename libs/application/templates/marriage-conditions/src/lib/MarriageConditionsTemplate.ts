@@ -171,6 +171,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

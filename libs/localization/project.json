@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/localization"]
     }
   },
-  "tags": []
+  "tags": ["lib:react"]
 }
