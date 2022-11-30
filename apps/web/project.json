@@ -77,7 +77,7 @@
         "command": "graphql-codegen --config apps/web/codegen.yml"
       }
     },
-    "dev/init": {
+    "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
@@ -86,11 +86,11 @@
           "echo '# ATTENTION #'",
           "echo '#############'",
           "echo ''",
-          "echo 'You must manually add these to your .env.secrets file:'",
+          "echo 'You must manually add these to your .env.secrets file (used for e.g. extract-strings):'",
           "echo '  CONTENTFUL_HOST '",
           "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
           "echo ''",
-          "yarn dev/init api"
+          "yarn nx run api:dev-init"
         ],
         "parallel": false
       }
@@ -98,7 +98,11 @@
     "dev": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": ["yarn dev api", "yarn start web"],
+        "commands": [
+          "./scripts/run-es-proxy.sh",
+          "yarn nx run api:dev",
+          "yarn start web"
+        ],
         "parallel": true
       }
     },

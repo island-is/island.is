@@ -5,6 +5,7 @@ import { Locale } from '@island.is/shared/types'
 
 export interface Routes {
   admin: string
+  adminCreateDiscount: string
   auth: string
   error: string
   home: string

@@ -23,19 +23,26 @@ export const Cards: FC<FieldBaseProps & Props> = ({ application, field }) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow marginBottom={3}>
-      {field.props.cards(application).map(({ title, description }, idx) => (
-        <GridColumn span={['12/12', '12/12', '6/12']} key={idx} paddingTop={3}>
-          <ProfileCard
-            heightFull
-            title={title}
-            description={
-              typeof description === 'function'
-                ? description(formatMessage)
-                : description
-            }
-          />
-        </GridColumn>
-      ))}
+      {field.props.cards(application).map(
+        ({ title, description }, idx) =>
+          title && (
+            <GridColumn
+              span={['12/12', '12/12', '6/12']}
+              key={idx}
+              paddingTop={3}
+            >
+              <ProfileCard
+                heightFull
+                title={title}
+                description={
+                  typeof description === 'function'
+                    ? description(formatMessage)
+                    : description
+                }
+              />
+            </GridColumn>
+          ),
+      )}
     </GridRow>
   )
 }
