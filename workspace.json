@@ -220,7 +220,6 @@
     "nova-sms": "libs/nova-sms",
     "plausible": "libs/plausible",
     "portals-admin": "apps/portals/admin",
-    "portals-admin-core": "libs/portals/admin/core",
     "portals-core": "libs/portals/core",
     "portals-shared-modules-delegations": "libs/portals/shared-modules/delegations",
     "react-feature-flags": "libs/react/feature-flags",
