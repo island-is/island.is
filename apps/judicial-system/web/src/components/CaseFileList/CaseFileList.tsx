@@ -1,6 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
+
 import {
   Box,
   StatusColor,
@@ -12,7 +13,12 @@ import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { caseFiles as m } from '@island.is/judicial-system-web/messages'
+import {
+  caseFiles as m,
+  core,
+  errors,
+} from '@island.is/judicial-system-web/messages'
+
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
 import { CaseFile, CaseFileStatus } from '../../utils/hooks/useCourtUpload'
@@ -117,11 +123,11 @@ const CaseFileList: React.FC<Props> = (props) => {
       <AnimatePresence>
         {fileNotFound && (
           <Modal
-            title={formatMessage(m.modal.fileNotFound.title)}
+            title={formatMessage(errors.fileNotFoundModalTitle)}
             text={formatMessage(m.modal.fileNotFound.text)}
             onClose={() => dismissFileNotFound()}
             onPrimaryButtonClick={() => dismissFileNotFound()}
-            primaryButtonText="Loka glugga"
+            primaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>
