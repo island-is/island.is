@@ -1,5 +1,5 @@
 import { MiddlewareContext } from '@nestjs/graphql'
-import { isPropertyOwner, PropertyDetail } from './propertyDetail.model'
+import { notPropertyOwner, PropertyDetail } from './propertyDetail.model'
 
 const MOCK_PROPERTY: PropertyDetail = {
   registeredOwners: {
@@ -22,7 +22,7 @@ describe('Asset Models', () => {
         ...MOCK_PROPERTY,
       }
       const context = { source: property } as MiddlewareContext
-      expect(isPropertyOwner(context)).toBeTruthy()
+      expect(notPropertyOwner(context)).toBeFalsy()
     })
 
     it('Non-owner should not be allowed to access data', async () => {
@@ -31,7 +31,7 @@ describe('Asset Models', () => {
         ...MOCK_PROPERTY,
       }
       const context = { source: property } as MiddlewareContext
-      expect(isPropertyOwner(context)).toBeFalsy()
+      expect(notPropertyOwner(context)).toBeTruthy()
     })
 
     it('User should not be allowed to access property with no owners', async () => {
@@ -40,7 +40,7 @@ describe('Asset Models', () => {
         ...MOCK_PROPERTY_SANS_OWNERS,
       }
       const context = { source: property } as MiddlewareContext
-      expect(isPropertyOwner(context)).toBeFalsy()
+      expect(notPropertyOwner(context)).toBeTruthy()
     })
   })
 })
