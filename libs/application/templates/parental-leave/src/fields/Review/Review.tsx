@@ -42,6 +42,7 @@ import {
   getOtherParentId,
   getOtherParentName,
   formatPeriods,
+  getLastDayOfLastMonth,
 } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
@@ -68,7 +69,6 @@ import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
-import { currentDateStartTime } from '../../lib/parentalLeaveTemplateUtils'
 
 interface ReviewScreenProps {
   application: Application
@@ -984,7 +984,9 @@ export const Review: FC<ReviewScreenProps> = ({
       >
         <SummaryTimeline application={application} />
         {(!applicationFundId || applicationFundId === '') &&
-          new Date(periods[0].startDate).getTime() < currentDateStartTime() && (
+          periods.length > 0 &&
+          new Date(periods[0].startDate).getTime() <
+            getLastDayOfLastMonth().getTime() && (
             <p
               style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}
             >
