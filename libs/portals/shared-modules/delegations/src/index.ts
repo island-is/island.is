@@ -10,7 +10,7 @@ export const delegationsModule: PortalModule = {
   name: 'Aðgangsstýring',
   featureFlag: Features.outgoingDelegationsV2,
   widgets: () => [],
-  routes: ({ userInfo }) => {
+  routes({ userInfo }) {
     const hasAccess = userInfo.scopes.includes(AuthScope.delegations)
     const accessControlCommonFields = {
       name: m.accessControlDelegations,
