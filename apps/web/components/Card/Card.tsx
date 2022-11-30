@@ -40,6 +40,8 @@ export interface CardProps {
   linkProps?: LinkProps
   link?: LinkResolverResponse
   highlightedResults?: boolean
+  subArticles?: Array<string>
+  relatedArticles?: Array<string>
 }
 
 export const Card = ({
@@ -51,6 +53,8 @@ export const Card = ({
   link,
   dataTestId,
   highlightedResults = false,
+  subArticles,
+  relatedArticles
 }: CardProps & TestSupport) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
@@ -135,7 +139,12 @@ export const Card = ({
             </Text>
           ) : (
             <Text>{description}</Text>
+            
           )}
+          <p>subArticles</p>
+          {subArticles}
+          <p>relatedArticles</p>
+          {relatedArticles}
 
           {visibleTags.length > 0 && highlightedResults && (
             <Box paddingTop={3} flexGrow={0} position="relative">
