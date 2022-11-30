@@ -139,7 +139,7 @@
       }
     },
     "docker-express": {},
-    "dev/init": {
+    "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
@@ -149,7 +149,7 @@
           "yarn nx schemas/build-openapi application-system-api",
           "yarn nx schemas/openapi-generator api-domains-application",
           "yarn nx schemas/build-graphql-schema api",
-          "yarn dev/init services-user-profile"
+          "yarn nx run services-user-profile:dev-init"
         ],
         "parallel": false
       }
