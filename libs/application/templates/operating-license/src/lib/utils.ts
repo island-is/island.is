@@ -6,7 +6,7 @@ import {
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 
 type ValidationOperation = {
   operation?: APPLICATION_TYPES
@@ -90,28 +90,16 @@ export const getChargeItemCode = (answers: FormValue) => {
     answers,
     'applicationInfo',
   ) as Operation
-  if (
-    applicationInfo.operation === APPLICATION_TYPES.RESTURANT &&
-    applicationInfo.category
-  ) {
-    if (applicationInfo.category === OPERATION_CATEGORY.TWO) {
-      return 'AY124'
-    } else if (applicationInfo.category === OPERATION_CATEGORY.THREE) {
-      return 'AY125'
-    }
-  } else if (applicationInfo.operation === APPLICATION_TYPES.HOTEL) {
-    if (applicationInfo.category) {
-      if (
-        applicationInfo.category.length > 1 ||
-        applicationInfo.category.includes(OPERATION_CATEGORY.THREE)
-      ) {
-        return 'AY123'
-      } else if (applicationInfo.category.includes(OPERATION_CATEGORY.TWO)) {
-        return 'AY122'
-      }
-    } else {
-      return 'AY121'
-    }
+  const isHotel = applicationInfo.operation === APPLICATION_TYPES.HOTEL
+  switch (applicationInfo.category) {
+    case OPERATION_CATEGORY.TWO:
+      return isHotel ? 'AY121' : 'AY124'
+    case OPERATION_CATEGORY.THREE:
+      return isHotel ? 'AY122' : 'AY125'
+    case OPERATION_CATEGORY.FOUR:
+      return 'AY123'
+    default:
+      break
   }
 }
 

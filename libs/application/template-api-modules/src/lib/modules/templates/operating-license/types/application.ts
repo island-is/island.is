@@ -18,14 +18,10 @@ export enum APPLICATION_TYPES {
 
 export type Operation = {
   operation: APPLICATION_TYPES
-  hotel: {
-    category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
-    type: string
-  }
-  resturant: {
-    category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
-    type: string
-  }
+  category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+  typeHotel?: string
+  typeResturant?: string[]
+  willServe?: string
 }
 
 export enum CATEGORIES {

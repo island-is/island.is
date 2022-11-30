@@ -470,6 +470,16 @@ export const m = defineMessages({
     defaultMessage: 'Tegund reksturs',
     description: 'Some description',
   },
+  typeHotel: {
+    id: 'ol.application:overview.typeHotel',
+    defaultMessage: 'Tegund gististaðar',
+    description: 'Some description',
+  },
+  typeResturant: {
+    id: 'ol.application:overview.typeResturant',
+    defaultMessage: 'Tegund veitingastaðar',
+    description: 'Some description',
+  },
   availableService: {
     id: 'ol.application:overview.availableService',
     defaultMessage: 'Þjónusta í boði:',

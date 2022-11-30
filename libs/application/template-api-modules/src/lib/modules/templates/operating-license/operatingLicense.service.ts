@@ -106,10 +106,12 @@ export class OperatingLicenseService {
         signed: true,
         type: PersonType.CounterParty,
       }))
+      // TODO: ADD criminal record and skuldleysis
 
       const persons: Person[] = [applicant, ...actors]
       const attachments = await this.getAttachments(application)
       const extraData = getExtraData(application)
+      console.log("EXTRA DATA", extraData)
       const result: DataUploadResponse = await this.syslumennService
         .uploadData(
           persons,

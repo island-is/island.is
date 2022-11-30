@@ -132,9 +132,9 @@ export const dataSchema = z.object({
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
   }),
   properties: z.object({
-    stay: Properties,
-    dining: Properties,
-    outside: Properties,
+    stay: Properties.optional(),
+    dining: Properties.optional(),
+    outside: Properties.optional(),
   }),
   openingHours: z
     .object({

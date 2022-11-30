@@ -10,7 +10,6 @@ import { m } from '../../lib/messages'
 import {
   APPLICATION_TYPES,
   Operation,
-  OPERATION_CATEGORY,
   OpeningHours,
   YES,
 } from '../../lib/constants'
@@ -41,7 +40,7 @@ export const sectionOverview = buildMultiField({
       label: m.operationType,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).operation ===
+        (application.answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.HOTEL
           ? m.operationHotel
           : m.operationResturant,
@@ -49,33 +48,20 @@ export const sectionOverview = buildMultiField({
     buildKeyValueField({
       label: 'Flokkur',
       width: 'half',
-      value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).category ===
-        OPERATION_CATEGORY.TWO
-          ? m.operationCategoryTwo
-          : m.operationCategoryThree,
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.RESTURANT,
+      value: ({ answers }: Application) =>
+        `Flokkur ${
+          (answers.applicationInfo as Operation)?.category === '2'
+            ? 'II'
+            : (answers.applicationInfo as Operation)?.category === '3'
+            ? 'III'
+            : 'IV'
+        }`,
     }),
     buildDescriptionField({
       id: 'overview.space0',
       title: '',
       description: '',
       space: 'gutter',
-    }),
-    buildKeyValueField({
-      label: m.operationTypeResturantDescription,
-      width: 'half',
-      value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).operation ===
-        APPLICATION_TYPES.HOTEL
-          ? (application.answers
-              .applicationInfo as Operation).typeHotel?.substring(2)
-          : (application.answers
-              .applicationInfo as Operation).typeResturant?.map((type) =>
-              type.substring(2),
-            ),
     }),
     buildKeyValueField({
       label: m.openingHoursOutside,
@@ -86,40 +72,31 @@ export const sectionOverview = buildMultiField({
           ? 'Já'
           : 'Nei',
     }),
+    buildKeyValueField({
+      label: m.typeHotel,
+      width: 'half',
+      value: (application: Application) =>
+        (application.answers
+          .applicationInfo as Operation)?.typeHotel?.substring(2),
+
+      condition: (answers) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.HOTEL,
+    }),
+    buildKeyValueField({
+      label: m.typeResturant,
+      width: 'half',
+      value: (application: Application) =>
+        (application.answers
+          .applicationInfo as Operation)?.typeResturant?.map((type) =>
+          type.substring(2),
+        ),
+      condition: (answers) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.RESTURANT,
+    }),
     buildDescriptionField({
       id: 'overview.space1',
-      title: '',
-      description: '',
-      space: 'gutter',
-    }),
-    buildKeyValueField({
-      label: m.operationCategoryTwo,
-      width: 'half',
-      value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).category?.includes(
-          OPERATION_CATEGORY.TWO,
-        )
-          ? m.yes
-          : m.no,
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
-    }),
-    buildKeyValueField({
-      label: m.operationCategoryHotelTwo,
-      width: 'half',
-      value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).category?.includes(
-          OPERATION_CATEGORY.THREE,
-        )
-          ? m.yes
-          : m.no,
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
-    }),
-    buildDescriptionField({
-      id: 'overview.space1.2',
       title: '',
       description: '',
       space: 'gutter',
