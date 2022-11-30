@@ -40,7 +40,7 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'ParentalLeavePrerequisites',
   title: parentalLeaveFormMessages.shared.formTitle,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'prerequisites',
