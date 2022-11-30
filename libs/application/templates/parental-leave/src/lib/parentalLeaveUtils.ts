@@ -553,6 +553,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const multipleBirths = getValueViaPath(
     answers,
     'multipleBirths.multipleBirths',
+    1,
   ) as number
 
   const multipleBirthsRequestDaysValue = getValueViaPath(
