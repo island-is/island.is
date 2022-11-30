@@ -10,6 +10,7 @@ import { DelegationsOutgoing } from '../components/delegations/outgoing/Delegati
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { m } from '../lib/messages'
 import { DelegationPaths } from '../lib/paths'
+import { usePortalMeta } from '@island.is/portals/core'
 
 const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
 const TAB_DELEGATION_INCOMING_ID = 'incoming'
@@ -25,10 +26,8 @@ const AccessControl = () => {
   const { userInfo } = useAuth()
   const history = useHistory()
   const location = useLocation()
-  const firstPath = location?.pathname?.split('/')[1]
-  const DELEGATIONS_INCOMING_PATH = `/${firstPath ?? ''}${
-    DelegationPaths.DelegationsIncoming
-  }`
+  const { basePath } = usePortalMeta()
+  const DELEGATIONS_INCOMING_PATH = `${basePath}${DelegationPaths.DelegationsIncoming}`
   const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
 
   const tabChangeHandler = (id: string) => {
