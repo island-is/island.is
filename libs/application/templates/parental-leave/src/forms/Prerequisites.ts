@@ -265,7 +265,7 @@ export const PrerequisitesForm: Form = buildForm({
           title: parentalLeaveFormMessages.shared.applicationTypeTitle,
           children: [
             buildMultiField({
-              id: 'applicationType.option',
+              id: 'applicationTypes',
               title: parentalLeaveFormMessages.shared.applicationTypeTitle,
               description:
                 parentalLeaveFormMessages.shared
