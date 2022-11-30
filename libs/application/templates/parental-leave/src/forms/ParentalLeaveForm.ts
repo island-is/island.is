@@ -20,13 +20,11 @@ import { Application, Form, FormModes } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  getExpectedDateOfBirth,
   getAllPeriodDates,
   getSelectedChild,
   requiresOtherParentApproval,
   getApplicationAnswers,
   allowOtherParent,
-  getLastValidPeriodEndDate,
   removeCountryCode,
   getApplicationExternalData,
   getMaxMultipleBirthsDays,
@@ -63,16 +61,12 @@ import {
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
-import {
-  minimumPeriodStartBeforeExpectedDateOfBirth,
-  minPeriodDays,
-} from '../config'
+import { minPeriodDays } from '../config'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { YesOrNo } from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({

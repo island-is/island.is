@@ -69,7 +69,6 @@ import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
-import addDays from 'date-fns/addDays'
 
 interface ReviewScreenProps {
   application: Application
