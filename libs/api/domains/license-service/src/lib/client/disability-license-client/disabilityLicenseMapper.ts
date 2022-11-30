@@ -32,7 +32,7 @@ export const parseDisabilityLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: label ? label['validTo'] : i18n.validTo[locale],
-      value: license.gildirTil?.toISOString() ?? '',
+      value: license.gildirtil?.toISOString() ?? '',
     },
   ]
 
@@ -41,8 +41,8 @@ export const parseDisabilityLicensePayload = (
     rawData: JSON.stringify(license),
     metadata: {
       licenseNumber: license.kennitala?.toString() ?? '',
-      expired: license.gildirTil
-        ? !isAfter(new Date(license.gildirTil), new Date())
+      expired: license.gildirtil
+        ? !isAfter(new Date(license.gildirtil), new Date())
         : null,
     },
   }
@@ -67,8 +67,8 @@ export const createPkPassDataInput = (license: OrorkuSkirteini) => {
       value: license.kennitala ?? '',
     },
     {
-      identifier: 'gildirTil',
-      value: license.gildirTil ? formatDateString(license.gildirTil) : '',
+      identifier: 'gildir',
+      value: license.gildirtil ? formatDateString(license.gildirtil) : '',
     },
   ]
 }

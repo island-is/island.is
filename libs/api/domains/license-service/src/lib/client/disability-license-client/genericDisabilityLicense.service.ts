@@ -91,11 +91,11 @@ export class GenericDisabilityLicenseService
   static licenseIsValidForPkpass(
     licenseInfo: OrorkuSkirteini | null | undefined,
   ): GenericUserLicensePkPassStatus {
-    if (!licenseInfo || !licenseInfo.gildirTil) {
+    if (!licenseInfo || !licenseInfo.gildirtil) {
       return GenericUserLicensePkPassStatus.Unknown
     }
 
-    const expired = new Date(licenseInfo.gildirTil)
+    const expired = new Date(licenseInfo.gildirtil)
     const comparison = compareAsc(expired, new Date())
 
     if (isNaN(comparison) || comparison < 0) {
@@ -124,6 +124,7 @@ export class GenericDisabilityLicenseService
     //Fetch template from api?
     return {
       inputFieldValues: inputValues,
+      expirationDate: license.rennurut?.toISOString(),
     }
   }
 
