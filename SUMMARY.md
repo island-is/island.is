@@ -229,7 +229,6 @@
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
 - [Portals](libs/portals/README.md)
-    - [Admin Core](libs/portals/admin/core/README.md)
   - [Core](libs/portals/core/README.md)
 - [React Libraries](libs/react/README.md)
   - [Feature Flags](libs/react/feature-flags/README.md)
