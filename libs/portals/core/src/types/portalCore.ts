@@ -179,6 +179,9 @@ export interface PortalModule {
    * when the attribute "subjectType" is "legalEntity" and `true` otherwise.
    */
   featureFlag?: Features
-}
 
-export type Modules<Keys extends string> = Record<Keys, PortalModule>
+  /**
+   * Indicates if module is enabled or not
+   */
+  enabled?: (props: { userInfo: User; isCompany: boolean }) => boolean
+}

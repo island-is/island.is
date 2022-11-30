@@ -4,28 +4,25 @@ import type { User } from '@island.is/shared/types'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
 import type { PortalModule, PortalRoute } from '../types/portalCore'
 
-interface FilterEnabledModulesArgs<ModulesKeys extends string> {
-  modules: Record<ModulesKeys, PortalModule>
+interface FilterEnabledModulesArgs {
+  modules: PortalModule[]
   featureFlagClient: FeatureFlagClient
-  companyModules?: ModulesKeys[]
   userInfo: User | null
 }
 
-export const filterEnabledModules = async <ModulesKeys extends string>({
+export const filterEnabledModules = async ({
   modules,
-  companyModules,
   featureFlagClient,
   userInfo,
-}: FilterEnabledModulesArgs<ModulesKeys>) => {
-  const filteredModules = {} as Record<ModulesKeys, PortalModule>
+}: FilterEnabledModulesArgs) => {
+  const filteredModules: PortalModule[] = []
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
-  const moduleEntries = Object.entries(modules) as [ModulesKeys, PortalModule][]
 
-  for (const [moduleKey, module] of moduleEntries) {
+  for (const module of modules) {
     let enabled = true
 
-    if (isCompany && !companyModules?.includes(moduleKey)) {
-      enabled = false
+    if (module?.enabled && userInfo) {
+      enabled = module.enabled({ userInfo, isCompany })
     }
 
     if (enabled && module.featureFlag) {
@@ -35,7 +32,7 @@ export const filterEnabledModules = async <ModulesKeys extends string>({
     }
 
     if (enabled) {
-      filteredModules[moduleKey] = module
+      filteredModules.push(module)
     }
   }
 
@@ -56,20 +53,19 @@ export const arrangeRoutes = async ({
   featureFlagClient,
 }: ArrangeRoutesArgs) => {
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
-  const routes = await Promise.all(
-    Object.values(modules).map((module) => {
-      const routesObject =
-        module.companyRoutes && IS_COMPANY
-          ? module.companyRoutes
-          : module.routes
-      return routesObject({
-        userInfo,
-        client: apolloClient,
-      })
-    }),
-  )
+  const portalRoutes = modules.map((module) => {
+    const routesObject =
+      module.companyRoutes && IS_COMPANY ? module.companyRoutes : module.routes
 
+    return routesObject({
+      userInfo,
+      client: apolloClient,
+    })
+  })
+
+  const routes = await Promise.all(portalRoutes)
   const flatRoutes = flatten(routes)
+
   const mappedRoutes = await Promise.all(
     flatRoutes.map(async (route) => {
       if (route.key) {

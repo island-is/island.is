@@ -7,8 +7,5 @@ import { PortalModule } from '@island.is/portals/core'
  * or if they are ready for beta testing. Modules that are ready
  * for beta testing should be feature flagged.
  */
-export type ModuleKeys = 'delegations'
 
-export const modules: Record<ModuleKeys, PortalModule> = {
-  delegations: delegationsModule,
-}
+export const modules: PortalModule[] = [delegationsModule]

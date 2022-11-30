@@ -8,7 +8,7 @@ import { defaultLanguage } from '@island.is/shared/constants'
 import { Authenticator } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import { UserProfileLocale } from '@island.is/shared/components'
-import { ModulesProvider } from '../contexts/ModulesContext'
+import { ModulesProvider } from '@island.is/portals/core'
 import { modules } from '../lib/modules'
 import environment from '../environments/environment'
 import Layout from '../components/Layout/Layout'
@@ -36,5 +36,3 @@ export const App = () => {
     </ApolloProvider>
   )
 }
-
-export default App
