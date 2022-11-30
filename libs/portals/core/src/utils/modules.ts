@@ -7,7 +7,7 @@ import type { PortalModule, PortalRoute } from '../types/portalCore'
 interface FilterEnabledModulesArgs {
   modules: PortalModule[]
   featureFlagClient: FeatureFlagClient
-  userInfo: User | null
+  userInfo: User
 }
 
 export const filterEnabledModules = async ({
@@ -16,12 +16,12 @@ export const filterEnabledModules = async ({
   userInfo,
 }: FilterEnabledModulesArgs) => {
   const filteredModules: PortalModule[] = []
-  const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
+  const isCompany = userInfo.profile?.subjectType === 'legalEntity'
 
   for (const module of modules) {
     let enabled = true
 
-    if (module?.enabled && userInfo) {
+    if (module?.enabled) {
       enabled = module.enabled({ userInfo, isCompany })
     }
 

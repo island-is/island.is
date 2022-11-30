@@ -19,7 +19,7 @@ export const App = () => {
     <ApolloProvider client={client}>
       <LocaleProvider locale={defaultLanguage} messages={{}}>
         <ApplicationErrorBoundary imgSrc="./assets/images/hourglass.svg">
-          <Router basename={AdminPortalPaths.Dashboard}>
+          <Router basename={AdminPortalPaths.Base}>
             <Authenticator>
               <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
                 <ModulesProvider modules={modules}>

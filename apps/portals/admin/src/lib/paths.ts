@@ -1,4 +1,4 @@
 export enum AdminPortalPaths {
-  Dashboard = '/stjornbord',
+  Base = '/stjornbord',
   Root = '/',
 }
