@@ -12,7 +12,7 @@ export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: '',
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'externalData',

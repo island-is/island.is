@@ -36,9 +36,6 @@ export class CurrentVehiclesProvider extends BasicDataProvider {
 
       return Promise.resolve(result)
     })
-    // .catch((error) => {
-    //   return Promise.reject(error)
-    // })
   }
 
   handleError(error: Error) {

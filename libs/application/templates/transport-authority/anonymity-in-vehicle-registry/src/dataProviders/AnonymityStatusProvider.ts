@@ -22,9 +22,6 @@ export class AnonymityStatusProvider extends BasicDataProvider {
         return Promise.resolve(response?.data?.getAnonymityStatus)
       },
     )
-    // .catch((error) => {
-    //   return Promise.reject(error)
-    // })
   }
 
   handleError(error: Error) {

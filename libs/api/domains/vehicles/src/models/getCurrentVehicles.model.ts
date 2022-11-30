@@ -19,13 +19,13 @@ export class VehiclesCurrentVehicle {
 }
 
 @ObjectType()
-export class VehiclesCurrentVehicleWithFees extends VehiclesCurrentVehicle {
+export class VehiclesCurrentVehicleWithDebtStatus extends VehiclesCurrentVehicle {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 }
 
 @ObjectType()
-export class VehicleFeesByPermno {
+export class VehicleDebtStatusByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 }

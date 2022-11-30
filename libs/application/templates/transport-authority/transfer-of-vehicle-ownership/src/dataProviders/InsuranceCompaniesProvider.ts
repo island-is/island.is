@@ -24,9 +24,6 @@ export class InsuranceCompaniesProvider extends BasicDataProvider {
         )
       },
     )
-    // .catch((error) => {
-    //   return Promise.reject(error)
-    // })
   }
 
   handleError(error: Error) {

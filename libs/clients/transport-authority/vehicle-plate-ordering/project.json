@@ -1,0 +1,46 @@
+{
+  "root": "libs/clients/transport-authority/vehicle-plate-ordering",
+  "sourceRoot": "libs/clients/transport-authority/vehicle-plate-ordering/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/transport-authority/vehicle-plate-ordering/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/transport-authority/vehicle-plate-ordering"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/transport-authority/vehicle-plate-ordering/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Vehicle-PlateOrdering-V1 -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/transport-authority/vehicle-plate-ordering"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/transport-authority/vehicle-plate-ordering/gen/fetch -i libs/clients/transport-authority/vehicle-plate-ordering/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

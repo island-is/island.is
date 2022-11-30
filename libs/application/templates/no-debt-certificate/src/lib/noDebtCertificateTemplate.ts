@@ -47,6 +47,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um skuldleysisvottorð',
+          status: 'draft',
           actionCard: {
             tag: {
               label: m.actionCardDraft,
@@ -80,6 +81,7 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
@@ -99,7 +101,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

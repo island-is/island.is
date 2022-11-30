@@ -18,7 +18,7 @@ type CreateChargeData = {
 export const Payment: Form = buildForm({
   id: 'PaymentForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: false,
   renderLastScreenBackButton: false,
   children: [
@@ -99,7 +99,7 @@ export const Payment: Form = buildForm({
           id: 'subSectionPaymentPending',
           component: 'PaymentPending',
           title: conclusion.general.title,
-          condition: (_, externalData) => {
+          condition: (_) => {
             return !!window.document.location.href.match(/\?done$/)
           },
         }),

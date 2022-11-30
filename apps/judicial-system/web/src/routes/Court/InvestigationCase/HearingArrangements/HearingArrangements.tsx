@@ -13,6 +13,7 @@ import {
   Modal,
   PageLayout,
   useCourtArrangements,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   NotificationType,
@@ -23,7 +24,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,

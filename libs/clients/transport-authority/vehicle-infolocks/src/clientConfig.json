@@ -1,0 +1,769 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SGS Rest API",
+    "description": "Vehicle infolocks API, developed in .Net6.0",
+    "contact": {
+      "name": "Samgöngustofa",
+      "email": "tolvuhjalp@samgongustofa.is"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "/vehicle/infolocks"
+    }
+  ],
+  "paths": {
+    "/authenticate": {
+      "post": {
+        "tags": ["Authentication"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{persidno}": {
+      "get": {
+        "tags": ["InfoLock"],
+        "parameters": [
+          {
+            "name": "persidno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{persidno}/lock/{infolocktype}": {
+      "get": {
+        "tags": ["InfoLock"],
+        "operationId": "GetInfoLock",
+        "parameters": [
+          {
+            "name": "persidno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "infolocktype",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "tags": ["InfoLock"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["InfoLock"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthenticateModel": {
+        "required": ["password", "username"],
+        "type": "object",
+        "properties": {
+          "username": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InfoLockDto": {
+        "type": "object",
+        "properties": {
+          "persidNo": {
+            "type": "string",
+            "description": "Social security number of person that has lock",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of person that has lock",
+            "nullable": true
+          },
+          "infoLockType": {
+            "type": "string",
+            "description": "Info lock code",
+            "nullable": true
+          },
+          "infoLockName": {
+            "type": "string",
+            "description": "Info lock name",
+            "nullable": true
+          },
+          "invalidDate": {
+            "type": "string",
+            "description": "When is lock invalid",
+            "format": "date-time",
+            "nullable": true
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Explanation of lock",
+            "nullable": true
+          },
+          "isValid": {
+            "type": "boolean",
+            "description": "Indicates if the lock is valid or not"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto for info lock"
+      },
+      "PostInfoLockModel": {
+        "required": ["infoLockType", "persidno"],
+        "type": "object",
+        "properties": {
+          "persidno": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Users social security number"
+          },
+          "infoLockType": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Lock type\r\nAllowed value: 1 (Anonymity) , 2 (Owner registration forbidden)"
+          },
+          "invalidDate": {
+            "type": "string",
+            "description": "When is lock invalid",
+            "format": "date-time",
+            "nullable": true
+          },
+          "explanation": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "Explanation of lock",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity to insert update lock"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PutInfoLockModel": {
+        "required": ["infoLockType", "persidno"],
+        "type": "object",
+        "properties": {
+          "persidno": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Users social security number"
+          },
+          "infoLockType": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Lock type\r\nAllowed value: 1 (Anonymity) , 2 (Owner registration forbidden)"
+          },
+          "invalidDate": {
+            "type": "string",
+            "description": "When is lock invalid",
+            "format": "date-time",
+            "nullable": true
+          },
+          "explanation": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "Explanation of lock",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity to update locks"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "jwtToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme.",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

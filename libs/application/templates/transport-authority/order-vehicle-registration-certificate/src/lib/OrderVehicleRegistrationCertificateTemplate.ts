@@ -37,6 +37,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Panta skráningarskírteini',
+          status: 'draft',
           actionCard: {
             tag: {
               label: application.actionCardDraft,
@@ -75,6 +76,7 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Greiðsla',
+          status: 'inprogress',
           actionCard: {
             tag: {
               label: application.actionCardPayment,
@@ -110,6 +112,7 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
@@ -129,7 +132,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

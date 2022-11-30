@@ -14,7 +14,7 @@ import { informationSection } from './InformationSection'
 export const ChangeOperatorOfVehicleForm: Form = buildForm({
   id: 'ChangeOperatorOfVehicleFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     externalDataSection,
     informationSection,

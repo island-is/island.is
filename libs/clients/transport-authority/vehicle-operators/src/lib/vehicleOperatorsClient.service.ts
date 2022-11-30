@@ -33,24 +33,20 @@ export class VehicleOperatorsClient {
     auth: User,
     permno: string,
     operators: Operator[],
-  ): Promise<ReturnTypeMessage[] | null> {
-    //TODOx waiting for new endpoint without contract
-    throw Error('Not implemented')
-    return null
-    // const result = await this.operatorsApiWithAuth(auth).post({
-    //   json: {
-    //     permno: permno,
-    //     reportingPersonIdNumber: auth.nationalId,
-    //     operators: operators.map((operator) => ({
-    //       personIdNumber: operator.ssn || '',
-    //       // startDate: operator.startDate || new Date(),
-    //       // endDate: operator.endDate || null,
-    //       mainOperator: operator.isMainOperator ? 1 : 0,
-    //     })),
-    //     contract: new Blob(),
-    //   },
-    // })
-
-    // return result
+  ): Promise<void> {
+    await this.operatorsApiWithAuth(auth).withoutcontractPost({
+      apiVersion: '2.0',
+      apiVersion2: '2.0',
+      postOperatorsWithoutContractModel: {
+        permno: permno,
+        reportingPersonIdNumber: auth.nationalId,
+        operators: operators.map((operator) => ({
+          personIdNumber: operator.ssn || '',
+          startDate: operator.startDate || new Date(),
+          endDate: operator.endDate || null,
+          mainOperator: operator.isMainOperator ? 1 : 0,
+        })),
+      },
+    })
   }
 }

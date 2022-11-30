@@ -74,6 +74,7 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
         ) {
           return true
         }
+        return false
       })
       if (notValid) {
         setGenericErrorMessage(undefined)

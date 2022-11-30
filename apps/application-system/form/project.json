@@ -77,12 +77,12 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
       }
     },
-    "dev/init": {
+    "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
           "yarn get-secrets application-system-form",
-          "yarn dev/init application-system-api"
+          "yarn nx run application-system-api:dev-init"
         ],
         "parallel": false
       }
@@ -91,7 +91,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "yarn dev application-system-api",
+          "yarn nx run application-system-api:dev",
           "yarn start application-system-form"
         ],
         "parallel": true

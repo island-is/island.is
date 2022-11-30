@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
 
 @Injectable()
-export class OrderVehicleLicensePlateService {
+export class OrderVehicleRegistrationCertificateService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly orderVehicleRegistrationCertificateApi: OrderVehicleRegistrationCertificateApi,

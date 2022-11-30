@@ -37,7 +37,10 @@ interface Props {
   authenticated?: boolean
 }
 
-const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
+export const UserProvider: React.FC<Props> = ({
+  children,
+  authenticated = false,
+}) => {
   const [user, setUser] = useState<User>()
 
   const isAuthenticated =
@@ -62,5 +65,3 @@ const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
     </UserContext.Provider>
   )
 }
-
-export default UserProvider

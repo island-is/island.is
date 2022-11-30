@@ -9,7 +9,7 @@ import { information, externalData, payment, review } from '../lib/messages'
 export const ReviewForm: Form = buildForm({
   id: 'ReviewForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'externalData',

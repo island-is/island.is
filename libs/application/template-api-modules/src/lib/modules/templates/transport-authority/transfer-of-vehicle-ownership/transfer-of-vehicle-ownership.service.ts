@@ -23,17 +23,12 @@ import {
   getRecipients,
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
-import {
-  ChargeFjsV2ClientService,
-  getChargeId,
-} from '@island.is/clients/charge-fjs-v2'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly transferOfVehicleOwnershipApi: TransferOfVehicleOwnershipApi,
-    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
   ) {}
 
   async createCharge({
@@ -229,7 +224,7 @@ export class TransferOfVehicleOwnershipService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Revert charge so that the seller gets reimburshed
-    this.revertCharge({ application, auth })
+    // Note: Will be added when FJS api has been updated
 
     // 2. Notify everyone in the process that the application has been withdrawn
 
@@ -264,37 +259,6 @@ export class TransferOfVehicleOwnershipService {
         )
       }
     }
-  }
-
-  private async revertCharge({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const payment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
-      application.id,
-    )
-
-    // No need to revert charge if never existed
-    if (!payment) {
-      return
-    }
-
-    // No need to revert charge if not yet paid
-    if (!payment.fulfilled) {
-      return
-    }
-
-    // Fetch the ID we got from FJS, and make sure it exists
-    const chargeId = getChargeId(application)
-    if (!chargeId) {
-      return
-    }
-
-    // Revert the charge
-    await this.chargeFjsV2ClientService.revertCharge(chargeId)
   }
 
   // After everyone has reviewed (and approved), then submit the application, and notify everyone involved it was a success
@@ -357,7 +321,6 @@ export class TransferOfVehicleOwnershipService {
       // Note: API throws error if timestamp is 00:00:00, so we will use noon
       dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
       saleAmount: Number(answers?.vehicle?.salePrice) || 0,
-      // Note: Insurance code 000 is when car is out of commission and is not going to be insured
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
         ssn: coOwner.nationalId,

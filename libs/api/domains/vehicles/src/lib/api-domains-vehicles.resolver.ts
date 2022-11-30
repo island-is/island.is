@@ -15,9 +15,9 @@ import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
-  VehicleFeesByPermno,
+  VehicleDebtStatusByPermno,
   VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithFees,
+  VehiclesCurrentVehicleWithDebtStatus,
 } from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
@@ -27,7 +27,6 @@ import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { VehicleServiceFjsV1ClientService } from '@island.is/clients/vehicle-service-fjs-v1'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.vehicles)
 @Resolver()
 @Audit({ namespace: '@island.is/api/vehicles' })
 export class VehiclesResolver {
@@ -40,6 +39,7 @@ export class VehiclesResolver {
     private readonly vehicleServiceFjsV1ClientService: VehicleServiceFjsV1ClientService,
   ) {}
 
+  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
   async getVehicleList(@CurrentUser() user: User) {
@@ -53,13 +53,14 @@ export class VehiclesResolver {
     return { ...data, downloadServiceURL }
   }
 
+  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesHistory, { name: 'vehiclesHistoryList', nullable: true })
   @Audit()
   async getVehicleHistory(@CurrentUser() user: User) {
     return await this.vehiclesService.getVehiclesForUser(user, true, true)
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.vehicles, ApiScope.internal)
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(
@@ -76,6 +77,7 @@ export class VehiclesResolver {
     return { ...data, downloadServiceURL }
   }
 
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => Number, {
     name: 'vehiclesSearchLimit',
     nullable: true,
@@ -85,6 +87,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getSearchLimit(user)
   }
 
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehiclesVehicleSearch, {
     name: 'vehiclesSearch',
     nullable: true,
@@ -124,18 +127,18 @@ export class VehiclesResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [VehiclesCurrentVehicleWithFees], {
-    name: 'currentVehiclesWithFees',
+  @Query(() => [VehiclesCurrentVehicleWithDebtStatus], {
+    name: 'currentVehiclesWithDebtStatus',
     nullable: true,
   })
   @Audit()
-  async getCurrentVehiclesWithFees(
+  async getCurrentVehiclesWithDebtStatus(
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
     return await Promise.all(
       (await this.getCurrentVehicles(input, user)).map(
-        async (vehicle: VehiclesCurrentVehicleWithFees) => {
+        async (vehicle: VehiclesCurrentVehicleWithDebtStatus) => {
           const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
             vehicle.permno || '',
           )
@@ -147,12 +150,12 @@ export class VehiclesResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => VehicleFeesByPermno, {
-    name: 'vehicleFeesByPermno',
+  @Query(() => VehicleDebtStatusByPermno, {
+    name: 'vehicleDebtStatusByPermno',
     nullable: true,
   })
   @Audit()
-  async getVehicleFeesByPermno(
+  async getVehicleDebtStatusByPermno(
     @Args('permno', { type: () => String }) permno: string,
   ) {
     const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(

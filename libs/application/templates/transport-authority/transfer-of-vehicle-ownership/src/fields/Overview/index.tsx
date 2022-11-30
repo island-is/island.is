@@ -3,7 +3,7 @@ import { FC, useState } from 'react'
 import { Box, Text, Divider, Button } from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../types'
 import { useLocale } from '@island.is/localization'
-import { error, overview, review } from '../../lib/messages'
+import { overview, review } from '../../lib/messages'
 import {
   VehicleSection,
   SellerSection,

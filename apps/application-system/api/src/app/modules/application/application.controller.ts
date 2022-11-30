@@ -106,7 +106,6 @@ import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
-import { TransferOfVehicleOwnershipStates } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -246,23 +245,22 @@ export class ApplicationController {
       templates[application.typeId] = applicationTemplate
 
       if (
-        (await this.validationService.isTemplateReady(
-          user,
-          applicationTemplate,
-        )) &&
-        this.applicationAccessService.shouldShowApplicationOnOverview(
-          application as BaseApplication,
-          user,
-          applicationTemplate,
-        )
+        await this.validationService.isTemplateReady(user, applicationTemplate)
       ) {
         templateTypeToIsReady[application.typeId] = true
-        filteredApplications.push(application)
+        if (
+          this.applicationAccessService.shouldShowApplicationOnOverview(
+            application as BaseApplication,
+            user,
+            applicationTemplate,
+          )
+        ) {
+          filteredApplications.push(application)
+        }
       } else {
         templateTypeToIsReady[application.typeId] = false
       }
     }
-
     return filteredApplications
   }
 
@@ -315,7 +313,7 @@ export class ApplicationController {
       applicantActors: user.actor ? [user.actor.nationalId] : [],
       attachments: {},
       state: initialState,
-      status: ApplicationStatus.IN_PROGRESS,
+      status: ApplicationStatus.DRAFT,
       typeId: application.typeId,
     }
 
@@ -1206,17 +1204,8 @@ export class ApplicationController {
       )
     }
 
-    // delete charge in FJS (charge has not been paid)
+    // delete charge in FJS
     await this.applicationChargeService.deleteCharge(existingApplication)
-
-    // revert charge in FJS (charge has been paid), if applies
-    if (
-      existingApplication.typeId ===
-        ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP &&
-      existingApplication.state === TransferOfVehicleOwnershipStates.REVIEW
-    ) {
-      await this.applicationChargeService.revertCharge(existingApplication)
-    }
 
     // delete the entry in Payment table to prevent FK error
     await this.paymentService.delete(existingApplication.id, user)

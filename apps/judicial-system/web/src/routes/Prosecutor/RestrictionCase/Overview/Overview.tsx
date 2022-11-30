@@ -29,12 +29,12 @@ import {
   AccordionListItem,
   CaseResubmitModal,
   FormContext,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
