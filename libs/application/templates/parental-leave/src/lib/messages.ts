@@ -357,7 +357,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     rightsDescription: {
       id: 'pl.application:rights.description',
       defaultMessage:
-        'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við orlofið eftir á.',
+        'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. ',
       description: `The right to parental leave is 12 months, they  are equally divided between parents, but 45 days can be moved from one parent to the other.`,
     },
     grantRightsDescription: {
@@ -365,7 +365,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins.',
       description:
-        'Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.',
+        'Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another.',
     },
     singleParentRightsDescription: {
       id: 'pl.application:single.parent.rights.description',
@@ -377,9 +377,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     singleParentGrantRightsDescription: {
       id: 'pl.application:single.parent.grant.rights.description',
       defaultMessage:
-        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við styrkinn eftir á.',
+        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir.',
       description:
-        'The right to parental leave is 12 months for single parent. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.',
+        'The right to parental leave is 12 months for single parent.',
     },
     requestRightsName: {
       id: 'pl.application:request.rights.name',
