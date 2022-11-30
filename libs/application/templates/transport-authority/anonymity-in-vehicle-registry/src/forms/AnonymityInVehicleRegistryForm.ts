@@ -13,7 +13,7 @@ import { m } from '../lib/messages'
 export const AnonymityInVehicleRegistryForm: Form = buildForm({
   id: 'AnonymityInVehicleRegistryFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',

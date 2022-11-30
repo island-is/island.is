@@ -7,6 +7,7 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -80,6 +81,7 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    NO_UPDATE_NOTIFIER: 'true'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -145,6 +147,7 @@ air-discount-scheme-backend:
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'air_discount_scheme_backend'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
@@ -274,6 +277,7 @@ api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NODE_OPTIONS: '--max-old-space-size=2000'
+    NO_UPDATE_NOTIFIER: 'true'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
@@ -389,6 +393,9 @@ api:
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
     FISKISTOFA_API_URL: '/k8s/api/FISKISTOFA_API_URL'
+    FISKISTOFA_POWERBI_CLIENT_ID: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_ID'
+    FISKISTOFA_POWERBI_CLIENT_SECRET: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET'
+    FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID'
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
@@ -468,6 +475,7 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     NODE_OPTIONS: '--max-old-space-size=976'
     NOVA_USERNAME: 'IslandIs_User_Development'
+    NO_UPDATE_NOTIFIER: 'true'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
@@ -547,6 +555,7 @@ application-system-api:
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'application_system_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
@@ -900,6 +909,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -944,6 +954,7 @@ endorsement-system-api:
       DB_NAME: 'services_endorsements_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_endorsements_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
@@ -998,6 +1009,7 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -1054,6 +1066,7 @@ icelandic-names-registry-backend:
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'icelandic_names_registry_backend'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
@@ -1343,6 +1356,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=976'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.staging01.devland.is/minarsidur'
   grantNamespaces:
@@ -1397,6 +1411,7 @@ service-portal-api:
       DB_NAME: 'service_portal_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'service_portal_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
@@ -1442,6 +1457,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -1485,6 +1501,7 @@ services-documents:
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_documents'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
@@ -1513,6 +1530,7 @@ skilavottord-web:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1579,6 +1597,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1629,6 +1648,7 @@ skilavottord-ws:
       DB_NAME: 'skilavottord'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'skilavottord'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'

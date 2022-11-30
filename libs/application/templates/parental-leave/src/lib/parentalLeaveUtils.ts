@@ -46,7 +46,13 @@ import {
 import { YesOrNo, Period, PersonInformation } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
-import { additionalSingleParentMonths } from '../config'
+import {
+  additionalSingleParentMonths,
+  daysInMonth,
+  defaultMonths,
+  minimumPeriodStartBeforeExpectedDateOfBirth,
+  multipleBirthsDefaultDays,
+} from '../config'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -61,6 +67,16 @@ export function getExpectedDateOfBirth(
   }
 
   return selectedChild.expectedDateOfBirth
+}
+
+export function getBeginningOfThisMonth(): Date {
+  const today = new Date()
+  return addDays(today, today.getDate() * -1 + 1)
+}
+
+export function getLastDayOfLastMonth(): Date {
+  const today = new Date()
+  return addDays(today, today.getDate() * -1)
 }
 
 // TODO: Once we have the data, add the otherParentPeriods here.
@@ -97,7 +113,7 @@ export function formatPeriods(
         startDateDateTime,
         startDateDateTime.getDate() * -1,
       )
-      const currentDateBeginOfMonth = addDays(today, today.getDate() * -1)
+      const currentDateBeginOfMonth = getBeginningOfThisMonth()
       if (
         startDateBeginOfMonth.getMonth() ===
           currentDateBeginOfMonth.getMonth() &&
@@ -186,6 +202,71 @@ export const getTransferredDays = (
   return days
 }
 
+export const getMultipleBirthsDays = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
+  if (selectedChild.parentalRelation === ParentalRelations.secondary) {
+    return selectedChild.multipleBirthsDays ?? 0
+  }
+
+  return getMultipleBirthRequestDays(application.answers)
+}
+
+export const getMultipleBirthRequestDays = (
+  answers: Application['answers'],
+) => {
+  const {
+    multipleBirthsRequestDays,
+    otherParent,
+    hasMultipleBirths,
+  } = getApplicationAnswers(answers)
+
+  if (otherParent === SINGLE && hasMultipleBirths === YES) {
+    return getMaxMultipleBirthsDays(answers)
+  }
+
+  return multipleBirthsRequestDays
+}
+
+export const getMaxMultipleBirthsDays = (answers: Application['answers']) => {
+  const { multipleBirths } = getApplicationAnswers(answers)
+  return (multipleBirths - 1) * multipleBirthsDefaultDays
+}
+
+export const getMaxMultipleBirthsInMonths = (
+  answers: Application['answers'],
+) => {
+  const maxDays = getMaxMultipleBirthsDays(answers)
+  return Math.ceil(maxDays / daysInMonth)
+}
+
+export const getMaxMultipleBirthsAndDefaultMonths = (
+  answers: Application['answers'],
+) => {
+  const multipleBirthsDaysInMonths = getMaxMultipleBirthsInMonths(answers)
+  return defaultMonths + multipleBirthsDaysInMonths
+}
+
+export const getMaxMultipleBirthsAndSingleParenttMonths = (
+  application: Application,
+) => {
+  const multipleBirthsDaysInMonths = getMaxMultipleBirthsInMonths(
+    application.answers,
+  )
+  const singleParentDaysInMonths = getAvailablePersonalRightsSingleParentInMonths(
+    application,
+  )
+
+  return singleParentDaysInMonths + multipleBirthsDaysInMonths
+}
+
 export const getAdditionalSingleParentRightsInDays = (
   application: Application,
 ) => {
@@ -207,17 +288,23 @@ export const getAvailableRightsInDays = (application: Application) => {
   if (selectedChild.parentalRelation === ParentalRelations.secondary) {
     // Transferred days are chosen for secondary parent by primary parent
     // so they are persisted into external data
-    return selectedChild.remainingDays
+    return selectedChild.remainingDays ?? 0
   }
 
   // Primary parent chooses transferred days so they are persisted into answers
   const transferredDays = getTransferredDays(application, selectedChild)
+  const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+    application.answers,
+  )
   const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
     application,
   )
 
   return (
-    selectedChild.remainingDays + additionalSingleParentDays + transferredDays
+    selectedChild.remainingDays +
+    additionalSingleParentDays +
+    transferredDays +
+    multipleBirthsRequestDays
   )
 }
 
@@ -234,11 +321,17 @@ export const getAvailablePersonalRightsInDays = (application: Application) => {
   }
 
   const totalTransferredDays = getTransferredDays(application, selectedChild)
+  const multipleBirthsDays = getMultipleBirthsDays(application)
   const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
     application,
   )
 
-  return totalDaysAvailable - additionalSingleParentDays - totalTransferredDays
+  return (
+    totalDaysAvailable -
+    additionalSingleParentDays -
+    totalTransferredDays -
+    multipleBirthsDays
+  )
 }
 
 export const getAvailablePersonalRightsSingleParentInMonths = (
@@ -452,6 +545,27 @@ export function getApplicationAnswers(answers: Application['answers']) {
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
 
+  const hasMultipleBirths = getValueViaPath(
+    answers,
+    'multipleBirths.hasMultipleBirths',
+  ) as YesOrNo
+
+  const multipleBirths = getValueViaPath(
+    answers,
+    'multipleBirths.multipleBirths',
+    1,
+  ) as number
+
+  const multipleBirthsRequestDaysValue = getValueViaPath(
+    answers,
+    'multipleBirthsRequestDays',
+  ) as number | undefined
+
+  const multipleBirthsRequestDays = getOrFallback(
+    hasMultipleBirths,
+    multipleBirthsRequestDaysValue,
+  ) as number
+
   const otherParent = (getValueViaPath(
     answers,
     'otherParentObj.chooseOtherParent',
@@ -585,24 +699,53 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'transferRights',
   ) as TransferRightsOption
 
-  const isRequestingRights =
+  const isRequestingRightsSecondary =
     transferRights === TransferRightsOption.REQUEST
       ? YES
       : (getValueViaPath(
           answers,
           'requestRights.isRequestingRights',
         ) as YesOrNo)
+  let isRequestingRights = isRequestingRightsSecondary
+
+  /*
+   ** When multiple births is selected and applicant is not using all 'common' rights
+   ** Need this check so we are not returning wrong answer
+   */
+  if (isRequestingRights === YES && hasMultipleBirths === YES) {
+    if (
+      multipleBirthsRequestDays * 1 !==
+      (multipleBirths - 1) * multipleBirthsDefaultDays
+    ) {
+      isRequestingRights = NO
+    }
+  }
 
   const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
     | number
     | undefined
 
-  const requestDays = getOrFallback(isRequestingRights, requestValue)
+  const requestDays = getOrFallback(
+    isRequestingRights === YES
+      ? isRequestingRights
+      : isRequestingRightsSecondary,
+    requestValue,
+  )
 
-  const isGivingRights =
+  let isGivingRights =
     transferRights === TransferRightsOption.GIVE
       ? YES
       : (getValueViaPath(answers, 'giveRights.isGivingRights') as YesOrNo)
+
+  /*
+   ** When multiple births is selected and applicant is not using all 'common' rights
+   ** Need this check so we are not returning wrong answer
+   */
+  if (isGivingRights === YES && hasMultipleBirths === YES) {
+    if (multipleBirthsRequestDays * 1 !== 0) {
+      isGivingRights = NO
+    }
+  }
 
   const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
     | number
@@ -625,6 +768,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
+    hasMultipleBirths,
+    multipleBirths,
+    multipleBirthsRequestDays: Number(multipleBirthsRequestDays),
     otherParent,
     otherParentRightOfAccess,
     pensionFund,
@@ -653,6 +799,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selectedChild,
     transferRights,
     isRequestingRights,
+    isRequestingRightsSecondary,
     requestDays: Number(requestDays),
     isGivingRights,
     giveDays: Number(giveDays),
@@ -832,7 +979,7 @@ export const getLastValidPeriodEndDate = (
   const lastEndDate = new Date(lastPeriodEndDate)
 
   const today = new Date()
-  const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+  const beginningOfMonth = getBeginningOfThisMonth()
 
   // LastPeriod's endDate is in current month then Applicant could only start from next month
   if (
@@ -856,6 +1003,30 @@ export const getLastValidPeriodEndDate = (
   }
 
   return lastEndDate
+}
+
+export const getMinimumStartDate = (application: Application): Date => {
+  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const lastPeriodEndDate = getLastValidPeriodEndDate(application)
+
+  const today = new Date()
+  if (lastPeriodEndDate) {
+    return lastPeriodEndDate
+  } else if (expectedDateOfBirth) {
+    const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
+    const beginningOfMonth = getBeginningOfThisMonth()
+    const leastStartDate = addMonths(
+      expectedDateOfBirthDate,
+      -minimumPeriodStartBeforeExpectedDateOfBirth,
+    )
+    if (leastStartDate.getTime() >= beginningOfMonth.getTime()) {
+      return leastStartDate
+    }
+
+    return beginningOfMonth
+  }
+
+  return today
 }
 
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>
@@ -958,20 +1129,31 @@ export const getPeriodSectionTitle = (application: Application) => {
 }
 
 export const getRightsDescTitle = (application: Application) => {
-  const { applicationType, otherParent } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    applicationType,
+    otherParent,
+    hasMultipleBirths,
+  } = getApplicationAnswers(application.answers)
 
   if (
     applicationType === PARENTAL_GRANT ||
     applicationType === PARENTAL_GRANT_STUDENTS
   ) {
-    return otherParent === SINGLE
+    return otherParent === SINGLE && hasMultipleBirths === YES
+      ? parentalLeaveFormMessages.shared
+          .singleParentGrantMultipleRightsDescription
+      : hasMultipleBirths === YES
+      ? parentalLeaveFormMessages.shared.grantMultipleRightsDescription
+      : otherParent === SINGLE
       ? parentalLeaveFormMessages.shared.singleParentGrantRightsDescription
       : parentalLeaveFormMessages.shared.grantRightsDescription
   }
 
-  return otherParent === SINGLE
+  return otherParent === SINGLE && hasMultipleBirths === YES
+    ? parentalLeaveFormMessages.shared.singleParentMultipleRightsDescription
+    : hasMultipleBirths === YES
+    ? parentalLeaveFormMessages.shared.multipleRightsDescription
+    : otherParent === SINGLE
     ? parentalLeaveFormMessages.shared.singleParentRightsDescription
     : parentalLeaveFormMessages.shared.rightsDescription
 }

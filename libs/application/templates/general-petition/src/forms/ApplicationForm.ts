@@ -17,7 +17,7 @@ export const PetitionApplicationForm: Form = buildForm({
   id: 'PetitionApplicationForm',
   title: 'Meðmælendalistar',
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'termsAndConditions',
