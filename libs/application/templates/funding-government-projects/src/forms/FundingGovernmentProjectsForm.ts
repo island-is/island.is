@@ -24,7 +24,7 @@ const FILE_SIZE_LIMIT = 10000000
 export const FundingGovernmentProjectsForm: Form = buildForm({
   id: 'FundingGovernmentProjectsForm',
   title: application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   logo: Logo,
   children: [
     buildSection({

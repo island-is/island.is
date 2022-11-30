@@ -58,6 +58,7 @@ export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
         } catch (error) {
           logger.warn('Failed to import frontpage', {
             error: error.message,
+            id: entry?.sys?.id,
           })
           return false
         }

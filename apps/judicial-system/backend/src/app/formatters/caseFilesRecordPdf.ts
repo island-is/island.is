@@ -126,16 +126,44 @@ export const createCaseFilesRecord = async (
       theCase.indictmentSubtypes[policeCaseNumber]) ??
     []
 
-  pdfDocument.addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
-    bold: true,
-    marginTop: 1,
-    newLine: subtypes.length === 0,
-  })
-
-  for (const subtype of subtypes) {
-    pdfDocument.addText(capitalize(indictmentSubtypes[subtype]), textFontSize, {
-      position: { x: defendantIndent },
+  pdfDocument
+    .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
+      bold: true,
+      marginTop: 1,
+      newLine: false,
     })
+    .addParagraph(
+      capitalize(
+        subtypes.map((subtype) => indictmentSubtypes[subtype]).join(', '),
+      ),
+      textFontSize,
+      defendantIndent,
+    )
+
+  if (theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]) {
+    pdfDocument
+      .addText(formatMessage(caseFilesRecord.crimeScene), textFontSize, {
+        bold: true,
+        marginTop: 1,
+        newLine: false,
+      })
+      .addParagraph(
+        `${theCase.crimeScenes[policeCaseNumber].place ?? ''}${
+          theCase.crimeScenes[policeCaseNumber].place &&
+          theCase.crimeScenes[policeCaseNumber].date
+            ? ' - '
+            : ''
+        }${
+          theCase.crimeScenes[policeCaseNumber].date
+            ? formatDate(
+                theCase.crimeScenes[policeCaseNumber].date,
+                'dd.MM.yyyy',
+              )
+            : ''
+        }`,
+        textFontSize,
+        defendantIndent,
+      )
   }
 
   pdfDocument.addText(

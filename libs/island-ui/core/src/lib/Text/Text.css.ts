@@ -44,6 +44,12 @@ export const strikethrough = style({
   textDecoration: 'line-through',
 })
 
+export const capitalizeFirstLetter = style({
+  ':first-letter': {
+    textTransform: 'capitalize',
+  },
+})
+
 export const base = style({
   ['-webkit-font-smoothing' as any]: 'antialiased',
 })

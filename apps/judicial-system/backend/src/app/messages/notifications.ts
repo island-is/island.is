@@ -473,6 +473,14 @@ export const notifications = {
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir að krafa sé afturkölluð',
     },
+    revokedIndictment: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.revoked_indictment',
+      defaultMessage:
+        'Ákæra sem taka átti fyrir hjá {courtText} {courtDateText}, hefur verið afturkölluð.',
+      description:
+        'Texti í pósti til verjanda/talsmanns sem tilgreinir að ákæra sé afturkölluð',
+    },
     defendant: {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defendant',
@@ -481,10 +489,18 @@ export const notifications = {
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir sakborning',
     },
+    // TODO: Remove defenderAssigned
     defenderAssigned: {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defender_assigned',
       defaultMessage: 'Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      description:
+        'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
+    },
+    defenderAssignedV2: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.defender_assigned_v2',
+      defaultMessage: 'Dómstóllinn hafði skráð þig sem verjanda í málinu.',
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
     },
@@ -534,13 +550,6 @@ export const notifications = {
       defaultMessage: '{court} - aðgangur að málsgögnum',
       description:
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
-    },
-    // TODO: REMOVE body
-    body: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.body',
-      defaultMessage:
-        '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.',
-      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
     bodyV2: {
       id:

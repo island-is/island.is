@@ -14,7 +14,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   directionType,
   sortableTableColumn,

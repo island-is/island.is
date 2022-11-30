@@ -130,7 +130,7 @@ const CourtRecord: React.FC = () => {
           text={formatMessage(m.modalText)}
           onPrimaryButtonClick={() => {
             router.push(
-              `${constants.CASES_ROUTE}`, // TODO: Add next url when it is ready
+              `${constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`,
             )
           }}
           primaryButtonText={formatMessage(core.closeModal)}

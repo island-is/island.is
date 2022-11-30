@@ -19,6 +19,11 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import {
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
@@ -30,6 +35,7 @@ import {
   CaseReadGuard,
   CaseReceivedGuard,
   CaseWriteGuard,
+  CaseTypeGuard,
 } from '../case'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -147,6 +153,7 @@ export class FileController {
 
   @UseGuards(
     CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
     CaseFileExistsGuard,
@@ -169,7 +176,12 @@ export class FileController {
     return this.fileService.uploadCaseFileToCourt(caseFile, theCase, user)
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseNotCompletedGuard,
+  )
   @RolesRules(prosecutorRule)
   @Patch('files')
   @ApiOkResponse({

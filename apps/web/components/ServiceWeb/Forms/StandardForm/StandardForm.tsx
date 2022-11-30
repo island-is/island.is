@@ -38,7 +38,6 @@ import {
   SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
-import { ModifySearchTerms } from '../../SearchInput/SearchInput'
 import orderBy from 'lodash/orderBy'
 import { useNamespace } from '@island.is/web/hooks'
 import slugify from '@sindresorhus/slugify'
@@ -111,6 +110,10 @@ type CategoryId =
    * Fullnustugerðir
    */
   | '7LkzuYSzqwM7k8fJyeRbm6'
+
+const mannaudstorgTag = [
+  { key: 'mannaudstorg', type: SearchableTags.Organization },
+]
 
 const labels: Record<string, string> = {
   syslumadur: 'Sýslumannsembætti',
@@ -269,14 +272,9 @@ export const StandardForm = ({
                 queryString,
                 size: 10,
                 types: [SearchableContentTypes['WebQna']],
-                tags: institutionSlugBelongsToMannaudstorg
-                  ? [
-                      {
-                        key: 'mannaudstorg',
-                        type: SearchableTags.Organization,
-                      },
-                    ]
-                  : [],
+                [institutionSlugBelongsToMannaudstorg
+                  ? 'tags'
+                  : 'excludedTags']: mannaudstorgTag,
               },
             },
           })
@@ -617,13 +615,13 @@ export const StandardForm = ({
                       >
                         <Text key={index} variant="small" color="blue600">
                           <a
-                            href={`${
-                              linkResolver('supportcategory', [
+                            href={
+                              linkResolver('supportqna', [
                                 organizationSlug,
                                 categorySlug,
                                 slug,
                               ]).href
-                            }?q=${slug}`}
+                            }
                           >
                             {title}
                           </a>

@@ -118,6 +118,7 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í "undirritun þingbókar" skrefi ef undirritun var ekki lokið á yfirlitsskjá afgreiddra mála.',
       },
+      // TODO: Remove closeButon
       closeButon: {
         id:
           'judicial.system.core:signed_verdict_overview.court_record_signature.close_button',
@@ -218,6 +219,7 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í hætta við takka í "Breyta lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      // TODO: Remove secondaryButtonTextSuccess
       secondaryButtonTextSuccess: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.secondary_button_text_success',
@@ -335,6 +337,7 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í modal glugga þegar máli hefur verið lokað fyrir öðru embætti',
       },
+      // TODO: Remove buttonClose
       buttonClose: {
         id:
           'judicial.system.core:signed_verdict_overview.share_case_modal.button_close',
@@ -349,15 +352,6 @@ export const signedVerdictOverview = {
         defaultMessage:
           'Framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} CUSTODY {gæslu} other {heimild}}',
         description: 'Notaður sem label á framlengja mál takka',
-      },
-      // TODO: remove
-      extensionInfo: {
-        id:
-          'judicial.system.core:signed_verdict_overview.case_extension.button',
-        defaultMessage:
-          '{hasChildCase, select, yes {Framlengingarkrafa hefur þegar verið útbúin} other {Ekki hægt að framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {kröfu}} {rejectReason, select, rejected {sem var hafnað} dismissed {sem var vísað frá} isValidToDateInThePast {sem er lokið} acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um} other {}}}}.',
-        description:
-          'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
       },
       extensionInfoV2: {
         id:
@@ -379,15 +373,6 @@ export const signedVerdictOverview = {
         id: 'judicial.system.core:signed_verdict_overview.appeal.deadline',
         defaultMessage:
           'Kærufrestur {isAppealDeadlineExpired, select, true {rann} false {rennur}} út {appealDeadline}',
-      },
-      // TODO: Remove accusedAppealed
-      accusedAppealed: {
-        id:
-          'judicial.system.core:signed_verdict_overview.appeal.accused_appealed',
-        defaultMessage:
-          '{genderedAccused} hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
-        description:
-          'Notaður sem upplýsingatexti sem útskýrir að varnaraðili kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
       },
       defendantAppealed: {
         id:
