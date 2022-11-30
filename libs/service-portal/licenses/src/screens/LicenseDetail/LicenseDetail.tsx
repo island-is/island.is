@@ -20,6 +20,7 @@ import {
   CardLoader,
   ErrorScreen,
   m as coreMessages,
+  IntroHeader,
 } from '@island.is/service-portal/core'
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
@@ -35,6 +36,7 @@ import {
 } from '../../utils/dataMapper'
 import { isExpired } from '../../utils/dateUtils'
 import isValid from 'date-fns/isValid'
+import { defineMessage } from 'react-intl'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -314,7 +316,7 @@ const DataFields = ({
 }
 
 const LicenseDetail: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.license')
+  const { loadingMessages } = useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = userProfile?.locale ?? 'is'
@@ -355,20 +357,12 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
   const expired = genericLicense?.payload?.metadata.expired
   return (
     <>
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={1}>
-              <Text variant="h3" as="h1" paddingTop={0}>
-                {formatMessage(heading.title)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(heading.text)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader
+        title={defineMessage(heading.title)}
+        intro={defineMessage(heading.text)}
+        loading={loadingMessages}
+        marginBottom={1}
+      />
       {queryLoading && <CardLoader />}
 
       {!error && !queryLoading && (

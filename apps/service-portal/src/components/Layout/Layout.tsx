@@ -17,7 +17,6 @@ import { useModules } from '../../hooks/useModules/useModules'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
-import { useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
 import cn from 'classnames'
@@ -28,7 +27,6 @@ import { useMeasure } from 'react-use'
 const Layout: FC = ({ children }) => {
   useRoutes()
   useModules()
-  useNamespaces(['service.portal', 'global'])
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const [{ mobileMenuState, sidebarState }] = useStore()

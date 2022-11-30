@@ -7,6 +7,7 @@ import {
   GridColumn,
   GridRow,
   Hidden,
+  LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -18,6 +19,8 @@ interface Props {
   img?: string
   hideImgPrint?: boolean
   marginBottom?: BoxProps['marginBottom']
+  // loading: boolean
+  loading?: boolean
 }
 
 export const IntroHeader = ({
@@ -26,18 +29,27 @@ export const IntroHeader = ({
   img,
   hideImgPrint = false,
   marginBottom = 6,
+  loading,
 }: Props) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow marginBottom={marginBottom}>
       <GridColumn span={['8/8', '5/8']} order={1}>
-        <Text variant="h3" as="h1">
-          {formatMessage(title)}
-        </Text>
-        {intro && (
-          <Text variant="default" paddingTop={2}>
-            {formatMessage(intro)}
-          </Text>
+        {loading ? (
+          <Box paddingBottom={6} paddingTop={2}>
+            <LoadingDots color="blue" />
+          </Box>
+        ) : (
+          <>
+            <Text variant="h3" as="h1">
+              {formatMessage(title)}
+            </Text>
+            {intro && (
+              <Text variant="default" paddingTop={2}>
+                {formatMessage(intro)}
+              </Text>
+            )}
+          </>
         )}
       </GridColumn>
       {img && (

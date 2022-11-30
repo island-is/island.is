@@ -85,7 +85,7 @@ const GenericLicensesQuery = gql`
 `
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.license')
+  const { loadingMessages } = useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
@@ -152,6 +152,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         <IntroHeader
           title={defineMessage(m.title)}
           intro={defineMessage(m.intro)}
+          loading={loadingMessages}
         />
       </Box>
       {loading && <CardLoader />}

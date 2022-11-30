@@ -107,7 +107,7 @@ const getFilteredVehicles = (
 export const VehiclesOverview: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
-  useNamespaces('sp.vehicles')
+  const { loadingMessages } = useNamespaces('sp.vehicles')
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
@@ -172,7 +172,11 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
   }
   return (
     <>
-      <IntroHeader title={messages.title} intro={messages.intro} />
+      <IntroHeader
+        title={messages.title}
+        intro={messages.intro}
+        loading={loadingMessages}
+      />
 
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>

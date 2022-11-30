@@ -9,7 +9,15 @@ export function useNamespaces(namespaces?: string | string[]) {
     loadingMessages,
     messages,
     changeLanguage,
+    loadedNamespaces,
   } = useContext(LocaleContext)
+
+  const loadingNamespaces =
+    typeof namespaces === 'string' ? [namespaces] : namespaces
+
+  const hasAllNamespaces = (loadingNamespaces || []).every((el) => {
+    return loadedNamespaces.includes(el)
+  })
 
   useEffect(() => {
     if (namespaces && !isEmpty(namespaces)) {
@@ -18,7 +26,7 @@ export function useNamespaces(namespaces?: string | string[]) {
   }, [loadMessages, namespaces])
 
   return {
-    loadingMessages,
+    loadingMessages: loadingMessages || !hasAllNamespaces,
     messages,
     changeLanguage,
   }
