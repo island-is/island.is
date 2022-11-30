@@ -201,7 +201,7 @@ export const CemetryOverview = ({
           <GridColumn span={['12/12', '6/12']}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
-                {formatMessage(m.debtsAndEquity)}
+                {formatMessage(m.debts)}
               </Text>
             </Box>
             <ValueLine
@@ -217,6 +217,11 @@ export const CemetryOverview = ({
               label={m.totalLiabilities}
               value={formatCurrency(answers.cemetryLiability?.total)}
             />
+            <Box paddingTop={3} paddingBottom={2}>
+              <Text variant="h4" as="h4">
+                {formatMessage(m.equity)}
+              </Text>
+            </Box>
             <ValueLine
               label={m.equityAtTheBeginningOfTheYear}
               value={formatCurrency(

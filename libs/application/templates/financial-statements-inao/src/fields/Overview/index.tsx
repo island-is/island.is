@@ -40,6 +40,7 @@ export const Overview = ({
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
+
   const [
     submitApplication,
     { error: submitError, loading },
