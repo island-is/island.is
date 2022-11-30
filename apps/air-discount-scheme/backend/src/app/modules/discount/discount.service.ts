@@ -1,14 +1,17 @@
 import { uuid } from 'uuidv4'
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
-import { Discount } from './discount.model'
-import { Flight } from '../flight'
+import { Discount, ExplicitCode } from './discount.model'
+import { Flight } from '../flight/flight.model'
 import {
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
 import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
 import { User } from '../user/user.model'
+import { InjectModel } from '@nestjs/sequelize'
+import { UserService } from '../user/user.service'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 interface CachedDiscount {
   user: User
@@ -28,12 +31,19 @@ const CACHE_KEYS = {
     `discount_code_lookup_${discountCode}`,
   connectionDiscountCode: (code: string) => `connection_discount_${code}`,
   flight: (flightId: string) => `discount_flight_lookup_${flightId}`,
+  explicitCode: (discountCode: string) =>
+    `explicit_code_lookup_${discountCode}`,
 }
 
 @Injectable()
 export class DiscountService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
+
+    @InjectModel(ExplicitCode)
+    private explicitModel: typeof ExplicitCode,
+
+    private readonly userService: UserService,
   ) {}
 
   private getRandomRange(min: number, max: number): number {
@@ -160,6 +170,48 @@ export class DiscountService {
       nationalId,
       ONE_DAY,
     )
+  }
+
+  async createExplicitDiscountCode(
+    auth: AuthUser,
+    nationalId: string,
+    postalCode: number,
+    employeeId: string,
+    comment: string,
+    unConnectedFlights: Flight[],
+  ): Promise<Discount | null> {
+    const user = await this.userService.getUserInfoByNationalId(
+      nationalId,
+      auth,
+    )
+    if (!user) {
+      return null
+    }
+
+    const discount = await this.createDiscountCode(
+      {
+        ...user,
+        postalcode: postalCode,
+      },
+      nationalId,
+      unConnectedFlights,
+    )
+
+    // Create record of the explicit code
+    this.explicitModel.create({
+      code: discount.discountCode,
+      customerId: nationalId,
+      employeeId: employeeId,
+      comment,
+    })
+
+    // Flag the discount as explicit in the cache
+    const cacheId = discount.discountCode
+    const cacheKey = CACHE_KEYS.explicitCode(discount.discountCode)
+    await this.setCache<string>(cacheKey, cacheId) // cacheId pointer
+    await this.setCache<string>(cacheId, discount.discountCode) // cache value
+
+    return discount
   }
 
   async getDiscountByNationalId(nationalId: string): Promise<Discount | null> {
@@ -291,8 +343,28 @@ export class DiscountService {
       }
     } else {
       const discountCacheKey = CACHE_KEYS.discountCode(discountCode)
+
       const cacheId = await this.cacheManager.get(discountCacheKey)
       await this.cacheManager.del(discountCacheKey)
+
+      const explicitCacheKey = CACHE_KEYS.explicitCode(discountCode)
+      const isExplicit = await this.getCache<string>(explicitCacheKey)
+
+      if (isExplicit) {
+        // Attach flight_id to explicit code record
+        this.explicitModel.update(
+          {
+            flightId,
+          },
+          {
+            where: {
+              code: discountCode,
+            },
+          },
+        )
+
+        await this.cacheManager.del(explicitCacheKey)
+      }
 
       const ttl = await this.cacheManager.ttl(cacheId)
       await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
