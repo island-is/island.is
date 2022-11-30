@@ -43,7 +43,7 @@ export const information = {
         description: 'Pick vehicle label',
       },
       placeholder: {
-        id: 'ta.ovrc.application:information.labels.pickVehicle.placeholder',
+        id: 'ta.tvo.application:information.labels.pickVehicle.placeholder',
         defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle placeholder',
       },
