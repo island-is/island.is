@@ -1,33 +1,35 @@
 import { defineConfig } from '@island.is/nest/config'
-import { z } from 'zod'
+import * as z from 'zod'
+import { VehiclesScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
-  xRoadServicePath: z.string(),
-  fetchTimeout: z.number().int(),
-  tokenExchangeScope: z.array(z.string()),
-  requestActorToken: z.boolean(),
+  xroadBaseUrl: z.string(),
+  xroadClientId: z.string(),
+  xroadPath: z.string(),
+  scope: z.array(z.string()),
 })
 
-export const VehicleServiceFjsV1ClientConfig = defineConfig({
+export const VehicleServiceFjsV1ClientConfig = defineConfig<
+  z.infer<typeof schema>
+>({
   name: 'VehicleServiceFjsV1Client',
   schema,
   load(env) {
     return {
-      xRoadServicePath: env.required(
-        'XROAD_VEHICLE_SERVICE_FJS_V1_PATH',
-        'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      xroadBaseUrl: env.required('XROAD_BASE_PATH', 'http://localhost:8081'),
+      xroadClientId: env.required(
+        'XROAD_CLIENT_ID',
+        'IS-DEV/GOV/10017/Samgongustofa-Client',
       ),
-      fetchTimeout:
-        env.optionalJSON('XROAD_VEHICLE_SERVICE_FJS_V1_TIMEOUT') ?? 20000,
-      tokenExchangeScope: env.optionalJSON(
-        'XROAD_VEHICLE_SERVICE_FJS_V1_SCOPE',
-      ) ?? [
+      xroadPath: env.required(
+        'XROAD_VEHICLE_SERVICE_FJS_V1_PATH',
+        'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
+      ),
+      scope: [
         '@fjs.is/finance',
         // TODO: Remove when fjs has migrated to the scope above.
         'api_resource.scope',
       ],
-      requestActorToken:
-        env.optionalJSON('XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN') ?? false,
     }
   },
 })

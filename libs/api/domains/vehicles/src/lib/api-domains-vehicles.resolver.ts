@@ -24,7 +24,7 @@ import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
-import { VehicleServiceFjsV1ClientService } from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -36,7 +36,7 @@ export class VehiclesResolver {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
-    private readonly vehicleServiceFjsV1ClientService: VehicleServiceFjsV1ClientService,
+    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
   ) {}
 
   @Scopes(ApiScope.vehicles)
@@ -139,7 +139,8 @@ export class VehiclesResolver {
     return await Promise.all(
       (await this.getCurrentVehicles(input, user)).map(
         async (vehicle: VehiclesCurrentVehicleWithDebtStatus) => {
-          const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
+          const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+            user,
             vehicle.permno || '',
           )
           vehicle.isDebtLess = debtStatus.isDebtLess
@@ -157,8 +158,10 @@ export class VehiclesResolver {
   @Audit()
   async getVehicleDebtStatusByPermno(
     @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
   ) {
-    const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
+    const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+      user,
       permno,
     )
     return { isDebtLess: debtStatus.isDebtLess }
