@@ -35,6 +35,8 @@ class MyDocument extends Document<Props> {
               src="https://plausible.io/js/plausible.js"
             ></script>
           )}
+          <script defer data-domain="localhost:4200" src="https://plausible.io/js/plausible.js"></script> 
+          <script defer data-domain="localhost:4200" src="https://plausible.io/js/script.local.js"></script>
         </Head>
         <body>
           <Main />

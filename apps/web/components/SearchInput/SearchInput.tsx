@@ -40,6 +40,7 @@ import {
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { trackSearchQuery } from '@island.is/plausible'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -493,6 +494,7 @@ const Results = ({
                       key={item.id}
                       {...itemProps}
                       onClick={(e) => {
+                        trackSearchQuery(search.term, 'Web Autocomplete')
                         onClick(e)
                         onRouting()
                       }}
