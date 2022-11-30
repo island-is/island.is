@@ -42,6 +42,7 @@ import {
   getOtherParentId,
   getOtherParentName,
   formatPeriods,
+  getLastDayOfLastMonth,
 } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
@@ -216,8 +217,6 @@ export const Review: FC<ReviewScreenProps> = ({
   }
 
   const periods = formatPeriods(application, formatMessage)
-  const today = new Date()
-  const lastDateOfLastMonth = addDays(today, today.getDate() * -1)
 
   return (
     <>
@@ -986,8 +985,9 @@ export const Review: FC<ReviewScreenProps> = ({
       >
         <SummaryTimeline application={application} />
         {(!applicationFundId || applicationFundId === '') &&
+          periods.length > 0 &&
           new Date(periods[0].startDate).getTime() <
-            lastDateOfLastMonth.getTime() && (
+            getLastDayOfLastMonth().getTime() && (
             <p
               style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}
             >

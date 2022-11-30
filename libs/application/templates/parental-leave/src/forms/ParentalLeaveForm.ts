@@ -41,6 +41,7 @@ import {
   getStartDateTitle,
   getMultipleBirthRequestDays,
   getMinimumStartDate,
+  getLastDayOfLastMonth,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -1140,7 +1141,7 @@ export const ParentalLeaveForm: Form = buildForm({
                           return (
                             periods.length > 0 &&
                             new Date(periods[0].startDate).getTime() >=
-                              currentDateStartTime()
+                              getLastDayOfLastMonth().getTime()
                           )
                         }
 
