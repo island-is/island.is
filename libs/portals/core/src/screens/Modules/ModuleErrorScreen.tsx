@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
 import { MessageDescriptor } from 'react-intl'
+import { m } from '../../lib/messages'
 
 interface ModuleErrorScreenProps {
   name: string | MessageDescriptor
