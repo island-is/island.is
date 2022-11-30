@@ -2,8 +2,9 @@ import { createElement, forwardRef } from 'react'
 
 import { BoxProps } from './types'
 import { useBoxStyles } from './useBoxStyles'
+import { TestSupport } from '@island.is/island-ui/utils'
 
-export const Box = forwardRef<HTMLElement, BoxProps>(
+export const Box = forwardRef<HTMLElement, BoxProps & TestSupport>(
   (
     {
       component = 'div',
