@@ -71,12 +71,14 @@ export type StateLifeCycle =
       // Controls visibility from my pages + /umsoknir/:type when in current state
       shouldBeListed: boolean
       shouldBePruned: false
+      shouldDeleteCharge?: boolean | null
     }
   | {
       shouldBeListed: boolean
       shouldBePruned: true
       // If set to a number prune date will equal current timestamp + whenToPrune (ms)
       whenToPrune: number | ((application: Application) => Date)
+      shouldDeleteCharge?: boolean | null
     }
 
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
