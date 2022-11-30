@@ -262,16 +262,17 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'applicationType.option',
               title: parentalLeaveFormMessages.shared.applicationTypeTitle,
               description:
-                parentalLeaveFormMessages.shared.applicationParentalLeaveDescription,
+                parentalLeaveFormMessages.shared
+                  .applicationParentalLeaveDescription,
               children: [
                 buildCustomField({
                   component: 'ApplicationType',
                   id: 'applicationType.option',
                   title: '',
                 }),
-              ]
-            })   
-          ]
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'externalData',

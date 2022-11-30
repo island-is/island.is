@@ -28,8 +28,7 @@ export const ApplicationType: FC<FieldBaseProps> = ({ application, field }) => {
           component: FieldComponents.RADIO,
           title,
           children: undefined,
-          options:
-            getApplicationTypeOptions(formatMessage),
+          options: getApplicationTypeOptions(formatMessage),
         }}
         application={application}
       />
