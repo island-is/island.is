@@ -56,12 +56,18 @@ const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
+
+const adsBackend = adsBackendSetup()
+const adsApi = adsApiSetup({ adsBackend })
+const adsWeb = adsWebSetup({ adsApi })
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
   documentsService,
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
+  airDiscountSchemeBackend: adsBackend,
 })
 const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
@@ -83,9 +89,6 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
 
-const adsBackend = adsBackendSetup()
-const adsApi = adsApiSetup({ adsBackend })
-const adsWeb = adsWebSetup({ adsApi })
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()

@@ -20,6 +20,7 @@ type AccessListContainerProps = {
   scopes?: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]
   loading?: boolean
   listMarginBottom?: ResponsiveProp<Space | 'auto'>
+  validityPeriod?: Date | null
 }
 
 export const AccessListContainer = ({
@@ -28,6 +29,7 @@ export const AccessListContainer = ({
   scopes,
   loading = false,
   listMarginBottom,
+  validityPeriod,
 }: AccessListContainerProps) => {
   const { formatMessage } = useLocale()
   const showAccessList = !loading && scopeTree && scopes && delegation
@@ -48,7 +50,7 @@ export const AccessListContainer = ({
       <Box marginBottom={listMarginBottom ?? 1}>
         {showAccessList ? (
           <AccessList
-            validityPeriod={delegation.validTo}
+            validityPeriod={validityPeriod ?? delegation.validTo}
             scopes={scopes}
             scopeTree={scopeTree}
           />

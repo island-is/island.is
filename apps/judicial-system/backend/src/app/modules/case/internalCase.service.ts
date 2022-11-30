@@ -22,7 +22,6 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  IndictmentSubtype,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
