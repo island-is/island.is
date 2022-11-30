@@ -61,7 +61,7 @@ export const clientInfoSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
+            const nationalRegistry = application.externalData.identity
               .data as User
             return nationalRegistry.name
           },

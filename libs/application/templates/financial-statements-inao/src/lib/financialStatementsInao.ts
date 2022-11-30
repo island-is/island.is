@@ -20,6 +20,12 @@ import { getCurrentUserType } from './utils/helpers'
 
 import { AuthDelegationType } from '../types/schema'
 import { FSIUSERTYPE } from '../types'
+import {
+  CurrentUserTypeProvider,
+  IndentityApiProvider,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
@@ -78,6 +84,12 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                CurrentUserTypeProvider,
+                IndentityApiProvider,
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
             },
           ],
         },
