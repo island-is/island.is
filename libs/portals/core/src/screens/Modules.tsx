@@ -3,29 +3,32 @@ import React, { Suspense, useEffect } from 'react'
 import { Route, Switch, useLocation } from 'react-router-dom'
 
 import { Box } from '@island.is/island-ui/core'
-import {
-  AccessDenied,
-  NotFound,
-  PlausiblePageviewDetail,
-  ServicePortalRoute,
-} from '@island.is/service-portal/core'
 import { User } from '@island.is/shared/types'
+import { useModules } from '../components/ModulesProvider'
+import { useModuleProps } from '../hooks/useModuleProps'
 import { ModuleErrorScreen, ModuleErrorBoundary } from './ModuleErrorScreen'
-import { useModules } from '../../components/ModulesProvider'
-import { useModuleProps } from '../../hooks/useModuleProps'
+import { AccessDenied } from './AccessDenied'
+import { NotFound } from './NotFound'
+import { PortalRoute } from '../types/portalCore'
+import { useApp } from '../components/AppProvider'
+import { PlausiblePageviewDetail } from '../hooks/usePlausiblePageviewDetail'
 
 type RouteComponentProps = {
-  route: ServicePortalRoute
+  route: PortalRoute
   userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }
 const RouteComponent = React.memo(
   ({ route, userInfo, client }: RouteComponentProps) => {
     const location = useLocation()
+    const { basePath } = useApp()
 
     useEffect(() => {
       if (route.render !== undefined) {
-        PlausiblePageviewDetail(route.path)
+        PlausiblePageviewDetail({
+          basePath,
+          path: route.path,
+        })
       }
     }, [location])
 
@@ -52,7 +55,7 @@ const RouteComponent = React.memo(
 )
 
 type RouteLoaderProps = {
-  routes: ServicePortalRoute[]
+  routes: PortalRoute[]
   userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }

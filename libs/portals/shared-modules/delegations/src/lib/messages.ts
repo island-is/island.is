@@ -38,4 +38,32 @@ export const m = defineMessages({
     id: 'service.portal:delegation-type-personal-representative',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
+  accessControl: {
+    id: 'service.portal:accessControl',
+    defaultMessage: 'Aðgangsstýring',
+  },
+  accessControlDelegations: {
+    id: 'service.portal:delegations',
+    defaultMessage: 'Umboð',
+  },
+  accessControlDelegationsIncoming: {
+    id: 'service.portal:to-me',
+    defaultMessage: 'Til mín',
+  },
+  accessControlDelegationsOutgoing: {
+    id: 'service.portal:from-me',
+    defaultMessage: 'Frá mér',
+  },
+  accessControlDescription: {
+    id: 'service.portal:accessControl-description',
+    defaultMessage: 'Umboðsveiting og yfirlit yfir umboð sem þú hefur gefið',
+  },
+  accessControlGrant: {
+    id: 'service.portal:accessControlGrant',
+    defaultMessage: 'Veita aðgang',
+  },
+  accessControlAccess: {
+    id: 'service.portal:accessControlAccess',
+    defaultMessage: 'Aðgangur',
+  },
 })

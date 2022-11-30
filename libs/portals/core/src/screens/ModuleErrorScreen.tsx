@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { m } from '../../lib/messages'
+import { m } from '../lib/messages'
 
 interface ModuleErrorScreenProps {
   name: string | MessageDescriptor

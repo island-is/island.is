@@ -1,0 +1,32 @@
+{
+  "root": "libs/portals/admin/core",
+  "sourceRoot": "libs/portals/admin/core/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/portals/admin/core/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/portals/admin/core"
+      ],
+      "options": {
+        "jestConfig": "libs/portals/admin/core/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": [
+    "lib:portals-admin",
+    "scope:react-spa"
+  ]
+}
