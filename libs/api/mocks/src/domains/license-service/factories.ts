@@ -18,12 +18,14 @@ import {
   mockFirearmLicense,
   mockMachineLicense,
 } from './mocks'
+import { mockDisabilityLicense } from './mocks/disabilityMock'
 import { maybeExpired } from './mocks/utils'
 
 const providerArray = [
   'AdministrationOfOccupationalSafetyAndHealth',
   'EnvironmentAgency',
   'NationalPoliceCommissioner',
+  'SocialInsuranceAdministration',
 ]
 
 const genericLicenseFetch = factory<GenericLicenseFetch>({
@@ -85,6 +87,9 @@ export const payload = () => {
       },
       DriversLicense: {
         data: mockDriversLicense(traitArgs),
+      },
+      DisabilityLicense: {
+        data: mockDisabilityLicense(traitArgs),
       },
     },
     data: [],

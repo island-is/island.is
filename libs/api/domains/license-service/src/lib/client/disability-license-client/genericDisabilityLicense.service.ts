@@ -55,10 +55,17 @@ export class GenericDisabilityLicenseService
     labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicense(user)
-
     if (!licenseData) {
       return null
     }
+    const isEmpty = Object.values(licenseData).every((item) =>
+      item ? false : true,
+    )
+
+    if (isEmpty) {
+      return null
+    }
+
     const payload = parseDisabilityLicensePayload(licenseData, locale, labels)
 
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
@@ -133,6 +140,7 @@ export class GenericDisabilityLicenseService
     )
     return pass ?? null
   }
+
   async getPkPassQRCode(user: User): Promise<string | null> {
     const payload = await this.createPkPassPayload(user)
 
@@ -146,6 +154,7 @@ export class GenericDisabilityLicenseService
 
     return pass ?? null
   }
+
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
