@@ -106,6 +106,26 @@
         "cwd": "apps/skilavottord/ws"
       }
     },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets skilavottord skilavottord-ws",
+          "echo 'export NEXTAUTH_URL=http://localhost:4200/app/skilavottord/api/auth' >> .env.secret",
+          "yarn nx run skilavottord-ws:migrate/undo",
+          "yarn nx run skilavottord-ws:migrate",
+          "yarn nx run skilavottord-ws:seed"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn start skilavottord-ws"],
+        "parallel": true
+      }
+    },
     "docker-express": {}
   },
   "tags": []

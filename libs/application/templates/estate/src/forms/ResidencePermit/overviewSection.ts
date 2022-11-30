@@ -12,6 +12,10 @@ import { EstateAsset, EstateMember } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 import { format as formatNationalId } from 'kennitala'
+import {
+  formatBankInfo,
+  formatCurrency,
+} from '@island.is/application/ui-components'
 
 export const overview = buildSection({
   id: 'overviewResidencePermit',
@@ -54,10 +58,12 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               ((answers.estate as any).estateMembers ?? []).map(
-                (member: EstateMember) => ({
+                (member: EstateMember | any) => ({
                   title: member.name,
                   description: [
-                    formatNationalId(member.nationalId),
+                    member.nationalId !== ''
+                      ? formatNationalId(member.nationalId)
+                      : member.dateOfBirth,
                     member.relation,
                   ],
                 }),
@@ -115,8 +121,12 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'overviewInventoryValue',
           title: m.inventoryValueTitle,
-          description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'inventoryValue'),
+          description: (application: Application) => {
+            const value =
+              getValueViaPath<string>(application.answers, 'inventoryValue') ??
+              ''
+            return formatCurrency(value)
+          },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -169,9 +179,11 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               ((answers.bankAccounts as any) ?? []).map((account: any) => ({
-                title: account.accountNumber,
+                title: formatBankInfo(account.accountNumber),
                 description: [
-                  `${m.bankAccountBalance.defaultMessage}: ${account.balance}`,
+                  `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
+                    account.balance,
+                  )}`,
                 ],
               })),
           },
@@ -197,7 +209,9 @@ export const overview = buildSection({
               ((answers.claims as any) ?? []).map((claim: any) => ({
                 title: claim.publisher,
                 description: [
-                  `${m.claimsAmount.defaultMessage}: ${claim.value}`,
+                  `${m.claimsAmount.defaultMessage}: ${formatCurrency(
+                    claim.value,
+                  )}`,
                 ],
               })),
           },
@@ -223,10 +237,14 @@ export const overview = buildSection({
               ((answers.stocks as any) ?? []).map((stock: any) => ({
                 title: stock.organization,
                 description: [
-                  `${m.stocksSsn.defaultMessage}: ${stock.ssn}`,
+                  `${m.stocksSsn.defaultMessage}: ${formatNationalId(
+                    stock.ssn,
+                  )}`,
                   `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
                   `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
-                  `${m.stocksValue.defaultMessage}: ${stock.value}`,
+                  `${m.stocksValue.defaultMessage}: ${formatCurrency(
+                    stock.value,
+                  )}`,
                 ],
               })),
           },
@@ -250,8 +268,14 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'overviewMOtherAssetsValue',
           title: m.otherAssetsValue,
-          description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'otherAssetsValue'),
+          description: (application: Application) => {
+            const value =
+              getValueViaPath<string>(
+                application.answers,
+                'otherAssetsValue',
+              ) ?? ''
+            return formatCurrency(value)
+          },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -278,11 +302,15 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'overviewMoneyAndDepositValue',
           title: m.moneyAndDepositValue,
-          description: (application: Application) =>
-            getValueViaPath<string>(
-              application.answers,
-              'moneyAndDepositBoxesValue',
-            ),
+          description: (application: Application) => {
+            const value =
+              getValueViaPath<string>(
+                application.answers,
+                'moneyAndDepositBoxesValue',
+              ) ?? ''
+
+            return formatCurrency(value)
+          },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -312,8 +340,10 @@ export const overview = buildSection({
               ((answers.debts as any) ?? []).map((debt: any) => ({
                 title: debt.creditorName,
                 description: [
-                  `${m.debtsSsn.defaultMessage}: ${debt.ssn}`,
-                  `${m.debtsBalance.defaultMessage}: ${debt.balance}`,
+                  `${m.debtsSsn.defaultMessage}: ${formatNationalId(debt.ssn)}`,
+                  `${m.debtsBalance.defaultMessage}: ${formatCurrency(
+                    debt.balance,
+                  )}`,
                 ],
               })),
           },

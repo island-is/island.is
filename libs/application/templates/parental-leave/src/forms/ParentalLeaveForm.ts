@@ -20,15 +20,14 @@ import { Application, Form, FormModes } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  getExpectedDateOfBirth,
   getAllPeriodDates,
   getSelectedChild,
   requiresOtherParentApproval,
   getApplicationAnswers,
   allowOtherParent,
-  getLastValidPeriodEndDate,
   removeCountryCode,
   getApplicationExternalData,
+  getMaxMultipleBirthsDays,
   getDurationTitle,
   getFirstPeriodTitle,
   getLeavePlanTitle,
@@ -38,6 +37,9 @@ import {
   getRightsDescTitle,
   getStartDateDesc,
   getStartDateTitle,
+  getMultipleBirthRequestDays,
+  getMinimumStartDate,
+  getLastDayOfLastMonth,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -59,23 +61,19 @@ import {
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
-import {
-  minimumPeriodStartBeforeExpectedDateOfBirth,
-  minPeriodDays,
-} from '../config'
+import { minPeriodDays } from '../config'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { YesOrNo } from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
   title: parentalLeaveFormMessages.shared.formTitle,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'prerequisites',
@@ -743,6 +741,35 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildCustomField({
+              id: 'multipleBirthsRequestDays',
+              childInputIds: [
+                'multipleBirthsRequestDays',
+                'requestRights.isRequestingRights',
+                'requestRights.requestDays',
+                'giveRights.isGivingRights',
+                'giveRights.giveDays',
+              ],
+              title: parentalLeaveFormMessages.shared.multipleBirthsDaysTitle,
+              description:
+                parentalLeaveFormMessages.shared.multipleBirthsDaysDescription,
+              condition: (answers, externalData) => {
+                const canTransferRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                  ParentalRelations.primary
+                const {
+                  hasMultipleBirths,
+                  otherParent,
+                } = getApplicationAnswers(answers)
+
+                return (
+                  canTransferRights &&
+                  hasMultipleBirths === YES &&
+                  otherParent !== SINGLE
+                )
+              },
+              component: 'RequestMultipleBirthsDaysSlider',
+            }),
+            buildCustomField({
               id: 'transferRights',
               childInputIds: [
                 'transferRights',
@@ -756,7 +783,19 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
-                return canTransferRights
+                const { hasMultipleBirths } = getApplicationAnswers(answers)
+
+                const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+                  answers,
+                )
+
+                return (
+                  canTransferRights &&
+                  (hasMultipleBirths === NO ||
+                    multipleBirthsRequestDays ===
+                      getMaxMultipleBirthsDays(answers) ||
+                    multipleBirthsRequestDays === 0)
+                )
               },
               title: parentalLeaveFormMessages.shared.transferRightsTitle,
               description:
@@ -776,9 +815,18 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
+                const { hasMultipleBirths } = getApplicationAnswers(answers)
+
+                const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+                  answers,
+                )
+
                 return (
                   canTransferRights &&
-                  getApplicationAnswers(answers).isRequestingRights === YES
+                  getApplicationAnswers(answers).isRequestingRights === YES &&
+                  (hasMultipleBirths === NO ||
+                    multipleBirthsRequestDays ===
+                      getMaxMultipleBirthsDays(answers))
                 )
               },
               component: 'RequestDaysSlider',
@@ -795,9 +843,16 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
+                const { hasMultipleBirths } = getApplicationAnswers(answers)
+
+                const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+                  answers,
+                )
+
                 return (
                   canTransferRights &&
-                  getApplicationAnswers(answers).isGivingRights === YES
+                  getApplicationAnswers(answers).isGivingRights === YES &&
+                  (hasMultipleBirths === NO || multipleBirthsRequestDays === 0)
                 )
               },
               component: 'GiveDaysSlider',
@@ -907,35 +962,8 @@ export const ParentalLeaveForm: Form = buildForm({
                       periods.length !== 0
                     )
                   },
-                  minDate: (application: Application) => {
-                    const expectedDateOfBirth = getExpectedDateOfBirth(
-                      application,
-                    )
-
-                    const lastPeriodEndDate = getLastValidPeriodEndDate(
-                      application,
-                    )
-
-                    const today = new Date()
-                    if (lastPeriodEndDate) {
-                      return lastPeriodEndDate
-                    } else if (
-                      expectedDateOfBirth &&
-                      new Date(expectedDateOfBirth).getTime() > today.getTime()
-                    ) {
-                      const leastStartDate = addDays(
-                        new Date(expectedDateOfBirth),
-                        -minimumPeriodStartBeforeExpectedDateOfBirth,
-                      )
-                      if (leastStartDate.getTime() < today.getTime()) {
-                        return today
-                      }
-
-                      return leastStartDate
-                    }
-
-                    return today
-                  },
+                  minDate: (application: Application) =>
+                    getMinimumStartDate(application),
                   excludeDates: (application) => {
                     const { periods } = getApplicationAnswers(
                       application.answers,
@@ -1107,7 +1135,7 @@ export const ParentalLeaveForm: Form = buildForm({
                           return (
                             periods.length > 0 &&
                             new Date(periods[0].startDate).getTime() >=
-                              currentDateStartTime()
+                              getLastDayOfLastMonth().getTime()
                           )
                         }
 
