@@ -1,5 +1,5 @@
 // Custom location helper for dynamic paths in service portal: https://plausible.io/docs/custom-locations
-export const PlausiblePageviewDetail = ({
+export const plausiblePageviewDetail = ({
   path,
   basePath,
 }: {

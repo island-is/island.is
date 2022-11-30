@@ -10,8 +10,8 @@ import { ModuleErrorScreen, ModuleErrorBoundary } from './ModuleErrorScreen'
 import { AccessDenied } from './AccessDenied'
 import { NotFound } from './NotFound'
 import { PortalRoute } from '../types/portalCore'
-import { useApp } from '../components/AppProvider'
-import { PlausiblePageviewDetail } from '../hooks/usePlausiblePageviewDetail'
+import { usePortalMeta } from '../components/PortalMetaProvider'
+import { plausiblePageviewDetail } from '../lib/plausiblePageviewDetail'
 
 type RouteComponentProps = {
   route: PortalRoute
@@ -21,11 +21,11 @@ type RouteComponentProps = {
 const RouteComponent = React.memo(
   ({ route, userInfo, client }: RouteComponentProps) => {
     const location = useLocation()
-    const { basePath } = useApp()
+    const { basePath } = usePortalMeta()
 
     useEffect(() => {
       if (route.render !== undefined) {
-        PlausiblePageviewDetail({
+        plausiblePageviewDetail({
           basePath,
           path: route.path,
         })
