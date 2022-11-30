@@ -325,7 +325,8 @@ export const getApplicationTypeOptions = (
       label:
         parentalLeaveFormMessages.shared
           .applicationParentalLeaveTitle,
-      subLabel: formatMessage( parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
+      subLabel: formatMessage( parentalLeaveFormMessages.shared.
+        applicationParentalLeaveSubTitle,
       ),  
     },
     {
