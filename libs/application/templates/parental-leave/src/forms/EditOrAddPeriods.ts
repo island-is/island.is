@@ -37,7 +37,7 @@ export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
   title: parentalLeaveFormMessages.shared.formEditTitle,
   logo: Logo,
-  mode: FormModes.EDITING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'editOrAddPeriods',

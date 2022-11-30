@@ -46,6 +46,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
         exit: [],
         meta: {
           name: 'Prerequisites',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -87,6 +88,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           actionCard: {
             title: m.applicationTitle,
           },
+          status: 'draft',
           progress: 0.5,
           lifecycle: HalfYearLifeCycle,
           onExit: {
@@ -120,6 +122,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
+          status: 'completed',
           lifecycle: HalfYearLifeCycle,
 
           roles: [
@@ -130,11 +133,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DELEGATED]: {
         meta: {
           name: 'Delegated',
+          status: 'completed',
           progress: 1,
           lifecycle: DayLifeCycle,
           onEntry: {
@@ -151,7 +154,6 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },
