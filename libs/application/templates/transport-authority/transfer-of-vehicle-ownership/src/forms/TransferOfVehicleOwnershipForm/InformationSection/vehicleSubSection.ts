@@ -10,7 +10,7 @@ import { getSelectedVehicle } from '../../../utils'
 
 export const vehicleSubSection = buildSubSection({
   id: 'vehicle',
-  title: 'Ökutæki',
+  title: information.labels.vehicle.sectionTitle,
   children: [
     buildMultiField({
       id: 'vehicleMultiField',

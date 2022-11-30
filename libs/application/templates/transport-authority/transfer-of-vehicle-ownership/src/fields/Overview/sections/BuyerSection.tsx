@@ -1,4 +1,4 @@
-// Buyer and buyers coowener + button for buyer to add more coowners or operators
+// Buyer and buyers coowner + button for buyer to add more coowners or operators
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'

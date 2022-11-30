@@ -8,7 +8,7 @@ import { information } from '../../../lib/messages'
 
 export const buyerSubSection = buildSubSection({
   id: 'buyer',
-  title: 'Kaupandi',
+  title: information.labels.buyer.sectionTitle,
   children: [
     buildMultiField({
       id: 'buyerMultiField',
