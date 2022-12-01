@@ -1031,7 +1031,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
         const { periods } = getApplicationAnswers(application.answers)
-        const tempPeriods = periods.filter((period) => period?.startDate)
+        const tempPeriods = periods.filter((period) => !!period?.startDate)
 
         if (answers.periods.length !== tempPeriods.length) {
           unset(answers, 'periods')

@@ -357,52 +357,53 @@ export const parentalLeaveFormMessages: MessageDir = {
     rightsDescription: {
       id: 'pl.application:rights.description',
       defaultMessage:
-        'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við orlofið eftir á.',
+        'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. ',
       description: `The right to parental leave is 12 months, they  are equally divided between parents, but 45 days can be moved from one parent to the other.`,
     },
     grantRightsDescription: {
       id: 'pl.application:grant.rights.description',
       defaultMessage:
-        'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við styrkinn eftir á.',
+        'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins.',
       description:
-        'Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.',
+        'Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another.',
     },
     multipleRightsDescription: {
       id: 'pl.application:multiple.rights.description',
       defaultMessage:
-        'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við orlofið eftir á. ',
+        'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs.',
       description: `The right to parental leave is 12 months, they  are equally divided between parents, but 45 days can be moved from one parent to the other. For each child that is born, 3 months of the parents' joint right is added.`,
     },
     grantMultipleRightsDescription: {
       id: 'pl.application:grant.multiple.rights.description',
       defaultMessage:
-        'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við styrkinn eftir á.',
-      description: `Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. For each child that is born, 3 months of the parents' joint right is added. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.`,
+        'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks.',
+      description: `Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. For each child that is born, 3 months of the parents' joint right is added.`,
     },
     singleParentRightsDescription: {
       id: 'pl.application:single.parent.rights.description',
       defaultMessage:
-        'Fæðingarorlofsréttur fyrir einhleypt foreldri eru 12 mánuðir. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við orlofið eftir á.',
+        'Fæðingarorlofsréttur fyrir einhleypt foreldri eru 12 mánuðir.',
       description:
-        'The right to parental leave is 12 months for single parent. ATTN if you are entitled to increased rights of parental leave you will have to contact Parental Leave Fund and they will add extra months to the leave after submission.',
+        'The right to parental leave is 12 months for single parent.',
     },
     singleParentGrantRightsDescription: {
       id: 'pl.application:single.parent.grant.rights.description',
       defaultMessage:
-        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við styrkinn eftir á.',
-      description: `The right to parental leave is 12 months for single parent. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.`,
+        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir.',
+      description:
+        'The right to parental leave is 12 months for single parent.',
     },
     singleParentMultipleRightsDescription: {
       id: 'pl.application:single.parent.multiple.rights.description',
       defaultMessage:
-        'Fæðingarorlofsréttur fyrir einhleypt foreldri eru 12 mánuðir. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við orlofið eftir á.',
-      description: `The right to parental leave is 12 months for single parent. For each child that is born, 3 months of the parents' joint right is added. ATTN if you are entitled to increased rights of parental leave you will have to contact Parental Leave Fund and they will add extra months to the leave after submission.`,
+        'Fæðingarorlofsréttur fyrir einhleypt foreldri eru 12 mánuðir. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs.',
+      description: `The right to parental leave is 12 months for single parent. For each child that is born, 3 months of the parents' joint right is added.`,
     },
     singleParentGrantMultipleRightsDescription: {
       id: 'pl.application:single.parent.grant.multiple.rights.description',
       defaultMessage:
-        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við styrkinn eftir á.',
-      description: `The right to parental leave is 12 months for single parent. For each child that is born, 3 months of the parents' joint right is added. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.`,
+        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks.',
+      description: `The right to parental leave is 12 months for single parent. For each child that is born, 3 months of the parents' joint right is added.`,
     },
     requestRightsName: {
       id: 'pl.application:request.rights.name',
