@@ -1,44 +1,28 @@
-import { UberChart } from './uber-chart'
-import { PostgresInfo, Service } from './types/input-types'
-import {
-  getDependantServices,
-  getPostgresInfoForFeature,
-  resolveWithMaxLength,
-} from './serialize-to-yaml'
-import { resolveDbHost } from './map-to-values'
-import { FeatureKubeJob } from './types/output-types'
+import { ServiceDefinitionForEnv } from '../types/input-types'
+import { resolveDbHost } from './map-to-helm-values'
+import { FeatureKubeJob } from '../types/output-types'
+import { resolveWithMaxLength } from './serialization-helpers'
+import { EnvironmentConfig } from '../types/charts'
 
-export const generateJobsForFeature = (
-  uberChart: UberChart,
-  habitat: Service[],
+export const generateJobsForFeature = async (
   image: string,
-  ...services: Service[]
-): FeatureKubeJob => {
-  const feature = uberChart.env.feature
+  services: ServiceDefinitionForEnv[],
+  env: EnvironmentConfig,
+): Promise<FeatureKubeJob> => {
+  const feature = env.feature
   if (typeof feature === 'undefined') {
     throw new Error('Feature jobs with a feature name not defined')
   }
-  const featureSpecificServices = getDependantServices(
-    uberChart,
-    habitat,
-    ...services,
-  )
   const securityContext = {
     privileged: false,
     allowPrivilegeEscalation: false,
   }
-  const containers = featureSpecificServices
+  const containers = Object.values(services)
     .map((service) =>
-      [
-        getPostgresInfoForFeature(feature, service.serviceDef.postgres),
-        getPostgresInfoForFeature(
-          feature,
-          service.serviceDef.initContainers?.postgres,
-        ),
-      ]
+      [service.postgres, service.initContainers?.postgres]
         .filter((id) => id)
         .map((info) => {
-          const host = resolveDbHost(info!, uberChart, service)
+          const host = resolveDbHost(service, env, info?.host)
           return {
             command: ['/app/create-db.sh'],
             image,
