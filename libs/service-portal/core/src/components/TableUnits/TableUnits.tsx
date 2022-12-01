@@ -4,12 +4,15 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Text, Box, Button, Table as T } from '@island.is/island-ui/core'
 
+type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+type Tables = {
+  header: string[]
+  rows: (string | number)[][]
+  paginate?: any
+}
+
 interface Props {
-  tables?: {
-    header: string[]
-    rows: (string | number)[][]
-    paginate?: any
-  }[]
+  tables?: Array<Tables | null>
   title?: string
   paginateCallback?: () => void
 }
@@ -29,54 +32,56 @@ export const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
           {title}
         </Text>
       ) : null}
-      {tables?.map((table, i) => (
-        <T.Table
-          key={`table-unit-${i}`}
-          box={i > 0 ? { marginTop: 'containerGutter' } : undefined}
-        >
-          <T.Head>
-            <T.Row>
-              {table.header.map((header, ii) => (
-                <T.HeadData key={`head-${ii}`} style={tableStyles}>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {header}
-                  </Text>
-                </T.HeadData>
-              ))}
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {table.rows.map((row, iii) => (
-              <T.Row key={`trow-${iii}`}>
-                {row.map((rowitem, iiii) => (
-                  <T.Data key={`tdata-${iiii}`} style={tableStyles}>
-                    <Text variant="medium">{rowitem}</Text>
-                  </T.Data>
+      {tables
+        ?.filter((Boolean as unknown) as ExcludesFalse)
+        ?.map((table, i) => (
+          <T.Table
+            key={`table-unit-${i}`}
+            box={i > 0 ? { marginTop: 'containerGutter' } : undefined}
+          >
+            <T.Head>
+              <T.Row>
+                {table.header.map((header, ii) => (
+                  <T.HeadData key={`head-${ii}`} style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
+                      {header}
+                    </Text>
+                  </T.HeadData>
                 ))}
               </T.Row>
-            ))}
-            {table.paginate ? (
-              <T.Row>
-                <T.Data borderColor="white" colSpan={5} style={tableStyles}>
-                  <Box
-                    alignItems="center"
-                    justifyContent="center"
-                    display="flex"
-                  >
-                    <Button
-                      size="small"
-                      variant="text"
-                      onClick={() => getMoreItems()}
+            </T.Head>
+            <T.Body>
+              {table.rows.map((row, iii) => (
+                <T.Row key={`trow-${iii}`}>
+                  {row.map((rowitem, iiii) => (
+                    <T.Data key={`tdata-${iiii}`} style={tableStyles}>
+                      <Text variant="medium">{rowitem}</Text>
+                    </T.Data>
+                  ))}
+                </T.Row>
+              ))}
+              {table.paginate ? (
+                <T.Row>
+                  <T.Data borderColor="white" colSpan={5} style={tableStyles}>
+                    <Box
+                      alignItems="center"
+                      justifyContent="center"
+                      display="flex"
                     >
-                      {formatMessage(m.fetchMore)}
-                    </Button>
-                  </Box>
-                </T.Data>
-              </T.Row>
-            ) : null}
-          </T.Body>
-        </T.Table>
-      ))}
+                      <Button
+                        size="small"
+                        variant="text"
+                        onClick={() => getMoreItems()}
+                      >
+                        {formatMessage(m.fetchMore)}
+                      </Button>
+                    </Box>
+                  </T.Data>
+                </T.Row>
+              ) : null}
+            </T.Body>
+          </T.Table>
+        ))}
     </>
   )
 }
