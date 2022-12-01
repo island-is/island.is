@@ -144,17 +144,21 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
                 item.periodIntervalName,
               ) as string).slice(0, 3),
               [paper]:
-                item.registrationTypes?.find(
-                  (t) =>
-                    t.registrationType === selectedRegistrationTypeOption.value,
-                )?.totalPaperRegistrationsOfType ??
-                item.totalPaperRegistrationsForCurrentPeriodInterval,
+                selectedRegistrationTypeOption.value === 'Allt'
+                  ? item.totalPaperRegistrationsForCurrentPeriodInterval
+                  : item.registrationTypes?.find(
+                      (t) =>
+                        t.registrationType ===
+                        selectedRegistrationTypeOption.value,
+                    )?.totalPaperRegistrationsOfType ?? 0,
               [electronic]:
-                item.registrationTypes?.find(
-                  (t) =>
-                    t.registrationType === selectedRegistrationTypeOption.value,
-                )?.totalElectronicRegistrationsOfType ??
-                item.totalElectronicRegistrationsForCurrentPeriodInterval,
+                selectedRegistrationTypeOption.value === 'Allt'
+                  ? item.totalElectronicRegistrationsForCurrentPeriodInterval
+                  : item.registrationTypes?.find(
+                      (t) =>
+                        t.registrationType ===
+                        selectedRegistrationTypeOption.value,
+                    )?.totalElectronicRegistrationsOfType ?? 0,
             }))}
           >
             <Bar
