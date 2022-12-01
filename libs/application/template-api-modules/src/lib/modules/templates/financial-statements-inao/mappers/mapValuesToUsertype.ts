@@ -123,7 +123,7 @@ export const mapValuesToCemeterytype = (answers: FormValue) => {
       getValueViaPath(answers, 'cemetryExpense.otherOperationCost'),
     ),
     depreciation: Number(
-      getValueViaPath(answers, 'cemetryExpense.otherOperationCost'),
+      getValueViaPath(answers, 'cemetryExpense.depreciation'),
     ),
     financialExpenses: Number(
       getValueViaPath(answers, 'capitalNumbers.capitalCost'),
