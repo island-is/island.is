@@ -35,7 +35,6 @@ export interface BadSubjectProblem extends BaseProblem {
 export interface ProviderErrorReason {
   title: StaticText
   summary: StaticText
-  hideSubmitError?: boolean
 }
 
 export interface TemplateApiErrorProblem extends BaseProblem {

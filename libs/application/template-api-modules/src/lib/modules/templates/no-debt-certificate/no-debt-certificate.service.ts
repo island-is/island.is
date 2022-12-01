@@ -47,7 +47,6 @@ export class NoDebtCertificateService extends BaseTemplateApiService {
         {
           title: ndcMessages.missingCertificateTitle,
           summary: ndcMessages.missingCertificateSummary,
-          hideSubmitError: true,
         },
         400,
       )

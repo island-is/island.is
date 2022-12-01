@@ -32,7 +32,7 @@ import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql
 import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'
-import { verifyExternalData, hideSubmitErrorExternalData } from '../utils'
+import { verifyExternalData } from '../utils'
 
 const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   title,
@@ -188,19 +188,7 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
-        const showSubmitError =
-          response.data &&
-          !hideSubmitErrorExternalData(
-            getExternalDataFromResponse(response.data),
-            relevantDataProviders,
-          )
-
-        return [
-          false,
-          showSubmitError
-            ? formatMessage(coreErrorMessages.failedDataProviderSubmit)
-            : '',
-        ]
+        return [false, '']
       })
     } else {
       setBeforeSubmitCallback(null)

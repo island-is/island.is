@@ -38,7 +38,6 @@ export const getErrorReasonIfPresent = (
       return {
         title: reason.title,
         summary: reason.summary,
-        hideSubmitError: reason.hideSubmitError,
       }
     }
     if (isTranslationObject(reason) || isString(reason)) {
