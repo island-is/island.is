@@ -38,8 +38,8 @@ export const resolvers: Resolvers = {
       if (!application) {
         throw new Error('Missing application')
       }
-      args.input.dataProviders.forEach(({ id, type }) => {
-        application.externalData[id] = externalData(id)
+      args.input.dataProviders.forEach(({ actionId, order }) => {
+        application.externalData[actionId] = externalData(actionId)
       })
       return application
     },
