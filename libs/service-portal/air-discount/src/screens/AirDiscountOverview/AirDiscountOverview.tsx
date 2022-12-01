@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
-import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
-  IntroHeader,
   ServicePortalModuleComponent,
   m as coreMessage,
   ActionCard,
