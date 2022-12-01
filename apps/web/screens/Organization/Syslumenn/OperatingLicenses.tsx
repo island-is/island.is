@@ -246,9 +246,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: pageUrl === primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
+      active: pageUrl === primaryLink?.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,

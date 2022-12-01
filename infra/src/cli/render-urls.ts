@@ -1,7 +1,5 @@
-import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
 import { OpsEnv } from '../dsl/types/input-types'
-import { ServiceHelm } from '../dsl/types/output-types'
-import { UberChart } from '../dsl/uber-chart'
+import { HelmService } from '../dsl/types/output-types'
 import { Envs } from '../environments'
 import {
   ChartName,
@@ -9,9 +7,9 @@ import {
   Charts,
   Deployments,
 } from '../uber-charts/all-charts'
-import { OpsEnvName } from '../dsl/types/charts'
+import { renderHelmServices } from '../dsl/exports/helm'
 
-const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
+const renderUrlsForService = ({ ingress = {} }: HelmService) => {
   const urls: string[] = []
   Object.keys(ingress).forEach((ingressName) => {
     ingress[ingressName].hosts.forEach((host) => {
@@ -23,11 +21,18 @@ const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   return urls
 }
 
-const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
-  const { services } = generateYamlForEnv(
-    new UberChart(Envs[Deployments[chartName][environment]]),
-    ...Charts[chartName][environment],
-  )
+const renderUrlsForChart = async (
+  environment: OpsEnv,
+  chartName: ChartName,
+) => {
+  const services = (
+    await renderHelmServices(
+      Envs[Deployments[chartName][environment]],
+      Charts[chartName][environment],
+      Charts[chartName][environment],
+    )
+  ).services
+
   return Object.keys(services).reduce((acc, serviceName) => {
     const urls = renderUrlsForService(services[serviceName])
     if (urls.length <= 0) {
@@ -37,10 +42,13 @@ const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
   }, {})
 }
 
-export const renderUrls = (environment: OpsEnv) => {
+export const renderUrls = async (environment: OpsEnv) => {
   console.log(
-    ChartNames.reduce((acc, chartName) => {
-      return { ...acc, ...renderUrlsForChart(environment, chartName) }
-    }, {}),
+    await ChartNames.reduce(async (acc, chartName) => {
+      return {
+        ...(await acc),
+        ...(await renderUrlsForChart(environment, chartName)),
+      }
+    }, Promise.resolve({})),
   )
 }
