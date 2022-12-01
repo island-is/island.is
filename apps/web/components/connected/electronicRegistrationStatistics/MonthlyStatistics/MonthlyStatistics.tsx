@@ -82,7 +82,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
   const yearOptions = useMemo(() => {
     const options = []
 
-    for (let year = 2019; year <= currentYear; year += 1) {
+    for (let year = 2020; year <= currentYear; year += 1) {
       options.push({
         label: String(year),
         value: String(year),
