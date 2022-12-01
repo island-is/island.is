@@ -1,0 +1,15 @@
+schema:
+  - apps/api/src/api.graphql
+documents:
+  - libs/portals/admin/air-discount-scheme/src/**/*.graphql
+generates:
+  libs/portals/admin/air-discount-scheme/src/:
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/api/schema'
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+hooks:
+  afterAllFileWrite:
+    - prettier --write

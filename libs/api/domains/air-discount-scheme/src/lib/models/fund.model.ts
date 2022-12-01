@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('AirDiscountSchemeFund')
 export class Fund {
   @Field()
   credit!: number

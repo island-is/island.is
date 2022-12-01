@@ -50,6 +50,8 @@ import { Discount } from '../discount/discount.model'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { User } from '../user/user.model'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -328,7 +330,7 @@ export class PublicFlightController {
       throw new NotFoundException(`Flight<${params.flightId}> not found`)
     }
 
-    const flightLeg = await flight.flightLegs.find(
+    const flightLeg = await flight.flightLegs?.find(
       (flightLeg) => flightLeg.id === params.flightLegId,
     )
     if (!flightLeg) {
@@ -340,27 +342,32 @@ export class PublicFlightController {
   }
 }
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Controller('api/private')
+@ApiTags('Admin')
+@ApiBearerAuth()
 export class PrivateFlightController {
   constructor(private readonly flightService: FlightService) {}
 
   @Get('flights')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
   }
 
   @Post('flightLegs')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
-  getFlightLegs(@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
+  @ApiOkResponse({ type: [FlightLeg] })
+  getFlightLegs(@Body() body: GetFlightLegsBody): Promise<FlightLeg[]> {
     return this.flightService.findAllLegsByFilter(body)
   }
 
   @Post('flightLegs/confirmInvoice')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
-  async confirmInvoice(
-    @Body() body: ConfirmInvoiceBody | {},
-  ): Promise<FlightLeg[]> {
+  @ApiOkResponse({ type: [FlightLeg] })
+  async confirmInvoice(@Body() body: ConfirmInvoiceBody): Promise<FlightLeg[]> {
     let flightLegs = await this.flightService.findAllLegsByFilter(body)
     flightLegs = await this.flightService.finalizeCreditsAndDebits(flightLegs)
     return flightLegs
@@ -368,6 +375,7 @@ export class PrivateFlightController {
 
   @Get('users/:nationalId/flights')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
   getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
     return this.flightService.findThisYearsFlightsByNationalId(
       params.nationalId,

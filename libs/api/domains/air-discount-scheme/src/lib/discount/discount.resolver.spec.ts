@@ -1,7 +1,7 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Test, TestingModule } from '@nestjs/testing'
-import { AirDiscountSchemeResolver } from './api-domains-air-discount-scheme.resolver'
-import { AirDiscountSchemeService } from './api-domains-air-discount-scheme.service'
+import { DiscountResolver } from './discount.resolver'
+import { DiscountService } from './discount.service'
 
 import {
   Discount as TDiscount,
@@ -9,8 +9,8 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { ApiScope } from '@island.is/auth/scopes'
 
-describe('ApiDomains: AirDiscountSchemeResolver', () => {
-  let resolver: AirDiscountSchemeResolver
+describe('ApiDomains: DiscountResolver', () => {
+  let resolver: DiscountResolver
 
   const idsForGetDiscount = ['1010303019', '1010307789', '2222222229']
   const idsForCreateDiscount = ['1010302399', '3333333339']
@@ -61,13 +61,12 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AirDiscountSchemeResolver,
+        DiscountResolver,
         {
-          provide: AirDiscountSchemeService,
+          provide: DiscountService,
           useFactory: () => ({
             // Is there a nicer way to mock a service while keeping some of its methods unchanged?
-            getCurrentDiscounts:
-              AirDiscountSchemeService.prototype.getCurrentDiscounts,
+            getCurrentDiscounts: DiscountService.prototype.getCurrentDiscounts,
 
             getDiscount: jest.fn(
               (user: User, nationalId: string): TDiscount | void => {
@@ -97,7 +96,7 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
       ],
     }).compile()
 
-    resolver = module.get<AirDiscountSchemeResolver>(AirDiscountSchemeResolver)
+    resolver = module.get<DiscountResolver>(DiscountResolver)
   })
 
   it('should be defined', () => {

@@ -19,17 +19,10 @@
         "passWithNoTests": true
       }
     },
-    "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "outputPath": "apps/air-discount-scheme/backend/src/openapi-private.yaml",
-        "command": "cross-env INIT_SCHEMA=true ADS_PRIVATE_CLIENT=true yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.app.json apps/air-discount-scheme/backend/src/buildOpenApi.ts"
-      }
-    },
     "schemas/external-openapi-generator": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "cross-env ADS_PRIVATE_CLIENT=1 yarn openapi-generator -o libs/clients/air-discount-scheme/gen/fetch -i apps/air-discount-scheme/backend/src/private-openapi.yaml"
+        "command": "yarn openapi-generator -o libs/clients/air-discount-scheme/gen/fetch -i apps/air-discount-scheme/backend/src/private-openapi.yaml --additional-properties=enumPropertyNaming=original"
       }
     }
   },
