@@ -67,6 +67,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'draft',
           progress: 0.33,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -95,6 +96,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.66,
+          status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -118,14 +120,15 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          status: 'approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
         },
-        type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
+          status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -138,6 +141,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
       closed: {
         meta: {
           name: 'Closed',
+          status: 'completed',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
