@@ -16,9 +16,9 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { Defendant, DefendantService } from '../../../defendant'
 import { User } from '../../../user'
 import { Institution } from '../../../institution'
+import { CaseFile } from '../../../file'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
-import { CaseFile } from '../../../file'
 
 interface Then {
   result: Case
@@ -40,6 +40,7 @@ describe('CaseController - Create', () => {
       caseModel,
       caseController,
     } = await createTestingCaseModule()
+
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
