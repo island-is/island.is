@@ -44,7 +44,7 @@ export const RadioFormField: FC<Props> = ({
     [options, application],
   )
   useEffect(() => {
-    console.log('application changed', application.answers)
+    console.log('application changed', application.answers.applicationInfo)
   }, [application])
 
   console.debug(

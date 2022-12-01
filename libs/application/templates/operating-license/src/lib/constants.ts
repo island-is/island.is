@@ -1,4 +1,4 @@
-import { Condition, DefaultEvents, Option } from '@island.is/application/types'
+import { DefaultEvents, Option } from '@island.is/application/types'
 
 import { attachmentNames, m } from './messages'
 

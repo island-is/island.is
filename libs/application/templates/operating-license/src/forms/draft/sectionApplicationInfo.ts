@@ -1,7 +1,6 @@
 import {
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildCheckboxField,
   buildDescriptionField,
 } from '@island.is/application/core'
@@ -49,14 +48,11 @@ export const applicationInfo = buildMultiField({
       condition: (answers) =>
         !!(answers.applicationInfo as Operation)?.operation,
     }),
-
     buildRadioField({
       id: 'applicationInfo.typeHotel',
       title: m.operationTypeHotelTitle,
-      defaultValue: '',
       options: ({ answers }) => {
-        console.log((answers.applicationInfo as Operation)?.category)
-        return (answers.applicationInfo as Operation)?.category !==
+        return (answers.applicationInfo as Operation).category !==
           OPERATION_CATEGORY.TWO
           ? [
               {
@@ -71,14 +67,23 @@ export const applicationInfo = buildMultiField({
       },
       backgroundColor: 'blue',
       condition: (answers) =>
-        !!(answers.applicationInfo as Operation)?.category,
-      // (answers.applicationInfo as Operation)?.operation ===
-      // APPLICATION_TYPES.HOTEL && !!(answers.applicationInfo as Operation)?.category,
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.HOTEL,
     }),
-
+    //fake field to trigger rerender on category switch
+    buildDescriptionField({
+      id: 'fake_helper_field',
+      title: '',
+      condition: (answers) =>
+        (answers.applicationInfo as Operation)?.operation ===
+          APPLICATION_TYPES.HOTEL &&
+        (answers.applicationInfo as Operation)?.category ===
+          OPERATION_CATEGORY.TWO,
+    }),
     buildCheckboxField({
       id: 'applicationInfo.typeResturant',
       title: m.operationTypeResturantTitle,
+      defaultValue: [],
       options: ResturantTypes,
       backgroundColor: 'blue',
       condition: (answers) =>
