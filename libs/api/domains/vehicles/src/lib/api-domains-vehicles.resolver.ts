@@ -137,7 +137,7 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
-    if (!input.showOwned && !input.showCoowned) {
+    if (input.showOperated) {
       throw Error(
         'You can only fetch the debt status for vehicles where you are either owner or co-owner',
       )
