@@ -20,7 +20,7 @@ import {
   createPkPassDataInput,
   parseMachineLicensePayload,
 } from './machineLicenseMapper'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import {
   PassDataInput,
   SmartSolutionsApi,
@@ -40,13 +40,51 @@ export class GenericMachineLicenseService
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  private handleGetLicenseError = (e: Error) => {
+    if (e instanceof FetchError) {
+      const err = e as FetchError
+
+      // STATUS CODES FROM VE
+      // 400 - no natid supplied
+      // 400 - user doesn't exist in natreg
+      // 404 - User has no license
+      // 200 - ok
+      // 401 - unauthroized
+      // 500 - server error
+
+      if ([400, 401, 404].includes(err.status)) {
+        switch (err.status) {
+          case 404:
+            //THIS IS IN ICELANDIC, ALSO BAD HANDLING TODO:
+            this.logger.info(err.body + '', {
+              category: LOG_CATEGORY,
+            })
+            break
+          case 401:
+            this.logger.warning(
+              'Unauthorized: Missing or invalid national id',
+              {
+                category: LOG_CATEGORY,
+              },
+            )
+            break
+          default:
+            break
+        }
+        return null
+      }
+    }
+
+    throw e
+  }
+
   private machineApiWithAuth = (user: User) =>
     this.machineApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async fetchLicense(user: User) {
     const license = await this.machineApiWithAuth(user)
       .getVinnuvela()
-      .catch(handle404)
+      .catch(this.handleGetLicenseError)
     return license
   }
 
