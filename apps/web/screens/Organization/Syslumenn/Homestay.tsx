@@ -59,10 +59,10 @@ const Homestay: Screen<HomestayProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === pageUrl ||
+        primaryLink?.url === pageUrl ||
         childrenLinks.some((link) => link.url === pageUrl),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
