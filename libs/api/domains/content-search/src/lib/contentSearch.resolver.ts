@@ -11,7 +11,6 @@ export class ContentSearchResolver {
 
   @Query(() => SearchResult)
   searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {
-    console.log(query)
     return this.contentSearchService.find(query)
   }
 

@@ -352,8 +352,6 @@ const Search: Screen<CategoryProps> = ({
       group: item.group,
       ...getItemImages(item),
       labels: getLabels(item),
-      subArticles: ["ob","bob"],
-      relatedArticles: ["asdf","kdkd"]
     }),
   )
 
