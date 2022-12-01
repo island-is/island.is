@@ -70,11 +70,11 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url.includes(`${organizationPage.slug}/thjonusta`) ||
-        primaryLink.url.includes(`${organizationPage.slug}/services`),
+        primaryLink?.url?.includes(`${organizationPage.slug}/thjonusta`) ||
+        primaryLink?.url?.includes(`${organizationPage.slug}/services`),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -116,7 +116,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   groups = groups.filter((x) =>
     services
       .filter((x) => parameters.categories.includes(x.category?.slug))
-      .map((x) => x.group.slug)
+      .map((x) => x.group?.slug)
       .includes(x.value),
   )
 

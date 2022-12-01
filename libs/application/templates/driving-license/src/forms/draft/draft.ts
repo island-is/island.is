@@ -14,7 +14,7 @@ export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: m.applicationName,
   logo: LogreglanLogo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,
   children: [

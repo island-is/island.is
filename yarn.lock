@@ -1429,6 +1429,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@azure/msal-common@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@azure/msal-common@npm:9.0.0"
+  checksum: e4b1fcff3a95a019761e62b6a3a7a8a5a67905826771ed262b8741efa719afb992db213b74b1000b1fee6faf8041189045fd32beb9d0e69961a7ee0980539546
+  languageName: node
+  linkType: hard
+
+"@azure/msal-node@npm:1.14.4":
+  version: 1.14.4
+  resolution: "@azure/msal-node@npm:1.14.4"
+  dependencies:
+    "@azure/msal-common": ^9.0.0
+    jsonwebtoken: ^8.5.1
+    uuid: ^8.3.0
+  checksum: 320205cae1087de4242f1a525dd732de1ecc0498f1fd660492d4f99f0253f5b52d10d6d635adbe3f63770cc9fba26676aa9714e86ddab8ce3754d89a16b3b983
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0 <7.4.0":
   version: 7.0.0
   resolution: "@babel/code-frame@npm:7.0.0"
@@ -25098,6 +25116,7 @@ __metadata:
     "@aws-sdk/client-sqs": 3.145.0
     "@aws-sdk/client-ssm": 3.145.0
     "@aws-sdk/credential-provider-node": 3.145.0
+    "@azure/msal-node": 1.14.4
     "@babel/core": 7.18.2
     "@babel/plugin-proposal-decorators": 7.18.2
     "@babel/plugin-transform-runtime": 7.18.2

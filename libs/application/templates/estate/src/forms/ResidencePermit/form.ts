@@ -16,7 +16,7 @@ import { overview } from './overviewSection'
 export const form: Form = buildForm({
   id: 'residencePermitForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
@@ -56,7 +56,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'realEstate',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -80,7 +80,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'inventory',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -100,6 +100,7 @@ export const form: Form = buildForm({
                   id: 'inventoryValue',
                   title: m.inventoryValueTitle,
                   width: 'half',
+                  variant: 'currency',
                 }),
               ],
             }),
@@ -111,7 +112,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'realEstate',
-              title: m.vehicles,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -135,7 +136,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'estateBankInfo',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -155,12 +156,12 @@ export const form: Form = buildForm({
                       {
                         title: m.bankAccount.defaultMessage,
                         id: 'accountNumber',
-                        placeholder: m.bankAccountPlaceholder.defaultMessage,
                         format: '#### - ## - ######',
                       },
                       {
                         title: m.bankAccountBalance.defaultMessage,
                         id: 'balance',
+                        currency: true,
                       },
                     ],
                     repeaterButtonText:
@@ -178,7 +179,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'claims',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -199,7 +200,11 @@ export const form: Form = buildForm({
                         title: m.claimsPublisher.defaultMessage,
                         id: 'publisher',
                       },
-                      { title: m.claimsAmount.defaultMessage, id: 'value' },
+                      {
+                        title: m.claimsAmount.defaultMessage,
+                        id: 'value',
+                        currency: true,
+                      },
                     ],
                     repeaterButtonText: m.claimsRepeaterButton.defaultMessage,
                     repeaterHeaderText: m.claimsTitle.defaultMessage,
@@ -215,7 +220,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'stocks',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -244,15 +249,18 @@ export const form: Form = buildForm({
                       {
                         title: m.stocksFaceValue.defaultMessage,
                         id: 'faceValue',
+                        type: 'number',
                       },
                       {
                         title: m.stocksRateOfChange.defaultMessage,
                         id: 'rateOfExchange',
+                        type: 'number',
                       },
                       {
                         title: m.stocksValue.defaultMessage,
                         id: 'value',
                         color: 'white',
+                        readOnly: true,
                       },
                     ],
                     repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
@@ -269,7 +277,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'moneyAndDedosit',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -289,6 +297,7 @@ export const form: Form = buildForm({
                   id: 'moneyAndDepositBoxesValue',
                   title: m.moneyAndDepositValue,
                   width: 'half',
+                  variant: 'currency',
                 }),
               ],
             }),
@@ -300,7 +309,7 @@ export const form: Form = buildForm({
           children: [
             buildMultiField({
               id: 'otherAssets',
-              title: m.properties,
+              title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
@@ -320,6 +329,7 @@ export const form: Form = buildForm({
                   id: 'otherAssetsValue',
                   title: m.otherAssetsValue,
                   width: 'half',
+                  variant: 'currency',
                 }),
               ],
             }),
@@ -353,7 +363,11 @@ export const form: Form = buildForm({
                     id: 'ssn',
                     format: '######-####',
                   },
-                  { title: m.debtsBalance.defaultMessage, id: 'balance' },
+                  {
+                    title: m.debtsBalance.defaultMessage,
+                    id: 'balance',
+                    currency: true,
+                  },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
                 repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,

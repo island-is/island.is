@@ -173,7 +173,7 @@ const Slider = ({
   })
 
   const formatTooltip = (count: number) =>
-    count <= 1
+    count === 1
       ? `${currentIndex} ${label.singular}`
       : `${count} ${label.plural}`
 

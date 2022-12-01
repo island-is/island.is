@@ -46,7 +46,7 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
   const getShipDetailsHref = (id: number) => {
     return `${n(
       'shipDetailsHref',
-      '/v/maelabord-fiskistofu?selectedTab=skip',
+      '/v/gagnasidur-fiskistofu?selectedTab=skip',
     )}&nr=${id}`
   }
 

@@ -93,7 +93,7 @@ export const m = defineMessages({
   },
   settingsInfoProviderSubtitle: {
     id: 'es.application:settingsInfoProviderSubtitle',
-    defaultMessage: 'Persónustillingar (sími og netfang) þínar frá Ísland.is.',
+    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
 
@@ -122,7 +122,22 @@ export const m = defineMessages({
   // Applicant
   announcer: {
     id: 'es.application:announcer',
+    defaultMessage: 'Tilkynnandi',
+    description: '',
+  },
+  announcerNoProperty: {
+    id: 'es.application:announcerNoProperty',
     defaultMessage: 'Yfirlýsandi eignaleysis',
+    description: '',
+  },
+  announcerResidencePermit: {
+    id: 'es.application:announcerResidencePermit',
+    defaultMessage: 'Umsækjandi um leyfi til setu í óskiptu búi',
+    description: '',
+  },
+  announcerRP: {
+    id: 'es.application:announcerRP',
+    defaultMessage: 'Umsækjandi',
     description: '',
   },
   applicantsInfoSubtitle: {
@@ -160,7 +175,7 @@ export const m = defineMessages({
   // Estate members, assets, vehicles
   estateMembersTitle: {
     id: 'es.application:estateMembersTitle',
-    defaultMessage: 'Erfingjar og erfðaskrá',
+    defaultMessage: 'Erfingjar',
     description: '',
   },
   estateMembersSubtitle: {
@@ -202,6 +217,11 @@ export const m = defineMessages({
   properties: {
     id: 'es.application:properties',
     defaultMessage: 'Eignir',
+    description: '',
+  },
+  propertiesTitle: {
+    id: 'es.application:propertiesTitle',
+    defaultMessage: 'Innlendar og erlendar eignir á dánardegi hins látna',
     description: '',
   },
   propertiesDescription: {
@@ -256,19 +276,20 @@ export const m = defineMessages({
   },
   vehiclesDescription: {
     id: 'es.application:vehiclesDescription',
-    defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar',
+    defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
     description: '',
   },
 
   // Bank Info
   estateBankInfo: {
     id: 'es.application:estateBankInfo',
-    defaultMessage: 'Innistæður í bönkum',
+    defaultMessage: 'Innstæður í bönkum og sparisjóðum',
     description: '',
   },
   estateBankInfoDescription: {
     id: 'es.application:estateBankInfoDescription',
-    defaultMessage: 'Bæði í innlendum og erlendum bönkum og sparisjóður',
+    defaultMessage:
+      'Innstæður í bæði innlendum og erlendum bönkum og sparisjóðum',
     description: '',
   },
   bankAccount: {
@@ -327,7 +348,7 @@ export const m = defineMessages({
   },
   stocksDescription: {
     id: 'es.application:stocksDescription',
-    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
+    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
     description: '',
   },
   stocksOrganization: {
@@ -357,7 +378,7 @@ export const m = defineMessages({
   },
   stocksRepeaterButton: {
     id: 'es.application:stocksRepeaterButton',
-    defaultMessage: 'Verðmæti á dánardegi',
+    defaultMessage: 'Bæta við hlutabréfum',
     description: '',
   },
 
@@ -453,7 +474,7 @@ export const m = defineMessages({
   },
   debtsRepeaterButton: {
     id: 'es.application:debtsRepeaterButton',
-    defaultMessage: 'Bæta við kröfuhafa',
+    defaultMessage: 'Bæta við skuldum',
     description: '',
   },
 
@@ -465,38 +486,39 @@ export const m = defineMessages({
   },
   overviewSubtitleWithNoProperty: {
     id: 'es.application:overviewSubtitle',
-    defaultMessage: 'Þú hefur lýst yfir eignarleysi dánarbús.',
+    defaultMessage: 'Þú hefur lýst yfir eignaleysi dánarbús.',
     description: '',
   },
   overviewSubtitleOfficialEstate: {
-    id: 'es.application:overviewSubtitleOfficialEstate',
+    id: 'es.application:overviewSubtitleOfficialEstate#markdown',
     defaultMessage:
-      'Þú hefur valið að tilkynna um opinber skipti. Vinsamlega lesið yfir neðangreindar upplýsingar, uppfærið og staðfestið eftir því sem við á.',
+      'Þú hefur valið að lýsa því yfir að þú óskir eftir að ofangreint dánarbú verði tekið til opinberra skipta. Nánari upplýsingar um skilyrði opinberra skipta má finna á eftirfarandi vefslóð á Ísland.is',
     description: '',
   },
   overviewSubtitleResidencePermit: {
-    id: 'es.application:overviewSubtitleResidencePermit',
+    id: 'es.application:overviewSubtitleResidencePermit#markdown',
     defaultMessage:
-      'Þú hefur valið að sækja um búsetuleyfi. Með því að staðfesta þessar upplýsingar staðfestir umsækjandi að hann hafi í lifandi lífi eignarráð á fjármunum búsins og beri ábyrgð á skuldum hins látna sem um hans eigin skuldir væri að ræða, skv. 12. gr. efðalaga nr. 8/1962.',
+      'Þú hefur nú útfyllt beiðni um leyfi til setu í óskiptu búi.',
     description: '',
   },
 
   // Submit
   submitApplication: {
     id: 'es.application:submitApplication',
-    defaultMessage: 'Senda inn tilkynningu',
+    defaultMessage: 'Senda inn beiðni',
     description: '',
   },
 
   // Done
   doneTitle: {
     id: 'es.application:officialExchangeDoneTitle',
-    defaultMessage: 'Tilkynning móttekin',
+    defaultMessage: 'Beiðni móttekin',
     description: '',
   },
   officialExchangeDoneSubtitle: {
     id: 'es.application:officialExchangeDoneSubtitle#markdown',
-    defaultMessage: 'Sýslumaður hefur móttekið beiðni þína um opinber skipti.',
+    defaultMessage:
+      'Sýslumaður hefur móttekið yfirlýsingu þína um að þú óskir eftir að dánarbúið verði tekið til opinberra skipta. Yfirlýsingin verður nú tekin til meðferðar hjá sýslumanni. Reynist skilyrði til þess að senda dánarbúið í opinber skipti verður það gert í framhaldinu. Þér mun berast tilkynning um slíkt inn á pósthólf þitt á Ísland.is.',
     description: '',
   },
   estateWithNoPropertySubtitle: {
@@ -508,7 +530,7 @@ export const m = defineMessages({
   residencePermitSubtitle: {
     id: 'es.application:residencePermitSubtitle#markdown',
     defaultMessage:
-      'Sýslumaður hefur móttekið beiðni þína um búsetuleyfi. Hún verður nú yfirfarin og staðfesting á búsetuleyfi í kjölfar sent í pósthólf þitt á Ísland.is',
+      'Sýslumaður hefur móttekið beiðni þína um leyfi til setu í óskiptu búi. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
     description: '',
   },
 
@@ -589,11 +611,6 @@ export const m = defineMessages({
   },
 
   // Properties
-  propertiesTitle: {
-    id: 'es.application:propertiesTitle',
-    defaultMessage: 'Eignir',
-    description: 'Properties title',
-  },
   realEstatesTitle: {
     id: 'es.application:realEstatesTitle',
     defaultMessage: 'Fasteignir',

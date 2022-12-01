@@ -25,7 +25,7 @@ export const prerequisite = (): Form => {
     id: 'AnnouncementOfDeathApplicationDraftForm',
     title: '', // m.applicationTitle,
     logo: CoatOfArms,
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
