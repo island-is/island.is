@@ -36,6 +36,11 @@ export const courtUpload = defineMessages({
     defaultMessage: 'Málsgögn {courtCaseNumber}',
     description: 'Notaður sem nafn á málsgögnum í Auði.',
   },
+  caseFilesRecord: {
+    id: 'judicial.system.backend:court_upload.case_files_record',
+    defaultMessage: 'Skjalaskrá {policeCaseNumber}',
+    description: 'Notaður sem nafn á skjalaskrá í Auði.',
+  },
   courtRecord: {
     id: 'judicial.system.backend:court_upload.court_record',
     defaultMessage: 'Þingbók {courtCaseNumber}',

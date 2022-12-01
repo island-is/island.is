@@ -44,7 +44,7 @@ const caseEvent = {
   ACCEPT_INDICTMENT: ':white_check_mark: Lokið',
   REJECT: ':negative_squared_cross_mark: Hafnað',
   DELETE: ':fire: Afturkallað',
-  SCHEDULE_COURT_DATE: ':timer_clock: Úthlutað fyrirtökutíma',
+  SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
 }
