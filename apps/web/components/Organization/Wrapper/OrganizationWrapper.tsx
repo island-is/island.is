@@ -136,7 +136,7 @@ export const getThemeConfig = (
 ): { themeConfig: Partial<LayoutProps> } => {
   let footerVersion: LayoutProps['footerVersion'] = 'default'
 
-  if (footerEnabled.includes(slug)) {
+  if (footerEnabled.includes(slug) || theme === 'landing_page') {
     footerVersion = 'organization'
   }
 

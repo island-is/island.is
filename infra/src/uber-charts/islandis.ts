@@ -41,6 +41,7 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
+import { ServiceBuilder } from '../dsl/dsl'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -50,7 +51,6 @@ const appSystemApi = appSystemApiSetup({
   servicesEndorsementApi: endorsement,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
-const appSystemForm = appSystemFormSetup({})
 
 const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
@@ -69,6 +69,7 @@ const api = apiSetup({
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
 })
+const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
@@ -172,10 +173,10 @@ export const Services: EnvironmentServices = {
 }
 
 // Services that are not included in any environment above but should be used in feature deployments
-export const FeatureDeploymentServices = []
+export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
-export const ExcludedFeatureDeploymentServices = [
+export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   contentfulEntryTagger,

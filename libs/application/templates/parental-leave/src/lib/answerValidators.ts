@@ -198,9 +198,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${path}`)(message)
 
-    const { multipleBirthsRequestDays } = getApplicationAnswers(
-      application.answers,
-    )
+    const {
+      multipleBirthsRequestDays,
+      hasMultipleBirths,
+    } = getApplicationAnswers(application.answers)
     const selectedChild = getSelectedChild(
       application.answers,
       application.externalData,
@@ -208,6 +209,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (
       requestRightsObj.isRequestingRights === YES &&
+      hasMultipleBirths === YES &&
       multipleBirthsRequestDays * 1 !==
         getMaxMultipleBirthsDays(application.answers) &&
       selectedChild?.parentalRelation === ParentalRelations.primary
@@ -225,9 +227,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${path}`)(message)
 
-    const { multipleBirthsRequestDays } = getApplicationAnswers(
-      application.answers,
-    )
+    const {
+      multipleBirthsRequestDays,
+      hasMultipleBirths,
+    } = getApplicationAnswers(application.answers)
 
     const selectedChild = getSelectedChild(
       application.answers,
@@ -235,6 +238,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     )
     if (
       givingRightsObj.isGivingRights === YES &&
+      hasMultipleBirths === YES &&
       multipleBirthsRequestDays * 1 !== 0 &&
       selectedChild?.parentalRelation === ParentalRelations.primary
     ) {

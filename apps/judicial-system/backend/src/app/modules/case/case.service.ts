@@ -19,7 +19,11 @@ import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  Message,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -178,6 +182,39 @@ export class CaseService {
     ])
   }
 
+  private addIndictmentCaseConnectedToCourtCaseMessagesToQueue(
+    theCase: Case,
+  ): Promise<void> {
+    const messages = theCase.policeCaseNumbers
+      .map<Message>((policeCaseNumber) => ({
+        type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+        caseId: theCase.id,
+        policeCaseNumber,
+      }))
+      .concat(
+        theCase.caseFiles
+          ?.filter(
+            (caseFile) =>
+              (caseFile.category &&
+                [
+                  CaseFileCategory.COVER_LETTER,
+                  CaseFileCategory.INDICTMENT,
+                  CaseFileCategory.CRIMINAL_RECORD,
+                  CaseFileCategory.COST_BREAKDOWN,
+                ].includes(caseFile.category)) ||
+              (caseFile.category === CaseFileCategory.CASE_FILE &&
+                !caseFile.policeCaseNumber),
+          )
+          .map((caseFile) => ({
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            caseId: theCase.id,
+            caseFileId: caseFile.id,
+          })) ?? [],
+      )
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
   // Note that the court record and ruling are not delieverd to court for indictment cases
   addCompletedIndictmentCaseMessagesToQueue(theCase: Case): Promise<void> {
     return this.messageService.sendMessagesToQueue([
@@ -186,11 +223,13 @@ export class CaseService {
     ])
   }
 
-  addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<void> {
-    return this.messageService.sendMessageToQueue({
-      type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
-      caseId,
-    })
+  addCaseConnectedToCourtCaseMessagesToQueue(theCase: Case): Promise<void> {
+    return isIndictmentCase(theCase.type)
+      ? this.addIndictmentCaseConnectedToCourtCaseMessagesToQueue(theCase)
+      : this.messageService.sendMessageToQueue({
+          type: MessageType.DELIVER_REQUEST_TO_COURT,
+          caseId: theCase.id,
+        })
   }
 
   async findById(caseId: string): Promise<Case> {
@@ -656,7 +695,7 @@ export class CaseService {
     )) as Case
 
     // No need to wait for now, but may consider including this in a transaction with the database update later
-    this.addCaseConnectedToCourtCaseMessageToQueue(updatedCase.id)
+    this.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase)
 
     return updatedCase
   }

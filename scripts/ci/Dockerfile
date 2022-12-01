@@ -91,12 +91,11 @@ ENV BASEPATH=/
 RUN mkdir -p /etc/nginx/templates
 RUN apk update && \
   apk upgrade && \
-  apk add bash && \
-  curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && \
-  chmod a+x /tmp/jq-linux64 && \
-  mv /tmp/jq-linux64 /usr/bin/jq
+  apk add bash nodejs
+
 ADD scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
+ADD scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base as output-jest

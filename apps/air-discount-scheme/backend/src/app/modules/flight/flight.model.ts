@@ -6,6 +6,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -23,6 +24,7 @@ import type {
   FlightLeg as TFlightLeg,
   UserInfo,
 } from '@island.is/air-discount-scheme/types'
+import { ExplicitCode } from '../discount/discount.model'
 
 export const financialStateMachine = createMachine({
   id: 'flight_leg_financial_state_machine',
@@ -211,6 +213,9 @@ export class Flight
   @HasMany(() => FlightLeg)
   @ApiProperty({ type: [FlightLeg] })
   flightLegs!: FlightLeg[]
+
+  @HasOne(() => ExplicitCode)
+  explicitCode?: ExplicitCode
 
   @CreatedAt
   @ApiProperty()
