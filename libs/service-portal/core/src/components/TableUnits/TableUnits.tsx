@@ -1,10 +1,8 @@
 import React, { FC } from 'react'
-import { tableStyles } from '../../utils/utils'
+import { ExcludesFalse, tableStyles } from '../../utils/utils'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Text, Box, Button, Table as T } from '@island.is/island-ui/core'
-
-type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 type Tables = {
   header: string[]
   rows: (string | number)[][]
