@@ -39,6 +39,7 @@ type ActionCardProps = {
     onClick?: () => void
     disabled?: boolean
     centered?: boolean
+    hide?: boolean
   }
   secondaryCta?: {
     label: string
@@ -232,32 +233,34 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Button>
             </Box>
           )}
-          <Box marginLeft={[0, 3]}>
-            {cta.url ? (
-              <LinkResolver href={cta.url}>
+          {!cta.hide && (
+            <Box marginLeft={[0, 3]}>
+              {cta.url ? (
+                <LinkResolver href={cta.url}>
+                  <Button
+                    icon={isExternalLink(cta.url) ? 'open' : cta.icon}
+                    colorScheme="default"
+                    iconType="outline"
+                    size="small"
+                    type="button"
+                    variant="text"
+                  >
+                    {cta.label}
+                  </Button>
+                </LinkResolver>
+              ) : (
                 <Button
-                  icon={isExternalLink(cta.url) ? 'open' : cta.icon}
-                  colorScheme="default"
-                  iconType="outline"
+                  variant={cta.variant}
                   size="small"
-                  type="button"
-                  variant="text"
+                  onClick={cta.onClick}
+                  disabled={cta.disabled}
+                  icon={cta.icon}
                 >
                   {cta.label}
                 </Button>
-              </LinkResolver>
-            ) : (
-              <Button
-                variant={cta.variant}
-                size="small"
-                onClick={cta.onClick}
-                disabled={cta.disabled}
-                icon={cta.icon}
-              >
-                {cta.label}
-              </Button>
-            )}
-          </Box>
+              )}
+            </Box>
+          )}
         </Box>
       )
     )

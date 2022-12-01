@@ -9,7 +9,15 @@ export const messages = defineMessages({
   introDescription: {
     id: 'sp.air-discount:intro-description',
     defaultMessage:
-      'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári, með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið notendaskilmála Loftbrúar.',
+      'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári, með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið ',
+  },
+  introTerms: {
+    id: 'sp.air-discount: intro-terms',
+    defaultMessage: 'notendaskilmála',
+  },
+  introDescription2: {
+    id: 'sp.air-discount:intro-description-2',
+    defaultMessage: ' Loftbrúar',
   },
   discountText: {
     id: 'sp.air-discount:discount-text',

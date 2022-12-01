@@ -15,12 +15,15 @@ import { Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
+  GridColumn,
+  GridRow,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 import { messages as m } from '../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
+import { ModuleAlertBannerSection } from '@island.is/service-portal/core'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
@@ -66,7 +69,7 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
         tag={formatMessage(coreMessage.errorTitle)}
         title={formatMessage(coreMessage.somethingWrong)}
         children={formatMessage(coreMessage.errorFetchModule, {
-          module: formatMessage(coreMessage.licenses).toLowerCase(),
+          module: formatMessage(coreMessage.airDiscount).toLowerCase(),
         })}
       />
     )
@@ -82,10 +85,25 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
-        <IntroHeader
-          title={defineMessage(m.introTitle)}
-          intro={defineMessage(m.introDescription)}
-        />
+        <GridRow marginBottom={2}>
+          <GridColumn span={['8/8', '5/8']} order={1}>
+            <Text variant="h3" as="h1">
+              {formatMessage(m.introTitle)}
+            </Text>
+
+            <Text variant="default" paddingTop={2}>
+              {formatMessage(m.introDescription)}
+              <a href="/">{formatMessage(m.introTerms)}</a>
+              {formatMessage(m.introDescription2)}
+            </Text>
+            <Text variant="default" paddingTop={2}></Text>
+          </GridColumn>
+
+          <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
+            <ModuleAlertBannerSection />
+          </GridColumn>
+        </GridRow>
+
         <Text variant="small" paddingBottom={2}>
           {formatMessage(m.discountText)}
         </Text>
@@ -98,11 +116,11 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
       {loading && <CardLoader />}
       {data && (
         <Box marginBottom={3}>
-          <Text variant="eyebrow" paddingBottom={1}>
+          <Text variant="eyebrow" paddingBottom={1} color="purple600">
             {formatMessage(m.myRights)}
           </Text>
           <Stack space={2}>
-            {airDiscounts?.map((item) => {
+            {airDiscounts?.map((item, index) => {
               const message = [
                 formatMessage(m.remainingAirfares),
                 item.user.fund?.credit,
@@ -116,15 +134,18 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
               )?.copied
               return (
                 <ActionCard
+                  key={`loftbru-item-${index}`}
                   heading={item.user.name}
                   text={message}
-                  secondaryText={item.discountCode}
+                  secondaryText={
+                    item.user.fund?.credit === 0 ? undefined : item.discountCode
+                  }
                   cta={{
                     label: formatMessage(m.copyCode),
                     onClick: () => copy(item.discountCode),
-                    disabled: item.user.fund?.credit === 0,
                     centered: true,
                     icon: isCopied ? 'checkmark' : 'copy',
+                    hide: item.user.fund?.credit === 0,
                   }}
                 />
               )
