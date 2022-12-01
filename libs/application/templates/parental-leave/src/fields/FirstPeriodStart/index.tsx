@@ -13,6 +13,7 @@ import { useLocale } from '@island.is/localization'
 import {
   getExpectedDateOfBirth,
   getApplicationAnswers,
+  getBeginningOfThisMonth,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
@@ -36,6 +37,16 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   )
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
+
+  let isDisable = true
+  if (expectedDateOfBirth) {
+    const expectedDateTime = new Date(expectedDateOfBirth).getTime()
+    const beginningOfMonth = getBeginningOfThisMonth()
+    const today = new Date()
+    isDisable =
+      expectedDateTime < today.getTime() &&
+      expectedDateTime < beginningOfMonth.getTime()
+  }
 
   const [statefulAnswer, setStatefulAnswer] = useState<
     ValidAnswers | undefined
@@ -91,18 +102,14 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                   .estimatedDateOfBirthOption,
               ),
               value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-              disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth).getTime() < new Date().getTime()
-                : false,
+              disabled: isDisable,
             },
             {
               label: formatMessage(
                 parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
               ),
               value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
-              disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth).getTime() < new Date().getTime()
-                : false,
+              disabled: isDisable,
             },
             {
               label: formatMessage(
