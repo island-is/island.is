@@ -1,6 +1,6 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
-export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
+export const getMobileMenuFigure = (path?: string) => {
   const basePath = '/minarsidur/assets/images/'
   let imgName
 

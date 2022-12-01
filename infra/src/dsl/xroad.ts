@@ -1,34 +1,42 @@
 import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
-import { json } from './dsl'
+import { json, ref } from './dsl'
 
 type XroadSectionConfig = {
   secrets?: Secrets
   env?: EnvironmentVariables
 }
 
-export class XroadConf implements XroadConfig {
+export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
   config: XroadSectionConfig
 
-  constructor(config: XroadSectionConfig) {
+  constructor(config: I) {
     this.config = config
   }
+
   getEnv(): EnvironmentVariables {
     return this.config.env || {}
   }
+
   getSecrets(): Secrets {
     return this.config.secrets || {}
   }
 }
 
+export type XRoadEnvs<
+  T extends XroadSectionConfig
+> = T extends XroadSectionConfig ? keyof T['env'] : never
+
 export const Base = new XroadConf({
   env: {
     XROAD_BASE_PATH: {
-      dev: 'http://securityserver.dev01.devland.is',
+      dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
       staging: 'http://securityserver.staging01.devland.is',
       prod: 'http://securityserver.island.is',
     },
     XROAD_BASE_PATH_WITH_ENV: {
-      dev: 'http://securityserver.dev01.devland.is/r1/IS-DEV',
+      dev: ref(
+        (h) => `${h.svc('http://securityserver.dev01.devland.is')}/r1/IS-DEV`,
+      ),
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
     },
@@ -80,6 +88,7 @@ export const JudicialSystem = new XroadConf({
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
     XROAD_COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
+    XROAD_POLICE_API_KEY: '/k8s/judicial-system/XROAD_POLICE_API_KEY',
   },
 })
 

@@ -9,7 +9,7 @@
       "options": {
         "baseHref": "/umsoknir/",
         "outputPath": "dist/apps/application-system/form",
-        "index": "apps/application-system/form/src/index.html",
+        "index": "apps/application-system/form/src/index.src.html",
         "main": "apps/application-system/form/src/main.tsx",
         "polyfills": "apps/application-system/form/src/polyfills.ts",
         "tsConfig": "apps/application-system/form/tsconfig.app.json",
@@ -44,6 +44,15 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/application-system/form/src",
+          "yarn nx run application-system-form:serveReal"
+        ]
+      }
+    },
+    "serveReal": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "port": 4242,
