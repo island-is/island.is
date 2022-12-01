@@ -15,7 +15,6 @@ import {
   OPERATION_CATEGORY,
   HotelCategories,
 } from '../../lib/constants'
-import { Option } from '@island.is/application/types'
 
 export const applicationInfo = buildMultiField({
   id: 'applicationInfo',
@@ -50,26 +49,33 @@ export const applicationInfo = buildMultiField({
       condition: (answers) =>
         !!(answers.applicationInfo as Operation)?.operation,
     }),
-    ...[],
+
     buildRadioField({
       id: 'applicationInfo.typeHotel',
       title: m.operationTypeHotelTitle,
-      options: ({ answers }) =>
-        HotelTypes.map((option) => {
-          return {
-            ...(option as Option),
-            disabled: !option.disabledFor
-              ? false
-              : option.disabledFor ===
-                (answers.applicationInfo as Operation)?.category,
-          }
-        }),
+      defaultValue: '',
+      options: ({ answers }) => {
+        console.log((answers.applicationInfo as Operation)?.category)
+        return (answers.applicationInfo as Operation)?.category !==
+          OPERATION_CATEGORY.TWO
+          ? [
+              {
+                value: 'A Hótel',
+                label: 'Hótel',
+                subLabel:
+                  'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
+              },
+              ...HotelTypes,
+            ]
+          : HotelTypes
+      },
       backgroundColor: 'blue',
       condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-          APPLICATION_TYPES.HOTEL &&
         !!(answers.applicationInfo as Operation)?.category,
+      // (answers.applicationInfo as Operation)?.operation ===
+      // APPLICATION_TYPES.HOTEL && !!(answers.applicationInfo as Operation)?.category,
     }),
+
     buildCheckboxField({
       id: 'applicationInfo.typeResturant',
       title: m.operationTypeResturantTitle,

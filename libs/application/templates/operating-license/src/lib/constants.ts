@@ -36,11 +36,7 @@ export enum OPERATION_CATEGORY {
   FOUR = '4',
 }
 
-export interface TypeOption extends Option {
-  disabledFor?: OPERATION_CATEGORY
-}
-
-export const ResturantTypes: TypeOption[] = [
+export const ResturantTypes: Option[] = [
   {
     value: 'A Veitingahús',
     label: 'Veitingahús',
@@ -85,14 +81,7 @@ export const ResturantTypes: TypeOption[] = [
   },
 ]
 
-export const HotelTypes: TypeOption[] = [
-  {
-    value: 'A Hótel',
-    label: 'Hótel',
-    subLabel:
-      'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
-    disabledFor: OPERATION_CATEGORY.TWO,
-  },
+export const HotelTypes: Option[] = [
   {
     value: 'B Stærra gistiheimili',
     label: 'Stærra gistiheimili',
@@ -117,12 +106,12 @@ export const HotelTypes: TypeOption[] = [
     subLabel:
       'Gisting í herbergjum eða í svefnskálum staðsett utan alfaraleiðar og almenningur hefur aðgang að, svo sem skálar fyrir ferðamenn, veiðiskálar og sæluhús.',
   },
-  {
-    value: 'F Heimagisting',
-    label: 'Heimagisting',
-    subLabel:
-      'Gisting á lögheimili einstaklings eða einni annarri fasteign í hans eigu sem hann hefur persónuleg not af.',
-  },
+  // {
+  //   value: 'F Heimagisting',
+  //   label: 'Heimagisting',
+  //   subLabel:
+  //     'Gisting á lögheimili einstaklings eða einni annarri fasteign í hans eigu sem hann hefur persónuleg not af.',
+  // },
   {
     value: 'G Íbúðir',
     label: 'Íbúðir',
@@ -136,6 +125,13 @@ export const HotelTypes: TypeOption[] = [
       'Hús utan þéttbýlis sem er nýtt til tímabundinnar dvalar. Orlofshús félagasamtaka, svo sem stéttarfélaga og starfsgreinafélaga, eru undanskilin.',
   },
 ]
+
+// {
+//   value: 'A Hótel',
+//   label: 'Hótel',
+//   subLabel:
+//     'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
+// },
 
 export const HotelCategories: Option[] = [
   {

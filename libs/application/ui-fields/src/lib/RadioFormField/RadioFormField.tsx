@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC, useMemo, useEffect } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
@@ -43,6 +43,9 @@ export const RadioFormField: FC<Props> = ({
     () => buildFieldOptions(options, application, field),
     [options, application],
   )
+  useEffect(() => {
+    console.log('application changed', application.answers)
+  }, [application])
 
   console.debug(
     `Radio title ${JSON.stringify(title)}, and formatted: ${formatText(

@@ -69,36 +69,36 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
           ),
         }
       : {}),
-    gistirymi: JSON.stringify(
-      [answers.properties.stay].map((selection: Property[]) =>
-        selection.map((property: Property) => ({
-          stadur: property.address,
-          fasteignanumer: property.propertyNumber,
-          rymisnumer: property.spaceNumber,
-          hamarksfjoldiGesta: property.customerCount,
-        })),
-      ),
-    ),
-    veitingarymi: JSON.stringify(
-      [answers.properties.dining].map((selection: Property[]) =>
-        selection.map((property: Property) => ({
-          stadur: property.address,
-          fasteignanumer: property.propertyNumber,
-          rymisnumer: property.spaceNumber,
-          hamarksfjoldiGesta: property.customerCount,
-        })),
-      ),
-    ),
-    utirymi: JSON.stringify(
-      [answers.properties.outside].map((selection: Property[]) =>
-        selection.map((property: Property) => ({
-          stadur: property.address,
-          fasteignanumer: property.propertyNumber,
-          rymisnumer: property.spaceNumber,
-          hamarksfjoldiGesta: property.customerCount,
-        })),
-      ),
-    ),
+    // gistirymi: JSON.stringify(
+    //   [answers.properties.stay].map((selection: Property[]) =>
+    //     selection.map((property: Property) => ({
+    //       stadur: property.address,
+    //       fasteignanumer: property.propertyNumber,
+    //       rymisnumer: property.spaceNumber,
+    //       hamarksfjoldiGesta: property.customerCount,
+    //     })),
+    //   ),
+    // ),
+    // veitingarymi: JSON.stringify(
+    //   [answers.properties.dining].map((selection: Property[]) =>
+    //     selection.map((property: Property) => ({
+    //       stadur: property.address,
+    //       fasteignanumer: property.propertyNumber,
+    //       rymisnumer: property.spaceNumber,
+    //       hamarksfjoldiGesta: property.customerCount,
+    //     })),
+    //   ),
+    // ),
+    // utirymi: JSON.stringify(
+    //   [answers.properties.outside].map((selection: Property[]) =>
+    //     selection.map((property: Property) => ({
+    //       stadur: property.address,
+    //       fasteignanumer: property.propertyNumber,
+    //       rymisnumer: property.spaceNumber,
+    //       hamarksfjoldiGesta: property.customerCount,
+    //     })),
+    //   ),
+    // ),
     bradabirgdarleyfi: answers.temporaryLicense?.includes(YES) ? 'Já' : 'Nei',
     skuldastada: answers.debtClaim?.includes(YES) ? 'Já' : 'Nei',
     annad: answers.otherInfoText || '',

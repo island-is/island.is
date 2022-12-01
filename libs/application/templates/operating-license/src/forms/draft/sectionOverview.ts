@@ -64,6 +64,17 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
     }),
     buildKeyValueField({
+      label: m.typeHotel,
+      width: 'half',
+      value: ({ answers }: Application) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.HOTEL
+          ? (answers.applicationInfo as Operation)?.typeHotel?.substring(2)
+          : (answers.applicationInfo as Operation)?.typeResturant?.map((type) =>
+              type.substring(2),
+            ),
+    }),
+    buildKeyValueField({
       label: m.openingHoursOutside,
       width: 'half',
       condition: (answers) => displayOpeningHours(answers),
@@ -71,29 +82,6 @@ export const sectionOverview = buildMultiField({
         hasYes((answers.applicationInfo as Operation)?.willServe)
           ? 'Já'
           : 'Nei',
-    }),
-    buildKeyValueField({
-      label: m.typeHotel,
-      width: 'half',
-      value: (application: Application) =>
-        (application.answers
-          .applicationInfo as Operation)?.typeHotel?.substring(2),
-
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
-    }),
-    buildKeyValueField({
-      label: m.typeResturant,
-      width: 'half',
-      value: (application: Application) =>
-        (application.answers
-          .applicationInfo as Operation)?.typeResturant?.map((type) =>
-          type.substring(2),
-        ),
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.RESTURANT,
     }),
     buildDescriptionField({
       id: 'overview.space1',

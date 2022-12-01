@@ -22,11 +22,11 @@ export const PropertyOverviewRepeater: FC<PropTypes> = ({
 
   return (
     <Box>
-      {fields.map((item, index) => (
+      {fields?.map((item, index) => (
         <PropertyItem
           field={item}
           index={index}
-          key={item.propertyNumber}
+          key={index + item.propertyNumber}
           title={formatText(title, application, formatMessage)}
         />
       ))}
