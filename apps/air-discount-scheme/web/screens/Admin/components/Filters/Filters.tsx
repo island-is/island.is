@@ -176,8 +176,12 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 options={[
                   { value: 'kk', label: 'kk' },
                   { value: 'kvk', label: 'kvk' },
-                  { value: 'hvk', label: 'hvk' },
+                  { value: 'hvk', label: 'x' },
                 ]}
+              />
+              <Checkbox
+                name="isExplicit"
+                options={[{ value: 'true', label: 'Handvirkur kóði' }]}
               />
             </Stack>
             <Stack space={2}>

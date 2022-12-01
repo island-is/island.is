@@ -22,10 +22,6 @@ import {
   RoleInState,
 } from '@island.is/application/types'
 
-enum FinalStates {
-  REJECTED = 'rejected',
-}
-
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
@@ -61,16 +57,14 @@ export class ApplicationTemplateHelper<
 
   getApplicationStatus(): ApplicationStatus {
     const { state } = this.application
-
-    if (this.template.stateMachineConfig.states[state].type === 'final') {
-      if (state === FinalStates.REJECTED) {
-        return ApplicationStatus.REJECTED
-      }
-
-      return ApplicationStatus.COMPLETED
+    const applicationTemplateState = this.template.stateMachineConfig.states[
+      state
+    ]
+    if (applicationTemplateState.meta?.status) {
+      return applicationTemplateState.meta.status as ApplicationStatus
+    } else {
+      return ApplicationStatus.DRAFT
     }
-
-    return ApplicationStatus.IN_PROGRESS
   }
 
   getApplicationActionCardMeta(
