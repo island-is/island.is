@@ -208,10 +208,10 @@ const ApiCatalogue: Screen<HomestayProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === Router.asPath ||
+        primaryLink?.url === Router.asPath ||
         childrenLinks.some((link) => link.url === Router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
