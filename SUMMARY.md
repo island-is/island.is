@@ -229,6 +229,8 @@
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
+- [Portals](libs/portals/README.md)
+  - [Core](libs/portals/core/README.md)
 - [React Libraries](libs/react/README.md)
   - [Feature Flags](libs/react/feature-flags/README.md)
 - [Regulations](libs/regulations/README.md)

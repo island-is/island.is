@@ -289,6 +289,7 @@
   "devDependencies": {
     "@anatine/esbuild-decorators": "0.2.4",
     "@anatine/esbuildnx": "0.2.0",
+    "@anev/ts-mountebank": "^1.6.0",
     "@aws-sdk/client-ses": "3.145.0",
     "@aws-sdk/client-ssm": "3.145.0",
     "@babel/core": "7.18.2",

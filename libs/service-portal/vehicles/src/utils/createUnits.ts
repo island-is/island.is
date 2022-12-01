@@ -1,6 +1,10 @@
 import chunk from 'lodash/chunk'
 import isNumber from 'lodash/isNumber'
-import { amountFormat, formatNationalId } from '@island.is/service-portal/core'
+import {
+  amountFormat,
+  ExcludesFalse,
+  formatNationalId,
+} from '@island.is/service-portal/core'
 import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 
@@ -15,7 +19,6 @@ import {
 
 import { displayWithUnit } from './displayWithUnit'
 import isValid from 'date-fns/isValid/index.js'
-type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 const basicInfoArray = (
   data: VehiclesBasicInfo,
