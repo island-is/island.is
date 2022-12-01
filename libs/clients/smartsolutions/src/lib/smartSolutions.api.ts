@@ -51,7 +51,7 @@ export class SmartSolutionsApi {
 
   async listPkPasses(queryId: string): Promise<ListPassesDTO | null> {
     if (!this.config.passTemplateId) {
-      this.logger.warn('Missing pass template id!', {
+      this.logger.info('Missing pass template id!', {
         category: LOG_CATEGORY,
       })
       return null
@@ -101,7 +101,7 @@ export class SmartSolutionsApi {
     }
 
     if (!res) {
-      this.logger.warn('Unable to get pk passes, null from fetch', {
+      this.logger.warn('Unable to retrieve pk passes, null from fetch', {
         category: LOG_CATEGORY,
       })
       return null
@@ -118,7 +118,7 @@ export class SmartSolutionsApi {
         // noop
       }
 
-      this.logger.warn('Expected 200 status for list pkpasses', {
+      this.logger.info('Expected 200 status for list pkpasses', {
         status: res.status,
         statusText: res.statusText,
         category: LOG_CATEGORY,
@@ -131,7 +131,7 @@ export class SmartSolutionsApi {
     try {
       json = await res.json()
     } catch (e) {
-      this.logger.warn('Unable to parse JSON for pk passes', {
+      this.logger.info('Unable to parse JSON for pk passes', {
         exception: e,
         category: LOG_CATEGORY,
       })

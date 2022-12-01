@@ -22,7 +22,7 @@ import {
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { Locale } from '@island.is/shared/types'
 import compareAsc from 'date-fns/compareAsc'
 
@@ -37,11 +37,48 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  private handleGetLicenseError = (e: Error) => {
+    if (e instanceof FetchError) {
+      const err = e as FetchError
+
+      // STATUS CODES FROM VE
+      // 404 - User dont exist
+      // 404 - User has no license
+      // 404 - Natid not in natreg
+      // 200 - ok
+      // 401 - unauthroized
+      // 500 - server error
+
+      if ([401, 404].includes(err.status)) {
+        switch (err.status) {
+          case 404:
+            //THIS IS IN ICELANDIC, ALSO BAD HANDLING TODO:
+            this.logger.info(err.body + '', {
+              category: LOG_CATEGORY,
+            })
+            break
+          case 401:
+            this.logger.warning('Missing or invalid national id', {
+              category: LOG_CATEGORY,
+            })
+            break
+          default:
+            break
+        }
+        return null
+      }
+    }
+
+    throw e
+  }
+
   private adrApiWithAuth = (user: User) =>
     this.adrApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async fetchLicense(user: User) {
-    const license = await this.adrApiWithAuth(user).getAdr().catch(handle404)
+    const license = await this.adrApiWithAuth(user)
+      .getAdr()
+      .catch(this.handleGetLicenseError)
     return license
   }
 

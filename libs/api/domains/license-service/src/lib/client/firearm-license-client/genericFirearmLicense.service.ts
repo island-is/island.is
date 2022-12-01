@@ -42,6 +42,14 @@ export class GenericFirearmLicenseService
     if (e instanceof FetchError) {
       const err = e as FetchError
 
+      // STATUS CODES FROM RLS
+      // 404 - User dont exist
+      // 404 - User has no license
+      // 404 - Natid not in natreg
+      // 200 - ok
+      // 401 - unauthroized
+      // 500 - server error
+
       if ([401, 404].includes(err.status)) {
         switch (err.status) {
           case 404:
