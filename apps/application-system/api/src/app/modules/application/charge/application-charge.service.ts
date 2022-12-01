@@ -19,7 +19,7 @@ export class ApplicationChargeService {
   }
 
   async deleteCharge(
-    application: Pick<Application, 'id' | 'externalData' | 'typeId' | 'state'>,
+    application: Pick<Application, 'id' | 'typeId' | 'state'>,
   ) {
     try {
       const payment = await this.paymentService.findPaymentByApplicationId(
@@ -40,13 +40,15 @@ export class ApplicationChargeService {
         const stateConfig =
           template.stateMachineConfig.states[application.state]
 
-        if (!stateConfig.meta?.lifecycle?.shouldDeleteCharge) {
+        if (
+          !stateConfig.meta?.lifecycle?.shouldDeleteChargeIfPaymentFulfilled
+        ) {
           return
         }
       }
 
       // Delete the charge, using the ID we got from FJS
-      const chargeId = this.getChargeId(application)
+      const chargeId = payment.id
       if (chargeId) {
         const status = await this.chargeFjsV2ClientService.getChargeStatus(
           chargeId,
@@ -65,21 +67,5 @@ export class ApplicationChargeService {
 
       throw error
     }
-  }
-
-  getChargeId(application: Pick<Application, 'externalData'>) {
-    const externalData = application.externalData as
-      | ExternalData
-      | undefined
-      | null
-    if (!externalData?.createCharge?.data) {
-      return
-    }
-
-    const { id: chargeId } = externalData.createCharge.data as {
-      id: string
-    }
-
-    return chargeId
   }
 }

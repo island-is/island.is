@@ -15,7 +15,6 @@ export interface ApplicationPruning {
     'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
   >
   failedAttachments: object
-  failedExternalData: object
 }
 
 @Injectable()
@@ -59,7 +58,6 @@ export class ApplicationLifeCycleService {
         pruned: true,
         application,
         failedAttachments: {},
-        failedExternalData: {},
       }
     })
   }
@@ -84,19 +82,6 @@ export class ApplicationLifeCycleService {
       try {
         await this.applicationChargeService.deleteCharge(prune.application)
       } catch (error) {
-        const chargeId = this.applicationChargeService.getChargeId(
-          prune.application,
-        )
-        if (chargeId) {
-          prune.failedExternalData = {
-            createCharge: {
-              data: {
-                id: chargeId,
-              },
-            },
-          }
-        }
-
         prune.pruned = false
         this.logger.error(
           `Application charge prune error on id ${prune.application.id}`,
@@ -113,7 +98,7 @@ export class ApplicationLifeCycleService {
           prune.application.id,
           {
             attachments: prune.failedAttachments,
-            externalData: prune.failedExternalData,
+            externalData: {},
             answers: {},
             pruned: prune.pruned,
           },
