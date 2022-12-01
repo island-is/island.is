@@ -141,36 +141,46 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
             margin={{ top: 30 }}
             width={800}
             height={400}
-            data={data.map((item) => ({
-              name: (n(
-                item.periodIntervalName?.split(' ')?.[0]?.trim() ?? '',
-                item.periodIntervalName,
-              ) as string).slice(0, 3),
-              [paper]:
+            data={data.map((item) => {
+              const paperCount =
                 selectedRegistrationTypeOption.value === defaultSelection.value
                   ? item.totalPaperRegistrationsForCurrentPeriodInterval
                   : item.registrationTypes?.find(
                       (t) =>
                         t.registrationType ===
                         selectedRegistrationTypeOption.value,
-                    )?.totalPaperRegistrationsOfType ?? 0,
-              [electronic]:
+                    )?.totalPaperRegistrationsOfType ?? 0
+
+              const electronicCount =
                 selectedRegistrationTypeOption.value === defaultSelection.value
                   ? item.totalElectronicRegistrationsForCurrentPeriodInterval
                   : item.registrationTypes?.find(
                       (t) =>
                         t.registrationType ===
                         selectedRegistrationTypeOption.value,
-                    )?.totalElectronicRegistrationsOfType ?? 0,
-              [manual]:
+                    )?.totalElectronicRegistrationsOfType ?? 0
+
+              const manualCount =
                 selectedRegistrationTypeOption.value === defaultSelection.value
                   ? item.totalManualRegistrationsForCurrentPeriodInterval
                   : item.registrationTypes?.find(
                       (t) =>
                         t.registrationType ===
                         selectedRegistrationTypeOption.value,
-                    )?.totalManualRegistrationsOfType ?? 0,
-            }))}
+                    )?.totalManualRegistrationsOfType ?? 0
+
+              const total = paperCount + electronicCount + manualCount
+
+              return {
+                name: (n(
+                  item.periodIntervalName?.split(' ')?.[0]?.trim() ?? '',
+                  item.periodIntervalName,
+                ) as string).slice(0, 3),
+                [paper]: +((paperCount / total) * 100).toFixed(3),
+                [electronic]: +((electronicCount / total) * 100).toFixed(3),
+                [manual]: +((manualCount / total) * 100).toFixed(3),
+              }
+            })}
           >
             <Bar
               legendType="circle"
@@ -192,7 +202,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
               fill="green"
             />
             <XAxis dataKey="name" height={60} />
-            <YAxis />
+            <YAxis tickFormatter={(tick: number) => `${tick}%`} />
             <Tooltip
               content={<CustomTooltip />}
               cursor={{ fillOpacity: 0.3 }}
