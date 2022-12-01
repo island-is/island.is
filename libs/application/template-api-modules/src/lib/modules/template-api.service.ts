@@ -36,8 +36,8 @@ import {
   DigitalTachographCompanyCardService,
   DigitalTachographDriversCardService,
   DigitalTachographWorkshopCardService,
-  OrderVehicleRegistrationCertificateService,
   OrderVehicleLicensePlateService,
+  OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
 } from './templates'
 
@@ -94,8 +94,8 @@ export class TemplateAPIService {
     private readonly digitalTachographCompanyCardService: DigitalTachographCompanyCardService,
     private readonly digitalTachographDriversCardService: DigitalTachographDriversCardService,
     private readonly digitalTachographWorkshopCardService: DigitalTachographWorkshopCardService,
-    private readonly orderVehicleRegistrationCertificateService: OrderVehicleRegistrationCertificateService,
     private readonly orderVehicleLicensePlateService: OrderVehicleLicensePlateService,
+    private readonly orderVehicleRegistrationCertificateService: OrderVehicleRegistrationCertificateService,
     private readonly transferOfVehicleOwnershipService: TransferOfVehicleOwnershipService,
   ) {}
 
@@ -135,8 +135,8 @@ export class TemplateAPIService {
       | DigitalTachographCompanyCardService
       | DigitalTachographDriversCardService
       | DigitalTachographWorkshopCardService
-      | OrderVehicleRegistrationCertificateService
       | OrderVehicleLicensePlateService
+      | OrderVehicleRegistrationCertificateService
       | TransferOfVehicleOwnershipService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
@@ -337,12 +337,12 @@ export class TemplateAPIService {
         )
       case ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE:
         return this.tryRunningActionOnService(
-          this.orderVehicleRegistrationCertificateService,
+          this.orderVehicleLicensePlateService,
           action,
         )
       case ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE:
         return this.tryRunningActionOnService(
-          this.orderVehicleLicensePlateService,
+          this.orderVehicleRegistrationCertificateService,
           action,
         )
       case ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP:
