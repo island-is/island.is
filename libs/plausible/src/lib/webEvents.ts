@@ -21,7 +21,7 @@ export const webLoginButtonSelect = (
 export const trackSearchQuery = (query: string, source: string) => {
   const event: BaseEvent = {
     eventName: 'Search Query',
-    featureName: '',
+    featureName: '', // intentionally left empty to match plausible Goal legacy settings
     params: {
       // lowercase to count "Query String" and "query string" as the same thing
       query: query.trim().toLowerCase(),
