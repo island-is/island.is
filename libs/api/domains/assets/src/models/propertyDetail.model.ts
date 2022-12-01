@@ -8,15 +8,15 @@ import { LandModel } from './Land.model'
 import { Extensions, Field, ObjectType } from '@nestjs/graphql'
 import { MiddlewareContext } from '@nestjs/graphql'
 
-export const notPropertyOwner = ({ source }: MiddlewareContext) => {
+export const isPropertyOwner = ({ source }: MiddlewareContext) => {
   const owners: PropertyOwner[] =
     (source as PropertyDetail).registeredOwners?.registeredOwners ?? []
   const isOwner = owners.some((owner) => owner.ssn == source.nationalId)
-  return !isOwner
+  return isOwner
 }
 @Extensions({
   filterFields: {
-    condition: notPropertyOwner,
+    condition: isPropertyOwner,
     fields: ['defaultAddress', 'land', 'propertyNumber'],
   },
 })
