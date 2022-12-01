@@ -225,6 +225,18 @@ export const core = defineMessages({
     description:
       'Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
   },
+  serviceInterruptionTextProsecutor: {
+    id: 'judicial.system.core:service_interruption_text_prosecutor',
+    defaultMessage: 'NONE',
+    description:
+      '(Saksóknaraflæði): Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
+  },
+  serviceInterruptionTextCourt: {
+    id: 'judicial.system.core:service_interruption_text_court',
+    defaultMessage: 'NONE',
+    description:
+      '(Dómstólaflæði): Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
+  },
   restrictionCase: {
     id: 'judicial.system.core:restriction_case',
     defaultMessage: 'gæsluvarðhald',
