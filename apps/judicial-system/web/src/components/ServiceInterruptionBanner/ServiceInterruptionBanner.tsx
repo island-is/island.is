@@ -27,7 +27,8 @@ const ServiceInterruptionBanner: React.FC = () => {
   ) {
     displayMessage = prosecutorMessage
   } else if (
-    user?.role === UserRole.JUDGE &&
+    user?.role &&
+    [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) &&
     courtMessage &&
     courtMessage !== 'NONE'
   ) {
