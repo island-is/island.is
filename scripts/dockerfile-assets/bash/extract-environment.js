@@ -33,5 +33,5 @@ if (
   )
   writeFileSync(fileOut, output, { encoding: 'utf-8' })
 } else {
-  console.error(`No template to fix`)
+  console.error(`No template to expand.`)
 }
