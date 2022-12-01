@@ -114,10 +114,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === router.asPath ||
+        primaryLink?.url === router.asPath ||
         childrenLinks.some((link) => link.url === router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,

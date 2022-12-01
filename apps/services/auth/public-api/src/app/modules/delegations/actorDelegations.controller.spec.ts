@@ -30,13 +30,11 @@ import { TestApp, getRequestMethod } from '@island.is/testing/nest'
 import { NationalRegistryClientPerson } from '@island.is/shared/types'
 import {
   createDelegation,
-  expectMatchingDelegations,
   getFakeName,
   createDelegationModels,
-  findExpectedDelegationModels,
+  createClient,
 } from '@island.is/services/auth/testing'
 
-import { createClient } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
@@ -45,8 +43,6 @@ import {
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import {
-  getFakeName,
-  createDelegationModels,
   expectMatchingMergedDelegations,
   findExpectedMergedDelegationModels,
 } from '../../../../test/utils'

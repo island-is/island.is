@@ -98,10 +98,10 @@ const SubPage: Screen<SubPageProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === pathWithoutHash ||
+        primaryLink?.url === pathWithoutHash ||
         childrenLinks.some((link) => link.url === pathWithoutHash),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
