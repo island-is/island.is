@@ -132,8 +132,8 @@ const template: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
               pruneInDaysATen(application, 8),
-            // TODOx add when shouldDeleteCharge change has been merged to main
-            // shouldDeleteCharge: true,
+            // TODOx add when shouldDeleteChargeIfPaymentFulfilled change has been merged to main
+            // shouldDeleteChargeIfPaymentFulfilled: true,
           },
           onEntry: {
             apiModuleAction: ApiActions.addReview,

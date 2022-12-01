@@ -21,12 +21,10 @@ export const DigitalTachographDriversCardClientConfig = defineConfig<
         'XROAD_CLIENT_ID',
         'IS-DEV/GOV/10000/island-is-client',
       ),
-      xroadPath: '',
-      //TODOx add to infra\src\dsl\xroad.ts and charts\islandis\values.dev.yaml
-      // xroadPath: env.required(
-      //   'XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH',
-      //   'IS-DEV/GOV/10017/Samgongustofa-Protected/<service_code>',
-      // ),
+      xroadPath: env.required(
+        'XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH',
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
+      ),
       scope: [VehiclesScope.vehicle],
     }
   },

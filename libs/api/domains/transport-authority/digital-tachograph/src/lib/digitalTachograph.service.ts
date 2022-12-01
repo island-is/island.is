@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
   DigitalTachographDriversCardClient,
-  DriverCardApplicationResponse,
   DriversCardApplicationRequest,
 } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
@@ -24,14 +23,12 @@ export class DigitalTachographApi {
     user: User,
     input: CheckTachoNetInput,
   ): Promise<CheckTachoNetExists> {
-    const result = await this.digitalTachographDriversCardClient.checkTachoNet(
+    const hasActiveCard = await this.digitalTachographDriversCardClient.checkIfHasActiveCardInTachoNet(
       user,
       input,
     )
 
-    const activeCard = result?.cards?.find((x) => x.isActive)
-
-    return { exists: !!activeCard }
+    return { exists: hasActiveCard }
   }
 
   async getNewestDriversCard(user: User): Promise<NewestDriversCard> {
@@ -43,8 +40,8 @@ export class DigitalTachographApi {
   async saveDriversCard(
     user: User,
     driversCardRequest: DriversCardApplicationRequest,
-  ): Promise<DriverCardApplicationResponse | null> {
-    return await this.digitalTachographDriversCardClient.saveDriversCard(
+  ): Promise<void> {
+    await this.digitalTachographDriversCardClient.saveDriversCard(
       user,
       driversCardRequest,
     )
