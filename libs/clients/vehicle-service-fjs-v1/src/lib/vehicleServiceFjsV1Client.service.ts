@@ -11,6 +11,8 @@ export class VehicleServiceFjsV1Client {
     return this.defaultApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  // Note: when calling this endpoint, you need to make sure the current user is
+  // either owner or co-owner of the vehicle
   async getVehicleDebtStatus(
     auth: User,
     permno: string,
