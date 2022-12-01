@@ -15,7 +15,7 @@ import { m } from '../lib/messages'
 export const ReviewApplication: Form = buildForm({
   id: 'ExampleInReview',
   title: 'Úrvinnsla umsóknar um atvinnuleysisbætur',
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'intro',

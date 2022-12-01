@@ -30,7 +30,7 @@ import { YES } from '../shared/constants'
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
   title: application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'terms',

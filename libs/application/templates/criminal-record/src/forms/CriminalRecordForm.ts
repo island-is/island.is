@@ -13,7 +13,7 @@ import { m } from '../lib/messages'
 export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({

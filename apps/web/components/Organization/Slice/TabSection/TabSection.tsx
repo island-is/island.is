@@ -7,6 +7,7 @@ import {
   GridColumn,
   GridColumnProps,
   GridRow,
+  ResponsiveSpace,
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
@@ -17,6 +18,7 @@ import * as styles from '@island.is/web/screens/Organization/Organization.css'
 interface SliceProps {
   slice: TabSection
   contentColumnProps?: GridColumnProps
+  contentPaddingTop?: ResponsiveSpace
 }
 
 export const TabSectionSlice: React.FC<SliceProps> = ({
@@ -25,6 +27,7 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
     span: ['9/9', '9/9', '9/9', '7/9'],
     offset: [null, null, null, '1/9'],
   },
+  contentPaddingTop = [0, 4, 6],
 }) => {
   const router = useRouter()
 
@@ -68,7 +71,7 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
             content: (
               <GridRow>
                 <GridColumn {...contentColumnProps}>
-                  <Box paddingTop={[0, 4, 6]} paddingBottom={[8, 0, 6]}>
+                  <Box paddingTop={contentPaddingTop} paddingBottom={[8, 0, 6]}>
                     {tab.image?.url && (
                       <img
                         src={tab.image.url}

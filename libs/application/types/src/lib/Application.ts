@@ -3,9 +3,11 @@ import { DataProviderResult } from './DataProviderResult'
 
 export enum ApplicationStatus {
   NOT_STARTED = 'notstarted',
+  DRAFT = 'draft',
   IN_PROGRESS = 'inprogress',
   COMPLETED = 'completed',
   REJECTED = 'rejected',
+  APPROVED = 'approved',
 }
 
 export interface ExternalData {
@@ -18,7 +20,7 @@ export interface FormValue {
   [key: string]: Answer
 }
 
-export type ActionCardTag = 'red' | 'blueberry' | 'blue'
+export type ActionCardTag = 'red' | 'blueberry' | 'blue' | 'purple' | 'mint'
 
 export interface ActionCardMetaData {
   title?: string

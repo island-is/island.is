@@ -1,4 +1,4 @@
-import { AuthApiScopeGroup } from '@island.is/api/schema'
+import format from 'date-fns/format'
 import {
   GROUP,
   Scope,
@@ -9,6 +9,11 @@ import {
   AccessFormScope,
   MappedScope,
 } from './access.types'
+
+export const DATE_FORMAT = 'dd.MM.yyyy'
+
+export const formatDelegationDate = (dt: string | Date) =>
+  format(new Date(dt), DATE_FORMAT)
 
 /**
  * Checks if scope is a scope group type
@@ -116,4 +121,11 @@ export const formatScopeTreeToScope = ({
     validTo,
     description: authApiScope?.description,
   }
+}
+
+export const accessMessages = {
+  dateValidTo: {
+    id: 'sp.settings-access-control:access-item-datepicker-label-mobile',
+    defaultMessage: 'Í gildi til',
+  },
 }

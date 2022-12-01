@@ -9,6 +9,7 @@ import {
   CaseQuery,
   DropdownMenu,
   Logo,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
@@ -21,7 +22,6 @@ import {
   isInvestigationCase,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'

@@ -21,3 +21,6 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 export const removeCountryCode = (phone: string) => {
   return phone.replace(/(^00354|^\+354|\D)/g, '')
 }
+
+export const formatCurrency = (answer: string) =>
+  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'

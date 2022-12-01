@@ -67,7 +67,7 @@ const buildPaymentPlanSteps = (): CustomField[] =>
 export const PaymentPlanForm: Form = buildForm({
   id: 'PaymentPlanForm',
   title: application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   logo: Logo,
   children: [
     // TODO remove section on official release

@@ -9,6 +9,7 @@ import {
 import { FieldBaseProps } from '@island.is/application/types'
 import { BOARDMEMEBER, CARETAKER } from '../constants'
 import { getBoardmembersAndCaretakers } from './helpers'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -27,6 +28,7 @@ const checkIfNegative = (inputNumber: string) => {
 const election = z.object({
   selectElection: z.string().optional(),
   electionName: z.string().optional(),
+  genitiveName: z.string().optional(),
   incomeLimit: z.string().refine((x) => !!x, { params: m.required }),
 })
 
@@ -49,8 +51,8 @@ const about = z.object({
   powerOfAttorneyName: z.string().optional(),
   phoneNumber: z.string().refine(
     (p) => {
-      // ignore validation on dev to test with Gervimenn
-      if (process.env.NODE_ENV === 'development') {
+      // ignore validation on dev to test with Gervimenn remove b4 release
+      if (isRunningOnEnvironment('dev')) {
         return true
       }
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')

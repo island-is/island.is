@@ -179,6 +179,17 @@ export class FinancialStatementsInaoTemplateService {
         file: fileName,
       }
 
+      this.logger.info(`PostFinancialStatementForPersonalElection input`, input)
+      this.logger.info(
+        `PostFinancialStatementForPersonalElection file type ${typeof fileName}`,
+      )
+
+      this.logger.info(
+        `PostFinancialStatementForPersonalElection method type, ${typeof this
+          .financialStatementsClientService
+          .postFinancialStatementForPersonalElection}`,
+      )
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(input)
         .then((data) => {
