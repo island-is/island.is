@@ -54,7 +54,7 @@
     "charts": "cd ./infra && yarn charts"
   },
   "dependencies": {
-    "@apollo/client": "3.1.3",
+    "@apollo/client": "3.7.1",
     "@apollo/gateway": "2.1.1",
     "@apollo/subgraph": "2.1.1",
     "@aws-sdk/client-sqs": "3.145.0",
