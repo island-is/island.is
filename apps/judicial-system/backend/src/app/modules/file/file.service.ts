@@ -20,7 +20,6 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
-import { courtUpload } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { Case } from '../case'
