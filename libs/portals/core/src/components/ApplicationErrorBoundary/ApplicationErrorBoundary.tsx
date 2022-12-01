@@ -1,10 +1,9 @@
-import React, { PureComponent, FC } from 'react'
+import React, { PureComponent } from 'react'
 import { useLocale } from '@island.is/localization'
 import * as styles from './ApplicationErrorBoundry.css'
 import { Box, Text, Tag, Button } from '@island.is/island-ui/core'
 
 interface PropTypes {
-  imgSrc: string
   children: React.ReactNode
 }
 
@@ -31,18 +30,18 @@ export class ApplicationErrorBoundary extends PureComponent<
   }
 
   render() {
-    const { children, imgSrc } = this.props
+    const { children } = this.props
     const { hasError } = this.state
 
     if (hasError) {
-      return <Error imgSrc={imgSrc} />
+      return <Error />
     }
 
     return children
   }
 }
 
-const Error: FC<{ imgSrc: string }> = ({ imgSrc }) => {
+const Error = () => {
   const { formatMessage } = useLocale()
 
   return (
@@ -80,7 +79,11 @@ const Error: FC<{ imgSrc: string }> = ({ imgSrc }) => {
       </Box>
 
       <Box display="flex" justifyContent="center" marginBottom={[1, 0]}>
-        <img src={imgSrc} alt="" className={styles.img} />
+        <img
+          src="./assets/images/hourglass.svg"
+          alt=""
+          className={styles.img}
+        />
       </Box>
     </Box>
   )

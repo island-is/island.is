@@ -12,21 +12,18 @@ import { arrangeRoutes, filterEnabledModules } from '../utils/modules'
 
 export type ModulesContextProps = {
   modules: PortalModule[]
-  companyModules?: string[]
   routes: PortalRoute[]
   loading: boolean
 }
 
 const ModulesContext = createContext<ModulesContextProps>({
   modules: [],
-  companyModules: undefined,
   loading: false,
   routes: [],
 })
 
 interface ModuleProviderProps {
   modules: PortalModule[]
-  companyModules?: PortalModule[]
   children: React.ReactNode
 }
 

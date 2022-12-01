@@ -32,7 +32,7 @@ export const App = () => {
             reducer={store.reducer}
           >
             <LocaleProvider locale={defaultLanguage} messages={{}}>
-              <ApplicationErrorBoundary imgSrc="./assets/images/hourglass.svg">
+              <ApplicationErrorBoundary>
                 <Router basename={ServicePortalPath.MinarSidurPath}>
                   <Authenticator>
                     <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>

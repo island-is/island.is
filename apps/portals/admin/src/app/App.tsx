@@ -23,7 +23,7 @@ export const App = () => {
     <ApolloProvider client={client}>
       <PortalMetaProvider basePath={AdminPortalPaths.Base}>
         <LocaleProvider locale={defaultLanguage} messages={{}}>
-          <ApplicationErrorBoundary imgSrc="./assets/images/hourglass.svg">
+          <ApplicationErrorBoundary>
             <Router basename={AdminPortalPaths.Base}>
               <Authenticator>
                 <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>

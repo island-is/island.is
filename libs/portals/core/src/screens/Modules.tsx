@@ -36,16 +36,16 @@ const RouteComponent = React.memo(
       return null
     }
 
-    const App = route.render({
+    const Module = route.render({
       userInfo,
       client,
     })
 
-    if (App)
+    if (Module)
       return (
         <Suspense fallback={null}>
           <ModuleErrorBoundary name={route.name}>
-            <App userInfo={userInfo} client={client} />
+            <Module userInfo={userInfo} client={client} />
           </ModuleErrorBoundary>
         </Suspense>
       )
