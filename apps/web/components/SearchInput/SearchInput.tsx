@@ -494,7 +494,7 @@ const Results = ({
                       key={item.id}
                       {...itemProps}
                       onClick={(e) => {
-                        trackSearchQuery(search.term, 'Web Autocomplete')
+                        trackSearchQuery(search.term, 'Web Suggestion')
                         onClick(e)
                         onRouting()
                       }}

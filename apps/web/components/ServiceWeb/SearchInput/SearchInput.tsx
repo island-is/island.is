@@ -132,7 +132,7 @@ export const SearchInput = ({
     const categorySlug = category?.slug ?? ''
 
     if (organizationSlug && categorySlug) {
-      trackSearchQuery(searchTerms, 'Service Web Autocomplete')
+      trackSearchQuery(searchTerms, 'Service Web Suggestion')
       Router.push(
         linkResolver('supportqna', [organizationSlug, categorySlug, slug]).href,
       )
