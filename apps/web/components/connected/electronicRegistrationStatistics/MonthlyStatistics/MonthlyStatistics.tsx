@@ -25,6 +25,8 @@ type QueryType = {
   getBrokenDownElectronicRegistrationStatistics: BrokenDownRegistrationStatisticResponse
 }
 
+const defaultSelection = { label: 'Allt', value: 'Allt' }
+
 interface MonthlyStatisticsProps {
   slice?: ConnectedComponent
 }
@@ -33,7 +35,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
   const [
     selectedRegistrationTypeOption,
     setSelectedRegistrationTypeOption,
-  ] = useState({ label: 'Allt', value: 'Allt' })
+  ] = useState(defaultSelection)
 
   const n = useNamespace(slice?.json ?? {})
 
@@ -92,6 +94,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
 
   const paper = n('paper', 'Pappír')
   const electronic = n('electronic', 'Rafrænt')
+  const manual = n('manual', 'Handvirk vinnsla')
 
   return (
     <Box>
@@ -144,7 +147,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
                 item.periodIntervalName,
               ) as string).slice(0, 3),
               [paper]:
-                selectedRegistrationTypeOption.value === 'Allt'
+                selectedRegistrationTypeOption.value === defaultSelection.value
                   ? item.totalPaperRegistrationsForCurrentPeriodInterval
                   : item.registrationTypes?.find(
                       (t) =>
@@ -152,13 +155,21 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
                         selectedRegistrationTypeOption.value,
                     )?.totalPaperRegistrationsOfType ?? 0,
               [electronic]:
-                selectedRegistrationTypeOption.value === 'Allt'
+                selectedRegistrationTypeOption.value === defaultSelection.value
                   ? item.totalElectronicRegistrationsForCurrentPeriodInterval
                   : item.registrationTypes?.find(
                       (t) =>
                         t.registrationType ===
                         selectedRegistrationTypeOption.value,
                     )?.totalElectronicRegistrationsOfType ?? 0,
+              [manual]:
+                selectedRegistrationTypeOption.value === defaultSelection.value
+                  ? item.totalManualRegistrationsForCurrentPeriodInterval
+                  : item.registrationTypes?.find(
+                      (t) =>
+                        t.registrationType ===
+                        selectedRegistrationTypeOption.value,
+                    )?.totalManualRegistrationsOfType ?? 0,
             }))}
           >
             <Bar
@@ -173,6 +184,12 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
               radius={[20, 20, 0, 0]}
               dataKey={electronic}
               fill="#ef8838"
+            />
+            <Bar
+              barSize={16}
+              radius={[20, 20, 0, 0]}
+              dataKey={manual}
+              fill="green"
             />
             <XAxis dataKey="name" height={60} />
             <YAxis />
