@@ -27,9 +27,6 @@ export class NewestDriversCardProvider extends BasicDataProvider {
         return Promise.resolve(response.data.digitalTachographNewestDriversCard)
       },
     )
-    // .catch(() => {
-    //   return Promise.reject({})
-    // })
   }
 
   onProvideError(error: { reason: StaticText }): FailedDataProviderResult {

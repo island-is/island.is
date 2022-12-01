@@ -137,7 +137,6 @@ export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
             formatMessage,
           )}
         </Text>
-        <Box marginTop={4}>{/* <Company /> */}</Box>
       </Box>
     </>
   )

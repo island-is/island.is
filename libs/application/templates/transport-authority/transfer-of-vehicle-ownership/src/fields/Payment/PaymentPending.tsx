@@ -140,7 +140,6 @@ export const PaymentPending: FC<Props> = ({
             formatMessage,
           )}
         </Text>
-        <Box marginTop={4}>{/* <Company /> */}</Box>
       </Box>
     </>
   )
