@@ -18,4 +18,5 @@ if (!isRunningOnEnvironment('local')) {
     version: environment.APP_VERSION,
   })
 }
+
 ReactDOM.render(<App />, document.getElementById('root'))
