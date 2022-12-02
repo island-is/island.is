@@ -1,6 +1,9 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { IdsClientConfig } from '@island.is/nest/config'
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+import {
+  ConfigType,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { RegistrationApi, Configuration } from '../../gen/fetch'
 import { VehiclePrintingClientConfig } from './vehiclePrintingClient.config'
 
