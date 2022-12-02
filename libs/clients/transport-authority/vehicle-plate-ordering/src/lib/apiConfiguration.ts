@@ -49,6 +49,10 @@ export const exportedApis = [
         ),
       )
     },
-    inject: [VehiclePlateOrderingClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      VehiclePlateOrderingClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
 ]

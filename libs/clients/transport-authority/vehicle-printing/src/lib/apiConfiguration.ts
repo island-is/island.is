@@ -49,6 +49,10 @@ export const exportedApis = [
         ),
       )
     },
-    inject: [VehiclePrintingClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      VehiclePrintingClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
 ]

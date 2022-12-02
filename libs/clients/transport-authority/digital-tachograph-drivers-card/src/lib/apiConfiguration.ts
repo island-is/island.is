@@ -53,7 +53,11 @@ export const exportedApis = [
         ),
       )
     },
-    inject: [DigitalTachographDriversCardClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      DigitalTachographDriversCardClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
   {
     provide: IndividualApiApi,
@@ -73,6 +77,10 @@ export const exportedApis = [
         ),
       )
     },
-    inject: [DigitalTachographDriversCardClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      DigitalTachographDriversCardClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
 ]

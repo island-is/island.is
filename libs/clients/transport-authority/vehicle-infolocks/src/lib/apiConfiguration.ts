@@ -49,6 +49,10 @@ export const exportedApis = [
         ),
       )
     },
-    inject: [VehicleInfolocksClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      VehicleInfolocksClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
 ]
