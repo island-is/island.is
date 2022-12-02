@@ -55,11 +55,11 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
   )
 
   const currentNavItem = projectPage.sidebarLinks.find(
-    ({ primaryLink }) => primaryLink.url === overviewPath,
+    ({ primaryLink }) => primaryLink?.url === overviewPath,
   )
 
   const newsOverviewTitle: string = currentNavItem
-    ? currentNavItem.primaryLink.text
+    ? currentNavItem.primaryLink?.text
     : n('newsTitle', 'Fréttir og tilkynningar')
 
   const breadCrumbs: BreadCrumbItem[] = [

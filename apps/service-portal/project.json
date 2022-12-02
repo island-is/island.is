@@ -9,7 +9,7 @@
       "options": {
         "baseHref": "/minarsidur/",
         "outputPath": "dist/apps/service-portal",
-        "index": "apps/service-portal/src/index.html",
+        "index": "apps/service-portal/src/index.src.html",
         "main": "apps/service-portal/src/Main.tsx",
         "polyfills": "apps/service-portal/src/polyfills.ts",
         "tsConfig": "apps/service-portal/tsconfig.app.json",
@@ -44,6 +44,15 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src",
+          "yarn nx run service-portal:serveReal"
+        ]
+      }
+    },
+    "serveReal": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "service-portal:build"
