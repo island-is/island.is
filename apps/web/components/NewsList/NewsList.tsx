@@ -9,8 +9,13 @@ import {
   Box,
   Link,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { NewsCard } from '@island.is/web/components'
+import {
+  LinkType,
+  useFeatureFlag,
+  useLinkResolver,
+  useNamespace,
+} from '@island.is/web/hooks'
+import { NewsCard, Webreader } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { makeHref } from './utils'
@@ -48,6 +53,10 @@ export const NewsList = ({
   newsPerPage = 10,
   monthOptions,
 }: NewsListProps) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const router = useRouter()
   const n = useNamespace(namespace)
 
@@ -59,9 +68,21 @@ export const NewsList = ({
 
   return (
     <Stack space={[3, 3, 4]}>
-      <Text variant="h1" as="h1" marginBottom={2}>
+      <Text
+        variant="h1"
+        as="h1"
+        marginBottom={isWebReaderEnabledForOrganizationPages ? 0 : 2}
+      >
         {title}
       </Text>
+      {isWebReaderEnabledForOrganizationPages && (
+        <Webreader
+          marginTop={0}
+          marginBottom={0}
+          readId={null}
+          readClass="rs_read"
+        />
+      )}
       {selectedYear && (
         <Hidden below="lg">
           <Text variant="h2" as="h2">
@@ -113,20 +134,25 @@ export const NewsList = ({
           {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
         </Text>
       )}
-      {newsList.map((newsItem, index) => (
-        <NewsCard
-          key={index}
-          title={newsItem.title}
-          introduction={newsItem.intro}
-          image={newsItem.image}
-          titleAs="h2"
-          href={
-            linkResolver(newsItemLinkType, [parentPageSlug, newsItem.slug]).href
-          }
-          date={newsItem.date}
-          readMoreText={n('readMore', 'Lesa nánar')}
-        />
-      ))}
+      <Box className="rs_read">
+        <Stack space={[3, 3, 4]}>
+          {newsList.map((newsItem, index) => (
+            <NewsCard
+              key={index}
+              title={newsItem.title}
+              introduction={newsItem.intro}
+              image={newsItem.image}
+              titleAs="h2"
+              href={
+                linkResolver(newsItemLinkType, [parentPageSlug, newsItem.slug])
+                  .href
+              }
+              date={newsItem.date}
+              readMoreText={n('readMore', 'Lesa nánar')}
+            />
+          ))}
+        </Stack>
+      </Box>
       {newsList.length > 0 && (
         <Box paddingTop={[4, 4, 8]}>
           <Pagination
