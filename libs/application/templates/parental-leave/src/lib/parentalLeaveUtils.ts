@@ -644,18 +644,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
       'personalAllowance.usePersonalAllowance',
     ) as YesOrNo) ??
     (getValueViaPath(answers, 'usePersonalAllowance', NO) as YesOrNo)
-  
-  // if (!applicationType) applicationType = PARENTAL_LEAVE as string
-  //   else applicationType = applicationType as string
-
-  // if (!usePersonalAllowance) {
-  //   let usePersonalAllowance = getValueViaPath(
-  //     answers,
-  //     'usePersonalAllowance',
-  //     NO,
-  //   ) as YesOrNo
-  //   setValue('personalAllowance.usePersonalAllowance', usePersonalAllowance)
-  // }
 
   const usePersonalAllowanceFromSpouse = getValueViaPath(
     answers,
@@ -663,18 +651,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as YesOrNo
   ??
   (getValueViaPath(answers, 'usePersonalAllowanceFromSpouse', NO) as YesOrNo)
-
-  // if (!usePersonalAllowanceFromSpouse) {
-  //   let usePersonalAllowanceFromSpouse = getValueViaPath(
-  //     answers,
-  //     'usePersonalAllowanceFromSpouse',
-  //     NO,
-  //   ) as YesOrNo
-  //   setValue(
-  //     'usePersonalAllowanceFromSpouse.usePersonalAllowance',
-  //     usePersonalAllowanceFromSpouse,
-  //   )
-  // }
 
   const personalUseAsMuchAsPossible = getValueViaPath(
     answers,
