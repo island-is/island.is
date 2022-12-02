@@ -264,7 +264,7 @@ describe('Parental Leave Application Template', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              usePersonalAllowanceFromSpouse: NO,
+              usePersonalAllowanceFromSpouse: YES,
               personalAllowanceFromSpouse: {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
@@ -293,8 +293,8 @@ describe('Parental Leave Application Template', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              usePersonalAllowance: NO,
               personalAllowance: {
+                usePersonalAllowance: NO,
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
