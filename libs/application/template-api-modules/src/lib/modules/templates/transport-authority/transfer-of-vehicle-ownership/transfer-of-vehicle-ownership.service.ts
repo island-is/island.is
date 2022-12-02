@@ -23,12 +23,17 @@ import {
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  ChargeFjsV2ClientService,
+  getChargeId,
+} from '@island.is/clients/charge-fjs-v2'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
   ) {}
 
   async createCharge({
@@ -223,8 +228,18 @@ export class TransferOfVehicleOwnershipService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // 1. Revert charge so that the seller gets reimburshed
-    // Note: Will be added when FJS api has been updated
+    // 1. Delete charge so that the seller gets reimburshed
+    const chargeId = getChargeId(application)
+    if (chargeId) {
+      const status = await this.chargeFjsV2ClientService.getChargeStatus(
+        chargeId,
+      )
+
+      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
+      if (status !== 'cancelled') {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
+    }
 
     // 2. Notify everyone in the process that the application has been withdrawn
 
