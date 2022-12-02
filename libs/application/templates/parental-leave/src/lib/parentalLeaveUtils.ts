@@ -677,12 +677,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     ) as YesOrNo) ??
     (getValueViaPath(answers, 'usePersonalAllowance', NO) as YesOrNo)
 
-  const usePersonalAllowanceFromSpouse = getValueViaPath(
-    answers,
-    'personalAllowanceFromSpouse.usePersonalAllowance',
-  ) as YesOrNo
-  ??
-  (getValueViaPath(answers, 'usePersonalAllowanceFromSpouse', NO) as YesOrNo)
+  const usePersonalAllowanceFromSpouse =
+    (getValueViaPath(
+      answers,
+      'personalAllowanceFromSpouse.usePersonalAllowance',
+    ) as YesOrNo) ??
+    (getValueViaPath(answers, 'usePersonalAllowanceFromSpouse', NO) as YesOrNo)
 
   const personalUseAsMuchAsPossible = getValueViaPath(
     answers,

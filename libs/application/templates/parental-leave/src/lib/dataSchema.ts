@@ -24,10 +24,12 @@ const PersonalAllowance = z
       .optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
-  .refine((schema) =>
-    schema.usePersonalAllowance === YES ? !!schema.useAsMuchAsPossible : true, {
-      path: ['useAsMuchAsPossible']
-    }
+  .refine(
+    (schema) =>
+      schema.usePersonalAllowance === YES ? !!schema.useAsMuchAsPossible : true,
+    {
+      path: ['useAsMuchAsPossible'],
+    },
   )
 
 /**
