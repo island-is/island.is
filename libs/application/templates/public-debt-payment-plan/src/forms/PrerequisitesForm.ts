@@ -19,6 +19,7 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { NO, YES } from '../shared/constants'
 import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
+import { isApplicantCompany, isApplicantPerson } from '../lib/paymentPlanUtils'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -99,12 +100,21 @@ export const PrerequisitesForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'applicantSection',
-          title: info.general.pageTitle,
-          description: info.general.pageDescription,
+          title: (formValue) =>
+            isApplicantCompany(formValue)
+              ? info.general.companyPageTitle
+              : info.general.pageTitle,
+          description: (formValue) =>
+            isApplicantCompany(formValue)
+              ? info.general.companyPageDescription
+              : info.general.pageDescription,
           children: [
             buildTextField({
               id: 'applicant.name',
-              title: info.labels.name,
+              title: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? info.labels.companyName
+                  : info.labels.name,
               backgroundColor: 'white',
               disabled: true,
               defaultValue: (application: Application) => {
@@ -202,11 +212,13 @@ export const PrerequisitesForm: Form = buildForm({
     buildSection({
       id: 'employer',
       title: section.employer,
+      condition: isApplicantPerson,
       children: [],
     }),
     buildSection({
       id: 'disposableIncome',
       title: section.disposableIncome,
+      condition: isApplicantPerson,
       children: [],
     }),
     buildSection({

@@ -18,7 +18,7 @@ import HtmlParser from 'react-html-parser'
 import { useLazyDistribution } from '../../hooks/useLazyDistribution'
 import { shared } from '../../lib/messages'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
-import { formatIsk } from '../../lib/paymentPlanUtils'
+import { formatIsk, isApplicantPerson } from '../../lib/paymentPlanUtils'
 import { AMOUNT, MONTHS } from '../../shared/constants'
 import {
   getEmptyPaymentPlanEntryKey,
@@ -34,7 +34,6 @@ import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
 import * as styles from './PaymentPlan.css'
 import { useDebouncedSliderValues } from './useDebouncedSliderValues'
-import * as kennitala from 'kennitala'
 
 // An array might not work for this schema
 // Might need to define specific fields for each one
@@ -79,7 +78,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
 
   const entry = `paymentPlans.${answerKey}`
   const currentAnswers = paymentPlans ? paymentPlans[answerKey] : undefined
-  const isPerson = kennitala.isPerson(application.applicant)
+  const isPerson = isApplicantPerson(application)
 
   const [paymentMode, setPaymentMode] = useState<PaymentModeState | undefined>(
     isPerson ? currentAnswers?.paymentMode : MONTHS,
@@ -241,10 +240,12 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         ref={register({ required: true })}
         name={`${entry}.distribution`}
       />
-      <Text marginBottom={5}>
-        {formatMessage(paymentPlan.general.paymentPlanDescription)}
-      </Text>
-      <Box marginBottom={[5, 5, 8]}>
+      {isPerson && (
+        <Text marginBottom={5}>
+          {formatMessage(paymentPlan.general.paymentPlanDescription)}
+        </Text>
+      )}
+      <Box marginBottom={[5, 5, 8]} marginTop={isPerson ? 0 : 4}>
         <PaymentPlanCard payment={payment} />
       </Box>
       <Text variant="h4" marginBottom={3}>

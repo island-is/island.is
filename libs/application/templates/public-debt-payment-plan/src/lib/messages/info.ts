@@ -13,12 +13,27 @@ export const info = {
        meðan málið er til meðferðar og upplýsa þig um niðurstöðuna.`,
       description: 'Info page description',
     },
+    companyPageTitle: {
+      id: `pdpp.application:section.info.companyPageTitle`,
+      defaultMessage: 'Upplýsingar um fyrirtæki',
+      description: 'Info page title for companies',
+    },
+    companyPageDescription: {
+      id: `pdpp.application:section.info.companyDescription`,
+      defaultMessage: `Vinsamlegast farið yfir eftirfarandi skráningu til að tryggja að allar upplýsingar séu réttar.  Innheimtumaður notar upplýsingarnar til að hafa samband við þig við úrvinnslu málsins.`,
+      description: 'Info page description for companies',
+    },
   }),
   labels: defineMessages({
     name: {
       id: `pdpp.application:section.info.name`,
       defaultMessage: 'Fullt nafn',
       description: 'Full name',
+    },
+    companyName: {
+      id: `pdpp.application:section.info.companyName`,
+      defaultMessage: 'Heiti fyrirtækis',
+      description: 'Company name',
     },
     nationalId: {
       id: `pdpp.application:section.info.nationalId`,

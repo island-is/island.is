@@ -138,7 +138,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
       !paymentScheduleConditions.accommodationTaxReturns ||
       !paymentScheduleConditions.withholdingTaxReturns ||
       paymentScheduleConditions.collectionActions ||
-      !paymentScheduleConditions.financialStatement ||
+      // !paymentScheduleConditions.financialStatement || TODO: Should include this check? (financial statement)
       !paymentScheduleConditions.doNotOwe ||
       paymentScheduleDebts.length <= 0
     ) {
@@ -222,8 +222,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
 
     const isCompany = kennitala.isCompany(application.applicant)
 
-    if (isCompany) return this.companyProvider()
-    else return this.personProvider()
+    return isCompany ? this.companyProvider() : this.personProvider()
   }
 
   onProvideSuccess(

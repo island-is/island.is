@@ -46,6 +46,16 @@ export const externalData = {
       defaultMessage: 'Nafn og kennitala.',
       description: 'National Registry Subtitle',
     },
+    identityRegistryTitle: {
+      id: `pdpp.application:section.externalData.identityRegistryTitle`,
+      defaultMessage: 'Upplýsingar frá Fyrirtækjaskrá',
+      description: 'Identity Registry Title',
+    },
+    identityRegistrySubTitle: {
+      id: `pdpp.application:section.externalData.identityRegistrySubTitle`,
+      defaultMessage: 'Nafn, kennitala, lögheimili, póstfang.',
+      description: 'Identity Registry Subtitle',
+    },
     userProfileTitle: {
       id: `pdpp.application:section.externalData.userProfileTitle`,
       defaultMessage: 'Upplýsingar frá Skattinum og Innheimtumanni ríkissjóðs',

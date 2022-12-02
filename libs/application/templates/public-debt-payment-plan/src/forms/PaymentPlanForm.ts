@@ -14,11 +14,9 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  FormValue,
 } from '@island.is/application/types'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
-import * as kennitala from 'kennitala'
 import {
   application,
   conclusion,
@@ -29,6 +27,7 @@ import {
   paymentPlan,
   betaTest,
 } from '../lib/messages'
+import { isApplicantPerson } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
 import {
   PaymentPlanBuildIndex,
@@ -36,11 +35,6 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../types'
-
-const isApplicantPerson = (formValue: FormValue) => {
-  const { applicant } = formValue as PublicDebtPaymentPlan
-  return kennitala.isPerson(applicant.nationalId)
-}
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
@@ -162,11 +156,14 @@ export const PaymentPlanForm: Form = buildForm({
           ],
         }),
       ],
-      condition: (_formValue, externalData) => {
+      condition: (formValue, externalData) => {
         const debts = (externalData as PaymentPlanExternalData)
           ?.paymentPlanPrerequisites?.data?.debts
 
-        return debts?.find((x) => x.type === 'Wagedection') !== undefined
+        return (
+          isApplicantPerson(formValue) &&
+          debts?.find((x) => x.type === 'Wagedection') !== undefined
+        )
       },
     }),
     buildSection({
