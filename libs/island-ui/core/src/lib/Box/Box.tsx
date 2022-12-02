@@ -2,8 +2,9 @@ import { createElement, forwardRef } from 'react'
 
 import { BoxProps } from './types'
 import { useBoxStyles } from './useBoxStyles'
+import { TestSupport } from '@island.is/island-ui/utils'
 
-export const Box = forwardRef<HTMLElement, BoxProps>(
+export const Box = forwardRef<HTMLElement, BoxProps & TestSupport>(
   (
     {
       component = 'div',
@@ -63,6 +64,7 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       opacity,
       printHidden,
       className,
+      dataTestId,
       ...restProps
     },
     ref,
@@ -129,6 +131,7 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
 
     return createElement(component, {
       className: boxStyles,
+      'data-testid': dataTestId,
       ...restProps,
       ref,
     })

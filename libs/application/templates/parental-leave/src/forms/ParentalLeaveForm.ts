@@ -1,5 +1,4 @@
 import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
 
 import {
   buildAsyncSelectField,
@@ -21,13 +20,11 @@ import { Application, Form, FormModes } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  getExpectedDateOfBirth,
   getAllPeriodDates,
   getSelectedChild,
   requiresOtherParentApproval,
   getApplicationAnswers,
   allowOtherParent,
-  getLastValidPeriodEndDate,
   removeCountryCode,
   getApplicationExternalData,
   getMaxMultipleBirthsDays,
@@ -41,6 +38,8 @@ import {
   getStartDateDesc,
   getStartDateTitle,
   getMultipleBirthRequestDays,
+  getMinimumStartDate,
+  getLastDayOfLastMonth,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -62,16 +61,12 @@ import {
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
-import {
-  minimumPeriodStartBeforeExpectedDateOfBirth,
-  minPeriodDays,
-} from '../config'
+import { minPeriodDays } from '../config'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { YesOrNo } from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({
@@ -967,35 +962,8 @@ export const ParentalLeaveForm: Form = buildForm({
                       periods.length !== 0
                     )
                   },
-                  minDate: (application: Application) => {
-                    const expectedDateOfBirth = getExpectedDateOfBirth(
-                      application,
-                    )
-
-                    const lastPeriodEndDate = getLastValidPeriodEndDate(
-                      application,
-                    )
-
-                    const today = new Date()
-                    if (lastPeriodEndDate) {
-                      return lastPeriodEndDate
-                    } else if (
-                      expectedDateOfBirth &&
-                      new Date(expectedDateOfBirth).getTime() > today.getTime()
-                    ) {
-                      const leastStartDate = addMonths(
-                        new Date(expectedDateOfBirth),
-                        -minimumPeriodStartBeforeExpectedDateOfBirth,
-                      )
-                      if (leastStartDate.getTime() < today.getTime()) {
-                        return today
-                      }
-
-                      return leastStartDate
-                    }
-
-                    return today
-                  },
+                  minDate: (application: Application) =>
+                    getMinimumStartDate(application),
                   excludeDates: (application) => {
                     const { periods } = getApplicationAnswers(
                       application.answers,
@@ -1167,7 +1135,7 @@ export const ParentalLeaveForm: Form = buildForm({
                           return (
                             periods.length > 0 &&
                             new Date(periods[0].startDate).getTime() >=
-                              currentDateStartTime()
+                              getLastDayOfLastMonth().getTime()
                           )
                         }
 

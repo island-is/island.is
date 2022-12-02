@@ -159,6 +159,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     (assetData.registeredOwners?.paging?.hasNextPage &&
       !ownersQuery?.data?.assetsPropertyOwners?.paging)
 
+  const hasOwners = owners?.flat()?.length > 0
   return (
     <>
       <DetailHeader
@@ -168,37 +169,41 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         <TableUnits
           paginateCallback={() => paginate()}
           tables={[
-            {
-              header: [
-                formatMessage(messages.legalOwners),
-                formatMessage(messages.ssn),
-                formatMessage(messages.authorization),
-                formatMessage(messages.holdings),
-                formatMessage(messages.purchaseDate),
-              ],
-              rows: owners,
-              paginate: paginateOwners,
-            },
-            {
-              header: [
-                `${formatMessage(messages.appraisal)} ${
-                  assetData.appraisal?.activeYear
-                }`,
-                `${formatMessage(messages.appraisal)} ${
-                  assetData.appraisal?.plannedYear
-                }`,
-              ],
-              rows: [
-                [
-                  assetData.appraisal?.activeAppraisal
-                    ? amountFormat(assetData.appraisal?.activeAppraisal)
-                    : '',
-                  assetData.appraisal?.plannedAppraisal
-                    ? amountFormat(assetData.appraisal?.plannedAppraisal)
-                    : '',
-                ],
-              ],
-            },
+            hasOwners
+              ? {
+                  header: [
+                    formatMessage(messages.legalOwners),
+                    formatMessage(messages.ssn),
+                    formatMessage(messages.authorization),
+                    formatMessage(messages.holdings),
+                    formatMessage(messages.purchaseDate),
+                  ],
+                  rows: owners,
+                  paginate: paginateOwners,
+                }
+              : null,
+            assetData.appraisal
+              ? {
+                  header: [
+                    `${formatMessage(messages.appraisal)} ${
+                      assetData.appraisal?.activeYear
+                    }`,
+                    `${formatMessage(messages.appraisal)} ${
+                      assetData.appraisal?.plannedYear
+                    }`,
+                  ],
+                  rows: [
+                    [
+                      assetData.appraisal?.activeAppraisal
+                        ? amountFormat(assetData.appraisal?.activeAppraisal)
+                        : '',
+                      assetData.appraisal?.plannedAppraisal
+                        ? amountFormat(assetData.appraisal?.plannedAppraisal)
+                        : '',
+                    ],
+                  ],
+                }
+              : null,
           ]}
         />
       </Box>

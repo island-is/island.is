@@ -60,8 +60,8 @@ export const convertLinkGroupsToNavigationItems = (
 ): NavigationItem[] =>
   linkGroups.map(({ primaryLink, childrenLinks }) => {
     return {
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active: false,
       items: convertLinksToNavigationItem(childrenLinks),
     }
