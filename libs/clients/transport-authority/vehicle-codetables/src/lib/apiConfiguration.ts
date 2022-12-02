@@ -34,6 +34,6 @@ export const exportedApis = [
         ),
       )
     },
-    inject: [VehicleCodetablesClientConfig.KEY],
+    inject: [XRoadConfig.KEY, VehicleCodetablesClientConfig.KEY],
   },
 ]
