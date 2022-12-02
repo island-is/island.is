@@ -22,6 +22,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
 import { useI18n } from '@island.is/web/i18n'
+import { trackSearchQuery } from '@island.is/plausible'
 
 interface SearchInputProps {
   title?: string
@@ -131,6 +132,7 @@ export const SearchInput = ({
     const categorySlug = category?.slug ?? ''
 
     if (organizationSlug && categorySlug) {
+      trackSearchQuery(searchTerms, 'Service Web Suggestion')
       Router.push(
         linkResolver('supportqna', [organizationSlug, categorySlug, slug]).href,
       )
