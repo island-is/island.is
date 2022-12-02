@@ -15,6 +15,10 @@ import {
   DigitalTachographDriversCardClientConfig,
 } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+import {
+  VehiclePlateOrderingClientModule,
+  VehiclePlateOrderingClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 
 @Module({
   imports: [
@@ -22,12 +26,14 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
     VehicleInfolocksClientModule,
     DigitalTachographDriversCardClientModule,
     DrivingLicenseApiModule,
+    VehiclePlateOrderingClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         VehicleCodetablesClientConfig,
         VehicleInfolocksClientConfig,
         DigitalTachographDriversCardClientConfig,
+        VehiclePlateOrderingClientConfig,
       ],
     }),
   ],
