@@ -11,6 +11,7 @@
 import { UserRole } from '@island.is/judicial-system/types'
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
 import 'cypress-file-upload'
+import { hasOperationName, Operation } from '../utils'
 
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
   if (graphqlRequest.body.hasOwnProperty('query')) {
