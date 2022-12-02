@@ -13,6 +13,7 @@ import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Application as ApplicationModel } from '@island.is/application/api/core'
+import { environment } from '../../../environments'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -48,6 +49,12 @@ export class PaymentService {
         },
       })
       .catch(handleError)
+  }
+
+  public makeDelegationPaymentUrl(docNum: string, loginHint: string): string {
+    return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?iss=${
+      environment.auth.issuer
+    }&login_hint=${loginHint}&target_link_uri=${this.makePaymentUrl(docNum)}`
   }
 
   public makePaymentUrl(docNum: string): string {
@@ -97,7 +104,7 @@ export class PaymentService {
 
     return {
       ...result,
-      paymentUrl: this.makePaymentUrl(result.user4),
+      paymentUrl: this.makeDelegationPaymentUrl(result.user4, user.sub),
     }
   }
 

@@ -122,6 +122,7 @@ export class PaymentController {
     description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
+    @CurrentUser() user: User,
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
     const payment = await this.paymentService.findPaymentByApplicationId(
@@ -144,7 +145,10 @@ export class PaymentController {
       // TODO: maybe treat the case where no payment was found differently?
       // not sure how/if that case would/could come up.
       fulfilled: payment.fulfilled || false,
-      paymentUrl: this.paymentService.makePaymentUrl(payment.user4),
+      paymentUrl: this.paymentService.makeDelegationPaymentUrl(
+        payment.user4,
+        user.nationalId,
+      ),
     }
   }
 }
