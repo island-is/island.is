@@ -19,7 +19,7 @@ import {
   LoadingDots,
   Stack,
 } from '@island.is/island-ui/core'
-import { useLocale, withClientLocale } from '@island.is/localization'
+import { withClientLocale } from '@island.is/localization'
 import {
   NationalRegistryChild,
   NationalRegistryXRoadChildGuardianship,
