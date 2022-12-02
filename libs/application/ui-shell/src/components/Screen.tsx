@@ -49,6 +49,7 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
+import { convertFormToScreens } from '../reducer/reducerUtils'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -222,6 +223,12 @@ const Screen: FC<ScreenProps> = ({
           input: {
             id: applicationId,
             answers: extractedAnswers,
+            draftProgress: {
+              // activeScreenIndex starts at 0, but numberOfScreens starts at 1
+              // So we add 1 to activeScreenIndex to get the correct step
+              stepsFinished: activeScreenIndex + 1,
+              totalSteps: numberOfScreens,
+            },
           },
           locale,
         },
