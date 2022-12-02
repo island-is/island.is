@@ -43,9 +43,6 @@ export const RadioFormField: FC<Props> = ({
     () => buildFieldOptions(options, application, field),
     [options, application],
   )
-  useEffect(() => {
-    console.log('application changed', application.answers.applicationInfo)
-  }, [application])
 
   console.debug(
     `Radio title ${JSON.stringify(title)}, and formatted: ${formatText(
