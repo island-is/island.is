@@ -40,7 +40,7 @@ const InfoCard: React.FC<Props> = (props) => {
             <Text variant="h4">{defendants.title}</Text>
             <Box marginBottom={defender ? [2, 2, 3, 3] : 0}>
               {defendants.items.map((defendant) => (
-                <Text key={`${defendant.id}`}>
+                <Text key={defendant.id}>
                   <span className={styles.infoCardDefendant}>
                     <Text
                       as="span"
