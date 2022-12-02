@@ -8,7 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 
-import { ApiScope } from '@island.is/auth/scopes'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -24,7 +24,7 @@ import { FlightLeg } from '../models/flightLeg.model'
 import { FlightLegAdminService } from './flight-leg-admin.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(AdminPortalScope.airDiscountScheme)
 @Resolver(() => FlightLeg)
 export class FlightLegAdminResolver {
   constructor(private readonly flightLegAdminService: FlightLegAdminService) {}

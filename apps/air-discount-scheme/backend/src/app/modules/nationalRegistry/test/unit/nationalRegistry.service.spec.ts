@@ -5,6 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryService } from '../../nationalRegistry.service'
 import { NationalRegistryUser } from '../../nationalRegistry.types'
 
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import {
@@ -25,7 +26,7 @@ const user: NationalRegistryUser = {
 
 const auth: AuthUser = {
   nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  scope: [AirDiscountSchemeScope.default],
   authorization: '',
   client: '',
 }

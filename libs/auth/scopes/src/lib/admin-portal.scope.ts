@@ -1,3 +1,3 @@
 export enum AdminPortalScope {
-  airDiscountScheme = '@admin.island.is/air-discount-scheme',
+  airDiscountScheme = '@admin.island.is/ads',
 }

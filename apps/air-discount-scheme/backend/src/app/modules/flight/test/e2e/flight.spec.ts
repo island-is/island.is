@@ -1,10 +1,11 @@
 import request from 'supertest'
-import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER, INestApplication } from '@nestjs/common'
 import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { Flight } from '../../flight.model'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { setup } from '../../../../../../test/setup'
 
@@ -25,7 +26,7 @@ const user: NationalRegistryUser = {
 
 const mockAuthGuard = new MockAuthGuard({
   nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  scope: [AirDiscountSchemeScope.default, AirDiscountSchemeScope.admin],
 })
 
 beforeAll(async () => {

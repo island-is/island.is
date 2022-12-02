@@ -3,6 +3,7 @@ import { User } from '../../user.model'
 import { UserService } from '../../user.service'
 import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { CACHE_MANAGER } from '@nestjs/common'
 import kennitala from 'kennitala'
@@ -13,7 +14,7 @@ function getAuthUser(nationalId: string): AuthUser {
     nationalId,
     authorization: '',
     client: '',
-    scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+    scope: [AirDiscountSchemeScope.default],
   }
 }
 

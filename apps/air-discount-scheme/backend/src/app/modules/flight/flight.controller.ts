@@ -48,10 +48,9 @@ import {
 import { DiscountService } from '../discount'
 import { Discount } from '../discount/discount.model'
 import { AuthGuard } from '../common'
-import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { User } from '../user/user.model'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -343,7 +342,7 @@ export class PublicFlightController {
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@Scopes(AirDiscountSchemeScope.admin)
 @Controller('api/private')
 @ApiTags('Admin')
 @ApiBearerAuth()

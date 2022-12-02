@@ -5,6 +5,7 @@ import {
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import { User } from '@island.is/air-discount-scheme/types'
 import { AuthGuard } from '../../../common'
 import { setup } from '../../../../../../test/setup'
@@ -34,7 +35,7 @@ const discountUser: User = {
 
 const mockAuthGuard = new MockAuthGuard({
   nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  scope: [AirDiscountSchemeScope.default],
 })
 
 beforeAll(async () => {

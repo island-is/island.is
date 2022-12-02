@@ -5,6 +5,7 @@ import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
 import { createTestUser } from '../../../../../../test/createTestUser'
 import { getModelToken } from '@nestjs/sequelize'
 import { ExplicitCode } from '../../discount.model'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
   NationalRegistryService,
@@ -19,7 +20,7 @@ function getAuthUser(nationalId: string): AuthUser {
     nationalId,
     authorization: '',
     client: '',
-    scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+    scope: [AirDiscountSchemeScope.default],
   }
 }
 

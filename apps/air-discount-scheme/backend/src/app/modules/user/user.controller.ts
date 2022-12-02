@@ -15,6 +15,7 @@ import {
 import { GetUserRelationsParams } from './dto'
 import { UserService } from './user.service'
 import { User } from './user.model'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -24,7 +25,7 @@ import {
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@Scopes(AirDiscountSchemeScope.default)
 @Controller('api/private')
 @ApiTags('Users')
 @ApiBearerAuth()
