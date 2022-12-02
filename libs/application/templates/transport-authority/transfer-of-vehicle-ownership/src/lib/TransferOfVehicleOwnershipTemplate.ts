@@ -132,6 +132,7 @@ const template: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
               pruneInDaysATen(application, 8),
+            shouldDeleteChargeIfPaymentFulfilled: true,
           },
           onEntry: {
             apiModuleAction: ApiActions.addReview,
