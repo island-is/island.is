@@ -113,6 +113,7 @@
 /libs/clients/documents/                                                                            @island-is/hugsmidjan
 /libs/clients/finance/                                                                              @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                              @island-is/hugsmidjan
+/libs/clients/disability-license/                                                                   @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                      @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                       @island-is/hugsmidjan
 /libs/clients/islykill/                                                                             @island-is/hugsmidjan
