@@ -137,6 +137,9 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
+      "@island.is/api/domains/passports": [
+        "libs/api/domains/passports/src/index.ts"
+      ],
       "@island.is/api/domains/payment": [
         "libs/api/domains/payment/src/index.ts"
       ],
