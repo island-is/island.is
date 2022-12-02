@@ -165,7 +165,7 @@ export class PoliceService {
         const reason = await res.text()
 
         // The police system does not provide a structured error response.
-        // When no files exist for the case, a stack trace is returned.
+        // When police case does not exist, a stack trace is returned.
         throw new NotFoundException({
           message: `Police case does not exist ${caseId}`,
           detail: reason,
