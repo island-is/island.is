@@ -9,5 +9,6 @@ if (argv.job === 'worker') {
 } else {
   import('./app').then((app) => {
     app.bootstrapServer()
+    // Testing
   })
 }
