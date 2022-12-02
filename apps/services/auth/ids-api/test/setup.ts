@@ -19,19 +19,30 @@ import {
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppModule } from '../src/app/app.module'
 import { getModelToken } from '@nestjs/sequelize'
-import { createDomain, createApiScope } from '@island.is/services/auth/testing'
+import {
+  createDomain,
+  createApiScope,
+  CreateDomain,
+} from '@island.is/services/auth/testing'
+import faker from 'faker'
 
 type Scopes = {
   [key: string]: {
     name: string
+    domainName: string
   }
 }
+
+export const defaultDomains: CreateDomain[] = [createDomain(), createDomain()]
 
 export const defaultScopes: Scopes = {
   // Test user has access to this scope
   testUserHasAccess: {
     name: '@identityserver.api/authentication',
+    domainName: defaultDomains[0].name,
   },
+  scope1: { name: faker.lorem.word(), domainName: defaultDomains[0].name },
+  scope2: { name: faker.lorem.word(), domainName: defaultDomains[1].name },
 }
 
 class MockNationalRegistryClientService
@@ -48,11 +59,13 @@ class MockUserProfile {
 interface SetupOptions {
   user: User
   scopes?: Scopes
+  domains?: CreateDomain[]
 }
 
 export const setupWithAuth = async ({
   user,
   scopes = defaultScopes,
+  domains = defaultDomains,
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
   const app = await testServer({
@@ -89,17 +102,14 @@ export const setupWithAuth = async ({
 
   // Create domain
   const domainModel = app.get<typeof Domain>(getModelToken(Domain))
-  const domain = await domainModel.create(createDomain())
+  await domainModel.bulkCreate(domains)
 
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
 
   await apiScopeModel.bulkCreate(
-    Object.values(scopes)
-      .map((scope) => scope)
-      .map((scope) => ({
-        ...createApiScope(scope),
-        domainName: domain.name,
-      })),
+    Object.values(scopes).map((scope) => ({
+      ...createApiScope(scope),
+    })),
   )
 
   return app

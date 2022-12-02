@@ -71,8 +71,7 @@ function Benefits({ misc }: PropTypes) {
     copySuccess,
     connectionFlightInfo,
   } = JSON.parse(misc)
-  const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
-  const hasBenefits = benefits.length > 0
+  const hasBenefits = discounts.length > 0
   const connections = discounts.filter(
     ({ connectionDiscountCodes }) => connectionDiscountCodes.length > 0,
   )
@@ -122,7 +121,7 @@ function Benefits({ misc }: PropTypes) {
             {(loading && !called) || loading ? (
               <SkeletonLoader height={98} repeat={2} space={3} />
             ) : (
-              benefits.map((discount, index) => {
+              discounts.map((discount, index) => {
                 const { discountCode, user } = discount
                 const fundUsed = user.fund.used === user.fund.total
                 const remainingPlaceholders = {

@@ -1,4 +1,8 @@
-export type { ConnectionDiscountCode, Discount } from './lib/discount'
+export type {
+  ConnectionDiscountCode,
+  Discount,
+  ExplicitCode,
+} from './lib/discount'
 export type {
   FlightLeg,
   UserInfo,

@@ -54,3 +54,5 @@ export type DrivingLicenseType = {
   undirskrift: string
   svipting: Array<DrivingLicenseSuspended>
 }
+
+export type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
