@@ -119,11 +119,7 @@ export class PaymentService {
 
     return {
       ...result,
-      paymentUrl: this.makeDelegationPaymentUrl(
-        result.user4,
-        user.sub,
-        callbackUrl,
-      ),
+      paymentUrl: this.makePaymentUrl(result.user4),
     }
   }
 
