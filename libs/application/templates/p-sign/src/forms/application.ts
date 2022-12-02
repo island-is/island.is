@@ -45,7 +45,7 @@ export const getApplication = (): Form => {
   return buildForm({
     id: 'PMarkApplicationDraftForm',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [

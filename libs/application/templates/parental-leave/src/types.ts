@@ -1,5 +1,20 @@
 import { YES, NO } from './constants'
 
+export interface MultipleBirths {
+  hasMultipleBirths: YesOrNo
+  multipleBirths?: number
+}
+
+export interface RequestRightsObj {
+  isRequestingRights: YesOrNo
+  requestDays: number
+}
+
+export interface GiveRightsObj {
+  isGivingRights: YesOrNo
+  requestDays: number
+}
+
 export interface PersonInformation {
   fullName: string
   genderCode: string

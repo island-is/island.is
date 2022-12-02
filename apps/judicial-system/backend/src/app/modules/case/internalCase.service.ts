@@ -22,7 +22,6 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  IndictmentSubType,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -30,11 +29,11 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { uuidFactory } from '../../factories'
 import {
-  stripHtmlTags,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
   formatCourtUploadRulingTitle,
   getRequestPdfAsBuffer,
+  createCaseFilesRecord,
 } from '../../formatters'
 import { courtUpload } from '../../messages'
 import { CaseEvent, EventService } from '../event'
@@ -51,7 +50,6 @@ import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { ArchiveResponse } from './models/archive.response'
 import { DeliverCompletedCaseResponse } from './models/deliverCompletedCase.response'
-import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 
@@ -257,53 +255,79 @@ export class InternalCaseService {
       })
   }
 
-  private async sendEmailToCourt(theCase: Case, subject: string, body: string) {
-    const to = [
-      {
-        name: theCase.judge?.name ?? '',
-        address: theCase.judge?.email ?? '',
-      },
-    ]
-    if (theCase.registrar) {
-      to.push({
-        name: theCase.registrar?.name ?? '',
-        address: theCase.registrar?.email ?? '',
-      })
-    }
-
-    try {
-      await this.emailService.sendEmail({
-        from: {
-          name: this.config.email.fromName,
-          address: this.config.email.fromEmail,
-        },
-        replyTo: {
-          name: this.config.email.replyToName,
-          address: this.config.email.replyToEmail,
-        },
-        to: to,
-        subject,
-        text: stripHtmlTags(body),
-        html: body,
-      })
-    } catch (error) {
-      this.logger.error('Failed to send email', { error })
-
-      this.eventService.postErrorEvent(
-        'Failed to send email',
-        {
-          subject,
-          to: to.reduce(
-            (acc, recipient, index) =>
-              index > 0
-                ? `${acc}, ${recipient.name} (${recipient.address})`
-                : `${recipient.name} (${recipient.address})`,
-            '',
-          ),
-        },
-        error as Error,
+  private async uploadCaseFilesRecordPdfToCourt(
+    theCase: Case,
+    policeCaseNumber: string,
+  ): Promise<boolean> {
+    const caseFiles = theCase.caseFiles
+      ?.filter(
+        (caseFile) =>
+          caseFile.policeCaseNumber === policeCaseNumber &&
+          caseFile.category === CaseFileCategory.CASE_FILE &&
+          caseFile.type === 'application/pdf' &&
+          caseFile.key &&
+          caseFile.chapter !== null &&
+          caseFile.orderWithinChapter !== null,
       )
-    }
+      ?.sort(
+        (caseFile1, caseFile2) =>
+          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
+          (caseFile1.orderWithinChapter ?? 0) -
+            (caseFile2.orderWithinChapter ?? 0),
+      )
+      ?.map((caseFile) => async () => {
+        const buffer = await this.awsS3Service
+          .getObject(caseFile.key ?? '')
+          .catch((reason) => {
+            // Tolerate failure, but log error
+            this.logger.error(
+              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
+              { reason },
+            )
+          })
+
+        return {
+          chapter: caseFile.chapter as number,
+          date: caseFile.displayDate ?? caseFile.created,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          buffer: buffer ?? undefined,
+        }
+      })
+
+    return createCaseFilesRecord(
+      theCase,
+      policeCaseNumber,
+      caseFiles ?? [],
+      this.formatMessage,
+    )
+      .then((pdf) => {
+        const fileName = this.formatMessage(courtUpload.caseFilesRecord, {
+          policeCaseNumber,
+        })
+
+        return this.courtService.createDocument(
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.CASE_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => {
+        return true
+      })
+      .catch((error) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to upload request pdf to court for case ${theCase.id}`,
+          { error },
+        )
+
+        return false
+      })
   }
 
   private async deliverCaseFilesToCourt(
@@ -362,21 +386,6 @@ export class InternalCaseService {
       })
   }
 
-  private async deliverProsecutorDocumentsToCourt(
-    theCase: Case,
-  ): Promise<boolean> {
-    return isIndictmentCase(theCase.type)
-      ? await this.deliverCaseFilesToCourt(theCase, [
-          CaseFileCategory.COVER_LETTER,
-          CaseFileCategory.INDICTMENT,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE_CONTENTS,
-          CaseFileCategory.CASE_FILE,
-        ])
-      : await this.upploadRequestPdfToCourt(theCase)
-  }
-
   private async getIndictmentCourtRecordAsString(
     theCase: Case,
   ): Promise<string> {
@@ -418,14 +427,22 @@ export class InternalCaseService {
           [],
         )
 
+        const caseType =
+          isIndictmentCase(theCase.type) &&
+          theCase.policeCaseNumbers.length > 0 &&
+          theCase.indictmentSubtypes &&
+          theCase.indictmentSubtypes[theCase.policeCaseNumbers[0]]
+            ? theCase.indictmentSubtypes[theCase.policeCaseNumbers[0]][0]
+            : theCase.type
+
         return this.policeService.updatePoliceCase(
           theCase.id,
-          isIndictmentCase(theCase.type)
-            ? (theCase.indictmentSubType as IndictmentSubType) // We know the sub type is set if the case is an indictment case
-            : theCase.type,
+          caseType,
           theCase.state,
           courtRecord,
-          theCase.policeCaseNumbers,
+          theCase.policeCaseNumbers.length > 0
+            ? theCase.policeCaseNumbers[0]
+            : '',
           defendantNationalIds,
           theCase.conclusion,
         )
@@ -466,6 +483,9 @@ export class InternalCaseService {
         .create(
           {
             ...caseToCreate,
+            state: isIndictmentCase(caseToCreate.type)
+              ? CaseState.DRAFT
+              : undefined,
             origin: CaseOrigin.LOKE,
             creatingProsecutorId: prosecutorId,
             prosecutorId,
@@ -619,18 +639,26 @@ export class InternalCaseService {
     }
   }
 
-  async deliverProsecutorDocuments(
+  async deliverCaseFilesRecordToCourt(
     theCase: Case,
-  ): Promise<DeliverProsecutorDocumentsResponse> {
+    policeCaseNumber: string,
+  ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const requestDeliveredToCourt = await this.deliverProsecutorDocumentsToCourt(
+    const delivered = await this.uploadCaseFilesRecordPdfToCourt(
       theCase,
+      policeCaseNumber,
     )
 
-    return {
-      requestDeliveredToCourt,
-    }
+    return { delivered }
+  }
+
+  async deliverRequestToCourt(theCase: Case): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    const delivered = await this.upploadRequestPdfToCourt(theCase)
+
+    return { delivered }
   }
 
   async deliverCourtRecordToCourt(theCase: Case): Promise<DeliverResponse> {

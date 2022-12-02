@@ -9,11 +9,10 @@ import { FlightLeg } from '../flightLeg'
 import { CurrentUser } from '../decorators'
 import type { AuthUser } from '../auth/types'
 import { User } from './models'
-import { Inject } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
 import { getRole } from '../auth/roles'
 
 @Resolver(() => User)

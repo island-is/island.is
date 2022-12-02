@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, useRef, useReducer } from 'react'
+import { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
   AlertMessage,
@@ -38,7 +38,8 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -245,9 +246,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: pageUrl === primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
+      active: pageUrl === primaryLink?.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -344,7 +345,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           {subpage.title}
         </Text>
       </Box>
-      {richText(subpage.description as SliceType[])}
+      {webRichText(subpage.description as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"

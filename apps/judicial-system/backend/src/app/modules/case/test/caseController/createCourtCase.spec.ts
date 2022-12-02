@@ -2,10 +2,10 @@ import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 
 import {
-  CaseFileState,
+  CaseFileCategory,
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   isIndictmentCase,
   User as TUser,
 } from '@island.is/judicial-system/types'
@@ -14,11 +14,8 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { randomEnum } from '../../../../test'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { CourtService } from '../../../court'
-import { Defendant } from '../../../defendant'
-import { User } from '../../../user'
-import { Institution } from '../../../institution'
-import { CaseFile } from '../../../file'
 import { Case } from '../../models/case.model'
+import { defendantsOrder, includes } from '../../case.service'
 
 interface Then {
   result: Case
@@ -70,12 +67,22 @@ describe('CaseController - Create court case', () => {
     const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
-    const indictmentSubType = isIndictmentCase(type)
-      ? randomEnum(IndictmentSubType)
+    const policeCaseNumber = uuid()
+    const indictmentSubtype = isIndictmentCase(type)
+      ? randomEnum(IndictmentSubtype)
       : undefined
-    const policeCaseNumbers = [uuid()]
+    const indictmentSubtypes = isIndictmentCase(type)
+      ? { [policeCaseNumber]: [indictmentSubtype] }
+      : undefined
+    const policeCaseNumbers = [policeCaseNumber]
     const courtId = uuid()
-    const theCase = { id: caseId, type, policeCaseNumbers, courtId } as Case
+    const theCase = {
+      id: caseId,
+      type,
+      policeCaseNumbers,
+      indictmentSubtypes,
+      courtId,
+    } as Case
 
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase)
@@ -89,7 +96,7 @@ describe('CaseController - Create court case', () => {
         type,
         policeCaseNumbers,
         false,
-        indictmentSubType,
+        indictmentSubtypes,
       )
     })
   })
@@ -129,47 +136,8 @@ describe('CaseController - Create court case', () => {
 
     it('should lookup the updated case', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        include: [
-          { model: Defendant, as: 'defendants' },
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
-          {
-            model: CaseFile,
-            as: 'caseFiles',
-            required: false,
-            where: {
-              state: { [Op.not]: CaseFileState.DELETED },
-            },
-          },
-        ],
-        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+        include: includes,
+        order: [defendantsOrder],
         where: {
           id: caseId,
           isArchived: false,
@@ -201,9 +169,78 @@ describe('CaseController - Create court case', () => {
 
     it('should post to queue', () => {
       expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
+        type: MessageType.DELIVER_REQUEST_TO_COURT,
         caseId,
       })
+    })
+  })
+
+  describe('indictment case queued', () => {
+    const user = {} as TUser
+    const caseId = uuid()
+    const policeCaseNumber1 = uuid()
+    const policeCaseNumber2 = uuid()
+    const coverLetterId = uuid()
+    const indictmentId = uuid()
+    const criminalRecordId = uuid()
+    const costBreakdownId = uuid()
+    const theCase = {
+      id: caseId,
+    } as Case
+    const returnedCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
+      caseFiles: [
+        { id: coverLetterId, category: CaseFileCategory.COVER_LETTER },
+        { id: indictmentId, category: CaseFileCategory.INDICTMENT },
+        { id: criminalRecordId, category: CaseFileCategory.CRIMINAL_RECORD },
+        { id: costBreakdownId, category: CaseFileCategory.COST_BREAKDOWN },
+      ],
+    } as Case
+
+    beforeEach(async () => {
+      const mockUpdate = mockCaseModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1])
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          caseId,
+          policeCaseNumber: policeCaseNumber1,
+        },
+        {
+          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          caseId,
+          policeCaseNumber: policeCaseNumber2,
+        },
+        {
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          caseId,
+          caseFileId: coverLetterId,
+        },
+        {
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          caseId,
+          caseFileId: indictmentId,
+        },
+        {
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          caseId,
+          caseFileId: criminalRecordId,
+        },
+        {
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          caseId,
+          caseFileId: costBreakdownId,
+        },
+      ])
     })
   })
 

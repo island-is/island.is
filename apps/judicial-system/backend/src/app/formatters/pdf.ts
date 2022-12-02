@@ -9,15 +9,7 @@ import {
   TextAlignment,
 } from 'pdf-lib'
 
-export enum Alignment {
-  Left,
-  Center,
-  Right,
-}
-
-export type PageLink = PDFRef
-
-export interface PdfTextOptions {
+interface TextOptions {
   alignment?: Alignment
   bold?: boolean
   pageLink?: PageLink
@@ -27,6 +19,19 @@ export interface PdfTextOptions {
   position?: { x?: number; y?: number }
 }
 
+export enum Alignment {
+  Left,
+  Center,
+  Right,
+}
+
+export type PageLink = PDFRef
+
+export interface LineLink {
+  pageNumber: number
+  y: number
+}
+
 export interface PdfDocument {
   addPage: (position?: number) => PdfDocument
   addPageNumbers: () => PdfDocument
@@ -34,12 +39,14 @@ export interface PdfDocument {
   addText: (
     text: string,
     fontSize: number,
-    options?: PdfTextOptions,
+    options?: TextOptions,
   ) => PdfDocument
   getContents: () => Promise<Buffer>
+  getCurrentLineLink: () => LineLink
   getPageCount: () => number
   getPageLink: (pageNumber: number) => PageLink
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
+  setCurrentLine: (lineLink: LineLink) => PdfDocument
   setMargins: (
     top: number,
     right: number,
@@ -105,8 +112,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     fontSize: number,
     x: number,
     y?: number,
-    spaceAbove?: number,
-    spaceBelow?: number,
+    spaceAbove = 0,
+    spaceBelow = spacing.line,
     pageLink?: PageLink,
     newLine = true,
   ) => {
@@ -115,13 +122,13 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     if (y !== undefined) {
       currentYPosition = y
     } else if (
-      currentYPosition + (spaceAbove ?? 0) * spacing.line + fontSize >
+      currentYPosition + spaceAbove * spacing.line + fontSize >
       page.getHeight() - margins.bottom
     ) {
       pdfDocument.addPage(currentPage + 1)
       page = rawDocument.getPage(currentPage)
     } else {
-      currentYPosition += (spaceAbove ?? 0) * spacing.line
+      currentYPosition += spaceAbove * spacing.line
     }
 
     drawTextAbsolute(
@@ -135,7 +142,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     )
 
     if (newLine) {
-      currentYPosition += fontSize + (spaceBelow ?? spacing.line)
+      currentYPosition += fontSize + spaceBelow
     }
   }
 
@@ -208,7 +215,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       return pdfDocument
     },
 
-    addText: (text: string, fontSize: number, options?: PdfTextOptions) => {
+    addText: (text: string, fontSize: number, options?: TextOptions) => {
       const {
         alignment = Alignment.Left,
         bold = false,
@@ -270,6 +277,11 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       return Buffer.from(bytes)
     },
 
+    getCurrentLineLink: () => ({
+      pageNumber: currentPage,
+      y: currentYPosition,
+    }),
+
     getPageCount: () => rawDocument.getPageCount(),
 
     getPageLink: (pageNumber: number) => rawDocument.getPage(pageNumber).ref,
@@ -283,6 +295,13 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       )
 
       pages.forEach((page) => rawDocument.addPage(page))
+
+      return pdfDocument
+    },
+
+    setCurrentLine: (lineLink: LineLink) => {
+      currentPage = lineLink.pageNumber
+      currentYPosition = lineLink.y
 
       return pdfDocument
     },

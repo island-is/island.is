@@ -142,12 +142,12 @@ export const SearchSection = ({
                 justifyContent="center"
                 alignItems="center"
                 aria-hidden="true"
+                dataTestId="home-banner"
               >
                 {videos?.length ? (
                   <Video
                     name="desktop"
                     title={imageAlternativeText}
-                    dataTestId="home-banner"
                     sources={videos.map(({ url, contentType }) => {
                       return {
                         src: url,

@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -30,9 +30,10 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface HomestayProps {
   organizationPage: Query['getOrganizationPage']
@@ -58,10 +59,10 @@ const Homestay: Screen<HomestayProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === pageUrl ||
+        primaryLink?.url === pageUrl ||
         childrenLinks.some((link) => link.url === pageUrl),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -114,7 +115,7 @@ const Homestay: Screen<HomestayProps> = ({
           {subpage.title}
         </Text>
       </Box>
-      {richText(subpage.description as SliceType[])}
+      {webRichText(subpage.description as SliceType[])}
       <Box
         background="blue100"
         borderRadius="large"

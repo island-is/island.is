@@ -1,15 +1,17 @@
-import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
-import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
+import { renderHelmServiceFile } from '../dsl/exports/helm'
 
-const EXCLUDED_ENVIRONMENT_NAMES = [
+export const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
+  'DB_HOST',
+  'DB_USER',
   'NOVA_USERNAME',
   'NOVA_PASSWORD',
   'DB_REPLICAS_HOST',
   'NODE_OPTIONS',
   'REDIS_NODES',
+  'REDIS_URL_NODE_01',
   'XROAD_NATIONAL_REGISTRY_REDIS_NODES',
   'COMPANY_REGISTRY_REDIS_NODES',
 ]
@@ -22,9 +24,18 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 }
 
 export const renderServiceEnvVars = async (service: string) => {
-  const uberChart = new UberChart(Envs.dev01)
-  const services = Object.values(Charts).map(
-    (chart) => generateYamlForEnv(uberChart, ...chart.dev).services,
+  const services = await Promise.all(
+    Object.values(Charts).map(
+      async (chart) =>
+        (
+          await renderHelmServiceFile(
+            Envs.dev01,
+            chart.dev,
+            chart.dev,
+            'no-mocks',
+          )
+        ).services,
+    ),
   )
 
   const secretRequests: [string, string][] = services
@@ -36,9 +47,10 @@ export const renderServiceEnvVars = async (service: string) => {
           }
           return []
         })
-        .reduce((p, c) => p.concat(c), [])
+        .flat()
     })
-    .reduce((p, c) => p.concat(c), [])
+    .flat()
+    // .reduce((p, c) => p.concat(c), [])
     .filter(([envName]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(envName))
     .map((request) => {
       const envName = request[0]

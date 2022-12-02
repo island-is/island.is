@@ -20,7 +20,7 @@ import {
 import {
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -65,7 +65,10 @@ export class PoliceService {
     }
 
     return fetch(url, {
-      headers: { 'X-Road-Client': this.config.clientId },
+      headers: {
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
       agent: this.agent,
     } as RequestInit)
   }
@@ -91,7 +94,7 @@ export class PoliceService {
     })
 
     const pdf = await this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+      `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
     )
       .then(async (res) => {
         if (res.ok) {
@@ -143,7 +146,7 @@ export class PoliceService {
     user: User,
   ): Promise<PoliceCaseFile[]> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
+      `${this.xRoadPath}/GetDocumentListById/${caseId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -207,37 +210,35 @@ export class PoliceService {
 
   async updatePoliceCase(
     caseId: string,
-    caseType: CaseType | IndictmentSubType,
+    caseType: CaseType | IndictmentSubtype,
     caseState: CaseState,
     courtRecordPdf: string,
-    policeCaseNumbers: string[],
+    policeCaseNumber: string,
     defendantNationalIds?: string[],
     caseConclusion?: string,
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(
-      `${this.xRoadPath}/api/Rettarvarsla/UpdateRVCase/${caseId}`,
-      {
-        method: 'PUT',
-        headers: {
-          accept: '*/*',
-          'Content-Type': 'application/json',
-          'X-Road-Client': this.config.clientId,
-        },
-        agent: this.agent,
-        body: JSON.stringify({
-          rvMal_ID: caseId,
-          caseNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
-          ssn:
-            defendantNationalIds && defendantNationalIds[0]
-              ? defendantNationalIds[0]
-              : '',
-          type: caseType,
-          courtVerdict: caseState,
-          courtVerdictString: caseConclusion,
-          courtDocument: Base64.btoa(courtRecordPdf),
-        }),
-      } as RequestInit,
-    )
+    return this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
+      method: 'PUT',
+      headers: {
+        accept: '*/*',
+        'Content-Type': 'application/json',
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
+      agent: this.agent,
+      body: JSON.stringify({
+        rvMal_ID: caseId,
+        caseNumber: policeCaseNumber,
+        ssn:
+          defendantNationalIds && defendantNationalIds[0]
+            ? defendantNationalIds[0]
+            : '',
+        type: caseType,
+        courtVerdict: caseState,
+        courtVerdictString: caseConclusion,
+        courtDocument: Base64.btoa(courtRecordPdf),
+      }),
+    } as RequestInit)
       .then(async (res) => {
         if (res.ok) {
           return true
@@ -256,7 +257,7 @@ export class PoliceService {
             caseId,
             caseType,
             caseState,
-            policeCaseNumbers: policeCaseNumbers.join(', '),
+            policeCaseNumber,
           },
           reason,
         )

@@ -8,6 +8,7 @@ import {
   IsString,
   IsNumber,
   IsISO8601,
+  IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
@@ -101,6 +102,10 @@ export class GetFlightLegsBody implements FlightLegsInput {
   @IsOptional()
   @IsNumber()
   postalCode?: number
+
+  @IsOptional()
+  @IsBoolean()
+  isExplicit?: boolean
 }
 
 export class CheckFlightBody {

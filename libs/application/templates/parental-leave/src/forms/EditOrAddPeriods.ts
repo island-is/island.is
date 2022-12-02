@@ -1,4 +1,5 @@
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 
 import {
   buildCustomField,
@@ -25,6 +26,7 @@ import {
   getPeriodImageTitle,
   getPeriodSectionTitle,
   getLeavePlanTitle,
+  getMinimumStartDate,
 } from '../lib/parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
@@ -35,7 +37,7 @@ export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
   title: parentalLeaveFormMessages.shared.formEditTitle,
   logo: Logo,
-  mode: FormModes.EDITING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'editOrAddPeriods',
@@ -83,38 +85,12 @@ export const EditOrAddPeriods: Form = buildForm({
 
                     return (
                       firstPeriodRequestingSpecificStartDate ||
-                      periods.length !== 0
+                      periods.length !== 0 ||
+                      !!currentPeriod?.firstPeriodStart
                     )
                   },
-                  minDate: (application: Application) => {
-                    const expectedDateOfBirth = getExpectedDateOfBirth(
-                      application,
-                    )
-
-                    const lastPeriodEndDate = getLastValidPeriodEndDate(
-                      application,
-                    )
-
-                    const today = new Date()
-                    if (lastPeriodEndDate) {
-                      return lastPeriodEndDate
-                    } else if (
-                      expectedDateOfBirth &&
-                      new Date(expectedDateOfBirth) > today
-                    ) {
-                      const leastStartDate = addDays(
-                        new Date(expectedDateOfBirth),
-                        -minimumPeriodStartBeforeExpectedDateOfBirth,
-                      )
-                      if (leastStartDate < today) {
-                        return today
-                      }
-
-                      return leastStartDate
-                    }
-
-                    return today
-                  },
+                  minDate: (application: Application) =>
+                    getMinimumStartDate(application),
                   excludeDates: (application) => {
                     const { periods } = getApplicationAnswers(
                       application.answers,
@@ -144,8 +120,9 @@ export const EditOrAddPeriods: Form = buildForm({
                   id: 'endDate',
                   condition: (answers) => {
                     const { rawPeriods } = getApplicationAnswers(answers)
+                    const period = rawPeriods[rawPeriods.length - 1]
 
-                    return rawPeriods[rawPeriods.length - 1]?.useLength === YES
+                    return period?.useLength === YES && !!period?.startDate
                   },
                   title: parentalLeaveFormMessages.duration.title,
                   component: 'Duration',
@@ -157,8 +134,9 @@ export const EditOrAddPeriods: Form = buildForm({
                     component: 'PeriodEndDate',
                     condition: (answers) => {
                       const { rawPeriods } = getApplicationAnswers(answers)
+                      const period = rawPeriods[rawPeriods.length - 1]
 
-                      return rawPeriods[rawPeriods.length - 1]?.useLength === NO
+                      return period?.useLength === NO && !!period?.startDate
                     },
                   },
                   {
@@ -188,6 +166,12 @@ export const EditOrAddPeriods: Form = buildForm({
                   title: parentalLeaveFormMessages.ratio.title,
                   description: parentalLeaveFormMessages.ratio.description,
                   component: 'PeriodPercentage',
+                  condition: (answers) => {
+                    const { rawPeriods } = getApplicationAnswers(answers)
+                    const period = rawPeriods[rawPeriods.length - 1]
+
+                    return !!period?.startDate && !!period?.endDate
+                  },
                 }),
               ],
             }),

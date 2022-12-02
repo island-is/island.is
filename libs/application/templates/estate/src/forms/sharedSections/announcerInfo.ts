@@ -7,14 +7,25 @@ import {
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import { EstateTypes } from '../../lib/constants'
 
 export const announcerInfo = buildSection({
   id: 'information',
-  title: m.announcer,
+  title: (application) =>
+    application.answers.selectedEstate === EstateTypes.noPropertyEstate
+      ? m.announcerNoProperty
+      : application.answers.selectedEstate === EstateTypes.residencePermit
+      ? m.announcerRP
+      : m.announcer,
   children: [
     buildMultiField({
       id: 'applicant',
-      title: m.announcer,
+      title: (application) =>
+        application.answers.selectedEstate === EstateTypes.noPropertyEstate
+          ? m.announcerNoProperty
+          : application.answers.selectedEstate === EstateTypes.residencePermit
+          ? m.announcerResidencePermit
+          : m.announcer,
       description: m.applicantsInfoSubtitle,
       children: [
         buildTextField({
