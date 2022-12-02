@@ -98,7 +98,7 @@ export const m = defineMessages({
   },
   passportNumber: {
     id: 'pa.application:selectPassport.passportNumber',
-    defaultMessage: 'Vegabréfsnúmer: ',
+    defaultMessage: 'Vegabréfsnúmer:',
     description: 'Some description',
   },
   validTag: {

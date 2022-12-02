@@ -20,18 +20,17 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
-import { courtUpload } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { Case } from '../case'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
-import { DeleteFileResponse } from './models/deleteFile.response'
-import { SignedUrl } from './models/signedUrl.model'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { UpdateFileDto } from './dto/updateFile.dto'
+import { PresignedPost } from './models/presignedPost.model'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { SignedUrl } from './models/signedUrl.model'
+import { CaseFile } from './models/file.model'
 
 // Files are stored in AWS S3 under a key which has the following format:
 // uploads/<uuid>/<uuid>/<filename>
@@ -66,13 +65,23 @@ export class FileService {
       })
   }
 
-  private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
+  private async deleteFileFromDatabase(
+    fileId: string,
+    transaction?: Transaction,
+  ): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
 
-    const [numberOfAffectedRows] = await this.fileModel.update(
-      { state: CaseFileState.DELETED, key: null },
-      { where: { id: fileId } },
-    )
+    const promisedUpdate = transaction
+      ? this.fileModel.update(
+          { state: CaseFileState.DELETED, key: null },
+          { where: { id: fileId }, transaction },
+        )
+      : this.fileModel.update(
+          { state: CaseFileState.DELETED, key: null },
+          { where: { id: fileId } },
+        )
+
+    const [numberOfAffectedRows] = await promisedUpdate
 
     if (numberOfAffectedRows !== 1) {
       // Tolerate failure, but log error
@@ -93,71 +102,39 @@ export class FileService {
     })
   }
 
-  private getFileProperties(file: CaseFile, theCase: Case) {
+  private getCourtDocumentFolder(file: CaseFile) {
     let courtDocumentFolder: CourtDocumentFolder
-    let subject: string
 
     switch (file.category) {
       case CaseFileCategory.COVER_LETTER:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.coverLetter, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.INDICTMENT:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.indictment, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.CRIMINAL_RECORD:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.criminalRecord, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.COST_BREAKDOWN:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.costBreakdown, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.COURT_RECORD:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.courtRecord, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.RULING:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.verdict, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.CASE_FILE_CONTENTS:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
-        subject = this.formatMessage(courtUpload.caseFileContents, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.CASE_FILE:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
-        subject = this.formatMessage(courtUpload.caseFile, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       default:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
-        subject = file.name
     }
 
-    const fileNameWithoutEnding = /^.+\./
-
-    const fileName = file.category
-      ? file.name.replace(fileNameWithoutEnding, `${subject}.`)
-      : file.name
-
-    return { courtDocumentFolder, subject, fileName }
+    return courtDocumentFolder
   }
 
   private async throttleUpload(
@@ -171,18 +148,15 @@ export class FileService {
 
     const content = await this.awsS3Service.getObject(file.key ?? '')
 
-    const { courtDocumentFolder, subject, fileName } = this.getFileProperties(
-      file,
-      theCase,
-    )
+    const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
     return this.courtService.createDocument(
       theCase.id,
       theCase.courtId,
       theCase.courtCaseNumber,
       courtDocumentFolder,
-      subject,
-      fileName,
+      file.name,
+      file.name,
       file.type,
       content,
       user,
@@ -261,8 +235,11 @@ export class FileService {
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async deleteCaseFile(file: CaseFile): Promise<DeleteFileResponse> {
-    const success = await this.deleteFileFromDatabase(file.id)
+  async deleteCaseFile(
+    file: CaseFile,
+    transaction?: Transaction,
+  ): Promise<DeleteFileResponse> {
+    const success = await this.deleteFileFromDatabase(file.id, transaction)
 
     if (success && file.key) {
       // Fire and forget, no need to wait for the result

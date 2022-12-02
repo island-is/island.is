@@ -136,6 +136,7 @@ export const serviceSetup = (services: {
         dev: 'https://beta.dev01.devland.is/umsoknir',
         staging: 'https://beta.staging01.devland.is/umsoknir',
         prod: 'https://island.is/umsoknir',
+        local: 'http://localhost:4200/umsoknir',
       },
       APPLICATION_ATTACHMENT_BUCKET: {
         dev: 'island-is-dev-storage-application-system',
