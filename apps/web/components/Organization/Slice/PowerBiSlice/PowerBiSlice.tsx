@@ -43,7 +43,11 @@ type EventType =
 const slicerStateContainsShipNameAndNumberTarget = (
   slicerState: models.ISlicerState,
 ) => {
-  return slicerState?.filters?.[0]?.target?.['column'] === 'Skip nafn og númer'
+  const value = 'Skip nafn og númer'
+  return (
+    slicerState?.filters?.[0]?.target?.['column'] === value ||
+    slicerState?.targets?.[0]?.['column'] === value
+  )
 }
 
 const convertShipNameToSlicerDropdownValue = (
@@ -147,6 +151,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           if (nr) query['nr'] = nr
         }
 
+        router.query = query
+
         // Store via query params the state of the report
         router.push(
           {
@@ -248,6 +254,11 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           ...slicerState,
           filters: [
             {
+              $schema: 'http://powerbi.com/product/schema#basic',
+              filterType: 1,
+              operator: 'In',
+              requireSingleSelection: false,
+              target: { table: 'Skipasaga', column: 'Skip nafn og númer' },
               ...slicerState.filters?.[0],
               values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
             },

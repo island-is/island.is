@@ -1,10 +1,9 @@
-import { Box, Icon } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
+import { Box, Icon } from '@island.is/island-ui/core'
 import * as styles from '../NavItem/NavItem.css'
 interface Props {
-  path?: ServicePortalPath
+  path?: string
   active: boolean
   enabled?: boolean
   collapsed?: boolean

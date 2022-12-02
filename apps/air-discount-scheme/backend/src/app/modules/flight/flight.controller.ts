@@ -45,7 +45,8 @@ import {
   CheckFlightParams,
   CheckFlightBody,
 } from './dto'
-import { Discount, DiscountService } from '../discount'
+import { DiscountService } from '../discount'
+import { Discount } from '../discount/discount.model'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
@@ -60,7 +61,6 @@ export class PublicFlightController {
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
     @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
-    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   private async validateConnectionFlights(

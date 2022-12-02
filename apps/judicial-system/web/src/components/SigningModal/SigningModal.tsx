@@ -12,7 +12,10 @@ import { useIntl } from 'react-intl'
 
 import { CaseType } from '@island.is/judicial-system/types'
 import { Box, Text, toast } from '@island.is/island-ui/core'
-import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  errors as errorMessages,
+} from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -174,7 +177,7 @@ export const SigningModal: React.FC<SigningModalProps> = ({
         signingProgress === 'inProgress'
           ? undefined
           : signingProgress === 'success'
-          ? formatMessage(m.secondaryButtonSuccessText)
+          ? formatMessage(core.closeModal)
           : formatMessage(m.secondaryButtonErrorText)
       }
       onPrimaryButtonClick={() => {
