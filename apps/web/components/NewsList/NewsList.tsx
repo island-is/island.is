@@ -53,8 +53,8 @@ export const NewsList = ({
   newsPerPage = 10,
   monthOptions,
 }: NewsListProps) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
+  const { value: isWebReaderEnabledForNews } = useFeatureFlag(
+    'isWebReaderEnabledForNews',
     false,
   )
   const router = useRouter()
@@ -71,11 +71,11 @@ export const NewsList = ({
       <Text
         variant="h1"
         as="h1"
-        marginBottom={isWebReaderEnabledForOrganizationPages ? 0 : 2}
+        marginBottom={isWebReaderEnabledForNews ? 0 : 2}
       >
         {title}
       </Text>
-      {isWebReaderEnabledForOrganizationPages && (
+      {isWebReaderEnabledForNews && (
         <Webreader
           marginTop={0}
           marginBottom={0}

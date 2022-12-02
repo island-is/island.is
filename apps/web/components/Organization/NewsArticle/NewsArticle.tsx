@@ -12,8 +12,8 @@ interface NewsArticleProps {
 }
 
 export const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
+  const { value: isWebReaderEnabledForNews } = useFeatureFlag(
+    'isWebReaderEnabledForNews',
     false,
   )
   const { format } = useDateUtils()
@@ -29,7 +29,7 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
           {newsItem.title}
         </Text>
       </Box>
-      {isWebReaderEnabledForOrganizationPages && (
+      {isWebReaderEnabledForNews && (
         <Webreader marginTop={0} readId={null} readClass="rs_read" />
       )}
       <Box className="rs_read">
