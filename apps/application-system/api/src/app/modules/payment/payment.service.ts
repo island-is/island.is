@@ -71,22 +71,17 @@ export class PaymentService {
     return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
-  public getCallbackUrl(payment: Payment): string {
-    return (
-      ((this.paymentConfig.callbackBaseUrl +
-        payment.application_id) as string) +
-      this.paymentConfig.callbackAdditionUrl +
-      payment.id
-    )
-  }
-
   async createCharge(
     payment: Payment,
     user: User,
   ): Promise<CreateChargeResult> {
     // TODO: island.is x-road service path for callback.. ??
     // this can actually be a fixed url
-    const callbackUrl = this.getCallbackUrl(payment)
+    const callbackUrl =
+      ((this.paymentConfig.callbackBaseUrl +
+        payment.application_id) as string) +
+      this.paymentConfig.callbackAdditionUrl +
+      payment.id
 
     const parsedDefinition = JSON.parse(
       (payment.definition as unknown) as string,

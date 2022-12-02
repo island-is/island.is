@@ -17,7 +17,10 @@ import {
   ApiHeader,
   ApiOkResponse,
 } from '@nestjs/swagger'
-import { PaymentType as BasePayment } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  PaymentType as BasePayment,
+} from '@island.is/application/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -34,6 +37,9 @@ import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
 import { PaymentAPI } from '@island.is/clients/payment'
+import { ApplicationService } from '@island.is/application/api/core'
+import { getSlugFromType } from '@island.is/application/core'
+import { environment } from '../../../environments'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -51,6 +57,7 @@ export class PaymentController {
     private readonly auditService: AuditService,
     private readonly paymentService: PaymentService,
     private readonly paymentAPI: PaymentAPI,
+    private readonly applicationService: ApplicationService,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
   ) {}
@@ -141,7 +148,18 @@ export class PaymentController {
       )
     }
 
-    const callbackUrl = this.paymentService.getCallbackUrl(payment)
+    const application = await this.applicationService.findOneById(applicationId)
+
+    let applicationSlug
+    if (application?.typeId) {
+      applicationSlug = getSlugFromType(application.typeId)
+    } else {
+      throw new NotFoundException(
+        `application type id was not found for application id ${applicationId}`,
+      )
+    }
+
+    const callbackUrl = `${environment.templateApi.clientLocationOrigin}/${applicationSlug}/${application.id}?done`
 
     return {
       // TODO: maybe treat the case where no payment was found differently?

@@ -10,7 +10,12 @@ import { PaymentService } from './payment.service'
 import { environment } from '../../../environments'
 import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
-import { Application } from '@island.is/application/api/core'
+import {
+  Application,
+  ApplicationApiCoreModule,
+} from '@island.is/application/api/core'
+import { TemplateAPIModule } from '@island.is/application/template-api-modules'
+import { TemplateApiApplicationService } from '../application/template-api.service'
 
 export interface Config {
   clientConfig: PaymentServiceOptions
@@ -39,6 +44,7 @@ export class PaymentModule {
         SequelizeModule.forFeature([Payment]),
         SequelizeModule.forFeature([Application]),
         CmsTranslationsModule,
+        ApplicationApiCoreModule,
       ],
       controllers: [PaymentController, PaymentCallbackController],
       exports: [PaymentService],
