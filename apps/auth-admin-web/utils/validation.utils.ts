@@ -8,7 +8,7 @@ class ValidationUtils {
   public static grantTypePattern = /^(?=[a-z])[a-z_:.-]+(?<=[a-z])$/
 
   /** Pattern that enforeces @domain.is or @domain2-_2.is */
-  public static domainPattern = /@{1}[a-z0-9_-]*[.]?[a-z]*$/
+  public static domainPattern = /@{1}[a-z0-9_.-]*$/
 
   /** Pattern that enforces input to @[domain.is] or @[domain.is][/[paths]]*
    */
@@ -29,7 +29,7 @@ class ValidationUtils {
 
   /** Pattern that enforces input to @[domain.is] or @[domain.is][/[optionalPaths]/[path:optionalAction]]*
    */
-  public static apiScopePattern = /^@[a-z\.]*[/]([a-z-][:/]?)*[a-z-]+$/
+  public static apiScopePattern = /^@[a-z_.-]*[/]([a-z-][:/]?)*[a-z-]+$/
 
   public static scopePattern = /^@([\w-])$/
 
