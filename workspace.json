@@ -47,7 +47,7 @@
     "api-domains-powerbi": "libs/api/domains/powerbi",
     "api-domains-regulations": "libs/api/domains/regulations",
     "api-domains-syslumenn": "libs/api/domains/syslumenn",
-    "api-domains-transport-authority-transfer-of-vehicle-ownership": "libs/api/domains/transport-authority/transfer-of-vehicle-ownership",
+    "api-domains-transport-authority": "libs/api/domains/transport-authority",
     "api-domains-user-profile": "libs/api/domains/user-profile",
     "api-domains-vehicles": "libs/api/domains/vehicles",
     "api-mocks": "libs/api/mocks",

@@ -1,6 +1,6 @@
 module.exports = {
-  displayName: 'api-domains-transport-authority-transfer-of-vehicle-ownership',
-  preset: '../../../../../jest.preset.js',
+  displayName: 'api-domains-transport-authority',
+  preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
@@ -12,5 +12,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../../coverage/libs/api/domains/transport-authority/transfer-of-vehicle-ownership',
+    '../../../../coverage/libs/api/domains/transport-authority',
 }

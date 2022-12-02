@@ -3,18 +3,15 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { InsuranceCompany } from './models'
-import { TransferOfVehicleOwnershipApi } from '../transferOfVehicleOwnership.service'
+import { TransportAuthorityApi } from '../transportAuthority.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
 @Resolver()
 export class MainResolver {
-  constructor(
-    private readonly transferOfVehicleOwnershipApi: TransferOfVehicleOwnershipApi,
-  ) {}
+  constructor(private readonly transportAuthorityApi: TransportAuthorityApi) {}
 
   @Query(() => [InsuranceCompany])
   transportAuthorityInsuranceCompanies() {
-    return this.transferOfVehicleOwnershipApi.getInsuranceCompanies()
+    return this.transportAuthorityApi.getInsuranceCompanies()
   }
 }

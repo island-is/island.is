@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { TransferOfVehicleOwnershipApi } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
@@ -23,12 +22,13 @@ import {
   getRecipients,
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly transferOfVehicleOwnershipApi: TransferOfVehicleOwnershipApi,
+    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
   ) {}
 
   async createCharge({
@@ -308,7 +308,8 @@ export class TransferOfVehicleOwnershipService {
       (x) => x.type === 'operator',
     )
 
-    await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
+    await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
+      // await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
       permno: answers?.vehicle?.plate,
       seller: {
         ssn: answers?.seller?.nationalId,

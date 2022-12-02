@@ -1,8 +1,5 @@
 {
-  "extends": "../../../../../tsconfig.base.json",
-  "compilerOptions": {
-    "experimentalDecorators": true
-  },
+  "extends": "../../../../tsconfig.base.json",
   "files": [],
   "include": [],
   "references": [

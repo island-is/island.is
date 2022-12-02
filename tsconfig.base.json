@@ -155,8 +155,8 @@
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
       ],
-      "@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership": [
-        "libs/api/domains/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
+      "@island.is/api/domains/transport-authority": [
+        "libs/api/domains/transport-authority/src/index.ts"
       ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
