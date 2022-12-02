@@ -1,5 +1,4 @@
 import fetch from 'isomorphic-fetch'
-
 import { Inject, Injectable } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
