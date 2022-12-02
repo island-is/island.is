@@ -88,6 +88,7 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
+  showReadSpeaker?: boolean
 }
 
 interface HeaderProps {
@@ -472,6 +473,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
   showSecondaryMenu = true,
   showExternalLinks = false,
+  showReadSpeaker = true,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -644,7 +646,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   />
                 )}
 
-                {isWebReaderEnabledForOrganizationPages && (
+                {showReadSpeaker && isWebReaderEnabledForOrganizationPages && (
                   <Webreader
                     marginTop={breadcrumbItems?.length ? 3 : 0}
                     marginBottom={breadcrumbItems?.length ? 0 : 3}
