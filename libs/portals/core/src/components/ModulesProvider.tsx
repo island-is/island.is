@@ -12,14 +12,18 @@ import { arrangeRoutes, filterEnabledModules } from '../utils/modules'
 
 export type ModulesContextProps = {
   modules: PortalModule[]
+  activeModule: PortalModule | null
   routes: PortalRoute[]
   loading: boolean
+  updateActiveModule(module: PortalModule | null): void
 }
 
 const ModulesContext = createContext<ModulesContextProps>({
   modules: [],
+  activeModule: null,
   loading: false,
   routes: [],
+  updateActiveModule: () => undefined,
 })
 
 interface ModuleProviderProps {
@@ -38,6 +42,10 @@ export const ModulesProvider = ({
   const [loading, setLoading] = useState(true)
   const [modules, setModules] = useState<PortalModule[]>(initialModules)
   const [routes, setRoutes] = useState<PortalRoute[]>([])
+  const [activeModule, setActiveModule] = useState<PortalModule | null>(null)
+
+  const updateActiveModule = (module: PortalModule | null) =>
+    setActiveModule(module)
 
   useEffect(() => {
     setLoading(true)
@@ -75,6 +83,8 @@ export const ModulesProvider = ({
         modules,
         routes,
         loading,
+        updateActiveModule,
+        activeModule,
       }}
     >
       {loading ? <LoadingScreen /> : children}

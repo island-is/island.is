@@ -82,3 +82,35 @@ export const arrangeRoutes = async ({
 
   return filteredRoutes
 }
+
+type GetActiveModuleArgs = {
+  userInfo: User
+  modules: PortalModule[]
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  pathname: string
+}
+
+export const getActiveModule = ({
+  pathname,
+  userInfo,
+  modules,
+  apolloClient,
+}: GetActiveModuleArgs) => {
+  const activeModule = modules.find((module) => {
+    const paths = module
+      .routes({
+        userInfo,
+        client: apolloClient,
+      })
+      .map(({ path }) => path)
+      .flat()
+
+    if (paths.find((path) => path === pathname)) {
+      return true
+    }
+
+    return false
+  })
+
+  return activeModule
+}

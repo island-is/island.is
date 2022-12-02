@@ -14,7 +14,7 @@ import {
 } from '@island.is/portals/core'
 import { modules } from '../lib/modules'
 import environment from '../environments/environment'
-import Layout from '../components/Layout/Layout'
+import { Layout } from '../components/Layout/Layout'
 import { ApplicationErrorBoundary } from '@island.is/portals/core'
 import { AdminPortalPaths } from '../lib/paths'
 

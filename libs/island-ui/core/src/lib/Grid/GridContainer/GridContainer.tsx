@@ -21,6 +21,7 @@ export const GridContainer: FC<Props> = ({
   if (position !== 'none') {
     pos.position = position
   }
+
   return (
     <Box {...pos} className={cn(className, styles.root)} id={id}>
       {children}

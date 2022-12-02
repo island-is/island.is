@@ -11,19 +11,27 @@ import { useNamespaces } from '@island.is/localization'
 
 import Header from '../Header/Header'
 import * as styles from './Layout.css'
+import {
+  useModules,
+  useModuleProps,
+  LayoutSizes,
+} from '@island.is/portals/core'
 
-const Layout: FC = ({ children }) => {
-  useNamespaces(['admin.portal', 'global'])
+const LayoutOuterContainer: FC = ({ children }) => (
+  <>
+    <ToastContainer useKeyframeStyles={false} />
+    <Header />
+    {children}
+  </>
+)
 
+const LayoutModuleContainer: FC<{ size: LayoutSizes }> = ({
+  children,
+  size,
+}) => {
   return (
-    <>
-      <ToastContainer useKeyframeStyles={false} />
-      <Header />
-      <Box
-        className={styles.container}
-        background={['white', 'white', 'white', 'blue100']}
-        paddingY={[0, 0, 0, 5]}
-      >
+    <Box className={styles.container} paddingY={[0, 0, 0, 5]}>
+      {size !== 'fullwidth' ? (
         <GridContainer>
           <Box
             className={styles.contentBox}
@@ -42,8 +50,38 @@ const Layout: FC = ({ children }) => {
             </GridRow>
           </Box>
         </GridContainer>
-      </Box>
-    </>
+      ) : (
+        children
+      )}
+    </Box>
   )
 }
-export default Layout
+
+export const Layout: FC = ({ children }) => {
+  useNamespaces(['admin.portal', 'global'])
+
+  const { activeModule } = useModules()
+  const moduleProps = useModuleProps()
+  const { layoutSize = 'default', moduleLayoutWrapper: ModuleLayoutWrapper } =
+    activeModule || {}
+
+  if (ModuleLayoutWrapper) {
+    return (
+      <LayoutOuterContainer>
+        <ModuleLayoutWrapper {...moduleProps}>
+          <LayoutModuleContainer size={layoutSize}>
+            {children}
+          </LayoutModuleContainer>
+        </ModuleLayoutWrapper>
+      </LayoutOuterContainer>
+    )
+  }
+
+  return (
+    <LayoutOuterContainer>
+      <LayoutModuleContainer size={layoutSize}>
+        {children}
+      </LayoutModuleContainer>
+    </LayoutOuterContainer>
+  )
+}

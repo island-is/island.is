@@ -144,6 +144,8 @@ export interface PortalGlobalComponent {
   render: () => PortalModuleRenderValue<any>
 }
 
+export type LayoutSizes = 'fullwidth' | 'large' | 'default'
+
 export interface PortalModule {
   /**
    * The title of this module
@@ -184,4 +186,14 @@ export interface PortalModule {
    * Indicates if module is enabled or not
    */
   enabled?: (props: { userInfo: User; isCompany: boolean }) => boolean
+
+  /**
+   * The layout size type of the module
+   */
+  layoutSize?: LayoutSizes
+
+  /**
+   * Module layout wrapper component for the module
+   */
+  moduleLayoutWrapper?: React.FC<PortalModuleProps>
 }
