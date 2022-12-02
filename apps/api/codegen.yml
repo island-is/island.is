@@ -7,8 +7,6 @@ generates:
       - typescript-resolvers
       - fragment-matcher
     config:
-      scalars:
-        DateTime: Date
       contextType: ./context#Context
       namingConvention:
         enumValues: keep

@@ -58,8 +58,6 @@ testem.log
 Thumbs.db
 .cache
 
-.env
-
 # Used to store local secrets
 .env.secret
 .env.secret.*
@@ -82,6 +80,7 @@ fragmentTypes.json
 **/gen/fetch/**
 **/gen/graphql.ts
 *.generated.ts
+/apps/**/src/index.html
 
 # IDE - Visual Studio
 *.suo

@@ -1,5 +1,10 @@
 import React from 'react'
-import { useForm, FormProvider, Controller } from 'react-hook-form'
+import {
+  useForm,
+  FormProvider,
+  Controller,
+  SubmitHandler,
+} from 'react-hook-form'
 
 import {
   Box,
@@ -20,7 +25,7 @@ import {
 import { FlightLegsFilters } from '../../types'
 
 interface PropTypes {
-  onSubmit: (data: unknown) => void
+  onSubmit: SubmitHandler<FlightLegsFilters>
   defaultValues: FlightLegsFilters
 }
 

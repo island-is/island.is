@@ -1,12 +1,12 @@
 import { isDefined } from '@island.is/shared/utils'
-import { AuthCustomDelegation } from '@island.is/api/schema'
+import {
+  AuthCustomDelegation,
+  AuthDelegationScope,
+} from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import { AlertBanner, Box, useBreakpoint } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
-import {
-  AuthDelegationScope,
-  AuthScopeTreeQuery,
-} from '@island.is/service-portal/graphql'
+import { AuthScopeTreeQuery } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useState } from 'react'

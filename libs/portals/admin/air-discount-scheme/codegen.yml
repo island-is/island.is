@@ -12,7 +12,7 @@ generates:
       - typescript-react-apollo
     config:
       scalars:
-        DateTime: Date
+        DateTime: string
 hooks:
   afterAllFileWrite:
     - prettier --write
