@@ -1,21 +1,19 @@
 import { useQuery } from '@apollo/client'
 import {
   EmptyList,
-  LinkCard,
+  ListButton,
   SearchHeader,
   TopLine,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
-  ActivityIndicator,
   Animated,
   AppState,
   AppStateStatus,
   FlatList,
   Image,
   Platform,
-  TouchableOpacity,
   View,
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
@@ -42,7 +40,7 @@ const {
   useNavigationOptions,
   getNavigationOptions,
 } = useThemedNavigationOptions(
-  (theme, intl) => ({
+  (theme, intl, initialized) => ({
     topBar: {
       title: {
         text: intl.formatMessage({ id: 'applications.title' }),
@@ -70,6 +68,12 @@ const {
             : undefined,
       },
     },
+    bottomTab: {
+      iconColor: theme.color.blue400,
+      text: initialized
+        ? intl.formatMessage({ id: 'applications.bottomTabText' })
+        : '',
+    },
   }),
   {
     topBar: {
@@ -80,6 +84,14 @@ const {
         hideTopBarOnFocus: true,
       },
       rightButtons: [],
+    },
+    bottomTab: {
+      testID: testIDs.TABBAR_TAB_APPLICATION,
+      iconInsets: {
+        bottom: -4,
+      },
+      icon: require('../../assets/icons/tabbar-application.png'),
+      selectedIcon: require('../../assets/icons/tabbar-application-selected.png'),
     },
   },
 )
@@ -99,9 +111,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const [queryString, setQueryString] = useState(QUERY_STRING_DEFAULT)
   const keyboardRef = useRef(false)
   const intl = useIntl()
-  const [page, setPage] = useState(1)
   const [items, setItems] = useState([]);
-  // const [isLoadingMore, setIsLoadingMore] = useState(true)
   const scrollY = useRef(new Animated.Value(0)).current
 
   const input = {
@@ -125,54 +135,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [res.data, res.loading])
 
-  // removed load on scroll while we cant order items and the are only few for now
-
-  // refetch load more on scroll
-  // useEffect(() => {
-  //   if (page > 1) {
-  //     try {
-  //       res
-  //         .fetchMore({
-  //           updateQuery(prev, { fetchMoreResult }) {
-  //             setIsLoadingMore(true)
-  //             const oldIds = prev.searchResults.items.map(
-  //               (item: any) => item.id,
-  //             )
-  //             if (
-  //               !fetchMoreResult ||
-  //               fetchMoreResult.searchResults.items.length === 0
-  //             ) {
-  //               setIsLoadingMore(false)
-  //             }
-  //             return {
-  //               ...prev,
-  //               searchResults: {
-  //                 ...prev.searchResults,
-  //                 items: prev.searchResults.items.concat(
-  //                   fetchMoreResult.searchResults.items.filter(
-  //                     (item: any) => !oldIds.includes(item.id),
-  //                   ),
-  //                 ),
-  //               },
-  //             }
-  //           },
-  //           variables: {
-  //             input: { ...input, page },
-  //           },
-  //         })
-  //         .then(() => setIsLoadingMore(false))
-  //     } catch (err) {
-  //       // noop
-  //     }
-  //   }
-  // }, [page])
-
   const renderItem = useCallback(({ item }) => {
-    if (item.type === 'loading') {
+    if (item.type === 'skeleton') {
       return (
-        <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
-          <ActivityIndicator size="large" color="#0061FF" />
-        </View>
+        <ListButton title="skeleton" isLoading />
       )
     }
 
@@ -191,15 +157,13 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
 
     return (
-      <TouchableOpacity
+      <ListButton
         key={item.id}
-        style={{ paddingHorizontal: 16 }}
+        title={item.title}
         onPress={() =>
           openBrowser(`http://island.is/${item.slug}`, componentId)
         }
-      >
-        <LinkCard>{item.title}</LinkCard>
-      </TouchableOpacity>
+      />
     )
   }, [])
 
@@ -273,16 +237,19 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: IArticleSearchResults) => item.id, [])
 
   const isSearch = ui.applicationQuery.length > 0
-  const isLoading = res.loading && page === 1
+  const isLoading = res.loading
   const isEmpty = (items ?? []).length === 0
   const isEmptyView = !isLoading && isEmpty && !isSearch
 
   const emptyItem = [{ id: '0', type: 'empty' }]
-  const loadingItem = [{ id: '1', type: 'loading' }]
+  const skeletonItems = Array.from({ length: 8 }).map((_, id) => ({
+    id,
+    type: 'skeleton',
+  }))
 
   return (
     <>
-      <BottomTabsIndicator index={3} total={3} />
+      <BottomTabsIndicator index={3} total={5} />
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_APPLICATIONS}
@@ -323,22 +290,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
             <View />
           )
         }
-        data={isLoading ? loadingItem : isEmptyView ? emptyItem : items}
+        data={isLoading ? skeletonItems : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
-        // onEndReached={() => !isLoading && setPage((p) => p + 1)}
-        // onEndReachedThreshold={0.5}
         refreshing={res?.networkStatus === 4}
         onRefresh={() => res?.refetch()}
-        // ListFooterComponent={() =>
-        //   !isEmptyView &&
-        //   !isSearch &&
-        //   !isLoading &&
-        //   isLoadingMore && (
-        //     <View style={{ paddingVertical: 20 }}>
-        //       <ActivityIndicator size="large" color="#0061FF" />
-        //     </View>
-        //   )
-        // }
       />
       {!isSearch && <TopLine scrollY={scrollY} />}
     </>

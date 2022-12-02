@@ -45,10 +45,16 @@ export const is = {
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
 
+  // peronal info screen
+  'personalInfo.screenTitle': 'Persónuupplýsingar',
+
   // user
   'user.screenTitle': 'Notandi',
   'user.tabs.preferences': 'Stillingar',
   'user.tabs.personalInfo': 'Persónuupplýsingar',
+
+  // setting screen
+  'setting.screenTitle': 'Stillingar',
 
   // user: settings
   'settings.infoBoxText': 'Stillingar á virkni og útliti appsins',
@@ -147,6 +153,54 @@ export const is = {
   // document detail
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
+
+  // profile
+  'profile.screenTitle': 'Mínar upplýsingar',
+  'profile.bottomTabText': 'Ég',
+  'profile.seeInfo': 'Skoða upplýsingar',
+  'profile.infoHeading': 'Upplýsingar',
+  'profile.family': 'Fjölskylda',
+  'profile.vehicles': 'Ökutæki',
+  'profile.assets': 'Fasteignir',
+
+  // vehicles
+  'vehicles.emptyListTitle': 'Engin ökutæki finnast fyrir notanda',
+  'vehicles.emptyListDescription': 'Ökutæki sem eru skráð á þig munu birtast hér.',
+
+  // vehicles detail
+  'vehicleDetail.regno': 'Skráningarnúmer',
+  'vehicleDetail.permno': 'Fastanúmer',
+  'vehicleDetail.firstReg': 'Árgerð',
+  'vehicleDetail.nextInspectionDate': 'Næsti skoðunardagur',
+  'vehicleDetail.color': 'Litur',
+  'vehicleDetail.insured': 'Tryggt',
+  'vehicleDetail.insuredValue': `{
+    isInsured,
+    select,
+    true {Já}
+    false {Nei}
+    other {Ekki vitað}
+  }`,
+  'vehicleDetail.unpaidVehicleFee': 'Ógreidd bifreiðagjöld',
+  'vehicleDetail.trailerWithBrakes': 'Hemlaður eftirvagn',
+  'vehicleDetail.trailerWithoutBrakes': 'Óhemlaður eftirvagn',
+  'vehicleDetail.nedc': 'Útblástursgildi (NEDC)',
+  'vehicleDetail.vehicleWeight': 'Eigin þyngd',
+
+  // assets overview
+  'assetsOverview.emptyListTitle': 'Engar fasteignir finnast fyrir notanda',
+  'assetsOverview.emptyListDescription': 'Fasteignir sem skráðar eru á þig munu birtast hér.',
+
+  // assets details
+  'assetsDetail.propertyNumber': 'Fastanúmer',
+  'assetsDetail.displaySize': 'Stærð',
+  'assetsDetail.activeAppraisal': 'Fasteignamat {activeYear}',
+  'assetsDetail.plannedAppraisal': 'Fasteignamat {plannedYear}',
+  'assetsDetail.explanation': 'Lýsing',
+  'assetsDetail.marking': 'Merking',
+  'assetsDetail.municipality': 'Sveitarfélag',
+  'assetsDetail.postNumber': 'Póstnúmer',
+  'assetsDetail.buildYearDisplay': 'Byggingarár',
 
   // wallet
   'wallet.screenTitle': 'Skírteini',

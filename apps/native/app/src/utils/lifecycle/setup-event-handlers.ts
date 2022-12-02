@@ -116,8 +116,8 @@ export function setupEventHandlers() {
   Navigation.events().registerNavigationButtonPressedListener(
     ({ buttonId }) => {
       switch (buttonId) {
-        case ButtonRegistry.UserButton:
-          return navigateTo('/user');
+        case ButtonRegistry.SettingsButton:
+          return navigateTo('/settings');
         case ButtonRegistry.NotificationsButton:
           return navigateTo('/notifications')
         case ButtonRegistry.ScanLicenseButton:

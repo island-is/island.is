@@ -23,6 +23,7 @@ enum ScanResult {
 const FirearmTemplateIds = ['dfb706c1-3a78-4518-bf25-cebbf0a93132','61f74977-0e81-4786-94df-6b8470013f09'];
 const VVRTemplateIds = ['61012578-c2a0-489e-8dbd-3df5b3e538ea', 'd63e4b27-9a0b-45b1-8fe4-a9be0011781f'];
 const ADRTemplaeIds = ['4e49febe-7ca9-49e3-a3be-3be70cb996c2','62a105d5-ef8a-419e-8423-fbbbfb5f1b36']
+const ororkuTemplateIds = ['d0b1a6b6-3af3-4131-9b97-c6d7d2ed7e63','c78364b6-33a8-4242-84ca-24de0854fe00']
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<
   BarCodeEvent & { isExpired: boolean }

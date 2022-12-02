@@ -1,7 +1,6 @@
 import { Base64 } from 'js-base64'
 import { Navigation, Options, OptionsModalPresentationStyle } from 'react-native-navigation'
 import { addRoute, addScheme } from '../../lib/deep-linking'
-import { ApplicationsScreen } from '../../screens/applications/applications'
 import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
 import { authStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
@@ -28,7 +27,7 @@ export function setupRoutes() {
   // Routes
   addRoute('/', () => {
     Navigation.dismissAllModals()
-    selectTab(1)
+    selectTab(2)
   })
 
   addRoute('/inbox', () => {
@@ -38,20 +37,99 @@ export function setupRoutes() {
 
   addRoute('/wallet', () => {
     Navigation.dismissAllModals()
-    selectTab(2)
+    selectTab(1)
   })
 
 
-  addRoute('/applications', async (passProps: any) => {
-    selectTab(1)
+  addRoute('/profile', () => {
+    Navigation.dismissAllModals()
+    selectTab(4)
+  })
 
+  addRoute('/applications', () => {
+    Navigation.dismissAllModals()
+    selectTab(3)
+ })
+
+
+  addRoute('/vehicles', async (passProps: any) => {
     await Navigation.dismissAllModals()
-    await Navigation.popToRoot(StackRegistry.HomeStack)
-    await Navigation.push(ComponentRegistry.HomeScreen, {
+    await Navigation.popToRoot(StackRegistry.ProfileStack)
+    await Navigation.push(ComponentRegistry.ProfileScreen, {
       component: {
-        name: ComponentRegistry.ApplicationsScreen,
+        name: ComponentRegistry.VehiclesScreen,
         passProps,
-        options: ApplicationsScreen.options as Options,
+      },
+    })
+  })
+
+  addRoute('/assets', async (passProps: any) => {
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.ProfileStack)
+    await Navigation.push(ComponentRegistry.ProfileScreen, {
+      component: {
+        name: ComponentRegistry.AssetsOverviewScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/personalinfo', async (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.PersonalInfoScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/settings', async (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.SettingsScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/vehicle/:id', (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.VehicleDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/asset/:id', (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.AssetsDetailScreen,
+              passProps,
+            },
+          },
+        ],
       },
     })
   })
@@ -72,7 +150,7 @@ export function setupRoutes() {
   })
 
   addRoute('/wallet/:passId', async ({ passId, fromId, toId, item, ...rest }: any) => {
-    selectTab(2)
+    selectTab(1)
     await Navigation.popToRoot(StackRegistry.WalletStack)
     Navigation.push(StackRegistry.WalletStack, {
       component: {

@@ -259,6 +259,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const fields = data?.payload?.data ?? []
   const hasPkpass = data?.license?.pkpass
   const hasValidPkpass = data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available;
+  // this is coming soon.. disable add button if not true.
+  // const hasValidatedPkpass = data?.license?.pkpassValidation;
 
   return (
     <View style={{ flex: 1 }}>

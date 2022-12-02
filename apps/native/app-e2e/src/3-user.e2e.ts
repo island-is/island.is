@@ -9,16 +9,15 @@ describe('Notifications', () => {
 
   it('should show user screen', async () => {
     await waitFor(element(by.id(testIDs.SCREEN_HOME))).toBeVisible()
-    await element(by.id(testIDs.TOPBAR_USER_BUTTON)).tap()
-    await waitFor(element(by.id(testIDs.SCREEN_USER))).toBeVisible()
+    // await waitFor(element(by.id(testIDs.SCREEN_USER))).toBeVisible()
     await waitFor(
-      element(by.id(testIDs.USER_SCREEN_PROFILE_INFO)),
+      element(by.id(testIDs.SCREEN_PERSONAL_INFO)),
     ).toBeVisible()
   })
 
   it('should have user profile tab open', async () => {
     await waitFor(
-      element(by.id(testIDs.USER_SCREEN_PROFILE_INFO)),
+      element(by.id(testIDs.SCREEN_PERSONAL_INFO)),
     ).toBeVisible()
     await waitFor(
       element(by.id(testIDs.USER_PROFILE_INFO_DISPLAY_NAME_VALUE)),
@@ -32,6 +31,6 @@ describe('Notifications', () => {
 
   it('should be able to close user screen', async () => {
     await element(by.id(testIDs.NAVBAR_SHEET_CLOSE_BUTTON)).tap()
-    await waitFor(element(by.id(testIDs.SCREEN_USER))).toBeNotVisible()
+    // await waitFor(element(by.id(testIDs.SCREEN_USER))).toBeNotVisible()
   })
 })

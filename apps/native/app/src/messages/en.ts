@@ -47,10 +47,16 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
 
+  // peronal info screen
+  'personalInfo.screenTitle': 'Personal info',
+
   // user
   'user.screenTitle': 'User',
   'user.tabs.preferences': 'Settings',
   'user.tabs.personalInfo': 'Personal info',
+
+  // setting screen
+  'setting.screenTitle': 'Settings',
 
   // user: settings
   'settings.infoBoxText': 'Configure your app preferences',
@@ -208,6 +214,54 @@ export const en: TranslatedMessages = {
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
+
+  // profile
+  'profile.screenTitle': 'My info',
+  'profile.bottomTabText': 'Me',
+  'profile.seeInfo': 'See info',
+  'profile.infoHeading': 'Info',
+  'profile.family': 'Family',
+  'profile.vehicles': 'Vehicles',
+  'profile.assets': 'Assets',
+
+  // vehicles
+  'vehicles.emptyListTitle': 'No vehicles found for the user',
+  'vehicles.emptyListDescription': 'Vehicles registered to you will appear here.',
+
+  // vehicles detail
+  'vehicleDetail.regno': 'Registration number',
+  'vehicleDetail.permno': 'Permanent number',
+  'vehicleDetail.firstReg': 'First registration',
+  'vehicleDetail.nextInspectionDate': 'Next main inspection',
+  'vehicleDetail.color': 'Color',
+  'vehicleDetail.insured': 'Insured',
+  'vehicleDetail.insuredValue': `{
+    isInsured,
+    select,
+    true {Yes}
+    false {No}
+    other {Unknown}
+  }`,
+  'vehicleDetail.unpaidVehicleFee': 'Unpaid vehicle tax',
+  'vehicleDetail.trailerWithBrakes': 'Permissible maximum towable mass of trailer (braked)',
+  'vehicleDetail.trailerWithoutBrakes': 'Permissible maximum towable mass of trailer (unbraked)',
+  'vehicleDetail.nedc': 'Exhaust emissions value (NEDC)',
+  'vehicleDetail.vehicleWeight': 'Vehicle weight',
+
+  // assets overview
+  'assetsOverview.emptyListTitle': 'No assets found for the user',
+  'assetsOverview.emptyListDescription': 'Assets registered to you will appear here.',
+
+  // assets details
+  'assetsDetail.propertyNumber': 'Property number',
+  'assetsDetail.displaySize': 'Size',
+  'assetsDetail.activeAppraisal': 'Fasteignamat {activeYear}',
+  'assetsDetail.plannedAppraisal': 'Fasteignamat {plannedYear}',
+  'assetsDetail.explanation': 'Explanation',
+  'assetsDetail.marking': 'Marking',
+  'assetsDetail.municipality': 'Municipality',
+  'assetsDetail.postNumber': 'Post number',
+  'assetsDetail.buildYearDisplay': 'Build Year Display',
 
   // applications screen
   'applications.title': 'Applications',

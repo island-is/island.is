@@ -402,7 +402,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
           )
         }
       />
-      <BottomTabsIndicator index={0} total={3} />
+      <BottomTabsIndicator index={0} total={5} />
       {!isSearch && <TopLine scrollY={scrollY} />}
     </>
   )

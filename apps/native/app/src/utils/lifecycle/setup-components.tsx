@@ -15,13 +15,19 @@ import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
 import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
 import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin-code'
-import { UserScreen } from '../../screens/user/user'
 import { WalletPassScreen } from '../../screens/wallet-pass/wallet-pass'
 import { WalletScreen } from '../../screens/wallet/wallet'
 import { ApplicationsScreen } from '../../screens/applications/applications'
 import { WebViewScreen } from '../../screens/webview/webview'
 import { ComponentRegistry as CR } from '../component-registry'
 import { registerComponent } from '../register-component'
+import { VehiclesScreen } from '../../screens/vehicles/vehicles'
+import { ProfileScreen } from '../../screens/profile/profile'
+import { VehicleDetailScreen } from '../../screens/vehicles/vehicles-detail'
+import { PersonalInfoScreen } from '../../screens/profile/personal-info'
+import { SettingsScreen } from '../../screens/profile/settings'
+import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
+import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 
 export function registerAllComponents() {
   // dev only
@@ -39,7 +45,6 @@ export function registerAllComponents() {
   registerComponent(CR.InboxScreen, InboxScreen)
   registerComponent(CR.WalletScreen, WalletScreen)
   registerComponent(CR.ApplicationsScreen, ApplicationsScreen)
-  registerComponent(CR.UserScreen, UserScreen)
   registerComponent(CR.AppLockScreen, AppLockScreen)
   registerComponent(CR.WalletPassScreen, WalletPassScreen)
   registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
@@ -48,6 +53,13 @@ export function registerAllComponents() {
   registerComponent(CR.WebViewScreen, WebViewScreen);
   registerComponent(CR.LicenseScannerScreen, LicenseScannerScreen);
   registerComponent(CR.LicenseScanDetailScreen, LicenseScanDetailScreen);
+  registerComponent(CR.VehiclesScreen, VehiclesScreen);
+  registerComponent(CR.VehicleDetailScreen, VehicleDetailScreen);
+  registerComponent(CR.ProfileScreen, ProfileScreen);
+  registerComponent(CR.PersonalInfoScreen, PersonalInfoScreen);
+  registerComponent(CR.AssetsOverviewScreen, AssetsOverviewScreen);
+  registerComponent(CR.AssetsDetailScreen, AssetsDetailScreen)
+  registerComponent(CR.SettingsScreen, SettingsScreen);
 
   // ui components
   // if (Platform.OS === 'android') {

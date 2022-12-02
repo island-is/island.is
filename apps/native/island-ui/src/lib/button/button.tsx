@@ -8,6 +8,7 @@ interface ButtonProps extends TouchableHighlightProps {
   title: string
   icon?: React.ReactNode;
   isTransparent?: boolean
+  isOutlined?: boolean
 }
 
 type HostProps = Omit<ButtonProps, 'title'>
@@ -20,8 +21,8 @@ const Host = styled.TouchableHighlight<HostProps>`
   padding: ${(props) =>
     `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
-    ({ theme, disabled, isTransparent }) =>
-      isTransparent
+    ({ theme, disabled, isTransparent, isOutlined }) =>
+      isTransparent || isOutlined
         ? 'transparent'
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
@@ -29,15 +30,30 @@ const Host = styled.TouchableHighlight<HostProps>`
           },
   )};
 
+  border-color: ${dynamicColor<HostProps>(
+    ({ theme, disabled, isOutlined }) =>
+      !isOutlined
+        ? 'transparent'
+        : {
+          dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
+          light: disabled ? theme.color.dark200 : theme.color.blue400,
+        },
+  )};
+
   border-radius: ${(props) => props.theme.border.radius.large};
   min-width: 192px;
+  ${(props) => props.isOutlined && `
+    border-width: 1px;
+    border-style: solid;
+
+  `}
 `
 
-const Text = styled.Text<{ isTransparent?: boolean }>`
+const Text = styled.Text<{ isTransparent?: boolean, isOutlined?: boolean }>`
   ${font({
     fontWeight: '600',
     color: (props) =>
-      props.isTransparent ? props.theme.color.blue400 : props.theme.color.white,
+      props.isTransparent || props.isOutlined ? props.theme.color.blue400 : props.theme.color.white,
   })}
   text-align: center;
 `
@@ -48,16 +64,17 @@ const Icon = styled.Image`
   margin-left: 10px;
 `;
 
-export function Button({ title, isTransparent, icon, ...rest }: ButtonProps) {
+export function Button({ title, isTransparent, isOutlined, icon, ...rest }: ButtonProps) {
   const theme = useTheme()
   return (
     <Host
-      underlayColor={isTransparent ? theme.shade.shade100 : theme.color.blue600}
+      underlayColor={isTransparent || isOutlined ? theme.shade.shade100 : theme.color.blue600}
       isTransparent={isTransparent}
+      isOutlined={isOutlined}
       {...rest}
     >
       <>
-        <Text isTransparent={isTransparent}>{title}</Text>
+        <Text isTransparent={isTransparent} isOutlined={isOutlined}>{title}</Text>
         {icon && <Icon source={icon as any} resizeMode="center" />}
       </>
     </Host>

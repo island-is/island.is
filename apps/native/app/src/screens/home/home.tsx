@@ -168,7 +168,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         }
       />
       <TopLine scrollY={scrollY} />
-      <BottomTabsIndicator index={1} total={3} />
+      <BottomTabsIndicator index={2} total={5} />
     </>
   )
 }

@@ -308,7 +308,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         renderItem={renderItem}
       />
       <TopLine scrollY={scrollY} />
-      <BottomTabsIndicator index={2} total={3} />
+      <BottomTabsIndicator index={1} total={5} />
     </>
   )
 }

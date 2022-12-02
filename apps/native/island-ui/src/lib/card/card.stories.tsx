@@ -17,6 +17,8 @@ import { LicenceCard } from './licence-card'
 import { NotificationCard } from './notification-card'
 import { StatusCard } from './status-card'
 import { WelcomeCard } from './welcome-card'
+import { VehicleCard } from './vehicle-card'
+import { UserCard } from './user-card'
 
 const CenterView = ({ children }: any) => (
   <View
@@ -94,6 +96,32 @@ storiesOf('Cards', module)
         message={message}
         unread={boolean('Is Unread', true)}
         onPress={() => console.log('test')}
+      />
+    )
+  })
+  .add('Vehicle Card', () => {
+    const title = text('Vehicle Card Title', 'BMW 318')
+    return (
+      <VehicleCard
+        title={title}
+        color="Rauður"
+        number="ph-676"
+        group="Fólksbíll"
+        date={new Date()}
+      />
+    )
+  })
+  .add('User Card', () => {
+    const userName = text('User name', 'Jón Jónsson')
+    const ssn = text('Ssn number', '010125-4529')
+    const actionTitle = text('Action Title', 'Skoða upplýsingar')
+    return (
+      <UserCard
+        name={userName}
+        ssn={ssn}
+        actions={[
+          { text: actionTitle, onPress: () => console.log('Action press') },
+        ]}
       />
     )
   })

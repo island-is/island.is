@@ -1,6 +1,6 @@
 import { AuthenticationType, isEnrolledAsync, supportedAuthenticationTypesAsync } from 'expo-local-authentication'
 import { AppState } from 'react-native'
-import { DefaultTheme } from 'styled-components'
+import { DefaultTheme } from 'styled-components/native'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
 import { zustandFlipper } from '../utils/devtools/flipper-zustand'
@@ -21,8 +21,8 @@ export interface UIStore extends State {
 
 export const uiStore = create<UIStore>((set, get) => ({
   theme: undefined,
-  selectedTab: 1,
-  unselectedTab: 1,
+  selectedTab: 2,
+  unselectedTab: 2,
   modalsOpen: 0,
   inboxQuery: '',
   applicationQuery: '',
