@@ -18,5 +18,5 @@ if (!isRunningOnEnvironment('local')) {
     version: environment.APP_VERSION,
   })
 }
-
+// Test
 ReactDOM.render(<App />, document.getElementById('root'))

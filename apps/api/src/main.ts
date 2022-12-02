@@ -6,5 +6,4 @@ bootstrap({
   name: 'api',
   port: 4444,
   stripNonClassValidatorInputs: false,
-  //Test
 })
