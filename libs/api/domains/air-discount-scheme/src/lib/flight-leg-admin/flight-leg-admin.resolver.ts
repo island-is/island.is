@@ -14,8 +14,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import type { FlightLeg as TFlightLeg } from '@island.is/clients/air-discount-scheme'
 
 import { FlightLegsInput } from './dto/flight-leg.input'

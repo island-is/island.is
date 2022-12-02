@@ -24,7 +24,7 @@ export type TSummary = {
 export type FlightLegsFilters = {
   airline?: { value: string }
   flightLeg?: AirDiscountSchemeTravelInput
-  period?: AirDiscountSchemePeriodInput
+  period: AirDiscountSchemePeriodInput
   state?: AirDiscountSchemeFlightLegState[]
   age?: AirDiscountSchemeRangeInput
   gender?: { value: AirDiscountSchemeFlightLegGender | '' }

@@ -20,7 +20,7 @@ import {
 import { FlightLegsFilters } from '../../types'
 
 interface PropTypes {
-  onSubmit: (data: any) => void
+  onSubmit: (data: unknown) => void
   defaultValues: FlightLegsFilters
 }
 

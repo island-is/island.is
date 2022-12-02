@@ -81,6 +81,7 @@ possibleTypes.json
 fragmentTypes.json
 **/gen/fetch/**
 **/gen/graphql.ts
+*.generated.ts
 
 # IDE - Visual Studio
 *.suo
