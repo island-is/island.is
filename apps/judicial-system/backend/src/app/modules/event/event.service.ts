@@ -8,6 +8,7 @@ import {
   capitalize,
   caseTypes,
   formatDate,
+  readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 
@@ -83,7 +84,14 @@ export class EventService {
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
           : caseEvent[event]
-      const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
+      const typeText = `${capitalize(
+        isIndictmentCase(theCase.type)
+          ? readableIndictmentSubtypes(
+              theCase.policeCaseNumbers,
+              theCase.indictmentSubtypes,
+            ).join(', ')
+          : caseTypes[theCase.type],
+      )} *${theCase.id}*`
       const prosecutionText = `${
         theCase.creatingProsecutor?.institution
           ? `${theCase.creatingProsecutor?.institution?.name} `
