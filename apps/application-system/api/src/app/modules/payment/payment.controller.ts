@@ -141,13 +141,16 @@ export class PaymentController {
       )
     }
 
+    const callbackUrl = this.paymentService.getCallbackUrl(payment)
+
     return {
       // TODO: maybe treat the case where no payment was found differently?
       // not sure how/if that case would/could come up.
       fulfilled: payment.fulfilled || false,
       paymentUrl: this.paymentService.makeDelegationPaymentUrl(
         payment.user4,
-        user.nationalId,
+        user.sub,
+        callbackUrl,
       ),
     }
   }

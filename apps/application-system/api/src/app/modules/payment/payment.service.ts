@@ -51,14 +51,33 @@ export class PaymentService {
       .catch(handleError)
   }
 
-  public makeDelegationPaymentUrl(docNum: string, loginHint: string): string {
+  public makeDelegationPaymentUrl(
+    docNum: string,
+    loginHint: string,
+    callbackUrl: string,
+  ): string {
+    const targetLinkUri = `${this.makePaymentUrl(
+      docNum,
+    )}&returnURL=${callbackUrl}`
+
     return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?iss=${
       environment.auth.issuer
-    }&login_hint=${loginHint}&target_link_uri=${this.makePaymentUrl(docNum)}`
+    }&login_hint=${loginHint}&target_link_uri=${encodeURIComponent(
+      targetLinkUri,
+    )}`
   }
 
   public makePaymentUrl(docNum: string): string {
     return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
+  }
+
+  public getCallbackUrl(payment: Payment): string {
+    return (
+      ((this.paymentConfig.callbackBaseUrl +
+        payment.application_id) as string) +
+      this.paymentConfig.callbackAdditionUrl +
+      payment.id
+    )
   }
 
   async createCharge(
@@ -67,11 +86,7 @@ export class PaymentService {
   ): Promise<CreateChargeResult> {
     // TODO: island.is x-road service path for callback.. ??
     // this can actually be a fixed url
-    const callbackUrl =
-      ((this.paymentConfig.callbackBaseUrl +
-        payment.application_id) as string) +
-      this.paymentConfig.callbackAdditionUrl +
-      payment.id
+    const callbackUrl = this.getCallbackUrl(payment)
 
     const parsedDefinition = JSON.parse(
       (payment.definition as unknown) as string,
@@ -104,7 +119,11 @@ export class PaymentService {
 
     return {
       ...result,
-      paymentUrl: this.makeDelegationPaymentUrl(result.user4, user.sub),
+      paymentUrl: this.makeDelegationPaymentUrl(
+        result.user4,
+        user.sub,
+        callbackUrl,
+      ),
     }
   }
 
