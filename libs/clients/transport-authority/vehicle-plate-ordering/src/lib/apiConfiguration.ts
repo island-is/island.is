@@ -1,10 +1,11 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { IdsClientConfig } from '@island.is/nest/config'
-import { ConfigType } from '@nestjs/config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { PlateOrderingApi, Configuration } from '../../gen/fetch'
 import { VehiclePlateOrderingClientConfig } from './vehiclePlateOrderingClient.config'
 
 const configFactory = (
+  xRoadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof VehiclePlateOrderingClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
   basePath: string,
@@ -22,7 +23,7 @@ const configFactory = (
       : undefined,
   }),
   headers: {
-    'X-Road-Client': config.xroadClientId,
+    'X-Road-Client': xRoadConfig.xRoadClient,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
@@ -33,15 +34,17 @@ export const exportedApis = [
   {
     provide: PlateOrderingApi,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof VehiclePlateOrderingClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
       return new PlateOrderingApi(
         new Configuration(
           configFactory(
+            xRoadConfig,
             config,
             idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )

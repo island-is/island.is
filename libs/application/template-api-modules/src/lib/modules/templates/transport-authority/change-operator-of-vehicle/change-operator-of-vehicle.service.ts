@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ChangeOperatorOfVehicleApi } from '@island.is/api/domains/transport-authority/change-operator-of-vehicle'
 import {
   ChangeOperatorOfVehicleAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
+import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly changeOperatorOfVehicleApi: ChangeOperatorOfVehicleApi,
+    private readonly vehicleOperatorsClient: VehicleOperatorsClient,
   ) {}
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -62,15 +62,13 @@ export class ChangeOperatorOfVehicleService {
     }
 
     const answers = application.answers as ChangeOperatorOfVehicleAnswers
+    const permno = answers?.vehicle?.plate
+    const newOperators = answers?.operators.map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator: operator.isMainOperator,
+    }))
 
     // Submit the application
-    await this.changeOperatorOfVehicleApi.saveOperators(
-      auth,
-      answers?.vehicle?.plate,
-      answers?.operators.map((operator) => ({
-        ssn: operator.nationalId,
-        isMainOperator: operator.isMainOperator,
-      })),
-    )
+    await this.vehicleOperatorsClient.saveOperators(auth, permno, newOperators)
   }
 }

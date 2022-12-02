@@ -1,6 +1,6 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { IdsClientConfig } from '@island.is/nest/config'
-import { ConfigType } from '@nestjs/config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import {
   DriverCardsApiApi,
   IndividualApiApi,
@@ -9,6 +9,7 @@ import {
 import { DigitalTachographDriversCardClientConfig } from './digitalTachographDriversCardClient.config'
 
 const configFactory = (
+  xRoadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
   basePath: string,
@@ -26,7 +27,7 @@ const configFactory = (
       : undefined,
   }),
   headers: {
-    'X-Road-Client': config.xroadClientId,
+    'X-Road-Client': xRoadConfig.xRoadClient,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
@@ -37,15 +38,17 @@ export const exportedApis = [
   {
     provide: DriverCardsApiApi,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
       return new DriverCardsApiApi(
         new Configuration(
           configFactory(
+            xRoadConfig,
             config,
             idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )
@@ -55,15 +58,17 @@ export const exportedApis = [
   {
     provide: IndividualApiApi,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
       return new IndividualApiApi(
         new Configuration(
           configFactory(
+            xRoadConfig,
             config,
             idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )

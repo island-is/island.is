@@ -1,10 +1,11 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { IdsClientConfig } from '@island.is/nest/config'
-import { ConfigType } from '@nestjs/config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { InfoLockApi, Configuration } from '../../gen/fetch'
 import { VehicleInfolocksClientConfig } from './vehicleInfolocksClient.config'
 
 const configFactory = (
+  xRoadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof VehicleInfolocksClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
   basePath: string,
@@ -22,7 +23,7 @@ const configFactory = (
       : undefined,
   }),
   headers: {
-    'X-Road-Client': config.xroadClientId,
+    'X-Road-Client': xRoadConfig.xRoadClient,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
@@ -33,15 +34,17 @@ export const exportedApis = [
   {
     provide: InfoLockApi,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof VehicleInfolocksClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
       return new InfoLockApi(
         new Configuration(
           configFactory(
+            xRoadConfig,
             config,
             idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )

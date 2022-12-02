@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { DigitalTachographApi } from '@island.is/api/domains/transport-authority/digital-tachograph'
 import {
   DigitalTachographDriversCardAnswers,
   getChargeItemCodes,
@@ -14,12 +13,13 @@ import {
   QualitySignature,
 } from './types'
 import { YES } from '@island.is/application/core'
+import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 
 @Injectable()
 export class DigitalTachographDriversCardService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly digitalTachographApi: DigitalTachographApi,
+    private readonly digitalTachographDriversCardClient: DigitalTachographDriversCardClient,
   ) {}
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -79,7 +79,7 @@ export class DigitalTachographDriversCardService {
       ?.data as QualitySignature
 
     // Submit the application
-    await this.digitalTachographApi.saveDriversCard(auth, {
+    await this.digitalTachographDriversCardClient.saveDriversCard(auth, {
       ssn: auth.nationalId,
       fullName: nationalRegistryData?.fullName,
       address: nationalRegistryData?.address?.streetAddress,

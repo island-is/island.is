@@ -1,8 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { OrderVehicleLicensePlateService } from './order-vehicle-license-plate.service'
-import { OrderVehicleLicensePlateApiModule } from '@island.is/api/domains/transport-authority/order-vehicle-license-plate'
+import {
+  VehiclePlateOrderingClientModule,
+  VehiclePlateOrderingClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 
 export class OrderVehicleRegistrationCertificateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -10,7 +14,11 @@ export class OrderVehicleRegistrationCertificateModule {
       module: OrderVehicleRegistrationCertificateModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        OrderVehicleLicensePlateApiModule,
+        VehiclePlateOrderingClientModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [VehiclePlateOrderingClientConfig],
+        }),
       ],
       providers: [OrderVehicleLicensePlateService],
       exports: [OrderVehicleLicensePlateService],
