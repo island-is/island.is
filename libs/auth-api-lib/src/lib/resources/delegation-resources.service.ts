@@ -203,6 +203,7 @@ export class DelegationResourcesService {
         ...this.skipScopeFilter(user, prefix),
         ...this.accessControlFilter(user, prefix),
         ...this.delegationTypeFilter(user, prefix),
+        ...this.grantToAuthenticatedUserFilter(user, prefix),
       )
     }
 
@@ -350,6 +351,22 @@ export class DelegationResourcesService {
       })
     }
     return [or(...delegationOr)]
+  }
+
+  private grantToAuthenticatedUserFilter(
+    user: User,
+    prefix?: string,
+  ): Array<WhereOptions<ApiScope>> {
+    const isAuthenticatedUser = !user.actor
+    if (isAuthenticatedUser) {
+      return [
+        {
+          [col(prefix, 'grantToAuthenticatedUser')]: true,
+        },
+      ]
+    }
+
+    return []
   }
 
   private scopeRuleMatchesUser(

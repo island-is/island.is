@@ -84,6 +84,13 @@ export class ApiScopesDTO {
   @ApiProperty({
     example: false,
   })
+  readonly grantToAuthenticatedUser!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
   readonly grantToLegalGuardians!: boolean
 
   @IsBoolean()

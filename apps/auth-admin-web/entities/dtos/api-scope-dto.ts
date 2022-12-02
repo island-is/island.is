@@ -8,6 +8,7 @@ export class ApiScopeDTO {
     this.showInDiscoveryDocument = true
     this.required = false
     this.emphasize = false
+    this.grantToAuthenticatedUser = true
     this.grantToLegalGuardians = false
     this.grantToProcuringHolders = false
     this.grantToPersonalRepresentatives = false
@@ -26,6 +27,7 @@ export class ApiScopeDTO {
   showInDiscoveryDocument: boolean
   required: boolean
   emphasize: boolean
+  grantToAuthenticatedUser: boolean
   grantToLegalGuardians: boolean
   grantToProcuringHolders: boolean
   grantToPersonalRepresentatives: boolean

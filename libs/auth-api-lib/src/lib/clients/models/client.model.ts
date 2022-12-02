@@ -479,6 +479,16 @@ export class Client extends Model {
   })
   promptDelegations!: boolean
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  requireApiScopes!: boolean
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

@@ -28,6 +28,7 @@ interface ModelAttributes {
   domainName: string
   groupId?: string | null
   showInDiscoveryDocument: boolean
+  grantToAuthenticatedUser: boolean
   grantToLegalGuardians: boolean
   grantToProcuringHolders: boolean
   grantToPersonalRepresentatives: boolean
@@ -51,6 +52,7 @@ type CreationAttributes = Optional<
   ModelAttributes,
   | 'enabled'
   | 'showInDiscoveryDocument'
+  | 'grantToAuthenticatedUser'
   | 'grantToLegalGuardians'
   | 'grantToProcuringHolders'
   | 'grantToPersonalRepresentatives'
@@ -136,6 +138,14 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   })
   @ApiProperty()
   showInDiscoveryDocument!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  })
+  @ApiProperty()
+  grantToAuthenticatedUser!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -251,6 +261,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       description: this.description,
       order: this.order,
       showInDiscoveryDocument: this.showInDiscoveryDocument,
+      grantToAuthenticatedUser: this.grantToAuthenticatedUser,
       grantToLegalGuardians: this.grantToLegalGuardians,
       grantToProcuringHolders: this.grantToProcuringHolders,
       grantToPersonalRepresentatives: this.grantToPersonalRepresentatives,

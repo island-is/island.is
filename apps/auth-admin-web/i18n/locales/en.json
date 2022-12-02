@@ -1519,6 +1519,12 @@
           "placeholder": "",
           "helpText": "Indicates that the Identity Server needs to do a look up in the access table with the user national identity for the user to have access"
         },
+        "grantToAuthenticatedUser": {
+          "label": "Grant To Authenticated User",
+          "placeholder": "",
+          "helpText": "Should the authenticated user get this scope",
+          "errorMessage": ""
+        },
         "grantToLegalGuardians": {
           "label": "Grant To Legal Guardians",
           "placeholder": "",
@@ -1745,6 +1751,10 @@
         "requireConsent": {
           "label": "Require consent",
           "helpText": "Specifies whether a consent screen is required"
+        },
+        "requireApiScopes": {
+          "label": "Require API Scopes",
+          "helpText": "Specifies whether some API scopes are required"
         },
         "supportsCustomDelegation": {
           "label": "Supports Custom Delegation",
