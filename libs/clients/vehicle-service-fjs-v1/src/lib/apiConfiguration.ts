@@ -1,10 +1,14 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { IdsClientConfig } from '@island.is/nest/config'
-import { ConfigType } from '@nestjs/config'
+import {
+  ConfigType,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { DefaultApi, Configuration } from '../../gen/fetch'
 import { VehicleServiceFjsV1ClientConfig } from './vehicleServiceFjsV1Client.config'
 
 const configFactory = (
+  xRoadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof VehicleServiceFjsV1ClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
   basePath: string,
@@ -22,7 +26,7 @@ const configFactory = (
       : undefined,
   }),
   headers: {
-    'X-Road-Client': config.xroadClientId,
+    'X-Road-Client': xRoadConfig.xRoadClient,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
@@ -33,19 +37,25 @@ export const exportedApis = [
   {
     provide: DefaultApi,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof VehicleServiceFjsV1ClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
       return new DefaultApi(
         new Configuration(
           configFactory(
+            xRoadConfig,
             config,
             idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )
     },
-    inject: [VehicleServiceFjsV1ClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      VehicleServiceFjsV1ClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
 ]
