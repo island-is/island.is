@@ -72,7 +72,7 @@ export const AnchorNavigation = ({
               textAlign="left"
               onClick={() => {
                 // eslint-disable-next-line no-restricted-globals
-                history?.replaceState({}, '', `#${slugify(text)}`)
+                history?.replaceState({}, '', `#${slugify(text)}`) // Store the hash of the anchor link in the url (without making the page jump)
                 navigate(id)
               }}
             >
