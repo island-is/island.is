@@ -12,7 +12,6 @@ const testApplicationTemplate = createApplicationTemplate()
 
 const createMockUser = (nationalId?: string) => {
   return {
-    sub: 'mock-sub',
     nationalId: nationalId || '111111-3000',
     scope: [],
     authorization: faker.random.word(),

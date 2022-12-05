@@ -463,7 +463,6 @@ describe('ParentalLeaveService', () => {
         authorization: '',
         client: '',
         nationalId,
-        sub,
         scope: [''],
       }
 
@@ -486,7 +485,6 @@ describe('ParentalLeaveService', () => {
         authorization: '',
         client: '',
         nationalId,
-        sub,
         scope: [''],
       }
 
