@@ -65,7 +65,6 @@ export class AuthGuard implements CanActivate {
     const user = await this.getUser(oidcUser)
     request['auth'] = { scope: [], authorization: '', client: '', ...user }
     request['user'] = {
-      sub: '',
       scope: [],
       authorization: '',
       client: '',
