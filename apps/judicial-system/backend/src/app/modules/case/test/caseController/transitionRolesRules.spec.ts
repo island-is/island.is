@@ -21,7 +21,7 @@ describe('CaseController - Transition rules', () => {
     expect(rules).toHaveLength(4)
   })
 
-  it('should give permission to prosecutors, representatives, judges and registars', () => {
+  it('should give permission to prosecutors, representatives, judges and registrars', () => {
     expect(rules).toContain(prosecutorTransitionRule)
     expect(rules).toContain(representativeTransitionRule)
     expect(rules).toContain(judgeTransitionRule)
