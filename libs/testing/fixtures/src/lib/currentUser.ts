@@ -34,6 +34,7 @@ export const createCurrentUser = (user: UserOptions = {}): User => {
     authorization: user.authorization ?? faker.random.word(),
     client: user.client ?? faker.random.word(),
     delegationType,
+    sub: '',
     actor,
   }
 }
