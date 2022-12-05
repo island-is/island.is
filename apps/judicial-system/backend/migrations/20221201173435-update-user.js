@@ -1,15 +1,21 @@
-'use strict';
+'use strict'
 
 const replaceEnum = require('sequelize-replace-enum-postgres').default
 
 module.exports = {
-  async up(queryInterface,) {
+  async up(queryInterface) {
     // replaceEnum does not support transactions
     return replaceEnum({
       queryInterface,
       tableName: 'user',
       columnName: 'role',
-      newValues: ['PROSECUTOR', 'REPRESENTATIVE', 'JUDGE', 'REGISTRAR', 'STAFF'],
+      newValues: [
+        'PROSECUTOR',
+        'REPRESENTATIVE',
+        'JUDGE',
+        'REGISTRAR',
+        'STAFF',
+      ],
     })
   },
 
@@ -21,5 +27,5 @@ module.exports = {
       columnName: 'role',
       newValues: ['PROSECUTOR', 'JUDGE', 'REGISTRAR', 'STAFF'],
     })
-  }
-};
+  },
+}
