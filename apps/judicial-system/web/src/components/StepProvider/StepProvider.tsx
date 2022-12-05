@@ -1,5 +1,7 @@
 import React, { createContext } from 'react'
 
+const steps = [{}]
+
 interface StepProvider {
   onContinue: () => void
 }
