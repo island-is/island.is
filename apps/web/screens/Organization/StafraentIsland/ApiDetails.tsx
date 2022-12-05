@@ -105,6 +105,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       <OrganizationWrapper
         pageTitle={service.title ?? ''}
         organizationPage={organizationPage}
+        showReadSpeaker={false}
         breadcrumbItems={[
           {
             title: 'Ísland.is',
