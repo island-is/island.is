@@ -19,7 +19,7 @@ describe('CaseController - Get by id rules', () => {
     expect(rules).toHaveLength(5)
   })
 
-  it('should give permission to prosecutors, representatives, judges, registrats, staff', () => {
+  it('should give permission to prosecutors, representatives, judges, registrars, staff', () => {
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(representativeRule)
     expect(rules).toContain(judgeRule)
