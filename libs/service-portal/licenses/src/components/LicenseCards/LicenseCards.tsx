@@ -10,19 +10,25 @@ import { applyPassport, passportLogo } from '../../lib/constants'
 interface Props {
   passportData?: IdentityDocumentModel[]
   name?: boolean
-  neverPassport?: boolean
+  noPassport?: boolean
+  nationalId?: string | null
 }
 
-const LicenseCards: FC<Props> = ({ passportData, name, neverPassport }) => {
+const LicenseCards: FC<Props> = ({
+  passportData,
+  name,
+  noPassport,
+  nationalId,
+}) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   return (
     <GridRow>
       <GridColumn span="12/12">
         <Stack space={2}>
-          {neverPassport ? (
+          {noPassport ? (
             <SingleLicenseCard
-              title={formatMessage(m.passportCardTitle)}
+              title={nationalId || formatMessage(m.passportCardTitle)}
               subtitle={formatMessage(m.noValidPassport)}
               link={applyPassport}
               img={passportLogo}

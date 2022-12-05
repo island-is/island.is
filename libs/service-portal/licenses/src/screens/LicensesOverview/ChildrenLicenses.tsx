@@ -26,6 +26,10 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
         <LicenseCards
           key={i}
           passportData={item.passports || undefined}
+          noPassport={
+            Array.isArray(item.passports) && item.passports.length === 0
+          }
+          nationalId={item.childNationalId}
           name={true}
         />
       ))}

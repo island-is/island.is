@@ -144,7 +144,10 @@ export const UserLicenses: FC<Props> = ({
             )
           })}
       {passportData && (
-        <LicenseCards passportData={passportData || undefined} />
+        <LicenseCards
+          passportData={passportData || undefined}
+          noPassport={Array.isArray(passportData) && passportData.length === 0}
+        />
       )}
 
       {!isLoading && !hasError && !hasData && (
