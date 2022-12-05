@@ -352,7 +352,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children'],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
@@ -687,7 +687,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        entry: 'assignToVMST',
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
@@ -753,7 +752,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children'],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [

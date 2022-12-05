@@ -8,7 +8,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Inline,
   LoadingDots,
   NavigationItem,
@@ -17,7 +16,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
+import {
+  getThemeConfig,
+  OrganizationWrapper,
+  Webreader,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   GenericTag,
@@ -27,7 +30,11 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
-import { linkResolver, useNamespace } from '@island.is/web/hooks'
+import {
+  linkResolver,
+  useFeatureFlag,
+  useNamespace,
+} from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -69,6 +76,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   genericTagFilters,
   namespace,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
@@ -114,10 +125,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === router.asPath ||
+        primaryLink?.url === router.asPath ||
         childrenLinks.some((link) => link.url === router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -249,6 +260,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     <OrganizationWrapper
       pageTitle={pageTitle}
       organizationPage={organizationPage}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -268,9 +280,17 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         <GridColumn span="12/12">
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-              <Text variant="h1" as="h1" marginBottom={4} marginTop={1}>
+              <Text
+                variant="h1"
+                as="h1"
+                marginBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}
+                marginTop={1}
+              >
                 {pageTitle}
               </Text>
+              {isWebReaderEnabledForOrganizationPages && (
+                <Webreader readId={null} readClass="rs_read" />
+              )}
             </GridColumn>
           </GridRow>
           <GridRow>

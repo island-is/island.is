@@ -10,7 +10,7 @@
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/portals/admin",
-        "index": "apps/portals/admin/src/index.html",
+        "index": "apps/portals/admin/src/index.src.html",
         "baseHref": "/stjornbord/",
         "main": "apps/portals/admin/src/main.tsx",
         "polyfills": "apps/portals/admin/src/polyfills.ts",
@@ -36,6 +36,15 @@
       }
     },
     "serve": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src",
+          "yarn nx run portals-admin:serveReal"
+        ]
+      }
+    },
+    "serveReal": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "portals-admin:build",
