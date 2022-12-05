@@ -39,8 +39,6 @@ export enum USERTYPE {
   CEMETRY = 150000002,
 }
 
-export const BACKYEARSLIMITFALLBACK = '1'
-
 export const INDIVIDUAL = 'individual'
 export const PARTY = 'party'
 export const CEMETRY = 'cemetery'
