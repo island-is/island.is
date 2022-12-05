@@ -17,10 +17,7 @@ import {
   ApiHeader,
   ApiOkResponse,
 } from '@nestjs/swagger'
-import {
-  ApplicationConfigurations,
-  PaymentType as BasePayment,
-} from '@island.is/application/types'
+import { PaymentType as BasePayment } from '@island.is/application/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
