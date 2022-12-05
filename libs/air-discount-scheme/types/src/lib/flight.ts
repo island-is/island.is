@@ -1,5 +1,4 @@
 import { Gender } from './user'
-type ModelGender = Exclude<Gender, Gender.Uncategorized>
 
 export type FlightLeg = {
   id: string

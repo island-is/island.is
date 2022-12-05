@@ -365,9 +365,10 @@ components:
         gender:
           type: string
           enum:
-            - kvk
             - kk
+            - kvk
             - x
+            - manneskja
         nationalId:
           type: string
         fund:
@@ -391,9 +392,10 @@ components:
         gender:
           type: string
           enum:
-            - kvk
             - kk
+            - kvk
             - x
+            - manneskja
         nationalId:
           type: string
         fund:

@@ -9,7 +9,11 @@ import {
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { Gender } from '@island.is/air-discount-scheme/types'
+import {
+  Gender,
+  RegistryGender,
+  UncategorizedGender,
+} from '@island.is/air-discount-scheme/types'
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -18,7 +22,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Ísabella',
     address: 'Hrimblugrugg 2',
     city: 'Vestmannaeyjar',
-    gender: Gender.Female,
+    gender: RegistryGender.Female,
     lastName: 'Developersdóttir',
     middleName: 'EagleAir',
     postalcode: 900,
@@ -29,7 +33,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Minnsti',
     middleName: 'Drengur',
     lastName: 'Ísabelluson',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Hrimblugrugg 2',
     postalcode: 900,
     city: 'Vestmannaeyjar',
@@ -40,7 +44,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Stærri',
     middleName: 'Drengur',
     lastName: 'Ísabelluson',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Hrimblugrugg 2',
     postalcode: 900,
     city: 'Vestmannaeyjar',
@@ -51,7 +55,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Lítil',
     middleName: 'Stúlka',
     lastName: 'Ísabelludóttir',
-    gender: Gender.Female,
+    gender: RegistryGender.Female,
     address: 'Hrimblugrugg 2',
     postalcode: 900,
     city: 'Vestmannaeyjar',
@@ -62,7 +66,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Stærsta',
     middleName: 'Stúlka',
     lastName: 'Ísabelludóttir',
-    gender: Gender.Female,
+    gender: RegistryGender.Female,
     address: 'Hrimblugrugg 2',
     postalcode: 900,
     city: 'Vestmannaeyjar',
@@ -73,7 +77,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Gervimaður',
     middleName: '',
     lastName: 'Ameríka',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Vallargata 1',
     postalcode: 600,
     city: 'Akureyri',
@@ -84,7 +88,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Gervimaður',
     middleName: '',
     lastName: 'Færeyjar',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Vallargata 1',
     postalcode: 100,
     city: 'Reykjavík',
@@ -95,7 +99,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Litli',
     middleName: 'Jói',
     lastName: 'Ameríkuson',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Vallargata 1',
     postalcode: 100,
     city: 'Vestmannaeyjar',
@@ -106,7 +110,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Litla',
     middleName: 'Jóna',
     lastName: 'Ameríkudóttir',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Vallargata 1',
     postalcode: 100,
     city: 'Vestmannaeyjar',
@@ -118,7 +122,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Friðrik',
     middleName: 'Ari',
     lastName: 'Baldursson',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Vallargata 1',
     postalcode: 900,
     city: 'Vestmannaeyjar',
@@ -129,7 +133,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Eyjólfur',
     middleName: '',
     lastName: 'Baldursson',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Vallargata 1',
     postalcode: 900,
     city: 'Vestmannaeyjar',
@@ -140,7 +144,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Arnar',
     middleName: '',
     lastName: 'Sigurðarson',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Vallargata 1',
     postalcode: 900,
     city: 'Vestmannaeyjar',
@@ -151,7 +155,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Gervimaður',
     middleName: '',
     lastName: 'Afríka',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Urðarbraut 1',
     postalcode: 540,
     city: 'Blönduós',
@@ -162,7 +166,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Stefán',
     middleName: 'Eysteinn',
     lastName: 'Júlíusson',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Urðarbraut 1',
     postalcode: 540,
     city: 'Blönduós',
@@ -173,7 +177,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Embla',
     middleName: '',
     lastName: 'Asksdóttir',
-    gender: Gender.Female,
+    gender: RegistryGender.Female,
     address: 'Urðarbraut 1',
     postalcode: 540,
     city: 'Blönduós',
@@ -184,7 +188,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Sunna',
     middleName: 'Hlín',
     lastName: 'Júlíusdóttir',
-    gender: Gender.Female,
+    gender: RegistryGender.Female,
     address: 'Urðarbraut 1',
     postalcode: 540,
     city: 'Blönduós',
@@ -195,7 +199,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Gervimaður',
     middleName: '',
     lastName: 'Útlönd',
-    gender: Gender.Male,
+    gender: RegistryGender.Male,
     address: 'Vallargata 1',
     postalcode: 900,
     city: 'Vestmannaeyjar',
@@ -206,7 +210,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     firstName: 'Sól',
     middleName: 'Rún',
     lastName: 'Gervimannsdóttir',
-    gender: Gender.Female,
+    gender: RegistryGender.Female,
     address: 'Urðarbraut 1',
     postalcode: 210,
     city: 'Garðabær',
@@ -226,15 +230,15 @@ export class NationalRegistryService {
     switch (genderId) {
       case '1':
       case '3':
-        return Gender.Male
+        return RegistryGender.Male
       case '2':
       case '4':
-        return Gender.Female
+        return RegistryGender.Female
       case '7':
       case '8':
-        return Gender.NonBinary
+        return RegistryGender.NonBinary
       default:
-        return Gender.Uncategorized
+        return UncategorizedGender.Uncategorized
     }
   }
 

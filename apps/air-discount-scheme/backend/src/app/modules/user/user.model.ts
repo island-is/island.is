@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import type {
+import {
   BaseUser as TBaseUser,
   User as TUser,
   Fund as TFund,
+  RegistryGender,
+  UncategorizedGender,
 } from '@island.is/air-discount-scheme/types'
-import { Gender } from '@island.is/air-discount-scheme/types'
 import { NationalRegistryUser } from '../nationalRegistry'
 
 class Fund implements TFund {
@@ -43,9 +44,12 @@ class BaseUser implements TBaseUser {
   // https://docs.nestjs.com/openapi/types-and-parameters#enums
   // We must manually set the enum property
   @ApiProperty({
-    enum: [Gender.Male, Gender.Female, Gender.NonBinary] as ValueOf<
-      TUser['gender']
-    >[],
+    enum: {
+      Male: RegistryGender.Male,
+      Female: RegistryGender.Female,
+      NonBinary: RegistryGender.NonBinary,
+      Uncategorized: UncategorizedGender.Uncategorized,
+    },
   })
   gender: TUser['gender']
 

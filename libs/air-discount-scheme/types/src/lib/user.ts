@@ -1,9 +1,14 @@
-export enum Gender {
+export enum RegistryGender {
   Male = 'kk',
   Female = 'kvk',
   NonBinary = 'x',
+}
+
+export enum UncategorizedGender {
   Uncategorized = 'manneskja',
 }
+
+export type Gender = RegistryGender | UncategorizedGender
 
 export interface Fund {
   credit: number

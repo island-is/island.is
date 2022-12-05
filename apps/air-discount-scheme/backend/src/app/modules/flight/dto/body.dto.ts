@@ -14,7 +14,11 @@ import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
-import { Gender } from '@island.is/air-discount-scheme/types'
+import {
+  Gender,
+  RegistryGender,
+  UncategorizedGender,
+} from '@island.is/air-discount-scheme/types'
 import type {
   Travel,
   RangeInput,
@@ -97,7 +101,12 @@ export class GetFlightLegsBody {
   age?: RangeInput
 
   @IsOptional()
-  @IsEnum(Gender)
+  @IsEnum([
+    RegistryGender.Female,
+    RegistryGender.Male,
+    RegistryGender.NonBinary,
+    UncategorizedGender.Uncategorized,
+  ])
   gender?: Gender
 
   @IsOptional()

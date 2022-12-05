@@ -5,9 +5,8 @@ import {
   RangeInput,
   PeriodInput,
   FlightLegsInput as TFlightLegsInput,
-  Gender,
+  RegistryGender,
 } from '@island.is/air-discount-scheme/types'
-type ModelGender = Exclude<Gender, Gender.Uncategorized>
 
 @InputType()
 class Travel implements TTravel {
@@ -54,7 +53,7 @@ export class FlightLegsInput implements TFlightLegsInput {
   age: Range
 
   @Field((_) => String, { nullable: true })
-  gender: ModelGender
+  gender: RegistryGender
 
   @Field((_) => Int, { nullable: true })
   postalCode: number
