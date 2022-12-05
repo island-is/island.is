@@ -50,6 +50,7 @@ import {
   additionalSingleParentMonths,
   daysInMonth,
   defaultMonths,
+  minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
 
@@ -66,6 +67,16 @@ export function getExpectedDateOfBirth(
   }
 
   return selectedChild.expectedDateOfBirth
+}
+
+export function getBeginningOfThisMonth(): Date {
+  const today = new Date()
+  return addDays(today, today.getDate() * -1 + 1)
+}
+
+export function getLastDayOfLastMonth(): Date {
+  const today = new Date()
+  return addDays(today, today.getDate() * -1)
 }
 
 // TODO: Once we have the data, add the otherParentPeriods here.
@@ -102,7 +113,7 @@ export function formatPeriods(
         startDateDateTime,
         startDateDateTime.getDate() * -1,
       )
-      const currentDateBeginOfMonth = addDays(today, today.getDate() * -1)
+      const currentDateBeginOfMonth = getBeginningOfThisMonth()
       if (
         startDateBeginOfMonth.getMonth() ===
           currentDateBeginOfMonth.getMonth() &&
@@ -398,6 +409,38 @@ export const getOtherParentOptions = (
   return options
 }
 
+export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
+  const options: Option[] = [
+    {
+      value: PARENTAL_LEAVE,
+      label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle,
+      subLabel: formatMessage(
+        parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
+      ),
+    },
+    {
+      value: PARENTAL_GRANT,
+      label:
+        parentalLeaveFormMessages.shared
+          .applicationParentalGrantUnemployedTitle,
+      subLabel: formatMessage(
+        parentalLeaveFormMessages.shared
+          .applicationParentalGrantUnemployedSubTitle,
+      ),
+    },
+    {
+      value: PARENTAL_GRANT_STUDENTS,
+      label:
+        parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
+      subLabel: formatMessage(
+        parentalLeaveFormMessages.shared
+          .applicationParentalGrantStudentSubTitle,
+      ),
+    },
+  ]
+  return options
+}
+
 export const getAllPeriodDates = (periods: Period[]) => {
   const filledPeriods = periods.filter((p) => p.startDate && p.endDate)
 
@@ -542,6 +585,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const multipleBirths = getValueViaPath(
     answers,
     'multipleBirths.multipleBirths',
+    1,
   ) as number
 
   const multipleBirthsRequestDaysValue = getValueViaPath(
@@ -626,17 +670,19 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
 
-  const usePersonalAllowance = getValueViaPath(
-    answers,
-    'usePersonalAllowance',
-    NO,
-  ) as YesOrNo
+  const usePersonalAllowance =
+    (getValueViaPath(
+      answers,
+      'personalAllowance.usePersonalAllowance',
+    ) as YesOrNo) ??
+    (getValueViaPath(answers, 'usePersonalAllowance', NO) as YesOrNo)
 
-  const usePersonalAllowanceFromSpouse = getValueViaPath(
-    answers,
-    'usePersonalAllowanceFromSpouse',
-    NO,
-  ) as YesOrNo
+  const usePersonalAllowanceFromSpouse =
+    (getValueViaPath(
+      answers,
+      'personalAllowanceFromSpouse.usePersonalAllowance',
+    ) as YesOrNo) ??
+    (getValueViaPath(answers, 'usePersonalAllowanceFromSpouse', NO) as YesOrNo)
 
   const personalUseAsMuchAsPossible = getValueViaPath(
     answers,
@@ -967,7 +1013,7 @@ export const getLastValidPeriodEndDate = (
   const lastEndDate = new Date(lastPeriodEndDate)
 
   const today = new Date()
-  const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+  const beginningOfMonth = getBeginningOfThisMonth()
 
   // LastPeriod's endDate is in current month then Applicant could only start from next month
   if (
@@ -991,6 +1037,30 @@ export const getLastValidPeriodEndDate = (
   }
 
   return lastEndDate
+}
+
+export const getMinimumStartDate = (application: Application): Date => {
+  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const lastPeriodEndDate = getLastValidPeriodEndDate(application)
+
+  const today = new Date()
+  if (lastPeriodEndDate) {
+    return lastPeriodEndDate
+  } else if (expectedDateOfBirth) {
+    const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
+    const beginningOfMonth = getBeginningOfThisMonth()
+    const leastStartDate = addMonths(
+      expectedDateOfBirthDate,
+      -minimumPeriodStartBeforeExpectedDateOfBirth,
+    )
+    if (leastStartDate.getTime() >= beginningOfMonth.getTime()) {
+      return leastStartDate
+    }
+
+    return beginningOfMonth
+  }
+
+  return today
 }
 
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>

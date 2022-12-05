@@ -25,6 +25,6 @@ export enum Roles {
 
 export const EstateTypes = {
   officialEstate: 'Opinber skipti',
-  noPropertyEstate: 'Eignarlaust dánarbú',
+  noPropertyEstate: 'Eignalaust dánarbú',
   residencePermit: 'Búsetuleyfi',
 }

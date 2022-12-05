@@ -30,7 +30,6 @@ class MyDocument extends Document<Props> {
         <Head>
           {Boolean(domain) && (
             <script
-              async
               defer
               data-domain={domain}
               src="https://plausible.io/js/plausible.js"
