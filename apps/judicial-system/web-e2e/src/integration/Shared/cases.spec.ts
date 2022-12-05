@@ -27,7 +27,7 @@ describe(CASES_ROUTE, () => {
 
   it('should have a button that allows me to create a custody, travel ban, investigation and indictment cases', () => {
     cy.getByTestid('createCaseDropdown').click()
-    cy.contains('a', 'Ákæra')
+    // cy.contains('a', 'Ákæra') TODO: Uncomment when indictments become available
     cy.contains('a', 'Gæsluvarðhald')
     cy.contains('a', 'Farbann')
     cy.contains('a', 'Rannsóknarheimild')
