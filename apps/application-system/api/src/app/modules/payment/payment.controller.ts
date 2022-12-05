@@ -164,7 +164,7 @@ export class PaymentController {
       fulfilled: payment.fulfilled || false,
       paymentUrl: this.paymentService.makeDelegationPaymentUrl(
         payment.user4,
-        user.sub,
+        user.sub ?? user.nationalId,
         callbackUrl,
       ),
     }
