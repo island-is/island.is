@@ -28,10 +28,10 @@ export interface ContactInfo {
   personalComment?: string
 }
 export interface Document {
-name?: string
-documentType?: string
-contentType?: string
-content?: string
+  name?: string
+  documentType?: string
+  contentType?: string
+  content?: string
 }
 export interface PreregistrationInput {
   guId?: string

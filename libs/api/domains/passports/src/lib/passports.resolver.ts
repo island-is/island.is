@@ -25,8 +25,10 @@ export class PassportsResolver {
     return this.passportApi.getPassports(user)
   }
 
-  @Query(()=> [IdentityDocumentChild])
-  getChildrenPassports(@CurrentUser() user: User): Promise<IdentityDocumentChild[]> {
+  @Query(() => [IdentityDocumentChild])
+  getChildrenPassports(
+    @CurrentUser() user: User,
+  ): Promise<IdentityDocumentChild[]> {
     return this.passportApi.getChildPassports(user)
   }
 

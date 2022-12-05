@@ -6,9 +6,9 @@ export class IdentityDocumentChild {
   @Field({ nullable: true })
   nationalId?: string
 
-  @Field(()=> [String],{ nullable: true })
+  @Field(() => [String], { nullable: true })
   secondParent?: string[]
 
   @Field(() => [IdentityDocument], { nullable: true })
- identityDocuments?: IdentityDocument[]
+  identityDocuments?: IdentityDocument[]
 }

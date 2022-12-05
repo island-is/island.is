@@ -1,4 +1,7 @@
-import { IdentityDocumentChildrenResponse, IdentityDocumentResponse } from '../../gen/fetch'
+import {
+  IdentityDocumentChildrenResponse,
+  IdentityDocumentResponse,
+} from '../../gen/fetch'
 import { IdentityDocument, IdentityDocumentChild } from './passportsApi.types'
 
 export const mapPassports = (
@@ -22,11 +25,12 @@ export const mapPassports = (
 }
 
 export const mapChildPassports = (
-    passports: IdentityDocumentChildrenResponse,
-  ): IdentityDocumentChild => {
-    return {
-        nationalId: passports.childrenSSN ?? '',
-        secondParent: passports.secondParent ?? [],
-        identityDocuments: passports.identityDocumentResponses?.map(mapPassports) || undefined
-    }
+  passports: IdentityDocumentChildrenResponse,
+): IdentityDocumentChild => {
+  return {
+    nationalId: passports.childrenSSN ?? '',
+    secondParent: passports.secondParent ?? [],
+    identityDocuments:
+      passports.identityDocumentResponses?.map(mapPassports) || undefined,
   }
+}
