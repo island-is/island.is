@@ -26,7 +26,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { register, setValue } = useFormContext()
-  const [showTitle, setShowTitle] = useState<boolean>(false)
 
   const registrationNumberValue = getValueViaPath(
     application.answers,
@@ -45,39 +44,25 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const shipOptions = (ships: Ship[]) => {
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
-      const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
-      const seaworthinessDate = format(
-        parseISO(ship.seaworthiness.validTo),
-        'dd.MM.yy',
-        {
-          locale: is,
-        },
-      )
       options.push({
         value: `${index}`,
         label: (
           <>
             <Box width="full" display="flex" justifyContent="spaceBetween">
-              <ShipInformation
-                ship={ship}
-                seaworthinessHasColor
-                isExpired={isExpired}
-              />
+              <ShipInformation ship={ship} seaworthinessHasColor />
+              <Stack space={1} align="right">
+                {ship.fishingLicenses?.map((license) => {
+                  if (license.code === 'unknown') return null
+                  return (
+                    <Tag variant="blue" disabled key={`${license}`}>
+                      {formatMessage(shipSelection.tags[license.code])}
+                    </Tag>
+                  )
+                })}
+              </Stack>
             </Box>
-            {isExpired && (
-              <Box marginTop={2}>
-                <AlertMessage
-                  type="warning"
-                  title={formatMessage(shipSelection.labels.expired, {
-                    date: seaworthinessDate,
-                  })}
-                  message={formatMessage(shipSelection.labels.expiredMessage)}
-                />
-              </Box>
-            )}
           </>
         ),
-        disabled: isExpired,
       })
     }
     return options
@@ -105,43 +90,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         }}
         options={shipOptions(ships)}
       />
-
-      {showTitle && (
-        <Text variant="h4" paddingY={3}>
-          {formatMessage(shipSelection.labels.withFishingLicenseTitle)}
-        </Text>
-      )}
-
-      {ships?.map((ship: Ship, index: number) => {
-        if (ship.fishingLicenses.length === 0) {
-          return null
-        }
-        if (!showTitle) setShowTitle(true)
-        return (
-          <Box
-            border="standard"
-            borderRadius="large"
-            padding={3}
-            width="full"
-            display="flex"
-            justifyContent="spaceBetween"
-            marginBottom={2}
-            key={index}
-          >
-            <ShipInformation ship={ship} />
-            <Stack space={1} align="right">
-              {ship.fishingLicenses?.map((license) => {
-                if (license.code === 'unknown') return null
-                return (
-                  <Tag variant="blue" disabled key={`${license}`}>
-                    {formatMessage(shipSelection.tags[license.code])}
-                  </Tag>
-                )
-              })}
-            </Stack>
-          </Box>
-        )
-      })}
       <input
         type="hidden"
         value={registrationNumber}
