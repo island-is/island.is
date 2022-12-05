@@ -654,7 +654,7 @@ export const SignedVerdictOverview: React.FC = () => {
             CaseAppealDecision.POSTPONE ||
           workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
           user?.role &&
-          isCourtRole(user?.role) &&
+          isCourtRole(user.role) &&
           user?.institution?.type !== InstitutionType.HIGH_COURT && (
             <Box marginBottom={7}>
               <AppealSection
