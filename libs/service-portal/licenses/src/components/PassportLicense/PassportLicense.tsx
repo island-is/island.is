@@ -4,6 +4,7 @@ import { formatDate, getExpiresIn } from '../../utils/dateUtils'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { SingleLicenseCard } from '../SingleLicenseCard/SingleLicenseCard'
 import { m } from '../../lib/messages'
+import { passportLogo } from '../../lib/constants'
 
 export const PassportLicense = ({
   id,
@@ -57,9 +58,7 @@ export const PassportLicense = ({
       title={name || formatMessage(m.passportCardTitle)}
       subtitle={formatMessage(m.passportNumber) + ' - ' + id}
       link={ServicePortalPath.LicensesPassportDetail.replace(':id', id)}
-      img={
-        'https://images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png?w=100&h=100&fit=pad&bg=white'
-      }
+      img={passportLogo}
       tag={{
         text: getLabel(),
         color: expiresIn || isInvalid ? 'red' : 'blue',
