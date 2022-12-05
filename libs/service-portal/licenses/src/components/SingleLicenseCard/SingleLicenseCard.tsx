@@ -1,9 +1,17 @@
 import { ReactNode } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Button, Hidden, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  BoxProps,
+  Button,
+  Hidden,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './SingleLicenseCard.css'
 import { m } from '../../lib/messages'
+import { LinkResolver } from '@island.is/service-portal/core'
 
 export type tag = {
   text?: string
@@ -22,14 +30,18 @@ export const SingleLicenseCard = ({
   secondaryTag,
   additionalLink,
   additionalLinkText,
+  background,
+  linkText,
 }: {
   title: string
   subtitle: string
   link: string
   img: string
-  tag: tag
+  tag?: tag
+  linkText?: string
   additionalLink?: ReactNode | string
   additionalLinkText?: string
+  background?: BoxProps['background']
   secondaryTag?: tag
 }) => {
   useNamespaces('sp.license')
@@ -42,6 +54,7 @@ export const SingleLicenseCard = ({
       padding={4}
       display="flex"
       flexDirection="row"
+      background={background}
     >
       <Hidden below="sm">
         <img className={styles.image} src={img} alt={title} />
@@ -76,7 +89,7 @@ export const SingleLicenseCard = ({
                 </Tag>
               </Box>
             ) : null}
-            {tag ? (
+            {tag.text ? (
               <Box paddingTop={secondaryTag ? [1, 1, 0] : undefined}>
                 <Tag disabled variant={tag.color}>
                   {tag.text}
@@ -126,17 +139,13 @@ export const SingleLicenseCard = ({
                 <Box className={styles.line} marginLeft={2} marginRight={2} />
               </Hidden>
             )}
-            <Link
-              to={{
-                pathname: link,
-              }}
-            >
+            <LinkResolver href={link}>
               <Box paddingTop={[1, 0]}>
                 <Button variant="text" size="small" icon="arrowForward">
-                  {formatMessage(m.seeDetails)}
+                  {linkText ?? formatMessage(m.seeDetails)}
                 </Button>
               </Box>
-            </Link>
+            </LinkResolver>
           </Box>
         </Box>
       </Box>

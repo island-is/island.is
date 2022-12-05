@@ -28,6 +28,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
+import { applyPassport, lostPassport } from '../../lib/constants'
 
 const getCurrentPassport = (
   id: string | undefined,
@@ -46,7 +47,7 @@ const getCurrentPassport = (
 }
 
 const NotifyLostLink = (text: string) => (
-  <Link href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=7a8b6878-757d-11e9-9452-005056851dd2">
+  <Link href={lostPassport}>
     <Button variant="utility" size="small" icon="open" iconType="outline">
       {text}
     </Button>
@@ -125,10 +126,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
                 </Box>
 
                 <Box display="flex" flexDirection="row" alignItems="center">
-                  <Link
-                    className={styles.renew}
-                    href="https://www.skra.is/folk/vegabref-og-onnur-skilriki/vegabref/"
-                  >
+                  <Link className={styles.renew} href={applyPassport}>
                     <Button
                       variant="utility"
                       size="small"

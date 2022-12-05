@@ -234,6 +234,10 @@ export const m = defineMessages({
     id: 'sp.license:error-fetch-passport',
     defaultMessage: 'Ekki tókst að sækja gögn um vegabréf',
   },
+  noValidPassport: {
+    id: 'sp.license:no-valid-passport',
+    defaultMessage: 'Engin gild vegabréf',
+  },
   see: {
     id: 'sp.license:see',
     defaultMessage: 'Skoða',
