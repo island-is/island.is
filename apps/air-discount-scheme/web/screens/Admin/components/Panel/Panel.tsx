@@ -21,14 +21,16 @@ interface PropTypes {
 
 function Panel({ flightLegs }: PropTypes) {
   const translateGender = (gender: string): string => {
-    if (gender === 'kk') {
-      return 'karlmaður'
-    } else if (gender === 'kvk') {
-      return 'kvenmaður'
-    } else if (gender === 'x') {
-      return 'kynsegin/annað'
+    switch (gender) {
+      case 'kk':
+        return 'karlmaður'
+      case 'kvk':
+        return 'kvenmaður'
+      case 'x':
+        return 'kynsegin/annað'
+      default:
+        return 'manneskja'
     }
-    return 'manneskja'
   }
 
   return (
