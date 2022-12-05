@@ -25,27 +25,41 @@ export class IdentityDocumentProvider extends BasicDataProvider {
   type = 'IdentityDocumentProvider'
 
   async provide(): Promise<IdentityDocument> {
-    const response = {
-      data: {
-        getIdentityDocument: {
-          productionRequestID: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-          number: 'A1234567',
-          type: 'P',
-          verboseType: 'Vegabréf: Almennt',
-          subType: 'A',
-          status: 'ISSUED',
-          issuingDate: new Date('2012-10-02'),
-          expirationDate: new Date('2022-10-02'),
-          displayFirstName: 'Gervimaður',
-          displayLastName: 'Mock',
-          mrzFirstName: 'GERVIMAÐUR',
-          mrzLastName: 'MOCK',
-          sex: 'X',
-        },
-      },
-    }
+    console.log('MEOOOOOWWWWW!')
 
-    return Promise.resolve(response.data.getIdentityDocument)
+    const query = `
+      query getPassport {
+        getPassport {
+          productionRequestID
+          number
+          type
+          verboseType
+          subType
+          status
+          issuingDate
+          expirationDate
+          displayFirstName
+          displayLastName
+          mrzFirstName
+          mrzLastName
+          sex
+        }
+      }
+    `
+
+    return this.useGraphqlGateway(query)
+      .then(async (res: Response) => {
+        const response = await res.json()
+
+        console.log('RESPONSE IS HERE MAMIIIII', response)
+
+        if (response.errors?.length > 0) {
+          return this.handleError(response.errors[0])
+        }
+
+        return Promise.resolve(response.data.getIdentityDocument)
+      })
+      .catch((error) => this.handleError(error))
   }
 
   handleError(_error: any) {
