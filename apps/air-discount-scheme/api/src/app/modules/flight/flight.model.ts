@@ -1,13 +1,17 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { UserInfo as TUserInfo } from '@island.is/air-discount-scheme/types'
+import {
+  UserInfo as TUserInfo,
+  Gender,
+} from '@island.is/air-discount-scheme/types'
 import { User } from '../user'
 import { FlightLeg } from '../flightLeg'
+type ModelGender = Exclude<Gender, Gender.Uncategorized>
 
 @ObjectType()
 export class UserInfo implements TUserInfo {
   @Field()
-  gender: 'kk' | 'kvk' | 'x'
+  gender: ModelGender
 
   @Field()
   age: number

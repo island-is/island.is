@@ -1,3 +1,6 @@
+import { Gender } from './user'
+type ModelGender = Exclude<Gender, Gender.Uncategorized>
+
 export type FlightLeg = {
   id: string
   flightId: string
@@ -16,7 +19,7 @@ export type FlightLeg = {
 
 export type UserInfo = {
   age: number
-  gender: 'kk' | 'kvk' | 'x' | 'óvíst'
+  gender: Gender
   postalCode: number
 }
 
@@ -52,7 +55,7 @@ export type FlightLegsInput = {
   period?: PeriodInput
   state?: string[]
   age?: RangeInput
-  gender?: 'kk' | 'kvk' | 'x'
+  gender?: Gender
   postalCode?: number
   nationalId?: string
 }

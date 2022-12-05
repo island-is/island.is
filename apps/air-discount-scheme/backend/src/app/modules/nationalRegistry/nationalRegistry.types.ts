@@ -1,8 +1,11 @@
+import { Gender } from '@island.is/air-discount-scheme/types'
+type ModelGender = Exclude<Gender, Gender.Uncategorized>
+
 export interface NationalRegistryGeneralLookupResponse {
   source: 'Þjóðskrá' | 'Fyrirtækjaskrá'
   ssn: string
   name: string
-  gender: 'kk' | 'kvk' | 'x'
+  gender: ModelGender
   address: string
   postalcode: string
   city: string
@@ -34,7 +37,7 @@ export interface NationalRegistryUser {
   firstName: string
   middleName: string
   lastName: string
-  gender: 'kk' | 'kvk' | 'x' | 'óvíst'
+  gender: Gender
   address: string
   postalcode: number
   city: string

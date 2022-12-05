@@ -1,3 +1,10 @@
+export enum Gender {
+  Male = 'kk',
+  Female = 'kvk',
+  NonBinary = 'x',
+  Uncategorized = 'manneskja',
+}
+
 export interface Fund {
   credit: number
   used: number
@@ -9,7 +16,7 @@ export interface BaseUser {
   firstName: string
   middleName: string
   lastName: string
-  gender: 'kk' | 'kvk' | 'x' | 'óvíst'
+  gender: Gender
   fund: Fund
 }
 

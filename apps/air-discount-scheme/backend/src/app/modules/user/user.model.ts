@@ -5,6 +5,7 @@ import type {
   User as TUser,
   Fund as TFund,
 } from '@island.is/air-discount-scheme/types'
+import { Gender } from '@island.is/air-discount-scheme/types'
 import { NationalRegistryUser } from '../nationalRegistry'
 
 class Fund implements TFund {
@@ -39,7 +40,13 @@ class BaseUser implements TBaseUser {
   @ApiProperty()
   lastName: string
 
-  @ApiProperty({ enum: ['kvk', 'kk', 'x'] as ValueOf<TUser['gender']>[] })
+  // https://docs.nestjs.com/openapi/types-and-parameters#enums
+  // We must manually set the enum property
+  @ApiProperty({
+    enum: [Gender.Male, Gender.Female, Gender.NonBinary] as ValueOf<
+      TUser['gender']
+    >[],
+  })
   gender: TUser['gender']
 
   @ApiProperty()
