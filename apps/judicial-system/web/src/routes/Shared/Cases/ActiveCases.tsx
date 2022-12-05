@@ -67,7 +67,7 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecution = user?.role && isProsecutionRole(user?.role)
+  const isProsecution = user?.role && isProsecutionRole(user.role)
   const isCourt = (user?.role && isCourtRole(UserRole.JUDGE)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
