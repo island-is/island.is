@@ -14,8 +14,6 @@ import {
   Application,
   ApplicationApiCoreModule,
 } from '@island.is/application/api/core'
-import { TemplateAPIModule } from '@island.is/application/template-api-modules'
-import { TemplateApiApplicationService } from '../application/template-api.service'
 
 export interface Config {
   clientConfig: PaymentServiceOptions
