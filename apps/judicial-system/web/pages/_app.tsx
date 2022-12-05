@@ -15,6 +15,7 @@ import {
   FormProvider,
   ViewportProvider,
   Header as HeaderContainer,
+  StepProvider,
 } from '../src/components'
 
 const getTranslationStrings = (apolloClient: typeof client) => {
@@ -83,8 +84,10 @@ class JudicialSystemApplication extends App<Props> {
                     <ServiceInterruptionBanner />
                     <HeaderContainer />
                     <FormProvider>
-                      <Component {...pageProps} />
-                      <ToastContainer useKeyframeStyles />
+                      <StepProvider>
+                        <Component {...pageProps} />
+                        <ToastContainer useKeyframeStyles />
+                      </StepProvider>
                     </FormProvider>
                     <style jsx global>{`
                       @font-face {

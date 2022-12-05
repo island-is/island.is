@@ -97,13 +97,13 @@ const useSections = () => {
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
-                href:
-                  (activeSubSection && activeSubSection > 2) ||
-                  (isDefendantStepValidForSidebarRC(workingCase) &&
-                    isHearingArrangementsStepValidRC(workingCase) &&
-                    workingCase.state !== CaseState.NEW)
-                    ? `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`
-                    : undefined,
+                href: undefined,
+                // (activeSubSection && activeSubSection > 2) ||
+                // (isDefendantStepValidForSidebarRC(workingCase) &&
+                //   isHearingArrangementsStepValidRC(workingCase) &&
+                //   workingCase.state !== CaseState.NEW)
+                //   ? `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`
+                //   : undefined,
               },
               {
                 type: 'SUB_SECTION',

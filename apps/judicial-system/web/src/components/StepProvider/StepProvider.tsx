@@ -1,22 +1,38 @@
-import React, { createContext } from 'react'
+import React, { createContext, useContext } from 'react'
+import { useRouter } from 'next/router'
 
-const steps = [{}]
+import * as constants from '@island.is/judicial-system/consts'
 
-interface StepProvider {
-  onContinue: () => void
+import { FormContext } from '../FormProvider/FormProvider'
+
+interface Flows {
+  restrictionCases: { onContinue: () => Promise<boolean> }[]
 }
 
-export const StepContext = createContext<StepProvider>({ onContinue: () => {} })
+export const StepContext = createContext<Flows>({
+  restrictionCases: [
+    {
+      onContinue: () => new Promise((resolve) => resolve(true)),
+    },
+  ],
+})
 
-// Setting authenticated to true forces current user query in tests
-interface Props {
-  onContinue: () => void
+const StepProvider: React.FC = ({ children }) => {
+  const router = useRouter()
+  const { workingCase } = useContext(FormContext)
+
+  const flows: Flows = {
+    restrictionCases: [
+      {
+        onContinue: () =>
+          router.push(
+            `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`,
+          ),
+      },
+    ],
+  }
+
+  return <StepContext.Provider value={flows}>{children}</StepContext.Provider>
 }
 
-export const StepProvider: React.FC<Props> = ({ onContinue, children }) => {
-  return (
-    <StepContext.Provider value={{ onContinue }}>
-      {children}
-    </StepContext.Provider>
-  )
-}
+export default StepProvider
