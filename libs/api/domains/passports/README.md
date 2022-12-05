@@ -1,4 +1,4 @@
-# api-domains-passports
+# API Domains Passports
 
 This library was generated with [Nx](https://nx.dev).
 

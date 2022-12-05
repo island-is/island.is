@@ -132,6 +132,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
+    - [API Domains Passports](libs/api/domains/passports/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)

@@ -22,6 +22,11 @@ export const m = defineMessages({
     defaultMessage: `Ef vegabréfi hefur verið glatað þarftu fyrst að tilkynna það áður en sótt er um nýtt.\\n\\n [Smelltu hér til að tilkynna glatað vegabréf.](https://island.is/stolidtynt-vegabref).`,
     description: 'Some description',
   },
+  noDisabiltiyRecordInfoMessage: {
+    id: 'pa.application:introSection.noDisabiltiyRecordInfoMessage#markdown',
+    defaultMessage: `Þú ert ekki handhafi örorkuskírteinis`,
+    description: 'Some description',
+  },
 
   /* Data collection section */
   dataCollectionTitle: {
@@ -167,7 +172,7 @@ export const m = defineMessages({
   hasDisabilityDiscount: {
     id: 'pa.application:personalInfo.hasDisabilityDiscount',
     defaultMessage:
-      'Ég vil láta fletta mér upp í öryrkjaskrá hjá Tryggingastofnun fyrir lægra gjald á vegabréfi',
+      'Ég er handhafi örorkuskírteinis og vil láta flétta upp örorkuskírteini mínu hjá Tryggingastofnun fyrir lægra gjald á vegabréfi.',
     description: 'Some description',
   },
 
