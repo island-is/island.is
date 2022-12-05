@@ -11,14 +11,12 @@ import parseISO from 'date-fns/parseISO'
 interface ShipInformationProps {
   ship: Ship
   seaworthinessHasColor?: boolean
-  isExpired?: boolean
   isDisabled?: boolean
 }
 
 export const ShipInformation: FC<ShipInformationProps> = ({
   ship,
   seaworthinessHasColor = false,
-  isExpired = false,
   isDisabled = false,
 }) => {
   const {
@@ -40,6 +38,10 @@ export const ShipInformation: FC<ShipInformationProps> = ({
       locale: is,
     },
   )
+
+  const isExpired =
+    new Date(seaworthinessDate).getTime() <= new Date().getTime()
+
   const seaworthinessColor = seaworthinessHasColor
     ? isExpired
       ? 'red'
