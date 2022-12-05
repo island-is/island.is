@@ -20,7 +20,6 @@ import {
   LoadingDots,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   FormContext,
@@ -319,7 +318,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
                   <PoliceCaseFilesMessageBox
                     icon="checkmark"
                     iconColor="blue400"
-                    message={formatMessage(errors.general)}
+                    message={formatMessage(m.allFilesUploadedMessage)}
                   />
                 )}
               </motion.ul>
