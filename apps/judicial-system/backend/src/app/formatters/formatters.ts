@@ -560,17 +560,22 @@ export function formatDefenderRevokedEmailNotification(
           ?.replace(' kl.', ', kl.')
       : 'NONE',
   })
-  const revokedText = formatMessage(cf.revoked, {
-    courtText,
-    courtDateText,
-    investigationPrefix:
-      type === CaseType.OTHER
-        ? 'onlyPrefix'
-        : isInvestigationCase(type)
-        ? 'withPrefix'
-        : 'noPrefix',
-    courtTypeName: caseTypes[type],
-  })
+  const revokedText = isIndictmentCase(type)
+    ? formatMessage(cf.revokedIndictment, {
+        courtText,
+        courtDateText,
+      })
+    : formatMessage(cf.revoked, {
+        courtText,
+        courtDateText,
+        investigationPrefix:
+          type === CaseType.OTHER
+            ? 'onlyPrefix'
+            : isInvestigationCase(type)
+            ? 'withPrefix'
+            : 'noPrefix',
+        courtTypeName: caseTypes[type],
+      })
 
   const defendantNationalIdText = defendantNoNationalId
     ? defendantNationalId || 'NONE'
@@ -580,7 +585,7 @@ export function formatDefenderRevokedEmailNotification(
     defendantNationalId: defendantNationalIdText,
     defendantNoNationalId: defendantNoNationalId ? 'NONE' : 'SOME',
   })
-  const defenderAssignedText = formatMessage(cf.defenderAssigned)
+  const defenderAssignedText = formatMessage(cf.defenderAssignedV2)
 
   return formatMessage(cf.body, {
     revokedText,

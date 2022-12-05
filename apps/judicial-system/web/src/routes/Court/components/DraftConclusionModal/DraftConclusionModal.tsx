@@ -1,11 +1,13 @@
 import React from 'react'
 import { AnimatePresence } from 'framer-motion'
+import { useIntl } from 'react-intl'
 
 import {
   ConclusionDraft,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import type { Case } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -23,6 +25,7 @@ const DraftConclusionModal: React.FC<Props> = (props) => {
     isDraftingConclusion,
     setIsDraftingConclusion,
   } = props
+  const { formatMessage } = useIntl()
 
   return (
     <AnimatePresence>
@@ -35,7 +38,7 @@ const DraftConclusionModal: React.FC<Props> = (props) => {
               setWorkingCase={setWorkingCase}
             />
           }
-          primaryButtonText="Loka glugga"
+          primaryButtonText={formatMessage(core.closeModal)}
           onPrimaryButtonClick={() => setIsDraftingConclusion(false)}
         />
       )}

@@ -19,6 +19,7 @@ import {
   CEMETRYEQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   OPERATINGCOST,
+  CAPITALNUMBERS,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
@@ -38,20 +39,19 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
     setError,
   } = useFormContext()
 
-  const operatingCostTotal = getValueViaPath(
-    answers,
-    OPERATINGCOST.total,
-  ) as string
+  const operatingCostTotal = Number(
+    getValueViaPath(answers, OPERATINGCOST.total),
+  )
+
+  const capitalTotal = Number(getValueViaPath(answers, CAPITALNUMBERS.total))
 
   useEffect(() => {
-    setValue(
-      CEMETRYEQUITIESANDLIABILITIESIDS.operationResult,
-      operatingCostTotal,
-    )
-    setTotalOperatingCost(operatingCostTotal)
-  }, [operatingCostTotal, setValue])
+    const total = operatingCostTotal + capitalTotal
+    setValue(CEMETRYEQUITIESANDLIABILITIESIDS.operationResult, total)
+    setTotalOperatingCost(total)
+  }, [operatingCostTotal, capitalTotal, setValue])
 
-  const [totalOperatingCost, setTotalOperatingCost] = useState('0')
+  const [totalOperatingCost, setTotalOperatingCost] = useState(0)
   const [equityTotal, setEquityTotal] = useState(0)
   const [equityAndDebts, setEquityAndDebts] = useState(0)
 
