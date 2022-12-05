@@ -21,6 +21,7 @@
     "api-domains-content-search": "libs/api/domains/content-search",
     "api-domains-criminal-record": "libs/api/domains/criminal-record",
     "api-domains-directorate-of-labour": "libs/api/domains/directorate-of-labour",
+    "api-domains-disablitly-license": "libs/api/domains/disablitly-license",
     "api-domains-document-provider": "libs/api/domains/document-provider",
     "api-domains-documents": "libs/api/domains/documents",
     "api-domains-driving-license": "libs/api/domains/driving-license",

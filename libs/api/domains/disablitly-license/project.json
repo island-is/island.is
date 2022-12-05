@@ -1,0 +1,23 @@
+{
+  "root": "libs/api/domains/disablitly-license",
+  "sourceRoot": "libs/api/domains/disablitly-license/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/disablitly-license/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/disablitly-license"],
+      "options": {
+        "jestConfig": "libs/api/domains/disablitly-license/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

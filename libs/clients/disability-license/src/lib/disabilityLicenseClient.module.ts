@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
 import { DisabilityLicenseApiProvider } from './disabilityLicenseClient.provider'
+import { DisablitityLicenseService } from './disabilityLicenseClient.service'
 
 @Module({
-  providers: [DisabilityLicenseApiProvider],
-  exports: [DisabilityLicenseApiProvider],
+  providers: [DisabilityLicenseApiProvider, DisablitityLicenseService],
+  exports: [DisabilityLicenseApiProvider, DisablitityLicenseService],
 })
 export class DisabilityLicenseClientModule {}
