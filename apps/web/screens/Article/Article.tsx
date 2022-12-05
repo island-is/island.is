@@ -278,7 +278,12 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           institutionTitle={n('organization')}
           institution={article.organization[0].title}
           locale={activeLocale}
-          linkProps={{ href: article.organization[0].link }}
+          linkProps={{
+            href: article.organization[0].hasALandingPage
+              ? linkResolver('organizationpage', [article.organization[0].slug])
+                  .href
+              : article.organization[0].link,
+          }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
       )}
@@ -609,7 +614,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 institution={{
                   title: article.organization[0].title,
                   label: n('organization'),
-                  href: article.organization[0].link,
+                  href: article.organization[0].hasALandingPage
+                    ? linkResolver('organizationpage', [
+                        article.organization[0].slug,
+                      ]).href
+                    : article.organization[0].link,
                 }}
                 responsibleParty={article.responsibleParty.map(
                   (responsibleParty) => ({
@@ -622,7 +631,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   (relatedOrganization) => ({
                     title: relatedOrganization.title,
                     label: n('relatedOrganization'),
-                    href: relatedOrganization.link,
+                    href: relatedOrganization.hasALandingPage
+                      ? linkResolver('organizationpage', [
+                          relatedOrganization.slug,
+                        ]).href
+                      : relatedOrganization.link,
                   }),
                 )}
                 locale={activeLocale}

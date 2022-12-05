@@ -57,6 +57,7 @@ export const GET_ARTICLE_QUERY = gql`
         shortTitle
         slug
         link
+        hasALandingPage
         logo {
           url
           width
@@ -80,6 +81,7 @@ export const GET_ARTICLE_QUERY = gql`
         title
         slug
         link
+        hasALandingPage
         logo {
           url
           width
