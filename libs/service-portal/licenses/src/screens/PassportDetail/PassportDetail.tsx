@@ -59,10 +59,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
   const { formatMessage, lang } = useLocale()
   const { id }: { id: string | undefined } = useParams()
   const { data: passportData, loading, error } = usePassport()
-  const {
-    data: childPassportData,
-    loading: childLoading,
-  } = useChildrenPassport()
+  const { data: childPassportData } = useChildrenPassport()
 
   const passportGender: Gender = {
     F: formatMessage(m.female),

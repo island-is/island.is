@@ -95,6 +95,8 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
     GenericLicenseType.DriversLicense,
   ])
+  const [passportEnabled, setPassportEnabled] = useState(false)
+
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
@@ -111,6 +113,18 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       }
     }
     isFlagEnabled()
+
+    const isPassportFlagEnabled = async () => {
+      const isPassEnabled = Boolean(
+        await featureFlagClient.getValue(
+          `isServicePortalPassportPageEnabled`,
+          false,
+        ),
+      )
+
+      setPassportEnabled(isPassEnabled)
+    }
+    isPassportFlagEnabled()
   }, [])
 
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
@@ -163,7 +177,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         intro={defineMessage(m.intro)}
         marginBottom={1}
       />
-      {hasChildren ? (
+      {hasChildren && passportEnabled ? (
         <Box>
           <Tabs
             label="License tabs"
@@ -200,7 +214,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           hasData={hasData}
           hasError={hasError}
           isGenericLicenseEmpty={isGenericLicenseEmpty}
-          passportData={passportData}
+          passportData={passportEnabled ? passportData : null}
           genericLicenses={genericLicenses}
         />
       )}
