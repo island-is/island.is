@@ -12,6 +12,7 @@ import {
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ParentalLeaveApi,
+  ApplicationInformationApi,
   Period as VmstPeriod,
   ParentalLeaveGetPeriodLengthRequest,
   ParentalLeaveGetPeriodEndDateRequest,
@@ -141,6 +142,12 @@ describe('ParentalLeaveService', () => {
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
+        },
+        {
+          provide: ApplicationInformationApi,
+          useClass: jest.fn(() => ({
+            applicationGetApplicationInformation: () => Promise.reject(),
+          })),
         },
         {
           provide: ParentalLeaveApi,
