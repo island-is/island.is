@@ -72,7 +72,7 @@ export class CreateFlightBody {
   @ApiProperty({ type: [CreateFlightLegBody] })
   readonly flightLegs!: CreateFlightLegBody[]
 }
-export class GetFlightLegsBody implements FlightLegsInput {
+export class GetFlightLegsBody {
   @IsOptional()
   @IsEnum(Object.keys(Airlines))
   airline?: string
@@ -96,8 +96,8 @@ export class GetFlightLegsBody implements FlightLegsInput {
   age?: RangeInput
 
   @IsOptional()
-  @IsEnum(['kk', 'kvk', 'x'])
-  gender?: 'kk' | 'kvk' | 'x'
+  @IsEnum(['kk', 'kvk', 'x', 'óvíst'])
+  gender?: 'kk' | 'kvk' | 'x' | 'óvíst'
 
   @IsOptional()
   @IsNumber()

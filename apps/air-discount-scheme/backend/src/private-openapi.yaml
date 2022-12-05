@@ -367,7 +367,7 @@ components:
           enum:
             - kvk
             - kk
-            - hvk
+            - x
         nationalId:
           type: string
         fund:
@@ -393,7 +393,7 @@ components:
           enum:
             - kvk
             - kk
-            - hvk
+            - x
         nationalId:
           type: string
         fund:
