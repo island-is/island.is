@@ -64,12 +64,7 @@ export class AuthGuard implements CanActivate {
     const oidcUser = this.decodeSession(request)
     const user = await this.getUser(oidcUser)
     request['auth'] = { scope: [], authorization: '', client: '', ...user }
-    request['user'] = {
-      scope: [],
-      authorization: '',
-      client: '',
-      ...user,
-    }
+    request['user'] = { scope: [], authorization: '', client: '', ...user }
     return !!user
   }
 }
