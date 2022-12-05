@@ -744,7 +744,7 @@ export const SignedVerdictOverview: React.FC = () => {
                       signatory={workingCase.courtRecordSignatory.name}
                       signingDate={workingCase.courtRecordSignatureDate}
                     />
-                  ) : user?.role && isCourtRole(user?.role) ? (
+                  ) : user?.role && isCourtRole(user.role) ? (
                     <Button
                       variant="ghost"
                       size="small"
