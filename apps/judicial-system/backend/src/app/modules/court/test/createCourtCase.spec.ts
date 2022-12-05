@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
 import formatISO from 'date-fns/formatISO'
 import each from 'jest-each'
+import { uuid } from 'uuidv4'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
@@ -265,7 +265,14 @@ describe('CourtService - Create court case', () => {
     const caseId = uuid()
     const courtId = uuid()
     const type = randomEnum(CaseType)
-    const policeCaseNumbers = [uuid()]
+    const indictmentSubtype = isIndictmentCase(type)
+      ? randomEnum(IndictmentSubtype)
+      : undefined
+    const policeCaseNumber = uuid()
+    const indictmentSubtypes = indictmentSubtype
+      ? { [policeCaseNumber]: [indictmentSubtype] }
+      : undefined
+    const policeCaseNumbers = [policeCaseNumber]
     const isExtension = randomBoolean()
     let then: Then
 
@@ -280,6 +287,7 @@ describe('CourtService - Create court case', () => {
         type,
         policeCaseNumbers,
         isExtension,
+        indictmentSubtypes,
       )
     })
 
