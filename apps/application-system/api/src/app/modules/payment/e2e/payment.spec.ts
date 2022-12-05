@@ -10,6 +10,7 @@ import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { PaymentService } from '../payment.service'
 import { AppModule } from '../../../app.module'
+import { ApplicationService } from '@island.is/application/api/core'
 
 let app: INestApplication
 
@@ -36,6 +37,13 @@ class MockPaymentApi {
   }
 }
 
+class MockApplicationService {
+  async findOneById() {
+    return {
+      typeId: 'DrivingLicense',
+    }
+  }
+}
 // TODO: mock the client instead - we are essentially not testing the service
 class MockPaymentService {
   async findApplicationById() {
@@ -66,6 +74,10 @@ class MockPaymentService {
     return 'asdf'
   }
 
+  makeDelegationPaymentUrl() {
+    return 'paymentUrl'
+  }
+
   async findPaymentByApplicationId() {
     return {
       fulfilled: true,
@@ -81,6 +93,8 @@ beforeAll(async () => {
   app = await setup(AppModule, {
     override: (builder) =>
       builder
+        .overrideProvider(ApplicationService)
+        .useClass(MockApplicationService)
         .overrideProvider(PaymentAPI)
         .useClass(MockPaymentApi)
         .overrideGuard(IdsUserGuard)

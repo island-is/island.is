@@ -156,7 +156,7 @@ export class PaymentController {
       )
     }
 
-    const callbackUrl = `${environment.templateApi.clientLocationOrigin}/${applicationSlug}/${application.id}?done`
+    const callbackUrl = `${environment.templateApi.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
 
     return {
       // TODO: maybe treat the case where no payment was found differently?
