@@ -26,7 +26,7 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
@@ -34,6 +34,7 @@ import {
   OrganizationWrapper,
   SliceDropdown,
   Form,
+  Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -86,6 +87,10 @@ const SubPage: Screen<SubPageProps> = ({
   namespace,
   locale,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const router = useRouter()
   const { activeLocale } = useI18n()
 
@@ -114,6 +119,7 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <OrganizationWrapper
       showExternalLinks={true}
+      showReadSpeaker={false}
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       fullWidthContent={true}
@@ -152,11 +158,18 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    <Box marginBottom={2}>
+                    <Box className="rs_read" marginBottom={2}>
                       <Text variant="h1" as="h1">
                         {subpage.title}
                       </Text>
                     </Box>
+                    {isWebReaderEnabledForOrganizationPages && (
+                      <Webreader
+                        marginTop={0}
+                        readId={null}
+                        readClass="rs_read"
+                      />
+                    )}
                   </GridColumn>
                 </GridRow>
                 {subpage.showTableOfContents && (
@@ -165,7 +178,7 @@ const SubPage: Screen<SubPageProps> = ({
                     title={n('navigationTitle', 'Efnisyfirlit')}
                   />
                 )}
-                <GridRow>
+                <GridRow className="rs_read">
                   <GridColumn
                     span={[
                       '12/12',
