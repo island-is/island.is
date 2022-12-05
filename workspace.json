@@ -121,6 +121,7 @@
     "clients-charge-fjs-v2": "libs/clients/charge-fjs-v2",
     "clients-criminal-record": "libs/clients/criminal-record",
     "clients-data-protection-complaint": "libs/clients/data-protection-complaint",
+    "clients-disability-license": "libs/clients/disability-license",
     "clients-document-provider": "libs/clients/document-provider",
     "clients-documents": "libs/clients/documents",
     "clients-driving-license": "libs/clients/driving-license",
