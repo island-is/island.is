@@ -45,6 +45,7 @@ describe('ApplicationTemplateValidation', () => {
 
   it('Should not be ready when the supplied featureFlag is disabled', async () => {
     const mockUser = {
+      sub: 'mock-sub',
       nationalId: '1234567891',
       scope: [],
       authorization: faker.random.word(),
@@ -62,6 +63,7 @@ describe('ApplicationTemplateValidation', () => {
 
   it('Should be ready when when the supplied featureFlag is enabled and the readyForProd is false', async () => {
     const mockUser = {
+      sub: 'mock-sub',
       nationalId: '1234567891',
       scope: [],
       authorization: faker.random.word(),
@@ -80,6 +82,7 @@ describe('ApplicationTemplateValidation', () => {
 
   it('Should be ready when the supplied featureFlag is disabled and readyForProd is false and the users nationalId is whitelisted', async () => {
     const mockUser = {
+      sub: 'mock-sub',
       nationalId: '1234567890',
       scope: [],
       authorization: faker.random.word(),
@@ -98,6 +101,7 @@ describe('ApplicationTemplateValidation', () => {
 
   it('Should be ready when no featureFlag is supplied but readyForProduction is true on prod', async () => {
     const mockUser = {
+      sub: 'mock-sub',
       nationalId: '1234567890',
       scope: [],
       authorization: faker.random.word(),
@@ -122,6 +126,7 @@ describe('ApplicationTemplateValidation', () => {
 
   it('Should not be ready when no featureFlag is supplied and readyForProduction is false on prod', async () => {
     const mockUser = {
+      sub: 'mock-sub',
       nationalId: '1234567890',
       scope: [],
       authorization: faker.random.word(),
@@ -146,6 +151,7 @@ describe('ApplicationTemplateValidation', () => {
 
   it('Should be ready when not running on production without a featureFlag and regardless of readyForProduction flag on localhost', async () => {
     const mockUser = {
+      sub: 'mock-sub',
       nationalId: '1234567890',
       scope: [],
       authorization: faker.random.word(),

@@ -16,6 +16,7 @@ export const MOCK_NATIONAL_ID_EXPIRED = '1'
 export const MOCK_NATIONAL_ID_TEACHER = '2'
 export const MOCK_NATIONAL_ID_NO_ASSESSMENT = '9'
 export const MOCK_USER = {
+  sub: 'mock-sub',
   nationalId: '0',
   scope: ['test-scope-1'],
   client_id: 'test-client',

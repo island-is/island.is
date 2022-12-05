@@ -6,6 +6,7 @@ import { createNationalId } from './nationalId'
 import type { NationalIdType } from './nationalId'
 
 interface UserOptions {
+  sub?: string
   nationalId?: string
   scope?: string[]
   authorization?: string
@@ -29,6 +30,7 @@ export const createCurrentUser = (user: UserOptions = {}): User => {
       : undefined
 
   return {
+    sub: user.sub ?? faker.random.word(),
     nationalId: user.nationalId ?? createNationalId(user.nationalIdType),
     scope: user.scope ?? [],
     authorization: user.authorization ?? faker.random.word(),
