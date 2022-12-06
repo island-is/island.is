@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { core } from '@island.is/judicial-system-web/messages'
 import { AlertBanner } from '@island.is/island-ui/core'
 import {
-  isCourtRole,
+  isExtendedCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 
@@ -32,7 +32,7 @@ const ServiceInterruptionBanner: React.FC = () => {
     displayMessage = prosecutorMessage
   } else if (
     user?.role &&
-    isCourtRole(user.role) &&
+    isExtendedCourtRole(user.role) &&
     courtMessage &&
     courtMessage !== 'NONE'
   ) {
