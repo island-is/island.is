@@ -9,7 +9,11 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
-import { linkResolver, useNamespace } from '@island.is/web/hooks'
+import {
+  linkResolver,
+  useFeatureFlag,
+  useNamespace,
+} from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
@@ -20,6 +24,7 @@ import {
   stepperUtils,
   Form,
   TabSectionSlice,
+  Webreader,
 } from '@island.is/web/components'
 import {
   Box,
@@ -52,6 +57,10 @@ const ProjectPage: Screen<PageProps> = ({
   stepOptionsFromNamespace,
   locale,
 }) => {
+  const { value: isWebReaderEnabledForProjectPages } = useFeatureFlag(
+    'isWebReaderEnabledForProjectPages',
+    false,
+  )
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -130,11 +139,17 @@ const ProjectPage: Screen<PageProps> = ({
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage.sidebar}
       >
+        {!subpage && isWebReaderEnabledForProjectPages && (
+          <Webreader marginTop={0} readId={null} readClass="rs_read" />
+        )}
         {!!subpage && (
           <Box marginBottom={1}>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
+            {isWebReaderEnabledForProjectPages && (
+              <Webreader readId={null} readClass="rs_read" />
+            )}
             {subpage.content &&
               webRichText(subpage.content as SliceType[], {
                 renderComponent: {
