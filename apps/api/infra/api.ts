@@ -20,6 +20,7 @@ import {
   Vehicles,
   AdrAndMachine,
   Firearm,
+  DisabilityLicense,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -231,6 +232,7 @@ export const serviceSetup = (services: {
     .xroad(
       AdrAndMachine,
       Firearm,
+      DisabilityLicense,
       Base,
       Client,
       HealthInsurance,
