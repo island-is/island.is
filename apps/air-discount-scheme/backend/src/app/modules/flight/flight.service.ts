@@ -27,6 +27,9 @@ export const ADS_POSTAL_CODES = {
   Vestmannaeyjar: 900,
 }
 const DEFAULT_AVAILABLE_LEGS = 6
+
+// This doesn't need to be updated year by year
+// unless deviations from the 6 default flightlegs occur
 const AVAILABLE_FLIGHT_LEGS: { [year: string]: number } = {
   '2020': 2,
   '2021': 6,

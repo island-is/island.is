@@ -42,25 +42,22 @@ export class DiscountResolver {
   ): Promise<DiscountWithTUser[]> {
     let relations: TUser[] = await backendApi.getUserRelations(user.nationalId)
 
-    // Check for explicit discount. If a discount exists but a person is ineligible
-    // it means that an admin has created it explicitly and we report it back.
-    const explicitDiscount = await backendApi.getDiscount(user.nationalId)
-    const explicitDiscountWithUser = [
-      {
-        ...explicitDiscount,
-        user: relations.find(
-          (relation) => relation.nationalId === user.nationalId,
-        ),
-      },
-    ]
-
     // Should not generate discountcodes for users who do not meet requirements
     relations = relations.filter(
       (user) => user.fund.credit === user.fund.total - user.fund.used,
     )
 
-    if (explicitDiscount && relations.length === 0) {
-      return explicitDiscountWithUser
+    // Check for explicit discount. If a discount exists but a person is ineligible
+    // it means that an admin has created it explicitly and we report it back.
+    // Otherwise the filter will have filtered out this user in previous
+    // iterations and then this does nothing.
+    const explicitDiscount = await backendApi.getDiscount(user.nationalId)
+    const explicitUser = explicitDiscount?.user
+    if (
+      explicitUser &&
+      !relations.find((user) => user.nationalId === user.nationalId)
+    ) {
+      relations.push(explicitUser)
     }
 
     return relations.reduce(
@@ -72,7 +69,10 @@ export class DiscountResolver {
           if (!discount || discount.expiresIn <= TWO_HOURS) {
             discount = await backendApi.createDiscount(relation.nationalId)
           }
-          return [...acc, { ...discount, user: relation }]
+          return [
+            ...acc,
+            { ...discount, user: { ...relation, fund: discount.user.fund } },
+          ]
         })
       },
       Promise.resolve([]),
