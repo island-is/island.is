@@ -23,8 +23,6 @@ import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { VehicleMiniDto } from '@island.is/clients/vehicles'
-import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -36,7 +34,6 @@ export class VehiclesResolver {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
-    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
   ) {}
 
   @Scopes(ApiScope.vehicles)
@@ -110,20 +107,12 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
-    return (
-      await this.vehiclesService.getCurrentVehicles(
-        user,
-        input.showOwned,
-        input.showCoowned,
-        input.showOperated,
-      )
-    )?.map((vehicle: VehicleMiniDto) => ({
-      permno: vehicle.permno,
-      make: vehicle.make,
-      color: vehicle.color,
-      role: vehicle.role,
-      isStolen: vehicle.stolen,
-    }))
+    return await this.vehiclesService.getCurrentVehicles(
+      user,
+      input.showOwned,
+      input.showCoowned,
+      input.showOperated,
+    )
   }
 
   @Scopes(ApiScope.internal)
@@ -136,24 +125,11 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
-    // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
-    if (input.showOperated) {
-      throw Error(
-        'You can only fetch the debt status for vehicles where you are either owner or co-owner',
-      )
-    }
-
-    return await Promise.all(
-      (await this.getCurrentVehicles(input, user)).map(
-        async (vehicle: VehiclesCurrentVehicleWithDebtStatus) => {
-          const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-            user,
-            vehicle.permno || '',
-          )
-          vehicle.isDebtLess = debtStatus.isDebtLess
-          return vehicle
-        },
-      ),
+    return await this.vehiclesService.getCurrentVehiclesWithDebtStatus(
+      user,
+      input.showOwned,
+      input.showCoowned,
+      input.showOperated,
     )
   }
 
@@ -167,25 +143,6 @@ export class VehiclesResolver {
     @Args('permno', { type: () => String }) permno: string,
     @CurrentUser() user: User,
   ) {
-    // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
-    const myVehicles = await this.getCurrentVehicles(
-      { showOwned: true, showCoowned: true, showOperated: false },
-      user,
-    )
-    const isOwnerOrCoOwner = !!myVehicles.find(
-      (vehicle: VehiclesCurrentVehicleWithDebtStatus) =>
-        vehicle.permno === permno,
-    )
-    if (!isOwnerOrCoOwner) {
-      throw Error(
-        'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
-      )
-    }
-
-    const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-      user,
-      permno,
-    )
-    return { isDebtLess: debtStatus.isDebtLess }
+    return await this.vehiclesService.getVehicleDebtStatusByPermno(user, permno)
   }
 }
