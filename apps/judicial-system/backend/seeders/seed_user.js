@@ -12,6 +12,16 @@ const userSeeds = `[
     "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
   },
   {
+    "id": "7ac41587-061b-44b8-8028-fb19f997c8e7",
+    "national_id": "0000006669",
+    "name": "Finnur Fulltrúi",
+    "title": "fulltrúi",
+    "mobile_number": "6666666",
+    "email": "finnur@dummy.dd",
+    "role": "REPRESENTATIVE",
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+  },
+  {
     "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
     "national_id": "0000001119",
     "name": "Dalli Dómritari",

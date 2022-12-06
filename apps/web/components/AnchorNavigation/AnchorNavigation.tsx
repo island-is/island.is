@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { Bullet } from '@island.is/web/components'
 import { Text, Box, FocusableBox, Stack } from '@island.is/island-ui/core'
+import slugify from '@sindresorhus/slugify'
+import { useRouter } from 'next/router'
 
 export interface AnchorNavigationProps {
   title?: string
@@ -14,9 +16,24 @@ export const AnchorNavigation = ({
   navigation,
   position = 'left',
 }: AnchorNavigationProps) => {
+  const router = useRouter()
+  const initialScrollHasHappened = useRef(false)
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids, { smooth: true })
   const [bulletRef, setBulletRef] = useState<HTMLElement>(null)
+
+  useEffect(() => {
+    if (initialScrollHasHappened.current) return
+
+    const hash = router.asPath?.split?.('#')?.[1]
+
+    const navigationId = navigation?.find((n) => slugify(n.text) === hash)?.id
+
+    if (hash && navigationId) {
+      navigate(navigationId)
+      initialScrollHasHappened.current = true
+    }
+  }, [navigate, navigation, router.asPath])
 
   return (
     <Box
@@ -53,7 +70,11 @@ export const AnchorNavigation = ({
               component="button"
               type="button"
               textAlign="left"
-              onClick={() => navigate(id)}
+              onClick={() => {
+                // eslint-disable-next-line no-restricted-globals
+                history?.replaceState({}, '', `#${slugify(text)}`) // Store the hash of the anchor link in the url (without making the page jump)
+                navigate(id)
+              }}
             >
               {id === activeId ? <b>{text}</b> : text}
             </FocusableBox>

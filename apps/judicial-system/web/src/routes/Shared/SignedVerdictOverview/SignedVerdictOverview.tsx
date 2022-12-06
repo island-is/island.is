@@ -22,6 +22,7 @@ import {
   isAcceptingCaseDecision,
   UpdateCase,
   User,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -652,8 +653,8 @@ export const SignedVerdictOverview: React.FC = () => {
           workingCase.prosecutorAppealDecision ===
             CaseAppealDecision.POSTPONE ||
           workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
-          (user?.role === UserRole.JUDGE ||
-            user?.role === UserRole.REGISTRAR) &&
+          user?.role &&
+          isCourtRole(user.role) &&
           user?.institution?.type !== InstitutionType.HIGH_COURT && (
             <Box marginBottom={7}>
               <AppealSection
@@ -743,8 +744,7 @@ export const SignedVerdictOverview: React.FC = () => {
                       signatory={workingCase.courtRecordSignatory.name}
                       signingDate={workingCase.courtRecordSignatureDate}
                     />
-                  ) : user?.role === UserRole.JUDGE ||
-                    user?.role === UserRole.REGISTRAR ? (
+                  ) : user?.role && isCourtRole(user.role) ? (
                     <Button
                       variant="ghost"
                       size="small"
