@@ -1,9 +1,14 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes-runtime'
 import { MissingSetting } from './types/input-types'
-import { serializeService } from './map-to-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  HelmService,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -19,7 +24,7 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('Extra attributes', () => {
-  it('basic values', () => {
+  it('basic values', async () => {
     const sut = service('api').extraAttributes({
       staging: {
         API: 'api',
@@ -28,25 +33,29 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
-    expect(serviceDef.serviceDef.extra).toEqual({
+    const serviceDef = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+    expect(serviceDef.serviceDef[0].extra).toEqual({
       API: 'api',
       KEY: { SUBKEY: 'value' },
     })
   })
-  it('missing values', () => {
+  it('missing values', async () => {
     const sut = service('api').extraAttributes({
       staging: MissingSetting,
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeErrors
+    const serviceDef = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
     expect(serviceDef.errors).toEqual([
       'Missing extra setting for service api in env staging',
     ])

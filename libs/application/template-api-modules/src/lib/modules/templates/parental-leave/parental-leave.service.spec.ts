@@ -12,6 +12,7 @@ import {
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ParentalLeaveApi,
+  ApplicationInformationApi,
   Period as VmstPeriod,
   ParentalLeaveGetPeriodLengthRequest,
   ParentalLeaveGetPeriodEndDateRequest,
@@ -141,6 +142,12 @@ describe('ParentalLeaveService', () => {
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
+        },
+        {
+          provide: ApplicationInformationApi,
+          useClass: jest.fn(() => ({
+            applicationGetApplicationInformation: () => Promise.reject(),
+          })),
         },
         {
           provide: ParentalLeaveApi,
@@ -302,7 +309,7 @@ describe('ParentalLeaveService', () => {
 
       expect(res).toEqual([
         {
-          from: 'date_of_birth',
+          from: '2021-05-17',
           to: '2021-11-16',
           ratio: '100',
           approved: false,
@@ -312,6 +319,93 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
+          ratio: '100',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: apiConstants.rights.receivingRightsId,
+        },
+      ])
+    })
+
+    it('should return 3 periods, one standard, one using single parent right code and one using multiple birth right code', async () => {
+      const application = createApplication()
+
+      const firstPeriod = get(application.answers, 'periods[0]') as object
+      set(firstPeriod, 'endDate', '2022-07-09')
+      set(application.answers, 'otherParent', SINGLE)
+      set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+      set(application.answers, 'multipleBirths.hasMultipleBirths', YES)
+      set(application.answers, 'multipleBirths.multipleBirths', 2)
+      set(application.answers, 'multipleBirthsRequestDays', 90)
+
+      const res = await parentalLeaveService.createPeriodsDTO(
+        application,
+        nationalId,
+      )
+
+      expect(res).toEqual([
+        {
+          from: '2021-05-17',
+          to: '2021-11-16',
+          ratio: '100',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: 'M-L-GR',
+        },
+        {
+          from: '2021-11-17',
+          to: '2022-05-16',
+          ratio: '100',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: apiConstants.rights.artificialInseminationRightsId,
+        },
+        {
+          from: '2022-05-17',
+          to: '2022-07-09',
+          ratio: '100',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: apiConstants.rights.multipleBirthsOrlofRightsId,
+        },
+      ])
+    })
+
+    it('should return 3 periods, one standard, one using multiple birth right code and one using right period code', async () => {
+      const application = createApplication()
+
+      const firstPeriod = get(application.answers, 'periods[0]') as object
+      set(firstPeriod, 'endDate', '2022-04-01')
+      set(application.answers, 'applicationType.option', PARENTAL_GRANT)
+      set(application.answers, 'multipleBirths.hasMultipleBirths', YES)
+      set(application.answers, 'multipleBirths.multipleBirths', 2)
+      set(application.answers, 'multipleBirthsRequestDays', 90)
+
+      const res = await parentalLeaveService.createPeriodsDTO(
+        application,
+        nationalId,
+      )
+
+      expect(res).toEqual([
+        {
+          from: '2021-05-17',
+          to: '2021-11-16',
+          ratio: '100',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: 'M-FS',
+        },
+        {
+          from: '2021-11-17',
+          to: '2022-02-16',
+          ratio: '100',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: apiConstants.rights.multipleBirthsGrantRightsId,
+        },
+        {
+          from: '2022-02-17',
+          to: '2022-04-01',
           ratio: '100',
           approved: false,
           paid: false,

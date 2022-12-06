@@ -14,11 +14,13 @@ import {
   CaseFile,
   CaseFileState,
   CaseFileCategory,
-  IndictmentSubType,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
   CaseQuery = 'CaseQuery',
+  CasesQuery = 'CasesQuery',
+  CurrentUserQuery = 'CurrentUserQuery',
   UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCaseMutation',
   SendNotificationMutation = 'SendNotificationMutation',
@@ -130,10 +132,11 @@ export const mockAddress = faker.address.streetAddress()
 
 export const mockCase = (
   type: CaseType,
-  indictmentSubType?: IndictmentSubType,
+  indictmentSubtype?: IndictmentSubtype,
 ): Case => {
   const caseId = faker.datatype.uuid()
 
+  const policeCaseNumber = '007-2021-202000'
   return {
     id: caseId,
     created: '2020-09-16T19:50:08.033Z',
@@ -141,9 +144,11 @@ export const mockCase = (
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
     type,
-    indictmentSubType,
+    indictmentSubtypes: indictmentSubtype
+      ? { [policeCaseNumber]: [indictmentSubtype] }
+      : undefined,
     court: makeCourt(),
-    policeCaseNumbers: ['007-2021-202000'],
+    policeCaseNumbers: [policeCaseNumber],
     defendants: [makeDefendant(caseId)],
     defendantWaivesRightToCounsel: false,
   }

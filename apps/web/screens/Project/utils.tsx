@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import {
   Link as LinkSchema,
   LinkGroup,
@@ -5,9 +6,8 @@ import {
 } from '@island.is/web/graphql/schema'
 import { Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { LayoutProps } from '@island.is/web/layouts/main'
-import Link from 'next/link'
 
-const footerEnabled = ['opinbernyskopun']
+const footerEnabled = ['opinbernyskopun', 'gagnasidur-fiskistofu']
 
 const lightThemes = [
   'traveling-to-iceland',
@@ -22,8 +22,14 @@ export const getThemeConfig = (
 ): { themeConfig: Partial<LayoutProps> } => {
   let footerVersion: LayoutProps['footerVersion'] = 'default'
 
+  let showHeader = true
+
   if (footerEnabled.includes(theme)) {
     footerVersion = 'organization'
+  }
+
+  if (theme === 'gagnasidur-fiskistofu') {
+    showHeader = false
   }
 
   const isLightTheme = lightThemes.includes(theme)
@@ -33,10 +39,11 @@ export const getThemeConfig = (
         headerButtonColorScheme: 'negative',
         headerColorScheme: 'white',
         footerVersion,
+        showHeader,
       },
     }
   }
-  return { themeConfig: { footerVersion } }
+  return { themeConfig: { footerVersion, showHeader } }
 }
 
 export const convertLinksToNavigationItem = (links: LinkSchema[]) =>
@@ -53,8 +60,8 @@ export const convertLinkGroupsToNavigationItems = (
 ): NavigationItem[] =>
   linkGroups.map(({ primaryLink, childrenLinks }) => {
     return {
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active: false,
       items: convertLinksToNavigationItem(childrenLinks),
     }

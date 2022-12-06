@@ -11,16 +11,14 @@ export const infoCardTitleContainer = style({
 })
 
 export const infoCardDataContainer = style({
+  display: 'grid',
+  gap: theme.spacing[2],
+
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      display: 'flex',
-      flexWrap: 'wrap',
+      gridTemplateColumns: '1fr 1fr',
     },
   },
-})
-
-export const infoCardData = style({
-  flex: '50%',
 })
 
 export const infoCardDefendant = style({

@@ -8,6 +8,7 @@ FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as build
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
 ADD infra/package.json infra/yarn.lock /app/infra/
+COPY .yarn/ ./.yarn
 WORKDIR /app/infra
 RUN yarn install --immutable
 

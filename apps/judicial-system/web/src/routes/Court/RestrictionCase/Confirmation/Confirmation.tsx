@@ -15,6 +15,7 @@ import {
   FormContext,
   useRequestRulingSignature,
   SigningModal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
@@ -26,15 +27,12 @@ import {
   completedCaseStates,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  core,
-  rcConfirmation as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { confirmation as strings } from './Confirmation.strings'
 
 export const Confirmation: React.FC = () => {
   const {
@@ -93,7 +91,7 @@ export const Confirmation: React.FC = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Yfirlit úrskurðar
+            {formatMessage(strings.title)}
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
@@ -108,7 +106,7 @@ export const Confirmation: React.FC = () => {
           <BlueBox>
             <Box marginBottom={2} textAlign="center">
               <Text as="h3" variant="h3">
-                {formatMessage(m.sections.conclusion.title)}
+                {formatMessage(strings.conclusionTitle)}
               </Text>
             </Box>
             <Box marginBottom={3}>
@@ -142,14 +140,14 @@ export const Confirmation: React.FC = () => {
           nextUrl={constants.CASES_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
-              ? m.footer.accepting.continueButtonText
+              ? strings.continueButtonTextAccepting
               : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-              ? m.footer.acceptingPartially.continueButtonText
+              ? strings.continueButtonTextAcceptingPartially
               : workingCase.decision === CaseDecision.REJECTING
-              ? m.footer.rejecting.continueButtonText
+              ? strings.continueButtonTextRejecting
               : workingCase.decision === CaseDecision.DISMISSING
-              ? m.footer.dismissing.continueButtonText
-              : m.footer.acceptingAlternativeTravelBan.continueButtonText,
+              ? strings.continueButtonTextDismissing
+              : strings.continueButtonTextAcceptingAlternativeTravelBan,
           )}
           nextButtonIcon={
             isAcceptingCaseDecision(workingCase.decision) ||

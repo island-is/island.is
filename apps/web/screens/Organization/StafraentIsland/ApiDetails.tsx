@@ -87,10 +87,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === cataloguePath ||
+        primaryLink?.url === cataloguePath ||
         childrenLinks.some((link) => link.url === cataloguePath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -105,6 +105,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       <OrganizationWrapper
         pageTitle={service.title ?? ''}
         organizationPage={organizationPage}
+        showReadSpeaker={false}
         breadcrumbItems={[
           {
             title: 'Ísland.is',

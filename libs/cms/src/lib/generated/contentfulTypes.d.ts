@@ -2156,6 +2156,9 @@ export interface IOrganizationFields {
 
   /** Shows up on the organizations page */
   showsUpOnTheOrganizationsPage?: boolean | undefined
+
+  /** Has A Landing Page */
+  hasALandingPage?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2201,6 +2204,7 @@ export interface IOrganizationPageFields {
     | 'rikislogmadur'
     | 'landskjorstjorn'
     | 'landing_page'
+    | 'fjarsysla-rikisins'
 
   /** Slices */
   slices?:
@@ -2460,6 +2464,15 @@ export interface IPowerBiSliceFields {
 
   /** Config */
   config: Record<string, any>
+
+  /** Workspace ID */
+  workSpaceId?: string | undefined
+
+  /** Report ID */
+  reportId?: string | undefined
+
+  /** Owner */
+  owner?: 'Fiskistofa' | undefined
 }
 
 /** A Slice that embeds a Power BI report */
@@ -2490,6 +2503,7 @@ export interface IProcessEntryFields {
     | 'Leyfisveitingagatt'
     | 'Drop and sign'
     | 'Paper'
+    | 'Ísland.is mínar síður'
 
   /** Process title */
   processTitle: string
@@ -2538,7 +2552,7 @@ export interface IProjectPageFields {
     | 'election'
     | 'ukraine'
     | 'opinbernyskopun'
-    | 'maelabord-fiskistofu'
+    | 'gagnasidur-fiskistofu'
 
   /** Sidebar */
   sidebar: boolean

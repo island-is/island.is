@@ -56,9 +56,7 @@ describe('PoliceController - Get all', () => {
     it('should request police files for the correct case', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringMatching(
-          new RegExp(
-            `.*/api/Rettarvarsla/GetDocumentListById/${originalAncestorCaseId}`,
-          ),
+          new RegExp(`.*/GetDocumentListById/${originalAncestorCaseId}`),
         ),
         expect.anything(),
       )
@@ -107,7 +105,7 @@ describe('PoliceController - Get all', () => {
     it('should throw not found exception', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(
-        `No police case files found for case ${originalAncestorCaseId}`,
+        `Police case does not exist ${originalAncestorCaseId}`,
       )
     })
   })

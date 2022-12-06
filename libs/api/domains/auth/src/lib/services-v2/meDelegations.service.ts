@@ -36,7 +36,8 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       user,
     ).meDelegationsControllerFindAll({
       domain: input.domain ?? undefined,
-      direction: MeDelegationsControllerFindAllDirectionEnum.outgoing,
+      direction:
+        input.direction ?? MeDelegationsControllerFindAllDirectionEnum.outgoing,
       validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
     })
     return delegations.map(this.includeDomainNameInScopes)

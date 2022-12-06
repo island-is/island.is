@@ -1,6 +1,14 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../support/utils'
 import { session } from '../../../support/session'
+import {
+  DefaultStub,
+  HttpMethod,
+  Imposter,
+  Mountebank,
+  Proxy,
+  ProxyMode,
+} from '@anev/ts-mountebank'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -34,6 +42,7 @@ test.describe('Front page', () => {
     { lang: 'en', home: '/en' },
   ]) {
     test(`should have life event @lang:${lang}`, async () => {
+      test.slow()
       const page = await context.newPage()
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
@@ -51,6 +60,7 @@ test.describe('Front page', () => {
       }
     })
     test(`should navigate to featured link @lang:${lang}`, async () => {
+      test.slow()
       const page = await context.newPage()
       await page.goto(home)
       const featuredLinks = page.locator('[data-testid="featured-link"]')
@@ -70,6 +80,7 @@ test.describe('Front page', () => {
     })
 
     test(`should have link on life events pages to navigate back to the main page @lang:${lang}`, async () => {
+      test.slow()
       const page = await context.newPage()
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')

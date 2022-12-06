@@ -4,7 +4,10 @@ export * from './lib/EmbeddedVideo/EmbeddedVideo'
 export * from './lib/Hyperlink/Hyperlink'
 export * from './lib/RichText/RichText'
 export * from './lib/RichTextRC/RichText'
-export * from './lib/Paragraph/Paragraph'
+export { defaultRenderComponentObject } from './lib/RichTextRC/defaultRenderComponents'
+export { defaultRenderMarkObject } from './lib/RichTextRC/defaultRenderMark'
+export { defaultRenderNodeObject } from './lib/RichTextRC/defaultRenderNode'
+export { renderConnectedComponent } from './lib/RichTextRC/defaultRenderComponents'
 export {
   ProcessEntryLinkButton,
   ProcessEntry,

@@ -7,7 +7,7 @@ import {
 
 const prosecutorFields: (keyof UpdateCase)[] = [
   'type',
-  'indictmentSubType',
+  'indictmentSubtypes',
   'description',
   'policeCaseNumbers',
   'defenderName',
@@ -40,11 +40,19 @@ const prosecutorFields: (keyof UpdateCase)[] = [
   'caseModifiedExplanation',
   'isolationToDate',
   'caseResentExplanation',
+  'crimeScenes',
 ]
 
 // Allows prosecutors to update a specific set of fields
 export const prosecutorUpdateRule = {
   role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD,
+  dtoFields: prosecutorFields,
+} as RolesRule
+
+// Allows representatives to update a specific set of fields
+export const representativeUpdateRule = {
+  role: UserRole.REPRESENTATIVE,
   type: RulesType.FIELD,
   dtoFields: prosecutorFields,
 } as RolesRule
@@ -123,6 +131,18 @@ export const staffUpdateRule = {
 // Allows prosecutors to open, submit and delete cases
 export const prosecutorTransitionRule = {
   role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.OPEN,
+    CaseTransition.SUBMIT,
+    CaseTransition.DELETE,
+  ],
+} as RolesRule
+
+// Allows representatives to open, submit and delete cases
+export const representativeTransitionRule = {
+  role: UserRole.REPRESENTATIVE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [

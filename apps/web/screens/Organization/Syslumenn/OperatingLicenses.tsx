@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, useRef, useReducer } from 'react'
+import { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
   AlertMessage,
@@ -28,17 +28,19 @@ import {
   GET_OPERATING_LICENSES_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationWrapper,
   OperatingLicensesCsvExport,
+  Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -233,6 +235,10 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   subpage,
   namespace,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
@@ -245,9 +251,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: pageUrl === primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
+      active: pageUrl === primaryLink?.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -324,6 +330,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       pageFeaturedImage={subpage.featuredImage}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -339,12 +346,15 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={2}>
+      <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 2}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
+        {isWebReaderEnabledForOrganizationPages && (
+          <Webreader readId={null} readClass="rs_read" />
+        )}
       </Box>
-      {richText(subpage.description as SliceType[])}
+      {webRichText(subpage.description as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"

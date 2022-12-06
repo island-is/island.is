@@ -7,6 +7,7 @@ import {
   buildForm,
   buildMultiField,
   buildRadioField,
+  buildSelectField,
   buildSection,
   buildSubmitField,
   buildSubSection,
@@ -18,15 +19,13 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { isEligibleForParentalLeave } from '../lib/parentalLeaveUtils'
 import {
-  NO,
-  YES,
-  ParentalRelations,
-  PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-} from '../constants'
+  isEligibleForParentalLeave,
+  getSelectedChild,
+  getApplicationAnswers,
+} from '../lib/parentalLeaveUtils'
+import { NO, YES, ParentalRelations } from '../constants'
+import { defaultMultipleBirthsMonths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -34,7 +33,7 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'ParentalLeavePrerequisites',
   title: parentalLeaveFormMessages.shared.formTitle,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'prerequisites',
@@ -258,39 +257,18 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'applicationType',
           title: parentalLeaveFormMessages.shared.applicationTypeTitle,
           children: [
-            buildRadioField({
-              id: 'applicationType.option',
+            buildMultiField({
+              id: 'applicationTypes',
               title: parentalLeaveFormMessages.shared.applicationTypeTitle,
               description:
                 parentalLeaveFormMessages.shared
                   .applicationParentalLeaveDescription,
-              options: [
-                {
-                  value: PARENTAL_LEAVE,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalLeaveTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalLeaveSubTitle.defaultMessage as string,
-                },
-                {
-                  value: PARENTAL_GRANT,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalGrantUnemployedTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalGrantUnemployedSubTitle
-                    .defaultMessage as string,
-                },
-                {
-                  value: PARENTAL_GRANT_STUDENTS,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalGrantStudentTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalGrantStudentSubTitle
-                    .defaultMessage as string,
-                },
+              children: [
+                buildCustomField({
+                  component: 'ApplicationType',
+                  id: 'applicationType.option',
+                  title: '',
+                }),
               ],
             }),
           ],
@@ -358,6 +336,38 @@ export const PrerequisitesForm: Form = buildForm({
                   id: 'selectedChild',
                   title: parentalLeaveFormMessages.selectChild.screenTitle,
                   component: 'ChildSelector',
+                }),
+                buildCustomField({
+                  component: 'HasMultipleBirths',
+                  id: 'multipleBirths.hasMultipleBirths',
+                  title:
+                    parentalLeaveFormMessages.selectChild.multipleBirthsName,
+                  description:
+                    parentalLeaveFormMessages.selectChild
+                      .multipleBirthsDescription,
+                  condition: (answers, externalData) =>
+                    !!answers.selectedChild &&
+                    getSelectedChild(answers, externalData)
+                      ?.parentalRelation === ParentalRelations.primary,
+                }),
+                buildSelectField({
+                  id: 'multipleBirths.multipleBirths',
+                  title: parentalLeaveFormMessages.selectChild.multipleBirths,
+                  options: new Array(defaultMultipleBirthsMonths)
+                    .fill(0)
+                    .map((_, index) => ({
+                      value: `${index + 2}`,
+                      label: `${index + 2}`,
+                    })),
+                  width: 'half',
+                  condition: (answers, externalData) => {
+                    const selectedChild =
+                      getSelectedChild(answers, externalData)
+                        ?.parentalRelation === ParentalRelations.primary
+                    const { hasMultipleBirths } = getApplicationAnswers(answers)
+
+                    return hasMultipleBirths === YES && selectedChild
+                  },
                 }),
                 buildSubmitField({
                   id: 'toDraft',
