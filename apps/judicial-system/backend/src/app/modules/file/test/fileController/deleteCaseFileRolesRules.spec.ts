@@ -1,9 +1,4 @@
-import {
-  judgeRule,
-  prosecutorRule,
-  registrarRule,
-  representativeRule,
-} from '../../../../guards'
+import { prosecutorRule, representativeRule } from '../../../../guards'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Delete case file rules', () => {
@@ -17,14 +12,12 @@ describe('FileController - Delete case file rules', () => {
     )
   })
 
-  it('should give permission to four role', () => {
-    expect(rules).toHaveLength(4)
+  it('should give permission to two role', () => {
+    expect(rules).toHaveLength(2)
   })
 
-  it('should give permission to prosecutors, representatives, judges and registrars', () => {
+  it('should give permission to prosecutors and representatives', () => {
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(representativeRule)
-    expect(rules).toContain(judgeRule)
-    expect(rules).toContain(registrarRule)
   })
 })
