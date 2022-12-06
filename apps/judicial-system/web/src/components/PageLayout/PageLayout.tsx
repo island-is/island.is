@@ -1,5 +1,6 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   Box,
@@ -23,7 +24,8 @@ import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
-import { StepContext } from '../StepProvider/StepProvider'
+import StepProvider, { StepContext } from '../StepProvider/StepProvider'
+import { hashString } from '../../utils/formatters'
 
 interface PageProps {
   children: ReactNode
@@ -49,6 +51,10 @@ const PageLayout: React.FC<PageProps> = ({
   const flows = useContext(StepContext)
   const { getSections } = useSections()
   const { formatMessage } = useIntl()
+  const router = useRouter()
+  const { pathname } = router
+  const stepIdentifier = pathname.slice(0, pathname.lastIndexOf('['))
+  const stepHash = hashString(stepIdentifier)
 
   useEffect(() => {
     window.scrollTo(0, 0)

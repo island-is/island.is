@@ -105,7 +105,10 @@ const useSections = () => {
                   (isDefendantStepValidForSidebarRC(workingCase) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     workingCase.state !== CaseState.NEW)
-                    ? () => flows.restrictionCases[0].onContinue()
+                    ? () =>
+                        flows.restrictionCases[
+                          constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
+                        ].onContinue()
                     : undefined,
               },
               {
@@ -118,7 +121,10 @@ const useSections = () => {
                   (isDefendantStepValidForSidebarRC(workingCase) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase))
-                    ? () => flows.restrictionCases[0].onContinue()
+                    ? () =>
+                        flows.restrictionCases[
+                          constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
+                        ].onContinue()
                     : undefined,
               },
               {

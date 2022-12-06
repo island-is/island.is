@@ -62,3 +62,10 @@ export const padTimeWithZero = (time: string): string => {
 export const enumerate = (values: string[], endWord: string): string => {
   return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
 }
+
+export const hashString = (str: string): number => {
+  return str.split('').reduce(function (a, b) {
+    a = (a << 5) - a + b.charCodeAt(0)
+    return a & a
+  }, 0)
+}

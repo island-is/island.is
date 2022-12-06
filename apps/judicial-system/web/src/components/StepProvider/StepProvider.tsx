@@ -6,15 +6,25 @@ import * as constants from '@island.is/judicial-system/consts'
 import { FormContext } from '../FormProvider/FormProvider'
 
 export interface Flows {
-  restrictionCases: { onContinue: () => Promise<boolean> }[]
+  restrictionCases: {
+    [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
+      onContinue: () => Promise<boolean>
+    }
+    [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
+      onContinue: () => Promise<boolean>
+    }
+  }
 }
 
 export const StepContext = createContext<Flows>({
-  restrictionCases: [
-    {
+  restrictionCases: {
+    [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
       onContinue: () => new Promise((resolve) => resolve(true)),
     },
-  ],
+    [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
+      onContinue: () => new Promise((resolve) => resolve(true)),
+    },
+  },
 })
 
 const StepProvider: React.FC = ({ children }) => {
@@ -22,14 +32,20 @@ const StepProvider: React.FC = ({ children }) => {
   const { workingCase } = useContext(FormContext)
 
   const flows: Flows = {
-    restrictionCases: [
-      {
+    restrictionCases: {
+      [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
         onContinue: () =>
           router.push(
             `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`,
           ),
       },
-    ],
+      [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
+        onContinue: () =>
+          router.push(
+            `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`,
+          ),
+      },
+    },
   }
 
   return <StepContext.Provider value={flows}>{children}</StepContext.Provider>
