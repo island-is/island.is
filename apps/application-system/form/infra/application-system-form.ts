@@ -7,6 +7,13 @@ export const serviceSetup = (_services: {}): ServiceBuilder<'application-system-
     .readiness('/readiness')
     .env({
       BASEPATH: '/umsoknir',
+      VMST_ID: '/k8s/application-system/VMST_ID',
+      SI_PUBLIC_GRAPHQL_PATH: {
+        dev: '',
+        prod: '',
+        staging: '',
+        local: ref((h) => `http://${h.svc(services.api)}`),
+      },
       SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -18,7 +25,6 @@ export const serviceSetup = (_services: {}): ServiceBuilder<'application-system-
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
-      VMST_ID: '/k8s/application-system/VMST_ID',
     })
     .ingress({
       primary: {
