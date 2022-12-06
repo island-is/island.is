@@ -1,6 +1,6 @@
 # 400 500 Template API Error
 
-The server will not process the request due to various reasons provided by the applicaiton template api being requested.
+The server will not process the request due to various reasons provided by the application template api being requested.
 The client can try again after fixing the indicated validation issues.
 
 ## Extra metadata
