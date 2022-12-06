@@ -47,3 +47,15 @@ export const registrarNotificationRule = {
     NotificationType.DEFENDER_ASSIGNED,
   ],
 } as RolesRule
+
+// Allows assistants to send notifications
+export const assistantNotificationRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'type',
+  dtoFieldValues: [
+    NotificationType.RECEIVED_BY_COURT,
+    NotificationType.COURT_DATE,
+    NotificationType.DEFENDER_ASSIGNED,
+  ],
+} as RolesRule

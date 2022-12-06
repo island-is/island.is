@@ -9,7 +9,7 @@ import {
   Case,
   CaseState,
   completedCaseStates,
-  courtRoles,
+  isCourtRole,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -41,7 +41,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
       user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
     const canCourtRoleOpen =
-      courtRoles.includes(user.role) &&
+      isCourtRole(user.role) &&
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
@@ -57,7 +57,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
     const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
 
     const canCourtRoleUpload =
-      courtRoles.includes(user.role) &&
+      isCourtRole(user.role) &&
       [CaseState.RECEIVED, ...completedCaseStates].includes(workingCase.state)
 
     return !isAppealGracePeriodExpired && canCourtRoleUpload

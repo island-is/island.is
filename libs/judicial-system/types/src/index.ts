@@ -41,6 +41,8 @@ export {
   isProsecutionRole,
   courtRoles,
   isCourtRole,
+  extendedCourtRoles,
+  isExtendedCourtRole,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 

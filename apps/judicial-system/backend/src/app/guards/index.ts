@@ -3,6 +3,7 @@ export {
   representativeRule,
   judgeRule,
   registrarRule,
+  assistantRule,
   staffRule,
   adminRule,
   defenderRule,

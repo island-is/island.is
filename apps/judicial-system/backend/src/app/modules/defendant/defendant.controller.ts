@@ -23,6 +23,7 @@ import {
   prosecutorRule,
   registrarRule,
   representativeRule,
+  assistantRule,
 } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
@@ -58,7 +59,13 @@ export class DefendantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
-  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Put(':defendantId')
   @ApiOkResponse({
     type: Defendant,

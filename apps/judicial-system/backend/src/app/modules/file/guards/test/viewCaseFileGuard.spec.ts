@@ -72,6 +72,11 @@ describe('View Case File Guard', () => {
     ${UserRole.JUDGE} | ${CaseState.ACCEPTED}
     ${UserRole.JUDGE} | ${CaseState.REJECTED}
     ${UserRole.JUDGE} | ${CaseState.DISMISSED}
+    ${UserRole.ASSISTANT} | ${CaseState.SUBMITTED}
+    ${UserRole.ASSISTANT} | ${CaseState.RECEIVED}
+    ${UserRole.ASSISTANT} | ${CaseState.ACCEPTED}
+    ${UserRole.ASSISTANT} | ${CaseState.REJECTED}
+    ${UserRole.ASSISTANT} | ${CaseState.DISMISSED}
   `.describe(
     'registrars and judges can view case files of completed cases',
     ({ role, state }) => {
@@ -97,6 +102,8 @@ describe('View Case File Guard', () => {
     ${UserRole.REGISTRAR} | ${CaseState.DRAFT}
     ${UserRole.JUDGE} | ${CaseState.NEW}
     ${UserRole.JUDGE} | ${CaseState.DRAFT}
+    ${UserRole.ASSISTANT} | ${CaseState.NEW}
+    ${UserRole.ASSISTANT} | ${CaseState.DRAFT}
   `.describe(
     'registrars and judges can not view case files of unreceived cases',
     ({ role, state }) => {

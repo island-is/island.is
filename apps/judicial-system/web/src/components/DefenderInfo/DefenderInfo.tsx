@@ -57,7 +57,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
     if (
       isRestrictionCase(workingCase.type) &&
       user?.role &&
-      isCourtRole(user?.role)
+      isCourtRole(user.role)
     ) {
       return (
         <Tooltip
@@ -68,7 +68,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
     } else if (
       isInvestigationCase(workingCase.type) &&
       user?.role &&
-      isCourtRole(user?.role)
+      isCourtRole(user.role)
     ) {
       return (
         <Tooltip
