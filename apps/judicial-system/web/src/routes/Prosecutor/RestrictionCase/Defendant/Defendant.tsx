@@ -41,19 +41,19 @@ import {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
 } from '../../components'
+import { StepContext } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export const StepOne: React.FC = () => {
-  const [
-    leadInvestigatorErrorMessage,
-    setLeadInvestigatorErrorMessage,
-  ] = useState<string>('')
-
   const {
     workingCase,
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const [
+    leadInvestigatorErrorMessage,
+    setLeadInvestigatorErrorMessage,
+  ] = useState<string>('')
   const { isCreatingCase, updateCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
@@ -61,6 +61,9 @@ export const StepOne: React.FC = () => {
   const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
     workingCase,
   )
+  const { onContinue, isValid } = useContext(StepContext).restrictionCases[
+    constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
+  ]
 
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {
@@ -206,9 +209,8 @@ export const StepOne: React.FC = () => {
             <FormFooter
               previousUrl={constants.CASES_ROUTE}
               nextIsLoading={isCreatingCase}
-              nextIsDisabled={
-                !isDefendantStepValidRC(workingCase, clientPoliceNumbers)
-              }
+              nextIsDisabled={!isValid}
+              onNextButtonClick={onContinue}
               nextButtonText={formatMessage(
                 workingCase.id === '' ? core.createCase : core.continue,
               )}

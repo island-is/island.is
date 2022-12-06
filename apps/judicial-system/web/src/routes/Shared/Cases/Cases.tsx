@@ -39,6 +39,7 @@ import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
+import { StepContext } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 const SectionTitle: React.FC = ({ children }) => {
   return (
@@ -63,6 +64,7 @@ export const Cases: React.FC = () => {
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
+  const flows = useContext(StepContext)
   const { features } = useContext(FeatureContext)
   const {
     findLastValidStep,
@@ -178,7 +180,7 @@ export const Cases: React.FC = () => {
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
-          getRestrictionCaseProsecutorSection(caseToOpen, user),
+          getRestrictionCaseProsecutorSection(flows, caseToOpen, user),
         ).href
       } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(

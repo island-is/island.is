@@ -89,10 +89,9 @@ const useSections = () => {
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
-                onClick: isDefendantStepValidRC(
-                  workingCase,
-                  workingCase.policeCaseNumbers,
-                )
+                onClick: flows.restrictionCases[
+                  constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
+                ].isValid
                   ? () =>
                       flows.restrictionCases[
                         constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE

@@ -7,11 +7,13 @@ import { FormContext } from '../FormProvider/FormProvider'
 import * as navigationHandlers from './navigationHandlers'
 import { useCase } from '../../utils/hooks'
 import useDefendants from '../../utils/hooks/useDefendants'
+import { isDefendantStepValidRC } from '../../utils/validate'
 
 export interface Flows {
   restrictionCases: {
     [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
       onContinue: () => Promise<void>
+      isValid: boolean
     }
     [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
       onContinue: () => Promise<boolean>
@@ -26,6 +28,7 @@ export const StepContext = createContext<Flows>({
   restrictionCases: {
     [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
       onContinue: () => new Promise((resolve) => resolve()),
+      isValid: false,
     },
     [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
       onContinue: () => new Promise((resolve) => resolve(true)),
@@ -52,6 +55,10 @@ const StepProvider: React.FC = ({ children }) => {
             createCase,
             updateDefendant,
           ),
+        isValid: isDefendantStepValidRC(
+          workingCase,
+          workingCase.policeCaseNumbers,
+        ),
       },
       [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
         onContinue: () =>
