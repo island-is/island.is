@@ -97,6 +97,14 @@ export function TabSettings() {
         nationalId
         locale
         documentNotifications
+        mobilePhoneNumber
+        mobileStatus
+        email
+        emailStatus
+        bankInfo
+        modified
+        canNudge
+        modified
       }
     }
   `
@@ -188,6 +196,30 @@ export function TabSettings() {
         hideIcon
       />
       <View style={{ height: 32 }} />
+        <TableViewGroup
+          header={intl.formatMessage({
+            id: 'settings.usersettings.groupTitle',
+          })}
+        >
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.usersettings.telephone',
+            })}
+            subtitle={userProfile.data?.getUserProfile?.mobilePhoneNumber ?? '-'}
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.usersettings.email',
+            })}
+            subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.usersettings.bankinfo',
+            })}
+            subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
+          />
+      </TableViewGroup>
       <TableViewGroup
         header={intl.formatMessage({
           id: 'settings.communication.groupTitle',

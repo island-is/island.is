@@ -142,7 +142,13 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          includedTypes: [GenericLicenseType.DriversLicense, GenericLicenseType.AdrLicense, GenericLicenseType.MachineLicense, GenericLicenseType.FirearmLicense]
+          includedTypes: [
+            GenericLicenseType.DriversLicense,
+            GenericLicenseType.AdrLicense,
+            GenericLicenseType.MachineLicense,
+            GenericLicenseType.FirearmLicense,
+            GenericLicenseType.DisabilityLicense
+          ]
         }
       }
     },

@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { EmptyList, Skeleton, TopLine, VehicleCard } from "@island.is/island-ui-native";
 import React, { useCallback, useRef, useState } from 'react'
-import { Animated, FlatList, Image, RefreshControl, SafeAreaView, Text, TouchableHighlight, View } from "react-native";
+import { Animated, FlatList, Image, RefreshControl, SafeAreaView, TouchableHighlight, View } from "react-native";
 import { NavigationFunctionComponent } from "react-native-navigation";
 import { GET_USERS_VEHICLES } from "../../graphql/queries/get-users-vehicles.query";
 import { client } from '../../graphql/client'
@@ -12,9 +12,22 @@ import illustrationSrc from '../../assets/illustrations/moving.png'
 import { BottomTabsIndicator } from "../../components/bottom-tabs-indicator/bottom-tabs-indicator";
 import { navigateTo } from "../../lib/deep-linking";
 import { translateType } from "./vehicles-mapper";
+import { useThemedNavigationOptions } from "../../hooks/use-themed-navigation-options";
 
-  const WalletItem = React.memo(({ item }: { item: any }) => {
-    console.log(item, 'item')
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = useThemedNavigationOptions(
+  (theme, intl) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({ id: 'vehicles.screenTitle' }),
+      },
+    },
+  }),
+)
+
+  const VehicleItem = React.memo(({ item }: { item: any }) => {
     const theme = useTheme()
     const nextInspection = item?.nextInspection?.nextInspectionDate ? new Date(item?.nextInspection.nextInspectionDate) : null;
     const vehicleCode = item.vehGroup?.split('(')[1]?.split(')')[0] ?? 'AA' // type from vehgroup = "Vörubifreið II (N3)" = N3 otherwise AA is default
@@ -45,6 +58,7 @@ import { translateType } from "./vehicles-mapper";
 )
 
 export const VehiclesScreen: NavigationFunctionComponent = ({ componentId }) => {
+  useNavigationOptions(componentId)
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
   const intl = useIntl()
@@ -52,9 +66,8 @@ export const VehiclesScreen: NavigationFunctionComponent = ({ componentId }) => 
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<number>()
   const vehiclesRes = useQuery(GET_USERS_VEHICLES, { client, fetchPolicy: 'cache-first' });
-  const isSkeleton = vehiclesRes.loading && !vehiclesRes.data
+  const isSkeleton = vehiclesRes?.loading && !vehiclesRes?.data
 
-  console.log(vehiclesRes, 'vehiclesRes')
   const vehicleList = vehiclesRes?.data?.vehiclesList?.vehicleList || [];
 
   const onRefresh = useCallback(() => {
@@ -78,7 +91,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({ componentId }) => 
     }
   }, [])
 
-  const renderItem = (({ item }) => {
+  const renderItem = (({ item }: { item: any }) => {
       if (item.type === 'skeleton') {
         return (
           <View style={{ paddingHorizontal: 16 }}>
@@ -113,7 +126,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({ componentId }) => 
         )
       }
 
-      return <WalletItem item={item} />
+      return <VehicleItem item={item} />
     }
   );
 
@@ -168,3 +181,5 @@ export const VehiclesScreen: NavigationFunctionComponent = ({ componentId }) => 
 
   )
 };
+
+VehiclesScreen.options = getNavigationOptions

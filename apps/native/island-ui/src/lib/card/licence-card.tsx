@@ -16,6 +16,8 @@ import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
 import LogoEnvironmentAgency from '../../assets/card/ust.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
+import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
+import DisabilityLicenseBg from '../../assets/card/ororka_bg.png'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
@@ -159,6 +161,12 @@ const LicenseCardPresets = {
     backgroundImage: BackgroundCovidCertificate,
     backgroundColor: '#D6CFD6',
   },
+  DisabilityLicense: {
+    title: 'Örorkuskírteini',
+    logo: DisabilityLicenseLogo,
+    backgroundImage: DisabilityLicenseBg,
+    backgroundColor: '#C5D5C8',
+  }
 }
 
 export type LicenseCardType = keyof typeof LicenseCardPresets

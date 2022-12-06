@@ -11,35 +11,50 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from "../../components/bottom-tabs-indicator/bottom-tabs-indicator";
 import { navigateTo } from "../../lib/deep-linking";
 import { GET_REAL_ESTATE_QUREY } from "../../graphql/queries/get-real-estate-query";
+import { useThemedNavigationOptions } from "../../hooks/use-themed-navigation-options";
 
-  const WalletItem = React.memo(({ item }: { item: any }) => {
-    const theme = useTheme()
-
-    return (
-      <View style={{ paddingHorizontal: 16 }}>
-        <TouchableHighlight
-          underlayColor={theme.shade.shade100}
-          style={{ marginBottom: 16, borderRadius: 16 }}
-          onPress={() => {
-            navigateTo(`/asset/${item.propertyNumber}`, {
-              item,
-            })
-          }}
-        >
-          <SafeAreaView>
-            <AssetCard
-              address={item?.defaultAddress?.displayShort}
-              city={`${item?.defaultAddress?.postNumber} ${item?.defaultAddress?.municipality}`}
-              number={item?.propertyNumber}
-            />
-          </SafeAreaView>
-        </TouchableHighlight>
-      </View>
-    );
-  }
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = useThemedNavigationOptions(
+  (theme, intl) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({ id: 'assetsOvervies.screenTitle' }),
+      },
+    },
+  }),
 )
 
+const AssetItem = React.memo(({ item }: { item: any }) => {
+  const theme = useTheme()
+  const postNumber = item?.defaultAddress?.postNumber !== null ? item?.defaultAddress?.postNumber : '';
+
+  return (
+    <View style={{ paddingHorizontal: 16 }}>
+      <TouchableHighlight
+        underlayColor={theme.shade.shade100}
+        style={{ marginBottom: 16, borderRadius: 16 }}
+        onPress={() => {
+          navigateTo(`/asset/${item.propertyNumber}`, {
+            item,
+          })
+        }}
+      >
+        <SafeAreaView>
+          <AssetCard
+            address={item?.defaultAddress?.displayShort}
+            city={`${postNumber} ${item?.defaultAddress?.municipality}`}
+            number={item?.propertyNumber}
+          />
+        </SafeAreaView>
+      </TouchableHighlight>
+    </View>
+  );
+})
+
 export const AssetsOverviewScreen: NavigationFunctionComponent = ({ componentId }) => {
+  useNavigationOptions(componentId)
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
   const intl = useIntl()
@@ -58,7 +73,6 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({ componentId 
   });
 
   const isSkeleton = assetsRes.loading && !assetsRes.data
-
   const assetsList = assetsRes?.data?.assetsOverview?.properties || [];
 
   const onRefresh = useCallback(() => {
@@ -117,7 +131,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({ componentId 
   }
 
 
-  const renderItem = (({ item }) => {
+  const renderItem = (({ item }: { item: any }) => {
       if (item.type === 'skeleton') {
         return (
           <View style={{ paddingHorizontal: 16 }}>
@@ -152,7 +166,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({ componentId 
         )
       }
 
-      return <WalletItem item={item} />
+      return <AssetItem item={item} />
     }
   );
 
@@ -206,6 +220,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({ componentId 
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={2} total={3} />
     </>
-
   )
 };
+
+AssetsOverviewScreen.options = getNavigationOptions

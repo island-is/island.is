@@ -11,13 +11,6 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
       appraisal {
         ...Appraisal
       }
-      land {
-        landNumber
-        landAppraisal
-        useDisplay
-        area
-        areaUnit
-      }
       unitsOfUse {
         unitsOfUse {
           ...unitsOfUse

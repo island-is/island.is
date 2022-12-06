@@ -64,6 +64,10 @@ export const en: TranslatedMessages = {
   'settings.accessibilityLayout.language': 'Language',
   'settings.accessibilityLayout.sytemDarkMode': 'Use system appearance',
   'settings.accessibilityLayout.darkMode': 'Dark mode',
+  'settings.usersettings.groupTitle': 'My settings',
+  'settings.usersettings.telephone': 'Telephone',
+  'settings.usersettings.email': 'Email',
+  'settings.usersettings.bankinfo': 'Bank info',
   'settings.communication.groupTitle': 'Notifications and communication',
   'settings.communication.newDocumentsNotifications':
     'Get notifications of new documents',
@@ -225,6 +229,7 @@ export const en: TranslatedMessages = {
   'profile.assets': 'Assets',
 
   // vehicles
+  'vehicles.screenTitle': 'Vehicles',
   'vehicles.emptyListTitle': 'No vehicles found for the user',
   'vehicles.emptyListDescription': 'Vehicles registered to you will appear here.',
 
@@ -249,6 +254,7 @@ export const en: TranslatedMessages = {
   'vehicleDetail.vehicleWeight': 'Vehicle weight',
 
   // assets overview
+  'assetsOvervies.screenTitle': 'Assets',
   'assetsOverview.emptyListTitle': 'No assets found for the user',
   'assetsOverview.emptyListDescription': 'Assets registered to you will appear here.',
 

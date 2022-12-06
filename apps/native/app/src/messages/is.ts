@@ -62,6 +62,10 @@ export const is = {
   'settings.accessibilityLayout.language': 'Tungumál',
   'settings.accessibilityLayout.sytemDarkMode': 'Nota útlit stýrikerfis',
   'settings.accessibilityLayout.darkMode': 'Nota dökkt útlit',
+  'settings.usersettings.groupTitle': 'Stillingar notanda',
+  'settings.usersettings.telephone': 'Símanúmer',
+  'settings.usersettings.email': 'Netfang',
+  'settings.usersettings.bankinfo': 'Reikningsnúmer',
   'settings.communication.groupTitle': 'Tilkynningar og samskipti',
   'settings.communication.newDocumentsNotifications':
     'Fá tilkynningar um ný skjöl',
@@ -164,6 +168,7 @@ export const is = {
   'profile.assets': 'Fasteignir',
 
   // vehicles
+  'vehicles.screenTitle': 'Ökutæki',
   'vehicles.emptyListTitle': 'Engin ökutæki finnast fyrir notanda',
   'vehicles.emptyListDescription': 'Ökutæki sem eru skráð á þig munu birtast hér.',
 
@@ -188,6 +193,7 @@ export const is = {
   'vehicleDetail.vehicleWeight': 'Eigin þyngd',
 
   // assets overview
+  'assetsOvervies.screenTitle': 'Fasteignir',
   'assetsOverview.emptyListTitle': 'Engar fasteignir finnast fyrir notanda',
   'assetsOverview.emptyListDescription': 'Fasteignir sem skráðar eru á þig munu birtast hér.',
 

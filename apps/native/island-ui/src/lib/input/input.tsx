@@ -41,7 +41,7 @@ const Value = styled.Text<{ size?: 'normal' | 'big' }>`
 
 interface InputProps {
   label: string
-  value?: string | React.ReactNode
+  value?: string
   loading?: boolean
   error?: boolean
   valueTestID?: string
@@ -60,7 +60,7 @@ export function Input({
   size = 'normal',
   isCompact = false,
 }: InputProps) {
-  console.log(value)
+  const tvalue = value !== undefined && typeof(value) === 'string' && value.trim();
   return (
     <Host noBorder={noBorder}>
       <Content isCompact={isCompact}>
@@ -68,7 +68,7 @@ export function Input({
         {loading || error ? (
           <Skeleton active={loading} error={error} />
         ) : (
-          <Value testID={valueTestID} size={size}>{value ?? ''}</Value>
+          <Value testID={valueTestID} size={size}>{tvalue === '' || !value ? '-' : value}</Value>
         )}
       </Content>
     </Host>

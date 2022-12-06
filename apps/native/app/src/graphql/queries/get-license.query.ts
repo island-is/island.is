@@ -25,6 +25,7 @@ export enum GenericLicenseType {
   AdrLicense = 'AdrLicense',
   FirearmLicense = 'FirearmLicense',
   HuntingLicense = 'HuntingLicense',
+  DisabilityLicense = 'DisabilityLicense',
 }
 
 export interface GetGenericLicenseInput {

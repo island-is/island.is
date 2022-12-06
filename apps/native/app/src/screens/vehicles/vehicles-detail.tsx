@@ -1,6 +1,6 @@
 import React from 'react'
-import { FormattedDate, useIntl } from 'react-intl';
-import { SafeAreaView, ScrollView, Text, View } from "react-native";
+import { useIntl } from 'react-intl';
+import { ScrollView, View } from "react-native";
 import { testIDs } from '../../utils/test-ids'
 import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
 import { Input, InputRow, NavigationBarSheet } from '@island.is/island-ui-native';
@@ -34,8 +34,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ item: any }> = (
       },
     },
   })
-
-  console.log(data, 'data details')
 
   const inspectionInfo = data?.vehiclesDetail?.inspectionInfo;
   const mainInfo = data?.vehiclesDetail?.mainInfo;
@@ -77,7 +75,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ item: any }> = (
               loading={isLoading}
               error={isError}
               label={intl.formatMessage({ id: 'vehicleDetail.firstReg' })}
-              value={<FormattedDate value={new Date(item.firstRegDate)} />}
+              value={intl.formatDate(new Date(item?.firstRegDate))}
             />
             <Input
               loading={isLoading}
@@ -87,22 +85,18 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ item: any }> = (
             />
           </InputRow>
           <InputRow>
-            {item?.nextInspection?.nextInspectionDate && (
-              <Input
-                loading={isLoading}
-                error={isError}
-                label={intl.formatMessage({ id: 'vehicleDetail.nextInspectionDate' })}
-                value={<FormattedDate value={new Date(item?.nextInspection?.nextInspectionDate)} />}
-              />
-            )}
-             {technicalInfo?.vehicleWeight && (
-              <Input
-                loading={isLoading}
-                error={isError}
-                label={intl.formatMessage({ id: 'vehicleDetail.vehicleWeight' })}
-                value={`${technicalInfo?.vehicleWeight} kg`}
-              />
-            )}
+            <Input
+              loading={isLoading}
+              error={isError}
+              label={intl.formatMessage({ id: 'vehicleDetail.nextInspectionDate' })}
+              value={item?.nextInspection?.nextInspectionDate ? intl.formatDate(new Date(item?.nextInspection?.nextInspectionDate)) : '-'}
+            />
+            <Input
+              loading={isLoading}
+              error={isError}
+              label={intl.formatMessage({ id: 'vehicleDetail.vehicleWeight' })}
+              value={`${technicalInfo?.vehicleWeight} kg`}
+            />
           </InputRow>
           {inspectionInfo && (
             <InputRow>
@@ -125,7 +119,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ item: any }> = (
           )}
 
           <InputRow>
-
             {mainInfo?.co2 && (
               <Input
                 loading={isLoading}

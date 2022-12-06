@@ -16,42 +16,6 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         trailerWithBrakesWeight
         trailerWithoutBrakesWeight
       }
-      basicInfo {
-        model
-        regno
-        subModel
-        permno
-        verno
-        year
-        country
-        preregDateYear
-        formerCountry
-        importStatus
-      }
-      registrationInfo {
-        firstRegistrationDate
-        preRegistrationDate
-        newRegistrationDate
-        vehicleGroup
-        color
-        reggroup
-        reggroupName
-        passengers
-        useGroup
-        driversPassengers
-        standingPassengers
-        plateLocation
-        specialName
-        plateStatus
-      }
-      currentOwnerInfo {
-        owner
-        nationalId
-        address
-        postalcode
-        city
-        dateOfPurchase
-      }
       inspectionInfo {
         type
         date
@@ -88,29 +52,6 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
           axle5
         }
       }
-      ownersInfo {
-        name
-        address
-        dateOfPurchase
-      }
-      coOwners {
-        nationalId
-        owner
-        address
-        postalcode
-        city
-        dateOfPurchase
-      }
-      operators {
-        nationalId
-        name
-        address
-        postalcode
-        city
-        startDate
-        endDate
-      }
-      downloadServiceURL
     }
   }
 `

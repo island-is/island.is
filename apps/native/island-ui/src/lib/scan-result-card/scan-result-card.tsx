@@ -14,6 +14,8 @@ import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
+import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
+import DisabilityLicenseBg from '../../assets/card/ororka_bg.png'
 import { useIntl } from 'react-intl'
 import { font } from '../../utils'
 import { LicenseCardType } from '../card/licence-card'
@@ -206,6 +208,12 @@ const ScanResultCardPresets = {
     logo: CoatOfArms,
     backgroundImage: BackgroundWeaponLicense,
     backgroundColor: '#EBEBF2',
+  },
+  DisabilityLicense: {
+    title: 'Örorkuskírteini',
+    logo: DisabilityLicenseLogo,
+    backgroundImage: DisabilityLicenseBg,
+    backgroundColor: '#C5D5C8',
   },
   Unknown: {
     title: 'Ekki þekkt',
