@@ -133,6 +133,12 @@ export class PaymentController {
       applicationId,
     )
 
+    if (!user.sub) {
+      throw new NotFoundException(
+        `user sub claim was not found for application id ${applicationId}`,
+      )
+    }
+
     if (!payment) {
       throw new NotFoundException(
         `payment object was not found for application id ${applicationId}`,
@@ -164,7 +170,7 @@ export class PaymentController {
       fulfilled: payment.fulfilled || false,
       paymentUrl: this.paymentService.makeDelegationPaymentUrl(
         payment.user4,
-        user.sub ?? user.nationalId,
+        user.sub,
         callbackUrl,
       ),
     }
