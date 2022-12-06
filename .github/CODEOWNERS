@@ -80,8 +80,9 @@
 
 /libs/clients/auth/                                                                                 @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
+/libs/portals/shared-modules/delegations                                                            @island-is/aranja
 /libs/service-portal/settings/access-control                                                        @island-is/aranja
-/libs/service-portal/access-control/delegations                                                     @island-is/aranja
+
 
 /apps/judicial-system/                                                                              @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                              @island-is/kolibri-justice-league

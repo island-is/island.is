@@ -1,5 +1,4 @@
 import fetch from 'isomorphic-fetch'
-
 import { Inject, Injectable } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -8,6 +7,7 @@ import {
   capitalize,
   caseTypes,
   formatDate,
+  readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 
@@ -44,7 +44,7 @@ const caseEvent = {
   ACCEPT_INDICTMENT: ':white_check_mark: Lokið',
   REJECT: ':negative_squared_cross_mark: Hafnað',
   DELETE: ':fire: Afturkallað',
-  SCHEDULE_COURT_DATE: ':timer_clock: Úthlutað fyrirtökutíma',
+  SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
 }
@@ -83,7 +83,14 @@ export class EventService {
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
           : caseEvent[event]
-      const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
+      const typeText = `${capitalize(
+        isIndictmentCase(theCase.type)
+          ? readableIndictmentSubtypes(
+              theCase.policeCaseNumbers,
+              theCase.indictmentSubtypes,
+            ).join(', ')
+          : caseTypes[theCase.type],
+      )} *${theCase.id}*`
       const prosecutionText = `${
         theCase.creatingProsecutor?.institution
           ? `${theCase.creatingProsecutor?.institution?.name} `
