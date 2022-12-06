@@ -54,7 +54,7 @@ const userSeeds = `[
   {
     "id": "a9506891-96cc-4c5d-ad14-eb2f2ef39bb7",
     "national_id": "0000007779",
-    "name": "Aðalheiður aðstoðardómari",
+    "name": "Aðalheiður aðstoðar",
     "title": "aðstoðarmaður dómara",
     "mobile_number": "7777777",
     "email": "adalheidur@dummy.dd",
