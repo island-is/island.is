@@ -223,6 +223,17 @@ export const Firearm = new XroadConf({
   },
 })
 
+// TODO: Get correct staging and prod values before release
+export const Disability = new XroadConf({
+  env: {
+    XROAD_DISABILITY_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
+      staging: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
+      prod: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
