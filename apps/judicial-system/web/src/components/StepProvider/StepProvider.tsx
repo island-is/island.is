@@ -5,6 +5,8 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { FormContext } from '../FormProvider/FormProvider'
 import * as navigationHandlers from './navigationHandlers'
+import { useCase } from '../../utils/hooks'
+import useDefendants from '../../utils/hooks/useDefendants'
 
 export interface Flows {
   restrictionCases: {
@@ -37,6 +39,8 @@ export const StepContext = createContext<Flows>({
 const StepProvider: React.FC = ({ children }) => {
   const router = useRouter()
   const { workingCase } = useContext(FormContext)
+  const { createCase } = useCase()
+  const { updateDefendant } = useDefendants()
 
   const flows: Flows = {
     restrictionCases: {
@@ -45,6 +49,8 @@ const StepProvider: React.FC = ({ children }) => {
           navigationHandlers.handleNavigateFromCreateRestrictionCase(
             router,
             workingCase,
+            createCase,
+            updateDefendant,
           ),
       },
       [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
