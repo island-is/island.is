@@ -13,9 +13,7 @@
   "paths": {
     "/v1/drivercards/{persidno}/newest": {
       "get": {
-        "tags": [
-          "DriverCardsApi"
-        ],
+        "tags": ["DriverCardsApi"],
         "parameters": [
           {
             "name": "persidno",
@@ -85,9 +83,7 @@
     },
     "/v1/drivercards": {
       "post": {
-        "tags": [
-          "DriverCardsApi"
-        ],
+        "tags": ["DriverCardsApi"],
         "requestBody": {
           "content": {
             "text/json": {
@@ -158,9 +154,7 @@
     },
     "/v1/drivercards/tachonetcheck": {
       "post": {
-        "tags": [
-          "DriverCardsApi"
-        ],
+        "tags": ["DriverCardsApi"],
         "requestBody": {
           "content": {
             "text/json": {
@@ -231,9 +225,7 @@
     },
     "/v1/individual/{persidno}/photoandsignature": {
       "get": {
-        "tags": [
-          "IndividualApi"
-        ],
+        "tags": ["IndividualApi"],
         "parameters": [
           {
             "name": "persidno",
@@ -302,25 +294,15 @@
   "components": {
     "schemas": {
       "CardIssueType": {
-        "enum": [
-          "Primary",
-          "Renewal",
-          "Reissue",
-          "Republication"
-        ],
+        "enum": ["Primary", "Renewal", "Reissue", "Republication"],
         "type": "string"
       },
       "CardTypeEnum": {
-        "enum": [
-          "DriverCard"
-        ],
+        "enum": ["DriverCard"],
         "type": "string"
       },
       "DeliveryMethodEnum": {
-        "enum": [
-          "Send",
-          "PickUp"
-        ],
+        "enum": ["Send", "PickUp"],
         "type": "string"
       },
       "DriverCardApplicationRequest": {
@@ -511,24 +493,15 @@
         "additionalProperties": false
       },
       "IsActiveEnum": {
-        "enum": [
-          "Yes",
-          "No"
-        ],
+        "enum": ["Yes", "No"],
         "type": "string"
       },
       "IsTemporaryEnum": {
-        "enum": [
-          "Yes",
-          "No"
-        ],
+        "enum": ["Yes", "No"],
         "type": "string"
       },
       "IsValidEnum": {
-        "enum": [
-          "Yes",
-          "No"
-        ],
+        "enum": ["Yes", "No"],
         "type": "string"
       },
       "NewestIcelandicDriverCardResponse": {
@@ -591,10 +564,7 @@
         "additionalProperties": false
       },
       "TachonetCheckRequest": {
-        "required": [
-          "birth_date",
-          "last_name"
-        ],
+        "required": ["birth_date", "last_name"],
         "type": "object",
         "properties": {
           "first_name": {
