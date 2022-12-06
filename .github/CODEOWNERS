@@ -80,8 +80,9 @@
 
 /libs/clients/auth/                                                                                 @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
+/libs/portals/shared-modules/delegations                                                            @island-is/aranja
 /libs/service-portal/settings/access-control                                                        @island-is/aranja
-/libs/service-portal/access-control/delegations                                                     @island-is/aranja
+
 
 /apps/judicial-system/                                                                              @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                              @island-is/kolibri-justice-league
@@ -113,6 +114,7 @@
 /libs/clients/documents/                                                                            @island-is/hugsmidjan
 /libs/clients/finance/                                                                              @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                              @island-is/hugsmidjan
+/libs/clients/disability-license/                                                                   @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                      @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                       @island-is/hugsmidjan
 /libs/clients/islykill/                                                                             @island-is/hugsmidjan

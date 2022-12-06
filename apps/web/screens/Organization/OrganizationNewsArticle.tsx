@@ -134,6 +134,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
         pageTitle={organizationPage.title}
         organizationPage={organizationPage}
         breadcrumbItems={breadCrumbs}
+        showReadSpeaker={false}
         navigationData={{
           title: n('navigationTitle', 'Efnisyfirlit'),
           items: navList,

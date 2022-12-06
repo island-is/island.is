@@ -8,6 +8,7 @@ import {
   CaseFileMessage,
   MessageService,
   MessageType,
+  PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
 
 import { appModuleConfig } from '../app.config'
@@ -15,7 +16,6 @@ import { MessageHandlerService } from '../messageHandler.service'
 import { RulingNotificationService } from '../rulingNotification.service'
 import { InternalDeliveryService } from '../internalDelivery.service'
 import { CaseDeliveryService } from '../caseDelivery.service'
-import { ProsecutorDocumentsDeliveryService } from '../prosecutorDocumentsDelivery.service'
 
 jest.mock('@island.is/logging')
 jest.mock('node-fetch')
@@ -38,7 +38,6 @@ describe('MessageHandlerService - Handle message', () => {
       const messageHandlerService = new MessageHandlerService(
         (undefined as unknown) as MessageService,
         (undefined as unknown) as CaseDeliveryService,
-        (undefined as unknown) as ProsecutorDocumentsDeliveryService,
         new InternalDeliveryService(config, logger),
         new RulingNotificationService(config, logger),
         logger,
@@ -78,6 +77,74 @@ describe('MessageHandlerService - Handle message', () => {
     it('should deliver case file to court', async () => {
       expect(fetch).toHaveBeenCalledWith(
         `${config.backendUrl}/api/internal/case/${caseId}/file/${caseFileId}/deliverToCourt`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('deliver case files record to court', () => {
+    const policeCaseNumber = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = (fetch as unknown) as jest.Mock
+      mockFetch.mockResolvedValueOnce(
+        Promise.resolve({
+          ok: true,
+          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
+        }),
+      )
+
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+        caseId,
+        policeCaseNumber,
+      } as PoliceCaseMessage)
+    })
+
+    it('should deliver case files record to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverCaseFilesRecordToCourt/${policeCaseNumber}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('deliver request to court', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = (fetch as unknown) as jest.Mock
+      mockFetch.mockResolvedValueOnce(
+        Promise.resolve({
+          ok: true,
+          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
+        }),
+      )
+
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_REQUEST_TO_COURT,
+        caseId,
+      })
+    })
+
+    it('should deliver request to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverRequestToCourt`,
         {
           method: 'POST',
           headers: {
