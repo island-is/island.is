@@ -103,7 +103,7 @@ export class TransferOfVehicleOwnershipService {
 
       const message = getValueViaPath<{ defaultMessage: string }>(
         messages,
-        'validation.application.' + (firstError.errorNo || '0'),
+        'applicationCheck.validation.' + (firstError.errorNo || '0'),
       )?.defaultMessage
       const defaultMessage = firstError.message || ''
 
