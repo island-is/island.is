@@ -15,5 +15,5 @@ export class OwnerChangeValidationMessage {
   errorNo?: number | null
 
   @Field(() => String, { nullable: true })
-  message?: string | null
+  defaultMessage?: string | null
 }

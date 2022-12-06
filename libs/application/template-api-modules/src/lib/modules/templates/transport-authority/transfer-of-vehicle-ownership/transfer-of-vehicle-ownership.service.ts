@@ -99,15 +99,18 @@ export class TransferOfVehicleOwnershipService {
 
     // If we received error, lets try to use the errorNo to return a translated message
     if (result.hasError && result.errorMessages?.length) {
+      // Note: will only display first error for now
       const firstError = result.errorMessages[0]
 
       const message = getValueViaPath<{ defaultMessage: string }>(
         messages,
-        'applicationCheck.validation.' + (firstError.errorNo || '0'),
+        'applicationCheck.validation.' + firstError.errorNo,
       )?.defaultMessage
-      const defaultMessage = firstError.message || ''
+      const defaultMessage = firstError.defaultMessage
+      const fallbackMessage =
+        messages.applicationCheck.validation['0'].defaultMessage
 
-      throw Error(message || defaultMessage)
+      throw Error(message || defaultMessage || fallbackMessage)
     }
   }
 

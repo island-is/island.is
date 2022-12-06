@@ -27,7 +27,11 @@ export class VehicleOwnerChangeClient {
     let errorList: ReturnTypeMessage[] = []
 
     try {
-      errorList = await this.ownerchangeApiWithAuth(auth).vehiclecheckPost({
+      // Note: we have manually changed this endpoint to void, since the messages we want only
+      // come with error code 400. If this function returns an array of ReturnTypeMessage, then
+      // we will get an error with code 204, since the openapi generator tries to convert empty result
+      // into an array of ReturnTypeMessage
+      await this.ownerchangeApiWithAuth(auth).vehiclecheckPost({
         apiVersion: '2.0',
         apiVersion2: '2.0',
         postVehicleOwnerChange: {
@@ -53,8 +57,8 @@ export class VehicleOwnerChangeClient {
     return {
       hasError: errorList.length > 0,
       errorMessages: errorList.map((item) => ({
-        errorNo: 0, // TODOx // item.errorNo,
-        message: item.errorMess,
+        errorNo: -1, // TODOx // item.errorNo,
+        defaultMessage: item.errorMess,
       })),
     }
   }
@@ -68,7 +72,11 @@ export class VehicleOwnerChangeClient {
     let errorList: ReturnTypeMessage[] = []
 
     try {
-      errorList = await this.ownerchangeApiWithAuth(auth).personcheckPost({
+      // Note: we have manually changed this endpoint to void, since the messages we want only
+      // come with error code 400. If this function returns an array of ReturnTypeMessage, then
+      // we will get an error with code 204, since the openapi generator tries to convert empty result
+      // into an array of ReturnTypeMessage
+      await this.ownerchangeApiWithAuth(auth).personcheckPost({
         apiVersion: '2.0',
         apiVersion2: '2.0',
         postPersonOwnerChange: {
@@ -104,8 +112,8 @@ export class VehicleOwnerChangeClient {
     return {
       hasError: errorList.length > 0,
       errorMessages: errorList.map((item) => ({
-        errorNo: 0, // TODOx // item.errorNo,
-        message: item.errorMess,
+        errorNo: -1, // TODOx // item.errorNo,
+        defaultMessage: item.errorMess,
       })),
     }
   }
