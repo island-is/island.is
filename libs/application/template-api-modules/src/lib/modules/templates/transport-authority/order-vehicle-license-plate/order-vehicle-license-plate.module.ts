@@ -8,10 +8,10 @@ import {
   VehiclePlateOrderingClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 
-export class OrderVehicleRegistrationCertificateModule {
+export class OrderVehicleLicensePlateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: OrderVehicleRegistrationCertificateModule,
+      module: OrderVehicleLicensePlateModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         VehiclePlateOrderingClientModule,

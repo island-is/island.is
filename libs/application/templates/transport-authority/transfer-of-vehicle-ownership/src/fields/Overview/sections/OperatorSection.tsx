@@ -28,7 +28,9 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                 <Text variant="h4">
                   {formatMessage(information.labels.operator.title)}{' '}
                   {operators.length > 1 ? index + 1 : ''}{' '}
-                  {operators.length > 1 && index === 0 ? '(aðal)' : ''}
+                  {operators.length > 1 && index === 0
+                    ? `(${formatMessage(information.labels.operator.main)})`
+                    : ''}
                 </Text>
                 <Text>{name}</Text>
                 <Text>{nationalId}</Text>

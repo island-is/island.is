@@ -8,10 +8,10 @@ import {
   VehiclePrintingClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-printing'
 
-export class OrderVehicleLicensePlateModule {
+export class OrderVehicleRegistrationCertificateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: OrderVehicleLicensePlateModule,
+      module: OrderVehicleRegistrationCertificateModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         VehiclePrintingClientModule,

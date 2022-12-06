@@ -60,6 +60,11 @@ export const information = {
       },
     }),
     vehicle: defineMessages({
+      sectionTitle: {
+        id: 'ta.tvo.application:information.labels.vehicle.sectionTitle',
+        defaultMessage: 'Ökutæki',
+        description: 'Vehicle section title',
+      },
       title: {
         id: 'ta.tvo.application:information.labels.vehicle.title',
         defaultMessage: 'Ökutæki',
@@ -98,6 +103,11 @@ export const information = {
       },
     }),
     seller: defineMessages({
+      sectionTitle: {
+        id: 'ta.tvo.application:information.labels.seller.sectionTitle',
+        defaultMessage: 'Seljandi',
+        description: 'Seller section title',
+      },
       title: {
         id: 'ta.tvo.application:information.labels.seller.title',
         defaultMessage: 'Seljandi',
@@ -220,8 +230,18 @@ export const information = {
         defaultMessage: 'Bæta við umráðamanni',
         description: 'Operator add label',
       },
+      main: {
+        id: 'ta.tvo.application:information.labels.operator.main',
+        defaultMessage: 'aðal',
+        description: 'Main label - for main operator',
+      },
     }),
     buyer: defineMessages({
+      sectionTitle: {
+        id: 'ta.tvo.application:information.labels.buyer.sectionTitle',
+        defaultMessage: 'Kaupandi',
+        description: 'Buyer section title',
+      },
       title: {
         id: 'ta.tvo.application:information.labels.buyer.title',
         defaultMessage: 'Kaupandi',
