@@ -26,7 +26,12 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+} from '../../guards'
 import {
   Case,
   CaseNotCompletedGuard,
@@ -60,7 +65,7 @@ export class FileController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule, registrarRule, judgeRule)
+  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
   @Post('file/url')
   @ApiCreatedResponse({
     type: PresignedPost,
@@ -76,7 +81,7 @@ export class FileController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule, registrarRule, judgeRule)
+  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -92,7 +97,7 @@ export class FileController {
   }
 
   @UseGuards(CaseExistsGuard, CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
   @Get('files')
   @ApiOkResponse({
     type: CaseFile,
@@ -111,7 +116,7 @@ export class FileController {
     ViewCaseFileGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
   @Get('file/:fileId/url')
   @ApiOkResponse({
     type: PresignedPost,
@@ -135,7 +140,7 @@ export class FileController {
     CaseNotCompletedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule, registrarRule, judgeRule)
+  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
@@ -182,7 +187,7 @@ export class FileController {
     CaseWriteGuard,
     CaseNotCompletedGuard,
   )
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Patch('files')
   @ApiOkResponse({
     type: Boolean,

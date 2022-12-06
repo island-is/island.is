@@ -21,6 +21,7 @@ import {
   Feature,
   isInvestigationCase,
   isIndictmentCase,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -74,8 +75,7 @@ export const Cases: React.FC = () => {
   } = useSections()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isJudge = user?.role === UserRole.JUDGE
-  const isRegistrar = user?.role === UserRole.REGISTRAR
+  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
   const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
   const isPrisonAdminUser =
     user?.institution?.type === InstitutionType.PRISON_ADMIN
@@ -124,16 +124,7 @@ export const Cases: React.FC = () => {
       setActiveCases(active)
       setPastCases(past)
     }
-  }, [
-    activeCases,
-    setActiveCases,
-    isProsecutor,
-    isJudge,
-    isRegistrar,
-    resCases,
-    isPrisonAdminUser,
-    isPrisonUser,
-  ])
+  }, [activeCases, setActiveCases, resCases, isPrisonAdminUser, isPrisonUser])
 
   const deleteCase = async (caseToDelete: Case) => {
     if (
@@ -166,7 +157,7 @@ export const Cases: React.FC = () => {
       } else {
         routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
       }
-    } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
+    } else if (isCourtRole(role)) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getRestrictionCaseCourtSections(caseToOpen, user),
@@ -279,6 +270,29 @@ export const Cases: React.FC = () => {
                   />
                 </Box>
               )}
+              {isRepresentative &&
+                // TODO Remove procecutor office id check when indictments are ready
+                (features.includes(Feature.INDICTMENTS) ||
+                  [
+                    '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
+                    '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
+                    'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
+                  ].includes(user.institution?.id ?? '')) && (
+                  <Box display={['none', 'none', 'block']}>
+                    <DropdownMenu
+                      dataTestId="createCaseDropdown"
+                      menuLabel="Tegund kröfu"
+                      icon="add"
+                      items={[
+                        {
+                          href: constants.CREATE_INDICTMENT_ROUTE,
+                          title: capitalize(formatMessage(core.indictment)),
+                        },
+                      ]}
+                      title={formatMessage(m.createCaseButton)}
+                    />
+                  </Box>
+                )}
             </div>
           )
         )}

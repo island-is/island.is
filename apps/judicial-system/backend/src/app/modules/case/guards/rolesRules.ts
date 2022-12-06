@@ -50,6 +50,13 @@ export const prosecutorUpdateRule = {
   dtoFields: prosecutorFields,
 } as RolesRule
 
+// Allows representatives to update a specific set of fields
+export const representativeUpdateRule = {
+  role: UserRole.REPRESENTATIVE,
+  type: RulesType.FIELD,
+  dtoFields: prosecutorFields,
+} as RolesRule
+
 const courtFields: (keyof UpdateCase)[] = [
   'defenderName',
   'defenderNationalId',
@@ -124,6 +131,18 @@ export const staffUpdateRule = {
 // Allows prosecutors to open, submit and delete cases
 export const prosecutorTransitionRule = {
   role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.OPEN,
+    CaseTransition.SUBMIT,
+    CaseTransition.DELETE,
+  ],
+} as RolesRule
+
+// Allows representatives to open, submit and delete cases
+export const representativeTransitionRule = {
+  role: UserRole.REPRESENTATIVE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [

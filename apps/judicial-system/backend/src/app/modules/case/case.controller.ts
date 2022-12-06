@@ -47,6 +47,7 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
+  representativeRule,
   staffRule,
 } from '../../guards'
 import { UserService } from '../user'
@@ -64,6 +65,8 @@ import {
   prosecutorUpdateRule,
   registrarTransitionRule,
   registrarUpdateRule,
+  representativeTransitionRule,
+  representativeUpdateRule,
 } from './guards/rolesRules'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -104,7 +107,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async create(
@@ -123,6 +126,7 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
+    representativeUpdateRule,
     judgeUpdateRule,
     registrarUpdateRule,
     staffUpdateRule,
@@ -189,6 +193,7 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
+    representativeTransitionRule,
     judgeTransitionRule,
     registrarTransitionRule,
   )
@@ -235,7 +240,13 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    staffRule,
+  )
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -249,7 +260,13 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    staffRule,
+  )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
@@ -293,7 +310,7 @@ export class CaseController {
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
   @Get('case/:caseId/caseFiles/:policeCaseNumber')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
