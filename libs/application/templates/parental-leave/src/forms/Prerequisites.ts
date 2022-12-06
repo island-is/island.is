@@ -13,6 +13,7 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  buildDateField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -317,6 +318,63 @@ export const PrerequisitesForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.salaryInformationTitle,
                   subTitle:
                     parentalLeaveFormMessages.shared.salaryInformationSubTitle,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'noPrimaryParent',
+          title: 'Áætlaður fæðingardagur fannst ekki',
+          children : [
+            buildMultiField({
+              id: 'selectedChildScreen',
+              title: parentalLeaveFormMessages.selectChild.screenTitle,
+              children: [
+                buildRadioField({
+                  id: 'noPrimaryParent.question.one',
+                  title: 'Er barn að fæðast erlendis?',
+                  options: [
+                    { value: YES, label: 'Já' },
+                    { value: NO, label: 'Nei' },
+                  ],
+                  width: 'half',
+                  largeButtons: true,
+                }),
+                buildRadioField({
+                  id: 'noPrimaryParent.question.two',
+                  title: 'Er móðir búsett erlendis og/eða ekki með íslenska kennitölu?',
+                  options: [
+                    { value: YES, label: 'Já' },
+                    { value: NO, label: 'Nei' },
+                  ],
+                  width: 'half',
+                  largeButtons: true,
+                }),
+                buildRadioField({
+                  id: 'noPrimaryParent.question.three',
+                  title: 'Á móðir ekki rétt á fæðingarorlofi á Íslandi?',
+                  options: [
+                    { value: YES, label: 'Já' },
+                    { value: NO, label: 'Nei' },
+                  ],
+                  width: 'half',
+                  largeButtons: true,
+                }),
+                buildDateField({
+                  id: 'birthDate',
+                  title: 'Hvenær er áætlaður / raunverulegur fæðingardagur barns',
+                  description: '',
+                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                  // minDate: (application: Application) =>
+                  //   getMinimumStartDate(application),
+                  // excludeDates: (application) => {
+                  //   const { periods } = getApplicationAnswers(
+                  //     application.answers,
+                  //   )
+
+                  //   return getAllPeriodDates(periods)
+                  // },
                 }),
               ],
             }),
