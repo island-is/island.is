@@ -23,6 +23,7 @@ import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
+import { StepContext } from '../StepProvider/StepProvider'
 
 interface PageProps {
   children: ReactNode
@@ -45,6 +46,7 @@ const PageLayout: React.FC<PageProps> = ({
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
+  const flows = useContext(StepContext)
   const { getSections } = useSections()
   const { formatMessage } = useIntl()
 
@@ -114,8 +116,14 @@ const PageLayout: React.FC<PageProps> = ({
                     sections={
                       activeSection === Sections.EXTENSION ||
                       activeSection === Sections.JUDGE_EXTENSION
-                        ? getSections(workingCase, activeSubSection, user)
+                        ? getSections(
+                            flows,
+                            workingCase,
+                            activeSubSection,
+                            user,
+                          )
                         : getSections(
+                            flows,
                             workingCase,
                             activeSubSection,
                             user,

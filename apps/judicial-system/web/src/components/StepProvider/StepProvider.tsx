@@ -5,7 +5,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { FormContext } from '../FormProvider/FormProvider'
 
-interface Flows {
+export interface Flows {
   restrictionCases: { onContinue: () => Promise<boolean> }[]
 }
 

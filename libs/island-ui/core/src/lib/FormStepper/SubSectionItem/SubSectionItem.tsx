@@ -1,16 +1,19 @@
 import React, { FC } from 'react'
+import cn from 'classnames'
 
 import { Icon } from '../../Icon/Icon'
 import { Text } from '../../Text/Text'
 import { Box } from '../../Box/Box'
+import { Link } from '../../Link/Link'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as styles from './SubSectionItem.css'
-import { Link } from '../../Link/Link'
+import * as linkStyles from '../../Link/Link.css'
 
 interface SubSectionItemProps {
   currentState: 'active' | 'previous' | 'next'
   showIcon?: boolean
   href?: string
+  onClick?: () => void
   children: React.ReactNode
 }
 
@@ -18,6 +21,7 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
   currentState,
   showIcon = false,
   children,
+  onClick,
   href,
 }) => {
   const renderChildren = () => (
@@ -49,9 +53,20 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
         )}
       </SectionNumberColumn>
       {href && currentState !== 'active' ? (
-        <Link href={href} underline="small" underlineVisibility="hover">
+        <Link href={href} underline="small">
           {renderChildren()}
         </Link>
+      ) : onClick && currentState !== 'active' ? (
+        <Box
+          component="button"
+          onClick={() => onClick()}
+          className={cn(
+            linkStyles.underlineVisibilities['hover'],
+            linkStyles.underlines['small'],
+          )}
+        >
+          {renderChildren()}
+        </Box>
       ) : (
         renderChildren()
       )}

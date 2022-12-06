@@ -17,6 +17,7 @@ import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   RESTRICTION_CASE_MODIFY_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { Flows } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -47,6 +48,7 @@ interface Section {
     type: string
     name: string
     href?: string
+    onClick?: () => void
   }[]
 }
 
@@ -60,6 +62,7 @@ const useSections = () => {
   }
 
   const getRestrictionCaseProsecutorSection = (
+    flows: Flows,
     workingCase: Case,
     user?: User,
     activeSubSection?: number,
@@ -97,25 +100,25 @@ const useSections = () => {
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
-                href: undefined,
-                // (activeSubSection && activeSubSection > 2) ||
-                // (isDefendantStepValidForSidebarRC(workingCase) &&
-                //   isHearingArrangementsStepValidRC(workingCase) &&
-                //   workingCase.state !== CaseState.NEW)
-                //   ? `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`
-                //   : undefined,
+                onClick:
+                  (activeSubSection && activeSubSection > 2) ||
+                  (isDefendantStepValidForSidebarRC(workingCase) &&
+                    isHearingArrangementsStepValidRC(workingCase) &&
+                    workingCase.state !== CaseState.NEW)
+                    ? () => flows.restrictionCases[0].onContinue()
+                    : undefined,
               },
               {
                 type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.policeReport,
                 ),
-                href:
+                onClick:
                   (activeSubSection && activeSubSection > 3) ||
                   (isDefendantStepValidForSidebarRC(workingCase) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase))
-                    ? `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`
+                    ? () => flows.restrictionCases[0].onContinue()
                     : undefined,
               },
               {
@@ -730,6 +733,7 @@ const useSections = () => {
   }
 
   const getSections = (
+    flows: Flows,
     workingCase?: Case,
     activeSubSection?: number,
     user?: User,
@@ -737,6 +741,7 @@ const useSections = () => {
     return [
       isRestrictionCase(workingCase?.type)
         ? getRestrictionCaseProsecutorSection(
+            flows,
             workingCase || ({} as Case),
             user,
             activeSubSection,
