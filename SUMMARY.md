@@ -169,6 +169,7 @@
   - [Charge Fjs V2](libs/clients/charge-fjs-v2/README.md)
   - [Criminal Record](libs/clients/criminal-record/README.md)
   - [Data Protection Complaint](libs/clients/data-protection-complaint/README.md)
+  - [Disability License](libs/clients/disability-license/README.md)
   - [Document Provider](libs/clients/document-provider/README.md)
   - [Documents](libs/clients/documents/README.md)
   - [Driving License](libs/clients/driving-license/README.md)
