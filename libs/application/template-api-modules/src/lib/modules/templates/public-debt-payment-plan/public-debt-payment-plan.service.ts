@@ -203,6 +203,9 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
     scheduleType: string,
     totalDebtAmount: number,
   ): Promise<DistributionInitialPosition> {
+    const indexOfScheduleType = Object.keys(ScheduleType).indexOf(scheduleType)
+    const scheduleTypeValue = Object.values(ScheduleType)[indexOfScheduleType]
+
     const {
       distributionInitialPosition,
       error,
@@ -211,7 +214,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
     ).distributionInitialPositionnationalIdscheduleTypeGET4({
       disposableIncome,
       nationalId: user.nationalId,
-      scheduleType,
+      scheduleType: scheduleTypeValue,
       totalAmount: totalDebtAmount,
     })
 
@@ -219,9 +222,10 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
       this.logger.error('Error getting initial schedule', error)
       throw new Error('Error getting initial schedule')
     }
+
     return {
       ...distributionInitialPosition,
-      scheduleType: distributionInitialPosition.scheduleType as ScheduleType,
+      scheduleType: scheduleType,
     }
   }
 
@@ -256,7 +260,17 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
     if (!deptAndSchedules) {
       throw new Error('No debts found for nationalId')
     }
-    return deptAndSchedules
+
+    return deptAndSchedules.map((debt) => {
+      const indexOfS = Object.values(ScheduleType).indexOf(
+        (debt.type as unknown) as ScheduleType,
+      )
+      const key = Object.keys(ScheduleType)[indexOfS]
+      return {
+        ...debt,
+        type: key,
+      }
+    })
   }
 
   async getCurrentEmployer(

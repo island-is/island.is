@@ -6,4 +6,5 @@ export {
   PaymentsDT,
   ConditionsDT,
   DebtsAndSchedulesDT,
+  ChargeTypesDT,
 } from './gen/fetch'
