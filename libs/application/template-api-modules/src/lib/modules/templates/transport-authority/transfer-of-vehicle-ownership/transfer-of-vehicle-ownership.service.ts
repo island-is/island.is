@@ -4,6 +4,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
+  messages,
 } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
   generateRequestReviewEmail,
@@ -27,6 +28,7 @@ import {
   ChargeFjsV2ClientService,
   getChargeId,
 } from '@island.is/clients/charge-fjs-v2'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
@@ -35,6 +37,79 @@ export class TransferOfVehicleOwnershipService {
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
   ) {}
+
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+    // No need to continue with this validation in user is neither seller nor buyer
+    // (only time application data changes is on state change from these roles)
+    const sellerSsn = answers?.seller?.nationalId
+    const buyerSsn = answers?.buyer?.nationalId
+    if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
+      return
+    }
+
+    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'operator',
+    )
+
+    // Note: If insurance company has not been supplied (we have not required the user to fill in at this point),
+    // then we will just send in a dummy value
+    let insuranceCompanyCode = answers?.insurance?.value
+    if (!insuranceCompanyCode) {
+      const dummyInsuranceCompanyCode = '6090' // VÍS
+      insuranceCompanyCode = dummyInsuranceCompanyCode
+    }
+
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      auth,
+      {
+        permno: answers?.vehicle?.plate,
+        seller: {
+          ssn: sellerSsn,
+          email: answers?.seller?.email,
+        },
+        buyer: {
+          ssn: buyerSsn,
+          email: answers?.buyer?.email,
+        },
+        dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
+        saleAmount: Number(answers?.vehicle?.salePrice) || 0,
+        insuranceCompanyCode: insuranceCompanyCode,
+        coOwners: buyerCoOwners?.map((coOwner) => ({
+          ssn: coOwner.nationalId,
+          email: coOwner.email,
+        })),
+        operators: buyerOperators?.map((operator) => ({
+          ssn: operator.nationalId,
+          email: operator.email,
+          isMainOperator:
+            buyerOperators.length > 1
+              ? operator.nationalId === answers.buyerMainOperator?.nationalId
+              : true,
+        })),
+      },
+    )
+
+    // If we received error, lets try to use the errorNo to return a translated message
+    if (result.hasError && result.errorMessages?.length) {
+      const firstError = result.errorMessages[0]
+
+      const message = getValueViaPath<{ defaultMessage: string }>(
+        messages,
+        'validation.application.' + (firstError.errorNo || '0'),
+      )?.defaultMessage
+      const defaultMessage = firstError.message || ''
+
+      throw Error(message || defaultMessage)
+    }
+  }
 
   async createCharge({
     application,
@@ -324,7 +399,6 @@ export class TransferOfVehicleOwnershipService {
     )
 
     await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
-      // await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
       permno: answers?.vehicle?.plate,
       seller: {
         ssn: answers?.seller?.nationalId,

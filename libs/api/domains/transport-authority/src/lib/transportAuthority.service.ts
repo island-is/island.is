@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import {
-  InsuranceCompany,
-  VehicleCodetablesClient,
-} from '@island.is/clients/transport-authority/vehicle-codetables'
+import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleInfolocksClient } from '@island.is/clients/transport-authority/vehicle-infolocks'
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { CheckTachoNetInput } from './graphql/dto'
 import {
+  OwnerChangeValidation,
+  InsuranceCompany,
   QualityPhotoAndSignature,
   CheckTachoNetExists,
   NewestDriversCard,
@@ -19,12 +19,27 @@ import {
 @Injectable()
 export class TransportAuthorityApi {
   constructor(
+    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
     private readonly vehicleInfolocksClient: VehicleInfolocksClient,
     private readonly digitalTachographDriversCardClient: DigitalTachographDriversCardClient,
     private readonly drivingLicenseApi: DrivingLicenseApi,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
   ) {}
+
+  async validateVehicleForOwnerChange(
+    user: User,
+    permno: string,
+  ): Promise<OwnerChangeValidation> {
+    // Note: Will just use today's date, since we dont have the purchase date at this point
+    const today = new Date()
+
+    return await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+      user,
+      permno,
+      today,
+    )
+  }
 
   async getInsuranceCompanies(): Promise<InsuranceCompany[]> {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()

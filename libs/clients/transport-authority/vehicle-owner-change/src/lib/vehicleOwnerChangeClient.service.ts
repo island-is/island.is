@@ -1,9 +1,12 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
+import { lookup } from 'dns'
+import { ReturnTypeMessage } from '../../gen/fetch'
 import { OwnerChangeApi } from '../../gen/fetch/apis'
 import {
   NewestOwnerChange,
   OwnerChange,
+  OwnerChangeValidation,
 } from './vehicleOwnerChangeClient.types'
 
 @Injectable()
@@ -12,6 +15,99 @@ export class VehicleOwnerChangeClient {
 
   private ownerchangeApiWithAuth(auth: Auth) {
     return this.ownerchangeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  public async validateVehicleForOwnerChange(
+    auth: User,
+    permno: string,
+    dateOfPurchase: Date,
+  ): Promise<OwnerChangeValidation> {
+    const useGroup = '000'
+
+    let errorList: ReturnTypeMessage[] = []
+
+    try {
+      errorList = await this.ownerchangeApiWithAuth(auth).vehiclecheckPost({
+        apiVersion: '2.0',
+        apiVersion2: '2.0',
+        postVehicleOwnerChange: {
+          permno: permno,
+          dateOfPurchase: dateOfPurchase,
+          useGroup: useGroup,
+        },
+      })
+    } catch (e) {
+      // Note: We need to wrap in try-catch to get the error messages, becuase if ownerchange results in error,
+      // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
+      // that is of the same class as 200 result schema
+      if (e?.problem?.Errors) {
+        errorList = e.problem.Errors as ReturnTypeMessage[]
+      } else {
+        throw e
+      }
+    }
+
+    const warnSeverityError = 'E'
+    errorList = errorList.filter((x) => x.warnSever === warnSeverityError)
+
+    return {
+      hasError: errorList.length > 0,
+      errorMessages: errorList.map((item) => ({
+        errorNo: 0, // TODOx // item.errorNo,
+        message: item.errorMess,
+      })),
+    }
+  }
+
+  public async validateAllForOwnerChange(
+    auth: User,
+    ownerChange: OwnerChange,
+  ): Promise<OwnerChangeValidation> {
+    const useGroup = '000'
+
+    let errorList: ReturnTypeMessage[] = []
+
+    try {
+      errorList = await this.ownerchangeApiWithAuth(auth).personcheckPost({
+        apiVersion: '2.0',
+        apiVersion2: '2.0',
+        postPersonOwnerChange: {
+          permno: ownerChange.permno,
+          currentOwnerPersonIdNumber: ownerChange.seller.ssn,
+          sellerEmail: ownerChange.seller.email,
+          personIdNumber: ownerChange.buyer.ssn,
+          buyerEmail: ownerChange.buyer.email,
+          purchaseDate: ownerChange.dateOfPurchase,
+          saleAmount: ownerChange.saleAmount,
+          insuranceCompanyCode: ownerChange.insuranceCompanyCode,
+          useGroup: useGroup,
+          operatorEmail: null,
+          operators: null,
+          coOwners: null,
+          reportingPersonIdNumber: auth.nationalId,
+        },
+      })
+    } catch (e) {
+      // Note: We need to wrap in try-catch to get the error messages, becuase if ownerchange results in error,
+      // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
+      // that is of the same class as 200 result schema
+      if (e?.problem?.Errors) {
+        errorList = e.problem.Errors as ReturnTypeMessage[]
+      } else {
+        throw e
+      }
+    }
+
+    const warnSeverityError = 'E'
+    errorList = errorList.filter((x) => x.warnSever === warnSeverityError)
+
+    return {
+      hasError: errorList.length > 0,
+      errorMessages: errorList.map((item) => ({
+        errorNo: 0, // TODOx // item.errorNo,
+        message: item.errorMess,
+      })),
+    }
   }
 
   public async getNewestOwnerChange(
@@ -42,6 +138,8 @@ export class VehicleOwnerChangeClient {
     auth: User,
     ownerChange: OwnerChange,
   ): Promise<void> {
+    const useGroup = '000'
+
     await this.ownerchangeApiWithAuth(auth).rootPost({
       apiVersion: '2.0',
       apiVersion2: '2.0',
@@ -54,7 +152,7 @@ export class VehicleOwnerChangeClient {
         dateOfPurchase: ownerChange.dateOfPurchase,
         saleAmount: ownerChange.saleAmount,
         insuranceCompanyCode: ownerChange.insuranceCompanyCode,
-        useGroup: '000',
+        useGroup: useGroup,
         operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
           ?.email,
         operators: ownerChange.operators?.map((operator) => ({

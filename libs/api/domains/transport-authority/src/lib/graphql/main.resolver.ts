@@ -10,6 +10,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { TransportAuthorityApi } from '../transportAuthority.service'
 import { CheckTachoNetInput } from './dto'
 import {
+  OwnerChangeValidation,
   InsuranceCompany,
   AnonymityStatus,
   QualityPhotoAndSignature,
@@ -22,6 +23,17 @@ import {
 @Resolver()
 export class MainResolver {
   constructor(private readonly transportAuthorityApi: TransportAuthorityApi) {}
+
+  @Query(() => OwnerChangeValidation)
+  ownerChangeVehicleValidationByPermno(
+    @CurrentUser() user: User,
+    @Args('permno') permno: string,
+  ) {
+    return this.transportAuthorityApi.validateVehicleForOwnerChange(
+      user,
+      permno,
+    )
+  }
 
   @Query(() => [InsuranceCompany])
   transportAuthorityInsuranceCompanies() {
