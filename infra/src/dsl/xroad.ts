@@ -223,6 +223,16 @@ export const Firearm = new XroadConf({
   },
 })
 
+export const DisabilityLicense = new XroadConf({
+  env: {
+    XROAD_DISABILTITY_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
+      staging: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1',
+      prod: 'IS/GOV/5012130120/TR-Protected/oryrki-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
