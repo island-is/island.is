@@ -55,6 +55,7 @@ interface TooltipProps {
   iconSize?: Size
   color?: Colors
   children?: ReactElement
+  preserveWhiteSpace?: boolean
   as?: ElementType
 }
 
@@ -65,6 +66,7 @@ export const Tooltip: FC<TooltipProps> = ({
   color = 'dark200',
   children,
   as = 'span',
+  preserveWhiteSpace = false,
 }) => {
   const tooltip = useTooltipState({
     animated: 250,
@@ -83,11 +85,16 @@ export const Tooltip: FC<TooltipProps> = ({
         </TooltipReference>
       )}
       <ReakitTooltip {...tooltip}>
-        <div className={styles.tooltip}>
+        <div
+          className={cn(styles.tooltip, {
+            [styles.whiteSpace]: preserveWhiteSpace,
+          })}
+        >
           <TooltipArrow {...tooltip}>
             <ArrowIcon placement={tooltip.placement} />
           </TooltipArrow>
           {text}
+          {children}
         </div>
       </ReakitTooltip>
     </>

@@ -17,6 +17,7 @@ export const tooltip = style({
   lineHeight: '20px',
   fontFamily: theme.typography.fontFamily,
   color: theme.color.dark400,
+  // whiteSpace: 'pre',
   selectors: {
     '[data-enter] &': {
       opacity: 1,
@@ -29,6 +30,10 @@ export const icon = style({
   display: 'inline-block',
   lineHeight: 1,
   position: 'relative',
+})
+
+export const whiteSpace = style({
+  whiteSpace: 'pre-wrap',
 })
 
 globalStyle(`${icon}:hover path`, {

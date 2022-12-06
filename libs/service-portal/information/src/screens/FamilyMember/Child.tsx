@@ -21,6 +21,9 @@ const ChildrenQuery = gql`
     nationalRegistryChildren {
       nationalId
       fullName
+      firstName
+      middleName
+      lastName
       displayName
       genderDisplay
       birthplace
@@ -74,6 +77,7 @@ const Child: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalRegistryUserV2ChildGuardianship: guardianship } =
     guardianshipData || {}
 
+  console.log('personpersonpersonpersonperson', person)
   return (
     <ChildView
       nationalId={nationalId}

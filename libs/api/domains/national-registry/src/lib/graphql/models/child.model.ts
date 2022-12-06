@@ -12,10 +12,13 @@ export class NationalRegistryChild {
   displayName?: string
 
   @Field(() => String, { nullable: true })
+  firstName?: string
+
+  @Field(() => String, { nullable: true })
   middleName?: string
 
   @Field(() => String, { nullable: true })
-  surname?: string
+  lastName?: string
 
   @Field(() => String, { nullable: true })
   gender?: string

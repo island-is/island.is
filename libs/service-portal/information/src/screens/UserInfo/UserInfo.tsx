@@ -21,6 +21,7 @@ import {
 import { spmm } from '../../lib/messages'
 import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { formatNameBreaks } from '../../helpers/formatting'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -56,6 +57,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           label={m.fullName}
           loading={loading}
           content={nationalRegistryUser?.fullName}
+          tooltip={formatNameBreaks(nationalRegistryUser ?? undefined)}
           editLink={{
             external: true,
             title: changeInNationalReg,
