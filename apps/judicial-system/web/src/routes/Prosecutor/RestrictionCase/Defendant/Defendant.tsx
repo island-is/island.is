@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
 import {
   DefenderInfo,
@@ -44,7 +43,6 @@ import {
 } from '../../components'
 
 export const StepOne: React.FC = () => {
-  const router = useRouter()
   const [
     leadInvestigatorErrorMessage,
     setLeadInvestigatorErrorMessage,
@@ -56,44 +54,13 @@ export const StepOne: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase, updateCase } = useCase()
+  const { isCreatingCase, updateCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
   const { formatMessage } = useIntl()
   const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
     workingCase,
   )
-
-  const handleNextButtonClick = async (theCase: Case) => {
-    if (!theCase.id) {
-      const createdCase = await createCase(theCase)
-
-      if (
-        createdCase &&
-        createdCase.defendants &&
-        createdCase.defendants.length > 0 &&
-        theCase.defendants &&
-        theCase.defendants.length > 0
-      ) {
-        await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
-          gender: theCase.defendants[0].gender,
-          name: theCase.defendants[0].name,
-          address: theCase.defendants[0].address,
-          nationalId: theCase.defendants[0].nationalId,
-          noNationalId: theCase.defendants[0].noNationalId,
-          citizenship: theCase.defendants[0].citizenship,
-        })
-
-        router.push(
-          `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
-        )
-      }
-    } else {
-      router.push(
-        `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
-      )
-    }
-  }
 
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {
@@ -238,7 +205,6 @@ export const StepOne: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={constants.CASES_ROUTE}
-              onNextButtonClick={() => handleNextButtonClick(workingCase)}
               nextIsLoading={isCreatingCase}
               nextIsDisabled={
                 !isDefendantStepValidRC(workingCase, clientPoliceNumbers)

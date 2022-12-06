@@ -21,7 +21,7 @@ import { Flows } from '@island.is/judicial-system-web/src/components/StepProvide
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
-  isDefendantStepValidForSidebarRC,
+  isDefendantStepValidRC,
   isCourtHearingArrangemenstStepValidRC,
   isCourtHearingArrangementsStepValidIC,
   isCourtRecordStepValidIC,
@@ -89,11 +89,15 @@ const useSections = () => {
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
-                href:
-                  (activeSubSection && activeSubSection > 1) ||
-                  isDefendantStepValidForSidebarRC(workingCase)
-                    ? `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-                    : undefined,
+                onClick: isDefendantStepValidRC(
+                  workingCase,
+                  workingCase.policeCaseNumbers,
+                )
+                  ? () =>
+                      flows.restrictionCases[
+                        constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
+                      ].onContinue()
+                  : undefined,
               },
               {
                 type: 'SUB_SECTION',
@@ -102,7 +106,10 @@ const useSections = () => {
                 ),
                 onClick:
                   (activeSubSection && activeSubSection > 2) ||
-                  (isDefendantStepValidForSidebarRC(workingCase) &&
+                  (isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  ) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     workingCase.state !== CaseState.NEW)
                     ? () =>
@@ -118,7 +125,10 @@ const useSections = () => {
                 ),
                 onClick:
                   (activeSubSection && activeSubSection > 3) ||
-                  (isDefendantStepValidForSidebarRC(workingCase) &&
+                  (isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  ) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase))
                     ? () =>
@@ -134,7 +144,10 @@ const useSections = () => {
                 ),
                 href:
                   (activeSubSection && activeSubSection > 4) ||
-                  (isDefendantStepValidForSidebarRC(workingCase) &&
+                  (isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  ) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase) &&
                     isPoliceReportStepValidRC(workingCase))
@@ -147,7 +160,10 @@ const useSections = () => {
                   sections.restrictionCaseProsecutorSection.overview,
                 ),
                 href:
-                  isDefendantStepValidForSidebarRC(workingCase) &&
+                  isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  ) &&
                   isHearingArrangementsStepValidRC(workingCase) &&
                   isPoliceDemandsStepValidRC(workingCase) &&
                   isPoliceReportStepValidRC(workingCase)
@@ -598,7 +614,10 @@ const useSections = () => {
                 ),
                 href:
                   (activeSubSection && activeSubSection > 1) ||
-                  isDefendantStepValidForSidebarRC(workingCase)
+                  isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  )
                     ? `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
               },
@@ -607,7 +626,10 @@ const useSections = () => {
                 name: formatMessage(sections.extensionSection.policeDemands),
                 href:
                   (activeSubSection && activeSubSection > 2) ||
-                  (isDefendantStepValidForSidebarRC(workingCase) &&
+                  (isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  ) &&
                     isHearingArrangementsStepValidRC(workingCase))
                     ? `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`
                     : undefined,
@@ -617,7 +639,10 @@ const useSections = () => {
                 name: formatMessage(sections.extensionSection.policeReport),
                 href:
                   (activeSubSection && activeSubSection > 3) ||
-                  (isDefendantStepValidForSidebarRC(workingCase) &&
+                  (isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  ) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase))
                     ? `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`
@@ -628,7 +653,10 @@ const useSections = () => {
                 name: formatMessage(sections.extensionSection.caseFiles),
                 href:
                   (activeSubSection && activeSubSection > 4) ||
-                  (isDefendantStepValidForSidebarRC(workingCase) &&
+                  (isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  ) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase) &&
                     isPoliceReportStepValidRC(workingCase))
@@ -639,7 +667,10 @@ const useSections = () => {
                 type: 'SUB_SECTION',
                 name: formatMessage(sections.extensionSection.overview),
                 href:
-                  isDefendantStepValidForSidebarRC(workingCase) &&
+                  isDefendantStepValidRC(
+                    workingCase,
+                    workingCase.policeCaseNumbers,
+                  ) &&
                   isHearingArrangementsStepValidRC(workingCase) &&
                   isPoliceDemandsStepValidRC(workingCase) &&
                   isPoliceReportStepValidRC(workingCase)

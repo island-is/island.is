@@ -1,12 +1,13 @@
+import { createIntl } from 'react-intl'
+
 import {
   CaseType,
   Defendant,
   CaseCustodyRestrictions,
   CaseDecision,
 } from '@island.is/judicial-system/types'
-import { createIntl } from 'react-intl'
 
-import { DemandsAutofillProps, getDemandsAutofill } from './StepThreeForm'
+import { DemandsAutofillProps, getDemandsAutofill } from './StepThree'
 
 const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
 describe('getDemandsAutofill', () => {

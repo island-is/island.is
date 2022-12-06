@@ -540,7 +540,9 @@ export const StepThree: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() => {
-            flows.restrictionCases[0].onContinue()
+            flows.restrictionCases[
+              constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
+            ].onContinue()
           }}
           // nextUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}

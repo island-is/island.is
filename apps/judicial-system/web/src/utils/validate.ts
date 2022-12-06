@@ -160,13 +160,6 @@ export const isDefendantStepValidRC = (
   )
 }
 
-export const isDefendantStepValidForSidebarRC = (workingCase: Case) => {
-  return (
-    workingCase.id &&
-    isDefendantStepValidRC(workingCase, workingCase.policeCaseNumbers)
-  )
-}
-
 export const isDefendantStepValidIC = (
   workingCase: Case,
   caseType: CaseType | undefined,
