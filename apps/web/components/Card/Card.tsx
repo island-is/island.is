@@ -137,6 +137,36 @@ export const Card = ({
             <Text>{description}</Text>
           )}
 
+
+        {title=="Rafræn skilríki"
+        ? 
+        <div>
+          <br></br>
+          <div style={{width: "50%", float:"left"}}>
+          <a href="/rafraen-skilriki/audkennisappid"><h4 className="Text_colors_blue400__hdsizx14">Rafræn skilríki á farsíma</h4></a>
+          <br></br>
+          </div>
+
+          <div style={{width: "50%", float:"left"}}>
+          <a href="/rafraen-skilriki/audkennisappid"><h4  className="Text_colors_blue400__hdsizx14">Rafræn skilríki á korti</h4></a>
+          <br></br>
+          </div>
+
+          <div style={{width: "50%", float:"left"}}>
+          <a href="/rafraen-skilriki/audkennisappid"><h4 className="Text_colors_blue400__hdsizx14">Auðkennisappið</h4></a>
+          <br></br>
+          </div>
+
+          <div style={{width: "50%", float:"left"}}>
+          <a href="/rafraen-skilriki/audkennisappid"><h4  className="Text_colors_blue400__hdsizx14">Afgreiðslustaðir</h4></a>
+          <br></br>
+          </div>
+
+        </div>
+        : ""
+          }
+          
+
           {visibleTags.length > 0 && highlightedResults && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>
