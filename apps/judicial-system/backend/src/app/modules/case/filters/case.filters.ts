@@ -9,7 +9,9 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
+  isCourtRole,
   isIndictmentCase,
+  isProsecutionRole,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -24,7 +26,7 @@ function getAllowedStates(
   institutionType?: InstitutionType,
   caseType?: CaseType,
 ): CaseState[] {
-  if (role === UserRole.PROSECUTOR) {
+  if (isProsecutionRole(role)) {
     return [
       CaseState.NEW,
       CaseState.DRAFT,
@@ -77,11 +79,11 @@ function getBlockedStates(
 }
 
 function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
-  return role === UserRole.PROSECUTOR
+  return isProsecutionRole(role)
 }
 
 function courtMustMatchUserInstitution(role: UserRole): boolean {
-  return role === UserRole.REGISTRAR || role === UserRole.JUDGE
+  return isCourtRole(role)
 }
 
 function isStateHiddenFromRole(
@@ -100,6 +102,10 @@ function getAllowedTypes(
 ): CaseType[] {
   if (role === UserRole.ADMIN) {
     return [] // admins should only handle user management
+  }
+
+  if (role === UserRole.REPRESENTATIVE) {
+    return indictmentCases
   }
 
   if (
@@ -308,30 +314,29 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
   }
 
-  const blockInstitutions =
-    user.role === UserRole.PROSECUTOR
-      ? {
-          [Op.or]: [
-            { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creatingProsecutor.institution_id$': user.institution?.id },
-            { shared_with_prosecutors_office_id: user.institution?.id },
-          ],
-        }
-      : user.institution?.type === InstitutionType.HIGH_COURT
-      ? {
-          [Op.or]: [
-            { accused_appeal_decision: CaseAppealDecision.APPEAL },
-            { prosecutor_appeal_decision: CaseAppealDecision.APPEAL },
-            { accused_postponed_appeal_date: { [Op.not]: null } },
-            { prosecutor_postponed_appeal_date: { [Op.not]: null } },
-          ],
-        }
-      : {
-          [Op.or]: [
-            { court_id: { [Op.is]: null } },
-            { court_id: user.institution?.id },
-          ],
-        }
+  const blockInstitutions = isProsecutionRole(user.role)
+    ? {
+        [Op.or]: [
+          { creating_prosecutor_id: { [Op.is]: null } },
+          { '$creatingProsecutor.institution_id$': user.institution?.id },
+          { shared_with_prosecutors_office_id: user.institution?.id },
+        ],
+      }
+    : user.institution?.type === InstitutionType.HIGH_COURT
+    ? {
+        [Op.or]: [
+          { accused_appeal_decision: CaseAppealDecision.APPEAL },
+          { prosecutor_appeal_decision: CaseAppealDecision.APPEAL },
+          { accused_postponed_appeal_date: { [Op.not]: null } },
+          { prosecutor_postponed_appeal_date: { [Op.not]: null } },
+        ],
+      }
+    : {
+        [Op.or]: [
+          { court_id: { [Op.is]: null } },
+          { court_id: user.institution?.id },
+        ],
+      }
 
   const blockHightenedSecurity =
     user.role === UserRole.PROSECUTOR
@@ -347,21 +352,18 @@ export function getCasesQueryFilter(user: User): WhereOptions {
         ]
       : []
 
-  const blockDraftIndictmentsForCourt = [
-    UserRole.JUDGE,
-    UserRole.REGISTRAR,
-  ].includes(user.role)
+  const blockDraftIndictmentsForCourt = isCourtRole(user.role)
     ? [
         {
           [Op.not]: {
-            [Op.and]: [
-              { state: CaseState.DRAFT },
-              { [Op.or]: indictmentCases.map((type) => ({ type })) },
-            ],
+            [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
           },
         },
       ]
     : []
+
+  const restrictCaseTypes =
+    user.role === UserRole.REPRESENTATIVE ? [{ type: indictmentCases }] : []
 
   return {
     [Op.and]: [
@@ -370,6 +372,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
       blockInstitutions,
       ...blockHightenedSecurity,
       ...blockDraftIndictmentsForCourt,
+      ...restrictCaseTypes,
     ],
   }
 }

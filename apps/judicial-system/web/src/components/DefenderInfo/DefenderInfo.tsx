@@ -5,6 +5,7 @@ import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
 
 import {
   Case,
+  isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
@@ -55,7 +56,8 @@ const DefenderInfo: React.FC<Props> = (props) => {
   const renderTooltip = () => {
     if (
       isRestrictionCase(workingCase.type) &&
-      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR)
+      user?.role &&
+      isCourtRole(user?.role)
     ) {
       return (
         <Tooltip
@@ -65,7 +67,8 @@ const DefenderInfo: React.FC<Props> = (props) => {
       )
     } else if (
       isInvestigationCase(workingCase.type) &&
-      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR)
+      user?.role &&
+      isCourtRole(user?.role)
     ) {
       return (
         <Tooltip
