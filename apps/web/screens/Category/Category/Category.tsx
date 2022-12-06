@@ -241,10 +241,8 @@ const Category: Screen<CategoryProps> = ({
   const handleAccordionClick = (groupSlug: string) => {
     const updatedArr = updateHashArray(hashArray, groupSlug)
     setHashArray(updatedArr)
-    Router.replace({
-      pathname: linkResolver(category.__typename as LinkType, [slug]).href,
-      hash: getHashString(updatedArr),
-    })
+    // eslint-disable-next-line no-restricted-globals
+    history?.replaceState({}, '', `#${getHashString(updatedArr)}`)
   }
 
   const sortArticles = (articles: Articles) => {
