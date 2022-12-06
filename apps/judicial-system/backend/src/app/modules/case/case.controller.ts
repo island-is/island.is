@@ -174,7 +174,7 @@ export class CaseController {
     }
 
     const updatedCase = (await this.caseService.update(
-      caseId,
+      theCase,
       caseToUpdate,
     )) as Case
 
@@ -219,7 +219,7 @@ export class CaseController {
     }
 
     const updatedCase = await this.caseService.update(
-      caseId,
+      theCase,
       update as UpdateCaseDto,
       state !== CaseState.DELETED,
     )

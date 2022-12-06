@@ -1,8 +1,6 @@
 import React, { Fragment } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
-import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
 import { starterColumnStyle } from './styles/overviewStyles.css'
@@ -19,7 +17,7 @@ export const CapitalNumberOverview = ({
     <Fragment>
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
-          {formatMessage(m.capitalNumbersSectionTitle)}
+          {formatMessage(m.capitalNumbers)}
         </Text>
       </Box>
       <GridRow>
