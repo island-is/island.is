@@ -15,7 +15,8 @@ const ConfirmationDate: FC<FieldBaseProps> = ({ field, error }) => {
   const { setValue } = useFormContext()
   const defaultDate = new Date()
   // Set date to yesterday if current time is before noon for better UX
-  if (defaultDate.getHours() < 12) defaultDate.setDate(defaultDate.getDate()-1)
+  if (defaultDate.getHours() < 12)
+    defaultDate.setDate(defaultDate.getDate() - 1)
 
   return (
     <GridContainer>
