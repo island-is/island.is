@@ -24,6 +24,7 @@ import {
   prosecutorRule,
   registrarRule,
   representativeRule,
+  assistantRule,
 } from '../../guards'
 import {
   Case,
@@ -41,6 +42,7 @@ import {
   prosecutorNotificationRule,
   registrarNotificationRule,
   representativeNotificationRule,
+  assistantNotificationRule,
 } from './guards/rolesRules'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
@@ -58,6 +60,7 @@ export class NotificationController {
     representativeNotificationRule,
     judgeNotificationRule,
     registrarNotificationRule,
+    assistantNotificationRule,
   )
   @Post('notification')
   @ApiCreatedResponse({
@@ -82,7 +85,13 @@ export class NotificationController {
   }
 
   @UseGuards(CaseReadGuard)
-  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('notifications')
   @ApiOkResponse({
     type: Notification,

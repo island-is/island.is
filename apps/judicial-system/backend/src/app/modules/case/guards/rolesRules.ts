@@ -119,6 +119,13 @@ export const registrarUpdateRule = {
   dtoFields: courtFields,
 } as RolesRule
 
+// Allows assistants to update a specific set of fields
+export const assistantUpdateRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD,
+  dtoFields: courtFields,
+} as RolesRule
+
 // Allows staff to update a specific set of fields
 // In practice, only prison admins will be able to update these fields,
 // as write access is blocked for other staff roles
@@ -152,7 +159,7 @@ export const representativeTransitionRule = {
   ],
 } as RolesRule
 
-// Allows judges to receive, accept and reject cases
+// Allows judges to receive, accept, reject and dismiss cases
 export const judgeTransitionRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
@@ -171,4 +178,17 @@ export const registrarTransitionRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.RECEIVE],
+} as RolesRule
+
+// Allows assistants to receive, accept, reject and dismiss cases
+export const assistantTransitionRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.RECEIVE,
+    CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+    CaseTransition.DISMISS,
+  ],
 } as RolesRule
