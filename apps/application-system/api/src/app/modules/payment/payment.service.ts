@@ -69,25 +69,31 @@ export class PaymentService {
     const parsedDefinition = JSON.parse(
       (payment.definition as unknown) as string,
     )
+    const parsedDefinitionCharges = parsedDefinition.charges as [
+      {
+        chargeItemName: string
+        chargeItemCode: string
+        amount: number
+      },
+    ]
+
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
       // should probably be an id or token from the DB charge once implemented
       chargeItemSubject: payment.id.substring(0, 22),
       systemID: 'ISL',
       // The OR values can be removed later when the system will be more robust.
-      performingOrgID: parsedDefinition.performingOrganiationID,
+      performingOrgID: parsedDefinition.performingOrganizationID,
       payeeNationalID: user.nationalId,
       chargeType: parsedDefinition.chargeType,
       performerNationalID: user.nationalId,
-      charges: [
-        {
-          chargeItemCode: parsedDefinition.chargeItemCode,
-          quantity: 1,
-          priceAmount: payment.amount,
-          amount: payment.amount,
-          reference: '',
-        },
-      ],
+      charges: parsedDefinitionCharges.map((parsedDefinitionCharge) => ({
+        chargeItemCode: parsedDefinitionCharge.chargeItemCode,
+        quantity: 1,
+        priceAmount: parsedDefinitionCharge.amount,
+        amount: parsedDefinitionCharge.amount,
+        reference: '',
+      })),
       immediateProcess: true,
       returnUrl: callbackUrl,
       requestID: payment.id,
@@ -109,10 +115,36 @@ export class PaymentService {
     )
 
     if (!item) {
-      throw new Error('bad chargeItemCode or empty catalog')
+      throw new Error('Bad chargeItemCode or empty catalog')
     }
 
     return item
+  }
+
+  async findChargeItems(targetChargeItemCodes: string[]): Promise<Item[]> {
+    const { item: allItems } = await this.paymentApi.getCatalog()
+
+    const items = allItems.filter(({ chargeItemCode }) =>
+      targetChargeItemCodes.includes(chargeItemCode),
+    )
+
+    if (!items || items.length === 0) {
+      throw new Error('Bad chargeItemCodes or empty catalog')
+    }
+
+    const firstItem = items[0]
+    const notSame = items.find(
+      (item) =>
+        item.performingOrgID !== firstItem.performingOrgID ||
+        item.chargeType !== firstItem.chargeType,
+    )
+    if (notSame) {
+      throw new Error(
+        'Not all chargeItemCodes have the same performingOrgID or chargeType',
+      )
+    }
+
+    return items
   }
 
   async findApplicationById(

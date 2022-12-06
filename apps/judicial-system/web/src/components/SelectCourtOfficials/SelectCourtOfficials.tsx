@@ -3,7 +3,12 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
 import { Box, Select, Option, Tooltip } from '@island.is/island-ui/core'
-import { Case, User, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  indictmentCases,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 import { ReactSelectOption } from '../../types'
@@ -24,7 +29,9 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
   const judges = (users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.JUDGE &&
+        (user.role === UserRole.JUDGE ||
+          (indictmentCases.includes(workingCase.type) &&
+            user.role === UserRole.ASSISTANT)) &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((judge: User) => {
