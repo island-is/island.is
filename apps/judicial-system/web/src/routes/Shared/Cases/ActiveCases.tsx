@@ -15,9 +15,8 @@ import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
   CaseState,
-  isCourtRole,
+  isExtendedCourtRole,
   isProsecutionRole,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
@@ -68,7 +67,7 @@ const ActiveCases: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const isProsecution = user?.role && isProsecutionRole(user.role)
-  const isCourt = (user?.role && isCourtRole(UserRole.JUDGE)) || false
+  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',

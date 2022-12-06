@@ -12,6 +12,8 @@ import {
   FishingLicense,
   MunicipalitiesFinancialAid,
   ChargeFjsV2,
+  VehicleServiceFjsV1,
+  TransportAuthority,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -225,6 +227,8 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      VehicleServiceFjsV1,
+      TransportAuthority,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

@@ -10,6 +10,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
+  prosecutionRoles,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -29,6 +30,8 @@ describe('isCaseBlockedFromUser', () => {
         ${CaseState.DELETED}   | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
         ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
+        ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
+        ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
@@ -36,30 +39,37 @@ describe('isCaseBlockedFromUser', () => {
         ${CaseState.NEW}       | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
         ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
+        ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
         ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.DRAFT}     | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
         ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.SUBMITTED} | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.SUBMITTED} | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
         ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.RECEIVED}  | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.RECEIVED}  | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
         ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.REJECTED}  | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.REJECTED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.REJECTED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.REJECTED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.ACCEPTED}  | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.ACCEPTED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.DISMISSED} | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.DISMISSED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DISMISSED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       `.it(
@@ -86,23 +96,26 @@ describe('isCaseBlockedFromUser', () => {
 
   describe.each(indictmentCases)('given %s case', (caseType) => {
     each`
-      state                  | role                   | institutionType
+      state                  | role                       | institutionType
       ${CaseState.DELETED}   | ${UserRole.PROSECUTOR}     | ${InstitutionType.PROSECUTORS_OFFICE}
       ${CaseState.DELETED}   | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
       ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
       ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
+      ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
       ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
       ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
       ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
+      ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
       ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
       ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
       ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
+      ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
       ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
       ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
@@ -338,7 +351,7 @@ describe('isCaseBlockedFromUser', () => {
           // Arrange
           const theCase = {
             state,
-            type: CaseType.CUSTODY,
+            type,
             courtId: 'Court',
           } as Case
           const user = {
@@ -359,7 +372,7 @@ describe('isCaseBlockedFromUser', () => {
           // Arrange
           const theCase = {
             state,
-            type: CaseType.CUSTODY,
+            type,
             courtId: 'Court',
           } as Case
           const user = {
@@ -380,7 +393,7 @@ describe('isCaseBlockedFromUser', () => {
           // Arrange
           const theCase = {
             state,
-            type: CaseType.CUSTODY,
+            type,
             isHeightenedSecurityLevel: true,
             courtId: 'Court',
             creatingProsecutor: {
@@ -420,7 +433,7 @@ describe('isCaseBlockedFromUser', () => {
             // Arrange
             const theCase = {
               state,
-              type: CaseType.CUSTODY,
+              type,
               courtId: 'Court',
               accusedAppealDecision: CaseAppealDecision.APPEAL,
             } as Case
@@ -445,7 +458,7 @@ describe('isCaseBlockedFromUser', () => {
             // Arrange
             const theCase = {
               state,
-              type: CaseType.CUSTODY,
+              type,
               courtId: 'Court',
               prosecutorAppealDecision: CaseAppealDecision.APPEAL,
             } as Case
@@ -470,7 +483,7 @@ describe('isCaseBlockedFromUser', () => {
             // Arrange
             const theCase = {
               state,
-              type: CaseType.CUSTODY,
+              type,
               courtId: 'Court',
               accusedAppealDecision: CaseAppealDecision.POSTPONE,
               accusedPostponedAppealDate: randomDate(),
@@ -496,7 +509,7 @@ describe('isCaseBlockedFromUser', () => {
             // Arrange
             const theCase = {
               state,
-              type: CaseType.CUSTODY,
+              type,
               courtId: 'Court',
               prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
               prosecutorPostponedAppealDate: randomDate(),
@@ -535,7 +548,7 @@ describe('isCaseBlockedFromUser', () => {
               // Arrange
               const theCase = {
                 state,
-                type: CaseType.CUSTODY,
+                type,
                 courtId: 'Court',
                 accusedAppealDecision,
                 prosecutorAppealDecision,
@@ -561,6 +574,438 @@ describe('isCaseBlockedFromUser', () => {
       )
     },
   )
+
+  describe.each(indictmentCases)('geven %s case', (type) => {
+    each`
+        state
+        ${CaseState.NEW}
+        ${CaseState.DRAFT}
+        ${CaseState.SUBMITTED}
+        ${CaseState.RECEIVED}
+        ${CaseState.ACCEPTED}
+        ${CaseState.REJECTED}
+        ${CaseState.DISMISSED}
+      `.describe('given $state case', ({ state }) => {
+      it.each(prosecutionRoles)(
+        'should block the case from other prosecutors offices',
+        (role) => {
+          // Arrange
+          const theCase = {
+            state,
+            type,
+            creatingProsecutor: { institutionId: 'Prosecutors Office' },
+          } as Case
+          const user = {
+            role,
+            institution: {
+              id: 'Another Prosecutors Office',
+              type: InstitutionType.PROSECUTORS_OFFICE,
+            },
+          } as User
+
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+          // Assert
+          expect(isWriteBlocked).toBe(true)
+          expect(isReadBlocked).toBe(true)
+        },
+      )
+
+      it.each(prosecutionRoles)(
+        'should not block the case from own prosecutors office',
+        (role) => {
+          // Arrange
+          const theCase = {
+            state,
+            type,
+            creatingProsecutor: { institutionId: 'Prosecutors Office' },
+          } as Case
+          const user = {
+            role,
+            institution: {
+              id: 'Prosecutors Office',
+              type: InstitutionType.PROSECUTORS_OFFICE,
+            },
+          } as User
+
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+          // Assert
+          expect(isWriteBlocked).toBe(false)
+          expect(isReadBlocked).toBe(false)
+        },
+      )
+
+      it.each(prosecutionRoles)(
+        'should not read block the case from shared prosecutors office',
+        (role) => {
+          // Arrange
+          const theCase = {
+            state,
+            type,
+            creatingProsecutor: { institutionId: 'Prosecutors Office' },
+            sharedWithProsecutorsOfficeId: 'Another Prosecutors Office',
+          } as Case
+          const user = {
+            role,
+            institution: {
+              id: 'Another Prosecutors Office',
+              type: InstitutionType.PROSECUTORS_OFFICE,
+            },
+          } as User
+
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+          // Assert
+          expect(isWriteBlocked).toBe(true)
+          expect(isReadBlocked).toBe(false)
+        },
+      )
+
+      it.each(prosecutionRoles)(
+        'should block a hightened security case from other prosecutors',
+        (role) => {
+          // Arrange
+          const theCase = {
+            state,
+            type,
+            isHeightenedSecurityLevel: true,
+            creatingProsecutor: {
+              id: 'Creating Prosecutor',
+              institution: { id: 'Prosecutors Office' },
+            },
+            prosecutor: { id: 'Assigned Prosecutor' },
+          } as Case
+          const user = {
+            id: 'Other Prosecutor',
+            role,
+            institution: {
+              id: 'Prosecutors Office',
+              type: InstitutionType.PROSECUTORS_OFFICE,
+            },
+          } as User
+
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+          // Assert
+          expect(isWriteBlocked).toBe(true)
+          expect(isReadBlocked).toBe(true)
+        },
+      )
+
+      it('should not block a hightened security case from creating prosecutor', () => {
+        // Arrange
+        const theCase = {
+          state,
+          type,
+          isHeightenedSecurityLevel: true,
+          creatingProsecutor: {
+            id: 'Creating Prosecutor',
+            institution: { id: 'Prosecutors Office' },
+          },
+          prosecutor: { id: 'Assigned Prosecutor' },
+        } as Case
+        const user = {
+          id: 'Creating Prosecutor',
+          role: UserRole.PROSECUTOR,
+          institution: {
+            id: 'Prosecutors Office',
+            type: InstitutionType.PROSECUTORS_OFFICE,
+          },
+        } as User
+
+        // Act
+        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+        // Assert
+        expect(isWriteBlocked).toBe(false)
+        expect(isReadBlocked).toBe(false)
+      })
+
+      it('should not block a hightened security case from assigned prosecutor', () => {
+        // Arrange
+        const theCase = {
+          state,
+          type,
+          isHeightenedSecurityLevel: true,
+          creatingProsecutor: {
+            id: 'Creating Prosecutor',
+            institution: { id: 'Prosecutors Office' },
+          },
+          prosecutor: { id: 'Assigned Prosecutor' },
+        } as Case
+        const user = {
+          id: 'Assigned Prosecutor',
+          role: UserRole.PROSECUTOR,
+          institution: {
+            id: 'Prosecutors Office',
+            type: InstitutionType.PROSECUTORS_OFFICE,
+          },
+        } as User
+
+        // Act
+        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+        // Assert
+        expect(isWriteBlocked).toBe(false)
+        expect(isReadBlocked).toBe(false)
+      })
+    })
+
+    each`
+        state                  | role
+        ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}
+        ${CaseState.SUBMITTED} | ${UserRole.JUDGE}
+        ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}
+        ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}
+        ${CaseState.RECEIVED}  | ${UserRole.JUDGE}
+        ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}
+        ${CaseState.ACCEPTED}  | ${UserRole.REGISTRAR}
+        ${CaseState.ACCEPTED}  | ${UserRole.JUDGE}
+        ${CaseState.ACCEPTED}  | ${UserRole.ASSISTANT}
+        ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}
+        ${CaseState.REJECTED}  | ${UserRole.JUDGE}
+        ${CaseState.REJECTED}  | ${UserRole.ASSISTANT}
+        ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}
+        ${CaseState.DISMISSED} | ${UserRole.JUDGE}
+        ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}
+      `.describe('given $state case and $role role', ({ state, role }) => {
+      it('should block the case from the role at other courts', () => {
+        // Arrange
+        const theCase = {
+          state,
+          type,
+          courtId: 'Court',
+        } as Case
+        const user = {
+          role,
+          institution: { id: 'Another Court', type: InstitutionType.COURT },
+        } as User
+
+        // Act
+        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+        // Assert
+        expect(isWriteBlocked).toBe(true)
+        expect(isReadBlocked).toBe(true)
+      })
+
+      it('should not block the case from the role at own court', () => {
+        // Arrange
+        const theCase = {
+          state,
+          type,
+          courtId: 'Court',
+        } as Case
+        const user = {
+          role,
+          institution: { id: 'Court', type: InstitutionType.COURT },
+        } as User
+
+        // Act
+        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+        // Assert
+        expect(isWriteBlocked).toBe(false)
+        expect(isReadBlocked).toBe(false)
+      })
+
+      it('should not block a hightened security case from own court', () => {
+        // Arrange
+        const theCase = {
+          state,
+          type,
+          isHeightenedSecurityLevel: true,
+          courtId: 'Court',
+          creatingProsecutor: {
+            id: 'Creating Prosecutor',
+            institution: { id: 'Prosecutors Office' },
+          },
+          prosecutor: { id: 'Assigned Prosecutor' },
+        } as Case
+        const user = {
+          id: 'Court User',
+          role,
+          institution: { id: 'Court', type: InstitutionType.COURT },
+        } as User
+
+        // Act
+        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+        // Assert
+        expect(isWriteBlocked).toBe(false)
+        expect(isReadBlocked).toBe(false)
+      })
+    })
+
+    each`
+        state                  | role
+        ${CaseState.ACCEPTED}  | ${UserRole.REGISTRAR}
+        ${CaseState.ACCEPTED}  | ${UserRole.JUDGE}
+        ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}
+        ${CaseState.REJECTED}  | ${UserRole.JUDGE}
+        ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}
+        ${CaseState.DISMISSED} | ${UserRole.JUDGE}
+      `.describe(
+      'given a $state case and $role at high court',
+      ({ state, role }) => {
+        it('should not read block the case if the accused appealed in court', () => {
+          // Arrange
+          const theCase = {
+            state,
+            type,
+            courtId: 'Court',
+            accusedAppealDecision: CaseAppealDecision.APPEAL,
+          } as Case
+          const user = {
+            role,
+            institution: {
+              id: 'High Court',
+              type: InstitutionType.HIGH_COURT,
+            },
+          } as User
+
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+          // Assert
+          expect(isWriteBlocked).toBe(true)
+          expect(isReadBlocked).toBe(false)
+        })
+
+        it('should not read block the case if the prosecutor appealed in court', () => {
+          // Arrange
+          const theCase = {
+            state,
+            type,
+            courtId: 'Court',
+            prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+          } as Case
+          const user = {
+            role,
+            institution: {
+              id: 'High Court',
+              type: InstitutionType.HIGH_COURT,
+            },
+          } as User
+
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+          // Assert
+          expect(isWriteBlocked).toBe(true)
+          expect(isReadBlocked).toBe(false)
+        })
+
+        it('should not read block the case if the accused appealed out of court', () => {
+          // Arrange
+          const theCase = {
+            state,
+            type,
+            courtId: 'Court',
+            accusedAppealDecision: CaseAppealDecision.POSTPONE,
+            accusedPostponedAppealDate: randomDate(),
+          } as Case
+          const user = {
+            role,
+            institution: {
+              id: 'High Court',
+              type: InstitutionType.HIGH_COURT,
+            },
+          } as User
+
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+          // Assert
+          expect(isWriteBlocked).toBe(true)
+          expect(isReadBlocked).toBe(false)
+        })
+
+        it('should not read block the case if the prosecutor appealed out of court', () => {
+          // Arrange
+          const theCase = {
+            state,
+            type,
+            courtId: 'Court',
+            prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+            prosecutorPostponedAppealDate: randomDate(),
+          } as Case
+          const user = {
+            role,
+            institution: {
+              id: 'High Court',
+              type: InstitutionType.HIGH_COURT,
+            },
+          } as User
+
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+          // Assert
+          expect(isWriteBlocked).toBe(true)
+          expect(isReadBlocked).toBe(false)
+        })
+
+        each`
+            accusedAppealDecision  | prosecutorAppealDecision
+            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.ACCEPT}
+            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.NOT_APPLICABLE}
+            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.POSTPONE}
+            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.ACCEPT}
+            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.NOT_APPLICABLE}
+            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.POSTPONE}
+            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.ACCEPT}
+            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.NOT_APPLICABLE}
+            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.POSTPONE}
+          `.it(
+          'should block the case if it has not been appealed',
+          ({ accusedAppealDecision, prosecutorAppealDecision }) => {
+            // Arrange
+            const theCase = {
+              state,
+              type,
+              courtId: 'Court',
+              accusedAppealDecision,
+              prosecutorAppealDecision,
+            } as Case
+            const user = {
+              role,
+              institution: {
+                id: 'High Court',
+                type: InstitutionType.HIGH_COURT,
+              },
+            } as User
+
+            // Act
+            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+            // Assert
+            expect(isWriteBlocked).toBe(true)
+            expect(isReadBlocked).toBe(true)
+          },
+        )
+      },
+    )
+  })
 
   describe.each(investigationCases)('given an accepted %s case', (type) => {
     each`
@@ -864,6 +1309,14 @@ describe('getCasesQueryFilter', () => {
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
+        {
+          [Op.or]: [
+            { is_heightened_security_level: { [Op.is]: null } },
+            { is_heightened_security_level: false },
+            { creating_prosecutor_id: user.id },
+            { prosecutor_id: user.id },
+          ],
+        },
         { type: indictmentCases },
       ],
     })
@@ -940,6 +1393,33 @@ describe('getCasesQueryFilter', () => {
           },
         ],
       })
+    })
+  })
+
+  it(`should get assistant filter`, () => {
+    // Arrange
+    const user = {
+      role: UserRole.ASSISTANT,
+      institution: { id: 'Court Id', type: InstitutionType.COURT },
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        { isArchived: false },
+        {
+          [Op.not]: {
+            state: [CaseState.NEW, CaseState.DRAFT, CaseState.DELETED],
+          },
+        },
+        {
+          [Op.or]: [{ court_id: { [Op.is]: null } }, { court_id: 'Court Id' }],
+        },
+        { type: indictmentCases },
+      ],
     })
   })
 
