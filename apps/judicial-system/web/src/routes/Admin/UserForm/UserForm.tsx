@@ -13,7 +13,12 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  isCourtRole,
+  isProsecutionRole,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { Institution, User } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '../../../types'
 import {
@@ -46,11 +51,11 @@ export const UserForm: React.FC<Props> = (props) => {
   ] = useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
-  const selectInstitutions = (user.role === UserRole.PROSECUTOR
+  const selectInstitutions = (isProsecutionRole(user.role)
     ? props.prosecutorsOffices
     : user.role === UserRole.STAFF
     ? props.prisonInstitutions
-    : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
+    : isCourtRole(user.role)
     ? props.allCourts
     : []
   ).map((institution) => ({
@@ -69,9 +74,9 @@ export const UserForm: React.FC<Props> = (props) => {
       return false
     }
 
-    return user.role === UserRole.PROSECUTOR
+    return isProsecutionRole(user.role)
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
-      : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
+      : isCourtRole(user.role)
       ? user.institution?.type === InstitutionType.COURT ||
         user.institution?.type === InstitutionType.HIGH_COURT
       : user.role === UserRole.STAFF
@@ -187,6 +192,18 @@ export const UserForm: React.FC<Props> = (props) => {
                 label="Saksóknari"
                 checked={user.role === UserRole.PROSECUTOR}
                 onChange={() => setUser({ ...user, role: UserRole.PROSECUTOR })}
+                large
+              />
+            </Box>
+            <Box className={styles.roleColumn}>
+              <RadioButton
+                name="role"
+                id="roleRepresentative"
+                label="Fulltrúi"
+                checked={user.role === UserRole.REPRESENTATIVE}
+                onChange={() =>
+                  setUser({ ...user, role: UserRole.REPRESENTATIVE })
+                }
                 large
               />
             </Box>

@@ -1,4 +1,9 @@
-import { judgeRule, prosecutorRule, registrarRule } from '../../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+} from '../../../guards'
 import { DefendantController } from '../defendant.controller'
 
 describe('DefendantController - Update rules', () => {
@@ -12,19 +17,14 @@ describe('DefendantController - Update rules', () => {
     )
   })
 
-  it('should give permission to three roles', () => {
-    expect(rules).toHaveLength(3)
+  it('should give permission to four roles', () => {
+    expect(rules).toHaveLength(4)
   })
 
-  it('should give permission to prosecutors', () => {
+  it('should give permission to prosecutors, representatives, judges and registrars', () => {
     expect(rules).toContain(prosecutorRule)
-  })
-
-  it('should give permission to judges', () => {
+    expect(rules).toContain(representativeRule)
     expect(rules).toContain(judgeRule)
-  })
-
-  it('should give permission to registrars', () => {
     expect(rules).toContain(registrarRule)
   })
 })

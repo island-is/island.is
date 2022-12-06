@@ -18,7 +18,12 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+} from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
@@ -37,7 +42,7 @@ export class DefendantController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Post()
   @ApiCreatedResponse({
     type: Defendant,
@@ -53,7 +58,7 @@ export class DefendantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
   @Put(':defendantId')
   @ApiOkResponse({
     type: Defendant,
@@ -70,7 +75,7 @@ export class DefendantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Delete(':defendantId')
   @ApiOkResponse({ description: 'Deletes a defendant' })
   async delete(
