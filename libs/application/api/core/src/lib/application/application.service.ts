@@ -149,10 +149,10 @@ export class ApplicationService {
   }
 
   async findAllDueToBePruned(): Promise<
-    Pick<Application, 'id' | 'attachments' | 'externalData'>[]
+    Pick<Application, 'id' | 'attachments' | 'typeId' | 'state'>[]
   > {
     return this.applicationModel.findAll({
-      attributes: ['id', 'attachments', 'externalData'],
+      attributes: ['id', 'attachments', 'typeId', 'state'],
       where: {
         [Op.and]: {
           pruneAt: {

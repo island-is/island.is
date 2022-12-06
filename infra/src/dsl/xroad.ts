@@ -1,34 +1,42 @@
 import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
-import { json } from './dsl'
+import { json, ref } from './dsl'
 
 type XroadSectionConfig = {
   secrets?: Secrets
   env?: EnvironmentVariables
 }
 
-export class XroadConf implements XroadConfig {
+export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
   config: XroadSectionConfig
 
-  constructor(config: XroadSectionConfig) {
+  constructor(config: I) {
     this.config = config
   }
+
   getEnv(): EnvironmentVariables {
     return this.config.env || {}
   }
+
   getSecrets(): Secrets {
     return this.config.secrets || {}
   }
 }
 
+export type XRoadEnvs<
+  T extends XroadSectionConfig
+> = T extends XroadSectionConfig ? keyof T['env'] : never
+
 export const Base = new XroadConf({
   env: {
     XROAD_BASE_PATH: {
-      dev: 'http://securityserver.dev01.devland.is',
+      dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
       staging: 'http://securityserver.staging01.devland.is',
       prod: 'http://securityserver.island.is',
     },
     XROAD_BASE_PATH_WITH_ENV: {
-      dev: 'http://securityserver.dev01.devland.is/r1/IS-DEV',
+      dev: ref(
+        (h) => `${h.svc('http://securityserver.dev01.devland.is')}/r1/IS-DEV`,
+      ),
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
     },
@@ -211,6 +219,17 @@ export const Firearm = new XroadConf({
       dev: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1',
       staging: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1',
       prod: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1',
+    },
+  },
+})
+
+// TODO: Get correct staging and prod values before release
+export const Disability = new XroadConf({
+  env: {
+    XROAD_DISABILITY_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
+      staging: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
+      prod: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
     },
   },
 })

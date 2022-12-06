@@ -1,5 +1,4 @@
 import { Box, IconProps, Icon } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
@@ -11,7 +10,7 @@ import Chevron from './Chevron'
 import { iconTypeToSVG, iconIdMapper } from '../../../utils/Icons/idMapper'
 
 interface Props {
-  path?: ServicePortalPath
+  path?: string
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   chevron?: boolean

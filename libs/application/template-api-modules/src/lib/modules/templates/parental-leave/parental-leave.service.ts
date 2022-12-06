@@ -5,7 +5,10 @@ import addDays from 'date-fns/addDays'
 import cloneDeep from 'lodash/cloneDeep'
 
 import type { Attachment, Period } from '@island.is/clients/vmst'
-import { ParentalLeaveApi } from '@island.is/clients/vmst'
+import {
+  ParentalLeaveApi,
+  ApplicationInformationApi,
+} from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
@@ -27,6 +30,7 @@ import {
   getMultipleBirthsDays,
   SINGLE,
   getAdditionalSingleParentRightsInDays,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -91,6 +95,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
+    private applicationInformationAPI: ApplicationInformationApi,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
@@ -510,12 +515,37 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       otherParent,
     } = getApplicationAnswers(application.answers)
 
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+
     const answers = cloneDeep(originalPeriods).sort((a, b) => {
       const dateA = new Date(a.startDate)
       const dateB = new Date(b.startDate)
 
       return dateA.getTime() - dateB.getTime()
     })
+
+    let vmstRightCodePeriod = null
+    if (applicationFundId) {
+      try {
+        const VMSTperiods = await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+        if (VMSTperiods?.periods) {
+          vmstRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+        }
+      } catch (e) {
+        this.logger.warn(
+          `Could not fetch applicationInformation on applicationId: {applicationId} with error: {error}`
+            .replace(`{${'applicationId'}}`, application.id)
+            .replace(`{${'error'}}`, e),
+        )
+      }
+    }
 
     const periods: Period[] = []
     const maximumDaysToSpend = getAvailableRightsInDays(application)
@@ -539,6 +569,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
     let numberOfDaysAlreadySpent = 0
+    const basicRightCodePeriod =
+      vmstRightCodePeriod ?? getRightsCode(application)
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
@@ -636,7 +668,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: getRightsCode(application),
+          rightsCodePeriod: basicRightCodePeriod,
         })
       } else if (otherParent === SINGLE) {
         // single parent
@@ -681,7 +713,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                 fromDate,
                 daysLeftOfPersonalRights,
                 period,
-                getRightsCode(application),
+                basicRightCodePeriod,
               )
 
               periods.push(personalPeriod)
@@ -739,7 +771,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                 fromDate,
                 daysLeftOfPersonalRights,
                 period,
-                getRightsCode(application),
+                basicRightCodePeriod,
               )
 
               periods.push(personalPeriod)
@@ -889,7 +921,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               undefined,
               daysLeftOfPersonalRights,
               period,
-              getRightsCode(application),
+              basicRightCodePeriod,
             )
 
             periods.push(personalPeriod)
@@ -963,7 +995,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               fromDate,
               daysLeftOfPersonalRights,
               period,
-              getRightsCode(application),
+              basicRightCodePeriod,
             )
 
             periods.push(personalPeriod)
@@ -1036,7 +1068,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             fromDate,
             daysLeftOfPersonalRights,
             period,
-            getRightsCode(application),
+            basicRightCodePeriod,
           )
 
           periods.push(personalPeriod)

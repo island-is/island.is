@@ -67,6 +67,8 @@ export const Users: React.FC = () => {
         return 'Dómari'
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
+      case UserRole.REPRESENTATIVE:
+        return 'Fulltrúi'
       case UserRole.REGISTRAR:
         return 'Dómritari'
       case UserRole.STAFF:

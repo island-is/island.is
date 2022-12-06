@@ -1,0 +1,29 @@
+{
+  "root": "libs/clients/disability-license",
+  "sourceRoot": "libs/clients/disability-license/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/disability-license/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/disability-license"],
+      "options": {
+        "jestConfig": "libs/clients/disability-license/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/disability-license/gen/fetch -i libs/clients/disability-license/src/clientConfig.yml"
+      }
+    }
+  },
+  "tags": []
+}

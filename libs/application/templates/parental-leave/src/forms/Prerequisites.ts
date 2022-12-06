@@ -30,14 +30,7 @@ import {
   getSelectedChild,
   getApplicationAnswers,
 } from '../lib/parentalLeaveUtils'
-import {
-  NO,
-  YES,
-  ParentalRelations,
-  PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-} from '../constants'
+import { NO, YES, ParentalRelations } from '../constants'
 import { defaultMultipleBirthsMonths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
@@ -270,39 +263,18 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'applicationType',
           title: parentalLeaveFormMessages.shared.applicationTypeTitle,
           children: [
-            buildRadioField({
-              id: 'applicationType.option',
+            buildMultiField({
+              id: 'applicationTypes',
               title: parentalLeaveFormMessages.shared.applicationTypeTitle,
               description:
                 parentalLeaveFormMessages.shared
                   .applicationParentalLeaveDescription,
-              options: [
-                {
-                  value: PARENTAL_LEAVE,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalLeaveTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalLeaveSubTitle.defaultMessage as string,
-                },
-                {
-                  value: PARENTAL_GRANT,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalGrantUnemployedTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalGrantUnemployedSubTitle
-                    .defaultMessage as string,
-                },
-                {
-                  value: PARENTAL_GRANT_STUDENTS,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalGrantStudentTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalGrantStudentSubTitle
-                    .defaultMessage as string,
-                },
+              children: [
+                buildCustomField({
+                  component: 'ApplicationType',
+                  id: 'applicationType.option',
+                  title: '',
+                }),
               ],
             }),
           ],

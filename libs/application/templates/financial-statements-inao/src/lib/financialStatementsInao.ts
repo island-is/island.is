@@ -47,7 +47,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
         : m.applicationTitleAlt
     }
 
-    return currentUser
+    return currentUser?.name
       ? `${m.applicationTitle.defaultMessage} - ${currentUser.name}`
       : m.applicationTitle
   },

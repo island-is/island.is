@@ -30,9 +30,10 @@ import {
   LiveChatIncChatPanel,
   Sticky,
   SidebarShipSearchInput,
+  Webreader,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -87,6 +88,7 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
+  showReadSpeaker?: boolean
 }
 
 interface HeaderProps {
@@ -136,7 +138,7 @@ export const getThemeConfig = (
 ): { themeConfig: Partial<LayoutProps> } => {
   let footerVersion: LayoutProps['footerVersion'] = 'default'
 
-  if (footerEnabled.includes(slug)) {
+  if (footerEnabled.includes(slug) || theme === 'landing_page') {
     footerVersion = 'organization'
   }
 
@@ -203,7 +205,7 @@ interface ExternalLinksProps {
 export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   organizationPage,
 }) => {
-  if (organizationPage.externalLinks) {
+  if (organizationPage.externalLinks?.length) {
     return (
       <Box
         display={['none', 'none', 'flex', 'flex']}
@@ -471,10 +473,16 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
   showSecondaryMenu = true,
   showExternalLinks = false,
+  showReadSpeaker = true,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
+
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
 
   useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
 
@@ -613,45 +621,60 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               )}
             </Box>
           )}
-          {(!!breadcrumbItems || !!pageDescription) && (
-            <GridContainer>
-              <GridRow>
-                <GridColumn
-                  span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
-                  offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
-                >
-                  {showExternalLinks && (
-                    <OrganizationExternalLinks
-                      organizationPage={organizationPage}
-                    />
-                  )}
-                  {breadcrumbItems && (
-                    <Breadcrumbs
-                      items={breadcrumbItems ?? []}
-                      renderLink={(link, item) => {
-                        return item?.href ? (
-                          <NextLink href={item?.href}>{link}</NextLink>
-                        ) : (
-                          link
-                        )
-                      }}
-                    />
-                  )}
-                  {pageDescription && (
-                    <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
-                      <Text variant="default">{pageDescription}</Text>
-                    </Box>
-                  )}
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          )}
+
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
+                offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
+              >
+                {showExternalLinks && (
+                  <OrganizationExternalLinks
+                    organizationPage={organizationPage}
+                  />
+                )}
+                {breadcrumbItems && (
+                  <Breadcrumbs
+                    items={breadcrumbItems ?? []}
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <NextLink href={item?.href}>{link}</NextLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                  />
+                )}
+
+                {showReadSpeaker && isWebReaderEnabledForOrganizationPages && (
+                  <Webreader
+                    marginTop={breadcrumbItems?.length ? 3 : 0}
+                    marginBottom={breadcrumbItems?.length ? 0 : 3}
+                    readId={null}
+                    readClass="rs_read"
+                  />
+                )}
+
+                {pageDescription && (
+                  <Box
+                    className="rs_read"
+                    paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}
+                  >
+                    <Text variant="default">{pageDescription}</Text>
+                  </Box>
+                )}
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+
           {isMobile && sidebarContent}
-          <Box paddingTop={fullWidthContent ? 0 : 4}>
+
+          <Box className="rs_read" paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}
           </Box>
         </SidebarLayout>
       )}
+
       {minimal && (
         <GridContainer>
           <GridRow>
@@ -659,18 +682,21 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               paddingTop={6}
               span={['12/12', '12/12', '10/12']}
               offset={['0', '0', '1/12']}
+              className="rs_read"
             >
               {mainContent}
             </GridColumn>
           </GridRow>
         </GridContainer>
       )}
-      {!!mainContent && children}
+      {!!mainContent && <Box className="rs_read">{children}</Box>}
       {!minimal && (
-        <OrganizationFooter
-          organizations={[organizationPage.organization]}
-          force={true}
-        />
+        <Box className="rs_read">
+          <OrganizationFooter
+            organizations={[organizationPage.organization]}
+            force={true}
+          />
+        </Box>
       )}
       <OrganizationChatPanel
         organizationIds={[organizationPage?.organization?.id]}

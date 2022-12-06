@@ -6,7 +6,12 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { CaseState, User, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  prosecutionRoles,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
 import { ViewCaseFileGuard } from '../viewCaseFile.guard'
@@ -39,8 +44,8 @@ describe('View Case File Guard', () => {
     }
   })
 
-  describe('prosecutors can view case files', () => {
-    const user = { role: UserRole.PROSECUTOR } as User
+  describe.each(prosecutionRoles)('%s can view case files', (role) => {
+    const user = { role } as User
     const theCase = {} as Case
     let then: Then
 

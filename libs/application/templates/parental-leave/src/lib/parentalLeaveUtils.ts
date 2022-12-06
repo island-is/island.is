@@ -412,6 +412,38 @@ export const getOtherParentOptions = (
   return options
 }
 
+export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
+  const options: Option[] = [
+    {
+      value: PARENTAL_LEAVE,
+      label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle,
+      subLabel: formatMessage(
+        parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
+      ),
+    },
+    {
+      value: PARENTAL_GRANT,
+      label:
+        parentalLeaveFormMessages.shared
+          .applicationParentalGrantUnemployedTitle,
+      subLabel: formatMessage(
+        parentalLeaveFormMessages.shared
+          .applicationParentalGrantUnemployedSubTitle,
+      ),
+    },
+    {
+      value: PARENTAL_GRANT_STUDENTS,
+      label:
+        parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
+      subLabel: formatMessage(
+        parentalLeaveFormMessages.shared
+          .applicationParentalGrantStudentSubTitle,
+      ),
+    },
+  ]
+  return options
+}
+
 export const getAllPeriodDates = (periods: Period[]) => {
   const filledPeriods = periods.filter((p) => p.startDate && p.endDate)
 
@@ -641,17 +673,19 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
 
-  const usePersonalAllowance = getValueViaPath(
-    answers,
-    'usePersonalAllowance',
-    NO,
-  ) as YesOrNo
+  const usePersonalAllowance =
+    (getValueViaPath(
+      answers,
+      'personalAllowance.usePersonalAllowance',
+    ) as YesOrNo) ??
+    (getValueViaPath(answers, 'usePersonalAllowance', NO) as YesOrNo)
 
-  const usePersonalAllowanceFromSpouse = getValueViaPath(
-    answers,
-    'usePersonalAllowanceFromSpouse',
-    NO,
-  ) as YesOrNo
+  const usePersonalAllowanceFromSpouse =
+    (getValueViaPath(
+      answers,
+      'personalAllowanceFromSpouse.usePersonalAllowance',
+    ) as YesOrNo) ??
+    (getValueViaPath(answers, 'usePersonalAllowanceFromSpouse', NO) as YesOrNo)
 
   const personalUseAsMuchAsPossible = getValueViaPath(
     answers,
