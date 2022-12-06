@@ -67,10 +67,6 @@ interface VMSTError {
   traceId: string
   errors: Record<string, string[]>
 }
-export interface AttachmentData {
-  key: string
-  name: string
-}
 
 type YesOrNo = typeof NO | typeof YES
 interface AnswerPeriod {
@@ -1093,7 +1089,7 @@ export class ParentalLeaveService {
         attachments,
         true,
       )
-      
+
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes
       await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
