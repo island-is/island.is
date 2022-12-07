@@ -18,7 +18,7 @@ const BottomBar = ({
   sendText,
 }: Props) => {
   const { formatMessage } = useLocale()
-  console.log(sendText)
+
   return (
     <Fragment>
       <Box paddingY={3}>

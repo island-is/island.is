@@ -126,7 +126,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
-            {formatMessage(m.expenses)}
+            {formatMessage(m.debtsAndEquity)}
           </Text>
           <Box paddingY={1}>
             <InputController
@@ -169,7 +169,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             total={totalLiabilities}
             label={formatMessage(m.totalDebts)}
           />
-          <Box paddingY={1}>
+          <Box paddingBottom={1} paddingTop={2}>
             <InputController
               id={EQUITIESANDLIABILITIESIDS.totalEquity}
               name={EQUITIESANDLIABILITIESIDS.totalEquity}
@@ -199,7 +199,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
       {errors && errors.validator ? (
         <Box paddingY={2}>
           <AlertBanner
-            title={formatMessage(m.genericError)}
+            title={formatMessage(m.equityErrorTitle)}
             description={formatMessage(m.equityDebtsAssetsValidatorError)}
             variant="error"
           />

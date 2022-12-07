@@ -95,7 +95,7 @@ export const m = defineMessages({
     description: 'Review contact info',
   },
   reviewInfo: {
-    id: 'fsn.application:reviewContact',
+    id: 'fsn.application:reviewInfo',
     defaultMessage: 'Vinsamlega yfirfarið upplýsingarnar hér að neðan',
     description: 'Review info',
   },
@@ -276,6 +276,11 @@ export const m = defineMessages({
     id: 'fsn.application:keyNumbers.operatingCost',
     defaultMessage: 'Rekstrarniðurstaða alls',
     description: 'Operating Cost',
+  },
+  operatingCostBefore: {
+    id: 'fsn.application:keyNumbers.operatingCostBeforeCapital',
+    defaultMessage: 'Rekstrarniðurstaða fyrir fjármagnsliði',
+    description: 'Operating Cost Capital',
   },
   operatingYear: {
     id: 'fsn.application:keyNumbers.operatingYear',
@@ -776,6 +781,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast veldu það sem við á',
     description: 'Please select',
   },
+  pleaseSelectElection: {
+    id: 'fsn.application:pleaseSelectElection',
+    defaultMessage: 'Vinsamlegast veldu þær kosningar sem við eiga',
+    description: 'Please select election',
+  },
   applicationAccept: {
     id: 'fsn.application:applicationAccept',
     defaultMessage: 'Umsókn móttekin',
@@ -826,6 +836,11 @@ export const m = defineMessages({
     id: 'fsn.application:individualReceivedMsgSecond',
     defaultMessage: 'hefur verið skilað þann',
     description: 'Second part of audit received message',
+  },
+  equityErrorTitle: {
+    id: 'fsn.application:equityErrorTitle',
+    defaultMessage: 'Ósamræmi í tölum',
+    description: 'Error msg title when E = S+E.fé is incorrect',
   },
   fetchErrorTitle: {
     id: 'fsn.application:fetchErrorMsg',

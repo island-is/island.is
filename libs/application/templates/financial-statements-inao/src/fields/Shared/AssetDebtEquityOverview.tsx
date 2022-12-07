@@ -56,15 +56,17 @@ export const AssetDebtEquityOverview = ({
             value={formatCurrency(answers.liability?.total)}
             isTotal
           />
-          <ValueLine
-            label={m.equity}
-            value={formatCurrency(answers.equity?.totalEquity)}
-          />
-          <ValueLine
-            label={m.debtsAndCash}
-            value={formatCurrency(answers.equityAndLiabilities?.total)}
-            isTotal
-          />
+          <Box paddingTop={2}>
+            <ValueLine
+              label={m.equity}
+              value={formatCurrency(answers.equity?.totalEquity)}
+            />
+            <ValueLine
+              label={m.debtsAndCash}
+              value={formatCurrency(answers.equityAndLiabilities?.total)}
+              isTotal
+            />
+          </Box>
         </GridColumn>
       </GridRow>
     </Fragment>
