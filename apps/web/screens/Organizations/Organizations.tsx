@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import NextLink from 'next/link'
 import { useWindowSize } from 'react-use'
+
 import {
   Box,
   Text,
@@ -25,16 +26,19 @@ import {
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { HeadWithSocialSharing } from '@island.is/web/components'
+import { useNamespace } from '@island.is/web/hooks'
+import { Screen } from '@island.is/web/types'
+import { useI18n } from '@island.is/web/i18n'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import sortAlpha from '@island.is/web/utils/sortAlpha'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
+
+import { CustomNextError } from '../../units/errors'
 import {
   GET_ORGANIZATIONS_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_TAGS_QUERY,
 } from '../queries'
-import { useNamespace } from '@island.is/web/hooks'
-import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '../../units/errors'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import sortAlpha from '@island.is/web/utils/sortAlpha'
 import {
   FilterMenu,
   CategoriesProps,
@@ -75,6 +79,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const n = useNamespace(namespace)
   const [page, setPage] = useState<number>(1)
   const { linkResolver } = useLinkResolver()
+  const { activeLocale } = useI18n()
 
   const [filter, setFilter] = useState<FilterOptions>({
     raduneyti: [],
@@ -230,57 +235,40 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             </Box>
 
             <GridRow>
-              {visibleItems.map(
-                (
-                  {
-                    title,
-                    description,
-                    tag,
-                    link,
-                    logo,
-                    hasALandingPage,
-                    slug,
-                  },
-                  index,
-                ) => {
-                  const tags =
-                    tag &&
-                    tag.map((x) => ({
-                      title: x.title,
-                      label: x.title,
-                    }))
+              {visibleItems.map((organization, index) => {
+                const tags =
+                  organization?.tag &&
+                  organization.tag.map((x) => ({
+                    title: x.title,
+                    label: x.title,
+                  }))
 
-                  return (
-                    <GridColumn
+                return (
+                  <GridColumn
+                    key={index}
+                    span={['12/12', '6/12', '6/12', '4/12']}
+                    paddingBottom={verticalSpacing}
+                  >
+                    <CategoryCard
+                      href={getOrganizationLink(organization, activeLocale)}
                       key={index}
-                      span={['12/12', '6/12', '6/12', '4/12']}
-                      paddingBottom={verticalSpacing}
-                    >
-                      <CategoryCard
-                        href={
-                          hasALandingPage
-                            ? linkResolver('organizationpage', [slug]).href
-                            : link
-                        }
-                        key={index}
-                        text={description}
-                        heading={title}
-                        hyphenate
-                        {...(tags?.length && { tags })}
-                        tagOptions={{
-                          hyphenate: true,
-                          textLeft: true,
-                        }}
-                        {...(logo?.url && {
-                          src: logo.url,
-                          alt: logo.title,
-                          autoStack: true,
-                        })}
-                      />
-                    </GridColumn>
-                  )
-                },
-              )}
+                      text={organization?.description}
+                      heading={organization?.title}
+                      hyphenate
+                      {...(tags?.length && { tags })}
+                      tagOptions={{
+                        hyphenate: true,
+                        textLeft: true,
+                      }}
+                      {...(organization?.logo?.url && {
+                        src: organization.logo.url,
+                        alt: organization.logo.title,
+                        autoStack: true,
+                      })}
+                    />
+                  </GridColumn>
+                )
+              })}
             </GridRow>
             {totalPages > 1 && (
               <GridRow>

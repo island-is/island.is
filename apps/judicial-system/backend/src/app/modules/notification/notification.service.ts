@@ -1145,10 +1145,11 @@ export class NotificationService {
     courtDate?: Date,
     courtName?: string,
   ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.subject,
-      { caseType },
-    )
+    const subject = isIndictmentCase(caseType)
+      ? this.formatMessage(notifications.defenderRevokedEmail.indictmentSubject)
+      : this.formatMessage(notifications.defenderRevokedEmail.subject, {
+          caseType,
+        })
 
     const html = formatDefenderRevokedEmailNotification(
       this.formatMessage,

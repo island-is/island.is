@@ -25,6 +25,8 @@ type QueryType = {
   getBrokenDownElectronicRegistrationStatistics: BrokenDownRegistrationStatisticResponse
 }
 
+const defaultSelection = { label: 'Allt', value: 'Allt' }
+
 interface MonthlyStatisticsProps {
   slice?: ConnectedComponent
 }
@@ -33,7 +35,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
   const [
     selectedRegistrationTypeOption,
     setSelectedRegistrationTypeOption,
-  ] = useState({ label: 'Allt', value: 'Allt' })
+  ] = useState(defaultSelection)
 
   const n = useNamespace(slice?.json ?? {})
 
@@ -43,10 +45,6 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
     label: String(currentYear),
     value: String(currentYear),
   })
-
-  useEffect(() => {
-    setSelectedRegistrationTypeOption({ label: 'Allt', value: 'Allt' })
-  }, [selectedYear])
 
   const { data: serverData, loading } = useQuery<QueryType>(
     GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY,
@@ -69,18 +67,32 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
 
   useEffect(() => {
     if (!data) return
-    setRegistrationTypes(
-      extractRegistrationTypesFromData(data).map((type) => ({
-        label: type,
-        value: type,
-      })),
-    )
-  }, [data])
+
+    const types = extractRegistrationTypesFromData(data)
+    const typeOptions = types.map((type) => ({
+      label: type,
+      value: type,
+    }))
+
+    // Default back to viewing all registration types if the currently selected one isn't available for the selected year
+    if (!types.includes(selectedRegistrationTypeOption.value)) {
+      setSelectedRegistrationTypeOption(defaultSelection)
+    } else {
+      // Make sure to keep the reference intact since we're renewing the list
+      setSelectedRegistrationTypeOption(
+        typeOptions.find(
+          (type) => type.value === selectedRegistrationTypeOption.value,
+        ),
+      )
+    }
+
+    setRegistrationTypes(typeOptions)
+  }, [data, selectedRegistrationTypeOption.value])
 
   const yearOptions = useMemo(() => {
     const options = []
 
-    for (let year = 2019; year <= currentYear; year += 1) {
+    for (let year = 2020; year <= currentYear; year += 1) {
       options.push({
         label: String(year),
         value: String(year),
@@ -92,6 +104,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
 
   const paper = n('paper', 'Pappír')
   const electronic = n('electronic', 'Rafrænt')
+  const manual = n('manual', 'Handvirk vinnsla')
 
   return (
     <Box>
@@ -144,17 +157,29 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
                 item.periodIntervalName,
               ) as string).slice(0, 3),
               [paper]:
-                item.registrationTypes?.find(
-                  (t) =>
-                    t.registrationType === selectedRegistrationTypeOption.value,
-                )?.totalPaperRegistrationsOfType ??
-                item.totalPaperRegistrationsForCurrentPeriodInterval,
+                selectedRegistrationTypeOption.value === defaultSelection.value
+                  ? item.totalPaperRegistrationsForCurrentPeriodInterval
+                  : item.registrationTypes?.find(
+                      (t) =>
+                        t.registrationType ===
+                        selectedRegistrationTypeOption.value,
+                    )?.totalPaperRegistrationsOfType ?? 0,
               [electronic]:
-                item.registrationTypes?.find(
-                  (t) =>
-                    t.registrationType === selectedRegistrationTypeOption.value,
-                )?.totalElectronicRegistrationsOfType ??
-                item.totalElectronicRegistrationsForCurrentPeriodInterval,
+                selectedRegistrationTypeOption.value === defaultSelection.value
+                  ? item.totalElectronicRegistrationsForCurrentPeriodInterval
+                  : item.registrationTypes?.find(
+                      (t) =>
+                        t.registrationType ===
+                        selectedRegistrationTypeOption.value,
+                    )?.totalElectronicRegistrationsOfType ?? 0,
+              [manual]:
+                selectedRegistrationTypeOption.value === defaultSelection.value
+                  ? item.totalManualRegistrationsForCurrentPeriodInterval
+                  : item.registrationTypes?.find(
+                      (t) =>
+                        t.registrationType ===
+                        selectedRegistrationTypeOption.value,
+                    )?.totalManualRegistrationsOfType ?? 0,
             }))}
           >
             <Bar
@@ -169,6 +194,12 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
               radius={[20, 20, 0, 0]}
               dataKey={electronic}
               fill="#ef8838"
+            />
+            <Bar
+              barSize={16}
+              radius={[20, 20, 0, 0]}
+              dataKey={manual}
+              fill="green"
             />
             <XAxis dataKey="name" height={60} />
             <YAxis />

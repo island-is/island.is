@@ -517,7 +517,14 @@ export const notifications = {
       defaultMessage:
         'Krafa um {caseType, select, CUSTODY {gæsluvarðhald} TRAVEL_BAN {farbann} ADMISSION_TO_FACILITY {vistun} other {rannsóknarheimild}} afturkölluð',
       description:
-        'Fyrirsögn í pósti til verjanda/talsmanns /egar krafa er afturkölluð',
+        'Fyrirsögn í pósti til verjanda/talsmanns þegar krafa er afturkölluð',
+    },
+    indictmentSubject: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.indictment_subject',
+      defaultMessage: 'Ákæra afturkölluð',
+      description:
+        'Fyrirsögn í pósti til verjanda/talsmanns þegar ákæra er afturkölluð',
     },
   }),
   modified: defineMessages({

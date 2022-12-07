@@ -54,7 +54,7 @@ const InfoCardClosedIndictment: React.FC = () => {
                 workingCase.policeCaseNumbers,
                 workingCase.indictmentSubtypes,
               ).map((subtype) => (
-                <Text>{capitalize(subtype)}</Text>
+                <Text key={subtype}>{capitalize(subtype)}</Text>
               ))}
             </>
           ) : (

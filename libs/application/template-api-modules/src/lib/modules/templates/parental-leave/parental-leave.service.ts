@@ -5,7 +5,10 @@ import addDays from 'date-fns/addDays'
 import cloneDeep from 'lodash/cloneDeep'
 
 import type { Attachment, Period } from '@island.is/clients/vmst'
-import { ParentalLeaveApi } from '@island.is/clients/vmst'
+import {
+  ParentalLeaveApi,
+  ApplicationInformationApi,
+} from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
@@ -26,6 +29,7 @@ import {
   getMultipleBirthsDays,
   SINGLE,
   getAdditionalSingleParentRightsInDays,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -65,7 +69,6 @@ interface VMSTError {
 }
 
 type YesOrNo = typeof NO | typeof YES
-
 interface AnswerPeriod {
   startDate: string
   endDate: string
@@ -88,6 +91,7 @@ export class ParentalLeaveService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
+    private applicationInformationAPI: ApplicationInformationApi,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
@@ -202,42 +206,11 @@ export class ParentalLeaveService {
     }
   }
 
-  async getSelfEmployedPdf(application: Application, index = 0) {
-    try {
-      let filename = getValueViaPath(
-        application.answers,
-        `employer.selfEmployed.file[${index}].key`,
-      )
-
-      if (!filename) {
-        filename = getValueViaPath(
-          application.answers,
-          `fileUpload.selfEmployedFile[${index}].key`,
-        )
-      }
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get self employed attachment', { e })
-      throw new Error('Failed to get the self employed attachment')
-    }
-  }
-
-  async getStudentPdf(application: Application, index = 0) {
+  async getPdf(application: Application, index = 0, fileUpload: string) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        `fileUpload.studentFile[${index}].key`,
+        fileUpload + `[${index}].key`,
       )
 
       const Key = `${application.id}/${filename}`
@@ -252,80 +225,8 @@ export class ParentalLeaveService {
 
       return fileContent.toString('base64')
     } catch (e) {
-      this.logger.error('Cannot get student attachment', { e })
-      throw new Error('Failed to get the student attachment')
-    }
-  }
-
-  async getBenefitsPdf(application: Application, index = 0) {
-    try {
-      const filename = getValueViaPath(
-        application.answers,
-        `fileUpload.benefitsFile[${index}].key`,
-      )
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get benefits attachment', { e })
-      throw new Error('Failed to get the benefits attachment')
-    }
-  }
-
-  async getSingleParentPdf(application: Application, index = 0) {
-    try {
-      const filename = getValueViaPath(
-        application.answers,
-        `fileUpload.singleParent[${index}].key`,
-      )
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get single parent attachment', { e })
-      throw new Error('Failed to get the single parent attachment')
-    }
-  }
-
-  async getGenericPdf(application: Application, index = 0) {
-    try {
-      const filename = getValueViaPath(
-        application.answers,
-        `fileUpload.file[${index}].key`,
-      )
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get attachment', { e })
-      throw new Error('Failed to get the attachment')
+      this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
+      throw new Error('Failed to get the ' + fileUpload + ' attachment')
     }
   }
 
@@ -345,7 +246,11 @@ export class ParentalLeaveService {
 
       if (selfEmployedPdfs?.length) {
         for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
-          const pdf = await this.getSelfEmployedPdf(application, i)
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.selfEmployedFile',
+          )
 
           attachments.push({
             attachmentType: apiConstants.attachments.selfEmployed,
@@ -360,7 +265,11 @@ export class ParentalLeaveService {
 
         if (oldSelfEmployedPdfs?.length) {
           for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
-            const pdf = await this.getSelfEmployedPdf(application, i)
+            const pdf = await this.getPdf(
+              application,
+              i,
+              'employer.selfEmployed.file',
+            )
 
             attachments.push({
               attachmentType: apiConstants.attachments.selfEmployed,
@@ -377,7 +286,11 @@ export class ParentalLeaveService {
 
       if (stuydentPdfs?.length) {
         for (let i = 0; i <= stuydentPdfs.length - 1; i++) {
-          const pdf = await this.getStudentPdf(application, i)
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.studentFile',
+          )
 
           attachments.push({
             attachmentType: apiConstants.attachments.student,
@@ -395,7 +308,11 @@ export class ParentalLeaveService {
 
       if (singleParentPdfs?.length) {
         for (let i = 0; i <= singleParentPdfs.length - 1; i++) {
-          const pdf = await this.getSingleParentPdf(application, i)
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.singleParent',
+          )
 
           attachments.push({
             attachmentType: apiConstants.attachments.artificialInsemination,
@@ -421,7 +338,11 @@ export class ParentalLeaveService {
 
       if (benefitsPdfs?.length) {
         for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
-          const pdf = await this.getBenefitsPdf(application, i)
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.benefitsFile',
+          )
 
           attachments.push({
             attachmentType: apiConstants.attachments.unEmploymentBenefits,
@@ -438,7 +359,7 @@ export class ParentalLeaveService {
 
     if (genericPdfs?.length) {
       for (let i = 0; i <= genericPdfs.length - 1; i++) {
-        const pdf = await this.getGenericPdf(application, i)
+        const pdf = await this.getPdf(application, i, 'fileUpload.file')
 
         attachments.push({
           attachmentType: apiConstants.attachments.other,
@@ -500,12 +421,37 @@ export class ParentalLeaveService {
       otherParent,
     } = getApplicationAnswers(application.answers)
 
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+
     const answers = cloneDeep(originalPeriods).sort((a, b) => {
       const dateA = new Date(a.startDate)
       const dateB = new Date(b.startDate)
 
       return dateA.getTime() - dateB.getTime()
     })
+
+    let vmstRightCodePeriod = null
+    if (applicationFundId) {
+      try {
+        const VMSTperiods = await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+        if (VMSTperiods?.periods) {
+          vmstRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+        }
+      } catch (e) {
+        this.logger.warn(
+          `Could not fetch applicationInformation on applicationId: {applicationId} with error: {error}`
+            .replace(`{${'applicationId'}}`, application.id)
+            .replace(`{${'error'}}`, e),
+        )
+      }
+    }
 
     const periods: Period[] = []
     const maximumDaysToSpend = getAvailableRightsInDays(application)
@@ -529,6 +475,8 @@ export class ParentalLeaveService {
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
     let numberOfDaysAlreadySpent = 0
+    const basicRightCodePeriod =
+      vmstRightCodePeriod ?? getRightsCode(application)
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
@@ -626,7 +574,7 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: getRightsCode(application),
+          rightsCodePeriod: basicRightCodePeriod,
         })
       } else if (otherParent === SINGLE) {
         // single parent
@@ -671,7 +619,7 @@ export class ParentalLeaveService {
                 fromDate,
                 daysLeftOfPersonalRights,
                 period,
-                getRightsCode(application),
+                basicRightCodePeriod,
               )
 
               periods.push(personalPeriod)
@@ -729,7 +677,7 @@ export class ParentalLeaveService {
                 fromDate,
                 daysLeftOfPersonalRights,
                 period,
-                getRightsCode(application),
+                basicRightCodePeriod,
               )
 
               periods.push(personalPeriod)
@@ -879,7 +827,7 @@ export class ParentalLeaveService {
               undefined,
               daysLeftOfPersonalRights,
               period,
-              getRightsCode(application),
+              basicRightCodePeriod,
             )
 
             periods.push(personalPeriod)
@@ -953,7 +901,7 @@ export class ParentalLeaveService {
               fromDate,
               daysLeftOfPersonalRights,
               period,
-              getRightsCode(application),
+              basicRightCodePeriod,
             )
 
             periods.push(personalPeriod)
@@ -1026,7 +974,7 @@ export class ParentalLeaveService {
             fromDate,
             daysLeftOfPersonalRights,
             period,
-            getRightsCode(application),
+            basicRightCodePeriod,
           )
 
           periods.push(personalPeriod)

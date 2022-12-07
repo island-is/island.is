@@ -24,14 +24,7 @@ import {
   getSelectedChild,
   getApplicationAnswers,
 } from '../lib/parentalLeaveUtils'
-import {
-  NO,
-  YES,
-  ParentalRelations,
-  PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-} from '../constants'
+import { NO, YES, ParentalRelations } from '../constants'
 import { defaultMultipleBirthsMonths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')

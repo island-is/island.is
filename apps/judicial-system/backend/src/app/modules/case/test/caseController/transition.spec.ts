@@ -1,6 +1,6 @@
 import each from 'jest-each'
 import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import {
   CaseState,
@@ -31,18 +31,26 @@ type GivenWhenThen = (
 
 describe('CaseController - Transition', () => {
   let mockMessageService: MessageService
+  let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       messageService,
+      sequelize,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
 
     mockMessageService = messageService
     mockCaseModel = caseModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (
       caseId: string,
@@ -110,7 +118,7 @@ describe('CaseController - Transition', () => {
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
             },
-            { where: { id: caseId } },
+            { where: { id: caseId }, transaction },
           )
 
           if (
