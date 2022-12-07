@@ -23,9 +23,13 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
-  const identityDocument = (application.externalData.identityDocument
-    .data as any)[0] as IdentityDocument
+  const identityDocument = application.externalData.identityDocument
+    .data as IdentityDocument
+  const children = (application.externalData.identityDocument.data as any)
+    .childrenPassport
   const identityDocumentNumber = identityDocument?.number
+
+  console.log(application.externalData.identityDocument)
 
   const tag = (identityDocument: IdentityDocument) => {
     const today = new Date()
@@ -101,7 +105,9 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           },
         }}
       />
-      <Text variant="h3">{formatMessage(m.children)}</Text>
+      <Text variant="h3" marginTop={2}>
+        {formatMessage(m.children)}
+      </Text>
       <RadioFormField
         error={fieldErros}
         application={application}
@@ -114,53 +120,19 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           children: undefined,
           backgroundColor: 'white',
           defaultValue: '',
-          options: [
-            {
-              label: 'Barn 1',
-              subLabel:
-                formatMessage(m.passportNumber) +
-                ' ' +
-                identityDocument?.subType +
-                identityDocumentNumber,
-              tag: {
-                variant: 'red',
-                outlined: true,
-                label: formatMessage(m.expiredTag),
-              },
-              value: '1',
-            },
-            {
-              label: 'Barn 2',
-              value: '2',
-              tag: {
-                variant: 'blue',
-                outlined: true,
-                label: formatMessage(m.noPassport),
-              },
-            },
-            {
-              label: 'Barn 3',
-              subLabel: '',
-              value: '3',
-              tag: {
-                variant: 'blue',
-                outlined: true,
-                label: formatMessage(m.orderedTag),
-              },
-              disabled: true,
-            },
-            {
-              label: 'Barn 4',
-              subLabel: '',
-              value: '4',
-              tag: {
-                variant: 'mint',
-                outlined: true,
-                label: formatMessage(m.validTag) + ' 2025',
-              },
-              disabled: true,
-            },
-          ],
+          options: children.map((child: any) => {
+            return {
+              label: child.nationalId,
+              value: child.nationalId,
+              subLabel: child.identityDocuments.length
+                ? formatMessage(m.passportNumber) +
+                  ' ' +
+                  (child.identityDocuments as any)[0].subType +
+                  (child.identityDocuments as any)[0].number
+                : '',
+              tag: tag((child.identityDocuments as any)[0]),
+            }
+          }),
           onSelect: () => {
             setValue(userPassportRadio, '')
           },

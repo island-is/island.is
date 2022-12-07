@@ -13,6 +13,27 @@ export class IdentityDocumentProvider extends BasicDataProvider {
     const query = `
       query getPassport {
         getPassport {
+          userPassport {
+            productionRequestID
+            number
+            type
+            verboseType
+            subType
+            status
+            issuingDate
+            expirationDate
+            displayFirstName
+            displayLastName
+            mrzFirstName
+            mrzLastName
+            sex
+          }
+        }
+        childPassports {
+          nationalId
+          name
+          secondParent
+          identityDocuments {
           productionRequestID
           number
           type
@@ -26,6 +47,7 @@ export class IdentityDocumentProvider extends BasicDataProvider {
           mrzFirstName
           mrzLastName
           sex
+          }
         }
       }
     `

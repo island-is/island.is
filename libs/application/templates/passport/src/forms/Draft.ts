@@ -20,7 +20,6 @@ import {
   DistrictCommissionerAgencies,
   Passport,
   Services,
-  YES,
 } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
