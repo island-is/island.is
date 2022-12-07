@@ -17,6 +17,8 @@ export class VehiclePrintingClient {
     await this.registrationApiWithAuth(
       auth,
     ).registrationRequestregistrationcardprintPost({
+      apiVersion: '1.0',
+      apiVersion2: '1.0',
       permno: permno,
     })
   }

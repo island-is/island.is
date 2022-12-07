@@ -1,16 +1,9 @@
 import { Module } from '@nestjs/common'
-import { IdsClientConfig } from '@island.is/nest/config'
-import { ApiConfiguration } from './apiConfiguration'
-import { exportedApis } from './apis'
-import { VehicleServiceFjsV1ClientService } from './vehicleServiceFjsV1Client.service'
+import { VehicleServiceFjsV1Client } from './vehicleServiceFjsV1Client.service'
+import { exportedApis } from './apiConfiguration'
 
 @Module({
-  imports: [IdsClientConfig.registerOptional()],
-  providers: [
-    ApiConfiguration,
-    VehicleServiceFjsV1ClientService,
-    ...exportedApis,
-  ],
-  exports: [VehicleServiceFjsV1ClientService],
+  providers: [...exportedApis, VehicleServiceFjsV1Client],
+  exports: [VehicleServiceFjsV1Client],
 })
 export class VehicleServiceFjsV1ClientModule {}

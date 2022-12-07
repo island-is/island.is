@@ -31,10 +31,11 @@ import {
   ApiCatalogueFilter,
   OrganizationWrapper,
   ServiceList,
+  Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SliceType } from '@island.is/island-ui/contentful'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import {
   GetApiCatalogueInput,
   QueryGetApiCatalogueArgs,
@@ -70,6 +71,10 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   filterContent,
   navigationLinks,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
   const Router = useRouter()
@@ -208,10 +213,10 @@ const ApiCatalogue: Screen<HomestayProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === Router.asPath ||
+        primaryLink?.url === Router.asPath ||
         childrenLinks.some((link) => link.url === Router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -227,6 +232,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
         pageTitle={subpage.title}
         organizationPage={organizationPage}
         pageFeaturedImage={subpage.featuredImage}
+        showReadSpeaker={false}
         breadcrumbItems={[
           {
             title: 'Ísland.is',
@@ -244,10 +250,13 @@ const ApiCatalogue: Screen<HomestayProps> = ({
         }}
         showSecondaryMenu={false}
       >
-        <Box paddingBottom={4}>
+        <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}>
           <Text variant="h1" as="h2">
             {subpage.title}
           </Text>
+          {isWebReaderEnabledForOrganizationPages && (
+            <Webreader readId={null} readClass="rs_read" />
+          )}
         </Box>
         {webRichText(subpage.description as SliceType[], {
           renderNode: {

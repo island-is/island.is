@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { TransferOfVehicleOwnershipApi } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
+  messages,
 } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
   generateRequestReviewEmail,
@@ -23,13 +23,96 @@ import {
   getRecipients,
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  ChargeFjsV2ClientService,
+  getChargeId,
+} from '@island.is/clients/charge-fjs-v2'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly transferOfVehicleOwnershipApi: TransferOfVehicleOwnershipApi,
+    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
   ) {}
+
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+    // No need to continue with this validation in user is neither seller nor buyer
+    // (only time application data changes is on state change from these roles)
+    const sellerSsn = answers?.seller?.nationalId
+    const buyerSsn = answers?.buyer?.nationalId
+    if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
+      return
+    }
+
+    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'operator',
+    )
+
+    // Note: If insurance company has not been supplied (we have not required the user to fill in at this point),
+    // then we will just send in a dummy value
+    let insuranceCompanyCode = answers?.insurance?.value
+    if (!insuranceCompanyCode) {
+      const dummyInsuranceCompanyCode = '6090' // VÍS
+      insuranceCompanyCode = dummyInsuranceCompanyCode
+    }
+
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      auth,
+      {
+        permno: answers?.vehicle?.plate,
+        seller: {
+          ssn: sellerSsn,
+          email: answers?.seller?.email,
+        },
+        buyer: {
+          ssn: buyerSsn,
+          email: answers?.buyer?.email,
+        },
+        dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
+        saleAmount: Number(answers?.vehicle?.salePrice) || 0,
+        insuranceCompanyCode: insuranceCompanyCode,
+        coOwners: buyerCoOwners?.map((coOwner) => ({
+          ssn: coOwner.nationalId,
+          email: coOwner.email,
+        })),
+        operators: buyerOperators?.map((operator) => ({
+          ssn: operator.nationalId,
+          email: operator.email,
+          isMainOperator:
+            buyerOperators.length > 1
+              ? operator.nationalId === answers.buyerMainOperator?.nationalId
+              : true,
+        })),
+      },
+    )
+
+    // If we received error, lets try to use the errorNo to return a translated message
+    if (result.hasError && result.errorMessages?.length) {
+      // Note: will only display first error for now
+      const firstError = result.errorMessages[0]
+
+      const message = getValueViaPath<{ defaultMessage: string }>(
+        messages,
+        'applicationCheck.validation.' + firstError.errorNo,
+      )?.defaultMessage
+      const defaultMessage = firstError.defaultMessage
+      const fallbackMessage =
+        messages.applicationCheck.validation['0'].defaultMessage
+
+      throw Error(message || defaultMessage || fallbackMessage)
+    }
+  }
 
   async createCharge({
     application,
@@ -223,8 +306,18 @@ export class TransferOfVehicleOwnershipService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // 1. Revert charge so that the seller gets reimburshed
-    // Note: Will be added when FJS api has been updated
+    // 1. Delete charge so that the seller gets reimburshed
+    const chargeId = getChargeId(application)
+    if (chargeId) {
+      const status = await this.chargeFjsV2ClientService.getChargeStatus(
+        chargeId,
+      )
+
+      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
+      if (status !== 'cancelled') {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
+    }
 
     // 2. Notify everyone in the process that the application has been withdrawn
 
@@ -308,7 +401,7 @@ export class TransferOfVehicleOwnershipService {
       (x) => x.type === 'operator',
     )
 
-    await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
+    await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
       permno: answers?.vehicle?.plate,
       seller: {
         ssn: answers?.seller?.nationalId,

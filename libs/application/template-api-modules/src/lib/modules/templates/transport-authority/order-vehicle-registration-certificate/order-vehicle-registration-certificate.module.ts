@@ -1,16 +1,24 @@
 import { DynamicModule } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { OrderVehicleRegistrationCertificateService } from './order-vehicle-registration-certificate.service'
-import { OrderVehicleRegistrationCertificateApiModule } from '@island.is/api/domains/transport-authority/order-vehicle-registration-certificate'
+import {
+  VehiclePrintingClientModule,
+  VehiclePrintingClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-printing'
 
-export class OrderVehicleLicensePlateModule {
+export class OrderVehicleRegistrationCertificateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: OrderVehicleLicensePlateModule,
+      module: OrderVehicleRegistrationCertificateModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        OrderVehicleRegistrationCertificateApiModule,
+        VehiclePrintingClientModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [VehiclePrintingClientConfig],
+        }),
       ],
       providers: [OrderVehicleRegistrationCertificateService],
       exports: [OrderVehicleRegistrationCertificateService],

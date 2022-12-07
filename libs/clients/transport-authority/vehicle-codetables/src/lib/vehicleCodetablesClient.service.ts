@@ -7,7 +7,9 @@ export class VehicleCodetablesClient {
   constructor(private readonly codetablesApi: CodeTableApi) {}
 
   public async getInsuranceCompanies(): Promise<InsuranceCompany[]> {
-    const result = await this.codetablesApi.insurancecompaniesGet({})
+    const result = await this.codetablesApi.insurancecompaniesGet({
+      apiVersion: '1.0',
+    })
 
     return result.map((item) => ({
       code: item.code,

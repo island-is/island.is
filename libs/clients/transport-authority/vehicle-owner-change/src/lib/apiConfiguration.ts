@@ -1,10 +1,14 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { IdsClientConfig } from '@island.is/nest/config'
-import { ConfigType } from '@nestjs/config'
+import {
+  ConfigType,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { OwnerChangeApi, Configuration } from '../../gen/fetch'
 import { VehicleOwnerChangeClientConfig } from './vehicleOwnerChangeClient.config'
 
 const configFactory = (
+  xRoadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof VehicleOwnerChangeClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
   basePath: string,
@@ -22,7 +26,7 @@ const configFactory = (
       : undefined,
   }),
   headers: {
-    'X-Road-Client': config.xroadClientId,
+    'X-Road-Client': xRoadConfig.xRoadClient,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
@@ -33,19 +37,25 @@ export const exportedApis = [
   {
     provide: OwnerChangeApi,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof VehicleOwnerChangeClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
       return new OwnerChangeApi(
         new Configuration(
           configFactory(
+            xRoadConfig,
             config,
             idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )
     },
-    inject: [VehicleOwnerChangeClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      VehicleOwnerChangeClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
 ]

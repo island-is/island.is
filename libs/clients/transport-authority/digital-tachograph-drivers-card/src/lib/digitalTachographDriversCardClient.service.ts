@@ -1,37 +1,24 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
+import { DriverCardsApiApi, IndividualApiApi } from '../../gen/fetch/apis'
 import {
-  DriverCardApplicationRequestDeliveryMethodEnum,
-  DriverCardApplicationResponseDeliveryMethodEnum,
-  NewestIcelandicDriverCardResponseIsValidEnum,
-  TachonetCheckResponseCardsIsActiveEnum,
-  TachonetCheckResponseCardsIsTemporaryEnum,
-} from '../../gen/fetch'
+  DeliveryMethodEnum,
+  IsActiveEnum,
+  IsValidEnum,
+} from '../../gen/fetch/models'
 import {
-  TachoNetApi,
-  DriverCardsApi,
-  IndividualApi,
-} from '../../gen/fetch/apis'
-import {
-  DriverCardApplicationResponse,
   DriversCardApplicationRequest,
   NewestDriversCard,
-  PhotoAndSignatureResponse,
+  IndividualPhotoAndSignature,
   TachoNetCheckRequest,
-  TachoNetCheckResponse,
 } from './digitalTachographDriversCardClient.types'
 
 @Injectable()
 export class DigitalTachographDriversCardClient {
   constructor(
-    private readonly tachoNetApi: TachoNetApi,
-    private readonly driversCardApi: DriverCardsApi,
-    private readonly individualApi: IndividualApi,
+    private readonly driversCardApi: DriverCardsApiApi,
+    private readonly individualApi: IndividualApiApi,
   ) {}
-
-  private tachoNetApiWithAuth(auth: Auth) {
-    return this.tachoNetApi.withMiddleware(new AuthMiddleware(auth))
-  }
 
   private driversCardApiWithAuth(auth: Auth) {
     return this.driversCardApi.withMiddleware(new AuthMiddleware(auth))
@@ -41,11 +28,13 @@ export class DigitalTachographDriversCardClient {
     return this.individualApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async checkTachoNet(
+  public async checkIfHasActiveCardInTachoNet(
     auth: User,
     request: TachoNetCheckRequest,
-  ): Promise<TachoNetCheckResponse> {
-    const result = await this.tachoNetApiWithAuth(auth).postTachonetcheck({
+  ): Promise<boolean> {
+    const result = await this.driversCardApiWithAuth(
+      auth,
+    ).v1DrivercardsTachonetcheckPost({
       tachonetCheckRequest: {
         firstName: request.firstName,
         lastName: request.lastName,
@@ -56,66 +45,31 @@ export class DigitalTachographDriversCardClient {
       },
     })
 
-    return {
-      firstName: result.firstName,
-      lastName: result.lastName,
-      birthDate: result.birthDate,
-      birthPlace: result.birthPlace,
-      drivingLicenceNumber: result.drivingLicenceNumber,
-      drivingLicenceIssuingCountry: result.drivingLicenceIssuingCountry,
-      cards: result.cards?.map((card) => ({
-        countryName: card.countryName,
-        cardNumber: card.cardNumber,
-        cardValidFrom: card.cardValidFromDatetime,
-        cardValidTo: card.cardValidToDatetime,
-        issuingAuthority: card.issuingAuthority,
-        isTemporary:
-          card.isTemporary === TachonetCheckResponseCardsIsTemporaryEnum.Yes,
-        isActive: card.isActive === TachonetCheckResponseCardsIsActiveEnum.Yes,
-      })),
-    }
+    return !!result.cards?.find((x) => x.isActive === IsActiveEnum.Yes)
   }
 
   public async getNewestDriversCard(auth: User): Promise<NewestDriversCard> {
-    // TODOx disabled untill this API goes on xroad
-    const validFrom = new Date()
-    validFrom.setFullYear(validFrom.getFullYear() - 1)
-    const validTo = new Date()
-    validTo.setMonth(validTo.getMonth() + 2)
-    return {
-      ssn: auth.nationalId,
-      applicationCreatedAt: validFrom,
-      cardNumber: '123456',
-      cardValidFrom: validFrom,
-      cardValidTo: validTo,
-      isValid: true,
-    }
-
     const result = await this.driversCardApiWithAuth(
       auth,
-    ).getNewesticelandicdrivercard({
+    ).v1DrivercardsPersidnoNewestGet({
       persidno: auth.nationalId,
     })
 
     return {
-      ssn: result?.personIdNumber,
-      applicationCreatedAt: result?.datetimeOfApplication,
-      cardNumber: result?.cardNumber,
-      cardValidFrom: result?.cardValidFromDatetime,
-      cardValidTo: result?.cardValidToDatetime,
-      isValid:
-        result?.isValid === NewestIcelandicDriverCardResponseIsValidEnum.Yes,
+      ssn: result?.personIdNumber || undefined,
+      applicationCreatedAt: result?.datetimeOfApplication || undefined,
+      cardNumber: result?.cardNumber || undefined,
+      cardValidFrom: result?.cardValidFromDatetime || undefined,
+      cardValidTo: result?.cardValidToDatetime || undefined,
+      isValid: result?.isValid === IsValidEnum.Yes,
     }
   }
 
   public async saveDriversCard(
     auth: User,
     request: DriversCardApplicationRequest,
-  ): Promise<DriverCardApplicationResponse | null> {
-    // TODOx disabled untill this API goes on xroad
-    throw Error('Not implemented')
-
-    const result = await this.driversCardApiWithAuth(auth).postDrivercards({
+  ): Promise<void> {
+    const result = await this.driversCardApiWithAuth(auth).v1DrivercardsPost({
       driverCardApplicationRequest: {
         personIdNumber: request.ssn,
         fullName: request.fullName,
@@ -127,50 +81,21 @@ export class DigitalTachographDriversCardClient {
         emailAddress: request.emailAddress,
         phoneNumber: request.phoneNumber,
         deliveryMethod: request.deliveryMethodIsSend
-          ? DriverCardApplicationRequestDeliveryMethodEnum.Send
-          : DriverCardApplicationRequestDeliveryMethodEnum.PickUp,
+          ? DeliveryMethodEnum.Send
+          : DeliveryMethodEnum.PickUp,
         paymentDatetime: request.paymentReceivedAt,
         photo: request.photo,
         signature: request.signature,
       },
     })
-
-    return {
-      ssn: result?.personIdNumber,
-      applicationCreatedAt: result?.applicationDatetime,
-      cardNumber: result?.cardNumber,
-      cardValidFrom: result?.cardValidFromDatetime,
-      cardValidTo: result?.cardValidToDatetime,
-      deliveryMethodIsSend:
-        result?.deliveryMethod ===
-        DriverCardApplicationResponseDeliveryMethodEnum.Send,
-      deliveryAddressIfSend:
-        result?.deliveryMethod ===
-        DriverCardApplicationResponseDeliveryMethodEnum.Send
-          ? {
-              recipientName: result?.deliveryIfSend?.recipientName,
-              address: result?.deliveryIfSend?.address,
-              postalCode: result?.deliveryIfSend?.postalCode,
-              place: result?.deliveryIfSend?.place,
-              country: result?.deliveryIfSend?.country,
-            }
-          : undefined,
-    }
   }
 
   public async getPhotoAndSignature(
     auth: User,
-  ): Promise<PhotoAndSignatureResponse> {
-    // TODOx disabled untill this API goes on xroad
-    return {
-      ssn: undefined,
-      photo: undefined,
-      signature: undefined,
-    }
-
+  ): Promise<IndividualPhotoAndSignature> {
     const result = await this.individualApiWithAuth(
       auth,
-    ).getIndividualPersidnoPhotoandsignature({
+    ).v1IndividualPersidnoPhotoandsignatureGet({
       persidno: auth.nationalId,
     })
 

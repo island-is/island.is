@@ -1,8 +1,16 @@
 import { DynamicModule } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { ChangeCoOwnerOfVehicleService } from './change-co-owner-of-vehicle.service'
-import { ChangeCoOwnerOfVehicleApiModule } from '@island.is/api/domains/transport-authority/change-co-owner-of-vehicle'
+import {
+  VehicleOwnerChangeClientModule,
+  VehicleOwnerChangeClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  VehicleOperatorsClientModule,
+  VehicleOperatorsClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-operators'
 
 export class ChangeCoOwnerOfVehicleModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -10,7 +18,12 @@ export class ChangeCoOwnerOfVehicleModule {
       module: ChangeCoOwnerOfVehicleModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        ChangeCoOwnerOfVehicleApiModule,
+        VehicleOwnerChangeClientModule,
+        VehicleOperatorsClientModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [VehicleOwnerChangeClientConfig, VehicleOperatorsClientConfig],
+        }),
       ],
       providers: [ChangeCoOwnerOfVehicleService],
       exports: [ChangeCoOwnerOfVehicleService],

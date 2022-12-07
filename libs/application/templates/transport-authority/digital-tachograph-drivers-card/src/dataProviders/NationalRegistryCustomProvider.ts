@@ -41,9 +41,6 @@ export class NationalRegistryCustomProvider extends BasicDataProvider {
         return Promise.resolve(nationalRegistryUserData)
       },
     )
-    // .catch(() => {
-    //   return Promise.reject({})
-    // })
   }
 
   onProvideError(error: { reason: StaticText }): FailedDataProviderResult {

@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ChangeCoOwnerOfVehicleApi } from '@island.is/api/domains/transport-authority/change-co-owner-of-vehicle'
 import {
   ChangeCoOwnerOfVehicleAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly changeCoOwnerOfVehicleApi: ChangeCoOwnerOfVehicleApi,
+    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
+    private readonly vehicleOperatorsClient: VehicleOperatorsClient,
   ) {}
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -62,16 +64,46 @@ export class ChangeCoOwnerOfVehicleService {
     }
 
     const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+    const permno = answers?.vehicle?.plate
+    const ownerEmail = answers?.owner?.email
+    const newCoOwners = answers?.coOwners.map((coOwner) => ({
+      ssn: coOwner.nationalId,
+      email: coOwner.email,
+    }))
+
+    const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
+      auth,
+      permno,
+    )
+
+    const currentOperators = await this.vehicleOperatorsClient.getOperators(
+      auth,
+      permno,
+    )
 
     // Submit the application
-    await this.changeCoOwnerOfVehicleApi.saveCoOwners(
-      auth,
-      answers?.vehicle?.plate,
-      answers?.owner?.email,
-      answers?.coOwners.map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
+    await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
+      permno: currentOwnerChange?.permno,
+      seller: {
+        ssn: currentOwnerChange?.ownerSsn,
+        email: ownerEmail,
+      },
+      buyer: {
+        ssn: currentOwnerChange?.ownerSsn,
+        email: ownerEmail,
+      },
+      dateOfPurchase: currentOwnerChange?.dateOfPurchase,
+      saleAmount: currentOwnerChange?.saleAmount,
+      insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
+      operators: currentOperators?.map((operator) => ({
+        ssn: operator.ssn || '',
+        // Note: It should be ok that the email we send in is empty, since we dont get
+        // the email when fetching current operators, and according to them (SGS), they
+        // are not using the operator email in their API (not being saved in their DB)
+        email: '',
+        isMainOperator: operator.isMainOperator || false,
       })),
-    )
+      coOwners: newCoOwners,
+    })
   }
 }

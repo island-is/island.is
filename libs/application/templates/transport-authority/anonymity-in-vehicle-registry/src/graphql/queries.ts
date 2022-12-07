@@ -1,6 +1,6 @@
 export const GET_ANONYMITY_STATUS = `
-  query GetAnonymityStatus {
-    getAnonymityStatus {
+  query VehicleRegistryAnonymityStatus {
+    vehicleRegistryAnonymityStatus {
       isChecked
     }
   } 

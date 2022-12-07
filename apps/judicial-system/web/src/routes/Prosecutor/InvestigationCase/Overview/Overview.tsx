@@ -397,7 +397,7 @@ export const Overview: React.FC = () => {
             onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
-            secondaryButtonText="Loka glugga"
+            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

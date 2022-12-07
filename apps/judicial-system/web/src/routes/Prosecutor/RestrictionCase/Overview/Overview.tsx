@@ -447,7 +447,7 @@ export const Overview: React.FC = () => {
                 ? formatMessage(errors.sendNotification)
                 : undefined
             }
-            secondaryButtonText="Loka glugga"
+            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

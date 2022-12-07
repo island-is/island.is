@@ -14,6 +14,8 @@ export const announcerInfo = buildSection({
   title: (application) =>
     application.answers.selectedEstate === EstateTypes.noPropertyEstate
       ? m.announcerNoProperty
+      : application.answers.selectedEstate === EstateTypes.residencePermit
+      ? m.announcerRP
       : m.announcer,
   children: [
     buildMultiField({
@@ -21,6 +23,8 @@ export const announcerInfo = buildSection({
       title: (application) =>
         application.answers.selectedEstate === EstateTypes.noPropertyEstate
           ? m.announcerNoProperty
+          : application.answers.selectedEstate === EstateTypes.residencePermit
+          ? m.announcerResidencePermit
           : m.announcer,
       description: m.applicantsInfoSubtitle,
       children: [

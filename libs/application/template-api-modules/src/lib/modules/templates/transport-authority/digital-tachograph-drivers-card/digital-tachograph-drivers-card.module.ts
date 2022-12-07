@@ -1,8 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { DigitalTachographDriversCardService } from './digital-tachograph-drivers-card.service'
-import { DigitalTachographApiModule } from '@island.is/api/domains/transport-authority/digital-tachograph'
+import {
+  DigitalTachographDriversCardClientModule,
+  DigitalTachographDriversCardClientConfig,
+} from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 
 export class DigitalTachographDriversCardModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -10,7 +14,11 @@ export class DigitalTachographDriversCardModule {
       module: DigitalTachographDriversCardModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        DigitalTachographApiModule,
+        DigitalTachographDriversCardClientModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [DigitalTachographDriversCardClientConfig],
+        }),
       ],
       providers: [DigitalTachographDriversCardService],
       exports: [DigitalTachographDriversCardService],

@@ -11,11 +11,12 @@ import { MiddlewareContext } from '@nestjs/graphql'
 export const isPropertyOwner = ({ source }: MiddlewareContext) => {
   const owners: PropertyOwner[] =
     (source as PropertyDetail).registeredOwners?.registeredOwners ?? []
-  return owners.some((owner) => owner.ssn == source.nationalId)
+  const isOwner = owners.some((owner) => owner.ssn == source.nationalId)
+  return isOwner
 }
 @Extensions({
   filterFields: {
-    condition: !isPropertyOwner,
+    condition: isPropertyOwner,
     fields: ['defaultAddress', 'land', 'propertyNumber'],
   },
 })

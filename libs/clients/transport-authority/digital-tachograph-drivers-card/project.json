@@ -22,6 +22,16 @@
         "passWithNoTests": true
       }
     },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Okuritar-V1 -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/transport-authority/digital-tachograph-drivers-card"
+      }
+    },
     "schemas/external-openapi-generator": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

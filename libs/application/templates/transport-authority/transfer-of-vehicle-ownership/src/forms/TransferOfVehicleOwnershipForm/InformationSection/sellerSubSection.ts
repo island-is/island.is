@@ -10,7 +10,7 @@ import { Application } from '../../../types/schema'
 
 export const sellerSubSection = buildSubSection({
   id: 'seller',
-  title: information.labels.seller.title,
+  title: information.labels.seller.sectionTitle,
   children: [
     buildMultiField({
       id: 'sellerMultiField',

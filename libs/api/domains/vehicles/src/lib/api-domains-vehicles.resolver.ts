@@ -23,8 +23,6 @@ import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { VehicleMiniDto } from '@island.is/clients/vehicles'
-import { VehicleServiceFjsV1ClientService } from '@island.is/clients/vehicle-service-fjs-v1'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -36,7 +34,6 @@ export class VehiclesResolver {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
-    private readonly vehicleServiceFjsV1ClientService: VehicleServiceFjsV1ClientService,
   ) {}
 
   @Scopes(ApiScope.vehicles)
@@ -110,20 +107,12 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
-    return (
-      await this.vehiclesService.getCurrentVehicles(
-        user,
-        input.showOwned,
-        input.showCoowned,
-        input.showOperated,
-      )
-    )?.map((vehicle: VehicleMiniDto) => ({
-      permno: vehicle.permno,
-      make: vehicle.make,
-      color: vehicle.color,
-      role: vehicle.role,
-      isStolen: vehicle.stolen,
-    }))
+    return await this.vehiclesService.getCurrentVehicles(
+      user,
+      input.showOwned,
+      input.showCoowned,
+      input.showOperated,
+    )
   }
 
   @Scopes(ApiScope.internal)
@@ -136,16 +125,11 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
-    return await Promise.all(
-      (await this.getCurrentVehicles(input, user)).map(
-        async (vehicle: VehiclesCurrentVehicleWithDebtStatus) => {
-          const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
-            vehicle.permno || '',
-          )
-          vehicle.isDebtLess = debtStatus.isDebtLess
-          return vehicle
-        },
-      ),
+    return await this.vehiclesService.getCurrentVehiclesWithDebtStatus(
+      user,
+      input.showOwned,
+      input.showCoowned,
+      input.showOperated,
     )
   }
 
@@ -157,10 +141,8 @@ export class VehiclesResolver {
   @Audit()
   async getVehicleDebtStatusByPermno(
     @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
   ) {
-    const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
-      permno,
-    )
-    return { isDebtLess: debtStatus.isDebtLess }
+    return await this.vehiclesService.getVehicleDebtStatusByPermno(user, permno)
   }
 }

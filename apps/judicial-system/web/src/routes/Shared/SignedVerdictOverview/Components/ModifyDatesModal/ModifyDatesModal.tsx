@@ -4,7 +4,10 @@ import formatISO from 'date-fns/formatISO'
 import { useIntl, IntlShape } from 'react-intl'
 import { motion } from 'framer-motion'
 
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   DateTime,
@@ -318,9 +321,7 @@ const ModifyDatesModal: React.FC<Props> = ({
           caseType: workingCase.type,
         })}
         text={successText}
-        secondaryButtonText={formatMessage(
-          m.sections.modifyDatesModal.secondaryButtonTextSuccess,
-        )}
+        secondaryButtonText={formatMessage(core.closeModal)}
         onSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
           setIsModifyingDates(false)

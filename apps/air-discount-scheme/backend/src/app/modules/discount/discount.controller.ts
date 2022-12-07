@@ -8,6 +8,7 @@ import {
   forwardRef,
   UseGuards,
   BadRequestException,
+  Body,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -19,6 +20,7 @@ import {
 import { Discount } from './discount.model'
 import {
   CreateDiscountCodeParams,
+  CreateExplicitDiscountCodeParams,
   GetCurrentDiscountByNationalIdParams,
 } from './dto'
 import { DiscountService } from './discount.service'
@@ -112,5 +114,33 @@ export class PrivateDiscountController {
       params.nationalId,
       unConnectedFlights,
     )
+  }
+
+  @ApiExcludeEndpoint()
+  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
+  @UseGuards(IdsUserGuard)
+  @Post('users/createExplicitDiscountCode')
+  async createExplicitDiscountCode(
+    @Body() body: CreateExplicitDiscountCodeParams,
+    @CurrentUser() auth: AuthUser,
+  ): Promise<Discount> {
+    const unConnectedFlights = await this.flightService.findThisYearsConnectableFlightsByNationalId(
+      body.nationalId,
+    )
+
+    const discount = await this.discountService.createExplicitDiscountCode(
+      auth,
+      body.nationalId,
+      body.postalcode,
+      auth.nationalId,
+      body.comment,
+      unConnectedFlights,
+    )
+
+    if (!discount) {
+      throw new Error(`Could not create explicit discount`)
+    }
+
+    return discount
   }
 }

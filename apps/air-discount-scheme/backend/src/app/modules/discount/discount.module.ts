@@ -9,9 +9,12 @@ import { CacheModule } from '../cache'
 import { NationalRegistryModule } from '../nationalRegistry'
 import { FlightModule } from '../flight'
 import { UserModule } from '../user'
+import { ExplicitCode } from './discount.model'
+import { SequelizeModule } from '@nestjs/sequelize'
 
 @Module({
   imports: [
+    SequelizeModule.forFeature([ExplicitCode]),
     CacheModule,
     NationalRegistryModule,
     forwardRef(() => FlightModule),

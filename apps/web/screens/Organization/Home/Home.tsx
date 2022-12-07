@@ -69,9 +69,9 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const navList: NavigationItem[] =
-    organizationPage?.menuLinks?.map(({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+    organizationPage.menuLinks.map(({ primaryLink, childrenLinks }) => ({
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active: false,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,

@@ -11,10 +11,14 @@ import {
   PersonalRepresentativeType,
   UNKNOWN_NAME,
   DelegationDTO,
+  Delegation,
+  Client,
+  ClientAllowedScope,
 } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
@@ -22,7 +26,11 @@ import { getModelToken } from '@nestjs/sequelize'
 import times from 'lodash/times'
 import faker from 'faker'
 import request from 'supertest'
-import { setupWithAuth, defaultScopes } from '../../../test/setup'
+import {
+  setupWithAuth,
+  defaultScopes,
+  defaultDomains,
+} from '../../../test/setup'
 import {
   getFakeName,
   getFakeNationalId,
@@ -36,7 +44,12 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
-import { createDomain } from '@island.is/services/auth/testing'
+import {
+  createClient,
+  createDelegation,
+  createDelegationModels,
+  createDomain,
+} from '@island.is/services/auth/testing'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -932,6 +945,116 @@ describe('DelegationsController', () => {
             })
           },
         )
+      })
+    })
+  })
+})
+
+describe('DelegationsController', () => {
+  describe('Given a user is authenticated', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let nationalRegistryApi: NationalRegistryClientService
+
+    const client = createClient({
+      clientId: '@island.is/webapp',
+      supportsCustomDelegation: true,
+      supportsLegalGuardians: true,
+    })
+
+    const userNationalId = getFakeNationalId()
+
+    const user = createCurrentUser({
+      nationalId: userNationalId,
+      scope: [defaultScopes.testUserHasAccess.name],
+      client: client.clientId,
+    })
+
+    describe('and we have two custom delegations on different domains, and one ward', () => {
+      let clientModel: typeof Client
+      let delegationModel: typeof Delegation
+
+      const fromNationalId = createNationalId('person')
+
+      const customDelegations = [
+        createDelegation({
+          fromNationalId: fromNationalId,
+          toNationalId: user.nationalId,
+          scopes: [defaultScopes.scope1.name],
+          domainName: defaultDomains[0].name,
+        }),
+        createDelegation({
+          fromNationalId: fromNationalId,
+          toNationalId: user.nationalId,
+          scopes: [defaultScopes.scope2.name],
+          domainName: defaultDomains[1].name,
+        }),
+      ]
+
+      beforeAll(async () => {
+        app = await setupWithAuth({
+          user,
+        })
+        server = request(app.getHttpServer())
+        nationalRegistryApi = app.get(NationalRegistryClientService)
+
+        clientModel = app.get<typeof Client>(getModelToken(Client))
+        await clientModel.create(client)
+
+        const clientAllowedScopesModel = app.get<typeof ClientAllowedScope>(
+          getModelToken(ClientAllowedScope),
+        )
+        await clientAllowedScopesModel.bulkCreate(
+          Object.values(defaultScopes).map((s) => ({
+            scopeName: s.name,
+            clientId: client.clientId,
+          })),
+        )
+
+        delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
+        await createDelegationModels(delegationModel, customDelegations)
+
+        jest
+          .spyOn(nationalRegistryApi, 'getCustodyChildren')
+          .mockImplementation(async () => {
+            return [fromNationalId]
+          })
+        jest
+          .spyOn(nationalRegistryApi, 'getIndividual')
+          .mockImplementation(async () => {
+            return createNationalRegistryUser({ nationalId: fromNationalId })
+          })
+      })
+
+      afterAll(async () => {
+        await delegationModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+      })
+
+      describe('when user calls GET /v2/delegations', () => {
+        const path = '/v2/delegations'
+        let response: request.Response
+        let body: MergedDelegationDTO[]
+
+        beforeAll(async () => {
+          response = await server.get(path)
+          body = response.body
+        })
+
+        it('should have a an OK return status', () => {
+          expect(response.status).toEqual(200)
+        })
+
+        it('should return a single merged delegation', async () => {
+          expect(body.length).toEqual(1)
+          expect(body[0].types.sort()).toEqual(
+            [DelegationType.Custom, DelegationType.LegalGuardian].sort(),
+          )
+        })
       })
     })
   })

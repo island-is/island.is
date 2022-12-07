@@ -54,6 +54,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
+          onExit: {
+            apiModuleAction: ApiActions.validateApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -132,10 +135,14 @@ const template: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
               pruneInDaysATen(application, 8),
+            shouldDeleteChargeIfPaymentFulfilled: true,
           },
           onEntry: {
             apiModuleAction: ApiActions.addReview,
             shouldPersistToExternalData: true,
+          },
+          onExit: {
+            apiModuleAction: ApiActions.validateApplication,
           },
           roles: [
             {

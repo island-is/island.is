@@ -17,8 +17,8 @@ export class VehiclePlateOrderingClient {
     const result = await this.plateOrderingApiWithAuth(
       auth,
     ).deliverystationsGet({
-      apiVersion: '2.0',
-      apiVersion2: '2.0',
+      apiVersion: '1.0',
+      apiVersion2: '1.0',
     })
 
     return result.map((item) => ({
@@ -30,8 +30,8 @@ export class VehiclePlateOrderingClient {
 
   public async orderPlates(auth: User, plateOrder: PlateOrder): Promise<void> {
     await this.plateOrderingApiWithAuth(auth).orderplatesPost({
-      apiVersion: '2.0',
-      apiVersion2: '2.0',
+      apiVersion: '1.0',
+      apiVersion2: '1.0',
       postOrderPlatesModel: {
         permno: plateOrder.permno,
         frontType: plateOrder.frontType,

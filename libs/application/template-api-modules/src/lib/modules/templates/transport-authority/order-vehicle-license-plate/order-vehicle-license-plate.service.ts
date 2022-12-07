@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { OrderVehicleLicensePlateApi } from '@island.is/api/domains/transport-authority/order-vehicle-license-plate'
-
 import {
   OrderVehicleLicensePlateAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
+import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 
 @Injectable()
 export class OrderVehicleLicensePlateService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly orderVehicleLicensePlateApi: OrderVehicleLicensePlateApi,
+    private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
   ) {}
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -60,7 +59,7 @@ export class OrderVehicleLicensePlateService {
 
     const answers = application.answers as OrderVehicleLicensePlateAnswers
 
-    await this.orderVehicleLicensePlateApi.orderPlates(auth, {
+    await this.vehiclePlateOrderingClient.orderPlates(auth, {
       permno: answers?.vehicle?.plate,
       frontType: answers?.frontType,
       rearType: answers?.rearType,

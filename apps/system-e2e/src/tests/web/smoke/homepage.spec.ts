@@ -1,6 +1,14 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../support/utils'
 import { session } from '../../../support/session'
+import {
+  DefaultStub,
+  HttpMethod,
+  Imposter,
+  Mountebank,
+  Proxy,
+  ProxyMode,
+} from '@anev/ts-mountebank'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

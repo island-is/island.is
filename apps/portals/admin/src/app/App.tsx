@@ -1,5 +1,4 @@
-import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
 
 import { client } from '../graphql'
@@ -8,29 +7,45 @@ import { defaultLanguage } from '@island.is/shared/constants'
 import { Authenticator } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import { UserProfileLocale } from '@island.is/shared/components'
-
+import {
+  PortalMetaProvider,
+  Modules,
+  ModulesProvider,
+} from '@island.is/portals/core'
+import { modules } from '../lib/modules'
 import environment from '../environments/environment'
 import Layout from '../components/Layout/Layout'
+import { ApplicationErrorBoundary } from '@island.is/portals/core'
+import { AdminPortalPaths } from '../lib/paths'
 
-export function App() {
+export const App = () => {
   return (
     <ApolloProvider client={client}>
-      <LocaleProvider locale={defaultLanguage} messages={{}}>
-        {/*<ApplicationErrorBoundary>*/}
-        <Router basename="/stjornbord">
-          <Authenticator>
-            <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-              <UserProfileLocale />
-              <Layout>
-                <h1>Hello world</h1>
-              </Layout>
-            </FeatureFlagProvider>
-          </Authenticator>
-        </Router>
-        {/*</ApplicationErrorBoundary>*/}
-      </LocaleProvider>
+      <PortalMetaProvider basePath={AdminPortalPaths.Base}>
+        <LocaleProvider locale={defaultLanguage} messages={{}}>
+          <ApplicationErrorBoundary>
+            <Router basename={AdminPortalPaths.Base}>
+              <Authenticator>
+                <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                  <ModulesProvider modules={modules}>
+                    <UserProfileLocale />
+                    <Layout>
+                      <Switch>
+                        <Route exact path={AdminPortalPaths.Root}>
+                          <h1>Dashboard</h1>
+                        </Route>
+                        <Route>
+                          <Modules />
+                        </Route>
+                      </Switch>
+                    </Layout>
+                  </ModulesProvider>
+                </FeatureFlagProvider>
+              </Authenticator>
+            </Router>
+          </ApplicationErrorBoundary>
+        </LocaleProvider>
+      </PortalMetaProvider>
     </ApolloProvider>
   )
 }
-
-export default App

@@ -19,7 +19,7 @@ export class AnonymityStatusProvider extends BasicDataProvider {
           return this.handleError(response.errors)
         }
 
-        return Promise.resolve(response?.data?.getAnonymityStatus)
+        return Promise.resolve(response?.data?.vehicleRegistryAnonymityStatus)
       },
     )
   }

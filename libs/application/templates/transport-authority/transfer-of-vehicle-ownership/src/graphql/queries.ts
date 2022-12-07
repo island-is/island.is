@@ -64,3 +64,16 @@ export const IDENTITY_QUERY = `
     }
   }
 `
+
+//TODOx use this endpoint instead of looking at isStolen
+export const GET_VEHICLE_VALIDATION_BY_PERMNO = `
+  query GetVehicleValidationByPermno($permno: String!) {
+    ownerChangeVehicleValidationByPermno(permno: $permno) {
+      hasError
+      errorMessages {
+        errorNo
+        defaultMessage
+      }
+    }
+  } 
+`

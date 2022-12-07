@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { ArrayNotEmpty, IsArray, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 
 @InputType()
 export class ApplicationPaymentChargeInput {

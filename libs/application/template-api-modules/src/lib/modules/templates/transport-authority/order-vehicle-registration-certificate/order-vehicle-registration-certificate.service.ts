@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ChargeItemCode } from '@island.is/shared/constants'
-import { OrderVehicleRegistrationCertificateApi } from '@island.is/api/domains/transport-authority/order-vehicle-registration-certificate'
 import {
   getChargeItemCodes,
   OrderVehicleRegistrationCertificateAnswers,
 } from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
+import { VehiclePrintingClient } from '@island.is/clients/transport-authority/vehicle-printing'
 
 @Injectable()
 export class OrderVehicleRegistrationCertificateService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly orderVehicleRegistrationCertificateApi: OrderVehicleRegistrationCertificateApi,
+    private readonly vehiclePrintingClient: VehiclePrintingClient,
   ) {}
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -59,10 +58,9 @@ export class OrderVehicleRegistrationCertificateService {
     }
 
     const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
+    const permno = answers?.vehicle?.plate
 
-    await this.orderVehicleRegistrationCertificateApi.requestRegistrationCardPrint(
-      auth,
-      answers?.vehicle?.plate,
-    )
+    // Submit the application
+    await this.vehiclePrintingClient.requestRegistrationCardPrint(auth, permno)
   }
 }

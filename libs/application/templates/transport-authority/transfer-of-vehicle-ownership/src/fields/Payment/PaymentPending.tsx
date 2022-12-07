@@ -10,6 +10,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { payment } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { Company } from '../../assets/Company'
 
 const QUERY = gql`
   query status($applicationId: String!) {
@@ -140,7 +141,9 @@ export const PaymentPending: FC<Props> = ({
             formatMessage,
           )}
         </Text>
-        <Box marginTop={4}>{/* <Company /> */}</Box>
+        <Box marginTop={4}>
+          <Company />
+        </Box>
       </Box>
     </>
   )

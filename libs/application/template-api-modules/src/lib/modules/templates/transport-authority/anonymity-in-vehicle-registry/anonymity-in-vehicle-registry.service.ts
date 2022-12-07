@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { AnonymityInVehicleRegistryApi } from '@island.is/api/domains/transport-authority/anonymity-in-vehicle-registry'
+import { VehicleInfolocksClient } from '@island.is/clients/transport-authority/vehicle-infolocks'
 import { AnonymityInVehicleRegistryAnswers } from '@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry'
 import { YES } from '@island.is/application/core'
 
 @Injectable()
 export class AnonymityInVehicleRegistryService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly anonymityInVehicleRegistryApi: AnonymityInVehicleRegistryApi,
+    private readonly vehicleInfolocksClient: VehicleInfolocksClient,
   ) {}
 
   async submitApplication({
@@ -17,10 +15,8 @@ export class AnonymityInVehicleRegistryService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as AnonymityInVehicleRegistryAnswers
+    const isChecked = answers.isChecked?.includes(YES) || false
 
-    await this.anonymityInVehicleRegistryApi.setAnonymityStatus(
-      auth,
-      answers.isChecked?.includes(YES) || false,
-    )
+    await this.vehicleInfolocksClient.setAnonymityStatus(auth, isChecked)
   }
 }

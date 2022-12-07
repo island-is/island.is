@@ -1,15 +1,18 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { IdsClientConfig } from '@island.is/nest/config'
-import { ConfigType } from '@nestjs/config'
 import {
-  TachoNetApi,
-  DriverCardsApi,
+  ConfigType,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
+import {
+  DriverCardsApiApi,
+  IndividualApiApi,
   Configuration,
-  IndividualApi,
 } from '../../gen/fetch'
 import { DigitalTachographDriversCardClientConfig } from './digitalTachographDriversCardClient.config'
 
 const configFactory = (
+  xRoadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
   basePath: string,
@@ -27,7 +30,7 @@ const configFactory = (
       : undefined,
   }),
   headers: {
-    'X-Road-Client': config.xroadClientId,
+    'X-Road-Client': xRoadConfig.xRoadClient,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
@@ -36,57 +39,51 @@ const configFactory = (
 
 export const exportedApis = [
   {
-    provide: TachoNetApi,
+    provide: DriverCardsApiApi,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
-      return new TachoNetApi(
+      return new DriverCardsApiApi(
         new Configuration(
           configFactory(
+            xRoadConfig,
             config,
             idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )
     },
-    inject: [DigitalTachographDriversCardClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      DigitalTachographDriversCardClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
   {
-    provide: DriverCardsApi,
+    provide: IndividualApiApi,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
-      return new DriverCardsApi(
+      return new IndividualApiApi(
         new Configuration(
           configFactory(
+            xRoadConfig,
             config,
             idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )
     },
-    inject: [DigitalTachographDriversCardClientConfig.KEY, IdsClientConfig.KEY],
-  },
-  {
-    provide: IndividualApi,
-    useFactory: (
-      config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
-      idsClientConfig: ConfigType<typeof IdsClientConfig>,
-    ) => {
-      return new IndividualApi(
-        new Configuration(
-          configFactory(
-            config,
-            idsClientConfig,
-            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
-          ),
-        ),
-      )
-    },
-    inject: [DigitalTachographDriversCardClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      DigitalTachographDriversCardClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   },
 ]
