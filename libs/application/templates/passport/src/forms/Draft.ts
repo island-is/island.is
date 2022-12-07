@@ -36,25 +36,6 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'introSection',
-      title: m.introTitle,
-      children: [
-        buildMultiField({
-          id: 'intro',
-          title: m.introSectionTitle,
-          description: m.introSectionDescription,
-          children: [
-            buildCustomField({
-              id: 'introInfo',
-              title: '',
-              component: 'IntroInfo',
-              doesNotRequireAnswer: true,
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
       id: 'externalDataSection',
       title: m.dataCollectionTitle,
       children: [
@@ -142,10 +123,8 @@ export const Draft: Form = buildForm({
                 const withDiscount =
                   ((application.answers.passport as Passport)?.userPassport !==
                     '' &&
-                    (application.answers
-                      .personalInfo as any)?.hasDisabilityDiscount.includes(
-                      YES,
-                    )) ||
+                    (application.answers.personalInfo as any)
+                      ?.hasDisabilityDiscountChecked) ||
                   (application.answers.passport as Passport)?.childPassport !==
                     ''
                 return [

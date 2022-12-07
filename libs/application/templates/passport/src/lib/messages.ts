@@ -7,26 +7,6 @@ export const m = defineMessages({
     defaultMessage: 'Inngangur',
     description: 'Some description',
   },
-  introSectionTitle: {
-    id: 'pa.application:introSection.title',
-    defaultMessage: 'Vegabréf',
-    description: 'Some description',
-  },
-  introSectionDescription: {
-    id: 'pa.application:intro.introSection.description#markdown',
-    defaultMessage: `Í þessari umsókn getur þú sótt um vegabréf fyrir þig eða einstaklinga í þinni forsjá. Eftir þetta ferli þarf að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið þá getur þú sótt það hjá því sýslumannsembætti sem hentar þér best.\\n\\n Umsókn um nýtt vegabréf kostar 13.000 kr. fyrir 18 ára og eldri og 5.600 kr. fyrir börn, aldraða og öryrkja og greiðist í lok þessa ferlis. Athugið að endurtaka þarf þetta ferli fyrir hvern einstakling sem þarf á nýju vegabréfi að halda.\\n\\n Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.`,
-    description: 'Some description',
-  },
-  introSectionInfoMessage: {
-    id: 'pa.application:introSection.message#markdown',
-    defaultMessage: `Ef vegabréfi hefur verið glatað þarftu fyrst að tilkynna það áður en sótt er um nýtt.\\n\\n [Smelltu hér til að tilkynna glatað vegabréf.](https://island.is/stolidtynt-vegabref).`,
-    description: 'Some description',
-  },
-  noDisabiltiyRecordInfoMessage: {
-    id: 'pa.application:introSection.noDisabiltiyRecordInfoMessage#markdown',
-    defaultMessage: `Þú ert ekki handhafi örorkuskírteinis`,
-    description: 'Some description',
-  },
 
   /* Data collection section */
   dataCollectionTitle: {
@@ -173,6 +153,22 @@ export const m = defineMessages({
     id: 'pa.application:personalInfo.hasDisabilityDiscount',
     defaultMessage:
       'Ég er handhafi örorkuskírteinis og vil láta flétta upp örorkuskírteini mínu hjá Tryggingastofnun fyrir lægra gjald á vegabréfi.',
+    description: 'Some description',
+  },
+  noDisabiltiyRecordInfoMessage: {
+    id: 'pa.application:introSection.noDisabiltiyRecordInfoMessage',
+    defaultMessage: 'Þú ert ekki handhafi örorkuskírteinis',
+    description: 'Some description',
+  },
+  disabiltiyRecordInfoMessage: {
+    id: 'pa.application:introSection.disabiltiyRecordInfoMessage',
+    defaultMessage: 'Þú ert handhafi örorkuskírteinis',
+    description: 'Some description',
+  },
+  disabiltiyRecordError: {
+    id: 'pa.application:introSection.disabiltiyRecordError',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis við að ná sambandi, vinsamlegast reyndu aftur síðar',
     description: 'Some description',
   },
 

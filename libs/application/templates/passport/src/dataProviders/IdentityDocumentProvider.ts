@@ -25,8 +25,6 @@ export class IdentityDocumentProvider extends BasicDataProvider {
   type = 'IdentityDocumentProvider'
 
   async provide(): Promise<IdentityDocument> {
-    console.log('MEOOOOOWWWWW!')
-
     const query = `
       query getPassport {
         getPassport {
@@ -51,13 +49,11 @@ export class IdentityDocumentProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
 
-        console.log('RESPONSE IS HERE MAMIIIII', response)
-
         if (response.errors?.length > 0) {
           return this.handleError(response.errors[0])
         }
 
-        return Promise.resolve(response.data.getIdentityDocument)
+        return Promise.resolve(response.data.getPassport)
       })
       .catch((error) => this.handleError(error))
   }

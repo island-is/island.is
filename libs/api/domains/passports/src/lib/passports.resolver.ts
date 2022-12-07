@@ -1,13 +1,8 @@
-import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
-
+import { Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-
 import {
-  AuthMiddleware,
-  BypassAuth,
   CurrentUser,
   IdsUserGuard,
-  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
@@ -31,6 +26,4 @@ export class PassportsResolver {
   ): Promise<IdentityDocumentChild[]> {
     return this.passportApi.getChildPassports(user)
   }
-
-  // @Mutation(() => )
 }

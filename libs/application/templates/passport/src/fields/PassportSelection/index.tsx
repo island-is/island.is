@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -10,7 +10,6 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
-import { IdentityDocument } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const PassportSelection: FC<FieldBaseProps> = ({
@@ -23,8 +22,8 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
-  const identityDocument = application.externalData.identityDocument
-    .data as IdentityDocument
+  const identityDocument = (application.externalData.identityDocument
+    .data as any)[0]
   const identityDocumentNumber = identityDocument?.number
 
   return (
@@ -52,10 +51,12 @@ export const PassportSelection: FC<FieldBaseProps> = ({
                 label:
                   formatMessage(m.validTag) +
                   ' ' +
-                  format(
-                    new Date(identityDocument?.expirationDate),
-                    'dd/MM/yy',
-                  ),
+                  (identityDocument
+                    ? format(
+                        new Date(identityDocument?.expirationDate),
+                        'dd/MM/yy',
+                      )
+                    : ''),
                 outlined: true,
               },
             },

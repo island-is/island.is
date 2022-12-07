@@ -17,9 +17,8 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
     : formatMessage(m.serviceTypeExpressPriceWithDiscount)
   const withDiscount =
     ((application.answers.passport as Passport)?.userPassport !== '' &&
-      (application.answers.personalInfo as any)?.hasDisabilityDiscount.includes(
-        YES,
-      )) ||
+      (application.answers.personalInfo as any)
+        ?.hasDisabilityDiscountChecked) ||
     (application.answers.passport as Passport)?.childPassport !== ''
 
   return (

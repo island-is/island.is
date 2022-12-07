@@ -81,9 +81,8 @@ export const personalOverview = buildMultiField({
       label: m.currentPassportStatus,
       width: 'half',
       value: (application: Application) => {
-        const date = (application.externalData.identityDocument?.data as {
-          expirationDate?: string
-        })?.expirationDate
+        const date = (application.externalData.identityDocument.data as any)[0]
+          ?.expirationDate
 
         return (
           m.currentPassportExpiration.defaultMessage +

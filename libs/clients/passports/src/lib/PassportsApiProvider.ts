@@ -1,4 +1,3 @@
-import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
