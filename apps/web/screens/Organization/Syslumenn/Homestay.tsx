@@ -26,9 +26,9 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import { OrganizationWrapper, Webreader } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -48,6 +48,10 @@ const Homestay: Screen<HomestayProps> = ({
   homestays,
   namespace,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   useContentfulId(organizationPage.id, subpage.id)
 
   const n = useNamespace(namespace)
@@ -94,6 +98,7 @@ const Homestay: Screen<HomestayProps> = ({
     <OrganizationWrapper
       pageTitle={subpage.title}
       organizationPage={organizationPage}
+      showReadSpeaker={false}
       pageFeaturedImage={subpage.featuredImage}
       breadcrumbItems={[
         {
@@ -110,10 +115,13 @@ const Homestay: Screen<HomestayProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={4}>
+      <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
+        {isWebReaderEnabledForOrganizationPages && (
+          <Webreader readId={null} readClass="rs_read" />
+        )}
       </Box>
       {webRichText(subpage.description as SliceType[])}
       <Box
