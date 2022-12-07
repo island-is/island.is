@@ -68,6 +68,16 @@ const useSections = () => {
     activeSubSection?: number,
   ): Section => {
     const { type, id } = workingCase
+    const {
+      onContinue: restrictionCaseHearingArragenmentContinueHandler,
+      isValid: restrictionCaseHearingArragenmentIsValid,
+    } = flows.restrictionCases[
+      constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
+    ]
+    const {
+      onContinue: restrictionCasePoliceDemandsContinueHandler,
+      isValid: restrictionCasePoliceDemandsIsValid,
+    } = flows.restrictionCases[constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]
 
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
@@ -89,13 +99,8 @@ const useSections = () => {
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
-                onClick: flows.restrictionCases[
-                  constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
-                ].isValid
-                  ? () =>
-                      flows.restrictionCases[
-                        constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
-                      ].onContinue()
+                onClick: restrictionCaseHearingArragenmentIsValid
+                  ? () => restrictionCaseHearingArragenmentContinueHandler()
                   : undefined,
               },
               {
@@ -104,17 +109,9 @@ const useSections = () => {
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
                 onClick:
-                  (activeSubSection && activeSubSection > 2) ||
-                  (isDefendantStepValidRC(
-                    workingCase,
-                    workingCase.policeCaseNumbers,
-                  ) &&
-                    isHearingArrangementsStepValidRC(workingCase) &&
-                    workingCase.state !== CaseState.NEW)
-                    ? () =>
-                        flows.restrictionCases[
-                          constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
-                        ].onContinue()
+                  restrictionCasePoliceDemandsIsValid &&
+                  restrictionCaseHearingArragenmentIsValid
+                    ? () => restrictionCasePoliceDemandsContinueHandler()
                     : undefined,
               },
               {

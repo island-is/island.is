@@ -1,10 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   CaseState,
-  CaseTransition,
   Institution,
   NotificationType,
 } from '@island.is/judicial-system/types'
@@ -35,7 +34,6 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -45,6 +43,7 @@ import {
   SelectCourt,
   ProsecutorSectionHeightenedSecurity,
 } from '../../components'
+import { StepContext } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()
@@ -56,48 +55,20 @@ export const HearingArrangements: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const { onContinue, isValid } = useContext(StepContext).restrictionCases[
+    constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
+  ]
 
   const {
     sendNotification,
     isSendingNotification,
     sendNotificationError,
-    transitionCase,
     isTransitioningCase,
     updateCase,
     setAndSendCaseToServer,
   } = useCase()
 
   const { courts, loading: institutionLoading } = useInstitution()
-
-  const handleNextButtonClick = async () => {
-    if (!workingCase) {
-      return
-    }
-
-    const caseOpened =
-      workingCase.state === CaseState.NEW
-        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
-        : true
-
-    if (caseOpened) {
-      if (
-        (workingCase.state !== CaseState.NEW &&
-          workingCase.state !== CaseState.DRAFT) ||
-        // TODO: Ignore failed notifications
-        workingCase.notifications?.find(
-          (notification) => notification.type === NotificationType.HEADS_UP,
-        )
-      ) {
-        router.push(
-          `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-        )
-      } else {
-        setModalVisible(true)
-      }
-    } else {
-      // TODO: Handle error
-    }
-  }
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -117,6 +88,12 @@ export const HearingArrangements: React.FC = () => {
 
     return false
   }
+
+  useEffect(() => {
+    if (workingCase.state === CaseState.DRAFT) {
+      setModalVisible(true)
+    }
+  }, [workingCase.state])
 
   return (
     <PageLayout
@@ -222,11 +199,8 @@ export const HearingArrangements: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={async () => await handleNextButtonClick()}
-              nextIsDisabled={
-                !isHearingArrangementsStepValidRC(workingCase) ||
-                isTransitioningCase
-              }
+              onNextButtonClick={async () => await onContinue()}
+              nextIsDisabled={!isValid || isTransitioningCase}
               nextIsLoading={isTransitioningCase}
             />
           </FormContentContainer>

@@ -1,13 +1,14 @@
 import React, { createContext, useContext } from 'react'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
 
 import * as constants from '@island.is/judicial-system/consts'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import * as navigationHandlers from './navigationHandlers'
 import { useCase } from '../../utils/hooks'
 import useDefendants from '../../utils/hooks/useDefendants'
-import { isDefendantStepValidRC } from '../../utils/validate'
+import * as navigationHandlers from './navigationHandlers'
+import * as validations from '../../utils/validate'
 
 export interface Flows {
   restrictionCases: {
@@ -16,7 +17,8 @@ export interface Flows {
       isValid: boolean
     }
     [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
-      onContinue: () => Promise<boolean>
+      onContinue: () => Promise<boolean | undefined>
+      isValid: boolean
     }
     [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
       onContinue: () => Promise<boolean>
@@ -32,6 +34,7 @@ export const StepContext = createContext<Flows>({
     },
     [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
       onContinue: () => new Promise((resolve) => resolve(true)),
+      isValid: false,
     },
     [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
       onContinue: () => new Promise((resolve) => resolve(true)),
@@ -41,8 +44,9 @@ export const StepContext = createContext<Flows>({
 
 const StepProvider: React.FC = ({ children }) => {
   const router = useRouter()
-  const { workingCase } = useContext(FormContext)
-  const { createCase } = useCase()
+  const { formatMessage } = useIntl()
+  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { createCase, transitionCase } = useCase()
   const { updateDefendant } = useDefendants()
 
   const flows: Flows = {
@@ -55,16 +59,21 @@ const StepProvider: React.FC = ({ children }) => {
             createCase,
             updateDefendant,
           ),
-        isValid: isDefendantStepValidRC(
+        isValid: validations.isDefendantStepValidRC(
           workingCase,
           workingCase.policeCaseNumbers,
         ),
       },
       [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
         onContinue: () =>
-          router.push(
-            `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+          navigationHandlers.handleNavigateFromHearingArrangementsRestrictionCases(
+            router,
+            workingCase,
+            setWorkingCase,
+            transitionCase,
+            formatMessage,
           ),
+        isValid: validations.isHearingArrangementsStepValidRC(workingCase),
       },
       [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
         onContinue: () =>
