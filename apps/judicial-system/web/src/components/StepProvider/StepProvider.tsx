@@ -43,6 +43,10 @@ export interface Flows {
         onContinue: () => Promise<boolean>
         isValid: boolean
       }
+      [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: {
+        onContinue: () => Promise<boolean>
+        isValid: boolean
+      }
     }
     [UserType.COURT]: {}
   }
@@ -77,6 +81,10 @@ export const StepContext = createContext<StepContextType>({
           isValid: false,
         },
         [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: false,
+        },
+        [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: {
           onContinue: () => new Promise((resolve) => resolve(true)),
           isValid: false,
         },
@@ -147,6 +155,13 @@ const StepProvider: React.FC = ({ children }) => {
               `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`,
             ),
           isValid: validations.isPoliceReportStepValidRC(workingCase),
+        },
+        [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: {
+          onContinue: () =>
+            router.push(
+              `${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`,
+            ),
+          isValid: true, // This step is always valid
         },
       },
       [UserType.COURT]: {},

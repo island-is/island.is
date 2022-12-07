@@ -36,6 +36,11 @@ import * as constants from '@island.is/judicial-system/consts'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import {
+  FlowType,
+  StepContext,
+  UserType,
+} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export const StepFive: React.FC = () => {
   const {
@@ -45,7 +50,10 @@ export const StepFive: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-
+  const { flows } = useContext(StepContext)
+  const { onContinue } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
+    constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
+  ]
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
@@ -172,7 +180,7 @@ export const StepFive: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={onContinue}
           nextIsDisabled={!allFilesUploaded || isUploading}
         />
       </FormContentContainer>
