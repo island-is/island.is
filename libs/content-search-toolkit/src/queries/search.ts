@@ -3,6 +3,7 @@ import { tagAggregationQueryFragment } from './tagAggregation'
 import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
+import { query } from 'express'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   // normalising all types before boosting
@@ -21,6 +22,7 @@ export const searchQuery = (
     countTag = [],
     countTypes = false,
     countProcessEntry = false,
+    useQuery = "default"
   }: SearchInput,
   aggregate = true,
   highlightSection = false,
@@ -36,6 +38,8 @@ export const searchQuery = (
     'content',
     'content.stemmed',
   ]
+
+
   // * wildcard support for internal clients
   if (queryString.trim() === '*') {
     should.push({
@@ -46,29 +50,41 @@ export const searchQuery = (
         default_operator: 'and',
       },
     })
-    // } else {
-    //   should.push({
-    //     multi_match: {
-    //       fields: fieldsWeights,
-    //       query: queryString,
-    //       fuzziness: 'AUTO',
-    //       operator: 'and',
-    //       type: 'best_fields',
-    //     },
-    //   })
-    // }
-  } else {
-    console.log('SEARCH.TS', queryString)
-    const words = queryString.split(' ')
-    const lastWord = words.pop()
-    // const [lastWord,...words] = queryString.split(' ')
-    // console.log(words,lastWord)
-    words.forEach((word) => {
-      should.push({ term: { title: word } })
-    })
-    should.push({ prefix: { title: lastWord } })
-  }
-  console.log('SEARCH.TS', should)
+    } else {
+      switch (useQuery) {
+        default:
+        case "default":
+          should.push({
+            multi_match: {
+              fields: fieldsWeights,
+              query: queryString,
+              fuzziness: 'AUTO',
+              operator: 'and',
+              type: 'best_fields',
+            },
+          })
+          break;
+        case "suggestions":
+          console.log('SEARCH.TS', queryString)
+          const words = queryString.split(' ')
+          const lastWord = words.pop()
+          // const [lastWord,...words] = queryString.split(' ')
+          // console.log(words,lastWord)
+          words.forEach((word) => {
+            should.push({ term: { title: word } })
+          })
+          should.push({ prefix: { title: lastWord } })
+        
+          console.log('SEARCH.TS', should)
+          break;
+      }
+      
+    }
+
+
+
+
+
 
   // if we have types restrict the query to those types
   if (types?.length) {

@@ -307,6 +307,7 @@ export class ElasticService {
   }
 
   async search(index: string, query: SearchInput) {
+    console.log(query)
     const requestBody = searchQuery(query, true, true)
 
     return this.findByQuery<

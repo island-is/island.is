@@ -121,6 +121,7 @@ const useSearch = (
                 //++++++++++++++++++++++++++++++ org page ex match stuff
               ],
               highlightResults: true,
+              // useQuery: "suggestions"
             },
           },
         })
