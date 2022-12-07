@@ -36,13 +36,6 @@ export class PassportService {
     throw new ApolloError('Failed to resolve request', error.status)
   }
 
-  private handle4xx(error: FetchError) {
-    if (error.status === 403 || error.status === 404) {
-      return undefined
-    }
-    this.handleError(error)
-  }
-
   private getPassportsWithAuth(auth: Auth) {
     return this.passportsApi.withMiddleware(new AuthMiddleware(auth))
   }
@@ -96,6 +89,11 @@ export class PassportService {
         expiresWithinNoticeTime: expiresWithinNoticeTime,
       }
     })
+
+    if (Array.isArray(passportArray) && passportArray.length === 0) {
+      this.logger.debug(`${LOG_CATEGORY}: No active passport`)
+    }
+
     return passportArray
   }
 
@@ -110,7 +108,7 @@ export class PassportService {
 
       return identityDocumentResponse
     } catch (e) {
-      this.handle4xx(e)
+      this.handleError(e)
     }
   }
 
@@ -133,7 +131,7 @@ export class PassportService {
 
       return childrenArray
     } catch (e) {
-      this.handle4xx(e)
+      this.handleError(e)
     }
   }
 }
