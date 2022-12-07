@@ -11,6 +11,7 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../lib/messages'
+import { IdentityDocument } from '../../lib/constants'
 
 export const PassportSelection: FC<FieldBaseProps> = ({
   field,
@@ -23,8 +24,47 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
   const identityDocument = (application.externalData.identityDocument
-    .data as any)[0]
+    .data as any)[0] as IdentityDocument
   const identityDocumentNumber = identityDocument?.number
+
+  const tag = (identityDocument: IdentityDocument) => {
+    const today = new Date()
+    const expirationDate = new Date(identityDocument?.expirationDate)
+    const todayPlus6Months = new Date(
+      new Date().setMonth(new Date().getMonth() + 6),
+    )
+
+    if (!identityDocument) {
+      return {
+        label: formatMessage(m.noPassport),
+        variant: 'blue',
+        outlined: true,
+      }
+    } else if (today > expirationDate) {
+      return {
+        label: formatMessage(m.expiredTag),
+        variant: 'red',
+        outlined: true,
+      }
+    } else if (todayPlus6Months > expirationDate) {
+      return {
+        label:
+          formatMessage(m.validTag) +
+          ' ' +
+          (identityDocument
+            ? format(new Date(expirationDate), 'dd/MM/yy')
+            : ''),
+        variant: 'red',
+        outlined: true,
+      }
+    } else if (todayPlus6Months < expirationDate) {
+      return {
+        label: formatMessage(m.validTag) + ' ' + expirationDate.getFullYear(),
+        variant: 'mint',
+        outlined: true,
+      }
+    }
+  }
 
   return (
     <Box>
@@ -44,21 +84,16 @@ export const PassportSelection: FC<FieldBaseProps> = ({
               label: (application.externalData.nationalRegistry.data as any)
                 ?.fullName,
               value: '1',
-              subLabel:
-                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
-              tag: {
-                variant: 'red',
-                label:
-                  formatMessage(m.validTag) +
+              subLabel: identityDocument
+                ? formatMessage(m.passportNumber) +
                   ' ' +
-                  (identityDocument
-                    ? format(
-                        new Date(identityDocument?.expirationDate),
-                        'dd/MM/yy',
-                      )
-                    : ''),
-                outlined: true,
-              },
+                  identityDocument?.subType +
+                  identityDocumentNumber
+                : '',
+              tag: tag(identityDocument) as any,
+              disabled:
+                (tag(identityDocument) as any).label === 'Í pöntun' ||
+                (tag(identityDocument) as any).variant === 'mint',
             },
           ],
           onSelect: () => {
@@ -83,7 +118,10 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: 'Barn 1',
               subLabel:
-                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
+                formatMessage(m.passportNumber) +
+                ' ' +
+                identityDocument?.subType +
+                identityDocumentNumber,
               tag: {
                 variant: 'red',
                 outlined: true,
@@ -102,8 +140,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             },
             {
               label: 'Barn 3',
-              subLabel:
-                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
+              subLabel: '',
               value: '3',
               tag: {
                 variant: 'blue',
@@ -114,8 +151,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             },
             {
               label: 'Barn 4',
-              subLabel:
-                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
+              subLabel: '',
               value: '4',
               tag: {
                 variant: 'mint',
