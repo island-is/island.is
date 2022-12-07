@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import React, { createContext, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 
@@ -87,7 +81,6 @@ const StepProvider: React.FC = ({ children }) => {
   const { createCase, transitionCase } = useCase()
   const { updateDefendant } = useDefendants()
 
-  const [lastValidStep, setLastValidStep] = useState<string>()
   const flows: Flows = {
     [FlowType.RESTRICTION_CASES]: {
       [UserType.PROSECUTOR]: {
