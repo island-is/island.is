@@ -43,7 +43,7 @@ export const PassportLicense = ({
   return (
     <SingleLicenseCard
       title={name || formatMessage(m.passportCardTitle)}
-      subtitle={formatMessage(m.passportNumber) + ' - ' + id}
+      subtitle={formatMessage(m.passportNumber) + ': ' + id}
       link={ServicePortalPath.LicensesPassportDetail.replace(':id', id)}
       img={passportLogo}
       tag={{
