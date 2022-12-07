@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
 import { useNamespaces } from '@island.is/localization'
-import { EmptyState, CardLoader } from '@island.is/service-portal/core'
+import {
+  EmptyState,
+  CardLoader,
+  formatNationalId,
+} from '@island.is/service-portal/core'
 
 import { Box } from '@island.is/island-ui/core'
 
@@ -23,14 +27,17 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
         </Box>
       )}
       {data?.map((item, i) => (
-        <Box paddingTop={i === 0 ? 0 : 2}>
+        <Box key={i} paddingTop={i === 0 ? 0 : 2}>
           <LicenseCards
-            key={i}
             passportData={item.passports || undefined}
             noPassport={
               Array.isArray(item.passports) && item.passports.length === 0
             }
-            nationalId={item.childNationalId}
+            nationalId={
+              item.childNationalId
+                ? formatNationalId(item.childNationalId)
+                : ' '
+            }
             name={true}
           />
         </Box>
