@@ -7,8 +7,8 @@ export const formatIsk = (value: number): string =>
 export const getChargeItemCodes = (
   answers: ChangeOperatorOfVehicle,
 ): Array<string> => {
-  const operatorWasAdded = !!answers.operators.find((x) => x.wasAdded)
-  const operatorWasRemoved = !!answers.operators.find((x) => x.wasRemoved)
+  const operatorWasAdded = !!answers.operators?.find((x) => x.wasAdded)
+  const operatorWasRemoved = !!answers.removed?.wasRemoved
 
   const result = []
 

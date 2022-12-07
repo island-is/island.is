@@ -1,0 +1,66 @@
+import { FieldBaseProps } from '@island.is/application/types'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { FC } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import { information } from '../../lib/messages'
+import { OperatorInformation } from '../../shared'
+import { OperatorRepeaterItem } from './OperatorRepeaterItem'
+
+export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
+  const { formatMessage } = useLocale()
+  const { application } = props
+  console.log(application)
+  const { setValue } = useFormContext()
+  const { fields, append, remove } = useFieldArray<OperatorInformation>({
+    name: 'operator',
+  })
+
+  const handleAdd = (operator?: OperatorInformation) =>
+    append({
+      name: operator?.name || '',
+      nationalId: operator?.nationalId || '',
+      email: operator?.email || '',
+      phone: operator?.phone || '',
+      wasAdded: operator ? false : true,
+    })
+
+  const handleRemove = (index: number, wasAdded?: boolean) => {
+    remove(index)
+    if (!wasAdded) {
+      setValue('removed.wasRemoved', true)
+    }
+  }
+
+  return (
+    <Box>
+      {fields.length > 0 ? (
+        fields.map((field, index) => {
+          return (
+            <OperatorRepeaterItem
+              id="operator"
+              repeaterField={field}
+              index={index}
+              rowLocation={index + 1}
+              key={field.id}
+              handleRemove={handleRemove}
+              {...props}
+            />
+          )
+        })
+      ) : (
+        <Text variant="h5" marginBottom={2}>
+          {formatMessage(information.labels.operator.operatorTempTitle)}
+        </Text>
+      )}
+      <Button
+        variant="ghost"
+        icon="add"
+        iconType="outline"
+        onClick={handleAdd.bind(null, undefined)}
+      >
+        {formatMessage(information.labels.operator.add)}
+      </Button>
+    </Box>
+  )
+}
