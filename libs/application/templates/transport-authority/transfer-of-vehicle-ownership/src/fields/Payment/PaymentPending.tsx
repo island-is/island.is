@@ -88,6 +88,7 @@ export const PaymentPending: FC<Props> = ({
     applicationId,
     application.answers,
     submitApplication,
+    goToScreen,
   ])
 
   if (queryError) {
