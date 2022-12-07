@@ -21,38 +21,37 @@ export const handleNavigateFromCreateRestrictionCase = async (
     update: UpdateDefendant,
   ) => Promise<boolean | undefined>,
 ) => {
-  if (!theCase.id) {
-    const createdCase = await createCaseHandler(theCase)
+  const createdCase = await createCaseHandler(theCase)
 
-    if (
-      createdCase &&
-      createdCase.defendants &&
-      createdCase.defendants.length > 0 &&
-      theCase.defendants &&
-      theCase.defendants.length > 0
-    ) {
-      await updateDefendantHandler(
-        createdCase.id,
-        createdCase.defendants[0].id,
-        {
-          gender: theCase.defendants[0].gender,
-          name: theCase.defendants[0].name,
-          address: theCase.defendants[0].address,
-          nationalId: theCase.defendants[0].nationalId,
-          noNationalId: theCase.defendants[0].noNationalId,
-          citizenship: theCase.defendants[0].citizenship,
-        },
-      )
+  if (
+    createdCase &&
+    createdCase.defendants &&
+    createdCase.defendants.length > 0 &&
+    theCase.defendants &&
+    theCase.defendants.length > 0
+  ) {
+    await updateDefendantHandler(createdCase.id, createdCase.defendants[0].id, {
+      gender: theCase.defendants[0].gender,
+      name: theCase.defendants[0].name,
+      address: theCase.defendants[0].address,
+      nationalId: theCase.defendants[0].nationalId,
+      noNationalId: theCase.defendants[0].noNationalId,
+      citizenship: theCase.defendants[0].citizenship,
+    })
 
-      router.push(
-        `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
-      )
-    }
-  } else {
     router.push(
-      `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
+      `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
     )
   }
+}
+
+export const handleNavigateFromDefendantRestrictionCases = async (
+  router: NextRouter,
+  theCase: Case,
+) => {
+  router.push(
+    `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
+  )
 }
 
 export const handleNavigateFromHearingArrangementsRestrictionCases = async (

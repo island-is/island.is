@@ -23,7 +23,11 @@ export enum UserType {
 export interface Flows {
   [FlowType.RESTRICTION_CASES]: {
     [UserType.PROSECUTOR]: {
-      [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
+      [constants.CREATE_RESTRICTION_CASE_ROUTE]: {
+        onContinue: () => Promise<void>
+        isValid: boolean
+      }
+      [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: {
         onContinue: () => Promise<void>
         isValid: boolean
       }
@@ -52,7 +56,11 @@ export const StepContext = createContext<StepContextType>({
   flows: {
     [FlowType.RESTRICTION_CASES]: {
       [UserType.PROSECUTOR]: {
-        [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
+        [constants.CREATE_RESTRICTION_CASE_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve()),
+          isValid: false,
+        },
+        [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: {
           onContinue: () => new Promise((resolve) => resolve()),
           isValid: false,
         },
@@ -84,13 +92,24 @@ const StepProvider: React.FC = ({ children }) => {
   const flows: Flows = {
     [FlowType.RESTRICTION_CASES]: {
       [UserType.PROSECUTOR]: {
-        [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
+        [constants.CREATE_RESTRICTION_CASE_ROUTE]: {
           onContinue: () =>
             navigationHandlers.handleNavigateFromCreateRestrictionCase(
               router,
               workingCase,
               createCase,
               updateDefendant,
+            ),
+          isValid: validations.isDefendantStepValidRC(
+            workingCase,
+            workingCase.policeCaseNumbers,
+          ),
+        },
+        [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: {
+          onContinue: () =>
+            navigationHandlers.handleNavigateFromDefendantRestrictionCases(
+              router,
+              workingCase,
             ),
           isValid: validations.isDefendantStepValidRC(
             workingCase,

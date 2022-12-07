@@ -76,7 +76,9 @@ const useSections = () => {
       onContinue: restrictionCaseHearingArragenmentContinueHandler,
       isValid: restrictionCaseHearingArragenmentIsValid,
     } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
-      constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
+      id === ''
+        ? constants.CREATE_RESTRICTION_CASE_ROUTE
+        : constants.RESTRICTION_CASE_DEFENDANT_ROUTE
     ]
     const {
       onContinue: restrictionCasePoliceDemandsContinueHandler,

@@ -69,7 +69,11 @@ export const StepOne: React.FC = () => {
 
   const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
     UserType.PROSECUTOR
-  ][constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]
+  ][
+    workingCase.id === ''
+      ? constants.CREATE_RESTRICTION_CASE_ROUTE
+      : constants.RESTRICTION_CASE_DEFENDANT_ROUTE
+  ]
 
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {
