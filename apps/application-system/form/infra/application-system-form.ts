@@ -9,7 +9,6 @@ export const serviceSetup = (services: {
     .readiness('/readiness')
     .env({
       BASEPATH: '/umsoknir',
-      VMST_ID: '/k8s/application-system/VMST_ID',
       SI_PUBLIC_GRAPHQL_PATH: {
         dev: '',
         prod: '',
