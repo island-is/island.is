@@ -7,7 +7,7 @@ import {
   GetVehicleDetailInput,
   VehiclesCurrentVehicleWithDebtStatus,
 } from '@island.is/api/schema'
-import { information } from '../../lib/messages'
+import { information, applicationCheck } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
@@ -41,8 +41,9 @@ export const VehicleSelectField: FC<
           make: currentVehicle?.make || '',
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
-          isStolen: currentVehicle?.isStolen,
           isDebtLess: true,
+          updatelocks: [],
+          ownerChangeErrorMessages: [],
         }
       : null,
   )
@@ -70,15 +71,18 @@ export const VehicleSelectField: FC<
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            isStolen: currentVehicle?.isStolen,
             isDebtLess: response?.vehicleDebtStatusByPermno?.isDebtLess,
+            updatelocks: response?.vehicleDebtStatusByPermno?.updatelocks,
+            ownerChangeErrorMessages:
+              response?.vehicleDebtStatusByPermno?.ownerChangeErrorMessages,
           })
-          setPlate(
-            !!currentVehicle?.isStolen ||
-              !response?.vehicleDebtStatusByPermno?.isDebtLess
-              ? ''
-              : currentVehicle.permno || '',
-          )
+
+          const disabled =
+            !response?.vehicleDebtStatusByPermno?.isDebtLess ||
+            !!response?.vehicleDebtStatusByPermno?.updatelocks?.length ||
+            !!response?.vehicleDebtStatusByPermno?.ownerChangeErrorMessages
+              ?.length
+          setPlate(disabled ? '' : currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
           setIsLoading(false)
         })
@@ -95,6 +99,46 @@ export const VehicleSelectField: FC<
     },
     [getVehicleDetails],
   )
+
+  const errorTags = []
+  if (!selectedVehicle?.isDebtLess) {
+    errorTags.push({
+      label: formatMessage(information.labels.pickVehicle.isNotDebtLessTag),
+    })
+  }
+  if (!!selectedVehicle?.updatelocks?.length) {
+    for (let i = 0; i < selectedVehicle.updatelocks.length; i++) {
+      errorTags.push({
+        label:
+          formatMessage(
+            getValueViaPath(
+              applicationCheck.locks,
+              selectedVehicle.updatelocks[i].lockNo || '',
+            ),
+          ) ||
+          formatMessage(applicationCheck.locks['0']) +
+            ' - ' +
+            selectedVehicle.updatelocks[i].lockNo,
+      })
+    }
+  }
+  if (!!selectedVehicle?.ownerChangeErrorMessages?.length) {
+    for (let i = 0; i < selectedVehicle.ownerChangeErrorMessages.length; i++) {
+      errorTags.push({
+        label:
+          formatMessage(
+            getValueViaPath(
+              applicationCheck.validation,
+              selectedVehicle.ownerChangeErrorMessages[i].errorNo || '',
+            ),
+          ) ||
+          selectedVehicle.ownerChangeErrorMessages[i].defaultMessage ||
+          formatMessage(applicationCheck.validation['0']) +
+            ' - ' +
+            selectedVehicle.ownerChangeErrorMessages[i].errorNo,
+      })
+    }
+  }
 
   return (
     <Box>
@@ -119,45 +163,10 @@ export const VehicleSelectField: FC<
           <Box>
             {selectedVehicle && (
               <CategoryCard
-                colorScheme={
-                  !!selectedVehicle.isStolen || !selectedVehicle.isDebtLess
-                    ? 'red'
-                    : 'blue'
-                }
+                colorScheme={errorTags.length > 0 ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
-                tags={
-                  selectedVehicle.isStolen
-                    ? !selectedVehicle.isDebtLess
-                      ? [
-                          {
-                            label: formatMessage(
-                              information.labels.pickVehicle.isStolenTag,
-                            ),
-                          },
-                          {
-                            label: formatMessage(
-                              information.labels.pickVehicle.isNotDebtLessTag,
-                            ),
-                          },
-                        ]
-                      : [
-                          {
-                            label: formatMessage(
-                              information.labels.pickVehicle.isStolenTag,
-                            ),
-                          },
-                        ]
-                    : !selectedVehicle.isDebtLess
-                    ? [
-                        {
-                          label: formatMessage(
-                            information.labels.pickVehicle.isNotDebtLessTag,
-                          ),
-                        },
-                      ]
-                    : []
-                }
+                tags={errorTags}
               />
             )}
           </Box>

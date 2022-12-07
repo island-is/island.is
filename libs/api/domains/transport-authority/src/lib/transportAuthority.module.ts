@@ -3,10 +3,6 @@ import { Module } from '@nestjs/common'
 import { MainResolver } from './graphql/main.resolver'
 import { TransportAuthorityApi } from './transportAuthority.service'
 import {
-  VehicleOwnerChangeClientModule,
-  VehicleOwnerChangeClientConfig,
-} from '@island.is/clients/transport-authority/vehicle-owner-change'
-import {
   VehicleCodetablesClientModule,
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
@@ -26,7 +22,6 @@ import {
 
 @Module({
   imports: [
-    VehicleOwnerChangeClientModule,
     VehicleCodetablesClientModule,
     VehicleInfolocksClientModule,
     DigitalTachographDriversCardClientModule,
@@ -35,7 +30,6 @@ import {
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        VehicleOwnerChangeClientConfig,
         VehicleCodetablesClientConfig,
         VehicleInfolocksClientConfig,
         DigitalTachographDriversCardClientConfig,

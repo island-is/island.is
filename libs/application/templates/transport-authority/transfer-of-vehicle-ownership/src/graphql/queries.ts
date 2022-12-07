@@ -5,7 +5,6 @@ export const GET_CURRENT_VEHICLES = `
       make
       color
       role
-      isStolen
     }
   } 
 `
@@ -17,8 +16,14 @@ export const GET_CURRENT_VEHICLES_WITH_DEBT_STATUS = `
       make
       color
       role
-      isStolen
       isDebtLess
+      updatelocks {
+        lockNo
+      }
+      ownerChangeErrorMessages {
+        errorNo
+        defaultMessage
+      }
     }
   } 
 `
@@ -27,6 +32,13 @@ export const GET_VEHICLE_DEBT_STATUS_BY_PERMNO = `
   query GetVehicleDebtStatusByPermno($permno: String!) {
     vehicleDebtStatusByPermno(permno: $permno) {
       isDebtLess
+      updatelocks {
+        lockNo
+      }
+      ownerChangeErrorMessages {
+        errorNo
+        defaultMessage
+      }
     }
   } 
 `
@@ -63,17 +75,4 @@ export const IDENTITY_QUERY = `
       nationalId
     }
   }
-`
-
-//TODOx use this endpoint instead of looking at isStolen
-export const GET_VEHICLE_VALIDATION_BY_PERMNO = `
-  query GetVehicleValidationByPermno($permno: String!) {
-    ownerChangeVehicleValidationByPermno(permno: $permno) {
-      hasError
-      errorMessages {
-        errorNo
-        defaultMessage
-      }
-    }
-  } 
 `

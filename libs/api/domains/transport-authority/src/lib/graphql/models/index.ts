@@ -1,4 +1,3 @@
-export * from './ownerChangeValidation.model'
 export * from './insuranceCompany.model'
 export * from './anonymityStatus.model'
 export * from './qualityPhotoAndSignature.model'

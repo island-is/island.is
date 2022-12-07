@@ -7,259 +7,169 @@ export const applicationCheck = {
       defaultMessage: 'Það kom upp villa við að sannreyna gögn',
       description: 'Default error message for validation',
     },
-    '1': {
-      id: 'ta.tvo.application:applicationCheck.validation.1',
-      defaultMessage: 'Kennitala kaupanda ekki til í Nöfnum',
-      description: 'Message for error no 1',
-    },
     '2': {
       id: 'ta.tvo.application:applicationCheck.validation.2',
       defaultMessage:
         'Kaupdagur er á undan síðasta kaupdegi, breyta þarf kaupdegi áður en eigendaskipti fara fram.',
-      description: 'Message for error no 2',
-    },
-    '3': {
-      id: 'ta.tvo.application:applicationCheck.validation.3',
-      defaultMessage: 'Afgreiðsludagur er á undan kaupdegi',
-      description: 'Message for error no 3',
-    },
-    '4': {
-      id: 'ta.tvo.application:applicationCheck.validation.4',
-      defaultMessage: 'Afgreiðsludagur er fram í tímann',
-      description: 'Message for error no 4',
-    },
-    '5': {
-      id: 'ta.tvo.application:applicationCheck.validation.5',
-      defaultMessage: 'Kaupdagur er á undan forskráningardegi',
-      description: 'Message for error no 5',
-    },
-    '6': {
-      id: 'ta.tvo.application:applicationCheck.validation.6',
-      defaultMessage: '"Kennitala seljanda er fyllt út en engar villur skráðar',
-      description: 'Message for error no 6',
-    },
-    '21': {
-      id: 'ta.tvo.application:applicationCheck.validation.21',
-      defaultMessage: 'Kaupdagur verður að vera útfylltur',
-      description: 'Message for error no 21',
-    },
-    '22': {
-      id: 'ta.tvo.application:applicationCheck.validation.22',
-      defaultMessage: 'Afgreiðsludagur verður að vera útfylltur',
-      description: 'Message for error no 22',
-    },
-    '23': {
-      id: 'ta.tvo.application:applicationCheck.validation.23',
-      defaultMessage: 'Skráningardagur verður að vera útfylltur',
-      description: 'Message for error no 23',
-    },
-    '24': {
-      id: 'ta.tvo.application:applicationCheck.validation.24',
-      defaultMessage: 'Kennitala verður að vera 10 stafir að lengd',
-      description: 'Message for error no 24',
-    },
-    '29': {
-      id: 'ta.tvo.application:applicationCheck.validation.29',
-      defaultMessage: 'Kennitala eiganda verður að vera útfyllt.',
-      description: 'Message for error no 29',
-    },
-    '30': {
-      id: 'ta.tvo.application:applicationCheck.validation.30',
-      defaultMessage: 'Tryggingarfélag verður að vera útfyllt.',
-      description: 'Message for error no 30',
-    },
-    '31': {
-      id: 'ta.tvo.application:applicationCheck.validation.31',
-      defaultMessage: 'Tryggingarfélag er ekki rétt slegið inn',
-      description: 'Message for error no 31',
-    },
-    '34': {
-      id: 'ta.tvo.application:applicationCheck.validation.34',
-      defaultMessage: 'Tegund tilkynnanda skal vera útfyllt.',
-      description: 'Message for error no 34',
+      description: 'Message for validation error no 2',
     },
     '43': {
       id: 'ta.tvo.application:applicationCheck.validation.43',
-      defaultMessage: 'Ekki má skrá eigendakipti á ökutæki sem afskráð - týnt.',
-      description: 'Message for error no 43',
-    },
-    '44': {
-      id: 'ta.tvo.application:applicationCheck.validation.44',
-      defaultMessage: '"Nauðsynlegt er að tilgreina söluandvirði ökutækis',
-      description: 'Message for error no 44',
-    },
-    '45': {
-      id: 'ta.tvo.application:applicationCheck.validation.45',
       defaultMessage:
-        'Ökutækið er ekki orðið 25 ára og því má ekki skrá það sem fornbifreið',
-      description: 'Message for error no 45',
-    },
-    '46': {
-      id: 'ta.tvo.application:applicationCheck.validation.46',
-      defaultMessage:
-        'Athugið: Ökutækið er ekki með nýskráningu. Gera þarf umráðamannabreytingu.',
-      description: 'Message for error no 46',
+        'Ökutækið er afskráð týnt, endurskrá þarf ökutækið áður en eigendaskipti eru framkvæmd.',
+      description: 'Message for validation error no 43',
     },
     '47': {
       id: 'ta.tvo.application:applicationCheck.validation.47',
       defaultMessage:
         'Ekki má hafa eigandaskipti á ökutæki sem hefur verið skráð til úrvinnslu',
-      description: 'Message for error no 47',
+      description: 'Message for validation error no 47',
     },
     '48': {
       id: 'ta.tvo.application:applicationCheck.validation.48',
       defaultMessage:
-        'Ekki má hafa eigandaskipti á ökutæki sem er í notkunarflokki 011 (Ökut. m. ferðaþjónustul)',
-      description: 'Message for error no 48',
+        'Ökutæki með ferðaþjónustuleyfi, þarf að fara í breytingaskoðun og breyta í almenna notkun fyrir sölu.',
+      description: 'Message for validation error no 48',
     },
     '49': {
       id: 'ta.tvo.application:applicationCheck.validation.49',
       defaultMessage:
-        'Ekki má hafa eigandaskipt á ökutæki sem er í notkunarflokki 012 (Ökutækjal./ferðaþj.leyfi)',
-      description: 'Message for error no 49',
+        'Ökutæki í ökutækjaleigu og með ferðaþjónustuleyfi, þarf að fara í breytingaskoðun og breyta í almenna notkun fyrir sölu.',
+      description: 'Message for validation error no 49',
     },
     '50': {
       id: 'ta.tvo.application:applicationCheck.validation.50',
       defaultMessage:
-        'Ekki má hafa eigandaskipti á ökutæki sem er í notkunarflokki 013 (VSK / ferðaþj.leyfi)',
-      description: 'Message for error no 50',
-    },
-    '51': {
-      id: 'ta.tvo.application:applicationCheck.validation.51',
-      defaultMessage: 'Seljandi er ekki skráður eigandi eða meðeigandi',
-      description: 'Message for error no 51',
-    },
-    '54': {
-      id: 'ta.tvo.application:applicationCheck.validation.54',
-      defaultMessage:
-        'Ökutæki þarf að hafa farið í löglega skoðun á síðustu 12 mánuðum',
-      description: 'Message for error no 54',
-    },
-    '55': {
-      id: 'ta.tvo.application:applicationCheck.validation.55',
-      defaultMessage: 'Ökutæki finnst ekki',
-      description: 'Message for error no 55',
-    },
-    '57': {
-      id: 'ta.tvo.application:applicationCheck.validation.57',
-      defaultMessage:
-        'Til eru gölluð eigendaskipti fyrir ökutækið (ekki ef búið er að hafna þeim)',
-      description: 'Message for error no 57',
+        'Ökutæki með ferðaþjónustuleyfi, þarf að fara í breytingaskoðun og breyta í almenna notkun fyrir sölu.',
+      description: 'Message for validation error no 50',
     },
     '58': {
       id: 'ta.tvo.application:applicationCheck.validation.58',
       defaultMessage:
-        'Eigendaskiptaálestur hefur ekki farið fram innan sjö daga (Skeyti)',
-      description: 'Message for error no 58',
-    },
-    '59': {
-      id: 'ta.tvo.application:applicationCheck.validation.59',
-      defaultMessage:
-        'Samgöngustofa er ekki með umboð fyrir tryggingafélagið og eigandi er ekki skráður með tryggingafærslu fyrir ökutækið',
-      description: 'Message for error no 59',
+        'Eigendaskiptaálestur hefur ekki farið fram innan sjö daga, lesa þarf af ökutækinu',
+      description: 'Message for validation error no 58',
     },
     '61': {
       id: 'ta.tvo.application:applicationCheck.validation.61',
-      defaultMessage: 'Kaupandi er undir lögaldri',
-      description: 'Message for error no 61',
+      defaultMessage:
+        'Kaupandi er ekki fjárráða, þarf að óska eftir leyfi sýslumanns. Ekki hægt að gera rafræn eigendaskipti',
+      description: 'Message for validation error no 61',
     },
     '62': {
       id: 'ta.tvo.application:applicationCheck.validation.62',
-      defaultMessage: 'Seljandi er undir lögaldri',
-      description: 'Message for error no 62',
+      defaultMessage:
+        'Seljandi er ekki fjárráða, þarf að óska eftir leyfi sýslumanns. Ekki hægt að gera rafræn eigendaskipti',
+      description: 'Message for validation error no 62',
     },
     '63': {
       id: 'ta.tvo.application:applicationCheck.validation.63',
       defaultMessage:
-        'Verið er að skrá eigandaskipti á sendiráðsökutæki. Athugið að fyrst þarf að skipta um skráningarmerki.',
-      description: 'Message for error no 63',
+        'Ökutækið er á sendiráðsmerkjum, setja þarf ökutækið á almenn merki fyrir sölu',
+      description: 'Message for validation error no 63',
     },
     '64': {
       id: 'ta.tvo.application:applicationCheck.validation.64',
-      defaultMessage: 'Ökutæki er skráð til neyðaraksturs',
-      description: 'Message for error no 64',
-    },
-    '65': {
-      id: 'ta.tvo.application:applicationCheck.validation.65',
-      defaultMessage: 'Tegund stöðvar skal vera útfyllt.',
-      description: 'Message for error no 65',
+      defaultMessage:
+        'Ökutækið er skráð í neyðarakstur, þarf að fara í breytingaskoðun og setja í almenna notkun fyrir sölu.',
+      description: 'Message for validation error no 64',
     },
     '66': {
       id: 'ta.tvo.application:applicationCheck.validation.66',
       defaultMessage:
-        'Skráður er rétthafi að fornmerkjum og ef merkið á að fylgja bílnum þarf rétthafinn að framvísa því til kaupanda.',
-      description: 'Message for error no 66',
+        'Skráður er rétthafi af fornmerkjum, ef merkið á að fylgja bílnum þarf rétthafinn að framvísa því til kaupanda. Ekki hægt að gera rafræn eigendaskipti.',
+      description: 'Message for validation error no 66',
     },
     '67': {
       id: 'ta.tvo.application:applicationCheck.validation.67',
       defaultMessage:
-        'Eigendaskiptaálestur fór fram í dag. Athugið hvort gjöld hafi verið lögð á.',
-      description: 'Message for error no 67',
+        'Eigendaskiptaálestur fór fram í dag, ekki hægt að gera eigendaskipti samdægurs vegna álagningar þungaskatts.',
+      description: 'Message for validation error no 67',
     },
     '68': {
       id: 'ta.tvo.application:applicationCheck.validation.68',
-      defaultMessage: 'Ökutæki þarf að fara í eigendaskiptaálestur',
-      description: 'Message for error no 68',
+      defaultMessage:
+        'Eigendaskiptaálestur hefur ekki farið fram innan sjö daga, lesa þarf af ökutækinu',
+      description: 'Message for validation error no 68',
     },
     '69': {
       id: 'ta.tvo.application:applicationCheck.validation.69',
-      defaultMessage: 'Ökutækið þarf að fara í eigendaskiptaálestur',
-      description: 'Message for error no 69',
+      defaultMessage:
+        'Eigendaskiptaálestur hefur ekki farið fram innan sjö daga, lesa þarf af ökutækinu',
+      description: 'Message for validation error no 69',
     },
     '70': {
       id: 'ta.tvo.application:applicationCheck.validation.70',
       defaultMessage:
-        'Ekki má hafa eigandaskipti á ökutæki sem er í notkunarflokki 011 (Ökut. m. ferðaþjónustul)',
-      description: 'Message for error no 70',
+        'Ökutæki með ferðaþjónustuleyfi, þarf að fara í breytingaskoðun og breyta í almenna notkun fyrir sölu.',
+      description: 'Message for validation error no 70',
     },
     '71': {
       id: 'ta.tvo.application:applicationCheck.validation.71',
       defaultMessage:
-        'Ekki má hafa eigandaskipt á ökutæki sem er í notkunarflokki 012 (Ökutækjal./ferðaþj.leyfi)',
-      description: 'Message for error no 71',
+        'Ökutæki í ökutækjaleigu og með ferðaþjónustuleyfi, þarf að fara í breytingaskoðun og breyta í almenna notkun fyrir sölu.',
+      description: 'Message for validation error no 71',
     },
     '72': {
       id: 'ta.tvo.application:applicationCheck.validation.72',
       defaultMessage:
-        'Ekki má hafa eigandaskipti á ökutæki sem er í notkunarflokki 013 (VSK / ferðaþj.leyfi)',
-      description: 'Message for error no 72',
-    },
-    '73': {
-      id: 'ta.tvo.application:applicationCheck.validation.73',
-      defaultMessage:
-        'Það eru til rafræn eigandaskipti sem ekki er búið að klára. Hafna þarf rafrænu eigandaskiptunum samhliða.',
-      description: 'Message for error no 73',
+        'Ökutæki með ferðaþjónustuleyfi, þarf að fara í breytingaskoðun og breyta í almenna notkun fyrir sölu.',
+      description: 'Message for validation error no 72',
     },
     '74': {
       id: 'ta.tvo.application:applicationCheck.validation.74',
       defaultMessage:
-        'Ekki má hafa eigandaskipti á ökutæki sem er í notkunarflokki 012 (Ökutækjal./ ferðaþj.leyfi)',
-      description: 'Message for error no 74',
-    },
-    '76': {
-      id: 'ta.tvo.application:applicationCheck.validation.76',
-      defaultMessage:
-        'Ekki má hafa eigandaskipti á ökutæki sem er í notkunarflokki 003 (Sendiráðsökutæki)',
-      description: 'Message for error no 76',
+        'Ökutæki í ökutækjaleigu og með ferðaþjónustuleyfi, þarf að fara í breytingaskoðun og breyta í almenna notkun fyrir sölu.',
+      description: 'Message for validation error no 74',
     },
     '78': {
       id: 'ta.tvo.application:applicationCheck.validation.78',
       defaultMessage:
-        'Ekki er hægt að framkvæma eigandaskipti af ökutæki í flokknum eigandaleiga nema ökutækið hafi farið í aðalskoðun á almanaksárinu.',
-      description: 'Message for error no 78',
+        'Ekki er hægt að framkvæma eigandaskipti af ökutæki í flokknum ökutækjaleiga nema ökutækið hafi farið í aðalskoðun á almanaksárinu. Þarf að fara með ökutækið í skoðun fyrir sölu.',
+      description: 'Message for validation error no 78',
     },
     '81': {
       id: 'ta.tvo.application:applicationCheck.validation.81',
       defaultMessage:
-        'Ökutæki er að fara í víðari skoðunartíðni og hefur ekki farið í skráningarskoðun, aðalskoðun, fulltrúaskoðun eða samanburðarskoðun innan almanksárs.',
-      description: 'Message for error no 81',
+        'Ökutækið verður að hafa farið í skoðun á árinu til að hægt sé að selja það.',
+      description: 'Message for validation error no 81',
     },
   }),
   locks: defineMessages({
-    0: {
+    '0': {
       id: 'ta.tvo.application:applicationCheck.locks.0',
-      defaultMessage: 'Það kom upp villa við að sækja lása fyrir bifreið',
+      defaultMessage: 'Óþekktur lás á ökutæki',
       description: 'Default error message for locs',
+    },
+    '1': {
+      id: 'ta.tvo.application:applicationCheck.locks.1',
+      defaultMessage: 'Lás á ökutæki, hafið samband við Samgöngustofu',
+      description: 'Message for lock error no 1',
+    },
+    '2': {
+      id: 'ta.tvo.application:applicationCheck.locks.2',
+      defaultMessage: 'Lás á ökutæki, hafið samband við Samgöngustofu',
+      description: 'Message for lock error no 2',
+    },
+    '4': {
+      id: 'ta.tvo.application:applicationCheck.locks.4',
+      defaultMessage: 'Lás á ökutæki, hafið samband við Samgöngustofu',
+      description: 'Message for lock error no 4',
+    },
+    '5': {
+      id: 'ta.tvo.application:applicationCheck.locks.5',
+      defaultMessage: 'Lás á ökutæki, hafið samband við Samgöngustofu',
+      description: 'Message for lock error no 5',
+    },
+    '6': {
+      id: 'ta.tvo.application:applicationCheck.locks.6',
+      defaultMessage: 'Lás á ökutæki, hafið samband við Samgöngustofu',
+      description: 'Message for lock error no 6',
+    },
+    '10': {
+      id: 'ta.tvo.application:applicationCheck.locks.10',
+      defaultMessage:
+        'Taka þarf einkamerki af ökutæki áður en eigendaskipti fara fram',
+      description: 'Message for lock error no 10',
     },
   }),
 }
