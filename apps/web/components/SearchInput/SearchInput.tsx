@@ -106,7 +106,7 @@ const useSearch = (
     }
 
     dispatch({ type: 'startLoading' })
-
+    console.log("TERM",term.trim())
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
         .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
@@ -119,6 +119,7 @@ const useSearch = (
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
+                //++++++++++++++++++++++++++++++ org page ex match stuff
               ],
               highlightResults: true,
             },
@@ -137,29 +138,29 @@ const useSearch = (
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
 
-      client
-        .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
-          query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
-          variables: {
-            input: {
-              singleTerm: queryString.trim(),
-              language: locale as ContentLanguage,
-              size: 10, // only show top X completions to prevent long list
-            },
-          },
-        })
-        .then(
-          ({
-            data: {
-              webSearchAutocomplete: { completions: suggestions },
-            },
-          }) => {
-            dispatch({
-              type: 'suggestions',
-              suggestions,
-            })
-          },
-        )
+      // client
+      //   .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
+      //     query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+      //     variables: {
+      //       input: {
+      //         singleTerm: queryString.trim(),
+      //         language: locale as ContentLanguage,
+      //         size: 10, // only show top X completions to prevent long list
+      //       },
+      //     },
+      //   })
+      //   .then(
+      //     ({
+      //       data: {
+      //         webSearchAutocomplete: { completions: suggestions },
+      //       },
+      //     }) => {
+      //       dispatch({
+      //         type: 'suggestions',
+      //         suggestions,
+      //       })
+      //     },
+      //   )
 
       dispatch({
         type: 'searchString',

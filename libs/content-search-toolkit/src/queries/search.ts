@@ -46,17 +46,29 @@ export const searchQuery = (
         default_operator: 'and',
       },
     })
+    // } else {
+    //   should.push({
+    //     multi_match: {
+    //       fields: fieldsWeights,
+    //       query: queryString,
+    //       fuzziness: 'AUTO',
+    //       operator: 'and',
+    //       type: 'best_fields',
+    //     },
+    //   })
+    // }
   } else {
-    should.push({
-      multi_match: {
-        fields: fieldsWeights,
-        query: queryString,
-        fuzziness: 'AUTO',
-        operator: 'and',
-        type: 'best_fields',
-      },
+    console.log('SEARCH.TS', queryString)
+    const words = queryString.split(' ')
+    const lastWord = words.pop()
+    // const [lastWord,...words] = queryString.split(' ')
+    // console.log(words,lastWord)
+    words.forEach((word) => {
+      should.push({ term: { title: word } })
     })
+    should.push({ prefix: { title: lastWord } })
   }
+  console.log('SEARCH.TS', should)
 
   // if we have types restrict the query to those types
   if (types?.length) {
