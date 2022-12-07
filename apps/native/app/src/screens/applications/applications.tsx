@@ -14,6 +14,7 @@ import {
   FlatList,
   Image,
   Platform,
+  SafeAreaView,
   View,
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
@@ -248,7 +249,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   }))
 
   return (
-    <>
+    <SafeAreaView>
       <BottomTabsIndicator index={3} total={5} />
       <Animated.FlatList
         ref={flatListRef}
@@ -260,6 +261,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
             useNativeDriver: true,
           },
         )}
+        contentContainerStyle={{
+          paddingBottom: 16
+        }}
         style={{ zIndex: 9 }}
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
@@ -296,7 +300,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         onRefresh={() => res?.refetch()}
       />
       {!isSearch && <TopLine scrollY={scrollY} />}
-    </>
+    </SafeAreaView>
   )
 }
 

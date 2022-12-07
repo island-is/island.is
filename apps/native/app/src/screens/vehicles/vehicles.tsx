@@ -151,6 +151,9 @@ export const VehiclesScreen: NavigationFunctionComponent = ({ componentId }) => 
           paddingTop: 16,
           zIndex: 9,
         }}
+        contentContainerStyle={{
+          paddingBottom: 16
+        }}
         contentInset={{
           bottom: 32,
         }}

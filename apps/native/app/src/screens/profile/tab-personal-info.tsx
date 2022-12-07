@@ -104,8 +104,9 @@ export function TabPersonalInfo() {
         label={intl.formatMessage({ id: 'user.natreg.religion' })}
         value={natRegData?.religion}
       />
+
       <View style={{ paddingHorizontal: 16, paddingVertical: 32 }}>
-      <Button isOutlined title="Fara í stillingar" onPress={() => navigateTo(`/settings`)} />
+        <Button isOutlined title="Fara í stillingar" onPress={() => navigateTo(`/settings`)} />
       </View>
     </ScrollView>
   )

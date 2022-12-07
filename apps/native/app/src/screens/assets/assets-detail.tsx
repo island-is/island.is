@@ -39,8 +39,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
   const appraisal = data?.assetsDetail?.appraisal;
   const unitsOfUse = data?.assetsDetail?.unitsOfUse;
 
-  if (!data?.assetsDetail) return null;
-
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
       <NavigationBarSheet

@@ -194,6 +194,9 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({ componentId 
         contentInset={{
           bottom: 32,
         }}
+        contentContainerStyle={{
+          paddingBottom: 16
+        }}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }

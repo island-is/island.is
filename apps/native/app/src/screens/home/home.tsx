@@ -88,7 +88,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
 
-  useActiveTabItemPress(1, () => {
+  useActiveTabItemPress(2, () => {
     flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
   })
 

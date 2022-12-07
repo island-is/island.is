@@ -1,6 +1,6 @@
 import { Heading, IconButton, UserCard } from '@island.is/island-ui-native'
 import React from 'react'
-import { Image, ScrollView } from 'react-native'
+import { Image, SafeAreaView, ScrollView } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
@@ -80,7 +80,8 @@ export const ProfileScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
   return (
     <>
-    <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16 }}>
+    <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16}}>
+      <SafeAreaView>
        <UserCard
         name={authStore.userInfo?.name}
         ssn={formatNationalId(String(authStore.userInfo?.nationalId))}
@@ -111,7 +112,7 @@ export const ProfileScreen: NavigationFunctionComponent = ({ componentId }) => {
           style={{ width: 30, height: 28 }} /> }
         />
       </Row>
-
+      </SafeAreaView>
     </ScrollView>
     <BottomTabsIndicator index={4} total={5} />
     </>

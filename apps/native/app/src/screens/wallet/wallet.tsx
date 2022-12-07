@@ -161,7 +161,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
 
-  useActiveTabItemPress(2, () => {
+  useActiveTabItemPress(1, () => {
     flatListRef.current?.scrollToOffset({
       offset: -150,
       animated: true,

@@ -43,8 +43,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ item: any }> = (
   const isError = !!error;
   const isLoading = loading;
 
-  if (!data?.vehiclesDetail) return null;
-
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
       <NavigationBarSheet
@@ -98,25 +96,25 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ item: any }> = (
               value={`${technicalInfo?.vehicleWeight} kg`}
             />
           </InputRow>
-          {inspectionInfo && (
-            <InputRow>
-              <Input
-                loading={isLoading}
-                error={isError}
-                label={intl.formatMessage({ id: 'vehicleDetail.insured' })}
-                value={intl.formatMessage(
-                  { id: 'vehicleDetail.insuredValue' },
-                  { isInsured: inspectionInfo?.insuranceStatus }
-                )}
-              />
-              <Input
-                loading={isLoading}
-                error={isError}
-                label={intl.formatMessage({ id: 'vehicleDetail.unpaidVehicleFee' })}
-                value={`${inspectionInfo?.carTax} kr.`}
-              />
-            </InputRow>
-          )}
+
+          <InputRow>
+            <Input
+              loading={isLoading}
+              error={isError}
+              label={intl.formatMessage({ id: 'vehicleDetail.insured' })}
+              value={intl.formatMessage(
+                { id: 'vehicleDetail.insuredValue' },
+                { isInsured: inspectionInfo?.insuranceStatus }
+              )}
+            />
+            <Input
+              loading={isLoading}
+              error={isError}
+              label={intl.formatMessage({ id: 'vehicleDetail.unpaidVehicleFee' })}
+              value={`${inspectionInfo?.carTax} kr.`}
+            />
+          </InputRow>
+
 
           <InputRow>
             {mainInfo?.co2 && (

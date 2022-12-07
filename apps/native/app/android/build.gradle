@@ -5,7 +5,7 @@ buildscript {
         RNNKotlinVersion = "1.4.31"
         buildToolsVersion = "30.0.3"
         minSdkVersion = 21
-        compileSdkVersion = 30
+        compileSdkVersion = 31
         targetSdkVersion = 30
     }
     repositories {
@@ -50,7 +50,7 @@ subprojects {
         project ->
             if (project.hasProperty("android")) {
                 android {
-                    compileSdkVersion = 30
+                    compileSdkVersion = 31
                     buildToolsVersion = "30.0.3"
                 }
             }
