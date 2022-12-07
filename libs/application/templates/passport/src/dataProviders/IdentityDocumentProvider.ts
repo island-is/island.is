@@ -28,25 +28,25 @@ export class IdentityDocumentProvider extends BasicDataProvider {
             mrzLastName
             sex
           }
-        }
-        childPassports {
-          nationalId
-          name
-          secondParent
-          identityDocuments {
-          productionRequestID
-          number
-          type
-          verboseType
-          subType
-          status
-          issuingDate
-          expirationDate
-          displayFirstName
-          displayLastName
-          mrzFirstName
-          mrzLastName
-          sex
+          childPassports {
+            nationalId
+            name
+            secondParent
+            identityDocuments {
+            productionRequestID
+            number
+            type
+            verboseType
+            subType
+            status
+            issuingDate
+            expirationDate
+            displayFirstName
+            displayLastName
+            mrzFirstName
+            mrzLastName
+            sex
+            }
           }
         }
       }
