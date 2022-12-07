@@ -13,7 +13,11 @@ import {
 
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   directionType,
@@ -62,9 +66,8 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isCourtRole =
-    user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
+  const isProsecution = user?.role && isProsecutionRole(user.role)
+  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -136,7 +139,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
             theCase={theCase}
-            isCourtRole={isCourtRole}
+            isCourtRole={isCourt}
           >
             {theCase.courtDate ? (
               <Text fontWeight={'medium'} variant="small">
@@ -323,7 +326,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                       mapCaseStateToTagVariant(
                         formatMessage,
                         c.state,
-                        isCourtRole,
+                        isCourt,
                         c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
@@ -336,7 +339,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                       mapCaseStateToTagVariant(
                         formatMessage,
                         c.state,
-                        isCourtRole,
+                        isCourt,
                         c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
@@ -369,7 +372,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   )}
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecutor &&
+                  {isProsecution &&
                     (c.state === CaseState.NEW ||
                       c.state === CaseState.DRAFT ||
                       c.state === CaseState.SUBMITTED ||
