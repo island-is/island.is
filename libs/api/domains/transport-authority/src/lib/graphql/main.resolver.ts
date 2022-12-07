@@ -43,7 +43,7 @@ export class MainResolver {
     return this.transportAuthorityApi.checkTachoNet(user, input)
   }
 
-  @Query(() => NewestDriversCard)
+  @Query(() => NewestDriversCard, { nullable: true })
   digitalTachographNewestDriversCard(@CurrentUser() user: User) {
     return this.transportAuthorityApi.getNewestDriversCard(user)
   }
