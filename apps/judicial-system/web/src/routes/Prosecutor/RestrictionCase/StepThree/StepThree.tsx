@@ -55,7 +55,11 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
-import { StepContext } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
+import {
+  FlowType,
+  StepContext,
+  UserType,
+} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export interface DemandsAutofillProps {
   defendant: Defendant
@@ -99,7 +103,10 @@ export const StepThree: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const flows = useContext(StepContext)
+  const { flows } = useContext(StepContext)
+  const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
+    UserType.PROSECUTOR
+  ][constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]
   const { formatMessage } = useIntl()
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
@@ -539,13 +546,8 @@ export const StepThree: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => {
-            flows.restrictionCases[
-              constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
-            ].onContinue()
-          }}
-          // nextUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}
+          onNextButtonClick={() => onContinue()}
+          nextIsDisabled={!isValid}
         />
       </FormContentContainer>
     </PageLayout>

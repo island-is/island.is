@@ -62,7 +62,7 @@ export const HearingArrangements: React.FC = () => {
   const { flows } = useContext(StepContext)
   const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
     UserType.PROSECUTOR
-  ][constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]
+  ][constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]
 
   const {
     sendNotification,

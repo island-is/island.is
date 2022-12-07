@@ -69,22 +69,33 @@ const useSections = () => {
     flows: Flows,
     workingCase: Case,
     user?: User,
-    activeSubSection?: number,
   ): Section => {
     const { type, id } = workingCase
     const {
-      onContinue: restrictionCaseHearingArragenmentContinueHandler,
-      isValid: restrictionCaseHearingArragenmentIsValid,
+      onContinue: restrictionCaseDefendantContinueHandler,
+      isValid: restrictionCaseDefendantIsValid,
     } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
       id === ''
         ? constants.CREATE_RESTRICTION_CASE_ROUTE
         : constants.RESTRICTION_CASE_DEFENDANT_ROUTE
     ]
     const {
+      onContinue: restrictionCaseHearingArrangementsContinueHandler,
+      isValid: restrictionCaseHearingArrangementsIsValid,
+    } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
+      constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
+    ]
+    const {
       onContinue: restrictionCasePoliceDemandsContinueHandler,
       isValid: restrictionCasePoliceDemandsIsValid,
     } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
       constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
+    ]
+    const {
+      onContinue: restrictionCasePoliceReportContinueHandler,
+      isValid: restrictionCasePoliceReportIsValid,
+    } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
+      constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
     ]
 
     return {
@@ -107,8 +118,8 @@ const useSections = () => {
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
-                onClick: restrictionCaseHearingArragenmentIsValid
-                  ? () => restrictionCaseHearingArragenmentContinueHandler()
+                onClick: restrictionCaseDefendantIsValid
+                  ? () => restrictionCaseDefendantContinueHandler()
                   : undefined,
               },
               {
@@ -117,9 +128,9 @@ const useSections = () => {
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
                 onClick:
-                  restrictionCasePoliceDemandsIsValid &&
-                  restrictionCaseHearingArragenmentIsValid
-                    ? () => restrictionCasePoliceDemandsContinueHandler()
+                  restrictionCaseHearingArrangementsIsValid &&
+                  restrictionCaseDefendantIsValid
+                    ? () => restrictionCaseHearingArrangementsContinueHandler()
                     : undefined,
               },
               {
@@ -128,17 +139,10 @@ const useSections = () => {
                   sections.restrictionCaseProsecutorSection.policeReport,
                 ),
                 onClick:
-                  (activeSubSection && activeSubSection > 3) ||
-                  (isDefendantStepValidRC(
-                    workingCase,
-                    workingCase.policeCaseNumbers,
-                  ) &&
-                    isHearingArrangementsStepValidRC(workingCase) &&
-                    isPoliceDemandsStepValidRC(workingCase))
-                    ? () =>
-                        flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
-                          constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
-                        ].onContinue()
+                  restrictionCaseHearingArrangementsIsValid &&
+                  restrictionCaseDefendantIsValid &&
+                  restrictionCasePoliceDemandsIsValid
+                    ? () => restrictionCasePoliceDemandsContinueHandler
                     : undefined,
               },
               {
@@ -146,16 +150,12 @@ const useSections = () => {
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.caseFiles,
                 ),
-                href:
-                  (activeSubSection && activeSubSection > 4) ||
-                  (isDefendantStepValidRC(
-                    workingCase,
-                    workingCase.policeCaseNumbers,
-                  ) &&
-                    isHearingArrangementsStepValidRC(workingCase) &&
-                    isPoliceDemandsStepValidRC(workingCase) &&
-                    isPoliceReportStepValidRC(workingCase))
-                    ? `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`
+                onClick:
+                  restrictionCaseHearingArrangementsIsValid &&
+                  restrictionCaseDefendantIsValid &&
+                  restrictionCasePoliceDemandsIsValid &&
+                  restrictionCasePoliceReportIsValid
+                    ? () => restrictionCasePoliceReportContinueHandler()
                     : undefined,
               },
               {
@@ -785,7 +785,6 @@ const useSections = () => {
             flows,
             workingCase || ({} as Case),
             user,
-            activeSubSection,
           )
         : isInvestigationCase(workingCase?.type)
         ? getInvestigationCaseProsecutorSection(

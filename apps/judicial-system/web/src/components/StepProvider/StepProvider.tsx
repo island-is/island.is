@@ -28,11 +28,15 @@ export interface Flows {
         isValid: boolean
       }
       [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: {
-        onContinue: () => Promise<void>
+        onContinue: () => Promise<boolean>
+        isValid: boolean
+      }
+      [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
+        onContinue: () => Promise<boolean | undefined>
         isValid: boolean
       }
       [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
-        onContinue: () => Promise<boolean | undefined>
+        onContinue: () => Promise<boolean>
         isValid: boolean
       }
       [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
@@ -61,7 +65,11 @@ export const StepContext = createContext<StepContextType>({
           isValid: false,
         },
         [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: {
-          onContinue: () => new Promise((resolve) => resolve()),
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: false,
+        },
+        [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
           isValid: false,
         },
         [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
@@ -107,16 +115,15 @@ const StepProvider: React.FC = ({ children }) => {
         },
         [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: {
           onContinue: () =>
-            navigationHandlers.handleNavigateFromDefendantRestrictionCases(
-              router,
-              workingCase,
+            router.push(
+              `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`,
             ),
           isValid: validations.isDefendantStepValidRC(
             workingCase,
             workingCase.policeCaseNumbers,
           ),
         },
-        [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
+        [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
           onContinue: () =>
             navigationHandlers.handleNavigateFromHearingArrangementsRestrictionCases(
               router,
@@ -127,12 +134,19 @@ const StepProvider: React.FC = ({ children }) => {
             ),
           isValid: validations.isHearingArrangementsStepValidRC(workingCase),
         },
-        [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
+        [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
           onContinue: () =>
             router.push(
               `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`,
             ),
-          isValid: true,
+          isValid: validations.isPoliceDemandsStepValidRC(workingCase),
+        },
+        [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
+          onContinue: () =>
+            router.push(
+              `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`,
+            ),
+          isValid: validations.isPoliceReportStepValidRC(workingCase),
         },
       },
       [UserType.COURT]: {},

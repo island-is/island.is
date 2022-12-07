@@ -45,15 +45,6 @@ export const handleNavigateFromCreateRestrictionCase = async (
   }
 }
 
-export const handleNavigateFromDefendantRestrictionCases = async (
-  router: NextRouter,
-  theCase: Case,
-) => {
-  router.push(
-    `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
-  )
-}
-
 export const handleNavigateFromHearingArrangementsRestrictionCases = async (
   router: NextRouter,
   theCase: Case,

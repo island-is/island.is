@@ -24,6 +24,11 @@ import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  FlowType,
+  StepContext,
+  UserType,
+} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export const StepFour: React.FC = () => {
   const {
@@ -32,6 +37,10 @@ export const StepFour: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const { flows } = useContext(StepContext)
+  const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
+    UserType.PROSECUTOR
+  ][constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
@@ -226,8 +235,8 @@ export const StepFour: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isPoliceReportStepValidRC(workingCase)}
+          onNextButtonClick={onContinue}
+          nextIsDisabled={!isValid}
         />
       </FormContentContainer>
     </PageLayout>
