@@ -63,9 +63,10 @@ export class ChangeOperatorOfVehicleService {
 
     const answers = application.answers as ChangeOperatorOfVehicleAnswers
     const permno = answers?.vehicle?.plate
+    const mainOperatorNationalId = answers?.mainOperator?.nationalId
     const newOperators = answers?.operators.map((operator) => ({
       ssn: operator.nationalId,
-      isMainOperator: operator.isMainOperator,
+      isMainOperator: operator.nationalId === mainOperatorNationalId,
     }))
 
     // Submit the application
