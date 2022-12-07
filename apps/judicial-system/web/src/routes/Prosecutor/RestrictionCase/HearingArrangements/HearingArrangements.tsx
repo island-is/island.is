@@ -43,7 +43,11 @@ import {
   SelectCourt,
   ProsecutorSectionHeightenedSecurity,
 } from '../../components'
-import { StepContext } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
+import {
+  FlowType,
+  StepContext,
+  UserType,
+} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()
@@ -56,9 +60,9 @@ export const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const { flows } = useContext(StepContext)
-  const { onContinue, isValid } = flows.restrictionCases[
-    constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
-  ]
+  const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
+    UserType.PROSECUTOR
+  ][constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]
 
   const {
     sendNotification,

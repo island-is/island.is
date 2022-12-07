@@ -39,7 +39,12 @@ import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import { StepContext } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
+import {
+  FlowType,
+  StepContext,
+  UserType,
+} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
+import { getLastValidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 const SectionTitle: React.FC = ({ children }) => {
   return (
@@ -64,7 +69,7 @@ export const Cases: React.FC = () => {
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
-  const { flows, lastValidStep } = useContext(StepContext)
+  const { flows } = useContext(StepContext)
   const { features } = useContext(FeatureContext)
   const {
     findLastValidStep,
@@ -179,7 +184,11 @@ export const Cases: React.FC = () => {
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = `${lastValidStep}/${caseToOpen.id}`
+        routeTo = `${getLastValidStep(
+          flows,
+          FlowType.RESTRICTION_CASES,
+          UserType.PROSECUTOR,
+        )}/${caseToOpen.id}`
       } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getInvestigationCaseProsecutorSection(caseToOpen, user),

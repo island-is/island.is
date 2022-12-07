@@ -41,7 +41,11 @@ import {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
 } from '../../components'
-import { StepContext } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
+import {
+  FlowType,
+  StepContext,
+  UserType,
+} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export const StepOne: React.FC = () => {
   const {
@@ -63,9 +67,9 @@ export const StepOne: React.FC = () => {
   )
   const { flows } = useContext(StepContext)
 
-  const { onContinue, isValid } = flows.restrictionCases[
-    constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
-  ]
+  const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
+    UserType.PROSECUTOR
+  ][constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]
 
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {

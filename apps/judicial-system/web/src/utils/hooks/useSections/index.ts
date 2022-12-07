@@ -17,7 +17,11 @@ import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   RESTRICTION_CASE_MODIFY_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Flows } from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
+import {
+  Flows,
+  FlowType,
+  UserType,
+} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -71,13 +75,15 @@ const useSections = () => {
     const {
       onContinue: restrictionCaseHearingArragenmentContinueHandler,
       isValid: restrictionCaseHearingArragenmentIsValid,
-    } = flows.restrictionCases[
+    } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
       constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
     ]
     const {
       onContinue: restrictionCasePoliceDemandsContinueHandler,
       isValid: restrictionCasePoliceDemandsIsValid,
-    } = flows.restrictionCases[constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]
+    } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
+      constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
+    ]
 
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
@@ -128,7 +134,7 @@ const useSections = () => {
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase))
                     ? () =>
-                        flows.restrictionCases[
+                        flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
                           constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
                         ].onContinue()
                     : undefined,

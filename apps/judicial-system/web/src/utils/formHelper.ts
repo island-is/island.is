@@ -6,6 +6,11 @@ import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
+import {
+  Flows,
+  UserType,
+  FlowType,
+} from '../components/StepProvider/StepProvider'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -168,4 +173,18 @@ export const hasDateChanged = (
     return compareAsc(newDate, new Date(currentDate)) !== 0
   }
   return false
+}
+
+export const getLastValidStep = (
+  flows: Flows,
+  flowType: FlowType,
+  userType: UserType,
+) => {
+  const [key] =
+    Object.entries(flows[flowType][userType])
+      .slice()
+      .reverse()
+      .find(([, value]) => value.isValid) || []
+
+  return key
 }
