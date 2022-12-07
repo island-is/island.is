@@ -106,7 +106,6 @@ const useSearch = (
     }
 
     dispatch({ type: 'startLoading' })
-    console.log("TERM",term.trim())
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
         .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
