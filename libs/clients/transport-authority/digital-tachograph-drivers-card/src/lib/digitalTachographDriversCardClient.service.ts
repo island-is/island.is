@@ -32,36 +32,52 @@ export class DigitalTachographDriversCardClient {
     auth: User,
     request: TachoNetCheckRequest,
   ): Promise<boolean> {
-    const result = await this.driversCardApiWithAuth(
-      auth,
-    ).v1DrivercardsTachonetcheckPost({
-      tachonetCheckRequest: {
-        firstName: request.firstName,
-        lastName: request.lastName,
-        birthDate: request.birthDate,
-        birthPlace: request.birthPlace,
-        drivingLicenceNumber: request.drivingLicenceNumber,
-        drivingLicenceIssuingCountry: request.drivingLicenceIssuingCountry,
-      },
-    })
+    try {
+      const result = await this.driversCardApiWithAuth(
+        auth,
+      ).v1DrivercardsTachonetcheckPost({
+        tachonetCheckRequest: {
+          firstName: request.firstName,
+          lastName: request.lastName,
+          birthDate: request.birthDate,
+          birthPlace: request.birthPlace,
+          drivingLicenceNumber: request.drivingLicenceNumber,
+          drivingLicenceIssuingCountry: request.drivingLicenceIssuingCountry,
+        },
+      })
 
-    return !!result.cards?.find((x) => x.isActive === IsActiveEnum.Yes)
+      return !!result.cards?.find((x) => x.isActive === IsActiveEnum.Yes)
+    } catch (e) {
+      if (e.status === 404) {
+        return false
+      }
+      throw e
+    }
   }
 
-  public async getNewestDriversCard(auth: User): Promise<NewestDriversCard> {
-    const result = await this.driversCardApiWithAuth(
-      auth,
-    ).v1DrivercardsPersidnoNewestGet({
-      persidno: auth.nationalId,
-    })
+  public async getNewestDriversCard(
+    auth: User,
+  ): Promise<NewestDriversCard | null> {
+    try {
+      const result = await this.driversCardApiWithAuth(
+        auth,
+      ).v1DrivercardsPersidnoNewestGet({
+        persidno: auth.nationalId,
+      })
 
-    return {
-      ssn: result?.personIdNumber || undefined,
-      applicationCreatedAt: result?.datetimeOfApplication || undefined,
-      cardNumber: result?.cardNumber || undefined,
-      cardValidFrom: result?.cardValidFromDatetime || undefined,
-      cardValidTo: result?.cardValidToDatetime || undefined,
-      isValid: result?.isValid === IsValidEnum.Yes,
+      return {
+        ssn: result?.personIdNumber || undefined,
+        applicationCreatedAt: result?.datetimeOfApplication || undefined,
+        cardNumber: result?.cardNumber || undefined,
+        cardValidFrom: result?.cardValidFromDatetime || undefined,
+        cardValidTo: result?.cardValidToDatetime || undefined,
+        isValid: result?.isValid === IsValidEnum.Yes,
+      }
+    } catch (e) {
+      if (e.status === 404) {
+        return null
+      }
+      throw e
     }
   }
 

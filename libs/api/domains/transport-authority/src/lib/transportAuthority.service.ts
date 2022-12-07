@@ -45,7 +45,7 @@ export class TransportAuthorityApi {
     return { exists: hasActiveCard }
   }
 
-  async getNewestDriversCard(user: User): Promise<NewestDriversCard> {
+  async getNewestDriversCard(user: User): Promise<NewestDriversCard | null> {
     return await this.digitalTachographDriversCardClient.getNewestDriversCard(
       user,
     )
