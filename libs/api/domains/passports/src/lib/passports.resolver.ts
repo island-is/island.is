@@ -9,6 +9,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { PassportsService } from '@island.is/clients/passports'
 import { IdentityDocument } from './models/identityDocument.model'
 import { IdentityDocumentChild } from './models/identityDocumentChild.model'
+import { Passport } from './models/passport.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -16,7 +17,7 @@ export class PassportsResolver {
   constructor(private passportApi: PassportsService) {}
 
   @Query(() => [IdentityDocument])
-  getPassport(@CurrentUser() user: User): Promise<IdentityDocument[]> {
+  getallPassports(@CurrentUser() user: User): Promise<IdentityDocument[]> {
     return this.passportApi.getPassports(user)
   }
 
@@ -25,5 +26,10 @@ export class PassportsResolver {
     @CurrentUser() user: User,
   ): Promise<IdentityDocumentChild[]> {
     return this.passportApi.getChildPassports(user)
+  }
+
+  @Query(() => Passport)
+  getPassport(@CurrentUser() user: User): Promise<Passport> {
+    return this.passportApi.getCurrentPassport(user)
   }
 }

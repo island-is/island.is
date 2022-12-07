@@ -1,10 +1,12 @@
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { XRoadConfig, ConfigType } from '@island.is/nest/config'
 import { Injectable, Inject } from '@nestjs/common'
 import { IdentityDocumentApi, PreregistrationApi } from '../../gen/fetch'
 import {
   IdentityDocument,
   IdentityDocumentChild,
+  Passport,
   PreregistrationInput,
 } from './passportsApi.types'
 import { mapChildPassports, mapPassports } from './passportsApi.utils'
@@ -16,6 +18,7 @@ export class PassportsService {
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private identityDocumentApi: IdentityDocumentApi,
     private preregistrationApi: PreregistrationApi,
+    private individualApi: NationalRegistryClientService,
   ) {}
 
   async getPassports(user: User): Promise<IdentityDocument[]> {
@@ -28,12 +31,30 @@ export class PassportsService {
   }
 
   async getChildPassports(user: User): Promise<IdentityDocumentChild[]> {
-    const identityDocuments = await this.identityDocumentApi
+    const identityDocuments: IdentityDocumentChild[] = await this.identityDocumentApi
       .withMiddleware(new AuthMiddleware(user))
       .identityDocumentGetChildrenIdentityDocument({
         xRoadClient: this.xroadConfig.xRoadClient,
       })
-    return identityDocuments.map(mapChildPassports)
+      .then((res) =>
+        res.filter((child) => !!child.childrenSSN).map(mapChildPassports),
+      )
+
+    const children = await Promise.all(
+      identityDocuments?.map(
+        async (passports): Promise<IdentityDocumentChild> => {
+          const individual = await this.individualApi.getIndividual(
+            passports.nationalId,
+          )
+          return {
+            ...passports,
+            name: individual?.name,
+          } as IdentityDocumentChild
+        },
+      ),
+    )
+
+    return children
   }
 
   async preregisterIdentityDocument(
@@ -46,5 +67,24 @@ export class PassportsService {
         xRoadClient: this.xroadConfig.xRoadClient,
         preregistration: input,
       })
+  }
+
+  async getCurrentPassport(user: User): Promise<Passport> {
+    const userPassports = await this.getPassports(user)
+    const childPassports = await this.getChildPassports(user)
+    const userPassport: IdentityDocument | null =
+      userPassports
+        .filter(
+          (passport) => passport.subType === 'A' && !!passport.expirationDate,
+        )
+        .sort(
+          (a, b) => b?.expirationDate.getDate() - a.expirationDate.getDate(),
+        )
+        .pop() || null
+
+    return {
+      userPassport: userPassport || undefined,
+      childPassports: childPassports,
+    }
   }
 }

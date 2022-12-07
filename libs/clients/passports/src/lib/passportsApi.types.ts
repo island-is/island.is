@@ -1,22 +1,23 @@
 export interface IdentityDocument {
-  productionRequestID?: string
-  number?: string
-  type?: string
-  verboseType?: string
-  subType?: string
-  status?: string
-  issuingDate?: Date
-  expirationDate?: Date
-  displayFirstName?: string
-  displayLastName?: string
-  mrzFirstName?: string
-  mrzLastName?: string
-  sex?: string
+  productionRequestID: string
+  number: string
+  type: string
+  verboseType: string
+  subType: string
+  status: string
+  issuingDate: Date
+  expirationDate: Date
+  displayFirstName: string
+  displayLastName: string
+  mrzFirstName: string
+  mrzLastName: string
+  sex: string
 }
 
 export interface IdentityDocumentChild {
   nationalId: string
   secondParent: string[]
+  name: string
   identityDocuments?: IdentityDocument[]
 }
 
@@ -40,4 +41,9 @@ export interface PreregistrationInput {
   appliedByBPersonId?: string
   contactInfo?: ContactInfo
   documents?: Document[]
+}
+
+export interface Passport {
+  userPassport?: IdentityDocument
+  childPassports?: IdentityDocumentChild[]
 }
