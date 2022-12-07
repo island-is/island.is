@@ -14,7 +14,13 @@ import {
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
+import {
+  VehicleDebtStatusByPermno,
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithDebtStatus,
+} from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
+import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -51,7 +57,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getVehiclesForUser(user, true, true)
   }
 
-  @Scopes(ApiScope.vehicles)
+  @Scopes(ApiScope.vehicles, ApiScope.internal)
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(
@@ -89,5 +95,54 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => [VehiclesCurrentVehicle], {
+    name: 'currentVehicles',
+    nullable: true,
+  })
+  @Audit()
+  async getCurrentVehicles(
+    @Args('input') input: GetCurrentVehiclesInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getCurrentVehicles(
+      user,
+      input.showOwned,
+      input.showCoowned,
+      input.showOperated,
+    )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => [VehiclesCurrentVehicleWithDebtStatus], {
+    name: 'currentVehiclesWithDebtStatus',
+    nullable: true,
+  })
+  @Audit()
+  async getCurrentVehiclesWithDebtStatus(
+    @Args('input') input: GetCurrentVehiclesInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getCurrentVehiclesWithDebtStatus(
+      user,
+      input.showOwned,
+      input.showCoowned,
+      input.showOperated,
+    )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => VehicleDebtStatusByPermno, {
+    name: 'vehicleDebtStatusByPermno',
+    nullable: true,
+  })
+  @Audit()
+  async getVehicleDebtStatusByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getVehicleDebtStatusByPermno(user, permno)
   }
 }

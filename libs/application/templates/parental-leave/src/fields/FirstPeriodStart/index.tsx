@@ -102,6 +102,10 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                   .estimatedDateOfBirthOption,
               ),
               value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+              tooltip: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart
+                  .specificDateOptionTooltip,
+              ),
               disabled: isDisable,
             },
             {
