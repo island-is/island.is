@@ -8,14 +8,12 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { useFormContext } from 'react-hook-form'
 
 export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
   const { id } = field
 
   const currentVehicleList = application.externalData?.currentVehicleList
@@ -41,15 +39,6 @@ export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
       },
     },
   )
-
-  useEffect(() => {
-    if (data?.vehiclesDetail) {
-      setValue(
-        'vehicle.isOutOfCommission',
-        data?.vehiclesDetail?.isOutOfCommission || false,
-      )
-    }
-  }, [data, setValue])
 
   return data?.vehiclesDetail?.coOwners &&
     data.vehiclesDetail.coOwners.length > 0 ? (
