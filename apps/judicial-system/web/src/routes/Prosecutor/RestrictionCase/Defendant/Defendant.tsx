@@ -61,7 +61,9 @@ export const StepOne: React.FC = () => {
   const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
     workingCase,
   )
-  const { onContinue, isValid } = useContext(StepContext).restrictionCases[
+  const { flows } = useContext(StepContext)
+
+  const { onContinue, isValid } = flows.restrictionCases[
     constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE
   ]
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 
@@ -22,24 +22,34 @@ export interface Flows {
     }
     [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
       onContinue: () => Promise<boolean>
+      isValid: boolean
     }
   }
 }
 
-export const StepContext = createContext<Flows>({
-  restrictionCases: {
-    [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
-      onContinue: () => new Promise((resolve) => resolve()),
-      isValid: false,
-    },
-    [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
-      onContinue: () => new Promise((resolve) => resolve(true)),
-      isValid: false,
-    },
-    [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
-      onContinue: () => new Promise((resolve) => resolve(true)),
+interface StepContextType {
+  flows: Flows
+  lastValidStep: string | undefined
+}
+
+export const StepContext = createContext<StepContextType>({
+  flows: {
+    restrictionCases: {
+      [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: {
+        onContinue: () => new Promise((resolve) => resolve()),
+        isValid: false,
+      },
+      [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: {
+        onContinue: () => new Promise((resolve) => resolve(true)),
+        isValid: false,
+      },
+      [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: {
+        onContinue: () => new Promise((resolve) => resolve(true)),
+        isValid: false,
+      },
     },
   },
+  lastValidStep: '',
 })
 
 const StepProvider: React.FC = ({ children }) => {
@@ -48,6 +58,8 @@ const StepProvider: React.FC = ({ children }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { createCase, transitionCase } = useCase()
   const { updateDefendant } = useDefendants()
+
+  const [lastValidStep, setLastValidStep] = useState<string>()
 
   const flows: Flows = {
     restrictionCases: {
@@ -80,11 +92,26 @@ const StepProvider: React.FC = ({ children }) => {
           router.push(
             `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`,
           ),
+        isValid: false,
       },
     },
   }
 
-  return <StepContext.Provider value={flows}>{children}</StepContext.Provider>
+  useEffect(() => {
+    const [key] =
+      Object.entries(flows.restrictionCases)
+        .slice()
+        .reverse()
+        .find(([, value]) => value.isValid) || []
+
+    setLastValidStep(key)
+  }, [flows])
+
+  return (
+    <StepContext.Provider value={{ flows, lastValidStep }}>
+      {children}
+    </StepContext.Provider>
+  )
 }
 
 export default StepProvider

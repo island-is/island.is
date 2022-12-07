@@ -64,7 +64,7 @@ export const Cases: React.FC = () => {
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
-  const flows = useContext(StepContext)
+  const { flows, lastValidStep } = useContext(StepContext)
   const { features } = useContext(FeatureContext)
   const {
     findLastValidStep,
@@ -179,9 +179,7 @@ export const Cases: React.FC = () => {
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(
-          getRestrictionCaseProsecutorSection(flows, caseToOpen, user),
-        ).href
+        routeTo = `${lastValidStep}/${caseToOpen.id}`
       } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getInvestigationCaseProsecutorSection(caseToOpen, user),

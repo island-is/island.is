@@ -46,7 +46,7 @@ const PageLayout: React.FC<PageProps> = ({
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
-  const flows = useContext(StepContext)
+  const { flows } = useContext(StepContext)
   const { getSections } = useSections()
   const { formatMessage } = useIntl()
 

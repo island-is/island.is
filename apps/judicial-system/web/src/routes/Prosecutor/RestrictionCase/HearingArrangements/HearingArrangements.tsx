@@ -55,7 +55,8 @@ export const HearingArrangements: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const { onContinue, isValid } = useContext(StepContext).restrictionCases[
+  const { flows } = useContext(StepContext)
+  const { onContinue, isValid } = flows.restrictionCases[
     constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
   ]
 
