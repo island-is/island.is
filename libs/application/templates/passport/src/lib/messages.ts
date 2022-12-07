@@ -152,7 +152,7 @@ export const m = defineMessages({
   hasDisabilityDiscount: {
     id: 'pa.application:personalInfo.hasDisabilityDiscount',
     defaultMessage:
-      'Ég er handhafi örorkuskírteinis og vil láta flétta upp örorkuskírteini mínu hjá Tryggingastofnun fyrir lægra gjald á vegabréfi.',
+      'Ég er handhafi örorkuskírteinis og vil láta fletta upp örorkuskírteini mínu hjá Tryggingastofnun fyrir lægra gjald á vegabréfi.',
     description: 'Some description',
   },
   noDisabiltiyRecordInfoMessage: {

@@ -3,23 +3,8 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/types'
+import { IdentityDocument } from '../lib/constants'
 import { m } from '../lib/messages'
-
-export interface IdentityDocument {
-  productionRequestID: string
-  number: string
-  type: string
-  verboseType: string
-  subType: string
-  status: string
-  issuingDate: Date
-  expirationDate: Date
-  displayFirstName: string
-  displayLastName: string
-  mrzFirstName: string
-  mrzLastName: string
-  sex: string
-}
 
 export class IdentityDocumentProvider extends BasicDataProvider {
   type = 'IdentityDocumentProvider'

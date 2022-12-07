@@ -71,8 +71,19 @@ export type ChildsPersonalInfo = {
 }
 
 export type IdentityDocument = {
+  productionRequestID: string
   number: string
+  type: string
+  verboseType: string
+  subType: string
+  status: string
+  issuingDate: Date
   expirationDate: Date
+  displayFirstName: string
+  displayLastName: string
+  mrzFirstName: string
+  mrzLastName: string
+  sex: string
 }
 
 export const twoDays = 24 * 3600 * 1000 * 2
