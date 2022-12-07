@@ -23,15 +23,17 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
         </Box>
       )}
       {data?.map((item, i) => (
-        <LicenseCards
-          key={i}
-          passportData={item.passports || undefined}
-          noPassport={
-            Array.isArray(item.passports) && item.passports.length === 0
-          }
-          nationalId={item.childNationalId}
-          name={true}
-        />
+        <Box paddingTop={i === 0 ? 0 : 2}>
+          <LicenseCards
+            key={i}
+            passportData={item.passports || undefined}
+            noPassport={
+              Array.isArray(item.passports) && item.passports.length === 0
+            }
+            nationalId={item.childNationalId}
+            name={true}
+          />
+        </Box>
       ))}
 
       {!loading && !data && (

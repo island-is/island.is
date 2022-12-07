@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { formatDate, getExpiresIn } from '../../utils/dateUtils'
+import { formatDate } from '../../utils/dateUtils'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { SingleLicenseCard } from '../SingleLicenseCard/SingleLicenseCard'
 import { m } from '../../lib/messages'
@@ -11,17 +11,16 @@ export const PassportLicense = ({
   expireDate,
   name,
   isInvalid,
+  expiresWithinNoticeTime,
 }: {
   expireDate: Date
   id?: string | null
   name?: string | null
   isInvalid?: boolean
+  expiresWithinNoticeTime?: boolean
 }) => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
-  const [currentDate] = useState(new Date())
-
-  const expiresIn = getExpiresIn(currentDate, new Date(expireDate))
 
   if (!id) {
     return null
@@ -31,20 +30,8 @@ export const PassportLicense = ({
     if (isInvalid) {
       return formatMessage(m.invalid)
     }
-    if (expiresIn) {
-      return expiresIn.value <= 0
-        ? formatMessage(m.isExpired)
-        : expiresIn?.key === 'months'
-        ? formatMessage(m.expiresIn) +
-          ' ' +
-          Math.round(expiresIn?.value) +
-          ' ' +
-          formatMessage(m.months)
-        : formatMessage(m.expiresIn) +
-          ' ' +
-          Math.round(expiresIn?.value) +
-          ' ' +
-          formatMessage(m.days)
+    if (expiresWithinNoticeTime) {
+      return formatMessage(m.passportExpiring)
     }
     if (expireDate) {
       return `${formatMessage(m.validUntil)} ${formatDate(expireDate, lang)}`
@@ -61,7 +48,7 @@ export const PassportLicense = ({
       img={passportLogo}
       tag={{
         text: getLabel(),
-        color: expiresIn || isInvalid ? 'red' : 'blue',
+        color: expiresWithinNoticeTime || isInvalid ? 'red' : 'blue',
       }}
     />
   )

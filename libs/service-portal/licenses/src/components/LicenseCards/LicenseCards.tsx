@@ -36,12 +36,15 @@ const LicenseCards: FC<Props> = ({
               background="blue100"
             />
           ) : (
-            passportData?.map((item) => (
+            passportData?.map((item, i) => (
               <PassportLicense
-                key={item.number}
+                key={`${item.number}-${i}`}
                 id={item.numberWithType}
                 expireDate={item.expirationDate}
                 isInvalid={item.status === 'INVALID'}
+                expiresWithinNoticeTime={
+                  item.expiresWithinNoticeTime ?? undefined
+                }
                 name={
                   item.displayFirstName && item.displayLastName && name
                     ? item.displayFirstName + ' ' + item.displayLastName

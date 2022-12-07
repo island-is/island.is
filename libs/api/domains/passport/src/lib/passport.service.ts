@@ -76,7 +76,7 @@ export class PassportService {
       let expiresWithinNoticeTime = undefined
       if (passport.expirationDate) {
         expiresWithinNoticeTime =
-          differenceInMonths(new Date(passport.expirationDate), new Date()) < 7
+          differenceInMonths(new Date(passport.expirationDate), new Date()) < 6
       }
 
       /**
@@ -106,7 +106,6 @@ export class PassportService {
       const passportResponse = await this.getPassportsWithAuth(
         auth,
       ).identityDocumentGetIdentityDocument()
-
       const identityDocumentResponse = this.resolvePassports(passportResponse)
 
       return identityDocumentResponse
