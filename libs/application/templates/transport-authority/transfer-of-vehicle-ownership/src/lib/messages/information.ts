@@ -47,11 +47,6 @@ export const information = {
         defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle placeholder',
       },
-      isStolenTag: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.isStolenTag',
-        defaultMessage: 'Bifreið stolin',
-        description: 'Pick vehicle is stolen tag',
-      },
       isNotDebtLessTag: {
         id:
           'ta.tvo.application:information.labels.pickVehicle.isNotDebtLessTag',

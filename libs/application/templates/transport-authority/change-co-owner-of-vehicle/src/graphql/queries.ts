@@ -5,7 +5,6 @@ export const GET_CURRENT_VEHICLES = `
       make
       color
       role
-      isStolen
     }
   } 
 `

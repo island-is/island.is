@@ -5,7 +5,7 @@ import {
   VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithDebtStatus,
 } from '@island.is/api/schema'
-import { information } from '../../lib/messages'
+import { information, applicationCheck } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
 import { GET_CURRENT_VEHICLES_WITH_DEBT_STATUS } from '../../graphql/queries'
@@ -63,7 +63,10 @@ export const VehicleRadioField: FC<
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      const disabled = !!vehicle.isStolen || !vehicle.isDebtLess
+      const disabled =
+        !vehicle.isDebtLess ||
+        !!vehicle.updatelocks?.length ||
+        !!vehicle.ownerChangeErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
@@ -77,11 +80,6 @@ export const VehicleRadioField: FC<
               </Text>
             </Box>
             <Box display="flex" flexDirection="row" wrap="wrap">
-              {vehicle.isStolen && (
-                <Tag variant="red">
-                  {formatMessage(information.labels.pickVehicle.isStolenTag)}
-                </Tag>
-              )}
               {!vehicle.isDebtLess && (
                 <Box paddingLeft={2}>
                   <Tag variant="red">
@@ -91,6 +89,39 @@ export const VehicleRadioField: FC<
                   </Tag>
                 </Box>
               )}
+              {!!vehicle.updatelocks?.length &&
+                vehicle.updatelocks?.map((lock) => (
+                  <Box paddingLeft={2}>
+                    <Tag variant="red">
+                      {formatMessage(
+                        getValueViaPath(
+                          applicationCheck.locks,
+                          lock.lockNo || '',
+                        ),
+                      ) ||
+                        formatMessage(applicationCheck.locks['0']) +
+                          ' - ' +
+                          lock.lockNo}
+                    </Tag>
+                  </Box>
+                ))}
+              {!!vehicle.ownerChangeErrorMessages?.length &&
+                vehicle.ownerChangeErrorMessages?.map((error) => (
+                  <Box paddingLeft={2}>
+                    <Tag variant="red">
+                      {formatMessage(
+                        getValueViaPath(
+                          applicationCheck.validation,
+                          error.errorNo || '',
+                        ),
+                      ) ||
+                        error.defaultMessage ||
+                        formatMessage(applicationCheck.validation['0']) +
+                          ' - ' +
+                          error.errorNo}
+                    </Tag>
+                  </Box>
+                ))}
             </Box>
           </Box>
         ),

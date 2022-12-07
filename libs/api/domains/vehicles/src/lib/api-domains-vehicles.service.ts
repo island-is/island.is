@@ -21,6 +21,7 @@ import {
   VehiclesCurrentVehicleWithDebtStatus,
 } from '../models/getCurrentVehicles.model'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'vehicles-service'
@@ -34,6 +35,7 @@ export class VehiclesService {
     private vehiclesApi: VehicleSearchApi,
     private vehiclesPDFApi: PdfApi,
     private vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
+    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -146,7 +148,6 @@ export class VehiclesService {
         make: vehicle.make || undefined,
         color: vehicle.color || undefined,
         role: vehicle.role || undefined,
-        isStolen: vehicle.stolen,
       }))
     } catch (e) {
       return this.handle4xx(e, 'Failed to get current vehicles')
@@ -175,11 +176,31 @@ export class VehiclesService {
           showOperated,
         )
       )?.map(async (vehicle: VehiclesCurrentVehicleWithDebtStatus) => {
+        // Get debt status
         const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
           auth,
           vehicle.permno || '',
         )
         vehicle.isDebtLess = debtStatus.isDebtLess
+
+        // Get updatelocks
+        const vehicleDetails = await this.getVehicleDetail(auth, {
+          permno: vehicle.permno,
+        })
+        vehicle.updatelocks = vehicleDetails?.updatelocks
+
+        // Get owner change validation
+        // Note: Will just use today's date, since we dont have the purchase date at this point
+        const today = new Date()
+        const ownerChangeValidation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+          auth,
+          vehicle.permno || '',
+          today,
+        )
+        vehicle.ownerChangeErrorMessages = ownerChangeValidation?.hasError
+          ? ownerChangeValidation.errorMessages
+          : null
+
         return vehicle
       }),
     )
@@ -201,11 +222,32 @@ export class VehiclesService {
       )
     }
 
+    // Get updatelocks
     const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
       auth,
       permno,
     )
 
-    return { isDebtLess: debtStatus.isDebtLess }
+    // Get updatelocks
+    const vehicleDetails = await this.getVehicleDetail(auth, {
+      permno: permno,
+    })
+
+    // Get owner change validation
+    // Note: Will just use today's date, since we dont have the purchase date at this point
+    const today = new Date()
+    const ownerChangeValidation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+      auth,
+      permno,
+      today,
+    )
+
+    return {
+      isDebtLess: debtStatus.isDebtLess,
+      updatelocks: vehicleDetails?.updatelocks,
+      ownerChangeErrorMessages: ownerChangeValidation?.hasError
+        ? ownerChangeValidation.errorMessages
+        : null,
+    }
   }
 }

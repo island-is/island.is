@@ -36,7 +36,6 @@ export const VehicleSelectField: FC<
           make: currentVehicle?.make || '',
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
-          isStolen: currentVehicle?.isStolen,
         }
       : null,
   )
@@ -58,7 +57,6 @@ export const VehicleSelectField: FC<
         make: currentVehicle?.make || '',
         color: currentVehicle?.color || '',
         role: currentVehicle?.role,
-        isStolen: currentVehicle?.isStolen,
       })
       setPlate(currentVehicle.permno)
       setColor(currentVehicle.color || undefined)
