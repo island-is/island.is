@@ -1,25 +1,19 @@
 import axios from 'axios'
-import { Injectable } from '@nestjs/common'
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
-import { CmsContentfulService, EmailSignup } from '@island.is/cms'
+import { ConfigType } from '@island.is/nest/config'
+import { EmailSignup } from '@island.is/cms'
 
 import { EmailSignupInput } from './dto/emailSignup.input'
-import { EmailSignupResponse } from './models/emailSignupResponse.model'
+import { EmailSignupConfig } from './emailSignup.config'
 
 enum FormFieldType {
   CHECKBOXES = 'checkboxes',
 }
 
-const FISKISTOFA_ZENTER_EMAIL = process.env.FISKISTOFA_ZENTER_EMAIL
-const FISKISTOFA_ZENTER_PASSWORD = process.env.FISKISTOFA_ZENTER_PASSWORD
+export class EmailSignupService {
+  constructor(private config: ConfigType<typeof EmailSignupConfig>) {}
 
-@Resolver()
-@Injectable()
-export class EmailSignupResolver {
-  constructor(private readonly cmsContentfulService: CmsContentfulService) {}
-
-  private async subscribeToMailchimp(
+  async subscribeToMailchimp(
     emailSignupModel: EmailSignup,
     inputFields: EmailSignupInput['inputFields'],
   ) {
@@ -68,7 +62,7 @@ export class EmailSignupResolver {
       }))
   }
 
-  private async subscribeToZenter(
+  async subscribeToZenter(
     emailSignupModel: EmailSignup,
     inputFields: EmailSignupInput['inputFields'],
   ) {
@@ -90,8 +84,8 @@ export class EmailSignupResolver {
       query:
         'mutation($email:String!,$password:String!){ loginApiUser(email:$email, password:$password)}',
       variables: {
-        email: FISKISTOFA_ZENTER_EMAIL,
-        password: FISKISTOFA_ZENTER_PASSWORD,
+        email: this.config.fiskistofaZenterEmail,
+        password: this.config.fiskistofaZenterPassword,
       },
     })
 
@@ -114,39 +108,14 @@ export class EmailSignupResolver {
       return acc
     }, {} as Record<string, string>)
 
+    // Create a recipient
     await axios.post(`${url}?token=${token}`, {
       query: `mutation(${params}) { addRecipient(${values}) { id } }`,
       variables,
     })
 
+    // Add that recipient to an audience list
+
     return { subscribed: true }
-  }
-
-  @Mutation(() => EmailSignupResponse)
-  async emailSignupSubscription(
-    @Args('input') input: EmailSignupInput,
-  ): Promise<EmailSignupResponse> {
-    const emailSignupModel = await this.cmsContentfulService.getEmailSignup({
-      id: input.signupID,
-    })
-
-    if (!emailSignupModel) return { subscribed: false }
-
-    const formFieldNames =
-      emailSignupModel.formFields?.filter((f) => f?.name)?.map((f) => f.name) ??
-      []
-    const inputFields = input.inputFields.filter((field) =>
-      formFieldNames.includes(field.name),
-    )
-
-    if (emailSignupModel.signupType === 'mailchimp') {
-      return this.subscribeToMailchimp(emailSignupModel, inputFields)
-    }
-
-    if (emailSignupModel.signupType === 'zenter') {
-      return this.subscribeToZenter(emailSignupModel, inputFields)
-    }
-
-    return { subscribed: false }
   }
 }

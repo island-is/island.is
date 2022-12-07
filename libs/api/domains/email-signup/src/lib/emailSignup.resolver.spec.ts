@@ -4,6 +4,7 @@ import { CmsContentfulService, CmsModule } from '@island.is/cms'
 import axios from 'axios'
 import { emailSignup } from './fixtures/emailSignup'
 import { EmailSignupInput } from './dto/emailSignup.input'
+import { EmailSignupService } from './emailSignup.service'
 
 describe('emailSignupResolver', () => {
   let emailSignupResolver: EmailSignupResolver
@@ -12,7 +13,7 @@ describe('emailSignupResolver', () => {
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CmsModule],
-      providers: [EmailSignupResolver],
+      providers: [EmailSignupService, EmailSignupResolver],
     }).compile()
 
     emailSignupResolver = moduleRef.get<EmailSignupResolver>(
