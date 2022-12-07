@@ -28,14 +28,16 @@ export const TOTAL = 'total'
 export const ELECTIONLIMIT = 550000
 export const INPUTCHANGEINTERVAL = 300
 export const UPDATE_ELECTION_ACTION = 'updateCurrentElection'
+export const PartiesYearAllowed = 'PartiesYearAllowed'
+export const PartiesBackwardLimit = 'PartiesBackwardLimit'
+export const CemeteriesYearAllowed = 'CemeteriesYearAllowed'
+export const CemeteriesBackwardLimit = 'CemeteriesBackwardLimit'
 
 export enum USERTYPE {
   INDIVIDUAL = 150000000,
   PARTY = 150000001,
   CEMETRY = 150000002,
 }
-
-export const BACKYEARSLIMITFALLBACK = '1'
 
 export const INDIVIDUAL = 'individual'
 export const PARTY = 'party'
