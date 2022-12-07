@@ -280,10 +280,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           institution={article.organization[0].title}
           locale={activeLocale}
           linkProps={{
-            href: article.organization[0].hasALandingPage
-              ? linkResolver('organizationpage', [article.organization[0].slug])
-                  .href
-              : article.organization[0].link,
+            href: getOrganizationLink(article.organization[0], activeLocale),
           }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
