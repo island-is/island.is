@@ -94,6 +94,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlega yfirfarið upplýsingar um tengilið hér að neðan',
     description: 'Review contact info',
   },
+  reviewInfo: {
+    id: 'fsn.application:reviewContact',
+    defaultMessage: 'Vinsamlega yfirfarið upplýsingarnar hér að neðan',
+    description: 'Review info',
+  },
   fullName: {
     id: 'fsn.application:fullName',
     defaultMessage: 'Fullt nafn',
@@ -165,7 +170,12 @@ export const m = defineMessages({
     id: 'fsn.application:SignatureMessage',
     defaultMessage:
       'Eftir að þú hefur sent inn umsókn mun rafræn undirritun verða send á netfangið',
-    description: 'Signature alert message',
+    description: 'Signature message',
+  },
+  SignaturePossible: {
+    id: 'fsn.application:SignaturePossible',
+    defaultMessage: 'svo hægt sé að undirrita hana með rafrænum skilríkjum.',
+    description: 'Signature possible message',
   },
   nationalId: {
     id: 'fsn.application:nationalId',
@@ -280,6 +290,11 @@ export const m = defineMessages({
   fillOutAppopriate: {
     id: 'fsn.application:fillOutAppopriate',
     defaultMessage: 'Vinsamlegast fylltu út þá reiti sem eiga við',
+    description: 'Fill out fields',
+  },
+  fillOutElectionInfo: {
+    id: 'fsn.application:fillOutElectionInfo',
+    defaultMessage: 'Vinsamlegast veldu þær kosningar sem við eiga',
     description: 'Fill out fields',
   },
   properties: {
@@ -661,6 +676,11 @@ export const m = defineMessages({
     id: 'fsn.application:send',
     defaultMessage: 'Senda umsókn',
     description: 'Send application',
+  },
+  sendStatement: {
+    id: 'fsn.application:sendStatement',
+    defaultMessage: 'Senda yfirlýsingu',
+    description: 'Send statement',
   },
   participated: {
     id: 'fsn.application:overview.participated',
