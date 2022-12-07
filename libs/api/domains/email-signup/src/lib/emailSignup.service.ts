@@ -62,6 +62,40 @@ export class EmailSignupService {
       }))
   }
 
+  async createZenterEmailRecipient(
+    url: string,
+    inputFields: EmailSignupInput['inputFields'],
+  ) {
+    const params = inputFields
+      .map((field) => `$${field.name}:String!`)
+      .join(',')
+
+    const values = inputFields
+      .map((field) => `${field.name}:$${field.name}`)
+      .join(',')
+
+    const variables = inputFields.reduce((acc, curr) => {
+      acc[curr.name] = curr.value
+      return acc
+    }, {} as Record<string, string>)
+
+    return axios.post(url, {
+      query: `mutation(${params}) { addRecipient(${values}) { id } }`,
+      variables,
+    })
+  }
+
+  async addZenterEmailRecipientToAudience(
+    url: string,
+    recipientId: number,
+    audienceId: number,
+  ) {
+    return axios.post(url, {
+      query: `mutation(recipientId: Int!, audienceId: Int!) { addRecipientToAudience(recipientId:$recipientId,audienceId:$audienceId) { id } }`,
+      variables: { recipientId, audienceId },
+    })
+  }
+
   async subscribeToZenter(
     emailSignupModel: EmailSignup,
     inputFields: EmailSignupInput['inputFields'],
@@ -82,7 +116,7 @@ export class EmailSignupService {
 
     const tokenResponse = await axios.post(url, {
       query:
-        'mutation($email:String!,$password:String!){ loginApiUser(email:$email, password:$password)}',
+        'mutation($email:String!,$password:String!){ loginApiUser(email: $email,password: $password)}',
       variables: {
         email: this.config.fiskistofaZenterEmail,
         password: this.config.fiskistofaZenterPassword,
@@ -95,26 +129,25 @@ export class EmailSignupService {
       throw new Error('Could not get access token from zenter GraphQL API')
     }
 
-    const params = inputFields
-      .map((field) => `$${field.name}:String!`)
-      .join(',')
+    const urlWithToken = `${url}?token=${token}`
 
-    const values = inputFields
-      .map((field) => `${field.name}:$${field.name}`)
-      .join(',')
+    const { data } = await this.createZenterEmailRecipient(
+      urlWithToken,
+      inputFields,
+    )
 
-    const variables = inputFields.reduce((acc, curr) => {
-      acc[curr.name] = curr.value
-      return acc
-    }, {} as Record<string, string>)
+    console.log('recipient id', data)
 
-    // Create a recipient
-    await axios.post(`${url}?token=${token}`, {
-      query: `mutation(${params}) { addRecipient(${values}) { id } }`,
-      variables,
-    })
+    // TODO: read from config instead of hardcoding audience id (and perhaps even have a specifically named field be able to control what audience the recipient will be signed up to)
+    const a = await this.addZenterEmailRecipientToAudience(
+      urlWithToken,
+      recipientId,
+      55085,
+    )
 
-    // Add that recipient to an audience list
+    // a.data.errors
+
+    console.log('audience id', a)
 
     return { subscribed: true }
   }
