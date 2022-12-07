@@ -86,6 +86,11 @@ export const information = {
       },
     }),
     coOwner: defineMessages({
+      sectionTitle: {
+        id: 'ta.cov.application:information.labels.coOwner.sectionTitle',
+        defaultMessage: 'Meðeigandi',
+        description: 'Co-owner section title',
+      },
       title: {
         id: 'ta.cov.application:information.labels.coOwner.title',
         defaultMessage: 'Meðeigandi',
@@ -119,9 +124,14 @@ export const information = {
       },
     }),
     operator: defineMessages({
+      sectionTitle: {
+        id: 'ta.cov.application:information.labels.operator.sectionTitle',
+        defaultMessage: 'Umráðamaður',
+        description: 'Operator section title',
+      },
       title: {
         id: 'ta.cov.application:information.labels.operator.title',
-        defaultMessage: 'Umráðamaður',
+        defaultMessage: 'Upplýsingar um umráðamenn',
         description: 'Operator title',
       },
       description: {
@@ -129,6 +139,16 @@ export const information = {
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
         description: 'Operator description',
+      },
+      operatorTitle: {
+        id: 'ta.cov.application:information.labels.operator.operatorTitle',
+        defaultMessage: 'Umráðamaður',
+        description: 'Operator operatorTitle',
+      },
+      operatorTempTitle: {
+        id: 'ta.cov.application:information.labels.operator.operatorTempTitle',
+        defaultMessage: 'Nýr umráðamaður',
+        description: 'Operator temp title',
       },
       nationalId: {
         id: 'ta.cov.application:information.labels.operator.nationalId',

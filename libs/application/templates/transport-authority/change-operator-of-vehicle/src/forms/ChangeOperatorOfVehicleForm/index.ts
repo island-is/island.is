@@ -27,11 +27,11 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
           title: payment.general.pageTitle,
           space: 1,
           children: [
-            /* buildCustomField({
+            buildCustomField({
               id: 'PaymentChargeOverview',
               title: '',
               component: 'PaymentChargeOverview',
-            }), */
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

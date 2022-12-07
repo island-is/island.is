@@ -39,6 +39,7 @@ export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
       },
     },
   )
+  console.log(data)
 
   return data?.vehiclesDetail?.coOwners &&
     data.vehiclesDetail.coOwners.length > 0 ? (

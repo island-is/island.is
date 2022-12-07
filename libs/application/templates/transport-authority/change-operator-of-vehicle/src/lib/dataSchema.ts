@@ -8,6 +8,15 @@ export const UserInformationSchema = z.object({
   approved: z.boolean().optional(),
 })
 
+export const OperatorInformationSchema = z.object({
+  nationalId: z.string(),
+  name: z.string(),
+  email: z.string(),
+  phone: z.string(),
+  approved: z.boolean().optional(),
+  wasAdded: z.boolean(),
+})
+
 export const ChangeOperatorOfVehicleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   pickVehicle: z.object({
@@ -20,14 +29,13 @@ export const ChangeOperatorOfVehicleSchema = z.object({
   vehicle: z.object({
     plate: z.string(),
   }),
-  operators: z.array(
-    z.object({
-      nationalId: z.string(),
-      isMainOperator: z.boolean(),
-      wasAdded: z.boolean(),
-      wasRemoved: z.boolean(),
-    }),
-  ),
+  operators: z.array(OperatorInformationSchema),
+  mainOperator: z.object({
+    nationalId: z.string(),
+  }),
+  removed: z.object({
+    wasRemoved: z.boolean(),
+  }),
 })
 export type ChangeOperatorOfVehicle = z.TypeOf<
   typeof ChangeOperatorOfVehicleSchema
