@@ -36,9 +36,16 @@ export interface Document {
 }
 export interface PreregistrationInput {
   guId?: string
+  priority?: number
   appliedForPersonId?: string
-  appliedByAPersonId?: string
-  appliedByBPersonId?: string
+  approvalA?: {
+    personId?: string
+    approved?: string
+  }
+  approvalB?: {
+    personId?: string
+    approved?: string
+  }
   contactInfo?: ContactInfo
   documents?: Document[]
 }

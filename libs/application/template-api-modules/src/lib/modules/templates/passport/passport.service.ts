@@ -7,12 +7,15 @@ import { getValueViaPath } from '@island.is/application/core'
 import { PASSPORT_CHARGE_CODES, YES, YesOrNo, DiscountCheck } from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
+import { PassportSchema } from '@island.is/application/templates/passport'
+import { PassportsService } from '@island.is/clients/passports'
 
 @Injectable()
 export class PassportService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private passportApi: PassportsService,
   ) {}
 
   async createCharge({
@@ -80,10 +83,8 @@ export class PassportService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{
     success: boolean
-    orderId?: string
+    orderId?: string[]
   }> {
-    const { answers } = application
-
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
@@ -97,28 +98,63 @@ export class PassportService {
         'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
       )
     }
-
-    let result
     try {
-      // TODO: Submit to skilrikjaskra
-      result = { success: true, errorMessage: null }
+      const {
+        passport,
+        personalInfo,
+        childsPersonalInfo,
+        service,
+      }: PassportSchema = application.answers as PassportSchema
+
+      const forUser = !!passport.userPassport
+      const payload = forUser
+        ? {
+            appliedForPersonId: personalInfo.nationalId,
+            priority: service.type === 'regular' ? 0 : 1,
+
+            contactInfo: {
+              phoneAtHome: personalInfo.phoneNumber,
+              phoneAtWork: personalInfo.phoneNumber,
+              phoneMobile: personalInfo.phoneNumber,
+              email: personalInfo.email,
+            },
+          }
+        : {
+            appliedForPersonId: childsPersonalInfo.nationalId,
+            priority: service.type === 'regular' ? 0 : 1,
+            approvalA: {
+              personId: childsPersonalInfo.guardian1.nationalId,
+              approved: '2022-12-06T13:50:14.454Z',
+            },
+            approvalB: {
+              personId: childsPersonalInfo.guardian2.nationalId,
+              approved: '2022-12-06T13:50:14.454Z',
+            },
+            contactInfo: {
+              phoneAtHome: childsPersonalInfo.guardian1.phoneNumber,
+              phoneAtWork: childsPersonalInfo.guardian1.phoneNumber,
+              phoneMobile: childsPersonalInfo.guardian1.phoneNumber,
+              email: childsPersonalInfo.guardian1.email,
+            },
+          }
+      const result = await this.passportApi.preregisterIdentityDocument(
+        auth,
+        payload,
+      )
+      if (result.length < 1) {
+        throw new Error(`Application submission failed (${''})`)
+      }
+
+      return {
+        success: true,
+        orderId: result,
+      }
     } catch (e) {
       this.log('error', 'Submitting passport failed', {
         e,
-        applicationFor: answers.type,
-        jurisdiction: answers.dropLocation,
       })
 
       throw e
-    }
-
-    if (!result.success) {
-      throw new Error(`Application submission failed (${result.errorMessage})`)
-    }
-
-    return {
-      success: true,
-      orderId: 'PÖNTUN12345',
     }
   }
 
