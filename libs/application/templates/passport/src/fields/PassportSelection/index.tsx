@@ -11,7 +11,7 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../lib/messages'
-import { IdentityDocument } from '../../lib/constants'
+import { IdentityDocument, UserPassport } from '../../lib/constants'
 
 export const PassportSelection: FC<FieldBaseProps> = ({
   field,
@@ -23,13 +23,12 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
-  const identityDocument = application.externalData.identityDocument
-    .data as IdentityDocument
+  const identityDocument = (application.externalData.identityDocument
+    .data as UserPassport).userPassport
   const children = (application.externalData.identityDocument.data as any)
-    .childrenPassport
+    .childPassports
   const identityDocumentNumber = identityDocument?.number
 
-  console.log(application.externalData.identityDocument)
 
   const tag = (identityDocument: IdentityDocument) => {
     const today = new Date()

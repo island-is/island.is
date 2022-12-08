@@ -12,6 +12,7 @@ import {
   Passport,
   Service,
   Services,
+  UserPassport,
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
@@ -81,13 +82,13 @@ export const personalOverview = buildMultiField({
       label: m.currentPassportStatus,
       width: 'half',
       value: (application: Application) => {
-        const date = (application.externalData.identityDocument.data as any)[0]
-          ?.expirationDate
-
+        const date =  (application.externalData.identityDocument
+          .data as UserPassport).userPassport.expirationDate
+        console.log(date)
         return (
           m.currentPassportExpiration.defaultMessage +
           ' ' +
-          format(new Date(date as string), 'dd.MM.yy')
+          format(date, 'dd.MM.yy')
         )
       },
     }),
