@@ -1,3 +1,4 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -118,9 +119,9 @@ const PassportTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.9,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
+          /*onEntry: {
             apiModuleAction: ApiActions.assignParentB,
-          },
+          },*/
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,9 +162,9 @@ const PassportTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          onEntry: {
+          /*onEntry: {
             apiModuleAction: ApiActions.submitPassportApplication,
-          },
+          },*/
           roles: [
             {
               id: Roles.APPLICANT,
@@ -200,12 +201,16 @@ const PassportTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToParentB: assign((context) => {
+        const parentB = getValueViaPath(
+          context.application.answers,
+          'childsPersonalInfo.guardian2.nationalId',
+        ) as string
+
         return {
           ...context,
           application: {
             ...context.application,
-            // Assigning Gervimaður Útlönd for testing
-            assignees: ['0101307789'],
+            assignees: parentB ? [parentB] : [],
           },
         }
       }),

@@ -8,7 +8,7 @@ import {
 import { Application } from '@island.is/application/types'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { format as formatKennitala } from 'kennitala'
-import { Passport, YES } from '../../lib/constants'
+import { Passport, PersonalInfo, YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const personalInfo = buildMultiField({
@@ -91,7 +91,8 @@ export const personalInfo = buildMultiField({
       component: 'NoDisabilityRecordInfo',
       doesNotRequireAnswer: true,
       condition: (answers) =>
-        (answers.personalInfo as any)?.hasDisabilityDiscount[0] === 'yes',
+        (answers.personalInfo as PersonalInfo)?.hasDisabilityDiscount[0] ===
+        YES,
     }),
   ],
 })

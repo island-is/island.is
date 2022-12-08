@@ -62,6 +62,15 @@ export type Guardian = {
   phoneNumber: string
 }
 
+export type PersonalInfo = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber: string
+  hasDisabilityDiscount: Array<string>
+  hasDisabilityDiscountChecked: boolean
+}
+
 export type ChildsPersonalInfo = {
   name: string
   nationalId: string
@@ -86,8 +95,16 @@ export type IdentityDocument = {
   sex: string
 }
 
-export type UserPassport = {
+export interface IdentityDocumentChild {
+  nationalId: string
+  secondParent: string[]
+  name: string
+  identityDocuments?: IdentityDocument[]
+}
+
+export interface IdentityDocumentData {
   userPassport: IdentityDocument
+  childPassports: IdentityDocumentChild[]
 }
 
 export const twoDays = 24 * 3600 * 1000 * 2

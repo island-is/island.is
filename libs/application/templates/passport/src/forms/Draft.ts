@@ -19,6 +19,7 @@ import {
 import {
   DistrictCommissionerAgencies,
   Passport,
+  PersonalInfo,
   Services,
 } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -40,7 +41,7 @@ export const Draft: Form = buildForm({
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: m.formName,
+          title: m.dataCollectionTitle,
           subTitle: m.dataCollectionSubtitle,
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
@@ -122,7 +123,7 @@ export const Draft: Form = buildForm({
                 const withDiscount =
                   ((application.answers.passport as Passport)?.userPassport !==
                     '' &&
-                    (application.answers.personalInfo as any)
+                    (application.answers.personalInfo as PersonalInfo)
                       ?.hasDisabilityDiscountChecked) ||
                   (application.answers.passport as Passport)?.childPassport !==
                     ''

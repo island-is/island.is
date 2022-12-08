@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Passport, Service, Services, YES } from '../../lib/constants'
+import { Passport, PersonalInfo, Service, Services } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
@@ -17,7 +17,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
     : formatMessage(m.serviceTypeExpressPriceWithDiscount)
   const withDiscount =
     ((application.answers.passport as Passport)?.userPassport !== '' &&
-      (application.answers.personalInfo as any)
+      (application.answers.personalInfo as PersonalInfo)
         ?.hasDisabilityDiscountChecked) ||
     (application.answers.passport as Passport)?.childPassport !== ''
 

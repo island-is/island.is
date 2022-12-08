@@ -10,62 +10,64 @@ export const m = defineMessages({
 
   /* Data collection section */
   dataCollectionTitle: {
-    id: 'pa.application:dataCollection.title',
+    id: 'pa.application:dataCollection.dataCollectionTitle',
     defaultMessage: 'Gagnaöflun',
     description: 'Some description',
   },
   dataCollectionSubtitle: {
-    id: 'pa.application:dataCollection.subtitle',
+    id: 'pa.application:dataCollection.dataCollectionSubtitle',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'Some description',
   },
   dataCollectionCheckboxLabel: {
-    id: 'pa.application:dataCollection.checkboxLabel',
+    id: 'pa.application:dataCollection.dataCollectionCheckboxLabel',
     defaultMessage: 'Ég skil að ofangreind gögn verði sótt rafrænt',
     description: 'Some description',
   },
   dataCollectionDistrictCommissionersTitle: {
-    id: 'pa.application:dataCollection.districtCommissionersTitle',
+    id:
+      'pa.application:dataCollection.dataCollectionDistrictCommissionersTitle',
     defaultMessage: 'Persónuupplýsingar úr Sýslumenn',
     description: 'Some description',
   },
   dataCollectionDistrictCommissionersSubitle: {
-    id: 'pa.application:dataCollection.districtCommissionersSubitle',
+    id:
+      'pa.application:dataCollection.dataCollectionDistrictCommissionersSubitle',
     defaultMessage:
       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Sýslumenn til þess að fylla út umsóknina.',
     description: 'Some description',
   },
   dataCollectionNationalRegistryTitle: {
-    id: 'pa.application:dataCollection.nationalRegistryTitle',
+    id: 'pa.application:dataCollection.dataCollectionNationalRegistryTitle',
     defaultMessage: 'Persónuupplýsingar',
     description: 'Some description',
   },
   dataCollectionNationalRegistrySubtitle: {
-    id: 'pa.application:dataCollection.nationalRegistrySubtitle',
+    id: 'pa.application:dataCollection.dataCollectionNationalRegistrySubtitle',
     defaultMessage:
-      'Upplýsingar frá Þjóðskrá um fæðingardag, heimilisfang, fjölskylduhagi og hjúskaparstöðu.',
+      'Upplýsingar frá Þjóðskrá um nafn, kennitölu og lögheimili.',
     description: 'Some description',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollection.userProfileTitle',
+    id: 'cr.application:dataCollection.dataCollectionUserProfileTitle',
     defaultMessage: 'Netfang og símanúmer',
     description: 'Some description',
   },
   dataCollectionUserProfileSubtitle: {
-    id: 'pa.application:dataCollection.userProfileSubtitle',
+    id: 'pa.application:dataCollection.dataCollectionUserProfileSubtitle',
     defaultMessage:
       'Upplýsingar frá Mínum síðum á Ísland.is um netfang og símanúmer.',
     description: 'Some description',
   },
   dataCollectionIdentityDocumentTitle: {
-    id: 'cr.application:dataCollection.identityDocumentTitle',
+    id: 'cr.application:dataCollection.dataCollectionIdentityDocumentTitle',
     defaultMessage: 'Skilríkjaskrá',
     description: 'Identity document provider title',
   },
   dataCollectionIdentityDocumentSubtitle: {
-    id: 'pa.application:dataCollection.identityDocumentSubtitle',
+    id: 'pa.application:dataCollection.dataCollectionIdentityDocumentSubtitle',
     defaultMessage:
-      'Uppfletting í skilríkjaskrá hjá Þjóðskrá um einstaklinga úr þinni forsjá.',
+      'Til þess að auðvelda þér umsóknarferlið sækjum við núverandi skráningu þína í skílríkjaskrá Þjóðskrár, ásamt börnum sem þú hefur forsjá yfir.',
     description: 'Identity document provider subtitle',
   },
 
@@ -156,19 +158,29 @@ export const m = defineMessages({
     description: 'Some description',
   },
   noDisabiltiyRecordInfoMessage: {
-    id: 'pa.application:introSection.noDisabiltiyRecordInfoMessage',
+    id: 'pa.application:noDisabiltiyRecordInfoMessage',
     defaultMessage: 'Þú ert ekki handhafi örorkuskírteinis',
     description: 'Some description',
   },
   disabiltiyRecordInfoMessage: {
-    id: 'pa.application:introSection.disabiltiyRecordInfoMessage',
+    id: 'pa.application:disabiltiyRecordInfoMessage',
     defaultMessage: 'Þú ert handhafi örorkuskírteinis',
     description: 'Some description',
   },
   disabiltiyRecordError: {
-    id: 'pa.application:introSection.disabiltiyRecordError',
+    id: 'pa.application:disabiltiyRecordError',
     defaultMessage:
       'Eitthvað fór úrskeiðis við að ná sambandi, vinsamlegast reyndu aftur síðar',
+    description: 'Some description',
+  },
+  parent1: {
+    id: 'pa.application:parent1',
+    defaultMessage: 'Forráðamaður 1',
+    description: 'Some description',
+  },
+  parent2: {
+    id: 'pa.application:parent2',
+    defaultMessage: 'Forráðamaður 2',
     description: 'Some description',
   },
 

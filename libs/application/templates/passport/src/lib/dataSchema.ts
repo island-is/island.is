@@ -36,7 +36,7 @@ export const dataSchema = z.object({
       .string()
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
     hasDisabilityDiscount: z.array(z.string()).optional(),
-    hasDisabilityDiscountChecked: z.array(z.string()).optional(),
+    hasDisabilityDiscountChecked: z.boolean().optional(),
   }),
   childsPersonalInfo: z.object({
     name: z.string().min(1),

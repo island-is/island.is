@@ -4,7 +4,12 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { ChildsPersonalInfo, Passport, SubmitResponse } from '../lib/constants'
+import {
+  ChildsPersonalInfo,
+  Passport,
+  PersonalInfo,
+  SubmitResponse,
+} from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
@@ -20,7 +25,8 @@ export const Done: Form = buildForm({
         values: {
           name:
             (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-              ?.name ?? (application.answers.personalInfo as any)?.name,
+              ?.name ??
+            (application.answers.personalInfo as PersonalInfo)?.name,
         },
       }),
       children: [
@@ -30,7 +36,7 @@ export const Done: Form = buildForm({
           titleVariant: 'h3',
           description: (application: Application) =>
             (application.externalData.submitPassportApplication
-              ?.data as SubmitResponse)?.orderId,
+              ?.data as SubmitResponse)?.orderId ?? '',
           space: 'gutter',
         }),
         buildDescriptionField({

@@ -5,54 +5,13 @@ import {
 } from '@island.is/application/types'
 import { IdentityDocument } from '../lib/constants'
 import { m } from '../lib/messages'
+import { getPassport } from '../lib/queries'
 
 export class IdentityDocumentProvider extends BasicDataProvider {
   type = 'IdentityDocumentProvider'
 
   async provide(): Promise<IdentityDocument> {
-    const query = `
-      query getPassport {
-        getPassport {
-          userPassport {
-            productionRequestID
-            number
-            type
-            verboseType
-            subType
-            status
-            issuingDate
-            expirationDate
-            displayFirstName
-            displayLastName
-            mrzFirstName
-            mrzLastName
-            sex
-          }
-          childPassports {
-            nationalId
-            name
-            secondParent
-            identityDocuments {
-            productionRequestID
-            number
-            type
-            verboseType
-            subType
-            status
-            issuingDate
-            expirationDate
-            displayFirstName
-            displayLastName
-            mrzFirstName
-            mrzLastName
-            sex
-            }
-          }
-        }
-      }
-    `
-
-    return this.useGraphqlGateway(query)
+    return this.useGraphqlGateway(getPassport)
       .then(async (res: Response) => {
         const response = await res.json()
 
