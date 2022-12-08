@@ -1,4 +1,5 @@
 import { FieldMiddleware, NextFn, MiddlewareContext } from '@nestjs/graphql'
+import { logger } from '@island.is/logging'
 
 export const maskOutFieldsMiddleware: FieldMiddleware = async (
   ctx: MiddlewareContext,
@@ -7,6 +8,7 @@ export const maskOutFieldsMiddleware: FieldMiddleware = async (
   const { info } = ctx
   const { extensions } = info.parentType
 
+  logger.info('Test')
   if (extensions?.filterFields) {
     const {
       condition = () => true,

@@ -44,7 +44,10 @@ module.exports = function (path, options) {
     return defaultResolver_1.default(path, options)
   } catch (e) {
     // Fallback to using typescript
-    compilerSetup = compilerSetup || getCompilerSetup(options.rootDir)
+    // compilerSetup = compilerSetup || getCompilerSetup(options.rootDir)
+    compilerSetup =
+      compilerSetup ||
+      getCompilerSetup((options.rootDir ?? options.basedir) + '/apps/api')
     const { compilerOptions, host } = compilerSetup
     return ts.resolveModuleName(path, options.basedir, compilerOptions, host)
       .resolvedModule.resolvedFileName
