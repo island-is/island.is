@@ -6,7 +6,7 @@ import { processAggregationQuery } from './processAggregation'
 import { query } from 'express'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
-  // normalising all types before boosting
+  // normalizing all types before boosting
   return defaultBoost
 }
 
@@ -22,7 +22,7 @@ export const searchQuery = (
     countTag = [],
     countTypes = false,
     countProcessEntry = false,
-    useQuery
+    useQuery,
   }: SearchInput,
   aggregate = true,
   highlightSection = false,
@@ -38,9 +38,8 @@ export const searchQuery = (
     'content',
     'content.stemmed',
   ]
-  // console.log(useQuery)
 
-  // * wildcard support for internal clients
+  // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
       simple_query_string: {
@@ -50,43 +49,34 @@ export const searchQuery = (
         default_operator: 'and',
       },
     })
-    } else {
-      switch (useQuery) {
-        default:
-        case "default":
-          console.log("DEFAULT")
-          should.push({
-            multi_match: {
-              fields: fieldsWeights,
-              query: queryString,
-              fuzziness: 'AUTO',
-              operator: 'and',
-              type: 'best_fields',
-            },
-          })
-          break;
-        case "suggestions":
-          console.log("SUGGESTIONS")
-          console.log('SEARCH.TS', queryString)
-          const words = queryString.split(' ')
-          const lastWord = words.pop()
-          // const [lastWord,...words] = queryString.split(' ')
-          // console.log(words,lastWord)
-          words.forEach((word) => {
-            should.push({ term: { title: word } })
-          })
-          should.push({ prefix: { title: lastWord } })
-        
-          console.log('SEARCH.TS', should)
-          break;
-      }
-      
+  } else {
+    switch (useQuery) {
+      // the search logic used for general site search
+      // uses all analyzed fields
+      default:
+      case 'default':
+        should.push({
+          multi_match: {
+            fields: fieldsWeights,
+            query: queryString,
+            fuzziness: 'AUTO',
+            operator: 'and',
+            type: 'best_fields',
+          },
+        })
+        break
+      // the search logic used for search drop down suggestions
+      //term and prefix queries on content title
+      case 'suggestions':
+        const words = queryString.split(' ')
+        const lastWord = words.pop()
+        words.forEach((word) => {
+          should.push({ term: { title: word } })
+        })
+        should.push({ prefix: { title: lastWord } })
+        break
     }
-
-
-
-
-
+  }
 
   // if we have types restrict the query to those types
   if (types?.length) {

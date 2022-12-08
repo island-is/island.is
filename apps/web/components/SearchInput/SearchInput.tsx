@@ -119,10 +119,9 @@ const useSearch = (
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
-                //++++++++++++++++++++++++++++++ org page ex match stuff
               ],
               highlightResults: true,
-              // useQuery: "suggestions"
+              useQuery: 'suggestions',
             },
           },
         })
@@ -139,6 +138,7 @@ const useSearch = (
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
 
+      //// PUTTNING THE AUTOCOMPLETE ON HOLD FOR NOW
       // client
       //   .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
       //     query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
