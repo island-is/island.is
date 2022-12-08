@@ -29,7 +29,6 @@ export const PassportSelection: FC<FieldBaseProps> = ({
     .childPassports
   const identityDocumentNumber = identityDocument?.number
 
-
   const tag = (identityDocument: IdentityDocument) => {
     const today = new Date()
     const expirationDate = new Date(identityDocument?.expirationDate)
