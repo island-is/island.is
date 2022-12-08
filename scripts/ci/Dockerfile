@@ -43,14 +43,13 @@ ARG APP_HOME
 ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
-
 WORKDIR /webapp
 
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
 
 FROM output-base as output-base-with-pg
-
+RUN apk add -U git
 RUN npm install -g \
   sequelize \
   sequelize-cli \
@@ -68,11 +67,19 @@ CMD [ "node", "--no-experimental-fetch", "main.js" ]
 FROM output-base-with-pg as output-next
 
 ENV PORT=4200
+USER root
 
-# TODO: smallify
-COPY --from=deps /build/node_modules /webapp/node_modules
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY --from=src /build/.yarn/releases/ .yarn/releases/
+COPY --from=src /build/yarn.lock/ yarn.lock
+COPY --from=src /build/.yarn/cache/ .yarn/cache/
+COPY --from=src /build/.yarnrc.yml .yarnrc.yml
 
+RUN touch yarn.lock
+RUN yarn install
+RUN yarn cache clean
+
+USER runner
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
