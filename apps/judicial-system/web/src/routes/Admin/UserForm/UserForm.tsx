@@ -32,6 +32,7 @@ type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
   user: User
+  courts: Institution[]
   allCourts: Institution[]
   prosecutorsOffices: Institution[]
   prisonInstitutions: Institution[]
@@ -53,10 +54,12 @@ export const UserForm: React.FC<Props> = (props) => {
 
   const selectInstitutions = (isProsecutionRole(user.role)
     ? props.prosecutorsOffices
-    : user.role === UserRole.STAFF
-    ? props.prisonInstitutions
     : isCourtRole(user.role)
     ? props.allCourts
+    : user.role === UserRole.ASSISTANT
+    ? props.courts
+    : user.role === UserRole.STAFF
+    ? props.prisonInstitutions
     : []
   ).map((institution) => ({
     label: institution.name,
@@ -79,6 +82,8 @@ export const UserForm: React.FC<Props> = (props) => {
       : isCourtRole(user.role)
       ? user.institution?.type === InstitutionType.COURT ||
         user.institution?.type === InstitutionType.HIGH_COURT
+      : user.role === UserRole.ASSISTANT
+      ? user.institution?.type === InstitutionType.COURT
       : user.role === UserRole.STAFF
       ? user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN
@@ -207,6 +212,8 @@ export const UserForm: React.FC<Props> = (props) => {
                 large
               />
             </Box>
+          </Box>
+          <Box marginBottom={2} className={styles.roleContainer}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -229,6 +236,16 @@ export const UserForm: React.FC<Props> = (props) => {
             </Box>
           </Box>
           <Box marginBottom={2} className={styles.roleContainer}>
+            <Box className={styles.roleColumn}>
+              <RadioButton
+                name="role"
+                id="roleAssistant"
+                label="Aðstoðarmaður dómara"
+                checked={user.role === UserRole.ASSISTANT}
+                onChange={() => setUser({ ...user, role: UserRole.ASSISTANT })}
+                large
+              />
+            </Box>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
