@@ -12,20 +12,18 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import {
   INPUTCHANGEINTERVAL,
   EQUITIESANDLIABILITIESIDS,
-  OPERATINGCOST,
   VALIDATOR,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 import { getTotal } from '../../lib/utils/helpers'
 
 export const ElectionEquities: FC<FieldBaseProps> = ({
-  application,
   setBeforeSubmitCallback,
 }): JSX.Element => {
   const { formatMessage } = useLocale()
@@ -51,7 +49,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
 
   useEffect(() => {
     clearErrors(VALIDATOR)
-  }, [totalEquity, totalLiabilities, totalAssets])
+  }, [totalEquity, totalLiabilities, totalAssets, clearErrors])
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
