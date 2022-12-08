@@ -52,7 +52,7 @@ export const DropdownMenu = ({
   const menuItemBoxStyle = useBoxStyles({
     component: 'button',
     display: 'flex',
-    justifyContent: 'center',
+    width: 'full',
     paddingTop: 2,
     paddingRight: 3,
     paddingBottom: 2,

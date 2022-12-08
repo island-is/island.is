@@ -40,7 +40,8 @@ export const NextSteps = ({ application }: PropTypes): JSX.Element => {
         <Box marginTop={2}>
           <CopyLink
             linkUrl={
-              `${document.location.origin}/hjonavigsla/` + application.id
+              `${document.location.origin}/umsoknir/hjonavigsla/` +
+              application.id
             }
             buttonTitle={formatMessage(m.copyLink)}
           />

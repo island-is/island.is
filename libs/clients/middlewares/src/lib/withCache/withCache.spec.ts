@@ -106,7 +106,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('expires responses', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers()
     const cacheManager = caching({ store: 'memory', ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
@@ -279,7 +279,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('does not get stale if not error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers()
     const cacheManager = caching({ store: 'memory', ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
@@ -305,7 +305,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('gets stale if http error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers()
     const cacheManager = caching({ store: 'memory', ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
@@ -342,7 +342,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('gets stale if network error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers()
     const cacheManager = caching({ store: 'memory', ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },

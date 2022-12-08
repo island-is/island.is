@@ -32,6 +32,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
           actionCard: {
             title: m.applicationTitle,
           },
+          status: 'inprogress',
           progress: 0.33,
           lifecycle: {
             shouldBeListed: false,
@@ -57,6 +58,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              delete: true,
               write: {
                 answers: ['approveExternalData'],
                 externalData: ['teachingRights', 'nationalRegistry'],

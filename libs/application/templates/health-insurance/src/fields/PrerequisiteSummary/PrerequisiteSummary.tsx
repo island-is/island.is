@@ -1,18 +1,13 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { m } from '../../forms/messages'
-import { getSlugFromType } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import SummaryItem from './SummaryItem'
 import {
   hasHealthInsurance,
-  hasActiveDraftApplication,
-  hasPendingApplications,
   hasNoIcelandicAddress,
-  getOldestDraftApplicationId,
 } from '../../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
-import { Applications } from '../../dataProviders/APIDataTypes'
 
 const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -32,25 +27,10 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
     return prerequisiteObject
   }
 
-  const getPendingApplicationNumber = () => {
-    const pendingApplications = externalData?.pendingApplications
-      ?.data as string[]
-    return pendingApplications[0]
-  }
-
-  const buildPendingApplicationLink = () => {
-    const applications = externalData?.applications.data as Applications[]
-    const applicationSlug = getSlugFromType(application.typeId)
-    const oldestDraftApplicationId = getOldestDraftApplicationId(applications)
-    return `umsoknir/${applicationSlug}/${oldestDraftApplicationId}`
-  }
-
   const requiresActionTagString = formatMessage(m.requiresActionTagLabel)
   const completeTagString = formatMessage(m.completeTagLabel)
   const hasNoIcelandicAddressCheck = hasNoIcelandicAddress(externalData)
-  const hasActiveDraftApplicationCheck = hasActiveDraftApplication(externalData)
   const hasHealthInsuranceCheck = hasHealthInsurance(externalData)
-  const hasPendingApplicationsCheck = hasPendingApplications(externalData)
 
   const checkPrerequisite = (prerequisiteName: string) => {
     switch (prerequisiteName) {
@@ -69,25 +49,6 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
             ? requiresActionTagString
             : completeTagString,
         }
-
-      case 'applications':
-        return {
-          prerequisiteMet: !hasActiveDraftApplicationCheck,
-          title: formatMessage(m.prerequisiteActiveDraftApplicationTitle),
-          description: formatMessage(
-            m.prerequisiteActiveDraftApplicationDescription,
-          ),
-          furtherInformationTitle: formatMessage(m.activeDraftApplicationTitle),
-          furtherInformationDescription: formatMessage(
-            m.activeDraftApplicationDescription,
-          ),
-          buttonText: formatMessage(m.activeDraftApplicationButtonText),
-          buttonLink: buildPendingApplicationLink(),
-          tagText: hasActiveDraftApplicationCheck
-            ? requiresActionTagString
-            : completeTagString,
-        }
-
       case 'healthInsurance':
         return {
           prerequisiteMet: !hasHealthInsuranceCheck,
@@ -100,27 +61,6 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           buttonText: formatMessage(m.alreadyInsuredButtonText),
           buttonLink: formatMessage(m.alreadyInsuredButtonLink),
           tagText: hasHealthInsuranceCheck
-            ? requiresActionTagString
-            : completeTagString,
-        }
-
-      case 'pendingApplications':
-        return {
-          prerequisiteMet: !hasPendingApplicationsCheck,
-          title: formatMessage(m.prerequisitePendingApplicationTitle),
-          description: formatMessage(
-            m.prerequisitePendingApplicationDescription,
-          ),
-          furtherInformationTitle: formatMessage(m.registerYourselfTitle),
-          furtherInformationDescription: formatMessage(
-            m.pendingApplicationDescription,
-            {
-              applicationNumber: getPendingApplicationNumber(),
-            },
-          ),
-          buttonText: formatMessage(m.pendingApplicationButtonText),
-          buttonLink: formatMessage(m.pendingApplicationButtonLink),
-          tagText: hasPendingApplicationsCheck
             ? requiresActionTagString
             : completeTagString,
         }

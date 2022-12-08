@@ -19,7 +19,7 @@ interface Props {
 const ConclusionDraft: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
 
   return (
     <>
@@ -87,7 +87,7 @@ const ConclusionDraft: React.FC<Props> = (props) => {
             },
           )}
           onChange={(decision) => {
-            setAndSendToServer(
+            setAndSendCaseToServer(
               [{ decision, force: true }],
               workingCase,
               setWorkingCase,

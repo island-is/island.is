@@ -40,11 +40,11 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   const overview = applicationOverviewTemplate(application)
 
   const body = dedent(`
-        <h2>Umsókn móttekin</h2>
+        <h2>Takk fyrir umsóknina!</h2>
         <p>
-          Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar. </br>
-          Við verðum í sambandi ef okkur vantar frekari upplýsingar. </br>
-          Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið <a href="mailto:island@island.is">island@island.is</a> </br>
+          Umsóknin er formlega móttekin. </br>
+          Verkefnastjóri Stafræns Íslands verður í sambandi sem fer yfir verkefnið með ykkur og næstu skref.</br>
+          Fyrir frekari upplýsingar er hægt að hafa samband á netfangið <a href="mailto:island@island.is">island@island.is</a> </br>
         </p>
         <h2>Yfirlit umsóknar</h2>
         ${overview}

@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   GridColumn,
@@ -9,23 +8,41 @@ import {
 import Link from 'next/link'
 
 import img from '../../../assets/images/educationLicense.svg'
+import { useI18n } from '@island.is/web/i18n'
+import { useLinkResolver } from '@island.is/web/hooks'
 
-const ContactBanner = ({ slug }: { slug?: string }) => {
-  const link = `/adstod/${slug || 'stafraent-island'}/hafa-samband`
+interface ContactBannerProps {
+  slug?: string
+  cantFindWhatYouAreLookingForText: string
+  howCanWeHelpText: string
+  contactUsText: string
+}
+
+const ContactBanner = ({
+  slug,
+  cantFindWhatYouAreLookingForText,
+  howCanWeHelpText,
+  contactUsText,
+}: ContactBannerProps) => {
+  const { activeLocale } = useI18n()
+  const { linkResolver } = useLinkResolver()
+  const link = linkResolver('servicewebcontact', [
+    slug || (activeLocale === 'en' ? 'digital-iceland' : 'stafraent-island'),
+  ]).href
 
   return (
     <Box background="purple100" padding={[7, 10, 10]} borderRadius="large">
       <GridRow>
         <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
           <Text variant="h3" as="h3" marginBottom={2}>
-            {'Finnurðu ekki það sem þig vantar?'}
+            {cantFindWhatYouAreLookingForText}
           </Text>
           <Text variant="intro" marginBottom={[5, 10]}>
-            {'Hvernig getum við aðstoðað?'}
+            {howCanWeHelpText}
           </Text>
           <Link href={link}>
             <Button type="button" variant="ghost" icon="arrowForward">
-              Hafa samband
+              {contactUsText}
             </Button>
           </Link>
         </GridColumn>

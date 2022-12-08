@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -39,12 +36,14 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   name: applicationName,
   readyForProduction: true,
   dataSchema: HealthInsuranceSchema,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUESITES,
     states: {
       [ApplicationStates.PREREQUESITES]: {
         meta: {
           name: applicationName,
+          status: 'draft',
           progress: 0,
           lifecycle: {
             shouldBeListed: false,
@@ -66,6 +65,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              delete: true,
               write: 'all',
             },
           ],
@@ -76,6 +76,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
       [ApplicationStates.DRAFT]: {
         meta: {
+          status: 'draft',
           name: applicationName,
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
@@ -93,6 +94,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              delete: true,
               write: 'all',
             },
           ],
@@ -105,12 +107,13 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
       [ApplicationStates.IN_REVIEW]: {
         meta: {
+          status: 'completed',
           name: applicationName,
           onEntry: {
             apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
           },
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

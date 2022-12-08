@@ -1,16 +1,23 @@
 import React, { FC, ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
+import isNumber from 'lodash/isNumber'
+import { useWindowSize } from 'react-use'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
+import { ValueType } from 'react-select'
+
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import { Select, Option } from '../Select/Select'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { isDefined } from '@island.is/shared/utils'
 
 import * as styles from './Tabs.css'
-import { ValueType } from 'react-select'
-import { Colors, theme } from '@island.is/island-ui/theme'
-import { FocusableBox } from '../FocusableBox/FocusableBox'
-import { useWindowSize } from 'react-use'
 
 type TabType = {
+  /**
+   * Required when prop onlyRenderSelectedTab is true
+   */
+  id?: string
   label: string
   content: ReactNode
   disabled?: boolean
@@ -22,6 +29,8 @@ interface TabInterface {
   tabs: TabType[]
   contentBackground?: Colors
   size?: 'xs' | 'sm' | 'md'
+  onChange?(id: string): void
+  onlyRenderSelectedTab?: boolean
 }
 
 export const Tabs: FC<TabInterface> = ({
@@ -30,20 +39,31 @@ export const Tabs: FC<TabInterface> = ({
   tabs,
   contentBackground = 'purple100',
   size = 'md',
+  onChange: onChangeHandler,
+  onlyRenderSelectedTab,
 }) => {
+  // When onlyRenderSelectedTab is true, then we need to make sure that every tab has an id prop defined
+  if (onlyRenderSelectedTab && !tabs.every(({ id }) => isDefined(id))) {
+    throw new Error(
+      'Every tab must have a unique id when onlyRenderSelectedTab is enabled',
+    )
+  }
+
   const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
   })
 
-  const selectOptions = tabs.map(({ label, disabled }, index) => {
+  const [prevCurrentId, setPrevCurrentId] = useState(tab.currentId)
+
+  const selectOptions = tabs.map(({ label, disabled, id }, index) => {
     return {
       label,
       disabled: disabled,
-      value: index.toString(),
+      value: id ?? index.toString(),
     }
   })
 
-  const onChange = (option: ValueType<Option>) => {
+  const onSelect = (option: ValueType<Option>) => {
     const tabOption = option as Option
     tab.setCurrentId(tabOption?.value as string)
     tab.move(tabOption?.value as string)
@@ -59,6 +79,14 @@ export const Tabs: FC<TabInterface> = ({
     setIsMobile(false)
   }, [width])
 
+  useEffect(() => {
+    if (onChangeHandler && tab.currentId && prevCurrentId !== tab.currentId) {
+      onChangeHandler(tab.currentId)
+      setPrevCurrentId(tab.currentId)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab.currentId])
+
   return (
     <Box position="relative">
       <Box background={contentBackground} className={styles.bg} />
@@ -69,9 +97,13 @@ export const Tabs: FC<TabInterface> = ({
               size={size}
               name={label}
               label={label}
-              onChange={onChange}
+              onChange={onSelect}
               options={selectOptions}
-              defaultValue={selectOptions[parseInt(selected)]}
+              defaultValue={
+                isNumber(selected)
+                  ? selectOptions[parseInt(selected)]
+                  : selectOptions.find((opt) => opt.value === selected)
+              }
               isSearchable={false}
             />
           </div>
@@ -82,17 +114,19 @@ export const Tabs: FC<TabInterface> = ({
           wrap={wrap}
           aria-label={label}
         >
-          {tabs.map(({ label, disabled }, index) => (
+          {tabs.map(({ label, disabled, id }, index) => (
             <FocusableBox
               {...tab}
               component={Tab}
               key={index}
               disabled={disabled}
-              id={`${index}`}
+              id={id ?? `${index}`}
               justifyContent="center"
               aria-label={label}
               className={cn(styles.tab, {
-                [styles.tabSelected]: index.toString() === tab.selectedId,
+                [styles.tabSelected]: id
+                  ? id === tab.selectedId
+                  : index.toString() === tab.selectedId,
                 [styles.tabDisabled]: disabled,
               })}
             >
@@ -100,9 +134,13 @@ export const Tabs: FC<TabInterface> = ({
             </FocusableBox>
           ))}
         </TabList>
-        {tabs.map(({ content }, index) => (
+        {tabs.map(({ content, id }, index) => (
           <TabPanel {...tab} key={index} className={styles.tabPanel}>
-            <Box>{content}</Box>
+            {onlyRenderSelectedTab && id ? (
+              tab.selectedId === id && <Box>{content}</Box>
+            ) : (
+              <Box>{content}</Box>
+            )}
           </TabPanel>
         ))}
       </Box>

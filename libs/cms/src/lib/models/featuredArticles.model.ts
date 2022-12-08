@@ -36,6 +36,9 @@ export class FeaturedArticles {
 
   @Field(() => Link, { nullable: true })
   link?: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapFeaturedArticles = ({
@@ -68,4 +71,5 @@ export const mapFeaturedArticles = ({
     }),
   },
   link: fields.link ? mapLink(fields.link) : null,
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

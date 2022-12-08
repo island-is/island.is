@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ArrowLink,
   Box,
@@ -31,10 +31,11 @@ import {
   ApiCatalogueFilter,
   OrganizationWrapper,
   ServiceList,
+  Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { useNamespace } from '@island.is/web/hooks'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import {
   GetApiCatalogueInput,
   QueryGetApiCatalogueArgs,
@@ -50,6 +51,8 @@ import { useRouter } from 'next/router'
 import { INLINES } from '@contentful/rich-text-types'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { webRichText } from '@island.is/web/utils/richText'
 
 const LIMIT = 20
 
@@ -68,6 +71,10 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   filterContent,
   navigationLinks,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
   const Router = useRouter()
@@ -75,6 +82,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   const fn = useNamespace(filterContent)
   const nn = useNamespace(navigationLinks)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id, subpage.id)
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -205,10 +213,10 @@ const ApiCatalogue: Screen<HomestayProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === Router.asPath ||
+        primaryLink?.url === Router.asPath ||
         childrenLinks.some((link) => link.url === Router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -224,6 +232,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
         pageTitle={subpage.title}
         organizationPage={organizationPage}
         pageFeaturedImage={subpage.featuredImage}
+        showReadSpeaker={false}
         breadcrumbItems={[
           {
             title: 'Ísland.is',
@@ -241,12 +250,15 @@ const ApiCatalogue: Screen<HomestayProps> = ({
         }}
         showSecondaryMenu={false}
       >
-        <Box paddingBottom={4}>
+        <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}>
           <Text variant="h1" as="h2">
             {subpage.title}
           </Text>
+          {isWebReaderEnabledForOrganizationPages && (
+            <Webreader readId={null} readClass="rs_read" />
+          )}
         </Box>
-        {richText(subpage.description as SliceType[], {
+        {webRichText(subpage.description as SliceType[], {
           renderNode: {
             [INLINES.HYPERLINK]: (node, children) => (
               <ArrowLink href={node.data.uri}>{children}</ArrowLink>
@@ -312,7 +324,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
             {data?.getApiCatalogue?.services.length > 0 && (
               <GridContainer>
                 <ServiceList
-                  baseUrl={linkResolver('webservicespage').href + '/'}
+                  baseUrl={linkResolver('apicataloguepage').href + '/'}
                   services={data?.getApiCatalogue?.services}
                   tagDisplayNames={filterContent}
                 />
@@ -333,6 +345,9 @@ const ApiCatalogue: Screen<HomestayProps> = ({
 }
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
+  const organizationSlug =
+    locale === 'en' ? 'digital-iceland' : 'stafraent-island'
+
   const [
     {
       data: { getOrganizationPage },
@@ -348,7 +363,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'stafraent-island',
+          slug: organizationSlug,
           lang: locale as ContentLanguage,
         },
       },
@@ -357,8 +372,8 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'stafraent-island',
-          slug: 'vefthjonustur',
+          organizationSlug,
+          slug: locale === 'en' ? 'webservices' : 'vefthjonustur',
           lang: locale as ContentLanguage,
         },
       },

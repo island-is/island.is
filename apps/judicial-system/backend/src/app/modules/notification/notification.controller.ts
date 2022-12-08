@@ -11,18 +11,21 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { UserRole, NotificationType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
-  RolesRule,
   RolesRules,
-  RulesType,
 } from '@island.is/judicial-system/auth'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+  assistantRule,
+} from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -34,43 +37,13 @@ import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { NotificationService } from './notification.service'
-
-// Allows prosecutors to send notifications
-const prosecutorNotificationRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [
-    NotificationType.HEADS_UP,
-    NotificationType.READY_FOR_COURT,
-    NotificationType.MODIFIED,
-    NotificationType.REVOKED,
-  ],
-} as RolesRule
-
-// Allows judges to send notifiications
-const judgeNotificationRule = {
-  role: UserRole.JUDGE,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [
-    NotificationType.RECEIVED_BY_COURT,
-    NotificationType.COURT_DATE,
-    NotificationType.MODIFIED,
-  ],
-} as RolesRule
-
-// Allows registrars to send notifications
-const registrarNotificationRule = {
-  role: UserRole.REGISTRAR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [
-    NotificationType.RECEIVED_BY_COURT,
-    NotificationType.COURT_DATE,
-    NotificationType.MODIFIED,
-  ],
-} as RolesRule
+import {
+  judgeNotificationRule,
+  prosecutorNotificationRule,
+  registrarNotificationRule,
+  representativeNotificationRule,
+  assistantNotificationRule,
+} from './guards/rolesRules'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
 @Controller('api/case/:caseId')
@@ -84,8 +57,10 @@ export class NotificationController {
   @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorNotificationRule,
+    representativeNotificationRule,
     judgeNotificationRule,
     registrarNotificationRule,
+    assistantNotificationRule,
   )
   @Post('notification')
   @ApiCreatedResponse({
@@ -110,7 +85,13 @@ export class NotificationController {
   }
 
   @UseGuards(CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('notifications')
   @ApiOkResponse({
     type: Notification,

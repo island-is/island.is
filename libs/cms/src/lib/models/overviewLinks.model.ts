@@ -14,6 +14,9 @@ export class OverviewLinks {
 
   @Field(() => Link, { nullable: true })
   link!: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapOverviewLinks = ({
@@ -24,4 +27,5 @@ export const mapOverviewLinks = ({
   id: sys.id,
   overviewLinks: (fields.overviewLinks ?? []).map(mapIntroLinkImage),
   link: fields.link ? mapLink(fields.link) : null,
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

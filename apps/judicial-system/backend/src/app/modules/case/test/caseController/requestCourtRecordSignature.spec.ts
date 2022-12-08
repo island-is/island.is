@@ -1,20 +1,15 @@
 import { uuid } from 'uuidv4'
-import { Response } from 'express'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { SigningServiceResponse } from '@island.is/dokobit-signing'
 import { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-interface MockResponse extends Response {
-  statusCode: number
-  message: string
-}
-
 interface Then {
-  result: MockResponse
+  result: SigningServiceResponse
   error: Error
 }
 
@@ -38,7 +33,7 @@ describe('CaseController - Request court record signature', () => {
           caseId,
           user,
           theCase,
-        )) as MockResponse
+        )) as SigningServiceResponse
       } catch (error) {
         then.error = error as Error
       }

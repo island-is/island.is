@@ -34,6 +34,8 @@ export class NationalRegistryModule {
         CorrectionResolver,
         {
           provide: NationalRegistryApi,
+          // See method doc for disable reason.
+          // eslint-disable-next-line local-rules/no-async-module-init
           useFactory: async () =>
             NationalRegistryApi.instantiateClass(config.nationalRegistry),
         },

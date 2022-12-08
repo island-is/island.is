@@ -6,7 +6,6 @@ import {
   servicePortalMasterNavigation,
   ServicePortalNavigationItem,
   ServicePortalRoute,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { User } from '@island.is/shared/types'
 
@@ -17,7 +16,7 @@ const filterNavigationTree = (
   item: ServicePortalNavigationItem,
   routes: ServicePortalRoute[],
   userInfo: User,
-  dymamicRouteArray: ServicePortalPath[],
+  dymamicRouteArray: string[],
 ): boolean => {
   const routeItem = routes.find(
     (route) =>
@@ -50,7 +49,12 @@ const filterNavigationTree = (
     routeItem?.dynamic && solidPath && !dymamicRouteArray?.includes(solidPath)
 
   // Hides item from navigation
-  item.navHide = (routeItem?.navHide ?? item.navHide) || hideDynamicPath
+
+  if (routeItem?.navHide) {
+    item.navHide = routeItem.navHide
+  }
+
+  item.navHide = item.navHide || !!hideDynamicPath
 
   return included || onlyDescendantsIncluded
 }

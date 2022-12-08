@@ -95,12 +95,10 @@ export class PublicDebtPaymentPlanTemplateService {
 
       await this.paymentScheduleApiWithAuth(auth).schedulesPOST6({
         inputSchedules: {
-          serviceInput: {
-            email: email,
-            nationalId: application.applicant,
-            phoneNumber: phoneNumber,
-            schedules: schedules,
-          },
+          email: email,
+          nationalId: application.applicant,
+          phoneNumber: phoneNumber,
+          schedules: schedules,
         },
       })
     } catch (error) {

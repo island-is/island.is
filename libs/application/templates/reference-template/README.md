@@ -6,11 +6,12 @@ This library is a reference how all application template libraries can be.
 
 There are multiple requirements needed for a new template to be usable by the application system:
 
-1. Add a unique application type to `application/core/src/types/ApplicationTypes.ts`
-2. Run `yarn generate @nrwl/react:library application/templates/NAME_OF_APPLICATION` to generate a new library.
-3. The default export of this library has to be an object that extends the `ApplicationTemplate` interface
+1. Run `yarn generate @nrwl/react:library application/templates/NAME_OF_APPLICATION` to generate a new library.
+2. The default export of this library has to be an object that extends the `ApplicationTemplate` interface
+3. Add a unique application type to `application/types/src/lib/ApplicationTypes.ts`
 4. Add to `application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
 5. If the template includes custom fields only used by this application, export a submodule `getFields` (see `application/templates/parental-leave`):
+6. Add to `application/core/src/lib/institutionMapper.ts`
 
 ```ts
 import ParentalLeaveTemplate from './lib/ParentalLeaveTemplate'
@@ -54,7 +55,7 @@ const ExampleApplicationTemplate: ApplicationTemplate<
 > = {
   ...
   // In this example we configure the legal guardian delegation type as an allowed delegation type for the example application
-  allowedDelegations: [DelegationType.LegalGuardian],
+  allowedDelegations: [{ type: DelegationType.LegalGuardian }],
   ...
 }
 

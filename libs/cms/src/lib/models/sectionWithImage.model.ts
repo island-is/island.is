@@ -15,8 +15,8 @@ export class SectionWithImage {
   @Field(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => Html)
-  html!: Html //fields.body is required in the contentful validation on the content model
+  @Field(() => Html, { nullable: true })
+  html?: Html | null
 }
 
 export const mapSectionWithImage = ({
@@ -27,5 +27,5 @@ export const mapSectionWithImage = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-  html: fields.body && mapHtml(fields.body, sys.id + ':html'),
+  html: fields.body ? mapHtml(fields.body, sys.id + ':html') : null,
 })

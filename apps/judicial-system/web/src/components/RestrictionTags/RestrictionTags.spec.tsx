@@ -23,10 +23,23 @@ describe('<RestrictionTags />', () => {
   })
 
   test('should render isolation restrction when isCustodyIsolation=true', () => {
-    const theCase = { isCustodyIsolation: true } as Case
+    const theCase = {
+      isCustodyIsolation: true,
+      decision: CaseDecision.ACCEPTING,
+    } as Case
     renderRestrictionTags(theCase)
 
     expect(screen.getByText('Einangrun', selector)).toBeInTheDocument()
+  })
+
+  test('should not render isolation restrction when decision not accepting', () => {
+    const theCase = {
+      isCustodyIsolation: true,
+      decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+    } as Case
+    renderRestrictionTags(theCase)
+
+    expect(screen.queryByText('Einangrun', selector)).toBeNull()
   })
 
   test('should render tags for accepted travel ban cases', () => {

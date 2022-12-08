@@ -25,6 +25,7 @@ type ItemProps = {
   href: string
   image?: Partial<Image>
   tags?: Tag[]
+  colorVariant?: 'default' | 'blue'
 }
 
 export const Item = ({
@@ -33,6 +34,7 @@ export const Item = ({
   text,
   href,
   image,
+  colorVariant = 'default',
   tags = [],
 }: ItemProps) => {
   const hasTags = Array.isArray(tags) && tags.length > 0
@@ -58,13 +60,24 @@ export const Item = ({
         <div className={styles.content}>
           <Box flexGrow={1} height="full">
             <Stack space={2}>
-              <Text as="span" variant="eyebrow">
+              <Text
+                color={colorVariant === 'blue' ? 'blue400' : undefined}
+                as="span"
+                variant="eyebrow"
+              >
                 {formattedDate}
               </Text>
-              <Text as="h3" variant="h2" title={heading}>
+              <Text
+                color={colorVariant === 'blue' ? 'blue600' : undefined}
+                as="h3"
+                variant="h2"
+                title={heading}
+              >
                 {heading}
               </Text>
-              <Text>{text}</Text>
+              <Text color={colorVariant === 'blue' ? 'blue600' : undefined}>
+                {text}
+              </Text>
             </Stack>
           </Box>
           {hasTags && (

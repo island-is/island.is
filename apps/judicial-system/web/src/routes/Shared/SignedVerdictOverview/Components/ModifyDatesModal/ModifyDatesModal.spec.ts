@@ -5,7 +5,7 @@ import { createCaseModifiedExplanation } from './ModifyDatesModal'
 describe('createCaseModifiedExplanation', () => {
   const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
     .formatMessage
-  beforeAll(() => jest.useFakeTimers('modern'))
+  beforeAll(() => jest.useFakeTimers())
 
   it('should append nextExplainantion', () => {
     const previousExplaination =

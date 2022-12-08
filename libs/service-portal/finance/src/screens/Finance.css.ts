@@ -10,17 +10,27 @@ export const dateFilterSingle = style({
   paddingBottom: theme.spacing[2],
 })
 
-export const accordionBox = style({})
+export const openCal = style({
+  paddingTop: '260px',
+})
 
+export const openLowerCal = style({
+  paddingTop: '165px',
+})
+
+export const accordionBox = style({})
 export const accordionBoxSingle = style({})
 
-/**
- * Open date picker margin needed as filter box is too small when calendar is expanded.
- */
-globalStyle(`${accordionBox} .react-datepicker__tab-loop`, {
-  marginTop: theme.spacing[6],
-})
+globalStyle(
+  `${accordionBox} .island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
+  {
+    top: '30px !important',
+  },
+)
 
-globalStyle(`${accordionBoxSingle} .react-datepicker__tab-loop`, {
-  marginTop: theme.spacing[12],
-})
+globalStyle(
+  `${accordionBoxSingle} .island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
+  {
+    top: '20px !important',
+  },
+)

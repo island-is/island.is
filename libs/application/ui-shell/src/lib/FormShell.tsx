@@ -1,8 +1,6 @@
 import React, { FC, useEffect, useReducer } from 'react'
 import cn from 'classnames'
-import * as Sentry from '@sentry/react'
 
-import { coreMessages } from '@island.is/application/core'
 import {
   Application,
   Form,
@@ -15,7 +13,6 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
@@ -28,7 +25,6 @@ import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
-import { ErrorShell } from '../components/ErrorShell'
 
 export const FormShell: FC<{
   application: Application
@@ -36,7 +32,6 @@ export const FormShell: FC<{
   form: Form
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
-  const { formatMessage } = useLocale()
   const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -59,11 +54,11 @@ export const FormShell: FC<{
     screens,
   } = state
   const {
-    mode = FormModes.APPLYING,
+    mode = FormModes.DRAFT,
     renderLastScreenButton,
     renderLastScreenBackButton,
   } = state.form
-  const showProgressTag = mode !== FormModes.APPLYING
+  const showProgressTag = mode !== FormModes.DRAFT
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
 
@@ -78,16 +73,7 @@ export const FormShell: FC<{
   }, [setInfo, application])
 
   return (
-    <Box
-      className={cn(styles.root, {
-        [styles.rootApplying]:
-          mode === FormModes.APPLYING || mode === FormModes.EDITING,
-        [styles.rootApproved]: mode === FormModes.APPROVED,
-        [styles.rootPending]: mode === FormModes.PENDING,
-        [styles.rootReviewing]: mode === FormModes.REVIEW,
-        [styles.rootRejected]: mode === FormModes.REJECTED,
-      })}
-    >
+    <Box className={styles.root}>
       <Box
         paddingTop={[0, 4]}
         paddingBottom={[0, 5]}
@@ -106,55 +92,38 @@ export const FormShell: FC<{
                 borderRadius="large"
                 background="white"
               >
-                <Sentry.ErrorBoundary
-                  beforeCapture={(scope) => {
-                    scope.setTag('errorBoundaryLocation', 'FormShell')
-                    scope.setExtra('applicationType', application.typeId)
-                    scope.setExtra('applicationState', application.state)
-                    scope.setExtra('currentScreen', currentScreen.id)
-                  }}
-                  fallback={
-                    <ErrorShell
-                      title={formatMessage(coreMessages.globalErrorTitle)}
-                      subTitle={formatMessage(coreMessages.globalErrorMessage)}
-                    />
+                <Screen
+                  application={storedApplication}
+                  addExternalData={(payload) =>
+                    dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
                   }
-                >
-                  <Screen
-                    application={storedApplication}
-                    addExternalData={(payload) =>
-                      dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
-                    }
-                    answerQuestions={(payload) =>
-                      dispatch({ type: ActionTypes.ANSWER, payload })
-                    }
-                    dataSchema={dataSchema}
-                    expandRepeater={() =>
-                      dispatch({ type: ActionTypes.EXPAND_REPEATER })
-                    }
-                    answerAndGoToNextScreen={(payload) =>
-                      dispatch({
-                        type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
-                        payload,
-                      })
-                    }
-                    goToScreen={(payload: string) => {
-                      dispatch({
-                        type: ActionTypes.GO_TO_SCREEN,
-                        payload,
-                      })
-                    }}
-                    prevScreen={() =>
-                      dispatch({ type: ActionTypes.PREV_SCREEN })
-                    }
-                    activeScreenIndex={activeScreen}
-                    numberOfScreens={screens.length}
-                    renderLastScreenButton={renderLastScreenButton}
-                    renderLastScreenBackButton={renderLastScreenBackButton}
-                    screen={currentScreen}
-                    mode={mode}
-                  />
-                </Sentry.ErrorBoundary>
+                  answerQuestions={(payload) =>
+                    dispatch({ type: ActionTypes.ANSWER, payload })
+                  }
+                  dataSchema={dataSchema}
+                  expandRepeater={() =>
+                    dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                  }
+                  answerAndGoToNextScreen={(payload) =>
+                    dispatch({
+                      type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
+                      payload,
+                    })
+                  }
+                  goToScreen={(payload: string) => {
+                    dispatch({
+                      type: ActionTypes.GO_TO_SCREEN,
+                      payload,
+                    })
+                  }}
+                  prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
+                  activeScreenIndex={activeScreen}
+                  numberOfScreens={screens.length}
+                  renderLastScreenButton={renderLastScreenButton}
+                  renderLastScreenBackButton={renderLastScreenBackButton}
+                  screen={currentScreen}
+                  mode={mode}
+                />
               </Box>
             </GridColumn>
             <GridColumn

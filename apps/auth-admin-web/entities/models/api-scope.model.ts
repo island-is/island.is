@@ -6,6 +6,7 @@ export class ApiScope {
   enabled!: boolean
   displayName!: string
   description!: string
+  order!: number
   groupId?: string
   showInDiscoveryDocument!: boolean
   archived!: Date
@@ -22,4 +23,5 @@ export class ApiScope {
   readonly created!: Date
   readonly modified?: Date
   group?: ApiScopeGroup
+  domainName!: string
 }

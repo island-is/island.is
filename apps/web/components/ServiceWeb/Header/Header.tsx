@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
 import NextLink from 'next/link'
 import cn from 'classnames'
 import {
@@ -14,14 +13,16 @@ import {
   ResponsiveSpace,
   Link,
   getTextStyles,
+  Button,
 } from '@island.is/island-ui/core'
 import {
+  LanguageToggler,
   ServiceWebContext,
   ServiceWebSearchInput,
 } from '@island.is/web/components'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 import { TextModes } from '../types'
-import { linkResolver } from '@island.is/web/hooks'
-import { Tag } from '@island.is/web/graphql/schema'
 
 import * as styles from './Header.css'
 
@@ -30,6 +31,7 @@ interface HeaderProps {
   hideSearch?: boolean
   textMode?: TextModes
   searchPlaceholder?: string
+  namespace: Record<string, string>
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -39,7 +41,13 @@ export const Header = ({
   hideSearch,
   textMode,
   searchPlaceholder,
+  namespace,
 }: HeaderProps) => {
+  const { linkResolver } = useLinkResolver()
+  const { t } = useI18n()
+
+  const n = useNamespace(namespace)
+
   const dark = textMode === 'dark'
 
   return (
@@ -82,9 +90,13 @@ export const Header = ({
                               })}
                             >
                               <NextLink
-                                href={`${linkResolver('serviceweb').href}${
-                                  institutionSlug ? '/' + institutionSlug : ''
-                                }`}
+                                href={
+                                  institutionSlug
+                                    ? linkResolver('serviceweborganization', [
+                                        institutionSlug,
+                                      ]).href
+                                    : linkResolver('serviceweb').href
+                                }
                               >
                                 <a
                                   className={cn(
@@ -116,9 +128,33 @@ export const Header = ({
                             <ServiceWebSearchInput
                               size="medium"
                               placeholder={searchPlaceholder}
+                              nothingFoundText={n(
+                                'nothingFoundText',
+                                'Ekkert fannst',
+                              )}
                             />
                           </Box>
                         )}
+
+                        <Hidden below="sm">
+                          <Box marginLeft={marginLeft}>
+                            <Link {...linkResolver('login')} skipTab>
+                              <Button
+                                colorScheme={dark ? 'default' : 'negative'}
+                                variant="utility"
+                                icon="person"
+                                as="span"
+                              >
+                                {t?.login ?? 'Login'}
+                              </Button>
+                            </Link>
+                          </Box>
+                        </Hidden>
+                        <Box marginLeft={marginLeft}>
+                          <LanguageToggler
+                            buttonColorScheme={dark ? 'default' : 'negative'}
+                          />
+                        </Box>
                       </Box>
                     </Column>
                   </Columns>

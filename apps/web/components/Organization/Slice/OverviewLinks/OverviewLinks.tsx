@@ -8,10 +8,12 @@ import {
   Stack,
   Text,
   Link,
+  BoxProps,
 } from '@island.is/island-ui/core'
 import { OverviewLinks } from '@island.is/web/graphql/schema'
-import { Image, richText, SliceType } from '@island.is/island-ui/contentful'
+import { Image, SliceType } from '@island.is/island-ui/contentful'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface SliceProps {
   slice: OverviewLinks
@@ -20,6 +22,16 @@ interface SliceProps {
 export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
   const { linkResolver } = useLinkResolver()
 
+  const boxProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: 4,
+      }
+    : {
+        paddingTop: 2,
+      }
+
   return (
     <section
       key={slice.id}
@@ -27,7 +39,7 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
       aria-labelledby={'sliceTitle-' + slice.id}
     >
       <GridContainer>
-        <Box borderTopWidth="standard" borderColor="standard" paddingTop={4}>
+        <Box {...boxProps}>
           <Stack space={6}>
             {slice.overviewLinks.map(
               (
@@ -55,8 +67,8 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                         paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
                       >
                         <Image
-                          url={image.url + '?w=774&fm=webp&q=80'}
-                          thumbnail={image.url + '?w=50&fm=webp&q=80'}
+                          url={image?.url + '?w=774&fm=webp&q=80'}
+                          thumbnail={image?.url + '?w=50&fm=webp&q=80'}
                           {...image}
                         />
                       </Box>
@@ -74,7 +86,7 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                           </Text>
                           {Boolean(intro) && (
                             <Box marginBottom={4}>
-                              {richText(
+                              {webRichText(
                                 [
                                   {
                                     __typename: 'Html',
@@ -86,17 +98,19 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                               )}{' '}
                             </Box>
                           )}
-                          <Link
-                            {...linkResolver(link.type as LinkType, [
-                              link.slug,
-                            ])}
-                            skipTab
-                            newTab={openLinkInNewTab ?? true}
-                          >
-                            <Button icon="arrowForward" variant="text">
-                              {linkTitle}
-                            </Button>
-                          </Link>
+                          {link?.slug && link?.type && (
+                            <Link
+                              {...linkResolver(link.type as LinkType, [
+                                link.slug,
+                              ])}
+                              skipTab
+                              newTab={openLinkInNewTab ?? true}
+                            >
+                              <Button icon="arrowForward" variant="text">
+                                {linkTitle}
+                              </Button>
+                            </Link>
+                          )}
                         </Box>
                       </Box>
                     </GridColumn>

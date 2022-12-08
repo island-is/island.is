@@ -54,6 +54,10 @@ export const InvestigationCaseTypes = [
         value: CaseType.RESTRAINING_ORDER,
       },
       {
+        label: 'Nálgunarbann og brottvísun af heimili',
+        value: CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+      },
+      {
         label: 'Brottvísun af heimili',
         value: CaseType.EXPULSION_FROM_HOME,
       },
@@ -73,85 +77,6 @@ export const InvestigationCaseTypes = [
   },
 ]
 
-export const IndictmentTypes = [
-  {
-    label: 'Barnaverndarlög',
-    value: CaseType.CHILD_PROTECTION_LAWS,
-  },
-  {
-    label: 'Eignaspjöll',
-    value: CaseType.PROPERTY_DAMAGE,
-  },
-  {
-    label: 'Fíkniefnalagabrot',
-    value: CaseType.NARCOTICS_OFFENSE,
-  },
-  {
-    label: 'Fjárdráttur',
-    value: CaseType.EMBEZZLEMENT,
-  },
-  {
-    label: 'Fjárdráttur',
-    value: CaseType.FRAUD,
-  },
-  {
-    label: 'Heimilisofbeldi',
-    value: CaseType.DOMESTIC_VIOLENCE,
-  },
-  {
-    label: 'Líkamsáras sem leiðir til dauða',
-    value: CaseType.ASSAULT_LEADING_TO_DEATH,
-  },
-  {
-    label: 'Manndráp',
-    value: CaseType.MURDER,
-  },
-  {
-    label: 'Meiriháttar líkamsárás',
-    value: CaseType.MAJOR_ASSAULT,
-  },
-  {
-    label: 'Minniháttar líkamsárás',
-    value: CaseType.MINOR_ASSAULT,
-  },
-  {
-    label: 'Nauðgun',
-    value: CaseType.RAPE,
-  },
-  {
-    label: 'Nytjastuldur',
-    value: CaseType.UTILITY_THEFT,
-  },
-  {
-    label: 'Sérlega hættuleg líkamsáras',
-    value: CaseType.AGGRAVATED_ASSAULT,
-  },
-  {
-    label: 'Tilraun til manndráps',
-    value: CaseType.ATTEMPTED_MURDER,
-  },
-  {
-    label: 'Umferðarlagabrot',
-    value: CaseType.TRAFFIC_VIOLATION,
-  },
-  {
-    label: 'Þjófnaður',
-    value: CaseType.THEFT,
-  },
-  {
-    label: 'Önnur hegningarlagabrot',
-    value: CaseType.OTHER_CRIMINAL_OFFENSES,
-  },
-  {
-    label: 'Önnur kynferðisbrot en nauðgun',
-    value: CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE,
-  },
-  {
-    label: 'Önnur sérrefsilagabrot',
-    value: CaseType.OTHER_OFFENSES,
-  },
-]
-
 // Date/time formats
 export const TIME_FORMAT = 'HH:mm'
 
@@ -161,6 +86,7 @@ export const USERS_ROUTE = '/notendur'
 export const CREATE_USER_ROUTE = '/notendur/nyr'
 export const CHANGE_USER_ROUTE = '/notendur/breyta'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
+export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/krafa/akaera/yfirlit'
 
 export const CREATE_RESTRICTION_CASE_ROUTE = '/krafa/ny/gaesluvardhald'
 export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
@@ -192,6 +118,8 @@ export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
 export const INDICTMENTS_DEFENDANT_ROUTE = '/krafa/akaera/akaerdi'
+export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/krafa/akaera/malsgogn'
+export const INDICTMENTS_CASE_FILE_ROUTE = '/krafa/akaera/skjalaskra'
 export const INDICTMENTS_PROCESSING_ROUTE = '/krafa/akaera/malsmedferd'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/krafa/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/krafa/akaera/stadfesta'
@@ -202,8 +130,8 @@ export const RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
 export const RESTRICTION_CASE_COURT_OVERVIEW_ROUTE = '/domur/krafa'
 export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/fyrirtokutimi'
-export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_RULING_ROUTE = '/domur/urskurdur'
+export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_CONFIRMATION_ROUTE = '/domur/stadfesta'
 export const RESTRICTION_CASE_MODIFY_RULING_ROUTE = '/domur/urskurdur/leidretta'
 
@@ -226,6 +154,9 @@ export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
 export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
+export const INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE =
+  '/domur/akaera/malflytjendur'
+export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
 
 // Feedback

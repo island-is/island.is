@@ -1,3 +1,4 @@
+import 'node-fetch'
 import fs from 'fs'
 import {
   createServer as createHttpServer,

@@ -6,10 +6,11 @@ import {
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
-import { AuditService, AuditTemplate } from './audit.service'
+import { AuditService } from './audit.service'
 import { Reflector } from '@nestjs/core'
 import { AUDIT_METADATA_KEY } from './audit.decorator'
 import { getCurrentAuth } from '@island.is/auth-nest-tools'
+import type { AuditTemplate } from './audit.types'
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {

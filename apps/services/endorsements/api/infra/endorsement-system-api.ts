@@ -13,7 +13,7 @@ export const serviceSetup = (_services: {}): ServiceBuilder<'endorsement-system-
     .namespace('endorsement-system')
     .serviceAccount('endorsement-system-api')
     .command('node')
-    .args('--tls-min-v1.0', 'main.js')
+    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
     .postgres(postgresInfo)
     .initContainer({
       containers: [
@@ -24,6 +24,9 @@ export const serviceSetup = (_services: {}): ServiceBuilder<'endorsement-system-
         },
       ],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .env({
       EMAIL_REGION: 'eu-west-1',
@@ -42,6 +45,7 @@ export const serviceSetup = (_services: {}): ServiceBuilder<'endorsement-system-
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL',

@@ -1,7 +1,6 @@
-import {
-  DEPRECATED_DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
+import type { User } from '@island.is/api/domains/national-registry'
+
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -12,9 +11,14 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { m } from './messages'
-import { Events, States, Roles } from './constants'
+import { Events, States, Roles, ApiActions } from './constants'
 import { dataSchema } from './utils/dataSchema'
 import { Features } from '@island.is/feature-flags'
+
+import { getCurrentUserType } from './utils/helpers'
+
+import { AuthDelegationType } from '../types/schema'
+import { FSIUSERTYPE } from '../types'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
@@ -22,22 +26,42 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.FINANCIAL_STATEMENTS_INAO,
-  name: m.applicationTitle,
+  name: (application) => {
+    const { answers, externalData } = application
+    const userType = getCurrentUserType(answers, externalData)
+    const hasApprovedExternalData = application.answers?.approveExternalData
+    const currentUser = hasApprovedExternalData
+      ? (externalData?.nationalRegistry?.data as User)
+      : undefined
+
+    if (userType === FSIUSERTYPE.INDIVIDUAL) {
+      return currentUser
+        ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.name}`
+        : m.applicationTitleAlt
+    }
+
+    return currentUser?.name
+      ? `${m.applicationTitle.defaultMessage} - ${currentUser.name}`
+      : m.applicationTitle
+  },
   institution: m.institutionName,
   dataSchema,
   featureFlag: Features.financialStatementInao,
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
-          actionCard: {
-            title: m.applicationTitle,
+          status: 'draft',
+          onEntry: {
+            apiModuleAction: ApiActions.getUserType,
+            shouldPersistToExternalData: true,
           },
-          progress: 0.4,
-          lifecycle: EphemeralStateLifeCycle,
 
+          progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -49,6 +73,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -59,9 +84,13 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
-
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -70,7 +99,6 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

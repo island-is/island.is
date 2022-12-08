@@ -1,6 +1,10 @@
 import chunk from 'lodash/chunk'
 import isNumber from 'lodash/isNumber'
-import { amountFormat, formatNationalId } from '@island.is/service-portal/core'
+import {
+  amountFormat,
+  ExcludesFalse,
+  formatNationalId,
+} from '@island.is/service-portal/core'
 import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 
@@ -15,7 +19,6 @@ import {
 
 import { displayWithUnit } from './displayWithUnit'
 import isValid from 'date-fns/isValid/index.js'
-type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 const basicInfoArray = (
   data: VehiclesBasicInfo,
@@ -369,50 +372,6 @@ const technicalInfoArray = (
         data.carryingCapacity?.toString() && {
           title: formatMessage(messages.carryingCapacity),
           value: displayWithUnit(data.carryingCapacity?.toString(), 'kg'),
-        },
-        data.axleTotalWeight?.toString() && {
-          title: formatMessage(messages.axleTotalWeight),
-          value: displayWithUnit(data.axleTotalWeight?.toString(), 'kg'),
-        },
-        data.tyres?.axle1 && {
-          title: formatMessage(messages.axle),
-          value: '1',
-        },
-        data.tyres?.axle1 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle1,
-        },
-        data.tyres?.axle2 && {
-          title: formatMessage(messages.axle),
-          value: '2',
-        },
-        data.tyres?.axle2 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle2,
-        },
-        data.tyres?.axle3 && {
-          title: formatMessage(messages.axle),
-          value: '3',
-        },
-        data.tyres?.axle3 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle3,
-        },
-        data.tyres?.axle4 && {
-          title: formatMessage(messages.axle),
-          value: '4',
-        },
-        data.tyres?.axle4 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle4,
-        },
-        data.tyres?.axle5 && {
-          title: formatMessage(messages.axle),
-          value: '5',
-        },
-        data.tyres?.axle5 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle5,
         },
       ].filter((Boolean as unknown) as ExcludesFalse),
       2,

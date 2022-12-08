@@ -2,6 +2,7 @@ import {
   SyslumennAuction,
   Homestay,
   PaginatedOperatingLicenses,
+  OperatingLicensesCSV,
   CertificateInfoResponse,
   DistrictCommissionerAgencies,
   DataUploadResponse,
@@ -13,17 +14,24 @@ import {
   AssetName,
   EstateRegistrant,
   EstateRelations,
+  EstateInfo,
+  RealEstateAgent,
+  Lawyer,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
   mapHomestay,
   mapPaginatedOperatingLicenses,
+  mapOperatingLicensesCSV,
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
   constructUploadDataObject,
   mapAssetName,
   mapEstateRegistrant,
+  mapEstateInfo,
+  mapRealEstateAgent,
+  mapLawyer,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -108,6 +116,22 @@ export class SyslumennService {
     return (syslumennAuctions ?? []).map(mapSyslumennAuction)
   }
 
+  async getRealEstateAgents(): Promise<RealEstateAgent[]> {
+    const { id, api } = await this.createApi()
+    const agents = await api.fasteignasalarGet({
+      audkenni: id,
+    })
+    return (agents ?? []).map(mapRealEstateAgent)
+  }
+
+  async getLawyers(): Promise<Lawyer[]> {
+    const { id, api } = await this.createApi()
+    const lawyers = await api.logmannalistiGet({
+      audkenni: id,
+    })
+    return (lawyers ?? []).map(mapLawyer)
+  }
+
   async getOperatingLicenses(
     searchQuery?: string,
     pageNumber?: number,
@@ -151,6 +175,23 @@ export class SyslumennService {
       paginationInfo,
       await virkLeyfiApiResponse.value(),
     )
+  }
+
+  async getOperatingLicensesCSV(): Promise<OperatingLicensesCSV> {
+    const { id, api } = await this.createApi()
+    const csv = await api
+      .withMiddleware({
+        pre: async (context) => {
+          context.init.headers = Object.assign({}, context.init.headers, {
+            Accept: 'text/plain',
+            'Content-Type': 'text/plain',
+          })
+        },
+      })
+      .virkLeyfiCsvGet({
+        audkenni: id,
+      })
+    return mapOperatingLicensesCSV(csv)
   }
 
   async sealDocument(document: string): Promise<SvarSkeyti> {
@@ -385,5 +426,16 @@ export class SyslumennService {
       },
     })
     return res
+  }
+
+  async getEstateInfo(nationalId: string): Promise<EstateInfo[]> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarUrDanarbuiPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+    return res.yfirlit?.map(mapEstateInfo) ?? []
   }
 }

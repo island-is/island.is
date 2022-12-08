@@ -1,5 +1,5 @@
 import { error } from './messages/index'
-import * as z from 'zod'
+import { z } from 'zod'
 import {
   Employment,
   HomeCircumstances,

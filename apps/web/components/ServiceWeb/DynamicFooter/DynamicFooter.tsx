@@ -1,4 +1,3 @@
-import React from 'react'
 import { Organization } from '@island.is/web/graphql/schema'
 
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -11,11 +10,13 @@ import {
 interface DynamicFooterProps {
   organization: Organization
   institutionSlug: string
+  namespace: Record<string, string>
 }
 
 export const DynamicFooter = ({
   organization,
   institutionSlug,
+  namespace,
 }: DynamicFooterProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -25,7 +26,7 @@ export const DynamicFooter = ({
     return null
   }
 
-  const contactLink = `${linkResolver('serviceweb').href}/${slug}/hafa-samband`
+  const contactLink = linkResolver('servicewebcontact', [slug]).href
 
   return footerEnabled.includes(slug) ? (
     <OrganizationFooter organizations={[organization]} />
@@ -35,6 +36,7 @@ export const DynamicFooter = ({
       logoSrc={organization.logo?.url}
       phone={organization.phone}
       contactLink={contactLink}
+      namespace={namespace}
     />
   )
 }

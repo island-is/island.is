@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import {
   Box,
   GridColumn,
@@ -15,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import Illustration from './Illustration'
 import { Locale } from '@island.is/shared/types'
+import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './Footer.css'
 
@@ -24,6 +25,7 @@ interface Props {
   logoSrc?: string
   contactLink?: string
   phone?: string
+  namespace: Record<string, string>
 }
 
 export const Footer: FC<Props> = ({
@@ -32,7 +34,9 @@ export const Footer: FC<Props> = ({
   logoSrc,
   contactLink,
   phone,
+  namespace,
 }) => {
+  const n = useNamespace(namespace)
   return (
     <Hidden print={true}>
       <Box as="footer" position="relative" background="blueberry100">
@@ -73,7 +77,10 @@ export const Footer: FC<Props> = ({
                       {contactLink && (
                         <>
                           <Text variant="h4">
-                            Ertu með ábendingu eða spurningu?
+                            {n(
+                              'doYouHaveAQuestion',
+                              'Ertu með ábendingu eða spurningu?',
+                            )}
                           </Text>
                           <LinkContext.Provider
                             value={{
@@ -90,7 +97,9 @@ export const Footer: FC<Props> = ({
                             }}
                           >
                             <Text color={'blue600'}>
-                              <a href={contactLink}>Sendu okkur línu</a>
+                              <a href={contactLink}>
+                                {n('sendUsALine', 'Sendu okkur línu')}
+                              </a>
                             </Text>
                           </LinkContext.Provider>
                         </>
@@ -111,7 +120,7 @@ export const Footer: FC<Props> = ({
                           }}
                         >
                           <Inline space={1}>
-                            <Text>Sími:</Text>
+                            <Text>{n('telephone', 'Sími')}:</Text>
                             <Text color="blue600">
                               <a href={`tel:${phone}`}>{phone}</a>
                             </Text>

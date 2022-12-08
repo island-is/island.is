@@ -11,33 +11,30 @@ import {
 
 @Injectable()
 export class CourtClientUnavailableService implements CourtClientService {
-  async createCase(_clientId: string, _args: CreateCaseArgs): Promise<string> {
+  async createCase(_courtId: string, _args: CreateCaseArgs): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }
 
   async createDocument(
-    _clientId: string,
+    _courtId: string,
     _args: CreateDocumentArgs,
   ): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }
 
   async createThingbok(
-    _clientId: string,
+    _courtId: string,
     _args: CreateThingbokArgs,
   ): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }
 
-  async createEmail(
-    _clientId: string,
-    _args: CreateEmailArgs,
-  ): Promise<string> {
+  async createEmail(_courtId: string, _args: CreateEmailArgs): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }
 
   async uploadStream(
-    _clientId: string,
+    _courtId: string,
     _args: UploadStreamArgs,
   ): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')

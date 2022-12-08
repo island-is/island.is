@@ -60,6 +60,12 @@ export default {
     'form',
     'formField',
     'graphCard',
+    'powerBiSlice',
+    'tableSlice',
+    'emailSignup',
+    'tabSection',
+    'tabContent',
+    'footerItem',
   ],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',

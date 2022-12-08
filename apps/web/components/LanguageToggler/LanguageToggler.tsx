@@ -1,4 +1,4 @@
-import React, { useContext, ReactElement, useState, FC } from 'react'
+import { useContext, ReactElement, useState, FC } from 'react'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
 import {
@@ -35,12 +35,9 @@ export const LanguageToggler = ({
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const {
-    pageContentfulId,
-    subpageContentfulId,
-    resolveLinkTypeLocally,
-    globalNamespace,
-  } = useContext(GlobalContext)
+  const { contentfulIds, resolveLinkTypeLocally, globalNamespace } = useContext(
+    GlobalContext,
+  )
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
   const otherLanguage = (activeLocale === 'en' ? 'is' : 'en') as Locale
@@ -53,7 +50,7 @@ export const LanguageToggler = ({
 
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
 
-    if (!pageContentfulId) {
+    if (!contentfulIds?.length) {
       const { type } = typeResolver(pathWithoutQueryParams, true)
       const pagePath = linkResolver(type, [], otherLanguage).href
 
@@ -65,7 +62,7 @@ export const LanguageToggler = ({
     }
 
     // Create queries that fetch slug information from Contentful
-    const queries = [pageContentfulId, subpageContentfulId]
+    const queries = contentfulIds
       .filter(Boolean)
       .map((id) => getContentSlug(id))
 
@@ -101,7 +98,10 @@ export const LanguageToggler = ({
     }
 
     if (resolveLinkTypeLocally) {
-      type = typeResolver(pathWithoutQueryParams).type
+      const localType = typeResolver(pathWithoutQueryParams)?.type
+      if (localType) {
+        type = localType
+      }
     }
 
     // Some content models are set up such that a slug is generated from the title

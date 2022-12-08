@@ -18,6 +18,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   amountFormat,
+  ErrorScreen,
   ExpandHeader,
   ExpandRow,
   formSubmit,
@@ -102,6 +103,19 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   const financeStatusZero = financeStatusData?.statusTotals === 0
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.finance).toLowerCase(),
+        })}
+      />
+    )
+  }
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -117,7 +131,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       />
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             {financeStatusData.organizations?.length > 0 ||
             financeStatusZero ? (
               <Box display="flex" justifyContent="flexStart" printHidden>
@@ -206,14 +220,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {error && (
-            <Box>
-              <AlertBanner
-                description={formatMessage(m.errorFetch)}
-                variant="error"
-              />
-            </Box>
-          )}
+
           {financeStatusData?.message && (
             <Box paddingY={2}>
               <AlertBanner

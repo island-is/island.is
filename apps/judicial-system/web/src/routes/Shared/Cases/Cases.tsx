@@ -2,11 +2,14 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import router from 'next/router'
+import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
+  CaseQuery,
   DropdownMenu,
   Logo,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
@@ -17,15 +20,15 @@ import {
   UserRole,
   Feature,
   isInvestigationCase,
+  isIndictmentCase,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system/types'
@@ -34,8 +37,8 @@ import * as constants from '@island.is/judicial-system/consts'
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
-import * as styles from './Cases.css'
 import { cases as m } from './Cases.strings'
+import * as styles from './Cases.css'
 
 const SectionTitle: React.FC = ({ children }) => {
   return (
@@ -72,8 +75,7 @@ export const Cases: React.FC = () => {
   } = useSections()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isJudge = user?.role === UserRole.JUDGE
-  const isRegistrar = user?.role === UserRole.REGISTRAR
+  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
   const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
   const isPrisonAdminUser =
     user?.institution?.type === InstitutionType.PRISON_ADMIN
@@ -105,37 +107,24 @@ export const Cases: React.FC = () => {
 
   useEffect(() => {
     if (resCases && !activeCases) {
-      // Remove deleted cases
       const casesWithoutDeleted = resCases.filter((c: Case) => {
         return c.state !== CaseState.DELETED
       })
 
-      setActiveCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? !c.isValidToDateInThePast && c.rulingDate
-            : !c.rulingDate
-        }),
-      )
+      const [active, past] = partition(casesWithoutDeleted, (c: Case) => {
+        if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
+          return false
+        } else if (isPrisonAdminUser || isPrisonUser) {
+          return !c.isValidToDateInThePast && c.rulingDate
+        } else {
+          return !c.rulingDate
+        }
+      })
 
-      setPastCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? c.isValidToDateInThePast && c.rulingDate
-            : c.rulingDate
-        }),
-      )
+      setActiveCases(active)
+      setPastCases(past)
     }
-  }, [
-    activeCases,
-    setActiveCases,
-    isProsecutor,
-    isJudge,
-    isRegistrar,
-    resCases,
-    isPrisonAdminUser,
-    isPrisonUser,
-  ])
+  }, [activeCases, setActiveCases, resCases, isPrisonAdminUser, isPrisonUser])
 
   const deleteCase = async (caseToDelete: Case) => {
     if (
@@ -157,13 +146,18 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
+
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
-    } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
+      if (isIndictmentCase(caseToOpen.type)) {
+        routeTo = `${constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+      } else {
+        routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+      }
+    } else if (isExtendedCourtRole(role)) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getRestrictionCaseCourtSections(caseToOpen, user),
@@ -173,9 +167,13 @@ export const Cases: React.FC = () => {
           getInvestigationCaseCourtSections(caseToOpen, user),
         ).href
       } else {
-        // Route to Indictment Overivew section since it always a valid step and
+        // Route to Indictment Overview section since it always a valid step and
         // would be skipped if we route to the last valid step
-        routeTo = getIndictmentsCourtSections(caseToOpen).children[0].href
+        const routeToOpen =
+          getIndictmentsCourtSections(caseToOpen).children[0]?.href ||
+          `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+
+        routeTo = routeToOpen
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -187,9 +185,12 @@ export const Cases: React.FC = () => {
           getInvestigationCaseProsecutorSection(caseToOpen, user),
         ).href
       } else {
-        routeTo = findLastValidStep(
+        const lastValidStep = findLastValidStep(
           getIndictmentCaseProsecutorSection(caseToOpen),
-        ).href
+        )
+        routeTo =
+          lastValidStep?.href ??
+          `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${caseToOpen.id}`
       }
     }
 
@@ -217,7 +218,13 @@ export const Cases: React.FC = () => {
                     menuLabel="Tegund kröfu"
                     icon="add"
                     items={
-                      features.includes(Feature.INDICTMENTS)
+                      // TODO Remove procecutor office id check when indictments are ready
+                      features.includes(Feature.INDICTMENTS) ||
+                      [
+                        '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
+                        '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
+                        'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
+                      ].includes(user.institution?.id ?? '')
                         ? [
                             {
                               href: constants.CREATE_INDICTMENT_ROUTE,
@@ -263,6 +270,29 @@ export const Cases: React.FC = () => {
                   />
                 </Box>
               )}
+              {isRepresentative &&
+                // TODO Remove procecutor office id check when indictments are ready
+                (features.includes(Feature.INDICTMENTS) ||
+                  [
+                    '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
+                    '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
+                    'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
+                  ].includes(user.institution?.id ?? '')) && (
+                  <Box display={['none', 'none', 'block']}>
+                    <DropdownMenu
+                      dataTestId="createCaseDropdown"
+                      menuLabel="Tegund kröfu"
+                      icon="add"
+                      items={[
+                        {
+                          href: constants.CREATE_INDICTMENT_ROUTE,
+                          title: capitalize(formatMessage(core.indictment)),
+                        },
+                      ]}
+                      title={formatMessage(m.createCaseButton)}
+                    />
+                  </Box>
+                )}
             </div>
           )
         )}

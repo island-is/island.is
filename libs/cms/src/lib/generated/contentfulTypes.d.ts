@@ -12,6 +12,15 @@ export interface IAccordionSliceFields {
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
+
+  /** Title Heading Level */
+  titleHeadingLevel?: 'h2' | 'h3' | 'h4' | 'h5' | undefined
 }
 
 /** A slice with accordions */
@@ -50,23 +59,30 @@ export interface IAlertBannerFields {
   linkTitle?: string | undefined
 
   /** Link */
-  link?:
-    | IAboutSubPage
-    | IArticle
-    | IArticleCategory
-    | ISubArticle
-    | ILifeEventPage
-    | ILinkUrl
-    | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
-    | undefined
+  link?: ILinkUrl | undefined
 
   /** Is dismissable */
   isDismissable: boolean
 
   /** dismissed for days */
   dismissedForDays: number
+
+  /** Service Portal Paths */
+  servicePortalPaths?:
+    | (
+        | '*'
+        | 'postholf'
+        | 'umsoknir'
+        | 'min-gogn'
+        | 'skirteini'
+        | 'leyfisbref'
+        | 'menntun'
+        | 'fasteignir'
+        | 'fjarmal'
+        | 'okutaeki'
+        | 'stillingar'
+      )[]
+    | undefined
 }
 
 /** Alert banner will show on top of all pages */
@@ -466,6 +482,9 @@ export interface IDistrictsFields {
 
   /** Links */
   links?: ILink[] | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IDistricts extends Entry<IDistrictsFields> {
@@ -478,6 +497,43 @@ export interface IDistricts extends Entry<IDistrictsFields> {
     contentType: {
       sys: {
         id: 'districts'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IEmailSignupFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Description */
+  description?: string | undefined
+
+  /** Form Fields */
+  formFields?: IFormField[] | undefined
+
+  /** Signup Type */
+  signupType?: 'mailchimp' | 'zenter' | undefined
+
+  /** Configuration */
+  configuration?: Record<string, any> | undefined
+
+  /** Translations */
+  translations?: Record<string, any> | undefined
+}
+
+export interface IEmailSignup extends Entry<IEmailSignupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'emailSignup'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -689,7 +745,7 @@ export interface IFeaturedArticlesFields {
   link?: ILink | undefined
 
   /** Automatically Fetch Articles */
-  automaticallyFetchArticles: boolean
+  automaticallyFetchArticles?: boolean | undefined
 
   /** Sort By */
   sortBy?: 'popularity' | 'importance' | undefined
@@ -708,6 +764,9 @@ export interface IFeaturedArticlesFields {
 
   /** Article Count */
   articleCount?: number | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -805,11 +864,21 @@ export interface IFormFieldFields {
   /** Title */
   title: string
 
+  /** Name */
+  name?: string | undefined
+
   /** Placeholder */
   placeholder?: string | undefined
 
   /** Type */
-  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+  type:
+    | 'input'
+    | 'text'
+    | 'dropdown'
+    | 'radio'
+    | 'acceptTerms'
+    | 'email'
+    | 'checkboxes'
 
   /** Required */
   required?: boolean | undefined
@@ -1284,6 +1353,9 @@ export interface ILifeEventPageFields {
   /** intro */
   intro?: string | undefined
 
+  /** short intro */
+  shortIntro?: string | undefined
+
   /** image */
   image?: Asset | undefined
 
@@ -1298,6 +1370,12 @@ export interface ILifeEventPageFields {
 
   /** category */
   category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
+
+  /** Page Type */
+  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1321,7 +1399,7 @@ export interface ILifeEventPageListSliceFields {
   /** Title */
   title?: string | undefined
 
-  /** Life Event Page List */
+  /** List */
   lifeEventPageList?: ILifeEventPage[] | undefined
 }
 
@@ -1578,6 +1656,9 @@ export interface IMailingListSignupFields {
   /** Category Label */
   categoryLabel?: string | undefined
 
+  /** Inputs */
+  inputs?: Record<string, any> | undefined
+
   /** Categories */
   categories?: Record<string, any> | undefined
 
@@ -1586,6 +1667,9 @@ export interface IMailingListSignupFields {
 
   /** Signup URL */
   signupUrl: string
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1724,6 +1808,9 @@ export interface IMultipleStatisticsFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IMultipleStatistics extends Entry<IMultipleStatisticsFields> {
@@ -1777,14 +1864,17 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Tilkynning */
+  tilkynning?: string | undefined
+
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
   /** Title */
   title: string
 
   /** Subtitle */
-  subtitle: string
+  subtitle?: string | undefined
 
   /** Slug */
   slug: string
@@ -1894,6 +1984,9 @@ export interface IOneColumnTextFields {
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2063,6 +2156,9 @@ export interface IOrganizationFields {
 
   /** Shows up on the organizations page */
   showsUpOnTheOrganizationsPage?: boolean | undefined
+
+  /** Has A Landing Page */
+  hasALandingPage?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2105,6 +2201,10 @@ export interface IOrganizationPageFields {
     | 'hsn'
     | 'fiskistofa'
     | 'landlaeknir'
+    | 'rikislogmadur'
+    | 'landskjorstjorn'
+    | 'landing_page'
+    | 'fjarsysla-rikisins'
 
   /** Slices */
   slices?:
@@ -2216,16 +2316,20 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
+        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
         | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
         | IFeaturedArticles
         | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | IPowerBiSlice
+        | ISliceConnectedComponent
         | ITabSection
         | ITeamList
         | ITellUsAStory
@@ -2298,6 +2402,9 @@ export interface IOverviewLinksFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
@@ -2351,15 +2458,52 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
   }
 }
 
+export interface IPowerBiSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Config */
+  config: Record<string, any>
+
+  /** Workspace ID */
+  workSpaceId?: string | undefined
+
+  /** Report ID */
+  reportId?: string | undefined
+
+  /** Owner */
+  owner?: 'Fiskistofa' | undefined
+}
+
+/** A Slice that embeds a Power BI report */
+
+export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'powerBiSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProcessEntryFields {
   /** Type */
   type:
-    | 'Digital'
-    | 'Not digital'
     | 'Digital w/login'
-    | 'Not digital w/login'
     | 'No type'
     | 'Application system'
+    | 'Leyfisveitingagatt'
+    | 'Drop and sign'
+    | 'Paper'
+    | 'Ísland.is mínar síður'
 
   /** Process title */
   processTitle: string
@@ -2402,7 +2546,13 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
+  theme:
+    | 'default'
+    | 'traveling-to-iceland'
+    | 'election'
+    | 'ukraine'
+    | 'opinbernyskopun'
+    | 'gagnasidur-fiskistofu'
 
   /** Sidebar */
   sidebar: boolean
@@ -2471,6 +2621,18 @@ export interface IProjectPageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
+
+  /** Back Link */
+  backLink?: ILink | undefined
+
+  /** Content Is Full Width */
+  contentIsFullWidth?: boolean | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2549,6 +2711,9 @@ export interface IQuestionAndAnswerFields {
 
   /** Answer */
   answer?: Document | undefined
+
+  /** Publish Date */
+  publishDate?: string | undefined
 }
 
 export interface IQuestionAndAnswer extends Entry<IQuestionAndAnswerFields> {
@@ -2676,11 +2841,22 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'ElectronicRegistrations/MonthlyStatistics'
     | 'LatestNewsCard'
+    | 'Fiskistofa/ShipSearch'
+    | 'Fiskistofa/ShipSearchSidebarInput'
+    | 'Fasteignasalar/RealEstateAgents'
+    | 'Lögmenn/Lawyers'
+    | 'Fiskistofa/CatchQuotaCalculator'
+    | 'Fiskistofa/StraddlingStockCalculator'
+    | 'Fiskistofa/SelectedShip'
     | undefined
 
-  /** JSON */
+  /** Localized JSON */
   json?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 export interface ISliceConnectedComponent
@@ -2793,9 +2969,6 @@ export interface IStepFields {
 
   /** Subtitle */
   subtitle?: Document | undefined
-
-  /** Options */
-  options?: Record<string, any> | undefined
 
   /** Config */
   config?: Record<string, any> | undefined
@@ -3141,6 +3314,31 @@ export interface ITabContent extends Entry<ITabContentFields> {
     contentType: {
       sys: {
         id: 'tabContent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITableSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Table Content */
+  tableContent?: Document | undefined
+}
+
+export interface ITableSlice extends Entry<ITableSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'tableSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3724,6 +3922,7 @@ export type CONTENT_TYPE =
   | 'cardSection'
   | 'contactUs'
   | 'districts'
+  | 'emailSignup'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
@@ -3772,6 +3971,7 @@ export type CONTENT_TYPE =
   | 'organizationTag'
   | 'overviewLinks'
   | 'pageHeader'
+  | 'powerBiSlice'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'
@@ -3793,6 +3993,7 @@ export type CONTENT_TYPE =
   | 'supportQNA'
   | 'supportSubCategory'
   | 'tabContent'
+  | 'tableSlice'
   | 'tabSection'
   | 'teamList'
   | 'teamMember'

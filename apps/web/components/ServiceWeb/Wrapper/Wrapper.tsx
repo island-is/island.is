@@ -1,17 +1,17 @@
-import React, { FC, useEffect, useState, createContext } from 'react'
-import Head from 'next/head'
+import { FC, useEffect, useState, createContext, useMemo } from 'react'
 import { Box } from '@island.is/island-ui/core'
-
-import { Organization, Tag } from '@island.is/web/graphql/schema'
+import { Organization } from '@island.is/web/graphql/schema'
 import {
   ServiceWebSearchSection,
   ServiceWebHeader,
   ServiceWebBackground,
   ServiceWebDynamicFooter,
   HeadWithSocialSharing,
+  WatsonChatPanel,
 } from '@island.is/web/components'
+import { useI18n } from '@island.is/web/i18n'
 import { BackgroundVariations, Options, TextModes } from '../types'
-import config from '../config'
+import config, { watsonConfig } from '../config'
 
 import * as styles from './Wrapper.css'
 
@@ -57,6 +57,7 @@ export const Wrapper: FC<WrapperProps> = ({
   indexableBySearchEngine = false,
   children,
 }) => {
+  const { activeLocale } = useI18n()
   const [options, setOptions] = useState<Options>({
     textMode: 'dark',
   })
@@ -73,15 +74,20 @@ export const Wrapper: FC<WrapperProps> = ({
     setTextMode(options.textMode)
   }, [options])
 
+  const namespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [],
+  )
+
   return (
     <>
       <HeadWithSocialSharing
         title={pageTitle}
         description={pageDescription}
-        imageUrl={organization.serviceWebFeaturedImage?.url}
-        imageContentType={organization.serviceWebFeaturedImage?.contentType}
-        imageWidth={organization.serviceWebFeaturedImage?.width?.toString()}
-        imageHeight={organization.serviceWebFeaturedImage?.height?.toString()}
+        imageUrl={organization?.serviceWebFeaturedImage?.url}
+        imageContentType={organization?.serviceWebFeaturedImage?.contentType}
+        imageWidth={organization?.serviceWebFeaturedImage?.width?.toString()}
+        imageHeight={organization?.serviceWebFeaturedImage?.height?.toString()}
       >
         {!indexableBySearchEngine && (
           <meta name="robots" content="noindex, nofollow" />
@@ -94,6 +100,7 @@ export const Wrapper: FC<WrapperProps> = ({
           title={headerTitle}
           textMode={textMode}
           searchPlaceholder={searchPlaceholder}
+          namespace={namespace}
         />
         <ServiceWebBackground
           variation={
@@ -111,6 +118,7 @@ export const Wrapper: FC<WrapperProps> = ({
               title={searchTitle}
               textMode={textMode}
               searchPlaceholder={searchPlaceholder}
+              namespace={namespace}
             />
           </Box>
         )}
@@ -118,8 +126,12 @@ export const Wrapper: FC<WrapperProps> = ({
         <ServiceWebDynamicFooter
           institutionSlug={institutionSlug}
           organization={organization}
+          namespace={namespace}
         />
       </ServiceWebContext.Provider>
+      {organization?.id in watsonConfig[activeLocale] && (
+        <WatsonChatPanel {...watsonConfig[activeLocale][organization.id]} />
+      )}
     </>
   )
 }

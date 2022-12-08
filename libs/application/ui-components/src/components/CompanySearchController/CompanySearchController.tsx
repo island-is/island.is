@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { AsyncSearch, Box, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -6,7 +6,10 @@ import { coreErrorMessages } from '@island.is/application/core'
 import debounce from 'lodash/debounce'
 import { CompanySearchItem } from './CompanySearchItem'
 import { debounceTime } from '@island.is/shared/constants'
-import { useSearchCompaniesLazyQuery } from '../../../gen/graphql'
+import {
+  useSearchCompaniesLazyQuery,
+  useIsEmployerValidLazyQuery,
+} from '../../../gen/graphql'
 
 interface Props {
   id: string
@@ -20,6 +23,7 @@ interface Props {
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
   setNationalId?: (s: string) => void
+  checkIfEmployerIsOnForbiddenList?: boolean
 }
 
 export const CompanySearchController: FC<Props> = ({
@@ -34,13 +38,25 @@ export const CompanySearchController: FC<Props> = ({
   colored = true,
   setLabelToDataSchema = true,
   setNationalId,
+  checkIfEmployerIsOnForbiddenList,
 }) => {
-  const { clearErrors, setValue } = useFormContext()
+  const { clearErrors, setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
-
   const [searchQuery, setSearchQuery] = useState('')
-
   const [search, { loading, data }] = useSearchCompaniesLazyQuery()
+  const [
+    getIsEmployerValid,
+    { loading: employerValidLoading, data: employerValidData },
+  ] = useIsEmployerValidLazyQuery()
+  const [companyIsValid, setCompanyIsValid] = useState<boolean>(false)
+
+  useEffect(() => {
+    const isValid = employerValidData?.isEmployerValid ?? true
+    const currForm = getValues(id)
+    currForm.validEmployer = isValid
+    setCompanyIsValid(isValid)
+    setValue(id, currForm)
+  }, [employerValidData?.isEmployerValid, getValues, id, setValue])
 
   const debouncer = useMemo(() => {
     return debounce(search, debounceTime.search)
@@ -89,7 +105,7 @@ export const CompanySearchController: FC<Props> = ({
 
   const getIsatNumber = (nationalId: string) => {
     if (!shouldIncludeIsatNumber) {
-      return ''
+      return
     }
 
     const companies = data?.companyRegistryCompanies?.data ?? []
@@ -100,7 +116,7 @@ export const CompanySearchController: FC<Props> = ({
     )
 
     if (!filteredCompany?.companyInfo) {
-      return ''
+      return
     }
 
     const vats = filteredCompany.companyInfo.vat
@@ -109,11 +125,22 @@ export const CompanySearchController: FC<Props> = ({
       if (!v.dateOfDeregistration && v.classification) {
         const c = v.classification.find((c) => c.type === 'Aðal')
         if (c) {
-          return `${c.number} - ${c.name}`
+          const isat = `${c.number} - ${c.name}`
+          const currForm = getValues(id)
+          currForm.isat = isat
+          setValue(id, currForm)
         }
       }
     }
-    return ''
+  }
+
+  const callValidateEmployer = (nationalId: string) => {
+    if (!checkIfEmployerIsOnForbiddenList) {
+      return
+    }
+    getIsEmployerValid({
+      variables: { input: { companyId: nationalId } },
+    })
   }
 
   return (
@@ -125,7 +152,7 @@ export const CompanySearchController: FC<Props> = ({
           return (
             <AsyncSearch
               label={label}
-              loading={loading}
+              loading={loading || employerValidLoading}
               options={getSearchOptions(
                 searchQuery,
                 data?.companyRegistryCompanies,
@@ -149,23 +176,39 @@ export const CompanySearchController: FC<Props> = ({
               onChange={(selection) => {
                 const { value, label } = selection || {}
                 if (value && label) {
+                  callValidateEmployer(value)
                   setNationalId && setNationalId(value)
                   setValue(
                     id,
                     setLabelToDataSchema
                       ? {
-                          isat: getIsatNumber(value),
                           nationalId: value,
                           label,
                         }
-                      : { isat: getIsatNumber(value), nationalId: value },
+                      : { nationalId: value },
                   )
+                  getIsatNumber(value)
                 }
               }}
             />
           )
         }}
       />
+      {checkIfEmployerIsOnForbiddenList &&
+        !employerValidLoading &&
+        !companyIsValid && (
+          <Box marginTop={[2, 2]}>
+            <AlertMessage
+              type="error"
+              title={formatMessage(
+                coreErrorMessages.invalidCompanySelectedTitle,
+              )}
+              message={formatMessage(
+                coreErrorMessages.invalidCompanySelectedMessage,
+              )}
+            />
+          </Box>
+        )}
       {noResultsFound && (
         <Box marginTop={[2, 2]}>
           <AlertMessage

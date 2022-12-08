@@ -19,6 +19,7 @@ export const CreateFileMutation = gql`
       key
       size
       category
+      policeCaseNumber
     }
   }
 `

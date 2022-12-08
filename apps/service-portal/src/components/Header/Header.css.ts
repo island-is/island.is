@@ -8,7 +8,6 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const header = style({
   position: 'fixed',
-  top: 0,
   left: 0,
   zIndex: zIndex.header,
   display: 'flex',
@@ -21,6 +20,7 @@ export const header = style({
       height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
     },
   },
+  transition: 'all 250ms ease-in-out',
 })
 
 export const placeholder = style({

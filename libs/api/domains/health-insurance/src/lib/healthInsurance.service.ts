@@ -1,35 +1,33 @@
+import { PersonApi } from '@island.is/clients/health-insurance-v2'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-
-import { VistaSkjalModel } from './graphql/models'
-import { HealthInsuranceAPI } from './soap'
-import { VistaSkjalInput } from '@island.is/health-insurance'
-
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import type { Logger } from '@island.is/logging'
 @Injectable()
 export class HealthInsuranceService {
   constructor(
-    @Inject(HealthInsuranceAPI)
-    private healthInsuranceAPI: HealthInsuranceAPI,
+    private readonly personApi: PersonApi,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
-  getProfun(): Promise<string> {
-    return this.healthInsuranceAPI.getProfun()
-  }
-
-  // return caseIds array with Pending status
-  async getPendingApplication(nationalId: string): Promise<number[]> {
-    return this.healthInsuranceAPI.getPendingApplication(nationalId)
-  }
-
   // return true or false when asked if person is health insured
-  async isHealthInsured(nationalId: string, date?: number): Promise<boolean> {
-    return this.healthInsuranceAPI.isHealthInsured(nationalId, date)
-  }
+  async isHealthInsured(nationalId: string, date: Date): Promise<boolean> {
+    const formattedDate = format(new Date(date), 'yyyy-MM-dd', {
+      locale: is,
+    })
 
-  // Apply for Health insurance ( number 570 is identify number for health insurance application)
-  async applyInsurance(
-    inputs: VistaSkjalInput,
-    nationalId: string,
-  ): Promise<VistaSkjalModel> {
-    return this.healthInsuranceAPI.applyInsurance(570, inputs, nationalId)
+    try {
+      const resp = await this.personApi.personIsHealthInsured({
+        date: formattedDate,
+        nationalID: nationalId,
+      })
+
+      return resp.isHealthInsured === 1
+    } catch (error) {
+      this.logger.error('Error fetching health insurance data', error)
+      return false
+    }
   }
 }

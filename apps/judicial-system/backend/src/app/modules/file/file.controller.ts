@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common'
@@ -18,9 +19,20 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import {
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+  assistantRule,
+} from '../../guards'
 import {
   Case,
   CaseNotCompletedGuard,
@@ -29,6 +41,7 @@ import {
   CaseReadGuard,
   CaseReceivedGuard,
   CaseWriteGuard,
+  CaseTypeGuard,
 } from '../case'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -41,6 +54,7 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
+import { UpdateFilesDto } from './dto/updateFile.dto'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
@@ -52,7 +66,13 @@ export class FileController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    registrarRule,
+    judgeRule,
+    assistantRule,
+  )
   @Post('file/url')
   @ApiCreatedResponse({
     type: PresignedPost,
@@ -68,7 +88,13 @@ export class FileController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    registrarRule,
+    judgeRule,
+    assistantRule,
+  )
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -84,7 +110,13 @@ export class FileController {
   }
 
   @UseGuards(CaseExistsGuard, CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('files')
   @ApiOkResponse({
     type: CaseFile,
@@ -103,7 +135,13 @@ export class FileController {
     ViewCaseFileGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('file/:fileId/url')
   @ApiOkResponse({
     type: PresignedPost,
@@ -127,7 +165,7 @@ export class FileController {
     CaseNotCompletedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
@@ -145,6 +183,7 @@ export class FileController {
 
   @UseGuards(
     CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
     CaseFileExistsGuard,
@@ -164,12 +203,27 @@ export class FileController {
   ): Promise<UploadFileToCourtResponse> {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
-    return this.fileService.uploadCaseFileToCourt(
-      caseFile,
-      caseId,
-      theCase.courtId,
-      theCase.courtCaseNumber,
-      user,
-    )
+    return this.fileService.uploadCaseFileToCourt(caseFile, theCase, user)
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseNotCompletedGuard,
+  )
+  @RolesRules(prosecutorRule, representativeRule)
+  @Patch('files')
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Updates multiple files of the case',
+  })
+  updateFiles(
+    @Param('caseId') caseId: string,
+    @Body() updateFiles: UpdateFilesDto,
+  ): Promise<CaseFile[]> {
+    this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
+
+    return this.fileService.updateFiles(caseId, updateFiles.files)
   }
 }

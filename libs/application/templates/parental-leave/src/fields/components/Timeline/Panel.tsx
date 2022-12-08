@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
@@ -26,11 +25,10 @@ export const Panel: FC<{
   isMobile,
   onDeletePeriod,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
   const formatStyle = isMobile ? 'dd MMM' : 'dd MMM yyyy'
   const titleLabel = isMobile ? titleSmall : title
   const firstPeriodUsingActualDateOfBirth = periods?.[0]?.actualDob
-
   return (
     <Box className={styles.panel}>
       <Box className={styles.panelRow}>
@@ -43,7 +41,7 @@ export const Panel: FC<{
 
           {firstPeriodUsingActualDateOfBirth
             ? ''
-            : format(initDate, 'dd MMM yyyy')}
+            : formatDateFns(initDate, 'dd MMM yyyy')}
         </Text>
         <Box className={styles.firstPanelRowSeparator} />
       </Box>
@@ -78,10 +76,10 @@ export const Panel: FC<{
                     duration: p.duration,
                   },
                 )
-              : `${format(parseISO(p.startDate), formatStyle)} - ${format(
-                  parseISO(p.endDate),
+              : `${formatDateFns(
+                  parseISO(p.startDate),
                   formatStyle,
-                )}`}
+                )} - ${formatDateFns(parseISO(p.endDate), formatStyle)}`}
           </Text>
         </Box>
       ))}

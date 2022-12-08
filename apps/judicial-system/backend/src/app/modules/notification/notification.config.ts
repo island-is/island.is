@@ -17,23 +17,6 @@ export const notificationModuleConfig = defineConfig({
         [key: string]: string
       },
     },
-    deepLinks: {
-      completedCaseOverviewUrl: env.required(
-        'COMPLETED_CASE_OVERVIEW_URL',
-        'http://localhost:4200/krafa/yfirlit/',
-      ),
-      prosecutorRestrictionCaseOverviewUrl: env.required(
-        'PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL',
-        'http://localhost:4200/krafa/stadfesta/',
-      ),
-      prosecutorInvestigationCaseOverviewUrl: env.required(
-        'PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL',
-        'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
-      ),
-      defenderCaseOverviewUrl: env.required(
-        'DEFENDER_CASE_OVERVIEW_URL',
-        'http://localhost:4200/verjandi/',
-      ),
-    },
+    clientUrl: env.required('CLIENT_URL', 'http://localhost:4200'),
   }),
 })

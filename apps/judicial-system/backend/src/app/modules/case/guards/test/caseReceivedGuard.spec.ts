@@ -64,7 +64,7 @@ describe('Case Completed Guard', () => {
     ${CaseState.DRAFT}
     ${CaseState.SUBMITTED}
     ${CaseState.DELETED}
-  `.describe('uncompleted case', ({ state }) => {
+  `.describe('unreceived case', ({ state }) => {
     let then: Then
 
     beforeEach(() => {
@@ -75,7 +75,7 @@ describe('Case Completed Guard', () => {
 
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe('Forbidden for uncompleted cases')
+      expect(then.error.message).toBe('Forbidden for unreceived cases')
     })
   })
 

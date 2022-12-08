@@ -6,7 +6,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
 } from '@island.is/application/types'
-import * as z from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { ApiActions } from '../shared'
 
@@ -58,6 +58,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.prerequisites]: {
         meta: {
           name: 'Skilyrði',
+          status: 'draft',
           progress: 0.2,
           lifecycle: {
             shouldBeListed: false,
@@ -88,6 +89,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.approved]: {
         meta: {
           name: 'Samþykkt akstursmat',
+          status: 'approved',
           progress: 1.0,
           lifecycle: {
             shouldBeListed: true,
@@ -109,7 +111,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -5,7 +5,7 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/types'
-import * as z from 'zod'
+import { z } from 'zod'
 import { initializeReducer } from '../reducer/ApplicationFormReducer'
 import { useHistorySync } from './useHistorySync'
 import { Router } from 'react-router-dom'

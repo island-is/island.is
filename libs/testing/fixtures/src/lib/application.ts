@@ -1,7 +1,7 @@
 import * as faker from 'faker'
 import { DefaultStateLifeCycle, buildForm } from '@island.is/application/core'
 import { EventObject } from 'xstate'
-import * as z from 'zod'
+import { z } from 'zod'
 import {
   ApplicationWithAttachments,
   ApplicationTypes,
@@ -57,7 +57,7 @@ export const createApplicationTemplate = (
     person: z.object({
       age: z.number().min(18),
       pets: z.array(
-        z.object({ name: z.string().nonempty(), kind: z.enum(['dog', 'cat']) }),
+        z.object({ name: z.string().min(1), kind: z.enum(['dog', 'cat']) }),
       ),
     }),
     externalReviewAccepted: z.boolean(),
@@ -71,6 +71,7 @@ export const createApplicationTemplate = (
         meta: {
           name: 'draft',
           progress: 0.33,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -100,6 +101,7 @@ export const createApplicationTemplate = (
       inReview: {
         meta: {
           name: 'In Review',
+          status: 'inprogress',
           progress: 0.66,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -125,14 +127,15 @@ export const createApplicationTemplate = (
       approved: {
         meta: {
           name: 'Approved',
+          status: 'approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
         },
-        type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
+          status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {

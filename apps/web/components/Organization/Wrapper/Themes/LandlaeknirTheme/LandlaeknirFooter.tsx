@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   GridColumn,
@@ -6,12 +5,14 @@ import {
   GridRow,
   Hidden,
   Hyphen,
+  Link,
   ResponsiveSpace,
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem, Slice } from '@island.is/web/graphql/schema'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
+import { webRichText } from '@island.is/web/utils/richText'
 import * as styles from './LandlaeknirFooter.css'
 
 const renderParagraphs = (
@@ -19,7 +20,7 @@ const renderParagraphs = (
   marginBottom: ResponsiveSpace = 2,
   bold = false,
 ) =>
-  richText(content as SliceType[], {
+  webRichText(content as SliceType[], {
     renderNode: {
       [BLOCKS.PARAGRAPH]: (_node, children) => (
         <Text
@@ -61,9 +62,19 @@ export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
                 <Box className={styles.borderTop} />
                 {footerItems?.[1] && (
                   <Box>
-                    <Text fontWeight="semiBold" marginBottom={2}>
-                      <Hyphen>{footerItems[1].title}</Hyphen>
-                    </Text>
+                    <Box marginBottom={2}>
+                      {footerItems[1].link?.url ? (
+                        <Link href={footerItems[1].link.url} color="white">
+                          <Text fontWeight="semiBold" marginBottom={2}>
+                            <Hyphen>{footerItems[1].title}</Hyphen>
+                          </Text>
+                        </Link>
+                      ) : (
+                        <Text fontWeight="semiBold" marginBottom={2}>
+                          <Hyphen>{footerItems[1].title}</Hyphen>
+                        </Text>
+                      )}
+                    </Box>
                     {renderParagraphs(footerItems[1].content)}
                   </Box>
                 )}
@@ -72,9 +83,19 @@ export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
                 <Box className={styles.borderTop} />
                 {footerItems?.[2] && (
                   <Box>
-                    <Text fontWeight="semiBold" marginBottom={2}>
-                      <Hyphen>{footerItems[2].title}</Hyphen>
-                    </Text>
+                    <Box marginBottom={2}>
+                      {footerItems[2].link?.url ? (
+                        <Link href={footerItems[2].link.url} color="white">
+                          <Text fontWeight="semiBold" marginBottom={2}>
+                            <Hyphen>{footerItems[2].title}</Hyphen>
+                          </Text>
+                        </Link>
+                      ) : (
+                        <Text fontWeight="semiBold" marginBottom={2}>
+                          <Hyphen>{footerItems[2].title}</Hyphen>
+                        </Text>
+                      )}
+                    </Box>
                     {renderParagraphs(footerItems[2].content)}
                   </Box>
                 )}
@@ -83,9 +104,19 @@ export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
                 <Box className={styles.borderTop} />
                 {footerItems.slice(3, 5).map((item, index) => (
                   <Box key={index}>
-                    <Text fontWeight="semiBold" marginBottom={2}>
-                      <Hyphen>{item.title}</Hyphen>
-                    </Text>
+                    <Box marginBottom={2}>
+                      {item.link?.url ? (
+                        <Link href={item.link.url} color="white">
+                          <Text fontWeight="semiBold" marginBottom={2}>
+                            <Hyphen>{item.title}</Hyphen>
+                          </Text>
+                        </Link>
+                      ) : (
+                        <Text fontWeight="semiBold" marginBottom={2}>
+                          <Hyphen>{item.title}</Hyphen>
+                        </Text>
+                      )}
+                    </Box>
                     {renderParagraphs(item.content)}
                   </Box>
                 ))}

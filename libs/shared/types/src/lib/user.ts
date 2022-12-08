@@ -9,6 +9,7 @@ interface IdsAuthClaims {
     nationalId: string
     name: string
   }
+  subjectType: 'person' | 'legalEntity'
   delegationType?: AuthDelegationType[]
   dateOfBirth?: Date
 }

@@ -3,6 +3,8 @@ import { Test } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { IntlService } from '@island.is/cms-translations'
+import { createTestIntl } from '@island.is/cms-translations/test'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
@@ -12,6 +14,8 @@ import { CaseService } from '../../case'
 import { CaseFile } from '../models/file.model'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
+import { InternalFileController } from '../internalFile.controller'
+import { Sequelize } from 'sequelize-typescript'
 
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
@@ -25,11 +29,22 @@ export const createTestingFileModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [FileController],
+    controllers: [FileController, InternalFileController],
     providers: [
       CaseService,
       CourtService,
       AwsS3Service,
+      {
+        provide: IntlService,
+        useValue: {
+          useIntl: async () => ({
+            formatMessage: createTestIntl({
+              onError: jest.fn(),
+              locale: 'is-IS',
+            }).formatMessage,
+          }),
+        },
+      },
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -48,6 +63,7 @@ export const createTestingFileModule = async () => {
         },
       },
       FileService,
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
     ],
   })
     .useMocker((token) => {
@@ -69,11 +85,19 @@ export const createTestingFileModule = async () => {
 
   const fileController = fileModule.get<FileController>(FileController)
 
+  const internalFileController = fileModule.get<InternalFileController>(
+    InternalFileController,
+  )
+
+  const sequelize = fileModule.get<Sequelize>(Sequelize)
+
   return {
     awsS3Service,
     courtService,
     fileModel,
     fileService,
     fileController,
+    internalFileController,
+    sequelize,
   }
 }

@@ -110,7 +110,7 @@ Beside validating missing environment variables with the `env.required` helpers,
 
 ```tsx
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const SomeModuleConfig = z.shape({
   url: z.string().url(),

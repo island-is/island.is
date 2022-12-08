@@ -7,7 +7,9 @@ import { uuid } from 'uuidv4'
 
 import {
   BlueBox,
+  DefenderInfo,
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
@@ -18,7 +20,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
@@ -33,16 +34,16 @@ import {
 } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
-import PoliceCaseNumbers, {
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
   usePoliceCaseNumbers,
-} from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
-import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+} from '../../components'
 
 const Defendant = () => {
   const router = useRouter()
@@ -54,7 +55,7 @@ const Defendant = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
+  const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
@@ -272,7 +273,7 @@ const Defendant = () => {
                       .value as CaseType
 
                     setCaseType(type)
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           type,
@@ -322,10 +323,10 @@ const Defendant = () => {
                   })
                 }}
                 onBlur={(evt) =>
-                  setAndSendToServer(
+                  setAndSendCaseToServer(
                     [
                       {
-                        description: evt.target.value,
+                        description: evt.target.value.trim(),
                         force: true,
                       },
                     ],
@@ -359,6 +360,7 @@ const Defendant = () => {
                       <DefendantInfo
                         defendant={defendant}
                         workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
                         onDelete={
                           workingCase.defendants &&
                           workingCase.defendants.length > 1
@@ -393,6 +395,7 @@ const Defendant = () => {
           <AnimatePresence>
             {[
               CaseType.RESTRAINING_ORDER,
+              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
               CaseType.EXPULSION_FROM_HOME,
               CaseType.PSYCHIATRIC_EXAMINATION,
               CaseType.OTHER,

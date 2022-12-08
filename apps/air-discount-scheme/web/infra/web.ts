@@ -13,7 +13,12 @@ export const serviceSetup = (services: {
         prod: 'innskra.island.is',
       },
       NEXTAUTH_URL: {
-        dev: 'https://loftbru.dev01.devland.is',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }loftbru.dev01.devland.is`,
+        ),
         staging: 'https://loftbru.staging01.devland.is',
         prod: 'https://loftbru.island.is',
       },
@@ -24,7 +29,6 @@ export const serviceSetup = (services: {
       DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
       IDENTITY_SERVER_SECRET:
         '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
-      SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',
     })
 
     .ingress({

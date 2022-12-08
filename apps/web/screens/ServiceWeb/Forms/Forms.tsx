@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
 
@@ -34,7 +34,6 @@ import {
   SupportCategory,
   Organization,
   QueryGetOrganizationsArgs,
-  SearchableTags,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -44,7 +43,14 @@ import {
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { CustomNextError } from '@island.is/web/units/errors'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Locale } from 'locale'
+
+type FormNamespace = Record<
+  string,
+  Record<'label' | 'placeholder' | 'requiredMessage' | 'patternMessage', string>
+>
 
 interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
@@ -52,6 +58,9 @@ interface ServiceWebFormsPageProps {
   supportCategories?: SupportCategory[]
   namespace: Query['getNamespace']
   institutionSlug: string
+  stateEntities: string[]
+  formNamespace: FormNamespace
+  locale: Locale
 }
 
 const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
@@ -60,6 +69,9 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   institutionSlug,
   organization,
   namespace,
+  stateEntities,
+  formNamespace,
+  locale,
 }) => {
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
@@ -68,12 +80,19 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
 
+  useContentfulId(organization.id)
+  useLocalLinkTypeResolver()
+
   const organizationNamespace = useMemo(
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
     [organization?.namespace],
   )
+  const o = useNamespace(organizationNamespace)
 
-  const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
+  const errorMessage = n(
+    'serviceWebFormErrorMessage',
+    'Villa kom upp við að senda fyrirspurn.',
+  )
 
   const successfullySent = data?.serviceWebForms?.sent
 
@@ -82,7 +101,12 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
 
     if (sent !== undefined) {
       sent
-        ? toast.success('Erindi þínu hefur verið komið áleiðis til okkar.')
+        ? toast.success(
+            n(
+              'serviceWebFormSuccessDescription',
+              'Erindi þínu hefur verið komið áleiðis til okkar.',
+            ),
+          )
         : toast.error(errorMessage)
 
       window.scrollTo(0, 0)
@@ -95,7 +119,10 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
   }, [error])
 
-  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
+  const headerTitle = o(
+    'serviceWebHeaderTitle',
+    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+  )
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const pageTitle = `${
     institutionSlug && organization && organization.title
@@ -103,22 +130,36 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
-  const breadcrumbItems = [
-    {
-      title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-      typename: 'serviceweb',
-      href: linkResolver('serviceweb').href,
-    },
-    {
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
+  const breadcrumbItems = useMemo(() => {
+    const items = []
+
+    if (!institutionSlugBelongsToMannaudstorg) {
+      items.push({
+        title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+        typename: 'serviceweb',
+        href: linkResolver('serviceweb').href,
+      })
+    }
+
+    items.push({
       title: organization.title,
       typename: 'serviceweb',
       href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
-    },
-    {
-      title: 'Hafðu samband',
+    })
+    items.push({
+      title: o(
+        'serviceWebContactUs',
+        n('serviceWebContactUs', 'Hafðu samband'),
+      ),
       isTag: true,
-    },
-  ]
+    })
+
+    return items
+  }, [institutionSlug, organization.title, linkResolver])
 
   return (
     <ServiceWebWrapper
@@ -128,6 +169,10 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
+      searchPlaceholder={o(
+        'serviceWebSearchPlaceholder',
+        'Leitaðu á þjónustuvefnum',
+      )}
     >
       <Box marginY={[3, 3, 10]} marginBottom={10}>
         <GridContainer>
@@ -192,33 +237,52 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                 <GridRow>
                   <GridColumn span="12/12">
                     <Text variant="h1" as="h1">
-                      Hvers efnis er erindið?
+                      {o(
+                        'serviceWebFormTitle',
+                        n('serviceWebFormTitle', 'Hvers efnis er erindið?'),
+                      )}
                     </Text>
                     <Text marginTop={2} variant="intro">
-                      Veldu viðeigandi flokk svo að spurningin rati á réttan
-                      stað.
+                      {o(
+                        'serviceWebFormIntro',
+                        n(
+                          'serviceWebFormIntro',
+                          'Veldu viðeigandi flokk svo að spurningin rati á réttan stað.',
+                        ),
+                      )}
                     </Text>
                   </GridColumn>
                 </GridRow>
                 {successfullySent ? (
                   <Box marginTop={6}>
                     <AlertBanner
-                      title="Takk fyrir"
-                      description="Erindi þínu hefur verið komið áleiðis til okkar."
+                      title={o(
+                        'serviceWebFormSuccessTitle',
+                        n('serviceWebFormSuccessTitle', 'Takk fyrir'),
+                      )}
+                      description={o(
+                        'serviceWebFormSuccessDescription',
+                        n(
+                          'serviceWebFormSuccessDescription',
+                          'Erindi þínu hefur verið komið áleiðis til okkar.',
+                        ),
+                      )}
                       variant="success"
                     />
                   </Box>
                 ) : (
                   <ServiceWebStandardForm
                     namespace={organizationNamespace}
+                    formNamespace={formNamespace}
                     institutionSlug={institutionSlug}
                     supportCategories={supportCategories}
                     syslumenn={syslumenn}
+                    stateEntities={stateEntities}
                     loading={loading}
                     onSubmit={async (formState) => {
                       await submit({
                         variables: {
-                          input: formState,
+                          input: { ...formState, lang: locale },
                         },
                       })
                     }}
@@ -239,13 +303,16 @@ ServiceWebFormsPage.getInitialProps = async ({
   locale,
   query,
 }) => {
-  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
+  const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
+  const slug = query.slug ? (query.slug as string) : defaultSlug
 
   const [
     organizations,
     organization,
     supportCategories,
     namespace,
+    stateEntities,
+    formNamespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
@@ -288,21 +355,50 @@ ServiceWebFormsPage.getInitialProps = async ({
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Rikisadili',
+            lang: locale,
+          },
+        },
+      })
+      .then(
+        (variables) =>
+          JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')?.entities ??
+          [],
+      ),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Service Web - Forms',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        JSON.parse(variables?.data?.getNamespace?.fields ?? '{}'),
+      ),
   ])
 
-  if (slug === 'mannaudstorg') {
-    throw new CustomNextError(404, 'Mannaudstorg does not have a contact page')
-  }
-
   return {
-    syslumenn: organizations?.data?.getOrganizations?.items?.filter((x) =>
-      x.slug.startsWith('syslumadurinn'),
+    syslumenn: organizations?.data?.getOrganizations?.items?.filter(
+      (x) =>
+        x.slug.startsWith('syslumadurinn') ||
+        x.slug.startsWith('district-commissioner-of'),
     ),
     organization: organization?.data?.getOrganization,
     supportCategories:
       supportCategories?.data?.getSupportCategoriesInOrganization,
     institutionSlug: slug,
     namespace,
+    stateEntities,
+    formNamespace,
+    locale: locale as Locale,
   }
 }
 

@@ -27,4 +27,8 @@ export class CreateFileInput implements CreateFile {
   @Allow()
   @Field()
   readonly size!: number
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly policeCaseNumber?: string
 }

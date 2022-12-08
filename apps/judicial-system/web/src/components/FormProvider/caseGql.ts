@@ -1,12 +1,13 @@
 import { gql } from '@apollo/client'
 
-export const CaseQuery = gql`
+const CaseQuery = gql`
   query CaseQuery($input: CaseQueryInput!) {
     case(input: $input) {
       id
       created
       modified
       type
+      indictmentSubtypes
       description
       state
       policeCaseNumbers
@@ -18,6 +19,11 @@ export const CaseQuery = gql`
         gender
         address
         citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defendantWaivesRightToCounsel
       }
       defenderName
       defenderNationalId
@@ -143,9 +149,15 @@ export const CaseQuery = gql`
         name
         size
         created
+        modified
         state
         key
         category
+        policeCaseNumber
+        chapter
+        orderWithinChapter
+        userGeneratedFilename
+        displayDate
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -155,6 +167,10 @@ export const CaseQuery = gql`
       origin
       seenByDefender
       subpoenaType
+      defendantWaivesRightToCounsel
+      crimeScenes
     }
   }
 `
+
+export default CaseQuery

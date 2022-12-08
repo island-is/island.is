@@ -15,15 +15,23 @@ import {
   REAL_ESTATE_ADDRESS,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   ESTATE_REGISTRANT_RESPONSE,
+  OPERATING_LICENSES_CSV,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
   mapSyslumennAuction,
   mapDataUploadResponse,
   mapPaginatedOperatingLicenses,
+  mapOperatingLicensesCSV,
   mapEstateRegistrant,
+  mapRealEstateAgent,
+  mapLawyer,
 } from './syslumennClient.utils'
-import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
+import {
+  SYSLUMENN_AUCTION,
+  REAL_ESTATE_AGENTS,
+  LAWYERS,
+} from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
 import { SyslumennClientModule } from '../lib/syslumennClient.module'
 
@@ -108,6 +116,22 @@ describe('SyslumennService', () => {
     })
   })
 
+  describe('getRealEstateAgents', () => {
+    it('should return real estate agents', async () => {
+      const response = await service.getRealEstateAgents()
+      expect(response).toStrictEqual(
+        (REAL_ESTATE_AGENTS ?? []).map(mapRealEstateAgent),
+      )
+    })
+  })
+
+  describe('getLawyers', () => {
+    it('should return lawyers', async () => {
+      const response = await service.getLawyers()
+      expect(response).toStrictEqual((LAWYERS ?? []).map(mapLawyer))
+    })
+  })
+
   describe('getOperatingLicenses', () => {
     it('should return operating license', async () => {
       const response = await service.getOperatingLicenses()
@@ -117,6 +141,15 @@ describe('SyslumennService', () => {
           JSON.stringify(OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES),
           OPERATING_LICENSE,
         ),
+      )
+    })
+  })
+
+  describe('getOperatingLicensesCSV', () => {
+    it('should return operating licences CSV', async () => {
+      const response = await service.getOperatingLicensesCSV()
+      expect(response).toStrictEqual(
+        mapOperatingLicensesCSV(OPERATING_LICENSES_CSV),
       )
     })
   })

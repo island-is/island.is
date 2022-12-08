@@ -3,6 +3,7 @@ import {
   FinancialStatementsInaoClientModule,
   FinancialStatementsInaoClientService,
 } from '@island.is/clients/financial-statements-inao'
+
 import { DynamicModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
@@ -20,10 +21,7 @@ export class FinancialStatementsInaoTemplateModule {
         }),
         FinancialStatementsInaoClientModule,
       ],
-      providers: [
-        FinancialStatementsInaoClientService,
-        FinancialStatementsInaoTemplateService,
-      ],
+      providers: [FinancialStatementsInaoTemplateService],
       exports: [FinancialStatementsInaoTemplateService],
     }
   }

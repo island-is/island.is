@@ -22,6 +22,7 @@ if (userMocked) {
       ApiScope.financeOverview,
       ApiScope.financeSalary,
       ApiScope.internal,
+      ApiScope.licenses,
       ApiScope.meDetails,
     ],
   })
@@ -42,8 +43,7 @@ if (userMocked) {
       UserProfileScope.read,
       UserProfileScope.write,
       AuthScope.actorDelegations,
-      AuthScope.readDelegations,
-      AuthScope.writeDelegations,
+      AuthScope.delegations,
       NationalRegistryScope.individuals,
       DocumentsScope.main,
       EndorsementsScope.main,

@@ -108,14 +108,6 @@ const prodConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  pkpass: {
-    apiKey: process.env.PKPASS_API_KEY,
-    apiUrl: process.env.PKPASS_API_URL,
-    secretKey: process.env.PKPASS_SECRET_KEY,
-    cacheKey: process.env.PKPASS_CACHE_KEY,
-    cacheTokenExpiryDelta: process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA,
-    authRetries: process.env.PKPASS_AUTH_RETRIES,
-  },
   audit: {
     defaultNamespace: '@island.is/api',
     groupName: process.env.AUDIT_GROUP_NAME,
@@ -264,15 +256,6 @@ const devConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  pkpass: {
-    apiKey: process.env.PKPASS_API_KEY,
-    apiUrl: process.env.PKPASS_API_URL,
-    secretKey: process.env.PKPASS_SECRET_KEY,
-    cacheKey: process.env.PKPASS_CACHE_KEY ?? 'smartsolution:apitoken',
-    cacheTokenExpiryDelta:
-      process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA ?? '2000',
-    authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
-  },
   audit: {
     defaultNamespace: '@island.is/api',
   },
@@ -293,4 +276,6 @@ const devConfig = () => ({
   },
 })
 export const getConfig =
-  process.env.NODE_ENV === 'production' ? prodConfig() : devConfig()
+  process.env.PROD_MODE === 'true' || process.env.NODE_ENV === 'production'
+    ? prodConfig()
+    : devConfig()

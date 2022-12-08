@@ -26,21 +26,24 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
   SliceMachine,
   OrganizationWrapper,
   SliceDropdown,
   Form,
+  Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 import { Locale } from 'locale'
 
 interface SubPageProps {
@@ -84,7 +87,12 @@ const SubPage: Screen<SubPageProps> = ({
   namespace,
   locale,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -95,10 +103,10 @@ const SubPage: Screen<SubPageProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === pathWithoutHash ||
+        primaryLink?.url === pathWithoutHash ||
         childrenLinks.some((link) => link.url === pathWithoutHash),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -110,6 +118,8 @@ const SubPage: Screen<SubPageProps> = ({
 
   return (
     <OrganizationWrapper
+      showExternalLinks={true}
+      showReadSpeaker={false}
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       fullWidthContent={true}
@@ -148,11 +158,18 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    <Box marginBottom={2}>
+                    <Box className="rs_read" marginBottom={2}>
                       <Text variant="h1" as="h1">
                         {subpage.title}
                       </Text>
                     </Box>
+                    {isWebReaderEnabledForOrganizationPages && (
+                      <Webreader
+                        marginTop={0}
+                        readId={null}
+                        readClass="rs_read"
+                      />
+                    )}
                   </GridColumn>
                 </GridRow>
                 {subpage.showTableOfContents && (
@@ -161,7 +178,7 @@ const SubPage: Screen<SubPageProps> = ({
                     title={n('navigationTitle', 'Efnisyfirlit')}
                   />
                 )}
-                <GridRow>
+                <GridRow className="rs_read">
                   <GridColumn
                     span={[
                       '12/12',
@@ -169,13 +186,17 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    {richText(subpage.description as SliceType[], {
-                      renderComponent: {
-                        Form: (slice) => (
-                          <Form form={slice} namespace={namespace} />
-                        ),
+                    {webRichText(
+                      subpage.description as SliceType[],
+                      {
+                        renderComponent: {
+                          Form: (slice) => (
+                            <Form form={slice} namespace={namespace} />
+                          ),
+                        },
                       },
-                    })}
+                      activeLocale,
+                    )}
                   </GridColumn>
                   {subpage.links.length > 0 && (
                     <GridColumn
@@ -205,6 +226,7 @@ const SubPage: Screen<SubPageProps> = ({
         subpage.sliceExtraText,
         namespace,
         organizationPage.slug,
+        organizationPage,
       )}
     </OrganizationWrapper>
   )
@@ -216,21 +238,52 @@ const renderSlices = (
   extraText: string,
   namespace: Record<string, string>,
   slug: string,
+  organizationPage: Query['getOrganizationPage'],
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
-      return slices.map((slice, index) => (
-        <SliceMachine
-          key={slice.id}
-          slice={slice}
-          namespace={namespace}
-          slug={slug}
-          renderedOnOrganizationSubpage={true}
-          marginBottom={index === slices.length - 1 ? 5 : 0}
-        />
-      ))
+      return slices.map((slice, index) => {
+        if (slice.__typename === 'LifeEventPageListSlice') {
+          const digitalIcelandDetailPageLinkType: LinkType =
+            'digitalicelandservicesdetailpage'
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={slug}
+              marginBottom={index === slices.length - 1 ? 5 : 0}
+              params={{
+                renderLifeEventPagesAsProfileCards: true,
+                anchorPageLinkType:
+                  organizationPage.theme === 'digital_iceland'
+                    ? digitalIcelandDetailPageLinkType
+                    : undefined,
+                latestNewsSliceBackground: 'white',
+                forceTitleSectionHorizontalPadding: 'true',
+              }}
+              fullWidth={true}
+            />
+          )
+        }
+
+        return (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            namespace={namespace}
+            slug={slug}
+            marginBottom={index === slices.length - 1 ? 5 : 0}
+            params={{
+              renderLifeEventPagesAsProfileCards: true,
+              latestNewsSliceBackground: 'white',
+              forceTitleSectionHorizontalPadding: 'true',
+            }}
+          />
+        )
+      })
   }
 }
 

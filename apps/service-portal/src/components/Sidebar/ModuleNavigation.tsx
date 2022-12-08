@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import {
+  formatPlausiblePathToParams,
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
@@ -8,11 +9,12 @@ import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
-import SubNavModal from './SubNavModal'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
 import * as styles from './Sidebar.css'
+import cn from 'classnames'
+
 interface Props {
   nav: ServicePortalNavigationItem
   badge?: boolean
@@ -43,7 +45,8 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const handleRootItemClick = (external?: boolean) => {
     if (nav.path === undefined) handleExpand()
     if (onItemClick) onItemClick()
-    if (external) servicePortalOutboundLink()
+    if (external)
+      servicePortalOutboundLink(formatPlausiblePathToParams(nav.path || ''))
   }
 
   useEffect(() => {
@@ -51,17 +54,13 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   }, [isModuleActive, setExpand])
 
   return (
-    <Box position="relative" className={styles.itemWrapper}>
-      {/* {navArray && nav.enabled !== false && collapsed && (
-        <SubNavModal>
-          <SubNav
-            collapsed
-            navChildren={navChildren}
-            onItemClick={() => handleRootItemClick(false)}
-            pathname={pathname}
-          />
-        </SubNavModal>
-      )} */}
+    <Box
+      position="relative"
+      className={cn(
+        styles.itemWrapper,
+        isModuleActive && styles.itemWrapperActive,
+      )}
+    >
       <NavItem
         path={nav.path}
         icon={nav.icon}

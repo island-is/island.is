@@ -1,4 +1,4 @@
-import { DEPRECATED_DefaultStateLifeCycle } from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -23,13 +23,14 @@ const PSignTemplate: ApplicationTemplate<
   name: 'Stæðiskort',
   dataSchema: dataSchema,
   readyForProduction: true,
-  allowedDelegations: [AuthDelegationType.LegalGuardian],
+  allowedDelegations: [{ type: AuthDelegationType.LegalGuardian }],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -59,6 +60,7 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
             {
               id: Roles.ACTOR,
@@ -74,6 +76,7 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -84,8 +87,9 @@ const PSignTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
 
           roles: [
             {
@@ -100,7 +104,6 @@ const PSignTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

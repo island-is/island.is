@@ -1,9 +1,3 @@
-export enum MarriageTermination {
-  divorce = 'divorce',
-  lostSpouse = 'lostSpouse',
-  annulment = 'annulment',
-}
-
 export type Individual = {
   person: {
     name: string
@@ -27,7 +21,6 @@ export type PersonalInfo = {
   address: string
   citizenship: string
   maritalStatus: string
-  previousMarriageTermination: MarriageTermination
 }
 
 export type Ceremony = {

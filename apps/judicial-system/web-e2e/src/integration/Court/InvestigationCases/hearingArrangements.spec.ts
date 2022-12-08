@@ -25,6 +25,7 @@ describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       state: CaseState.RECEIVED,
       defenderName: 'Test Testesen',
+      courtDate: '2020-09-16T19:50:08.033Z',
     }
 
     cy.login(UserRole.JUDGE)
@@ -41,24 +42,25 @@ describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
   it('should ask for defender info depending on selected session arrangement and warn users if defender is not found in the lawyer registry', () => {
     cy.get('[name="session-arrangements-all-present"]').click()
-    cy.get('[name="defenderName"]').should('exist')
-    cy.get('[name="defenderEmail"]').should('exist')
-    cy.get('[name="defenderPhoneNumber"]').should('exist')
+    cy.get('[name*="defenderName"]').should('exist')
+    cy.get('[name*="defenderEmail"]').should('exist')
+    cy.get('[name*="defenderPhoneNumber"]').should('exist')
 
     cy.get('#react-select-defenderName-input')
       .type('click', { force: true })
       .type('{enter}')
+
     cy.getByTestid('defenderNotFound').should('exist')
 
     cy.get('[name="session-arrangements-all-present_spokesperson"]').click()
-    cy.get('[name="defenderName"]').should('exist')
-    cy.get('[name="defenderEmail"]').should('exist')
-    cy.get('[name="defenderPhoneNumber"]').should('exist')
+    cy.get('[name*="defenderName"]').should('exist')
+    cy.get('[name*="defenderEmail"]').should('exist')
+    cy.get('[name*="defenderPhoneNumber"]').should('exist')
 
     cy.get('[name="session-arrangements-prosecutor-present"]').click()
-    cy.get('[name="defenderName"]').should('not.exist')
-    cy.get('[name="defenderEmail"]').should('not.exist')
-    cy.get('[name="defenderPhoneNumber"]').should('not.exist')
+    cy.get('[name*="defenderName"]').should('not.exist')
+    cy.get('[name*="defenderEmail"]').should('not.exist')
+    cy.get('[name*="defenderPhoneNumber"]').should('not.exist')
   })
 
   it('should autofill form correctly and allow court to confirm court date and send notification', () => {

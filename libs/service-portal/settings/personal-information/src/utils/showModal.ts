@@ -1,6 +1,11 @@
 import { UserProfile } from '@island.is/api/schema'
 import differenceInMonths from 'date-fns/differenceInMonths'
 
+export const onboardingModalStorage = {
+  key: 'ONBOARDING_MODAL',
+  value: 'HIDDEN',
+}
+
 /**
  * MODIFIED_FALLBACK_TIME
  * This represents the date of the deployment of this feature.
@@ -24,11 +29,18 @@ export const showModal = (getUserProfile: UserProfile | undefined | null) => {
     return false
   }
 
+  const modalStorageValue = sessionStorage.getItem(onboardingModalStorage.key)
+  const hasClosedInSession = modalStorageValue === onboardingModalStorage.value
+
   const userProfileEmail = getUserProfile.email
   const userProfileTel = getUserProfile.mobilePhoneNumber
   const hasEmailAndTel = userProfileEmail && userProfileTel
 
   const diffOverMax = diffModifiedOverMaxDate(getUserProfile.modified)
+
+  if (hasClosedInSession) {
+    return false
+  }
 
   return (!hasEmailAndTel && !getUserProfile.modified) || diffOverMax
 }

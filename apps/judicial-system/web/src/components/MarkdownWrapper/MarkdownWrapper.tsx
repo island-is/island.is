@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
+
 import {
   Box,
   Text,
@@ -8,6 +9,7 @@ import {
   Link,
   TextProps,
 } from '@island.is/island-ui/core'
+
 import * as styles from './MarkdownWrapper.css'
 
 const BulletListBox = ({ children }: { children: ReactNode }) => {

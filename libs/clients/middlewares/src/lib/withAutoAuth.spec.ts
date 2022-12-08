@@ -88,7 +88,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should not cache token forever', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers()
     env = setupTestEnv({
       autoAuth: { ...autoAuth, mode: 'token' },
     })
@@ -167,7 +167,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should not cache token exchange forever', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers()
     const cacheManager = caching({ store: 'memory', ttl: 0 })
     env = setupTestEnv({
       autoAuth: {

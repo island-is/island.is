@@ -4,6 +4,8 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiHeader,
+  ApiHeaderOptions,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -23,10 +25,15 @@ type ExtendedOmit<T, K extends keyof any> = {
   [P in keyof T as Exclude<P, K>]: T[P]
 }
 
+export type DocumentationParamOptions = ExtendedOmit<ApiParamOptions, 'name'>
+export type DocumentationQueryOptions = ExtendedOmit<ApiQueryOptions, 'name'>
+export type DocumentationHeaderOptions = ExtendedOmit<ApiHeaderOptions, 'name'>
+
 export interface Options {
   request?: {
-    params?: Record<string, ExtendedOmit<ApiParamOptions, 'name'>>
-    query?: Record<string, ExtendedOmit<ApiQueryOptions, 'name'>>
+    params?: Record<string, DocumentationParamOptions>
+    query?: Record<string, DocumentationQueryOptions>
+    header?: Record<string, DocumentationHeaderOptions>
   }
   response?: {
     status?: 200 | 201 | 204
@@ -36,11 +43,13 @@ export interface Options {
   description?: string
   summary?: string
   deprecated?: boolean
+  /** Uses 204 No Content response instead of 404 Not Found for get requests with resource IDs **/
+  includeNoContentResponse?: boolean
 }
 
-const getResponseDecorators = (
-  response: Options['response'],
-): MethodDecorator[] => {
+const getResponseDecorators = ({
+  response,
+}: Options = {}): MethodDecorator[] => {
   switch (response?.status ?? 200) {
     case 200:
       return [ApiOkResponse(response)]
@@ -57,9 +66,9 @@ const getResponseDecorators = (
 }
 
 const getRequestDecorators = ({
-  query = {},
-  params = {},
-}: Options['request'] = {}): MethodDecorator[] => {
+  request: { query = {}, params = {}, header = {} } = {},
+  includeNoContentResponse = false,
+}: Options = {}): MethodDecorator[] => {
   const queryKeys = Object.keys(query)
   const queryDecorators = queryKeys.map((name) =>
     ApiQuery({ name, ...query[name] }),
@@ -68,14 +77,21 @@ const getRequestDecorators = ({
   const paramsKeys = Object.keys(params)
   const defaultValue: MethodDecorator[] =
     paramsKeys.length > 0
-      ? [ApiNotFoundResponse({ type: HttpProblemResponse })]
+      ? includeNoContentResponse
+        ? [ApiNoContentResponse()]
+        : [ApiNotFoundResponse({ type: HttpProblemResponse })]
       : []
   const paramsDecorators = paramsKeys.reduce(
     (acc, name) => [...acc, ApiParam({ name, ...params[name] })],
     defaultValue,
   )
 
-  return [...queryDecorators, ...paramsDecorators]
+  const headerKeys = Object.keys(header)
+  const headerDecorators = headerKeys.map((name) =>
+    ApiHeader({ name, ...header[name] }),
+  )
+
+  return [...queryDecorators, ...paramsDecorators, ...headerDecorators]
 }
 
 const getExtraDecorators = ({
@@ -83,7 +99,7 @@ const getExtraDecorators = ({
   description,
   summary,
   deprecated,
-}: Omit<Options, 'response' | 'request'>): MethodDecorator[] => {
+}: Options): MethodDecorator[] => {
   let decorators: MethodDecorator[] = []
   if (isAuthorized) {
     decorators = [
@@ -103,19 +119,15 @@ const getExtraDecorators = ({
   return decorators
 }
 
-export const Documentation = ({
-  response,
-  request,
-  ...extra
-}: Options): MethodDecorator =>
+export const Documentation = (options: Options): MethodDecorator =>
   applyDecorators(
     /* BEGIN DEFAULT DECORATORS */
-    HttpCode(response?.status ?? 200),
+    HttpCode(options?.response?.status ?? 200),
     ApiInternalServerErrorResponse({ type: HttpProblemResponse }),
     ApiBadRequestResponse({ type: HttpProblemResponse }),
     /* END DEFAULT DECORATORS */
 
-    ...getResponseDecorators(response),
-    ...getRequestDecorators(request),
-    ...getExtraDecorators(extra),
+    ...getResponseDecorators(options),
+    ...getRequestDecorators(options),
+    ...getExtraDecorators(options),
   )

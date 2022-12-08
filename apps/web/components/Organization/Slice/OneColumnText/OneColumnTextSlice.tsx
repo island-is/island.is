@@ -8,7 +8,8 @@ import {
 } from '@island.is/island-ui/core'
 import { OneColumnText } from '@island.is/web/graphql/schema'
 import Link from 'next/link'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface SliceProps {
   slice: OneColumnText
@@ -20,6 +21,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
         borderTopWidth: 'standard',
         borderColor: 'standard',
         paddingTop: 4,
+        paddingBottom: 4,
       }
     : {}
 
@@ -31,15 +33,17 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
     >
       <GridContainer>
         <Box {...boxProps}>
-          <Text
-            variant="h2"
-            as="h2"
-            id={'sliceTitle-' + slice.id}
-            paddingBottom={2}
-          >
-            {slice.title}
-          </Text>
-          {richText(slice.content as SliceType[])}
+          {slice.showTitle && (
+            <Text
+              variant="h2"
+              as="h2"
+              id={'sliceTitle-' + slice.id}
+              paddingBottom={2}
+            >
+              {slice.title}
+            </Text>
+          )}
+          {webRichText(slice.content as SliceType[])}
           {slice.link && slice.link.url && (
             <Link href={slice.link.url}>
               <Button

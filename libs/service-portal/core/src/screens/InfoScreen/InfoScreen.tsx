@@ -16,6 +16,8 @@ import { MessageDescriptor } from 'react-intl'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { m } from '../../lib/messages'
 import * as styles from './InfoScreen.css'
+import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
+import { useLocation } from 'react-router-dom'
 interface Props {
   title: MessageDescriptor
   intro: MessageDescriptor
@@ -44,8 +46,10 @@ export const InfoScreen: FC<Props> = ({
   inProgress = true,
 }) => {
   const { formatMessage } = useLocale()
+  const { pathname } = useLocation()
+
   const trackExternalLinkClick = () => {
-    servicePortalOutboundLink()
+    servicePortalOutboundLink(formatPlausiblePathToParams(pathname))
   }
   return (
     <Box marginBottom={[4, 6, 9]}>

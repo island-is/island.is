@@ -1,4 +1,4 @@
-import { DelegationType } from '@island.is/clients/auth-public-api'
+import { DelegationType } from '@island.is/clients/auth/public-api'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('AuthActorDelegationInput')

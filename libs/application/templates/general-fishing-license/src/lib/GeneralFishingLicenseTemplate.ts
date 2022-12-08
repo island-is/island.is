@@ -13,6 +13,7 @@ import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '../types/schema'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -40,13 +41,14 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
-  allowedDelegations: [AuthDelegationType.ProcurationHolder],
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'draft',
           progress: 0.1,
           lifecycle: {
             shouldBeListed: false,
@@ -70,6 +72,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -80,6 +83,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'draft',
           progress: 0.3,
           lifecycle: pruneAtMidnight(),
           roles: [
@@ -112,6 +116,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
             description: application.labels.actionCardPayment,
           },
@@ -141,6 +146,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -152,11 +158,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.SUBMITTED]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },
@@ -172,16 +176,13 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DECLINED]: {
         meta: {
           name: 'Declined',
+          status: 'rejected',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -192,7 +193,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

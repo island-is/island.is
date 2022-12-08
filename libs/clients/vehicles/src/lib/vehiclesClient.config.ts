@@ -1,5 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 import { VehiclesScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
@@ -22,7 +22,7 @@ export const VehiclesClientConfig = defineConfig<z.infer<typeof schema>>({
       fetch: {
         timeout: 30000,
       },
-      scope: [VehiclesScope.vehicle],
+      scope: [VehiclesScope.vehicle], // TODO: Change to new scope when it has been created
     }
   },
 })

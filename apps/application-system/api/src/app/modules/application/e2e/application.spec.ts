@@ -108,10 +108,12 @@ describe('Application system API', () => {
         typeId: ApplicationTypes.EXAMPLE,
         assignees: [nationalId],
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
-        status: ApplicationStatus.IN_PROGRESS,
+        status: ApplicationStatus.DRAFT,
       })
       .expect(400)
 
@@ -134,7 +136,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
@@ -144,7 +148,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
+          },
         },
       })
       .expect(400)
@@ -152,20 +158,91 @@ describe('Application system API', () => {
     // Assert
     expect(putResponse.body).toMatchInlineSnapshot(`
       Object {
-        "detail": "Found issues in these fields: careerHistoryCompanies",
+        "detail": "Found issues in these fields: careerHistoryDetails",
         "fields": Object {
-          "careerHistoryCompanies": Array [
-            "Ógilt gildi",
-            "Ógilt gildi",
-            "Ógilt gildi",
-            "Ógilt gildi",
-          ],
+          "careerHistoryDetails": Object {
+            "careerHistoryCompanies": Array [
+              "Ógilt gildi",
+              "Ógilt gildi",
+              "Ógilt gildi",
+              "Ógilt gildi",
+            ],
+          },
         },
         "status": 400,
         "title": "Validation Failed",
         "type": "https://docs.devland.is/reference/problems/validation-failed",
       }
     `)
+  })
+
+  it('should fail when PUT-ing answers in a very deep nested schema which doesnt comply', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          deepNestedValues: {
+            something: {
+              very: {
+                deep: {
+                  so: {
+                    so: {
+                      very: {
+                        very: {
+                          deep: {
+                            nested: {
+                              value: 6,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(400)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          deepNestedValues: {
+            something: {
+              very: {
+                deep: {
+                  so: {
+                    so: {
+                      very: {
+                        very: {
+                          deep: {
+                            nested: {
+                              value: 'hello',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
   })
 
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
@@ -180,7 +257,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
@@ -236,7 +315,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
@@ -247,14 +328,18 @@ describe('Application system API', () => {
       .send({
         event: 'SUBMIT',
         answers: {
-          careerHistoryCompanies: ['advania', 'aranja'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['advania', 'aranja'],
+          },
         },
       })
       .expect(200)
 
     expect(newStateResponse.body.state).toBe('waitingToAssign')
     expect(newStateResponse.body.answers).toEqual({
-      careerHistoryCompanies: ['advania', 'aranja'],
+      careerHistoryDetails: {
+        careerHistoryCompanies: ['advania', 'aranja'],
+      },
       dreamJob: 'pilot',
     })
   })
@@ -310,7 +395,7 @@ describe('Application system API', () => {
 
     expect(finalStateResponse.body.state).toBe('approved')
     expect(finalStateResponse.body.answers).toEqual({
-      careerHistoryCompanies: ['government', 'aranja', 'advania'],
+      careerHistoryCompanies: ['government'],
       dreamJob: 'pilot', // this answer is non-writable
     })
   })
@@ -366,7 +451,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
         },
       })
       .expect(200)
@@ -590,7 +677,7 @@ describe('Application system API', () => {
 
     const getResponse = await server
       .get(
-        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.IN_PROGRESS}`,
+        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.DRAFT}`,
       )
       .expect(200)
 
@@ -600,7 +687,7 @@ describe('Application system API', () => {
         expect.objectContaining({
           applicant: nationalId,
           typeId: ApplicationTypes.PARENTAL_LEAVE,
-          status: ApplicationStatus.IN_PROGRESS,
+          status: ApplicationStatus.DRAFT,
         }),
       ]),
     )
@@ -745,7 +832,9 @@ describe('Application system API', () => {
       dreamJob: 'Yes',
       attachments: [],
       careerHistory: 'yes',
-      careerHistoryCompanies: ['aranja'],
+      careerHistoryDetails: {
+        careerHistoryCompanies: ['aranja'],
+      },
     }
 
     const draftStateResponse = await server
@@ -783,7 +872,6 @@ describe('Application system API', () => {
       .send({
         event: 'APPROVE',
         answers: {
-          ...answers,
           approvedByReviewer: 'APPROVE',
         },
       })

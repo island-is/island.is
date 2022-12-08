@@ -57,8 +57,6 @@ export const Footer = ({
   languageSwitchLink = defaultLanguageSwitchLink,
   privacyPolicyLink = defaultPrivacyPolicyLink,
   hideLanguageSwitch = false,
-  linkToHelpWeb,
-  linkToHelpWebText = 'Getum við aðstoðað?',
   languageSwitchOnClick,
 }: FooterProps) => {
   return (
@@ -103,41 +101,26 @@ export const Footer = ({
                   })}
                 </LinkContext.Provider>
                 <Box display="flex" flexDirection={'column'} paddingBottom={4}>
-                  {linkToHelpWeb ? (
-                    <Link href={linkToHelpWeb} skipTab>
-                      <Button
-                        colorScheme="default"
-                        icon="arrowForward"
-                        iconType="filled"
-                        size="default"
-                        variant="text"
-                        as="span"
-                      >
-                        {linkToHelpWebText}
-                      </Button>
-                    </Link>
-                  ) : (
-                    topLinksContact.map(({ title, href }, index) => {
-                      const isLast = index + 1 === topLinksContact.length
-                      const isInternalLink = !shouldLinkOpenInNewWindow(href)
-                      return (
-                        <Box marginBottom={isLast ? 0 : 3} key={index}>
-                          <Link href={href} skipTab>
-                            <Button
-                              colorScheme="default"
-                              icon={isInternalLink ? 'arrowForward' : undefined}
-                              iconType={isInternalLink ? 'filled' : undefined}
-                              size="default"
-                              variant="text"
-                              as="span"
-                            >
-                              {title}
-                            </Button>
-                          </Link>
-                        </Box>
-                      )
-                    })
-                  )}
+                  {topLinksContact.map(({ title, href }, index) => {
+                    const isLast = index + 1 === topLinksContact.length
+                    const isInternalLink = !shouldLinkOpenInNewWindow(href)
+                    return (
+                      <Box marginBottom={isLast ? 0 : 3} key={index}>
+                        <Link href={href} skipTab>
+                          <Button
+                            colorScheme="default"
+                            icon={isInternalLink ? 'arrowForward' : undefined}
+                            iconType={isInternalLink ? 'filled' : undefined}
+                            size="default"
+                            variant="text"
+                            as="span"
+                          >
+                            {title}
+                          </Button>
+                        </Link>
+                      </Box>
+                    )
+                  })}
                 </Box>
                 <div>
                   <Stack space={1}>

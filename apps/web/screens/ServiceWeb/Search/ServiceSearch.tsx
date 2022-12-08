@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { Screen } from '../../../types'
@@ -48,6 +48,9 @@ import {
   ServiceWebModifySearchTerms,
 } from '@island.is/web/components'
 import { getSlugPart } from '../utils'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Locale } from 'locale'
 
 const PERPAGE = 10
 
@@ -57,6 +60,7 @@ interface ServiceSearchProps {
   namespace: GetNamespaceQuery['getNamespace']
   organization?: Organization
   searchResults: GetSupportSearchResultsQuery['searchResults']
+  locale: Locale
 }
 
 const ServiceSearch: Screen<ServiceSearchProps> = ({
@@ -65,6 +69,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   namespace,
   organization,
   searchResults,
+  locale,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
@@ -79,25 +84,30 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   )
   const o = useNamespace(organizationNamespace)
 
-  const institutionSlug = getSlugPart(Router.asPath, 2)
+  useContentfulId(organization?.id)
+  useLocalLinkTypeResolver()
 
-  const searchResultsItems = (searchResults.items as Array<SupportQna>).map(
-    (item) => ({
+  const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
+
+  const searchResultsItems = (searchResults.items as Array<SupportQna>)
+    .filter(
+      (item) => item.organization?.slug && item.category?.slug && item.slug,
+    )
+    .map((item) => ({
       title: item.title,
       parentTitle: item.organization?.title,
       description: item.organization?.description,
       link: {
-        href:
-          linkResolver('servicewebcategory', [
-            item.organization.slug,
-            item.category.slug,
-          ]).href + `/${item.slug}`,
+        href: linkResolver('supportqna', [
+          item.organization.slug,
+          item.category.slug,
+          item.slug,
+        ]).href,
       },
       categorySlug: item.category.slug,
       category: item.category.title,
       labels: [item.category.title],
-    }),
-  )
+    }))
 
   const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const totalSearchResults = searchResults.total
@@ -114,7 +124,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       ? {
           title: organization.title,
           typename: 'serviceweb',
-          href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
+          href: linkResolver('serviceweb', [institutionSlug]).href,
         }
       : {
           title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
@@ -206,6 +216,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     'serviceWebSearchPlaceholder',
                     'Leitaðu á þjónustuvefnum',
                   )}
+                  nothingFoundText={n('nothingFoundText', 'Ekkert fannst')}
                 />
 
                 {!!q &&
@@ -261,6 +272,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                         key={index}
                         tags={tags}
                         subTitle={parentTitle}
+                        highlightedResults={true}
                         {...rest}
                       />
                     )
@@ -300,7 +312,24 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
               span={['12/12', '12/12', '12/12', '10/12']}
             >
               <Box marginTop={[10, 10, 20]}>
-                <ContactBanner />
+                <ContactBanner
+                  slug={institutionSlug}
+                  cantFindWhatYouAreLookingForText={o(
+                    'cantFindWhatYouAreLookingForText',
+                    n(
+                      'cantFindWhatYouAreLookingForText',
+                      'Finnurðu ekki það sem þig vantar?',
+                    ),
+                  )}
+                  contactUsText={o(
+                    'contactUsText',
+                    n('contactUsText', 'Hafa samband'),
+                  )}
+                  howCanWeHelpText={o(
+                    'howCanWeHelpText',
+                    n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
+                  )}
+                />
               </Box>
             </GridColumn>
           </GridRow>
@@ -313,13 +342,15 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
+  const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
+
   const q = single(query.q) || ''
-  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
+  const slug = query.slug ? (query.slug as string) : defaultSlug
   const page = Number(single(query.page)) || 1
 
   const types = ['webQNA' as SearchableContentTypes]
 
-  const queryString = ServiceWebModifySearchTerms(q)
+  const queryString = q
 
   const institutionSlugBelongsToMannaudstorg = slug.includes('mannaudstorg')
   const mannaudstorgTag = [
@@ -355,6 +386,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
             : 'excludedTags']: mannaudstorgTag,
           size: PERPAGE,
           page,
+          highlightResults: true,
         },
       },
     }),
@@ -370,7 +402,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((variables) => {
         // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
+        return JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')
       }),
   ])
 
@@ -384,6 +416,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
     organization: organization?.data?.getOrganization,
     searchResults,
+    locale: locale as Locale,
   }
 }
 

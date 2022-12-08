@@ -29,17 +29,17 @@ export class NationalRegistryPerson {
   children?: NationalRegistryPerson[]
 
   @Field(() => NationalRegistryPerson, { nullable: true })
-  otherParent?: NationalRegistryPerson
+  otherParent?: NationalRegistryPerson | null
 
   @Field(() => [NationalRegistryResidence], { nullable: true })
   residenceHistory?: NationalRegistryResidence[]
 
   @Field(() => NationalRegistrySpouse, { nullable: true })
-  spouse?: NationalRegistrySpouse
+  spouse?: NationalRegistrySpouse | null
 
   @Field(() => NationalRegistryBirthplace, { nullable: true })
-  birthplace?: NationalRegistryBirthplace
+  birthplace?: NationalRegistryBirthplace | null
 
   @Field(() => NationalRegistryCitizenship, { nullable: true })
-  citizenship?: NationalRegistryCitizenship
+  citizenship?: NationalRegistryCitizenship | null
 }

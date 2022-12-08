@@ -1,13 +1,16 @@
 import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize/types'
 
 import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
+import { MessageType, MessageService } from '@island.is/judicial-system/message'
 
+import { randomDate } from '../../../../test'
+import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { randomDate } from '../../../../test'
 
 interface Then {
   result: SignatureConfirmationResponse
@@ -22,13 +25,35 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get ruling signature confirmation', () => {
+  let mockMessageService: MessageService
+  let mockAwsS3Service: AwsS3Service
+  let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, caseController } = await createTestingCaseModule()
+    const {
+      messageService,
+      awsS3Service,
+      sequelize,
+      caseModel,
+      caseController,
+    } = await createTestingCaseModule()
 
     mockCaseModel = caseModel
+    mockMessageService = messageService
+    mockAwsS3Service = awsS3Service
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
+
+    const mockPostMessageToQueue = mockMessageService.sendMessagesToQueue as jest.Mock
+    mockPostMessageToQueue.mockResolvedValue(undefined)
+    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+    mockPutObject.mockResolvedValue(uuid())
 
     givenWhenThen = async (
       caseId: string,
@@ -67,7 +92,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should set the ruling date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingDate: expect.any(Date) },
-        { where: { id: caseId } },
+        { where: { id: caseId }, transaction },
       )
     })
   })
@@ -89,6 +114,13 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should return success', () => {
       expect(then.result).toEqual({ documentSigned: true })
+      expect(mockAwsS3Service.putObject).toHaveBeenCalled()
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        { type: MessageType.CASE_COMPLETED, caseId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
+      ])
     })
   })
 
@@ -126,7 +158,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
     beforeEach(async () => {
       const mockUpdate = mockCaseModel.update as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
-
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
@@ -162,8 +193,37 @@ describe('CaseController - Get ruling signature confirmation', () => {
           rulingDate: expect.any(Date),
           rulingModifiedHistory: expect.any(String),
         },
-        { where: { id: caseId } },
+        { where: { id: caseId }, transaction },
       )
+    })
+  })
+
+  describe('AWS S3 upload failed', () => {
+    const userId = uuid()
+    const user = { id: userId } as User
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      judgeId: userId,
+      policeCaseNumbers: ['007-2022-1'],
+    } as Case
+    const documentToken = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+      mockPutObject.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseId, user, theCase, documentToken)
+    })
+
+    it('should fail and return that the document was not signed', () => {
+      expect(then.result.documentSigned).toBe(false)
+      expect(then.result.message).toBeTruthy()
+      expect(then.result.code).toBeUndefined()
+
+      expect(mockCaseModel.update).not.toHaveBeenCalled()
+      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 })

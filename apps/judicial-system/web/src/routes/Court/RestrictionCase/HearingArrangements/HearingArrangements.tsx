@@ -9,6 +9,10 @@ import {
   CourtCaseInfo,
   FormContentContainer,
   Modal,
+  useCourtArrangements,
+  CourtArrangements,
+  DefenderInfo,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -21,17 +25,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import {
   rcHearingArrangements as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import CourtArrangements, {
-  useCourtArrangements,
-} from '@island.is/judicial-system-web/src/components/CourtArrangements'
 import * as constants from '@island.is/judicial-system/consts'
 
 export const HearingArrangements: React.FC = () => {
@@ -47,7 +46,7 @@ export const HearingArrangements: React.FC = () => {
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const {
-    setAndSendToServer,
+    setAndSendCaseToServer,
     sendNotification,
     isSendingNotification,
   } = useCase()
@@ -67,7 +66,7 @@ export const HearingArrangements: React.FC = () => {
         setInitialAutoFillDone(true)
       }
 
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           // validToDate, isolationToDate and isCustodyIsolation are autofilled here
           // so they are ready for conclusion autofill later
@@ -95,7 +94,7 @@ export const HearingArrangements: React.FC = () => {
       )
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     initialAutoFillDone,
     isCaseUpToDate,
     setCourtDate,
@@ -108,7 +107,7 @@ export const HearingArrangements: React.FC = () => {
       (notification) => notification.type === NotificationType.COURT_DATE,
     )
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [
         {
           courtDate: courtDate
@@ -130,7 +129,7 @@ export const HearingArrangements: React.FC = () => {
     }
   }, [
     workingCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
     courtDate,
     setWorkingCase,
     courtDateHasChanged,

@@ -72,9 +72,7 @@ export const ScreenFooter: FC<FooterProps> = ({
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
-    (mode !== FormModes.REVIEW &&
-      mode !== FormModes.APPLYING &&
-      mode !== FormModes.EDITING)
+    (mode !== FormModes.IN_PROGRESS && mode !== FormModes.DRAFT)
   ) {
     return null
   }
@@ -147,7 +145,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                 >
                   {formatMessage({
                     id: 'application.system:button.servicePortal',
-                    defaultMessage: 'Back to Service Portal',
+                    defaultMessage: 'Til baka á Mínar Síður',
                     description: 'Service Portal button text',
                   })}
                 </Button>

@@ -1,6 +1,5 @@
+import { storageFactory } from '@island.is/shared/utils'
 import { UserManagerSettings, WebStorageStateStore } from 'oidc-client-ts'
-import { storageFactory } from './storageFactory'
-import { toStringScope } from './utils/toStringScope'
 
 export interface AuthSettings
   extends Omit<UserManagerSettings, 'scope' | 'redirect_uri'> {

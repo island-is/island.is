@@ -81,4 +81,15 @@ export const errors = defineMessages({
     defaultMessage: 'Ekki tókst að afrita hlekk',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að afrita hlekk',
   },
+  failedDeleteFile: {
+    id: 'judicial.system.core:errors.failed_delete_file',
+    defaultMessage: 'Ekki tókst að eyða skrá',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða skrá',
+  },
+  fileNotFoundModalTitle: {
+    id: 'judicial.system.core:errors.file_not_found_modal_title',
+    defaultMessage: 'Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt',
+    description:
+      'Notaður sem titill fyrir popup glugga sem segir að skjal sé ekki lengur aðgengilegt í RVG þegar reynt er að opna það',
+  },
 })

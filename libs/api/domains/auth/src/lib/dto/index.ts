@@ -1,4 +1,6 @@
 export { CreateDelegationInput } from './createDelegation.input'
 export { DelegationInput } from './delegation.input'
+export { DelegationsInput } from './delegations.input'
 export { UpdateDelegationInput } from './updateDelegation.input'
+export { PatchDelegationInput } from './patchDelegation.input'
 export { DeleteDelegationInput } from './deleteDelegation.input'

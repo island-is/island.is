@@ -38,6 +38,7 @@ export interface DropdownMenuProps {
    */
   icon?: ButtonProps['icon']
   disclosure?: ReactElement
+  menuClassName?: string
 }
 
 export const DropdownMenu = ({
@@ -46,6 +47,7 @@ export const DropdownMenu = ({
   title,
   icon,
   disclosure,
+  menuClassName,
 }: DropdownMenuProps) => {
   const menu = useMenuState({ placement: 'bottom', gutter: 8 })
   const menuBoxStyle = useBoxStyles({
@@ -82,7 +84,7 @@ export const DropdownMenu = ({
       <Menu
         {...menu}
         aria-label={menuLabel}
-        className={cn(styles.menu, menuBoxStyle)}
+        className={cn(styles.menu, menuBoxStyle, menuClassName)}
       >
         {items.map((item, index) => {
           let anchorProps = {}

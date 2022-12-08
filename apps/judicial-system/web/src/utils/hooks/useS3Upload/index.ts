@@ -17,8 +17,9 @@ import {
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
-interface TUploadFile extends UploadFile {
+export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
+  policeCaseNumber?: string
 }
 
 export const useS3Upload = (workingCase: Case) => {
@@ -215,6 +216,7 @@ export const useS3Upload = (workingCase: Case) => {
             key: file.key,
             size: file.size,
             category: file.category,
+            policeCaseNumber: file.policeCaseNumber,
           },
         },
       })
@@ -224,7 +226,7 @@ export const useS3Upload = (workingCase: Case) => {
           updateFile(file)
         })
         .catch(() => {
-          // TODO: Log to sentry
+          // TODO: handle error
         })
     }
   }
@@ -283,7 +285,7 @@ export const useS3Upload = (workingCase: Case) => {
           }
         })
         .catch(() => {
-          // TODO: Log to Sentry and display an error message.
+          // TODO: handle error
         })
     }
   }

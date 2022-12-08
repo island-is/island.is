@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   Application,
   ApplicationConfigurations,
@@ -45,6 +42,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -60,6 +58,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -73,7 +72,8 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
         meta: {
           name: States.submitted,
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          status: 'completed',
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },

@@ -92,7 +92,7 @@ const Overview = ({
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
-            error: error.graphQLErrors[0].extensions?.code ?? 500,
+            error: (error.graphQLErrors[0].extensions?.code as number) ?? 500,
           })
         })
       if (documentToken) {
@@ -113,7 +113,7 @@ const Overview = ({
             dispatchFileSignature({
               type: FileSignatureActionTypes.ERROR,
               status: FileSignatureStatus.UPLOAD_ERROR,
-              error: error.graphQLErrors[0].extensions?.code ?? 500,
+              error: (error.graphQLErrors[0].extensions?.code as number) ?? 500,
             })
           })
 

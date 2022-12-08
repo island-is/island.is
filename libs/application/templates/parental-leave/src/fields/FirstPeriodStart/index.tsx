@@ -1,10 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import {
-  NO_ANSWER,
-  extractRepeaterIndexFromField,
-} from '@island.is/application/core'
+import { extractRepeaterIndexFromField } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -16,9 +13,14 @@ import { useLocale } from '@island.is/localization'
 import {
   getExpectedDateOfBirth,
   getApplicationAnswers,
+  getBeginningOfThisMonth,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { StartDateOptions } from '../../constants'
+import {
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  StartDateOptions,
+} from '../../constants'
 
 type ValidAnswers = StartDateOptions | undefined
 
@@ -30,9 +32,21 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const { rawPeriods } = getApplicationAnswers(application.answers)
+  const { rawPeriods, applicationType } = getApplicationAnswers(
+    application.answers,
+  )
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
+
+  let isDisable = true
+  if (expectedDateOfBirth) {
+    const expectedDateTime = new Date(expectedDateOfBirth).getTime()
+    const beginningOfMonth = getBeginningOfThisMonth()
+    const today = new Date()
+    isDisable =
+      expectedDateTime < today.getTime() &&
+      expectedDateTime < beginningOfMonth.getTime()
+  }
 
   const [statefulAnswer, setStatefulAnswer] = useState<
     ValidAnswers | undefined
@@ -45,6 +59,10 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const onSelect = (answer: string) => {
     setStatefulAnswer(answer as ValidAnswers)
   }
+
+  const isGrant =
+    applicationType === PARENTAL_GRANT ||
+    applicationType === PARENTAL_GRANT_STUDENTS
 
   const renderHiddenStartDateInput =
     statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
@@ -63,7 +81,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
     <Box marginY={3} key={field.id}>
       <FieldDescription
         description={formatMessage(
-          parentalLeaveFormMessages.firstPeriodStart.description,
+          isGrant
+            ? parentalLeaveFormMessages.firstPeriodStart.grantDescription
+            : parentalLeaveFormMessages.firstPeriodStart.description,
         )}
       />
       <Box paddingTop={3} marginBottom={3}>
@@ -71,7 +91,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           id={field.id}
           error={error}
           defaultValue={
-            statefulAnswer !== undefined ? [statefulAnswer] : NO_ANSWER
+            statefulAnswer !== undefined
+              ? [statefulAnswer]
+              : StartDateOptions.SPECIFIC_DATE
           }
           options={[
             {
@@ -80,12 +102,18 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                   .estimatedDateOfBirthOption,
               ),
               value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+              tooltip: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart
+                  .specificDateOptionTooltip,
+              ),
+              disabled: isDisable,
             },
             {
               label: formatMessage(
                 parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
               ),
               value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+              disabled: isDisable,
             },
             {
               label: formatMessage(

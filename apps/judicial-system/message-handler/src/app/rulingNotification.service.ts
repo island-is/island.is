@@ -3,7 +3,8 @@ import fetch from 'node-fetch'
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
-import { logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { NotificationType } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'
@@ -13,12 +14,13 @@ export class RulingNotificationService {
   constructor(
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async sendRulingNotification(caseId: string): Promise<void> {
-    logger.debug(`Sending ruling notification for case ${caseId}`)
+  async sendRulingNotification(caseId: string): Promise<boolean> {
+    this.logger.debug(`Sending ruling notification for case ${caseId}`)
 
-    return fetch(
+    await fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/notification`,
       {
         method: 'POST',
@@ -33,7 +35,7 @@ export class RulingNotificationService {
         const response = await res.json()
 
         if (res.ok) {
-          logger.debug(
+          this.logger.debug(
             `Ruling notification${
               response.notificationSent ? '' : ' not'
             } sent for case ${caseId}`,
@@ -42,14 +44,17 @@ export class RulingNotificationService {
           return
         }
 
-        logger.error(`Failed to send ruling notification for case ${caseId}`, {
-          response,
-        })
+        throw response
       })
       .catch((reason) => {
-        logger.error(`Failed to send ruling notification for case ${caseId}`, {
-          reason,
-        })
+        this.logger.error(
+          `Failed to send ruling notification for case ${caseId}`,
+          {
+            reason,
+          },
+        )
       })
+
+    return true
   }
 }

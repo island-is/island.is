@@ -1,9 +1,9 @@
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
+import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
 import {
@@ -25,11 +25,12 @@ const autoSchemaFile = environment.production
 @Module({
   imports: [
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       debug,
       playground,
       autoSchemaFile,
       path: '/api/graphql',
-      context: ({ req }) => req,
+      context: ({ req }: any) => req,
       dataSources: () => ({
         backendApi: new BackendAPI(),
       }),

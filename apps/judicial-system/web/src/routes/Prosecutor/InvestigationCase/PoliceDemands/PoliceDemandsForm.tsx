@@ -101,7 +101,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
 
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
@@ -121,14 +121,11 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accused: enumerate(
                   workingCase.defendants.map(
                     (defendant) =>
-                      `${defendant.name}${
-                        defendant.nationalId
-                          ? ` ${formatDOB(
-                              defendant.nationalId,
-                              defendant.noNationalId,
-                            )}`
-                          : ''
-                      }`,
+                      `${defendant.name} ${`${formatDOB(
+                        defendant.nationalId,
+                        defendant.noNationalId,
+                        '',
+                      )}`.trim()}`,
                   ),
                   formatMessage(core.and),
                 ),
@@ -153,7 +150,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             })
           : undefined
 
-        setAndSendToServer(
+        setAndSendCaseToServer(
           [{ demands: courtClaimText }],
           workingCase,
           setWorkingCase,
@@ -163,7 +160,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       setInitialAutoFillDone(true)
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,

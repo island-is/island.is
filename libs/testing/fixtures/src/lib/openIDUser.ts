@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import * as faker from 'faker'
+import kennitala from 'kennitala'
 
 import { User } from '@island.is/shared/types'
+import { createNationalId } from './nationalId'
 
 const createRandomOpenIDUser = (): User => {
   const [firstName, middleName, lastName] = [
@@ -10,6 +12,8 @@ const createRandomOpenIDUser = (): User => {
     faker.name.middleName(),
     faker.name.lastName(),
   ]
+  const nationalId = createNationalId()
+  const subjectType = kennitala.isCompany(nationalId) ? 'legalEntity' : 'person'
 
   return {
     id_token: faker.random.word(),
@@ -18,7 +22,8 @@ const createRandomOpenIDUser = (): User => {
     scope: faker.random.word(),
     profile: {
       name: `${firstName} ${middleName} ${lastName}`,
-      nationalId: faker.helpers.replaceSymbolWithNumber('##########'),
+      nationalId,
+      subjectType,
       given_name: firstName,
       family_name: lastName,
       nickname: faker.name.firstName(),

@@ -18,10 +18,11 @@ interface FilterTag {
 
 export const getAllGenericTagGroups = (genericTags: GenericTag[]) => {
   const genericTagGroupObject: Record<string, GenericTagGroup> = {}
-  genericTags.forEach(
-    (tag) =>
-      (genericTagGroupObject[tag.genericTagGroup.id] = tag.genericTagGroup),
-  )
+  genericTags.forEach((tag) => {
+    if (tag.genericTagGroup?.id) {
+      genericTagGroupObject[tag.genericTagGroup.id] = tag.genericTagGroup
+    }
+  })
   return Object.keys(genericTagGroupObject).map(
     (key) => genericTagGroupObject[key],
   )

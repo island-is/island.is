@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import { Box, Button } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { Gender, isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 
 import * as styles from '../AppealSection/AppealSection.css'
@@ -60,22 +59,12 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
             disabled={!appealDate}
           >
             {`${capitalize(
-              isRestrictionCase(workingCase.type)
-                ? formatMessage(core.accused, {
-                    suffix:
-                      workingCase.defendants &&
-                      workingCase.defendants.length > 0 &&
-                      workingCase.defendants[0].gender === Gender.MALE
-                        ? 'i'
-                        : 'a',
-                  })
-                : formatMessage(core.defendant, {
-                    suffix:
-                      workingCase.defendants &&
-                      workingCase.defendants.length > 1
-                        ? 'ar'
-                        : 'i',
-                  }),
+              formatMessage(core.defendant, {
+                suffix:
+                  workingCase.defendants && workingCase.defendants.length > 1
+                    ? 'ar'
+                    : 'i',
+              }),
             )} ${
               workingCase.defendants && workingCase.defendants.length > 1
                 ? 'kæra'

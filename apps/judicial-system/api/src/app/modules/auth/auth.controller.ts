@@ -170,7 +170,6 @@ export class AuthController {
     requestedRedirectRoute: string,
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
-
     if (user && this.authService.validateUser(user)) {
       return {
         userId: user.id,
@@ -183,7 +182,7 @@ export class AuthController {
       }
     } else if (requestedRedirectRoute?.startsWith(`${DEFENDER_ROUTE}/`)) {
       const defender = await this.authService.findDefender(
-        requestedRedirectRoute.substring(10),
+        requestedRedirectRoute.split('/').pop() || '',
         authUser.nationalId,
       )
 

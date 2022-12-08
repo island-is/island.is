@@ -55,7 +55,7 @@ export const withMetrics = ({
       const response = await fetch(request)
       handleMetrics(response)
       return response
-    } catch (error) {
+    } catch (error: any) {
       handleMetrics(undefined, error)
       throw error
     }

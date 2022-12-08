@@ -8,8 +8,8 @@ export class SupportCategory {
   @Field(() => ID)
   id!: string
 
-  @Field()
-  title!: string
+  @Field({ nullable: true })
+  title?: string
 
   @Field({ nullable: true })
   description?: string
@@ -17,8 +17,8 @@ export class SupportCategory {
   @Field(() => Organization, { nullable: true })
   organization?: Organization | null
 
-  @Field()
-  slug!: string
+  @Field({ nullable: true })
+  slug?: string
 
   @Field()
   importance!: number

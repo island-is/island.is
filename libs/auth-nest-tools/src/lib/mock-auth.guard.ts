@@ -8,21 +8,25 @@ import type { User } from './user'
 export class MockAuthGuard implements CanActivate {
   auth: Auth
 
-  constructor(user: Partial<Auth>) {
+  constructor(auth: Partial<Auth>) {
     this.auth = {
       nationalId: '0101302989',
       authorization: '',
       client: 'mock',
       scope: [],
-      ...user,
+      ...auth,
     }
+  }
+
+  getAuth(): Auth {
+    return this.auth
   }
 
   canActivate(context: ExecutionContext): boolean {
     const request = getRequest(context)
-    request.auth = this.auth
-    if (this.auth.nationalId) {
-      request.user = this.auth as User
+    request.auth = this.getAuth()
+    if (request.auth.nationalId) {
+      request.user = request.auth as User
     }
     return true
   }

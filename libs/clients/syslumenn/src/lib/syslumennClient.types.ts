@@ -10,7 +10,18 @@ export interface SyslumennAuction {
   auctionTime: string
   petitioners: string
   respondent: string
+  publishText: string
   auctionTakesPlaceAt: string
+}
+
+export interface RealEstateAgent {
+  name: string
+  location: string
+}
+
+export interface Lawyer {
+  name: string
+  licenceType: string
 }
 
 export interface DataUploadResponse {
@@ -56,6 +67,10 @@ export interface OperatingLicense {
   alcoholWeekendOutdoorLicense?: string
   maximumNumberOfGuests?: number
   numberOfDiningGuests?: number
+}
+
+export interface OperatingLicensesCSV {
+  value: string
 }
 
 /**
@@ -162,31 +177,39 @@ export type EstateAsset = {
   description: string
   assetNumber: string
   share: number
+  enabled?: boolean
 }
 
-export type EstateRegistrant = {
+export interface EstateRegistrant extends EstateCommon {
   applicantEmail: string
   applicantPhone: string
-  knowledgeOfOtherWills: 'yes' | 'no'
-  assets: EstateAsset[]
-  vehicles: EstateAsset[]
-  ships: EstateAsset[]
-  cash: EstateAsset[]
-  flyers: EstateAsset[]
-  estateMembers: EstateMember[]
-  marriageSettlement: boolean
   office: string
-  caseNumber: string
-  dateOfDeath: Date
-  nameOfDeceased: string
-  nationalIdOfDeceased: string
   ownBusinessManagement: boolean
   assetsAbroad: boolean
   occupationRightViaCondominium: boolean
   bankStockOrShares: boolean
-  districtCommissionerHasWill: boolean
 }
 
 export type EstateRelations = {
   relations: string[]
+}
+
+interface EstateCommon {
+  assets: EstateAsset[]
+  vehicles: EstateAsset[]
+  ships: EstateAsset[]
+  flyers: EstateAsset[]
+  cash: EstateAsset[]
+  estateMembers: EstateMember[]
+  caseNumber: string
+  districtCommissionerHasWill: boolean
+  marriageSettlement: boolean
+  dateOfDeath: Date
+  nameOfDeceased: string
+  nationalIdOfDeceased: string
+  knowledgeOfOtherWills: 'Yes' | 'No'
+}
+
+export interface EstateInfo extends EstateCommon {
+  addressOfDeceased: string
 }

@@ -1,11 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import { FetchError } from '@island.is/clients/middlewares'
 import { FasteignirApi } from '@island.is/clients/assets'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { Auth, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  PropertiesDTO,
+  PropertySingleDTO,
+  RegisteredOwnerWrapper,
+  UnitsOfUseWrapper,
+  AssetsMultiDetail,
+} from '../types'
+
+const LOG_CATEGORY = 'assets-service'
 
 const getAssetString = (str: string) =>
   str.charAt(0).toLowerCase() === 'f' ? str.substring(1) : str
@@ -18,23 +26,22 @@ export class AssetsXRoadService {
     private fasteignirApi: FasteignirApi,
   ) {}
 
-  handleError(error: any): any {
-    this.logger.error(error)
-
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message ?? error?.response?.message,
-    )
+  handleError(error: any, detail?: string): ApolloError | null {
+    this.logger.error(detail || 'Domain assets error', {
+      error: JSON.stringify(error),
+      category: LOG_CATEGORY,
+    })
+    throw new ApolloError('Failed to resolve request', error.status)
   }
 
-  private handle4xx(error: FetchError) {
+  private handle4xx(error: any, detail?: string): ApolloError | null {
     if (error.status === 403 || error.status === 404) {
       return null
     }
-    this.handleError(error)
+    return this.handleError(error, detail)
   }
 
-  private getRealEstatesWithAuth(auth: Auth) {
+  private getRealEstatesWithAuth(auth: User) {
     return this.fasteignirApi.withMiddleware(
       new AuthMiddleware(auth, { forwardUserInfo: true }),
     )
@@ -43,7 +50,7 @@ export class AssetsXRoadService {
   async getRealEstates(
     auth: User,
     cursor?: string | null,
-  ): Promise<any | null> {
+  ): Promise<PropertiesDTO | null> {
     try {
       const fasteignirResponse = await this.getRealEstatesWithAuth(
         auth,
@@ -70,15 +77,21 @@ export class AssetsXRoadService {
       }
       return null
     } catch (e) {
-      this.handle4xx(e)
+      this.handle4xx(e, 'Failed to get assets list')
+      return null
     }
   }
 
-  async getRealEstateDetail(assetId: string, auth: User): Promise<any | null> {
+  async getRealEstateDetail(
+    assetId: string,
+    auth: User,
+  ): Promise<PropertySingleDTO | null> {
     try {
       const singleFasteignResponse = await this.getRealEstatesWithAuth(
         auth,
-      ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })
+      ).fasteignirGetFasteign({
+        fasteignanumer: getAssetString(assetId),
+      })
 
       if (singleFasteignResponse) {
         return {
@@ -103,7 +116,7 @@ export class AssetsXRoadService {
             activeStructureAppraisal:
               singleFasteignResponse?.fasteignamat?.gildandiMannvirkjamat,
             plannedStructureAppraisal:
-              singleFasteignResponse?.fasteignamat?.fyrirhugadFasteignamat,
+              singleFasteignResponse?.fasteignamat?.fyrirhugadMannvirkjamat,
             activePlotAssessment:
               singleFasteignResponse?.fasteignamat?.gildandiLodarhlutamat,
             plannedPlotAssessment:
@@ -191,7 +204,8 @@ export class AssetsXRoadService {
       }
       return null
     } catch (e) {
-      this.handle4xx(e)
+      this.handle4xx(e, 'Failed to get detail asset')
+      return null
     }
   }
 
@@ -200,7 +214,7 @@ export class AssetsXRoadService {
     auth: User,
     cursor?: string | null,
     limit?: number | null,
-  ): Promise<any | null> {
+  ): Promise<RegisteredOwnerWrapper | null> {
     try {
       const singleFasteignResponse = await this.getRealEstatesWithAuth(
         auth,
@@ -226,7 +240,8 @@ export class AssetsXRoadService {
       }
       return null
     } catch (e) {
-      this.handle4xx(e)
+      this.handle4xx(e, 'Failed to get assets owner')
+      return null
     }
   }
 
@@ -235,7 +250,7 @@ export class AssetsXRoadService {
     auth: User,
     cursor?: string | null,
     limit?: number | null,
-  ): Promise<any | null> {
+  ): Promise<UnitsOfUseWrapper | null> {
     try {
       const unitsOfUseResponse = await this.getRealEstatesWithAuth(
         auth,
@@ -282,14 +297,15 @@ export class AssetsXRoadService {
       }
       return null
     } catch (e) {
-      this.handleError(e)
+      this.handle4xx(e, 'Failed to get units of use for asset')
+      return null
     }
   }
 
   async getRealEstatesWithDetail(
     auth: User,
     cursor?: string | null,
-  ): Promise<any | null> {
+  ): Promise<AssetsMultiDetail | null> {
     try {
       const getRealEstatesRes = await this.getRealEstates(auth, cursor)
 
@@ -297,16 +313,16 @@ export class AssetsXRoadService {
         return {
           paging: getRealEstatesRes.paging,
           properties: await Promise.all(
-            getRealEstatesRes.properties.map(
-              (item: { propertyNumber: string }) =>
-                this.getRealEstateDetail(item.propertyNumber, auth),
+            getRealEstatesRes.properties.map((item) =>
+              this.getRealEstateDetail(item.propertyNumber ?? '', auth),
             ),
           ),
         }
       }
       return null
     } catch (e) {
-      this.handle4xx(e)
+      this.handle4xx(e, 'Failed to get assets with detail')
+      return null
     }
   }
 }

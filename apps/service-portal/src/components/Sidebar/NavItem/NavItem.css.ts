@@ -86,7 +86,7 @@ export const iconWrapper = style({
   position: 'absolute',
   right: 0,
   paddingRight: theme.spacing[2],
-  paddingTop: theme.spacing[1],
+  paddingTop: 10,
   cursor: 'pointer',
   color: theme.color.blue600,
   ':hover': {

@@ -1,4 +1,5 @@
 export enum ProblemType {
+  HTTP_NO_CONTENT = 'https://httpstatuses.org/204',
   HTTP_BAD_REQUEST = 'https://httpstatuses.org/400',
   HTTP_UNAUTHORIZED = 'https://httpstatuses.org/401',
   HTTP_FORBIDDEN = 'https://httpstatuses.org/403',

@@ -12,8 +12,8 @@ import {
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { CaseData, LimitedAccessCaseData } from '../../types'
-import { CaseQuery } from './caseGql'
-import { LimitedAccessCaseQuery } from './limitedAccessCaseGql'
+import LimitedAccessCaseQuery from './limitedAccessCaseGql'
+import CaseQuery from './caseGql'
 
 type ProviderState =
   | 'fetch'
@@ -45,6 +45,7 @@ const initialState: Case = {
   state: CaseState.NEW,
   policeCaseNumbers: [],
   defendants: [{ id: '' } as Defendant],
+  defendantWaivesRightToCounsel: false,
 }
 
 export const FormContext = createContext<FormProvider>({
@@ -57,7 +58,7 @@ export const FormContext = createContext<FormProvider>({
   refreshCase: () => {},
 })
 
-const FormProvider = ({ children }: Props) => {
+export const FormProvider = ({ children }: Props) => {
   const router = useRouter()
   const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
   const id = router.query.id
@@ -67,10 +68,10 @@ const FormProvider = ({ children }: Props) => {
     : router.pathname.includes('gaesluvardhald')
     ? CaseType.CUSTODY
     : router.pathname.includes('akaera')
-    ? // These are random case types for the default value. This
-      // is updated when the case is created.
-      CaseType.FRAUD
-    : CaseType.OTHER
+    ? CaseType.INDICTMENT
+    : // This is a random case type for the default value.
+      // It is updated when the case is created.
+      CaseType.OTHER
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
@@ -155,5 +156,3 @@ const FormProvider = ({ children }: Props) => {
     </FormContext.Provider>
   )
 }
-
-export default FormProvider

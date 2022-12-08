@@ -10,6 +10,7 @@ import Cellular from '../../components/AnimatedIcon/Cellular'
 import Person from '../../components/AnimatedIcon/Person'
 import Business from '../../components/AnimatedIcon/Business'
 import LogOut from '../../components/AnimatedIcon/LogOut'
+import People from '../../components/AnimatedIcon/People'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -40,6 +41,10 @@ export const iconIdMapper = (iconType: string) => {
     // Aðgangsstýringar
     case 'lockClosed':
       return 'eA2KDqNP3G51'
+      break
+    // Aðgangsstýringar vol.2
+    case 'people':
+      return 'eje81k4ND7o1'
       break
     // Menntun
     case 'school':
@@ -96,6 +101,10 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     // Aðgangsstýringar
     case 'lockClosed':
       return <LockClosed />
+      break
+    // Aðgangsstýringar vol.2
+    case 'people':
+      return <People />
       break
     // Menntun
     case 'school':

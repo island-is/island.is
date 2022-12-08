@@ -15,12 +15,18 @@ export type TestServerOptions = {
     override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
     extend?: (app: TestApp) => Promise<CleanUp | undefined>
   }[]
+
+  /**
+   * Enables NestJS versioning.
+   */
+  enableVersioning?: boolean
 }
 
 export const testServer = async ({
   appModule,
   hooks = [],
   override,
+  enableVersioning,
 }: TestServerOptions): Promise<TestApp> => {
   let builder = Test.createTestingModule({
     imports: [InfraModule.forRoot({ appModule })],
@@ -41,8 +47,13 @@ export const testServer = async ({
     .createNestApplication()
     .useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-    )
-    .init()) as TestApp
+    )) as TestApp
+
+  if (enableVersioning) {
+    app.enableVersioning()
+  }
+
+  await app.init()
 
   const hookCleanups = await Promise.all(
     hooks.map((hook) => {

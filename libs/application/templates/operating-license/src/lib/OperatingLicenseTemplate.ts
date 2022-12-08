@@ -32,7 +32,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
   type: ApplicationTypes.OPERATING_LCENSE,
   name: m.formName.defaultMessage,
   featureFlag: Features.operatingLicense,
-  allowedDelegations: [AuthDelegationType.ProcurationHolder],
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -40,6 +40,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: m.formName.defaultMessage,
+          status: 'draft',
           progress: 0.33,
           lifecycle: pruneAfter(oneDay),
           roles: [
@@ -68,6 +69,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
             description: m.payment,
           },
@@ -87,6 +89,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -97,6 +100,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
           onEntry: {
@@ -115,7 +119,6 @@ const OperatingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

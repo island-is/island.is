@@ -1,5 +1,6 @@
 import request from 'supertest'
 import { Controller, Get, INestApplication, UseGuards } from '@nestjs/common'
+import { ApolloDriver } from '@nestjs/apollo'
 import { Test } from '@nestjs/testing'
 import { ConfigModule } from '@island.is/nest/config'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
@@ -15,7 +16,8 @@ import {
 } from '../'
 import { GraphQLModule, Query, Resolver } from '@nestjs/graphql'
 
-const testUser = createCurrentUser()
+const testUser = createCurrentUser({ nationalIdType: 'person' })
+const testCompany = createCurrentUser({ nationalIdType: 'company' })
 const testFeature = 'test' as Features
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
@@ -60,6 +62,7 @@ export class TestFeatureResolver {
 
 describe('FeatureFlagGuard', () => {
   let app: INestApplication
+  const authGuard = new MockAuthGuard(testUser)
   const featureFlagClient = {
     getValue: jest.fn(),
   }
@@ -70,14 +73,18 @@ describe('FeatureFlagGuard', () => {
       providers: [TestResolver, TestFeatureResolver],
       imports: [
         FeatureFlagModule,
-        GraphQLModule.forRoot({ autoSchemaFile: true, path: '/graphql' }),
+        GraphQLModule.forRoot({
+          autoSchemaFile: true,
+          driver: ApolloDriver,
+          path: '/graphql',
+        }),
         ConfigModule.forRoot({ isGlobal: true, load: [FeatureFlagConfig] }),
       ],
     })
       .overrideProvider(FEATURE_FLAG_CLIENT)
       .useValue(featureFlagClient)
       .overrideGuard(IdsUserGuard)
-      .useValue(new MockAuthGuard(testUser))
+      .useValue(authGuard)
       .compile()
 
     app = moduleRef.createNestApplication()
@@ -86,6 +93,7 @@ describe('FeatureFlagGuard', () => {
 
   afterEach(() => {
     jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   it('guards controller if feature is disabled', () => {
@@ -122,6 +130,29 @@ describe('FeatureFlagGuard', () => {
       false,
       {
         id: testUser.nationalId,
+        attributes: {
+          subjectType: 'person',
+        },
+      },
+    )
+  })
+
+  it('passes company details to getValue', async () => {
+    // Arrange
+    jest.spyOn(authGuard, 'getAuth').mockReturnValue(testCompany)
+
+    // Act
+    await request(app.getHttpServer()).get('/rest')
+
+    // Assert
+    expect(featureFlagClient.getValue).toHaveBeenCalledWith(
+      testFeature,
+      false,
+      {
+        id: testCompany.nationalId,
+        attributes: {
+          subjectType: 'legalEntity',
+        },
       },
     )
   })

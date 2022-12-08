@@ -24,20 +24,13 @@ interface FormOutput {
 }
 
 const ApiScopeCreateForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-    setValue,
-  } = useForm<FormOutput>()
+  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [groups, setGroups] = useState<ApiScopeGroup[]>([])
   const [nameLength, setNameLength] = useState(0)
   const [domains, setDomains] = useState<Domain[]>([])
-  const [domainIsTouched, setDomainIsTouched] = useState<boolean>(false)
   //#region hint-box
   const [
     apiScopeNameHintVisible,
@@ -103,6 +96,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   }
 
   const save = async (data: FormOutput) => {
+    data.apiScope.order = +data.apiScope.order
     if (data.apiScope.groupId === 'null') {
       data.apiScope.groupId = null
     }
@@ -116,12 +110,6 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
     }
   }
 
-  const onDomainChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDomainIsTouched(true)
-    setValue('apiScope.name', e.currentTarget.value)
-    document.getElementById('apiScope.name').focus()
-  }
-
   return (
     <div className="api-scope-form">
       <div className="api-scope-form__wrapper">
@@ -131,39 +119,6 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
             <div className="api-scope-form__help">{localization.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-scope-form__container__fields">
-                <div
-                  className={`api-scope-form__container__field${
-                    isEditing ? ' hidden' : ''
-                  }`}
-                >
-                  <label htmlFor="domain" className="api-scope-form__label">
-                    Domain
-                  </label>
-                  <select
-                    id="domain"
-                    name="domain"
-                    onChange={(e) => onDomainChange(e)}
-                  >
-                    <option value={'null'} disabled={true} selected>
-                      {localization.fields['domain'].selectAnItem}
-                    </option>
-                    {domains.map((domain: Domain) => {
-                      return (
-                        <option
-                          value={domain.name + '/'}
-                          key={domain.name}
-                          selected={props?.apiScope?.name?.includes(
-                            domain.name + '/',
-                          )}
-                          title={domain.description}
-                        >
-                          {domain.name + '/'}
-                        </option>
-                      )
-                    })}
-                  </select>
-                </div>
-
                 <div className="api-scope-form__container__field">
                   <label
                     htmlFor="apiScope.name"
@@ -186,7 +141,6 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     className="api-scope-form__input"
                     title={localization.fields['name'].helpText}
                     defaultValue={props.apiScope.name}
-                    readOnly={isEditing || !domainIsTouched}
                     onChange={(e) => onApiScopeNameChange(e.target.value)}
                     placeholder={localization.fields['name'].placeholder}
                     onBlur={() => setApiScopeNameHintVisible(false)}
@@ -217,7 +171,6 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     message={localization.fields['name'].errorMessage}
                   />
                 </div>
-
                 <div className="api-scope-form__container__field">
                   <label
                     htmlFor="apiScope.displayName"
@@ -291,6 +244,41 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="api-scope-form__container__field">
+                  <label htmlFor="domainName" className="api-scope-form__label">
+                    {localization.fields['domainName'].label}
+                  </label>
+                  <select
+                    id="apiScope.domainName"
+                    name="apiScope.domainName"
+                    ref={register({
+                      required: true,
+                    })}
+                    placeholder={localization.fields['domainName'].placeholder}
+                    title={localization.fields['domainName'].helpText}
+                  >
+                    {domains.map((domain: Domain) => {
+                      return (
+                        <option
+                          value={domain.name}
+                          key={domain.name}
+                          selected={props.apiScope.domainName === domain.name}
+                        >
+                          {domain.name}
+                        </option>
+                      )
+                    })}
+                  </select>
+                  <HelpBox
+                    helpText={localization.fields['domainName'].helpText}
+                  />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="domainName"
+                    message={localization.fields['domainName'].errorMessage}
+                  />
+                </div>
+                <div className="api-scope-form__container__field">
                   <label
                     htmlFor="apiScope.groupId"
                     className="api-scope-form__label"
@@ -325,6 +313,30 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     apiScopeGroup={new ApiScopeGroup()}
                     handleChanges={getGroups}
                   ></ApiScopeGroupCreateFormModal>
+                </div>
+                <div className="api-scope-form__container__field">
+                  <label
+                    htmlFor="apiScope.order"
+                    className="api-scope-form__label"
+                  >
+                    {localization.fields['order'].label}
+                  </label>
+                  <input
+                    ref={register({ required: true, min: 0, max: 999 })}
+                    id="apiScope.order"
+                    name="apiScope.order"
+                    type="number"
+                    className="api-scope-form__input"
+                    title={localization.fields['order'].helpText}
+                    defaultValue={props.apiScope.order}
+                  />
+                  <HelpBox helpText={localization.fields['order'].helpText} />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="apiScope.order"
+                    message={localization.fields['order'].errorMessage}
+                  />
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">

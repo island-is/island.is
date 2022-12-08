@@ -1,19 +1,15 @@
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
-import { INDICTMENTS_SUBPOENA_ROUTE } from '@island.is/judicial-system/consts'
-
 import {
-  makeCourt,
-  intercept,
-  hasOperationName,
-  Operation,
-  makeJudge,
-  mockCase,
-} from '../../../utils'
+  INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+  INDICTMENTS_SUBPOENA_ROUTE,
+} from '@island.is/judicial-system/consts'
+
+import { makeCourt, intercept, mockCase } from '../../../utils'
 
 describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
-  beforeEach(() => {
-    const caseData = mockCase(CaseType.MAJOR_ASSAULT)
+  const caseData = mockCase(CaseType.MAJOR_ASSAULT)
 
+  beforeEach(() => {
     const caseDataAddition = {
       ...caseData,
       state: CaseState.RECEIVED,
@@ -24,28 +20,18 @@ describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${INDICTMENTS_SUBPOENA_ROUTE}/test`)
+    cy.visit(`${INDICTMENTS_SUBPOENA_ROUTE}/${caseData.id}`)
   })
 
   it('should enable continue button when required fields are valid', () => {
-    cy.intercept('POST', '**/api/graphql', (req) => {
-      if (hasOperationName(req, Operation.UpdateCaseMutation)) {
-        const { body } = req
-
-        req.reply({
-          data: {
-            updateCase: {
-              ...body.variables?.input,
-              judge: makeJudge(),
-              __typename: 'Case',
-            },
-          },
-        })
-      }
-    })
-
     cy.getByTestid('continueButton').should('not.be.enabled')
     cy.get('#subpoenaTypeAbsenceSummons').click()
     cy.getByTestid('continueButton').should('be.enabled')
+    cy.getByTestid('continueButton').click()
+    cy.getByTestid('modalPrimaryButton').click()
+    cy.url().should(
+      'include',
+      `${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${caseData.id}`,
+    )
   })
 })

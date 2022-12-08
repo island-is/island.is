@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { error } from './error'
 import { APPLICATION_TYPES, NO, OPERATION_CATEGORY, YES } from './constants'
 import {
@@ -119,7 +119,7 @@ export const dataSchema = z.object({
     }),
 
   info: z.object({
-    operationName: z.string().nonempty(),
+    operationName: z.string().min(1),
     vskNr: z
       .string()
       .refine((v) => isValidVskNr(v), { params: error.invalidValue }),

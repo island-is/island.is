@@ -16,6 +16,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn',
     description: `Application's name`,
   },
+  nameApplicationNeverWorkedBefore: {
+    id: 'example.application:name.application.never.worked.before',
+    defaultMessage: 'Umsókn - Aldrei unnið áður',
+    description: `Application's name`,
+  },
   draftTitle: {
     id: 'example.application:draft.title',
     defaultMessage: 'Drög',
@@ -82,6 +87,16 @@ export const m = defineMessages({
     defaultMessage: 'Hvar hefur þú unnið áður?',
     description: 'Some description',
   },
+  careerIndustry: {
+    id: 'example.application:career.industry',
+    defaultMessage: 'Starfsgeiri',
+    description: 'Some description',
+  },
+  careerIndustryDescription: {
+    id: 'example.application:career.industryDescription',
+    defaultMessage: 'Í hvaða geira hefur þú unnið?',
+    description: 'Some description',
+  },
   careerHistory: {
     id: 'example.application:careerHistory',
     defaultMessage: 'Hefurðu unnið yfir höfuð einhvern tímann áður?',
@@ -142,5 +157,22 @@ export const m = defineMessages({
     id: 'example.application:dataSchema.national.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
+  },
+  careerHistoryOther: {
+    id: 'example.application:careerHistory.other',
+    defaultMessage: 'Hvern hefur þú unnið fyrir áður?',
+    description: 'Some description',
+  },
+  careerHistoryOtherError: {
+    id: 'example.application:careerHistory.othertError',
+    defaultMessage:
+      'Vinsamlegast tilgreindu fyrir hvern þú hefur unnið fyrir áður?',
+    description: 'Some description',
+  },
+  approvedByReviewerError: {
+    id: 'example.application:approvedByReviewerError',
+    defaultMessage:
+      'Vinsamlegast tilgreindu hvort umsóknin sé samþykkt eða ekki',
+    description: 'Some description',
   },
 })

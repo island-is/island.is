@@ -37,6 +37,14 @@ export interface ProfileCardProps {
     url: string
     text: string
   }
+  /**
+   * Choose where to place the title
+   */
+  variant?: 'default' | 'title-above'
+  /**
+   * Is card disabled or not
+   */
+  disabled?: boolean
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -46,6 +54,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   heightFull,
   size = 'default',
   link,
+  variant = 'default',
+  disabled,
 }) => {
   const conditionalProps: { height?: 'full' } = {}
   if (heightFull) {
@@ -60,46 +70,62 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       overflow="hidden"
       background="white"
       borderWidth="standard"
-      borderColor="blue200"
+      borderColor={disabled ? 'blue100' : 'blue200'}
       {...conditionalProps}
+      position="relative"
     >
+      {title && variant === 'title-above' && (
+        <Box className={styles.titleAboveContainer}>
+          <Text color="blue400" variant="h3">
+            {title}
+          </Text>
+        </Box>
+      )}
       {image && (
         <Box
           className={styles.image}
           style={{ backgroundImage: `url(${image})` }}
         />
       )}
-      <Box padding={3}>
-        {title && (
-          <Text variant="h4" marginBottom={1}>
+      <Box padding={3} paddingBottom={link ? 6 : 3}>
+        {title && variant === 'default' && (
+          <Text
+            color={disabled ? 'dark300' : 'dark400'}
+            variant="h4"
+            marginBottom={1}
+          >
             {title}
           </Text>
         )}
-        <Stack space={0}>
-          {strings?.map((x, idx) =>
-            typeof x === 'string' ? (
-              <Text variant={size} key={idx}>
-                {x}
-              </Text>
-            ) : (
-              <Fragment key={idx}>{x}</Fragment>
-            ),
-          )}
-        </Stack>
+        <Box paddingBottom={link ? 2 : 0}>
+          <Stack space={0}>
+            {strings?.map((x, idx) =>
+              typeof x === 'string' ? (
+                <Text
+                  color={disabled ? 'dark300' : 'dark400'}
+                  variant={size}
+                  key={idx}
+                >
+                  {x}
+                </Text>
+              ) : (
+                <Fragment key={idx}>{x}</Fragment>
+              ),
+            )}
+          </Stack>
+        </Box>
         {link && (
-          <Box paddingTop={2}>
-            <Link href={link.url}>
-              <Button
-                icon="arrowForward"
-                iconType="filled"
-                type="button"
-                variant="text"
-                size={size}
-              >
-                {link.text}
-              </Button>
-            </Link>
-          </Box>
+          <Link className={styles.link} href={link.url}>
+            <Button
+              icon="arrowForward"
+              iconType="filled"
+              type="button"
+              variant="text"
+              size={size}
+            >
+              {link.text}
+            </Button>
+          </Link>
         )}
       </Box>
     </Box>

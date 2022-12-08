@@ -54,8 +54,9 @@ const RouteLoader: FC<{
     {routes.map((route) =>
       route.enabled === false ? (
         <Route
-          key={Array.isArray(route.path) ? route.path[0] : route.path}
           path={route.path}
+          exact
+          key={Array.isArray(route.path) ? route.path[0] : route.path}
           component={AccessDenied}
         />
       ) : (

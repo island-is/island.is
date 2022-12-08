@@ -7,11 +7,10 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { FormatMessage } from '@island.is/cms-translations'
-import { Gender, SessionArrangements } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import { environment } from '../../environments'
 import { Case } from '../modules/case'
-import { core, custodyNotice } from '../messages'
+import { custodyNotice } from '../messages'
 import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,
@@ -23,7 +22,6 @@ import {
   addFooter,
   setTitle,
 } from './pdfHelpers'
-import { writeFile } from './writeFile'
 
 function constructCustodyNoticePdf(
   theCase: Case,
@@ -155,14 +153,6 @@ function constructCustodyNoticePdf(
     )
 
     if (theCase.isCustodyIsolation) {
-      const genderedAccused = formatMessage(core.accused, {
-        suffix:
-          !theCase.defendants ||
-          theCase.defendants.length < 1 ||
-          theCase.defendants[0].gender === Gender.MALE
-            ? 'i'
-            : 'a',
-      })
       const isolationPeriod = formatDate(theCase.isolationToDate, 'PPPPp')
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')
@@ -171,7 +161,6 @@ function constructCustodyNoticePdf(
         doc,
         capitalize(
           formatMessage(custodyNotice.isolationDisclaimer, {
-            genderedAccused,
             isolationPeriod,
           }),
         ),
@@ -191,42 +180,30 @@ function constructCustodyNoticePdf(
   return stream
 }
 
-export async function getCustodyNoticePdfAsString(
+export function getCustodyNoticePdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
   const stream = constructCustodyNoticePdf(theCase, formatMessage)
 
   // wait for the writing to finish
-  const pdf = await new Promise<string>(function (resolve) {
+  return new Promise<string>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContentsAsString('binary') as string)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-custody-notice.pdf`, pdf)
-  }
-
-  return pdf
 }
 
-export async function getCustodyNoticePdfAsBuffer(
+export function getCustodyNoticePdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
   const stream = constructCustodyNoticePdf(theCase, formatMessage)
 
   // wait for the writing to finish
-  const pdf = await new Promise<Buffer>(function (resolve) {
+  return new Promise<Buffer>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContents() as Buffer)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-custody-notice.pdf`, pdf)
-  }
-
-  return pdf
 }

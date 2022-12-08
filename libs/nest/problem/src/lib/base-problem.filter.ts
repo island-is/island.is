@@ -1,12 +1,14 @@
 import { ArgumentsHost, ExceptionFilter, Inject } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { Response } from 'express'
-import { Problem } from '@island.is/shared/problem'
-import type { Logger } from '@island.is/logging'
+
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { ProblemOptions } from './problem.options'
-import { PROBLEM_OPTIONS } from './problem.options'
+import type { Logger } from '@island.is/logging'
+import { Problem, ProblemType } from '@island.is/shared/problem'
+
 import { ProblemError } from './ProblemError'
+import { PROBLEM_OPTIONS } from './problem.options'
+import type { ProblemOptions } from './problem.options'
 
 export abstract class BaseProblemFilter implements ExceptionFilter {
   private readonly logger: Logger
@@ -48,11 +50,16 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
 
-    response.setHeader('Content-Language', 'en')
-    response.setHeader('Content-Type', 'application/problem+json')
     response.status(problem.status || 500)
     response.statusMessage = problem.title
-    response.json(problem)
+
+    if (problem.type === ProblemType.HTTP_NO_CONTENT) {
+      response.send()
+    } else {
+      response.setHeader('Content-Language', 'en')
+      response.setHeader('Content-Type', 'application/problem+json')
+      response.json(problem)
+    }
   }
 
   abstract getProblem(error: Error): Problem

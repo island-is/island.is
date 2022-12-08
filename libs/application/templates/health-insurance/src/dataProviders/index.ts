@@ -1,6 +1,4 @@
 export { HealthInsuranceProvider } from './HealthInsuranceProvider'
-export { PendingApplications } from './PendingApplications'
-export { ApplicationsProvider } from './ApplicationsProvider'
 export {
   UserProfileProvider,
   NationalRegistryProvider,

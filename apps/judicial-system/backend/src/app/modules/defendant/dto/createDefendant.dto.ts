@@ -34,4 +34,29 @@ export class CreateDefendantDto {
   @IsString()
   @ApiPropertyOptional()
   readonly citizenship?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defenderName?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defenderEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defenderPhoneNumber?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly defendantWaivesRightToCounsel?: boolean
 }

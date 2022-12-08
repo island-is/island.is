@@ -9,6 +9,8 @@ import {
   PregnancyApi,
   ParentalLeaveApi,
   ParentalLeave,
+  ApplicationInformationApi,
+  ApplicationInformation,
 } from '@island.is/clients/vmst'
 import format from 'date-fns/format'
 import formatISO from 'date-fns/formatISO'
@@ -22,7 +24,9 @@ import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.mod
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
 
-const isRunningInDevelopment = process.env.NODE_ENV !== 'production'
+const isRunningInDevelopment = !(
+  process.env.PROD_MODE === 'true' || process.env.NODE_ENV === 'production'
+)
 const df = 'yyyy-MM-dd'
 
 enum PensionFundType {
@@ -38,8 +42,26 @@ export class DirectorateOfLabourRepository {
     private unionApi: UnionApi,
     private pensionApi: PensionApi,
     private pregnancyApi: PregnancyApi,
+    private applicationInfo: ApplicationInformationApi,
   ) {
     this.logger.debug('Created Directorate of labour repository')
+  }
+
+  async getApplicationInfo(
+    applicationId: string,
+  ): Promise<ApplicationInformation | null> {
+    const applicationInfo = await this.applicationInfo.applicationGetApplicationInformation(
+      { applicationId },
+    )
+
+    if (applicationInfo) {
+      return applicationInfo
+    }
+
+    this.logger.warning(
+      `could not fetch applicationInformation for ${applicationId}`,
+    )
+    return null
   }
 
   async getUnions(): Promise<Union[]> {

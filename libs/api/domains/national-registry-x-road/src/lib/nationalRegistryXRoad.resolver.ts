@@ -22,7 +22,8 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
-import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
+import { ChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
+import { ChildGuardianshipInput } from '../dto/nationalRegistryChildGuardianshipInput'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 
@@ -42,9 +43,24 @@ export class NationalRegistryXRoadResolver {
   @Audit()
   async nationalRegistryPersons(
     @CurrentUser() user: User,
-  ): Promise<NationalRegistryPerson | undefined> {
+  ): Promise<NationalRegistryPerson | null> {
     return this.nationalRegistryXRoadService.getNationalRegistryPerson(
       user.nationalId,
+    )
+  }
+
+  @Query(() => ChildGuardianship, {
+    name: 'nationalRegistryUserV2ChildGuardianship',
+    nullable: true,
+  })
+  @Audit()
+  async childGuardianship(
+    @Context('req') { user }: { user: User },
+    @Args('input') input: ChildGuardianshipInput,
+  ): Promise<ChildGuardianship | null> {
+    return this.nationalRegistryXRoadService.getChildGuardianship(
+      user,
+      input.childNationalId,
     )
   }
 
@@ -54,10 +70,10 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryPerson[] | undefined> {
-    return this.nationalRegistryXRoadService.getChildrenCustodyInformation(
-      user,
-      person.nationalId,
-    )
+    if (person.nationalId !== user.nationalId) {
+      return undefined
+    }
+    return this.nationalRegistryXRoadService.getChildrenCustodyInformation(user)
   }
 
   @ResolveField('residenceHistory', () => [NationalRegistryResidence], {
@@ -69,7 +85,6 @@ export class NationalRegistryXRoadResolver {
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryResidence[] | undefined> {
     return this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      user,
       person.nationalId,
     )
   }
@@ -79,8 +94,8 @@ export class NationalRegistryXRoadResolver {
   async resolveSpouse(
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
-  ): Promise<NationalRegistrySpouse | undefined> {
-    return this.nationalRegistryXRoadService.getSpouse(user, person.nationalId)
+  ): Promise<NationalRegistrySpouse | null> {
+    return this.nationalRegistryXRoadService.getSpouse(person.nationalId)
   }
 
   @ResolveField('birthplace', () => NationalRegistryBirthplace, {
@@ -90,11 +105,8 @@ export class NationalRegistryXRoadResolver {
   async resolveBirthPlace(
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
-  ): Promise<NationalRegistryBirthplace | undefined> {
-    return this.nationalRegistryXRoadService.getBirthplace(
-      user,
-      person.nationalId,
-    )
+  ): Promise<NationalRegistryBirthplace | null> {
+    return this.nationalRegistryXRoadService.getBirthplace(person.nationalId)
   }
 
   @ResolveField('citizenship', () => NationalRegistryCitizenship, {
@@ -104,10 +116,7 @@ export class NationalRegistryXRoadResolver {
   async resolveCitizenship(
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
-  ): Promise<NationalRegistryCitizenship | undefined> {
-    return this.nationalRegistryXRoadService.getCitizenship(
-      user,
-      person.nationalId,
-    )
+  ): Promise<NationalRegistryCitizenship | null> {
+    return this.nationalRegistryXRoadService.getCitizenship(person.nationalId)
   }
 }

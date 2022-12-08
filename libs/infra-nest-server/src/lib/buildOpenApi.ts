@@ -11,10 +11,12 @@ export const buildOpenApi = async ({
   appModule,
   openApi,
   path,
+  enableVersioning,
 }: {
   appModule: Type<any>
   openApi: Omit<OpenAPIObject, 'paths'>
   path: string
+  enableVersioning?: boolean
 }) => {
   try {
     logger.info('Creating openapi.yaml file ...', { path })
@@ -22,6 +24,9 @@ export const buildOpenApi = async ({
     const app = await NestFactory.create(InfraModule.forRoot({ appModule }), {
       logger: LoggingModule.createLogger(),
     })
+    if (enableVersioning) {
+      app.enableVersioning()
+    }
     const document = SwaggerModule.createDocument(app, openApi)
 
     writeFileSync(path, yaml.dump(document, { noRefs: true }))
@@ -33,7 +38,7 @@ export const buildOpenApi = async ({
     // https://github.com/configcat/common-js/issues/36
     // TODO: Remove this when it's been fixed.
     process.exit(0)
-  } catch (e) {
+  } catch (e: any) {
     logger.error('Error while creating openapi.yaml', { message: e.message })
   }
 }

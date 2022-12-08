@@ -605,6 +605,26 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
       'Héraðsdómur Reykjavíkur hefur móttekið kröfu um rannsóknarheimild sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
     )
   })
+
+  test('should format received by court notification for an indictment', () => {
+    // Arranged
+    const type = CaseType.INDICTMENT
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
+      type,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið ákæru sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+    )
+  })
 })
 
 describe('formatProsecutorCourtDateEmailNotification', () => {
@@ -822,6 +842,34 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
   })
 
+  test('should format court date notification for indictments', () => {
+    // Arrange
+    const type = CaseType.INDICTMENT
+    const courtCaseNumber = 'S-898/2021'
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+
+    // Act
+    const res = fn(
+      type,
+      courtCaseNumber,
+      court,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+    )
+
+    // Assert
+    expect(res.subject).toBe('Þingfesting í máli: S-898/2021')
+    expect(res.body).toBe(
+      'Héraðsdómur Reykjavíkur boðar til þingfestingar í máli S-898/2021.<br /><br />Þingfesting mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
+    )
+  })
+
   test('should format court date notification when defender will not attend', () => {
     // Arrange
     const type = CaseType.OTHER
@@ -972,6 +1020,42 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
+    const defenderName = 'Vala Verja'
+    const isExtension = false
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
+
+    // Act
+    const res = formatPrisonCourtDateEmailNotification(
+      formatMessage,
+      caseType,
+      prosecutorOffice,
+      court,
+      courtDate,
+      accusedName,
+      accusedGender,
+      requestedValidToDate,
+      isolation,
+      defenderName,
+      isExtension,
+      sessionArrangements,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Talsmaður sakbornings: Vala Verja.',
+    )
+  })
+
+  test('should format court date notification with undefined isolation', () => {
+    // Arrange
+    const caseType = CaseType.CUSTODY
+    const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
+    const court = 'Héraðsdómur Austurlands'
+    const courtDate = new Date('2021-02-04T02:02')
+    const accusedName = 'Maggi Murder'
+    const accusedGender = Gender.MALE
+    const requestedValidToDate = new Date('2030-08-12T08:25')
+    const isolation = undefined
     const defenderName = 'Vala Verja'
     const isExtension = false
     const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
@@ -1564,7 +1648,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um gæsluvarðhald sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 000000-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um gæsluvarðhald sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 000000-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
     )
   })
 
@@ -1590,7 +1674,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um farbann sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um farbann sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
     )
   })
 
@@ -1616,7 +1700,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um vistun á viðeigandi stofnun sem taka átti fyrir hjá ótilgreindum dómstóli á ótilgreindum tíma, hefur verið afturkölluð.<br /><br />Sakborningur: Nafn ekki skráð, kt. ekki skráð.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um vistun á viðeigandi stofnun sem taka átti fyrir hjá ótilgreindum dómstóli á ótilgreindum tíma, hefur verið afturkölluð.<br /><br />Sakborningur: Nafn ekki skráð, kt. ekki skráð.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
     )
   })
 
@@ -1642,7 +1726,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild (rof bankaleyndar) sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um rannsóknarheimild (rof bankaleyndar) sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
     )
   })
 
@@ -1668,7 +1752,33 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
+    )
+  })
+
+  test('should format revoked notification for indictments', () => {
+    // Arrange
+    const type = CaseType.INDICTMENT
+    const defendantNationalId = '01.01.2022'
+    const defendantName = 'Gaui Glæpon'
+    const defendantNoNationalId = true
+    const court = 'Héraðsdómur Þingvalla'
+    const courtDate = new Date('2021-01-24T08:15')
+
+    // Act
+    const res = formatDefenderRevokedEmailNotification(
+      formatMessage,
+      type,
+      defendantNationalId,
+      defendantName,
+      defendantNoNationalId,
+      court,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ákæra sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
     )
   })
 })
@@ -1904,48 +2014,28 @@ describe('formatPrisonAdministrationRulingNotification', () => {
 })
 
 describe('formatDefenderResubmittedToCourtEmailNotification', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  let formatMessage: FormatMessage
 
-  const fn = (
-    caseType: CaseType,
-    policeCaseNumbers: string[],
-    overviewUrl: string,
-    courtName?: string,
-  ) =>
-    formatDefenderResubmittedToCourtEmailNotification(
-      formatMessage,
-      caseType,
-      policeCaseNumbers,
-      overviewUrl,
-      courtName,
-    )
-
-  it('should format email', () => {
-    const caseType = CaseType.CUSTODY
-    const policeCaseNumbers = ['007-2022-06546']
-    const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
-    const courtName = 'Héraðsdómur Reykjavíkur'
-
-    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
-
-    expect(result.body).toEqual(
-      'Sækjandi í máli 007-2022-06546 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
-    )
-    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+  beforeAll(() => {
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
-  it('should format email with multiple policeCaseNumbers', () => {
-    const caseType = CaseType.CUSTODY
-    const policeCaseNumbers = ['007-2022-06546', '007-2022-06547']
+  it('should format email', () => {
     const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
-    const courtName = 'Héraðsdómur Reykjavíkur'
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-2022/999'
 
-    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
+    const result = formatDefenderResubmittedToCourtEmailNotification(
+      formatMessage,
+      overviewUrl,
+      court,
+      courtCaseNumber,
+    )
 
     expect(result.body).toEqual(
-      'Sækjandi í málum: 007-2022-06546, 007-2022-06547 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="https://rettarvorslugatt.island.is/overviewUrl">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
-    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+    expect(result.subject).toEqual('Gögn í máli R-2022/999')
   })
 })

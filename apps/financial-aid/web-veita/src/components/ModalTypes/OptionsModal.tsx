@@ -4,7 +4,7 @@ import * as styles from './ModalTypes.css'
 import cn from 'classnames'
 
 import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 interface Props {
   isModalVisable: boolean
@@ -20,7 +20,6 @@ const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
     <>
       {isModalVisable && (
         <motion.div
-          layoutId="modal"
           data-testid="optionsModal"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

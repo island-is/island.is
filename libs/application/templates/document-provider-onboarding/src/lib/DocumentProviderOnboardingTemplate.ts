@@ -1,11 +1,8 @@
 import { assign } from 'xstate'
-import * as z from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import {
-  DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -136,6 +133,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn skjalaveitu',
           progress: 0.25,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -152,6 +150,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -165,7 +164,8 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign reviewer',
           progress: 0.4,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          status: 'inprogress',
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignReviewer,
           },
@@ -177,6 +177,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                   Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
+              delete: true,
             },
           ],
         },
@@ -188,8 +189,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: States.IN_REVIEW,
+          status: 'inprogress',
           progress: 0.5,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -226,8 +228,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       [States.REJECTED]: {
         meta: {
           name: 'Rejected',
+          status: 'rejected',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.applicationRejected,
           },
@@ -246,8 +249,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       [States.TEST_PHASE]: {
         meta: {
           name: 'TestPhase',
+          status: 'inprogress',
           progress: 0.75,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.applicationApproved,
           },
@@ -271,9 +275,10 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
       [States.FINISHED]: {
         meta: {
+          status: 'completed',
           name: 'Finished',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -284,7 +289,6 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

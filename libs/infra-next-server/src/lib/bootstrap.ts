@@ -1,7 +1,7 @@
 import '@island.is/infra-tracing'
 
 import createExpressApp, { Express } from 'express'
-import type { Config } from 'http-proxy-middleware'
+
 import next from 'next'
 
 import { startMetricServer } from '@island.is/infra-metrics'
@@ -30,7 +30,7 @@ type BootstrapOptions = {
   /**
    * Proxy configuration. Ignored in production (according to NODE_ENV).
    */
-  proxyConfig?: { [context: string]: Config }
+  proxyConfig?: { [context: string]: any }
 
   /**
    * External dependencies to do DNS lookup for the /readiness healthcheck
@@ -84,7 +84,7 @@ export const bootstrap = async (options: BootstrapOptions) => {
     readyPromise,
     options.externalEndpointDependencies,
   )
-  expressApp.all('*', (req, res) => handle(req, res))
+  expressApp.all('*', (req: any, res: any) => handle(req, res))
 
   startServer(expressApp, options.port)
 

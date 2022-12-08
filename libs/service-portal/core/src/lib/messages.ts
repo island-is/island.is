@@ -181,6 +181,11 @@ export const m = defineMessages({
     id: 'service.portal:could-not-fetch-data',
     defaultMessage: 'Ekki tókst að sækja gögn',
   },
+  errorFetchModule: {
+    id: 'service.portal:could-not-fetch-data-module',
+    defaultMessage:
+      'Ekki tókst að sækja {module}, samband við vefþjón mistókst.',
+  },
   couldNotFetch: {
     id: 'service.portal:could-not-fetch',
     defaultMessage: 'Tókst ekki að sækja',
@@ -216,6 +221,10 @@ export const m = defineMessages({
   vehiclesLookup: {
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
+  },
+  vehiclesDrivingLessons: {
+    id: 'service.portal:vehicles-driving-lessons',
+    defaultMessage: 'Ökunám',
   },
   yourVehicles: {
     id: 'service.portal:your-vehicles',
@@ -501,6 +510,14 @@ export const m = defineMessages({
     id: 'service.portal:drivingLicense',
     defaultMessage: 'Ökuréttindi',
   },
+  adrLicense: {
+    id: 'service.portal:adr-license',
+    defaultMessage: 'Ökuréttindi',
+  },
+  machineLicense: {
+    id: 'service.portal:machine-license',
+    defaultMessage: 'Vinnuvélaréttindi',
+  },
   notFound: {
     id: 'service.portal:not-found',
     defaultMessage: 'Síða finnst ekki',
@@ -521,6 +538,18 @@ export const m = defineMessages({
   accessControl: {
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
+  },
+  accessControlDelegations: {
+    id: 'service.portal:delegations',
+    defaultMessage: 'Umboð',
+  },
+  accessControlDelegationsIncoming: {
+    id: 'service.portal:to-me',
+    defaultMessage: 'Til mín',
+  },
+  accessControlDelegationsOutgoing: {
+    id: 'service.portal:from-me',
+    defaultMessage: 'Frá mér',
   },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
@@ -787,5 +816,37 @@ export const m = defineMessages({
   clearSelected: {
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
+  },
+  yes: {
+    id: 'service.portal:yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'service.portal:no',
+    defaultMessage: 'Nei',
+  },
+  errorTitle: {
+    id: 'service.portal:error-screen-title',
+    defaultMessage: 'Villa',
+  },
+  buttonCancel: {
+    id: 'service.portal:button.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel',
+  },
+  buttonEdit: {
+    id: 'service.portal:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+  },
+  buttonDestroy: {
+    id: 'service.portal:button.delete',
+    defaultMessage: 'Eyða',
+    description: 'Delete',
+  },
+  buttonRenew: {
+    id: 'service.portal:button.renew',
+    defaultMessage: 'Endurnýja',
+    description: 'Renew',
   },
 })

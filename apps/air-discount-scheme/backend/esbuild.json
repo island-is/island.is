@@ -40,7 +40,10 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8",
-    "safer-buffer"
+    "safer-buffer",
+    "pseudomap",
+    "safer-buffer",
+    "ioredis"
   ],
   "keepNames": true
 }

@@ -21,8 +21,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "curl https://api.syslumenn.is/dev/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
-          "cat <<< $(jq '.paths[][].tags = [\"Syslumenn\"]' src/clientConfig.json) > src/clientConfig.json"
+          "curl https://api.syslumenn.is/dev/swagger/v1/swagger.json -H 'Accept: application/json' | jq '.paths[][].tags = [\"Syslumenn\"]' > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/syslumenn"

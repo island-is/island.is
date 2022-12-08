@@ -6,7 +6,8 @@ import { UserContext } from '@island.is/air-discount-scheme-web/context'
 
 export const useLogOut = () => {
   const { setUser, setIsAuthenticated } = useContext(UserContext)
-  const [session]: AuthSession = useSession()
+  const [session] = useSession() as [AuthSession, boolean]
+
   const logOut = () => {
     setUser && setUser(undefined)
     setIsAuthenticated && setIsAuthenticated(false)

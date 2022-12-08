@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationConfigurations,
   ApplicationTemplate,
@@ -51,6 +48,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
@@ -72,6 +70,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -84,12 +83,13 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,
           },
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
           },

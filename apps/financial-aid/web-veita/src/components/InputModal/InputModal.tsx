@@ -28,7 +28,6 @@ const InputModal = ({
     <>
       {isModalVisable && (
         <motion.div
-          layoutId="inputmodal"
           data-testid="modal"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

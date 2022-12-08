@@ -144,6 +144,7 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      SERVERSIDE_FEATURES_ON: ''
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
@@ -160,7 +161,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -275,7 +276,7 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
+          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'libs/**/mutations/**/*.tsx?', 'libs/**/fragments/**/*.tsx?' , 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
@@ -390,7 +391,7 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
@@ -399,7 +400,7 @@ jobs:
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress docker-jest)
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
       - name: check pre-release
@@ -412,7 +413,7 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           export BASE=$(git merge-base HEAD $GITHUB_BASE_REF)
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
@@ -439,7 +440,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -505,12 +506,12 @@ jobs:
         continue-on-error: true
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
         if: steps.gather.outcome == 'success'
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn

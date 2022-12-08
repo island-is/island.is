@@ -462,6 +462,7 @@ export const getCustomerTapControlData = {
   RecordsTap: true,
   employeeClaimsTap: false,
   localTaxTap: false,
+  schedulesTap: true,
 }
 
 export const getCustomerChargeTypeData = {

@@ -35,20 +35,20 @@ const Entry: React.FC<{ label: string; value: string }> = ({
   )
 }
 
-export const getDefentantLabel = (
+export const getDefendantLabel = (
   formatMessage: IntlShape['formatMessage'],
-  defentants: Defendant[],
+  defendants: Defendant[],
   type: CaseType,
 ) => {
   if (!isIndictmentCase(type)) {
     return formatMessage(core.defendant, {
-      suffix: defentants.length > 1 ? 'ar' : 'i',
+      suffix: defendants.length > 1 ? 'ar' : 'i',
     })
   }
 
-  if (defentants.length === 1) {
+  if (defendants.length === 1) {
     return formatMessage(core.indictmentDefendant, {
-      gender: defentants[0].gender,
+      gender: defendants[0].gender,
     })
   }
 
@@ -67,7 +67,7 @@ const Defendants: React.FC<Props> = ({ workingCase }) => {
 
   return (
     <Entry
-      label={capitalize(getDefentantLabel(formatMessage, defendants, type))}
+      label={capitalize(getDefendantLabel(formatMessage, defendants, type))}
       value={enumerate(
         flatMap(defendants, (d) => (d.name ? [d.name] : [])),
         formatMessage(core.and),
@@ -85,7 +85,9 @@ export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
 
   return (
     <Box component="section" marginBottom={5}>
-      <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
+      <Box marginBottom={2}>
+        <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
+      </Box>
       {!hideCourt && court?.name && (
         <Entry label={formatMessage(core.court)} value={court?.name} />
       )}

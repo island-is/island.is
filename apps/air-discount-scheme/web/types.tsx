@@ -1,10 +1,11 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { NextComponentType } from 'next'
-import { NextPageContext } from 'next/dist/next-server/lib/utils'
+import { NextPageContext } from 'next/dist/shared/lib/utils'
 import { Locale } from '@island.is/shared/types'
 
 export interface Routes {
   admin: string
+  adminCreateDiscount: string
   auth: string
   error: string
   home: string

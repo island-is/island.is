@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import {
@@ -38,6 +37,7 @@ const template: ApplicationTemplate<
         meta: {
           name: m.applicationForDrivingLicense.defaultMessage,
           progress: 0.2,
+          status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -76,6 +76,7 @@ const template: ApplicationTemplate<
           actionCard: {
             description: m.actionCardDraft,
           },
+          status: 'draft',
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -112,11 +113,12 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
             description: m.actionCardPayment,
           },
           progress: 0.9,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -134,6 +136,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -146,7 +149,8 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          status: 'completed',
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },
@@ -158,13 +162,13 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DECLINED]: {
         meta: {
           name: 'Declined',
+          status: 'rejected',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -174,7 +178,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -35,9 +35,11 @@ export const createTestingDefendantModule = async () => {
         provide: getModelToken(Defendant),
         useValue: {
           findOne: jest.fn(),
+          findAll: jest.fn(),
           create: jest.fn(),
           update: jest.fn(),
           destroy: jest.fn(),
+          findByPk: jest.fn(),
         },
       },
       DefendantService,
@@ -56,5 +58,9 @@ export const createTestingDefendantModule = async () => {
     DefendantController,
   )
 
-  return { defendantModel, defendantService, defendantController }
+  return {
+    defendantModel,
+    defendantService,
+    defendantController,
+  }
 }

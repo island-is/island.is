@@ -6,6 +6,7 @@ import {
   vehicleOwnedDataHeader,
 } from './dataHeaders'
 import isValid from 'date-fns/isValid'
+import { VEHICLE_OPERATOR, VEHICLE_OWNER, VEHICLE_COOWNER } from './constants'
 
 export const exportVehicleOwnedDocument = async (
   data: any[],
@@ -14,15 +15,15 @@ export const exportVehicleOwnedDocument = async (
   nationalId: string,
 ) => {
   const ownersVehicles = data.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'eigandi',
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_OWNER,
   )
 
   const coOwnerVehicles = data.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'meðeigandi',
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_COOWNER,
   )
 
   const operatorVehicles = data.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'umráðamaður',
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_OPERATOR,
   )
 
   const ownersData = ownersVehicles.map((item: VehiclesVehicle) => {

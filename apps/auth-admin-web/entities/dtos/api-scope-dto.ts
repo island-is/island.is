@@ -4,6 +4,7 @@ export class ApiScopeDTO {
     this.name = ''
     this.displayName = ''
     this.description = ''
+    this.order = 0
     this.showInDiscoveryDocument = true
     this.required = false
     this.emphasize = false
@@ -21,6 +22,7 @@ export class ApiScopeDTO {
   name: string
   displayName: string
   description: string
+  order: number
   showInDiscoveryDocument: boolean
   required: boolean
   emphasize: boolean
@@ -32,4 +34,5 @@ export class ApiScopeDTO {
   alsoForDelegatedUser: boolean
   isAccessControlled: boolean
   groupId?: string
+  domainName!: string
 }

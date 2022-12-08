@@ -5,34 +5,34 @@ import { NationalRegistryClientPerson } from '@island.is/shared/types'
 import { createNationalId } from './nationalId'
 
 const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
-  const [firstName, middleName, lastName] = [
+  const [givenName, middleName, familyName] = [
     faker.name.firstName(),
     faker.name.middleName(),
     faker.name.lastName(),
   ]
-  const name = `${firstName} ${middleName} ${lastName}`
+  const name = `${givenName} ${middleName} ${familyName}`
 
   return {
-    kennitala: createNationalId('person'),
-    nafn: name,
-    eiginnafn: firstName,
-    millinafn: middleName,
-    kenninafn: lastName,
-    fulltNafn: name,
-    kynkodi: faker.datatype.number({ min: 1, max: 8 }).toString(),
-    bannmerking: faker.datatype.boolean(),
-    faedingardagur: faker.date.past(100),
-    logheimili: {
-      heiti: faker.address.streetName(),
-      postnumer: faker.address.zipCode(),
-      stadur: faker.address.city(),
-      sveitarfelagsnumer: faker.address.cityPrefix(),
+    nationalId: createNationalId('person'),
+    name,
+    givenName,
+    middleName,
+    familyName,
+    fullName: name,
+    genderCode: faker.datatype.number({ min: 1, max: 8 }).toString(),
+    exceptionFromDirectMarketing: faker.datatype.boolean(),
+    birthdate: faker.date.past(100),
+    legalDomicile: {
+      streetAddress: faker.address.streetName(),
+      postalCode: faker.address.zipCode(),
+      locality: faker.address.city(),
+      municipalityNumber: faker.address.cityPrefix(),
     },
-    adsetur: {
-      heiti: faker.address.streetName(),
-      postnumer: faker.address.zipCode(),
-      stadur: faker.address.city(),
-      sveitarfelagsnumer: faker.address.cityPrefix(),
+    residence: {
+      streetAddress: faker.address.streetName(),
+      postalCode: faker.address.zipCode(),
+      locality: faker.address.city(),
+      municipalityNumber: faker.address.cityPrefix(),
     },
   }
 }
@@ -43,30 +43,31 @@ export const createNationalRegistryUser = (
   const fallback = createRandomNationalRegistryUser()
 
   const {
-    kennitala = user['kennitala'] ?? fallback['kennitala'],
-    nafn = user['nafn'] ?? fallback['nafn'],
-    eiginnafn = user['eiginnafn'] ?? fallback['eiginnafn'],
-    millinafn = user['millinafn'] ?? fallback['millinafn'],
-    kenninafn = user['kenninafn'] ?? fallback['kenninafn'],
-    fulltNafn = user['fulltNafn'] ?? fallback['fulltNafn'],
-    kynkodi = user['kynkodi'] ?? fallback['kynkodi'],
-    bannmerking = user['bannmerking'] ?? fallback['bannmerking'],
-    faedingardagur = user['faedingardagur'] ?? fallback['faedingardagur'],
-    logheimili = user['logheimili'] ?? fallback['logheimili'],
-    adsetur = user['adsetur'] ?? fallback['adsetur'],
+    nationalId = user['nationalId'] ?? fallback['nationalId'],
+    name = user['name'] ?? fallback['name'],
+    givenName = user['givenName'] ?? fallback['givenName'],
+    middleName = user['middleName'] ?? fallback['middleName'],
+    familyName = user['familyName'] ?? fallback['familyName'],
+    fullName = user['fullName'] ?? fallback['fullName'],
+    genderCode = user['genderCode'] ?? fallback['genderCode'],
+    exceptionFromDirectMarketing = user['exceptionFromDirectMarketing'] ??
+      fallback['exceptionFromDirectMarketing'],
+    birthdate = user['birthdate'] ?? fallback['birthdate'],
+    legalDomicile = user['legalDomicile'] ?? fallback['legalDomicile'],
+    residence = user['residence'] ?? fallback['residence'],
   } = user
 
   return {
-    kennitala,
-    nafn,
-    eiginnafn,
-    millinafn,
-    kenninafn,
-    fulltNafn,
-    kynkodi,
-    bannmerking,
-    faedingardagur,
-    logheimili,
-    adsetur,
+    nationalId,
+    name,
+    givenName,
+    middleName,
+    familyName,
+    fullName,
+    genderCode,
+    exceptionFromDirectMarketing,
+    birthdate,
+    legalDomicile,
+    residence,
   }
 }

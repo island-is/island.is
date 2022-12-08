@@ -40,6 +40,7 @@ import {
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { trackSearchQuery } from '@island.is/plausible'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -120,6 +121,7 @@ const useSearch = (
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
               ],
+              highlightResults: true,
             },
           },
         })
@@ -378,6 +380,7 @@ export const SearchInput = forwardRef<
                     onRouting()
                   }
                 }}
+                highlightedResults={true}
               />
             )}
           </AsyncSearchInput>
@@ -395,6 +398,7 @@ type ResultsProps = {
   autosuggest: boolean
   onRouting?: () => void
   quickContentLabel?: string
+  highlightedResults?: boolean | false
 }
 
 const Results = ({
@@ -404,6 +408,7 @@ const Results = ({
   autosuggest,
   onRouting,
   quickContentLabel = 'Beint að efninu',
+  highlightedResults,
 }: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -489,6 +494,7 @@ const Results = ({
                       key={item.id}
                       {...itemProps}
                       onClick={(e) => {
+                        trackSearchQuery(search.term, 'Web Suggestion')
                         onClick(e)
                         onRouting()
                       }}
@@ -503,7 +509,13 @@ const Results = ({
                       }
                       skipTab
                     >
-                      {item.title}
+                      {highlightedResults ? (
+                        <span
+                          dangerouslySetInnerHTML={{ __html: item.title }}
+                        ></span>
+                      ) : (
+                        item.title
+                      )}
                     </Link>
                   )
                 })}

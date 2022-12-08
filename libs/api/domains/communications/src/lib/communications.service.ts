@@ -56,13 +56,16 @@ export class CommunicationsService {
 
     const contentfulRespository = new ContentfulRepository()
 
-    const result = await contentfulRespository.getLocalizedEntries(
-      localeMap['is'],
-      {
-        ['content_type']: 'organization',
-        'fields.slug': institutionSlug,
-      },
-    )
+    let locale = localeMap['is']
+
+    if (input.lang && localeMap[input.lang]) {
+      locale = localeMap[input.lang]
+    }
+
+    const result = await contentfulRespository.getLocalizedEntries(locale, {
+      ['content_type']: 'organization',
+      'fields.slug': institutionSlug,
+    })
 
     const errors: Record<string, string> = {}
 

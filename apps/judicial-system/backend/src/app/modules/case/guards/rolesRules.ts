@@ -7,6 +7,7 @@ import {
 
 const prosecutorFields: (keyof UpdateCase)[] = [
   'type',
+  'indictmentSubtypes',
   'description',
   'policeCaseNumbers',
   'defenderName',
@@ -39,11 +40,19 @@ const prosecutorFields: (keyof UpdateCase)[] = [
   'caseModifiedExplanation',
   'isolationToDate',
   'caseResentExplanation',
+  'crimeScenes',
 ]
 
 // Allows prosecutors to update a specific set of fields
 export const prosecutorUpdateRule = {
   role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD,
+  dtoFields: prosecutorFields,
+} as RolesRule
+
+// Allows representatives to update a specific set of fields
+export const representativeUpdateRule = {
+  role: UserRole.REPRESENTATIVE,
   type: RulesType.FIELD,
   dtoFields: prosecutorFields,
 } as RolesRule
@@ -86,6 +95,8 @@ const courtFields: (keyof UpdateCase)[] = [
   'caseModifiedExplanation',
   'rulingModifiedHistory',
   'subpoenaType',
+  'defendantWaivesRightToCounsel',
+  'prosecutorId',
 ]
 
 const staffFields: (keyof UpdateCase)[] = [
@@ -104,6 +115,13 @@ export const judgeUpdateRule = {
 // Allows registrars to update a specific set of fields
 export const registrarUpdateRule = {
   role: UserRole.REGISTRAR,
+  type: RulesType.FIELD,
+  dtoFields: courtFields,
+} as RolesRule
+
+// Allows assistants to update a specific set of fields
+export const assistantUpdateRule = {
+  role: UserRole.ASSISTANT,
   type: RulesType.FIELD,
   dtoFields: courtFields,
 } as RolesRule
@@ -129,7 +147,19 @@ export const prosecutorTransitionRule = {
   ],
 } as RolesRule
 
-// Allows judges to receive, accept and reject cases
+// Allows representatives to open, submit and delete cases
+export const representativeTransitionRule = {
+  role: UserRole.REPRESENTATIVE,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.OPEN,
+    CaseTransition.SUBMIT,
+    CaseTransition.DELETE,
+  ],
+} as RolesRule
+
+// Allows judges to receive, accept, reject and dismiss cases
 export const judgeTransitionRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
@@ -148,4 +178,17 @@ export const registrarTransitionRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.RECEIVE],
+} as RolesRule
+
+// Allows assistants to receive, accept, reject and dismiss cases
+export const assistantTransitionRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.RECEIVE,
+    CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+    CaseTransition.DISMISS,
+  ],
 } as RolesRule

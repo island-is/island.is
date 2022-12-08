@@ -1,0 +1,9 @@
+schema: https://smartpages-api-dev.smartsolutions.is/graphql
+generates:
+  libs/clients/smartsolutions/gen/schema.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+hooks:
+  afterAllFileWrite:
+    - prettier --write

@@ -315,90 +315,6 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
 
                   <div className="api-scope-form__container__checkbox__field">
                     <label
-                      htmlFor="grantToLegalGuardians"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['grantToLegalGuardians'].label}
-                    </label>
-                    <input
-                      ref={register}
-                      id="grantToLegalGuardians"
-                      name="grantToLegalGuardians"
-                      type="checkbox"
-                      defaultChecked={
-                        props.identityResource.grantToLegalGuardians
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['grantToLegalGuardians'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['grantToLegalGuardians'].helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="grantToProcuringHolders"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['grantToProcuringHolders'].label}
-                    </label>
-                    <input
-                      ref={register}
-                      id="grantToProcuringHolders"
-                      name="grantToProcuringHolders"
-                      type="checkbox"
-                      defaultChecked={
-                        props.identityResource.grantToProcuringHolders
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['grantToProcuringHolders'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['grantToProcuringHolders'].helpText
-                      }
-                    />
-                  </div>
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="allowExplicitDelegationGrant"
-                      className="api-scope-form__label"
-                    >
-                      {
-                        localization.fields['allowExplicitDelegationGrant']
-                          .label
-                      }
-                    </label>
-                    <input
-                      ref={register}
-                      id="allowExplicitDelegationGrant"
-                      name="allowExplicitDelegationGrant"
-                      type="checkbox"
-                      defaultChecked={
-                        props.identityResource.allowExplicitDelegationGrant
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['allowExplicitDelegationGrant']
-                          .helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['allowExplicitDelegationGrant']
-                          .helpText
-                      }
-                    />
-                  </div>
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
                       htmlFor="automaticDelegationGrant"
                       className="api-scope-form__label"
                     >
@@ -420,33 +336,6 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     <HelpBox
                       helpText={
                         localization.fields['automaticDelegationGrant'].helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="alsoForDelegatedUser"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['alsoForDelegatedUser'].label}
-                    </label>
-                    <input
-                      ref={register}
-                      id="alsoForDelegatedUser"
-                      name="alsoForDelegatedUser"
-                      type="checkbox"
-                      defaultChecked={
-                        props.identityResource.alsoForDelegatedUser
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['alsoForDelegatedUser'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['alsoForDelegatedUser'].helpText
                       }
                     />
                   </div>

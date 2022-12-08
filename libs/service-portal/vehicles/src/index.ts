@@ -13,6 +13,12 @@ export const vehiclesModule: ServicePortalModule = {
   routes: ({ userInfo }) => [
     {
       name: m.yourVehicles,
+      path: ServicePortalPath.AssetsVehicles,
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      render: () => lazy(() => import('./screens/Overview/Overview')),
+    },
+    {
+      name: m.yourVehicles,
       path: ServicePortalPath.AssetsMyVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/Overview/Overview')),
@@ -31,9 +37,19 @@ export const vehiclesModule: ServicePortalModule = {
         lazy(() => import('./screens/VehicleHistory/VehicleHistory')),
     },
     {
+      name: m.vehiclesDrivingLessons,
+      path: ServicePortalPath.AssetsVehiclesDrivingLessons,
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      dynamic: true,
+      render: () =>
+        lazy(() => import('./screens/DrivingLessonsBook/DrivingLessonsBook')),
+    },
+    {
       name: m.vehiclesLookup,
       path: ServicePortalPath.AssetsVehiclesLookup,
-      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.internalProcuring),
       key: 'VehicleLookup',
       render: () => lazy(() => import('./screens/Lookup/Lookup')),
     },

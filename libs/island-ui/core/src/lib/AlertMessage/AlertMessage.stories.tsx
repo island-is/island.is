@@ -64,3 +64,13 @@ export const Success = () => (
     />
   </ContentBlock>
 )
+
+export const Default = () => (
+  <ContentBlock>
+    <AlertMessage
+      type="default"
+      title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"
+      message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
+    />
+  </ContentBlock>
+)

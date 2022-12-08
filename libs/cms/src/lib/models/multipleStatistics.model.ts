@@ -17,6 +17,9 @@ export class MultipleStatistics {
 
   @Field(() => Link, { nullable: true })
   link!: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapMultipleStatistics = ({
@@ -28,4 +31,5 @@ export const mapMultipleStatistics = ({
   title: fields.title ?? '',
   statistics: (fields.statistics ?? []).map(mapStatistics),
   link: fields.link ? mapLink(fields.link) : null,
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

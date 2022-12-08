@@ -6,7 +6,7 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import {
   AnimatePresence,
-  AnimateSharedLayout,
+  LayoutGroup,
   motion,
   useAnimation,
 } from 'framer-motion'
@@ -15,10 +15,10 @@ import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
   CaseState,
-  isInvestigationCase,
-  UserRole,
+  isExtendedCourtRole,
+  isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   directionType,
   sortableTableColumn,
@@ -66,9 +66,8 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isCourtRole =
-    user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
+  const isProsecution = user?.role && isProsecutionRole(user.role)
+  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -140,7 +139,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
             theCase={theCase}
-            isCourtRole={isCourtRole}
+            isCourtRole={isCourt}
           >
             {theCase.courtDate ? (
               <Text fontWeight={'medium'} variant="small">
@@ -239,7 +238,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           <th></th>
         </tr>
       </thead>
-      <AnimateSharedLayout>
+      <LayoutGroup>
         <tbody>
           <AnimatePresence>
             {cases.map((c, i) => (
@@ -327,8 +326,8 @@ const ActiveCases: React.FC<Props> = (props) => {
                       mapCaseStateToTagVariant(
                         formatMessage,
                         c.state,
-                        isCourtRole,
-                        isInvestigationCase(c.type),
+                        isCourt,
+                        c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
                       ).color
@@ -340,8 +339,8 @@ const ActiveCases: React.FC<Props> = (props) => {
                       mapCaseStateToTagVariant(
                         formatMessage,
                         c.state,
-                        isCourtRole,
-                        isInvestigationCase(c.type),
+                        isCourt,
+                        c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
                       ).text
@@ -373,7 +372,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   )}
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecutor &&
+                  {isProsecution &&
                     (c.state === CaseState.NEW ||
                       c.state === CaseState.DRAFT ||
                       c.state === CaseState.SUBMITTED ||
@@ -434,7 +433,7 @@ const ActiveCases: React.FC<Props> = (props) => {
             ))}
           </AnimatePresence>
         </tbody>
-      </AnimateSharedLayout>
+      </LayoutGroup>
     </table>
   )
 }

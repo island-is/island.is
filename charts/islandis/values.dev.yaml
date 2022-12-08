@@ -7,6 +7,7 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -43,6 +44,7 @@ air-discount-scheme-api:
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -76,8 +78,10 @@ air-discount-scheme-backend:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'dev'
+    IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    NO_UPDATE_NOTIFIER: 'true'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -143,10 +147,12 @@ air-discount-scheme-backend:
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'air_discount_scheme_backend'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -163,11 +169,11 @@ air-discount-scheme-backend:
     DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
     NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
     NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
-    VEGAGERDIN_IDS_CLIENTS_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -216,6 +222,7 @@ air-discount-scheme-web:
           paths:
             - '/'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -232,19 +239,22 @@ air-discount-scheme-web:
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
-    SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 api:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
   enabled: true
   env:
+    AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
+    AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
@@ -252,6 +262,7 @@ api:
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://api-staging.thinglysing.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
@@ -266,12 +277,13 @@ api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NODE_OPTIONS: '--max-old-space-size=2000'
+    NO_UPDATE_NOTIFIER: 'true'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SYSLUMENN_TIMEOUT: '30000'
+    SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -285,6 +297,7 @@ api:
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
+    XROAD_FIREARM_LICENSE_PATH: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1'
@@ -296,14 +309,18 @@ api:
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
-    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
-    XROAD_PROPERTIES_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Fasteignir-v1'
+    XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_TIMEOUT: '20000'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_VEHICLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1'
+    XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
+    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2'
+    XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
+    XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
+    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '10003'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'stjanilofts'
@@ -347,6 +364,7 @@ api:
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -359,6 +377,7 @@ api:
       cpu: '200m'
       memory: '1024Mi'
   secrets:
+    ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DOCUMENT_PROVIDER_ADMINS: '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS'
@@ -375,9 +394,21 @@ api:
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+    FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
+    FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
+    FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
+    FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
+    FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
+    FISKISTOFA_API_URL: '/k8s/api/FISKISTOFA_API_URL'
+    FISKISTOFA_POWERBI_CLIENT_ID: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_ID'
+    FISKISTOFA_POWERBI_CLIENT_SECRET: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET'
+    FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID'
+    FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
+    FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+    MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
     PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
@@ -391,6 +422,8 @@ api:
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
     POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
+    SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
     SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
     SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL'
@@ -398,6 +431,7 @@ api:
     SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME'
+    VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
@@ -448,6 +482,7 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     NODE_OPTIONS: '--max-old-space-size=976'
     NOVA_USERNAME: 'IslandIs_User_Development'
+    NO_UPDATE_NOTIFIER: 'true'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
@@ -472,6 +507,11 @@ application-system-api:
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
+    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2'
+    XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
+    XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
+    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '10003'
   grantNamespaces:
@@ -527,12 +567,14 @@ application-system-api:
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'application_system_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 60
@@ -572,6 +614,7 @@ application-system-api:
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
+    VMST_ID: '/k8s/application-system/VMST_ID'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
@@ -641,6 +684,7 @@ application-system-api-worker:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -680,6 +724,7 @@ application-system-form:
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
+    SI_PUBLIC_GRAPHQL_PATH: ''
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -715,6 +760,7 @@ application-system-form:
           paths:
             - '/umsoknir'
   namespace: 'application-system'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -731,7 +777,6 @@ application-system-form:
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
-    VMST_ID: '/k8s/application-system/VMST_ID'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -773,6 +818,7 @@ contentful-entry-tagger-service:
   namespace: 'contentful-entry-tagger'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -833,6 +879,7 @@ contentful-translation-extension:
           paths:
             - '/'
   namespace: 'contentful-translation-extension'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -895,6 +942,7 @@ download-service:
           paths:
             - '/download'
   namespace: 'download-service'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -919,6 +967,7 @@ download-service:
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -933,6 +982,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -977,12 +1027,14 @@ endorsement-system-api:
       DB_NAME: 'services_endorsements_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_endorsements_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1044,6 +1096,7 @@ external-contracts-tests:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/external-contracts-tests'
   namespace: 'external-contracts-tests'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1068,6 +1121,7 @@ external-contracts-tests:
 github-actions-cache:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1109,6 +1163,7 @@ github-actions-cache:
   namespace: 'github-actions-cache'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 5
     max: 8
@@ -1134,6 +1189,7 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
+    NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'dev'
   image:
@@ -1150,6 +1206,7 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -1206,10 +1263,12 @@ icelandic-names-registry-backend:
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'icelandic_names_registry_backend'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1265,6 +1324,7 @@ island-ui-storybook:
           paths:
             - '/'
   namespace: 'storybook'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1286,6 +1346,7 @@ namespaces:
   namespaces:
     - 'application-system'
     - 'service-portal'
+    - 'portals-admin'
     - 'islandis'
     - 'search-indexer'
     - 'xroad-collector'
@@ -1301,16 +1362,77 @@ namespaces:
     - 'user-notification'
     - 'external-contracts-tests'
     - 'contentful-entry-tagger'
+portals-admin:
+  enabled: true
+  env:
+    BASEPATH: '/stjornbord'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    SERVERSIDE_FEATURES_ON: ''
+    SI_PUBLIC_ENVIRONMENT: 'dev'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/readiness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 30
+        min: 5
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+      hosts:
+        - host: 'beta.dev01.devland.is'
+          paths:
+            - '/stjornbord'
+  namespace: 'portals-admin'
+  pvcs: []
+  replicaCount:
+    default: 5
+    max: 30
+    min: 5
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '200m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 search-indexer-service:
   enabled: true
   env:
     APPLICATION_URL: 'http://search-indexer-service'
+    CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '20'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'preview.contentful.com'
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-    NODE_OPTIONS: '--max-old-space-size=976'
+    NODE_OPTIONS: '--max-old-space-size=2000'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1352,10 +1474,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '400m'
-            memory: '1024Mi'
+            memory: '2048Mi'
           requests:
             cpu: '100m'
-            memory: '256Mi'
+            memory: '512Mi'
       - args:
           - '/webapp/migrateElastic.js'
         command:
@@ -1364,10 +1486,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '400m'
-            memory: '1024Mi'
+            memory: '2048Mi'
           requests:
             cpu: '100m'
-            memory: '256Mi'
+            memory: '512Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1376,12 +1498,13 @@ search-indexer-service:
         resources:
           limits:
             cpu: '400m'
-            memory: '1024Mi'
+            memory: '2048Mi'
           requests:
             cpu: '100m'
-            memory: '256Mi'
+            memory: '512Mi'
     env:
       APPLICATION_URL: 'http://search-indexer-service'
+      CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '20'
       CONTENTFUL_ENVIRONMENT: 'master'
       CONTENTFUL_HOST: 'preview.contentful.com'
       CONTENTFUL_SPACE: '8k0h54kbe6bj'
@@ -1395,6 +1518,7 @@ search-indexer-service:
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 1
     max: 1
@@ -1402,10 +1526,10 @@ search-indexer-service:
   resources:
     limits:
       cpu: '400m'
-      memory: '1024Mi'
+      memory: '2048Mi'
     requests:
       cpu: '100m'
-      memory: '256Mi'
+      memory: '512Mi'
   secrets:
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1462,6 +1586,7 @@ service-portal:
           paths:
             - '/minarsidur'
   namespace: 'service-portal'
+  pvcs: []
   replicaCount:
     default: 5
     max: 30
@@ -1491,6 +1616,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=976'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.dev01.devland.is/minarsidur'
   grantNamespaces:
@@ -1545,12 +1671,14 @@ service-portal-api:
       DB_NAME: 'service_portal_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'service_portal_api'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'service-portal'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 30
@@ -1589,6 +1717,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -1632,10 +1761,12 @@ services-documents:
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_documents'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1659,6 +1790,7 @@ skilavottord-web:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1693,6 +1825,7 @@ skilavottord-web:
           paths:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1724,6 +1857,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
+    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1774,10 +1908,12 @@ skilavottord-ws:
       DB_NAME: 'skilavottord'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'skilavottord'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1807,6 +1943,7 @@ skilavottord-ws:
     privileged: false
 user-notification:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1851,6 +1988,7 @@ user-notification:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1875,6 +2013,7 @@ user-notification:
     name: 'user-notification'
 user-notification-worker:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
     - '--job=worker'
   command:
@@ -1914,6 +2053,7 @@ user-notification-worker:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1985,6 +2125,7 @@ web:
           paths:
             - '/'
   namespace: 'islandis'
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -2000,12 +2141,12 @@ web:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
-    SENTRY_DSN: '/k8s/web/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 xroad-collector:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -2044,6 +2185,7 @@ xroad-collector:
   namespace: 'xroad-collector'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3

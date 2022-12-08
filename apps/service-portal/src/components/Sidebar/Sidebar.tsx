@@ -16,7 +16,11 @@ import useNavigation from '../../hooks/useNavigation/useNavigation'
 import cn from 'classnames'
 import * as styles from './Sidebar.css'
 
-export const Sidebar: FC<{}> = () => {
+interface Props {
+  position: number
+}
+
+export const Sidebar = ({ position }: Props) => {
   const navigation = useNavigation()
   //const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(false) //useState(sidebarState === 'closed')
@@ -49,7 +53,11 @@ export const Sidebar: FC<{}> = () => {
   // }, [isMobile])
 
   return (
-    <aside className={cn(styles.sidebar, collapsed && styles.collapsed)}>
+    <aside
+      className={cn(styles.sidebar, collapsed && styles.collapsed)}
+      style={{ top: position }}
+    >
+      {/*  Inline style to dynamicly change position of header because of alert banners */}
       <Box
         className={collapsed && styles.logoCollapsed}
         paddingTop={6}

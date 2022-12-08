@@ -89,6 +89,7 @@ export const subSectionTempInfo = buildSubSection({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
           disabled: false,
+          required: true,
           options: ({
             externalData: {
               teachers: { data },

@@ -22,7 +22,7 @@ describe('GraphQL Middlewares', () => {
   describe('filterFields', () => {
     it('should not mask out when no extensions is defined', () => {
       // Arrange
-      const extensions = undefined
+      const extensions: any = undefined
 
       // Act & Assert
       fields.forEach((field) => {

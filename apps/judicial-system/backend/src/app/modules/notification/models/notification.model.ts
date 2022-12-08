@@ -9,7 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import { NotificationType, Recipient } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
 
@@ -51,9 +51,10 @@ export class Notification extends Model {
   type!: NotificationType
 
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
+    type: DataType.ARRAY(DataType.JSON),
+    allowNull: false,
+    defaultValue: [],
   })
   @ApiProperty()
-  recipients?: string
+  recipients!: Recipient[]
 }

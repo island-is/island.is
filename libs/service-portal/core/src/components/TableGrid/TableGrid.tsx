@@ -9,7 +9,7 @@ interface TableItem {
 }
 
 interface Props {
-  dataArray: Array<Array<TableItem | undefined | null | ''>>
+  dataArray: Array<Array<TableItem | null | undefined | ''>>
   title?: string
   subtitle?: string
   mt?: boolean
@@ -35,8 +35,7 @@ export const TableGrid: FC<Props> = ({ dataArray, title, subtitle, mt }) => {
           <T.Row key={`row-${ii}`}>
             {row.map(
               (rowitem, iii) =>
-                rowitem &&
-                rowitem.value && (
+                rowitem && (
                   <T.Data
                     key={`rowitem-${iii}`}
                     colSpan={2}

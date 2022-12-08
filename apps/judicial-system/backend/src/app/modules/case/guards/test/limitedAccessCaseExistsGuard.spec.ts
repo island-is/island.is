@@ -7,14 +7,16 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseFileState, CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
 import { User } from '../../../user'
+import { CaseFile } from '../../../file'
 import { Case } from '../../models/case.model'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
+import { attributes } from '../../limitedAccessCase.service'
 
 interface Then {
   result: boolean
@@ -54,40 +56,6 @@ describe('Restricted Case Exists Guard', () => {
 
   describe('database lookup', () => {
     const caseId = uuid()
-    const attributes: (keyof Case)[] = [
-      'id',
-      'created',
-      'modified',
-      'origin',
-      'type',
-      'state',
-      'policeCaseNumbers',
-      'defenderName',
-      'defenderNationalId',
-      'defenderEmail',
-      'defenderPhoneNumber',
-      'courtId',
-      'leadInvestigator',
-      'requestedCustodyRestrictions',
-      'creatingProsecutorId',
-      'prosecutorId',
-      'courtCaseNumber',
-      'courtDate',
-      'courtEndTime',
-      'decision',
-      'validToDate',
-      'isCustodyIsolation',
-      'isolationToDate',
-      'conclusion',
-      'rulingDate',
-      'registrarId',
-      'judgeId',
-      'courtRecordSignatoryId',
-      'courtRecordSignatureDate',
-      'parentCaseId',
-      'caseModifiedExplanation',
-      'seenByDefender',
-    ]
 
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
@@ -128,6 +96,15 @@ describe('Restricted Case Exists Guard', () => {
           },
           { model: Case, as: 'parentCase', attributes },
           { model: Case, as: 'childCase', attributes },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+              category: { [Op.not]: null },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {

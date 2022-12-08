@@ -38,6 +38,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
     court: makeCourt(),
     creatingProsecutor: makeProsecutor(),
     prosecutor: makeProsecutor(),
+    defenderNationalId: '0000000000',
     defenderName,
     defenderEmail,
     defenderPhoneNumber,

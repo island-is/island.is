@@ -9,6 +9,10 @@ export const containerDisabled = style({
   backgroundColor: 'transparent',
 })
 
+export const rightAlign = style({
+  textAlign: 'right',
+})
+
 export const readOnly = style({
   backgroundColor: 'transparent',
 })

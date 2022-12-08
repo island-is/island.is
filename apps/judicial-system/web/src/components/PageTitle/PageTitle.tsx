@@ -2,13 +2,10 @@ import React from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
-interface Props {
-  title: string
-}
-const PageTitle: React.FC<Props> = ({ title }) => (
+const PageTitle: React.FC = ({ children }) => (
   <Box marginBottom={7}>
     <Text as="h1" variant="h1">
-      {title}
+      {children}
     </Text>
   </Box>
 )

@@ -44,6 +44,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -73,6 +74,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -83,6 +85,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           progress: 0.9,
           lifecycle: pruneAfter(sixtyDays),
           onEntry: {
@@ -104,6 +107,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -115,6 +119,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
         entry: 'assignToSpouse',
         meta: {
           name: 'Done',
+          status: 'inprogress',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
           onEntry: {
@@ -158,12 +163,18 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
           actionCard: {
             tag: {
               label: m.actionCardDoneTag,
             },
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
           },
           roles: [
             {
@@ -186,7 +197,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

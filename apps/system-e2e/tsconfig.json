@@ -3,9 +3,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
-    "types": ["cypress", "@testing-library/cypress", "node"],
+    "types": ["node"],
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "sourceMap": true
   },
-  "include": ["cypress.config.ts", "src/**/*.ts", "src/**/*.js"]
+  "include": ["src/**/*.ts", "src/**/*.js", "global.d.ts"]
 }

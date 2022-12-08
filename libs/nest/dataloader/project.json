@@ -1,0 +1,22 @@
+{
+  "root": "libs/nest/dataloader",
+  "sourceRoot": "libs/nest/dataloader/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/nest/dataloader/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/nest/dataloader"],
+      "options": {
+        "jestConfig": "libs/nest/dataloader/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

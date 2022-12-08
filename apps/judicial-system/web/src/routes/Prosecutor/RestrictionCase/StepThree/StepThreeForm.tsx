@@ -2,10 +2,7 @@ import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import {
-  formatDate,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
@@ -21,6 +18,7 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
+  CheckboxList,
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
@@ -33,7 +31,6 @@ import {
   autofillEntry,
   useDeb,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
   travelBanProvisions,
@@ -54,7 +51,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import * as styles from './StepThree.css'
 
 export interface DemandsAutofillProps {
-  defentant: Defendant
+  defendant: Defendant
   caseType: CaseType
   requestedValidToDate?: string | Date
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
@@ -66,11 +63,14 @@ export const getDemandsAutofill = (
   formatMessage: IntlShape['formatMessage'],
   props: DemandsAutofillProps,
 ): string => {
-  return formatMessage(rcReportForm.sections.demands.autofillV3, {
-    accusedName: props.defentant.name,
-    accusedNationalId: props.defentant.noNationalId
-      ? ' '
-      : `, kt. ${formatNationalId(props.defentant.nationalId ?? '')}, `,
+  const defendantDOB = formatDOB(
+    props.defendant.nationalId,
+    props.defendant.noNationalId,
+    '',
+  )
+  return formatMessage(rcReportForm.sections.demands.autofill, {
+    defendantName: props.defendant.name,
+    defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
     isExtended:
       props.parentCaseDecision &&
       isAcceptingCaseDecision(props.parentCaseDecision),
@@ -96,7 +96,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
     '',
   )
 
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'lawsBroken')
@@ -110,14 +110,14 @@ const StepThreeForm: React.FC<Props> = (props) => {
       requestedValidToDate: Date | string | undefined,
       requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
     ) => {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           entry,
           {
             demands:
               workingCase.defendants && workingCase.defendants.length
                 ? getDemandsAutofill(formatMessage, {
-                    defentant: workingCase.defendants[0],
+                    defendant: workingCase.defendants[0],
                     caseType,
                     requestedValidToDate: requestedValidToDate,
                     parentCaseDecision: workingCase.parentCase?.decision,
@@ -132,7 +132,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     },
-    [workingCase, formatMessage, setWorkingCase, setAndSendToServer],
+    [workingCase, formatMessage, setWorkingCase, setAndSendCaseToServer],
   )
 
   return (
@@ -214,7 +214,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                         force: true,
                       },
                       workingCase.type,
-                      workingCase.requestedCourtDate,
+                      workingCase.requestedValidToDate,
                       nextRequestedCustodyRestrictions,
                     )
                   }}
@@ -245,7 +245,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                         force: true,
                       },
                       nextCaseType,
-                      workingCase.requestedCourtDate,
+                      workingCase.requestedValidToDate,
                       workingCase.requestedCustodyRestrictions,
                     )
                   }}

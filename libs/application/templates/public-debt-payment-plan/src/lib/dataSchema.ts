@@ -1,5 +1,6 @@
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
-import * as z from 'zod'
+import { z } from 'zod'
 import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
 import { error } from './messages'
 
@@ -17,12 +18,12 @@ export const PaymentPlanSchema = z
   .optional()
 
 export const ApplicantSchema = z.object({
-  address: z.string(),
-  city: z.string(),
+  address: z.string().optional(),
+  city: z.string().optional(),
   email: z.string(),
-  name: z.string(),
-  nationalId: z.string(),
-  phoneNumber: z.string(),
+  name: z.string().optional(),
+  nationalId: z.string().optional(),
+  phoneNumber: z.string().optional(),
   postalCode: z.string(),
 })
 
@@ -33,6 +34,10 @@ export const CorrectedEmployerSchema = z.object({
       params: error.nationalId,
     }),
   label: z.string().min(1),
+  value: z.string().optional(),
+  validEmployer: z.boolean().refine((x) => x === true, {
+    params: error.invalidEmployer,
+  }),
 })
 
 export const PaymentPlansSchema = z.object({
@@ -50,7 +55,7 @@ export const PaymentPlansSchema = z.object({
 
 export const PublicDebtPaymentPlanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicant: ApplicantSchema,
+  applicant: applicantInformationSchema,
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
   }),

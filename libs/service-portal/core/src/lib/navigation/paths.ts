@@ -17,10 +17,18 @@ export enum ServicePortalPath {
 
   // Settings
   SettingsRoot = '/stillingar',
-
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
   SettingsAccessControlAccess = '/stillingar/adgangsstyring/:delegationId',
+
+  // Access Control
+  AccessControlDelegationsGrant = '/adgangsstyring/umbod/veita',
+  // Access Control - Outgoing delegations, i.e. from me
+  AccessControlDelegations = '/adgangsstyring/umbod',
+  AccessControlDelegationAccess = '/adgangsstyring/umbod/:delegationId',
+  // Access Control - Incoming delegations, i.e. to me
+  AccessControlDelegationsIncoming = '/adgangsstyring/umbod-til-min',
+
   SettingsPersonalInformation = '/stillingar/minar-stillingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/minar-stillingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/minar-stillingar/breyta-netfangi',
@@ -41,10 +49,10 @@ export enum ServicePortalPath {
   Company = '/fyrirtaeki',
 
   // General Petitions
-  Petitions = '/min-gogn/medmaeli',
-  PetitionsAdminView = '/min-gogn/medmaeli-admin',
-  PetitionList = '/min-gogn/medmaeli/:listId',
-  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
+  Petitions = '/medmaeli',
+  PetitionsAdminView = '/medmaeli-admin',
+  PetitionList = '/medmaeli/:listId',
+  PetitionListAdmin = '/medmaeli-admin/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
@@ -84,6 +92,7 @@ export enum ServicePortalPath {
   AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
   AssetsVehiclesLookup = '/okutaeki/leit',
   AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
+  AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
 
   // Messages
   MessagesRoot = '/skilabod',
@@ -97,8 +106,8 @@ export enum ServicePortalPath {
 
   // Licenses service
   LicensesRoot = '/skirteini',
-  LicensesDriving = '/skirteini/okuskirteini',
-  LicensesDrivingDetail = '/skirteini/okuskirteini/:id',
+  LicensesDetail = '/skirteini/:provider/:type',
+
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
   // release there will only be a limited number of features and this change creates a better UX in

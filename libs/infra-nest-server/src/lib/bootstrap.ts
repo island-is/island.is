@@ -66,11 +66,17 @@ type RunServerOptions = {
   globalPrefix?: string
 
   stripNonClassValidatorInputs?: boolean
+
+  /**
+   * Enables NestJS versioning.
+   */
+  enableVersioning?: boolean
 }
 
 export const createApp = async ({
   stripNonClassValidatorInputs = true,
   appModule,
+  enableVersioning,
   ...options
 }: RunServerOptions) => {
   monkeyPatchServerLogging()
@@ -83,6 +89,10 @@ export const createApp = async ({
       logger: LoggingModule.createLogger(),
     },
   )
+
+  if (enableVersioning) {
+    app.enableVersioning()
+  }
 
   // Configure "X-Requested-For" handling.
   // Internal services should trust the X-Forwarded-For header (EXPRESS_TRUST_PROXY=1)
