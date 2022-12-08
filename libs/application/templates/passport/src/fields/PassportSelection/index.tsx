@@ -4,6 +4,7 @@ import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
+  TagVariant,
 } from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -11,7 +12,17 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../lib/messages'
-import { IdentityDocument, UserPassport } from '../../lib/constants'
+import {
+  IdentityDocument,
+  IdentityDocumentChild,
+  IdentityDocumentData,
+} from '../../lib/constants'
+
+export type Tag = {
+  label: string
+  variant?: TagVariant | undefined
+  outlined?: boolean | undefined
+}
 
 export const PassportSelection: FC<FieldBaseProps> = ({
   field,
@@ -23,11 +34,8 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
-  const identityDocument = (application.externalData.identityDocument
-    .data as UserPassport).userPassport
-  const children = (application.externalData.identityDocument.data as any)
-    .childPassports
-  const identityDocumentNumber = identityDocument?.number
+  const identityDocumentData = application.externalData.identityDocument
+    .data as IdentityDocumentData
 
   const tag = (identityDocument: IdentityDocument) => {
     const today = new Date()
@@ -36,20 +44,22 @@ export const PassportSelection: FC<FieldBaseProps> = ({
       new Date().setMonth(new Date().getMonth() + 6),
     )
 
+    let tagObject = {} as Tag
+
     if (!identityDocument) {
-      return {
+      tagObject = {
         label: formatMessage(m.noPassport),
         variant: 'blue',
         outlined: true,
       }
     } else if (today > expirationDate) {
-      return {
+      tagObject = {
         label: formatMessage(m.expiredTag),
         variant: 'red',
         outlined: true,
       }
     } else if (todayPlus6Months > expirationDate) {
-      return {
+      tagObject = {
         label:
           formatMessage(m.validTag) +
           ' ' +
@@ -60,12 +70,14 @@ export const PassportSelection: FC<FieldBaseProps> = ({
         outlined: true,
       }
     } else if (todayPlus6Months < expirationDate) {
-      return {
+      tagObject = {
         label: formatMessage(m.validTag) + ' ' + expirationDate.getFullYear(),
         variant: 'mint',
         outlined: true,
       }
     }
+
+    return tagObject
   }
 
   return (
@@ -86,16 +98,17 @@ export const PassportSelection: FC<FieldBaseProps> = ({
               label: (application.externalData.nationalRegistry.data as any)
                 ?.fullName,
               value: '1',
-              subLabel: identityDocument
+              subLabel: identityDocumentData.userPassport
                 ? formatMessage(m.passportNumber) +
                   ' ' +
-                  identityDocument?.subType +
-                  identityDocumentNumber
+                  identityDocumentData.userPassport?.subType +
+                  identityDocumentData?.userPassport?.number
                 : '',
-              tag: tag(identityDocument) as any,
+              tag: tag(identityDocumentData.userPassport),
               disabled:
-                (tag(identityDocument) as any).label === 'Í pöntun' ||
-                (tag(identityDocument) as any).variant === 'mint',
+                tag(identityDocumentData.userPassport).label ===
+                  m.orderedTag.defaultMessage ||
+                tag(identityDocumentData.userPassport).variant === 'mint',
             },
           ],
           onSelect: () => {
@@ -118,23 +131,28 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           children: undefined,
           backgroundColor: 'white',
           defaultValue: '',
-          options: children.map((child: any) => {
-            return {
-              label: child.name,
-              value: child.nationalId,
-              subLabel: child.identityDocuments.length
-                ? formatMessage(m.passportNumber) +
-                  ' ' +
-                  (child.identityDocuments as any)[0].subType +
-                  (child.identityDocuments as any)[0].number
-                : '',
-              tag: tag((child.identityDocuments as any)[0]),
-              disabled:
-                tag((child.identityDocuments as any)[0])?.label ===
-                  'Í pöntun' ||
-                tag((child.identityDocuments as any)[0])?.variant === 'mint',
-            }
-          }),
+          options: identityDocumentData.childPassports.map(
+            (child: IdentityDocumentChild) => {
+              return {
+                label: child.name,
+                value: child.nationalId,
+                subLabel: child.identityDocuments?.length
+                  ? formatMessage(m.passportNumber) +
+                    ' ' +
+                    child.identityDocuments[0].subType +
+                    child.identityDocuments[0].number
+                  : '',
+                tag: child.identityDocuments
+                  ? tag(child.identityDocuments?.[0])
+                  : undefined,
+                disabled: child.identityDocuments
+                  ? tag(child.identityDocuments?.[0]).label ===
+                      m.orderedTag.defaultMessage ||
+                    tag(child.identityDocuments?.[0]).variant === 'mint'
+                  : false,
+              }
+            },
+          ),
           onSelect: () => {
             setValue(userPassportRadio, '')
           },

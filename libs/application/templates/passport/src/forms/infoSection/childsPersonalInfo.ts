@@ -7,7 +7,7 @@ import {
 import { Application, DefaultEvents } from '@island.is/application/types'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { format as formatKennitala } from 'kennitala'
-import { Passport } from '../../lib/constants'
+import { IdentityDocumentData, Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const childsPersonalInfo = buildMultiField({
@@ -24,8 +24,8 @@ export const childsPersonalInfo = buildMultiField({
       readOnly: true,
       defaultValue: (application: Application) => {
         return (
-          (application.externalData.identityDocument?.data as any)
-            .childPassports[0].name ?? ''
+          (application.externalData.identityDocument
+            ?.data as IdentityDocumentData).childPassports[0].name ?? ''
         )
       },
     }),
@@ -38,8 +38,8 @@ export const childsPersonalInfo = buildMultiField({
       format: '######-####',
       defaultValue: (application: Application) => {
         return (
-          (application.externalData.identityDocument?.data as any)
-            .childPassports[0].nationalId ?? ''
+          (application.externalData.identityDocument
+            ?.data as IdentityDocumentData).childPassports[0].nationalId ?? ''
         )
       },
     }),
@@ -112,8 +112,9 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       defaultValue: (application: Application) => {
         return (
-          (application.externalData.identityDocument?.data as any)
-            .childPassports[0].secondParent[0] ?? ''
+          (application.externalData.identityDocument
+            ?.data as IdentityDocumentData).childPassports[0].secondParent[0] ??
+          ''
         )
       },
     }),
@@ -126,8 +127,9 @@ export const childsPersonalInfo = buildMultiField({
       format: '######-####',
       defaultValue: (application: Application) => {
         return (
-          (application.externalData.identityDocument?.data as any)
-            .childPassports[0].secondParent[0] ?? ''
+          (application.externalData.identityDocument
+            ?.data as IdentityDocumentData).childPassports[0].secondParent[0] ??
+          ''
         )
       },
     }),
