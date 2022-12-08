@@ -40,7 +40,7 @@ export const ShipInformation: FC<ShipInformationProps> = ({
   )
 
   const isExpired =
-    new Date(seaworthinessDate).getTime() <= new Date().getTime()
+    new Date(seaworthiness.validTo).getTime() <= new Date().getTime()
 
   const seaworthinessColor = seaworthinessHasColor
     ? isExpired
