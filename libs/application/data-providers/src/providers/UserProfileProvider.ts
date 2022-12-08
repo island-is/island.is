@@ -52,7 +52,7 @@ export class UserProfileProvider extends BasicDataProvider {
       return Promise.resolve({
         email: 'mockEmail@island.is',
         mobilePhoneNumber: '9999999',
-        bankInfo: '0000-11-222222'
+        bankInfo: '0000-11-222222',
       })
     }
 

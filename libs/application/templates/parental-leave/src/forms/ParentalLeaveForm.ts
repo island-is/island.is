@@ -214,9 +214,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) =>
-                  (application.externalData.userProfile?.data as {
-                    bankInfo?: string
-                  })?.bankInfo,
+                    (application.externalData.userProfile?.data as {
+                      bankInfo?: string
+                    })?.bankInfo,
                 }),
                 buildAsyncSelectField({
                   condition: (answers) => {
