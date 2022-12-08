@@ -84,5 +84,5 @@ export class SearcherInput {
   @Field(() => String, { nullable: true })
   // @IsEnum(ContentLanguage)
   @IsOptional()
-  useQuery?: string = "default"
+  useQuery?: string
 }

@@ -22,7 +22,7 @@ export const searchQuery = (
     countTag = [],
     countTypes = false,
     countProcessEntry = false,
-    useQuery = "default"
+    useQuery
   }: SearchInput,
   aggregate = true,
   highlightSection = false,
@@ -38,7 +38,7 @@ export const searchQuery = (
     'content',
     'content.stemmed',
   ]
-
+  // console.log(useQuery)
 
   // * wildcard support for internal clients
   if (queryString.trim() === '*') {
@@ -54,6 +54,7 @@ export const searchQuery = (
       switch (useQuery) {
         default:
         case "default":
+          console.log("DEFAULT")
           should.push({
             multi_match: {
               fields: fieldsWeights,
@@ -65,6 +66,7 @@ export const searchQuery = (
           })
           break;
         case "suggestions":
+          console.log("SUGGESTIONS")
           console.log('SEARCH.TS', queryString)
           const words = queryString.split(' ')
           const lastWord = words.pop()
