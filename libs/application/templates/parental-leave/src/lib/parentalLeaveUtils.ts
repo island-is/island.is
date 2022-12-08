@@ -536,6 +536,11 @@ export function getApplicationExternalData(
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
+  const userBankInfo = getValueViaPath(
+    externalData,
+    'userProfile.data.bankInfo',
+  ) as string
+
   const applicantGenderCode = getValueViaPath(
     externalData,
     'person.data.genderCode',
@@ -568,6 +573,7 @@ export function getApplicationExternalData(
     navId,
     userEmail,
     userPhoneNumber,
+    userBankInfo,
   }
 }
 

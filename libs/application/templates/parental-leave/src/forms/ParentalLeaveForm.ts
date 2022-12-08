@@ -213,6 +213,10 @@ export const ParentalLeaveForm: Form = buildForm({
                   dataTestId: 'bank-account-number',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
+                  defaultValue: (application: Application) =>
+                  (application.externalData.userProfile?.data as {
+                    bankInfo?: string
+                  })?.bankInfo,
                 }),
                 buildAsyncSelectField({
                   condition: (answers) => {
