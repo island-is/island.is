@@ -52,7 +52,7 @@ export const StepFive: React.FC = () => {
   const { formatMessage } = useIntl()
   const { flows } = useContext(StepContext)
   const { onContinue } = flows[FlowType.RESTRICTION_CASES][UserType.PROSECUTOR][
-    constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
+    constants.RESTRICTION_CASE_CASE_FILES_ROUTE
   ]
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [policeCaseFileList, setPoliceCaseFileList] = useState<

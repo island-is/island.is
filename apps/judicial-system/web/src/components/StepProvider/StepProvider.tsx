@@ -48,7 +48,32 @@ export interface Flows {
         isValid: boolean
       }
     }
-    [UserType.COURT]: {}
+    [UserType.COURT]: {
+      [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: {
+        onContinue: () => Promise<boolean>
+        isValid: boolean
+      }
+      [constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: {
+        onContinue: () => Promise<boolean>
+        isValid: boolean
+      }
+      [constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: {
+        onContinue: () => Promise<boolean | undefined>
+        isValid: boolean
+      }
+      [constants.RESTRICTION_CASE_RULING_ROUTE]: {
+        onContinue: () => Promise<boolean>
+        isValid: boolean
+      }
+      [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: {
+        onContinue: () => Promise<boolean>
+        isValid: boolean
+      }
+      [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: {
+        onContinue: () => Promise<boolean>
+        isValid: boolean
+      }
+    }
   }
   [FlowType.INVESTIGATION_CASES]: {
     [UserType.PROSECUTOR]: {}
@@ -89,7 +114,32 @@ export const StepContext = createContext<StepContextType>({
           isValid: false,
         },
       },
-      [UserType.COURT]: {},
+      [UserType.COURT]: {
+        [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: false,
+        },
+        [constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: false,
+        },
+        [constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: false,
+        },
+        [constants.RESTRICTION_CASE_RULING_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: false,
+        },
+        [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: false,
+        },
+        [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: false,
+        },
+      },
     },
     [FlowType.INVESTIGATION_CASES]: {
       [UserType.PROSECUTOR]: {},
@@ -164,7 +214,35 @@ const StepProvider: React.FC = ({ children }) => {
           isValid: true, // This step is always valid
         },
       },
-      [UserType.COURT]: {},
+      [UserType.COURT]: {
+        [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: {
+          onContinue: () =>
+            router.push(
+              `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+            ),
+          isValid: true, // This step is always valid
+        },
+        [constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: true,
+        },
+        [constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: true,
+        },
+        [constants.RESTRICTION_CASE_RULING_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: true,
+        },
+        [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: true,
+        },
+        [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: {
+          onContinue: () => new Promise((resolve) => resolve(true)),
+          isValid: true,
+        },
+      },
     },
     [FlowType.INVESTIGATION_CASES]: {
       [UserType.PROSECUTOR]: {},
