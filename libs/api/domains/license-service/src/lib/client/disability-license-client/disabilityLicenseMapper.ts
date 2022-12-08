@@ -49,7 +49,7 @@ export const parseDisabilityLicensePayload = (
 }
 
 const formatDateString = (dateTime: Date) => {
-  return dateTime ? format(dateTime, 'dd/MM/yyyy') : ''
+  return dateTime ? format(dateTime, 'dd.MM.yyyy') : ''
 }
 
 // TODO FORMAT CORRECTLY
