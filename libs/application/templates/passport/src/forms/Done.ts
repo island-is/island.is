@@ -30,7 +30,7 @@ export const Done: Form = buildForm({
           titleVariant: 'h3',
           description: (application: Application) =>
             (application.externalData.submitPassportApplication
-              ?.data as SubmitResponse)?.orderId,
+              ?.data as SubmitResponse)?.orderId ?? '',
           space: 'gutter',
         }),
         buildDescriptionField({
