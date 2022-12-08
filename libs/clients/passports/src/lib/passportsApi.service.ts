@@ -61,6 +61,7 @@ export class PassportsService {
     user: User,
     input: PreregistrationInput,
   ): Promise<string[]> {
+    console.log('inClient', input)
     return await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
       .preregistrationPreregistration({

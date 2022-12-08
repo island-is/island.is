@@ -137,6 +137,7 @@ export class PassportService {
               email: childsPersonalInfo.guardian1.email,
             },
           }
+        console.log('payload', payload)
       const result = await this.passportApi.preregisterIdentityDocument(
         auth,
         payload,

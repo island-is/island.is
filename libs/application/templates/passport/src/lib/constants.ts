@@ -77,8 +77,8 @@ export type IdentityDocument = {
   verboseType: string
   subType: string
   status: string
-  issuingDate: Date
-  expirationDate: Date
+  issuingDate: string
+  expirationDate: string
   displayFirstName: string
   displayLastName: string
   mrzFirstName: string

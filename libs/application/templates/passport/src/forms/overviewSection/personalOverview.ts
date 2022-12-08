@@ -84,11 +84,11 @@ export const personalOverview = buildMultiField({
       value: (application: Application) => {
         const date =  (application.externalData.identityDocument
           .data as UserPassport).userPassport.expirationDate
-        console.log(date)
+        console.log(typeof date)
         return (
           m.currentPassportExpiration.defaultMessage +
           ' ' +
-          format(date, 'dd.MM.yy')
+          format(new Date(date), 'dd.MM.yy') || ''
         )
       },
     }),
