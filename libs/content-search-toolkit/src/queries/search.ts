@@ -66,7 +66,7 @@ export const searchQuery = (
         })
         break
       // the search logic used for search drop down suggestions
-      //term and prefix queries on content title
+      // term and prefix queries on content title
       case 'suggestions':
         const words = queryString.split(' ')
         const lastWord = words.pop()

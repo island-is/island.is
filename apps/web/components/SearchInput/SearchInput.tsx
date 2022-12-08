@@ -433,7 +433,7 @@ const Results = ({
       paddingY={2}
       paddingX={3}
     >
-      <div className={styles.menuRow}>
+      {/* <div className={styles.menuRow}>
         <Stack space={1}>
           {search.suggestions &&
             search.suggestions.map((suggestion, i) => {
@@ -466,10 +466,10 @@ const Results = ({
               )
             })}
         </Stack>
-      </div>{' '}
+      </div>{' '} */}
       {autosuggest && search.results && search.results.items.length > 0 && (
         <>
-          <div className={styles.separatorHorizontal} />
+          {/* <div className={styles.separatorHorizontal} /> */}
           <div className={styles.menuRow}>
             <Stack space={2}>
               <Text variant="eyebrow" color="purple400">
