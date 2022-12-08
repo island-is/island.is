@@ -129,6 +129,10 @@ export const PassportSelection: FC<FieldBaseProps> = ({
                   (child.identityDocuments as any)[0].number
                 : '',
               tag: tag((child.identityDocuments as any)[0]),
+              disabled:
+                tag((child.identityDocuments as any)[0])?.label ===
+                  'Í pöntun' ||
+                tag((child.identityDocuments as any)[0])?.variant === 'mint',
             }
           }),
           onSelect: () => {
