@@ -120,7 +120,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           defaultValue: '',
           options: children.map((child: any) => {
             return {
-              label: child.nationalId,
+              label: child.name,
               value: child.nationalId,
               subLabel: child.identityDocuments.length
                 ? formatMessage(m.passportNumber) +
