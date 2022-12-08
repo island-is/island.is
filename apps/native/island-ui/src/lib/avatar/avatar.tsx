@@ -37,10 +37,20 @@ interface AvatarProps {
 }
 
 export function Avatar({ name }: AvatarProps) {
-  const letters = name.match(/\b(\w)/g)?.join('').slice(0,2) || [];
+
+  function getFirstLetters(str: string) {
+    const firstLetters = str
+      .split(' ')
+      .slice(0, 2)
+      .map(word => word[0])
+      .join('');
+
+    return firstLetters;
+  }
+
   return (
     <Host>
-      <Text>{letters}</Text>
+      <Text>{getFirstLetters(name)}</Text>
     </Host>
   )
 }
