@@ -10,6 +10,8 @@ import {
   PreregistrationInput,
 } from './passportsApi.types'
 import { mapChildPassports, mapPassports } from './passportsApi.utils'
+import PDFDocument from 'pdfkit'
+import getStream from 'get-stream'
 
 @Injectable()
 export class PassportsService {
@@ -61,7 +63,27 @@ export class PassportsService {
     user: User,
     input: PreregistrationInput,
   ): Promise<string[]> {
-    console.log('inClient', input)
+    console.log('preregister user')
+    return await this.preregistrationApi
+      .withMiddleware(new AuthMiddleware(user))
+      .preregistrationPreregistration({
+        xRoadClient: this.xroadConfig.xRoadClient,
+        preregistration: input,
+      })
+  }
+
+  async preregisterChildIdentityDocument(
+    user: User,
+    input: PreregistrationInput,
+  ): Promise<string[]> {
+    const { appliedForPersonId, approvalA, approvalB } = input
+    console.log("IN PREREGISTER CHILD", input)
+    const pdfDoc = this.createDocumentBuffer({
+      appliedForPersonId,
+      approvalA,
+      approvalB,
+    })
+    console.log("PDF DOC",pdfDoc)
     return await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
       .preregistrationPreregistration({
@@ -87,5 +109,58 @@ export class PassportsService {
       userPassport: userPassport || undefined,
       childPassports: childPassports,
     }
+  }
+
+  async createDocumentBuffer({
+    appliedForPersonId,
+    approvalA,
+    approvalB,
+  }: Pick<
+    PreregistrationInput,
+    'appliedForPersonId' | 'approvalA' | 'approvalB'
+  >) {
+    // build pdf
+    const doc = new PDFDocument()
+    const locale = 'is-IS'
+    const big = 16
+    const regular = 8
+    const fontRegular = 'Helvetica'
+    const fontBold = 'Helvetica-Bold'
+
+    doc
+      .fontSize(big)
+      .text('Umsókn um vegabréf með samþykki forráðamanna fyrir hönd: ')
+      .text(appliedForPersonId ?? '')
+      .moveDown()
+
+      .fontSize(regular)
+      .font(fontBold)
+      .text(
+        'Samþykki forráðamanna liggur fyrir og er staðfest gegnum island.is.',
+      )
+      .moveDown()
+
+      .font(fontBold)
+      .text('Forráðamaður A: ')
+      .font(fontRegular)
+      .text(`${approvalA?.personId}, ${approvalA?.approved}`)
+      .moveDown()
+
+      .font(fontBold)
+      .text('Forráðamaður B: ')
+      .font(fontRegular)
+      .text(`${approvalB?.personId}, ${approvalB?.approved}`)
+      .moveDown()
+
+      .font(fontRegular)
+      .text('Með kveðju frá island.is')
+
+      .moveDown()
+      .text(
+        'Þetta skjal var framkallað sjálfvirkt þann: ' +
+          new Date().toLocaleDateString(locale),
+      )
+    doc.end()
+    return await getStream.buffer(doc)
   }
 }

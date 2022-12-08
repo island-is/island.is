@@ -85,6 +85,7 @@ export class PassportService {
     success: boolean
     orderId?: string[]
   }> {
+    console.log("HALLO AM I HERE???")
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
@@ -105,10 +106,12 @@ export class PassportService {
         childsPersonalInfo,
         service,
       }: PassportSchema = application.answers as PassportSchema
-
+      console.log("HERE I AM !!", passport.userPassport)
       const forUser = !!passport.userPassport
-      const payload = forUser
-        ? {
+      const result = forUser
+        ? await this.passportApi.preregisterIdentityDocument(
+          auth,
+          {
             appliedForPersonId: personalInfo.nationalId,
             priority: service.type === 'regular' ? 0 : 1,
 
@@ -118,8 +121,10 @@ export class PassportService {
               phoneMobile: personalInfo.phoneNumber,
               email: personalInfo.email,
             },
-          }
-        : {
+          },
+        )
+        : await this.passportApi.preregisterChildIdentityDocument(
+          auth,{
             appliedForPersonId: childsPersonalInfo.nationalId,
             priority: service.type === 'regular' ? 0 : 1,
             approvalA: {
@@ -136,15 +141,12 @@ export class PassportService {
               phoneMobile: childsPersonalInfo.guardian1.phoneNumber,
               email: childsPersonalInfo.guardian1.email,
             },
-          }
-        console.log('payload', payload)
-      const result = await this.passportApi.preregisterIdentityDocument(
-        auth,
-        payload,
-      )
-      if (result.length < 1) {
-        throw new Error(`Application submission failed (${''})`)
-      }
+          })
+          console.log(result)
+ 
+      // if (result.length < 1) {
+        throw new Error(`Application submission failed (${result})`)
+      // }
 
       return {
         success: true,
