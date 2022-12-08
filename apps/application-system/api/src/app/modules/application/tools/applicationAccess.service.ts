@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/api/core'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
+  AllowedDelegation,
   Application,
   ApplicationContext,
   ApplicationStateSchema,
@@ -18,10 +19,14 @@ import {
 } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { EventObject } from 'xstate'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 @Injectable()
 export class ApplicationAccessService {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   async findOneByIdAndNationalId(id: string, user: User) {
     const existingApplication = await this.applicationService.findOneById(
@@ -103,7 +108,7 @@ export class ApplicationAccessService {
     return true
   }
 
-  shouldShowApplicationOnOverview = (
+  async shouldShowApplicationOnOverview(
     application: Application,
     user: User,
     template?: ApplicationTemplate<
@@ -111,7 +116,7 @@ export class ApplicationAccessService {
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
-  ): boolean => {
+  ): Promise<boolean> {
     if (template === undefined) {
       return false
     }
@@ -125,9 +130,10 @@ export class ApplicationAccessService {
         if (!userDelegations) {
           return false
         }
-        const matchesAtLeastOneDelegation = template.allowedDelegations.some(
-          (d) => userDelegations.includes(d.type),
+        const matchesAtLeastOneDelegation = await template.allowedDelegations.some(
+          async (d) => await this.isDelegatationAllowed(d, user),
         )
+
         if (!matchesAtLeastOneDelegation) {
           return false
         }
@@ -141,5 +147,20 @@ export class ApplicationAccessService {
     const currentUserRole = template.mapUserToRole(nationalId, application)
     const templateHelper = new ApplicationTemplateHelper(application, template)
     return this.evaluateIfRoleShouldBeListed(currentUserRole, templateHelper)
+  }
+
+  async isDelegatationAllowed(
+    delegation: AllowedDelegation,
+    user: User,
+  ): Promise<boolean | undefined> {
+    let featureAllowed = true
+    if (delegation.featureFlag) {
+      featureAllowed = await this.featureFlagService.getValue(
+        delegation.featureFlag,
+        false,
+        user,
+      )
+    }
+    return user.delegationType?.includes(delegation.type) && featureAllowed
   }
 }
