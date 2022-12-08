@@ -5,20 +5,17 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
-import { useQuery } from '@apollo/client'
-import { gql } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { LoadingDots } from '@island.is/island-ui/core'
-
-export const query = gql`
-  query hasDisabilityLicense {
-    hasDisabilityLicense
-  }
-`
+import { hasDisabilityLicense } from '../../lib/queries'
 
 export const NoDisabilityRecordInfo: FC<FieldBaseProps> = () => {
-  const { data, loading, error, refetch } = useQuery(query, {
-    notifyOnNetworkStatusChange: true,
-  })
+  const { data, loading, error, refetch } = useQuery(
+    gql(hasDisabilityLicense),
+    {
+      notifyOnNetworkStatusChange: true,
+    },
+  )
 
   const { setValue } = useFormContext()
 

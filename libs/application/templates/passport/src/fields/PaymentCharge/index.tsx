@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Passport, Service, Services, YES } from '../../lib/constants'
+import { Passport, Service, Services } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {

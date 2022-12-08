@@ -158,19 +158,29 @@ export const m = defineMessages({
     description: 'Some description',
   },
   noDisabiltiyRecordInfoMessage: {
-    id: 'pa.application:introSection.noDisabiltiyRecordInfoMessage',
+    id: 'pa.application:noDisabiltiyRecordInfoMessage',
     defaultMessage: 'Þú ert ekki handhafi örorkuskírteinis',
     description: 'Some description',
   },
   disabiltiyRecordInfoMessage: {
-    id: 'pa.application:introSection.disabiltiyRecordInfoMessage',
+    id: 'pa.application:disabiltiyRecordInfoMessage',
     defaultMessage: 'Þú ert handhafi örorkuskírteinis',
     description: 'Some description',
   },
   disabiltiyRecordError: {
-    id: 'pa.application:introSection.disabiltiyRecordError',
+    id: 'pa.application:disabiltiyRecordError',
     defaultMessage:
       'Eitthvað fór úrskeiðis við að ná sambandi, vinsamlegast reyndu aftur síðar',
+    description: 'Some description',
+  },
+  parent1: {
+    id: 'pa.application:parent1',
+    defaultMessage: 'Forráðamaður 1',
+    description: 'Some description',
+  },
+  parent2: {
+    id: 'pa.application:parent2',
+    defaultMessage: 'Forráðamaður 2',
     description: 'Some description',
   },
 

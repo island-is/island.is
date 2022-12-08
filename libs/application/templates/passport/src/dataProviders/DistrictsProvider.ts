@@ -4,6 +4,7 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { getSyslumennDistrictCommissionersAgencies } from '../lib/queries'
 
 export interface DistrictCommissionerAgencies {
   name: string
@@ -16,18 +17,7 @@ export class DistrictsProvider extends BasicDataProvider {
   type = 'DistrictsProvider'
 
   async provide(): Promise<DistrictCommissionerAgencies> {
-    const query = `
-        query getSyslumennDistrictCommissionersAgencies {
-          getSyslumennDistrictCommissionersAgencies {
-            name
-            place
-            address
-            id
-          }
-        }
-      `
-
-    return this.useGraphqlGateway(query)
+    return this.useGraphqlGateway(getSyslumennDistrictCommissionersAgencies)
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors?.length > 0) {

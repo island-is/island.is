@@ -118,9 +118,9 @@ const PassportTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.9,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
+          /*onEntry: {
             apiModuleAction: ApiActions.assignParentB,
-          },
+          },*/
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,9 +161,9 @@ const PassportTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          onEntry: {
+          /*onEntry: {
             apiModuleAction: ApiActions.submitPassportApplication,
-          },
+          },*/
           roles: [
             {
               id: Roles.APPLICANT,
