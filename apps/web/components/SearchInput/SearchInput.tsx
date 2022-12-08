@@ -138,7 +138,7 @@ const useSearch = (
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
 
-      //// PUTTNING THE AUTOCOMPLETE ON HOLD FOR NOW
+      // // PUTTNING THE AUTOCOMPLETE ON HOLD FOR NOW
       // client
       //   .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
       //     query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
@@ -237,7 +237,7 @@ export const SearchInput = forwardRef<
       size = 'medium',
       white = false,
       colored = true,
-      autocomplete = true,
+      autocomplete = true, // putting autocomplete on hold for now
       autosuggest = true,
       id = 'downshift',
       onRouting,
@@ -466,10 +466,10 @@ const Results = ({
               )
             })}
         </Stack>
-      </div>{' '} */}
+      </div>{' '}
+      <div className={styles.separatorHorizontal} /> */}
       {autosuggest && search.results && search.results.items.length > 0 && (
         <>
-          {/* <div className={styles.separatorHorizontal} /> */}
           <div className={styles.menuRow}>
             <Stack space={2}>
               <Text variant="eyebrow" color="purple400">

@@ -70,10 +70,10 @@ export const searchQuery = (
       case 'suggestions':
         const words = queryString.split(' ')
         const lastWord = words.pop()
+        should.push({ prefix: { title: lastWord } })
         words.forEach((word) => {
           should.push({ term: { title: word } })
         })
-        should.push({ prefix: { title: lastWord } })
         break
     }
   }
