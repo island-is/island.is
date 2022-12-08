@@ -13,7 +13,6 @@ import {
   isCourtRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   capitalize,
   displayFirstPlusRemaining,
@@ -21,7 +20,10 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
-import { Table } from '@island.is/judicial-system-web/src/components'
+import {
+  Table,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import {

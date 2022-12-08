@@ -19,7 +19,6 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.vehicles)
 @Resolver()
 @Audit({ namespace: '@island.is/api/vehicles' })
 export class VehiclesResolver {
@@ -31,6 +30,7 @@ export class VehiclesResolver {
     >,
   ) {}
 
+  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
   async getVehicleList(@CurrentUser() user: User) {
@@ -44,12 +44,14 @@ export class VehiclesResolver {
     return { ...data, downloadServiceURL }
   }
 
+  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesHistory, { name: 'vehiclesHistoryList', nullable: true })
   @Audit()
   async getVehicleHistory(@CurrentUser() user: User) {
     return await this.vehiclesService.getVehiclesForUser(user, true, true)
   }
 
+  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(
@@ -66,6 +68,7 @@ export class VehiclesResolver {
     return { ...data, downloadServiceURL }
   }
 
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => Number, {
     name: 'vehiclesSearchLimit',
     nullable: true,
@@ -75,6 +78,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getSearchLimit(user)
   }
 
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehiclesVehicleSearch, {
     name: 'vehiclesSearch',
     nullable: true,

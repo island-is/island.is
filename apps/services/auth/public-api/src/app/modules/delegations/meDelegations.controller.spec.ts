@@ -22,9 +22,9 @@ import {
   createDelegationModels,
   expectMatchingDelegations,
   findExpectedDelegationModels,
+  createClient,
 } from '@island.is/services/auth/testing'
 
-import { createClient } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,

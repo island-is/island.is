@@ -39,7 +39,7 @@ test.describe('Service portal', () => {
       .textContent()
     expect(companyName).toBeTruthy()
     await firstCompany.click()
-    await page.waitForURL(homeUrl, {
+    await page.waitForURL(new RegExp(homeUrl), {
       waitUntil: 'domcontentloaded',
     })
 

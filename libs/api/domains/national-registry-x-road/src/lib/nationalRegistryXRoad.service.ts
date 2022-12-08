@@ -8,6 +8,7 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
+import { ChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 import { NationalRegistryReligion } from '../models/nationalRegistryReligion.model'
@@ -39,6 +40,38 @@ export class NationalRegistryXRoadService {
       country: entry.country,
       dateOfChange: entry.dateOfChange,
     }))
+  }
+
+  async getChildGuardianship(
+    user: User,
+    childNationalId: string,
+  ): Promise<ChildGuardianship | null> {
+    const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
+      user,
+    )
+
+    const isChildOfUser = childrenNationalIds.some(
+      (childId) => childId === childNationalId,
+    )
+
+    if (!isChildOfUser) {
+      return null
+    }
+
+    const residenceParent = await this.nationalRegistryApi.getChildResidenceParent(
+      user,
+      childNationalId,
+    )
+    const legalDomicileParent = await this.nationalRegistryApi.getChildDomicileParent(
+      user,
+      childNationalId,
+    )
+
+    return {
+      childNationalId,
+      legalDomicileParent,
+      residenceParent,
+    }
   }
 
   async getNationalRegistryPerson(

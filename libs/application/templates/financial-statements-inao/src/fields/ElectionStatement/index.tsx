@@ -49,7 +49,7 @@ export const ElectionStatement = ({
           ${formatMessage(m.nationalId)}: ${formatNationalId(
             answers.about.nationalId,
           )}, ${formatMessage(m.participated)} 
-          ${answers.election.electionName}`}
+          ${answers.election.genitiveName}`}
         </Text>
       </Box>
       <Box paddingY={2}>

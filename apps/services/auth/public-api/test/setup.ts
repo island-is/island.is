@@ -19,7 +19,6 @@ import {
   Client,
   ClientAllowedScope,
   DelegationConfig,
-  DelegationsService,
   Domain,
   Language,
   NamesService,
@@ -33,7 +32,6 @@ import {
   RskProcuringClientMock,
   FeatureFlagServiceMock,
 } from './mocks'
-import { CreateClient } from './fixtures'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@island.is/nest/config'
@@ -41,6 +39,7 @@ import {
   createDomain,
   createApiScopeGroup,
   createApiScope,
+  CreateClient,
 } from '@island.is/services/auth/testing'
 
 export interface ScopeSetupOptions {

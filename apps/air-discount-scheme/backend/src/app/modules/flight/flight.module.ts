@@ -10,10 +10,11 @@ import { FlightService } from './flight.service'
 import { DiscountModule } from '../discount'
 import { NationalRegistryModule } from '../nationalRegistry'
 import { CacheModule } from '../cache'
+import { ExplicitCode } from '../discount/discount.model'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Flight, FlightLeg]),
+    SequelizeModule.forFeature([Flight, FlightLeg, ExplicitCode]),
     forwardRef(() => DiscountModule),
     NationalRegistryModule,
     CacheModule,

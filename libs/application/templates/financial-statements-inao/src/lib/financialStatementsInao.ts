@@ -40,7 +40,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
         : m.applicationTitleAlt
     }
 
-    return currentUser
+    return currentUser?.name
       ? `${m.applicationTitle.defaultMessage} - ${currentUser.name}`
       : m.applicationTitle
   },
@@ -54,6 +54,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
+          status: 'draft',
           onEntry: {
             apiModuleAction: ApiActions.getUserType,
             shouldPersistToExternalData: true,
@@ -83,6 +84,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
@@ -97,7 +99,6 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

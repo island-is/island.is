@@ -179,6 +179,7 @@ export class DrivingLicenseBookClientApiFactory {
       data,
     } = await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
       teacherSsn: user.nationalId,
+      showExpired: false,
     })
     if (!data) {
       this.logger.error(`${LOGTAG} Error fetching students for teacher`)
@@ -201,6 +202,7 @@ export class DrivingLicenseBookClientApiFactory {
     const api = await this.create()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
+      showInactiveBooks: false,
     })
     const activeBook = await this.getActiveBookId(nationalId)
 

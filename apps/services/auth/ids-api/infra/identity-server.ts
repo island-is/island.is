@@ -74,6 +74,7 @@ export const serviceSetup = (services: {
       PersistenceSettings__UserProfileBaseAddress:
         'http://web-service-portal-api.service-portal.svc.cluster.local',
       Application__MinCompletionPortThreads: '10',
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',

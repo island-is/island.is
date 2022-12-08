@@ -40,6 +40,7 @@ export const Overview = ({
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
+
   const [
     submitApplication,
     { error: submitError, loading },
@@ -79,7 +80,7 @@ export const Overview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersIncomeAndExpenses)}
+            {formatMessage(m.expensesIncome)}
           </Text>
         </Box>
         <GridRow>
@@ -155,7 +156,7 @@ export const Overview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersDebt)}
+            {formatMessage(m.propertiesAndDebts)}
           </Text>
         </Box>
         <AssetDebtEquityOverview answers={answers} />

@@ -27,6 +27,7 @@ import {
   FormContext,
   useRequestRulingSignature,
   SigningModal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -47,7 +48,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   core,
   rcRuling as m,

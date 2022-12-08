@@ -1,4 +1,9 @@
-import { CaseAppealDecision, Gender } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  Gender,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -12,6 +17,8 @@ import {
   formatPhoneNumber,
   displayFirstPlusRemaining,
   splitStringByComma,
+  readableIndictmentSubtypes,
+  indictmentSubtypes,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -293,4 +300,40 @@ describe('splitStringByComma', () => {
       expect(result).toEqual(['apple', 'pear', 'orange'])
     },
   )
+})
+
+describe('readableIndictmentSubtypes', () => {
+  test('should return an empty list if no policeCaseNumber is provided', () => {
+    const policeCaseNumbers: string[] = []
+    const rawIndictmentSubtypes: IndictmentSubtypeMap = {
+      '220-2020-202': [IndictmentSubtype.MAJOR_ASSAULT],
+    }
+
+    expect(
+      readableIndictmentSubtypes(policeCaseNumbers, rawIndictmentSubtypes),
+    ).toEqual([])
+  })
+
+  test('should return an empty list if rawIndictmentSubtype is not provided', () => {
+    const policeCaseNumbers: string[] = ['220-2020-202']
+    const rawIndictmentSubtypes = undefined
+
+    expect(
+      readableIndictmentSubtypes(policeCaseNumbers, rawIndictmentSubtypes),
+    ).toEqual([])
+  })
+
+  test('should return a array of readable indictment subtypes if policeCaseNumbers and rawIndictmentSubtypes are provided', () => {
+    const policeCaseNumbers: string[] = ['220-2020-202']
+    const rawIndictmentSubtypes: IndictmentSubtypeMap = {
+      '220-2020-202': [IndictmentSubtype.RAPE, IndictmentSubtype.THEFT],
+    }
+
+    expect(
+      readableIndictmentSubtypes(policeCaseNumbers, rawIndictmentSubtypes),
+    ).toEqual([
+      indictmentSubtypes[IndictmentSubtype.RAPE],
+      indictmentSubtypes[IndictmentSubtype.THEFT],
+    ])
+  })
 })

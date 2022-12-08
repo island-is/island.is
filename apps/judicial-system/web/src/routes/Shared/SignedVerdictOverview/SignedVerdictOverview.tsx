@@ -43,8 +43,8 @@ import {
   SignedDocument,
   useRequestRulingSignature,
   SigningModal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
@@ -907,9 +907,7 @@ export const SignedVerdictOverview: React.FC = () => {
         <Modal
           title={shareCaseModal.title}
           text={shareCaseModal.text}
-          primaryButtonText={formatMessage(
-            m.sections.shareCaseModal.buttonClose,
-          )}
+          primaryButtonText={formatMessage(core.closeModal)}
           onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
         />
       )}
@@ -965,7 +963,7 @@ export const SignedVerdictOverview: React.FC = () => {
           }
           primaryButtonText={
             courtRecordSignatureConfirmationResponse
-              ? formatMessage(m.sections.courtRecordSignatureModal.closeButon)
+              ? formatMessage(core.closeModal)
               : ''
           }
           onPrimaryButtonClick={() => {

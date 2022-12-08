@@ -1119,6 +1119,68 @@
         ]
       }
     },
+    "/api/v1/einstaklingar/{barn}/busetuforeldri": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "summary": "Get the list of resident parents",
+        "operationId": "Einstaklingar_GetBusetuForeldri",
+        "parameters": [
+          {
+            "name": "barn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns resident parent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization information is missing or invalid."
+          },
+          "404": {
+            "description": "No individual exists with that national id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "There was an error on the server side.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
     "/api/v1/einstaklingar/{id}/samibuar": {
       "get": {
         "tags": ["Einstaklingar"],

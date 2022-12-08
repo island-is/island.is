@@ -44,7 +44,7 @@ export const overviewSection = buildSection({
             ? m.overviewDescription
             : `${m.electionStatement.defaultMessage} ${getValueViaPath(
                 application.answers,
-                ABOUTIDS.electionName,
+                ABOUTIDS.genitiveName,
               )}`
         } else {
           return m.review

@@ -71,12 +71,14 @@ export type StateLifeCycle =
       // Controls visibility from my pages + /umsoknir/:type when in current state
       shouldBeListed: boolean
       shouldBePruned: false
+      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
   | {
       shouldBeListed: boolean
       shouldBePruned: true
       // If set to a number prune date will equal current timestamp + whenToPrune (ms)
       whenToPrune: number | ((application: Application) => Date)
+      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
@@ -88,6 +90,10 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
   progress?: number
+  /**
+   * Represents the current status of the application in the state, defaults to draft
+   */
+  status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
   roles?: RoleInState<T>[]
   onExit?: ApplicationTemplateAPIAction
   onEntry?: ApplicationTemplateAPIAction

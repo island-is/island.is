@@ -11,7 +11,10 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { CaseType } from '@island.is/judicial-system/types'
-import type { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
+import type {
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
+} from '@island.is/judicial-system/types'
 
 export class CreateCaseDto {
   @IsNotEmpty()
@@ -65,4 +68,9 @@ export class CreateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly leadInvestigator?: string
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly crimeScenes?: CrimeSceneMap
 }

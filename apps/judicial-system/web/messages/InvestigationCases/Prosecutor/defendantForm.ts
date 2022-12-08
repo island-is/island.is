@@ -57,14 +57,6 @@ export const defendant = {
         description:
           'Notaður sem titill fyrir "upplýsingar um varnaraðila" hlutann á varnaraðila skrefi í rannsóknarheimildum.',
       }),
-      // TODO: Remove delete
-      delete: defineMessage({
-        id:
-          'judicial.system.investigation_cases:defendant.defendant_info.delete',
-        defaultMessage: 'Eyða varnaraðila',
-        description:
-          'Notaður sem texti á eyða varnaraðila hnappinn í "upplýsingar um varnaraðila" hlutanum á varnaraðila skrefi í rannsóknarheimildum',
-      }),
       addDefendantButtonText: defineMessage({
         id:
           'judicial.system.investigation_cases:defendant.defendant_info.add_defendant_button_text',

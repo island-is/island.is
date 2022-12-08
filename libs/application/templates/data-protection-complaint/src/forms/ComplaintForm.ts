@@ -40,7 +40,7 @@ const noOption = { value: NO, label: sharedFields.no }
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
   title: application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',

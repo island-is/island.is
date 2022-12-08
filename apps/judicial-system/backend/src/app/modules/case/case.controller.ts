@@ -170,7 +170,7 @@ export class CaseController {
     }
 
     const updatedCase = (await this.caseService.update(
-      caseId,
+      theCase,
       caseToUpdate,
     )) as Case
 
@@ -180,7 +180,7 @@ export class CaseController {
     ) {
       // The court case number has changed, so the request must be uploaded to the new court case
       // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseConnectedToCourtCaseMessageToQueue(updatedCase.id)
+      this.caseService.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase)
     }
 
     return updatedCase
@@ -214,7 +214,7 @@ export class CaseController {
     }
 
     const updatedCase = await this.caseService.update(
-      caseId,
+      theCase,
       update as UpdateCaseDto,
       state !== CaseState.DELETED,
     )

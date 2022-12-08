@@ -1,14 +1,39 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
+
 import { core } from '@island.is/judicial-system-web/messages'
 import { AlertBanner } from '@island.is/island-ui/core'
+import { UserRole } from '@island.is/judicial-system/types'
+
+import { UserContext } from '../UserProvider/UserProvider'
 
 const ServiceInterruptionBanner: React.FC = () => {
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
 
-  const message = formatMessage(core.serviceInterruptionText, undefined)
+  let displayMessage = ''
+  const message = formatMessage(core.serviceInterruptionText)
+  const prosecutorMessage = formatMessage(
+    core.serviceInterruptionTextProsecutor,
+  )
+  const courtMessage = formatMessage(core.serviceInterruptionTextCourt)
 
-  if (!message || message === 'NONE') {
+  if (message && message !== 'NONE') {
+    displayMessage = message
+  } else if (
+    user?.role === UserRole.PROSECUTOR &&
+    prosecutorMessage &&
+    prosecutorMessage !== 'NONE'
+  ) {
+    displayMessage = prosecutorMessage
+  } else if (
+    user?.role &&
+    [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) &&
+    courtMessage &&
+    courtMessage !== 'NONE'
+  ) {
+    displayMessage = courtMessage
+  } else {
     return null
   }
 
@@ -16,7 +41,7 @@ const ServiceInterruptionBanner: React.FC = () => {
     <AlertBanner
       title={formatMessage(core.serviceInterruptionTitle)}
       variant="warning"
-      description={message}
+      description={displayMessage}
       dismissable
     />
   )

@@ -39,7 +39,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'MarriageConditionsApplicationDraftForm',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [

@@ -198,19 +198,19 @@ export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
   )
 }
 
-export const isDefendantStepValidIndictments = (
-  workingCase: Case,
-  policeCaseNumbers: string[],
-) => {
+export const isDefendantStepValidIndictments = (workingCase: Case) => {
   const result =
-    policeCaseNumbers.length > 0 &&
-    workingCase.indictmentSubtypes &&
-    Object.entries(workingCase.indictmentSubtypes).length > 0 &&
+    workingCase.policeCaseNumbers.length > 0 &&
+    !workingCase.policeCaseNumbers.some(
+      (n) =>
+        !workingCase.indictmentSubtypes ||
+        !workingCase.indictmentSubtypes[n] ||
+        workingCase.indictmentSubtypes[n].length === 0,
+    ) &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],
-      [Object.entries(workingCase.indictmentSubtypes)[0][1][0], ['empty']],
-      ...policeCaseNumbers.map(
+      ...workingCase.policeCaseNumbers.map(
         (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
       ),
     ]).isValid
@@ -221,10 +221,7 @@ export const isDefendantStepValidIndictments = (
 export const isDefendantStepValidForSidebarIndictments = (
   workingCase: Case,
 ) => {
-  return (
-    workingCase.id &&
-    isDefendantStepValidIndictments(workingCase, workingCase.policeCaseNumbers)
-  )
+  return workingCase.id && isDefendantStepValidIndictments(workingCase)
 }
 
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {

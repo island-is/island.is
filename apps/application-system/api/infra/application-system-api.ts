@@ -134,6 +134,7 @@ export const serviceSetup = (services: {
         dev: 'https://beta.dev01.devland.is/umsoknir',
         staging: 'https://beta.staging01.devland.is/umsoknir',
         prod: 'https://island.is/umsoknir',
+        local: 'http://localhost:4200/umsoknir',
       },
       APPLICATION_ATTACHMENT_BUCKET: {
         dev: 'island-is-dev-storage-application-system',
@@ -208,6 +209,7 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .xroad(
       Base,
@@ -257,6 +259,9 @@ export const serviceSetup = (services: {
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .postgres(postgresInfo)
     .liveness('/liveness')
