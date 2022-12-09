@@ -100,6 +100,7 @@ export const parseAdrLicensePayload = (
       expired: license.gildirTil
         ? !isAfter(new Date(license.gildirTil), new Date())
         : null,
+      expireDate: license.gildirTil ?? undefined,
     },
   }
 }
