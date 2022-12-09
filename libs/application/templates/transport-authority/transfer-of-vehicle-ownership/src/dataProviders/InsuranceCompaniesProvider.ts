@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/types'
 import { InsuranceCompany } from '@island.is/api/schema'
 import { GET_INSURANCE_COMPANIES } from '../graphql/queries'
+import { error as errorMsg } from '../lib/messages'
 
 export class InsuranceCompaniesProvider extends BasicDataProvider {
   type = 'InsuranceCompaniesProvider'
@@ -28,7 +29,7 @@ export class InsuranceCompaniesProvider extends BasicDataProvider {
 
   handleError(error: Error) {
     console.error(error)
-    return Promise.reject({ reason: 'Failed to fetch data' })
+    return Promise.reject({ reason: errorMsg.failedToFetchData })
   }
 
   onProvideError(error: { reason: StaticText }): FailedDataProviderResult {

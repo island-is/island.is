@@ -1,17 +1,27 @@
 import {
   BasicDataProvider,
+  Application,
   FailedDataProviderResult,
   StaticText,
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
 import { VehiclesCurrentVehicle } from '@island.is/api/schema'
 import { GET_CURRENT_VEHICLES } from '../graphql/queries'
-import { externalData } from '../lib/messages'
+import { error as errorMsg, externalData } from '../lib/messages'
+import { MessageDescriptor } from '@formatjs/intl'
+import { info } from 'kennitala'
 
 export class CurrentVehiclesProvider extends BasicDataProvider {
   type = 'CurrentVehiclesProvider'
 
-  async provide(): Promise<VehiclesCurrentVehicle[]> {
+  async provide(application: Application): Promise<VehiclesCurrentVehicle[]> {
+    const applicantSsn = application.applicant
+
+    const errorMessage = this.validateApplicant(applicantSsn)
+    if (errorMessage) {
+      return Promise.reject({ reason: errorMessage })
+    }
+
     return this.useGraphqlGateway(GET_CURRENT_VEHICLES, {
       input: {
         showOwned: true,
@@ -30,7 +40,7 @@ export class CurrentVehiclesProvider extends BasicDataProvider {
       // Validate that user has at least 1 vehicle he can transfer
       if (!result || !result.length) {
         return Promise.reject({
-          reason: externalData.currentVehicles.empty.defaultMessage,
+          reason: externalData.currentVehicles.empty,
         })
       }
 
@@ -38,9 +48,20 @@ export class CurrentVehiclesProvider extends BasicDataProvider {
     })
   }
 
+  validateApplicant(ssn: string): MessageDescriptor | null {
+    // Validate applicants age
+    const minAge = 18
+    const { age } = info(ssn)
+    if (age < minAge) {
+      return errorMsg.minAgeNotFulfilled
+    }
+
+    return null
+  }
+
   handleError(error: Error) {
     console.error(error)
-    return Promise.reject({ reason: 'Failed to fetch data' })
+    return Promise.reject({ reason: errorMsg.failedToFetchData })
   }
 
   onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
