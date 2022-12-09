@@ -49,6 +49,7 @@ export const vehicleSubSection = buildSubSection({
           id: 'vehicle.salePrice',
           title: information.labels.vehicle.salePrice,
           width: 'full',
+          variant: 'currency',
         }),
         buildDateField({
           id: 'vehicle.date',
