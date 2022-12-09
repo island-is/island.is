@@ -3,7 +3,6 @@ import { Application } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
-import { ExternalData } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { PaymentService } from '@island.is/application/api/payment'
 
