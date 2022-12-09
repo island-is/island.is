@@ -23,7 +23,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   const plate = vehicle.regno || vehicle.permno || ''
   const text = vehicle.color ? vehicle.color + ' - ' + plate : plate
   const colorCode = vehicle.colorCode ?? '999' // 999 is default if no value is set
-  const vehicleCode = vehicle.vehGroup?.split('(')[1].split(')')[0] ?? 'AA' // type from vehgroup = "Vörubifreið II (N3)" = N3 otherwise AA is default
+  const vehicleCode = vehicle.vehGroupCode ?? 'AA' // type from vehgroup = "Vörubifreið II (N3)" = N3 otherwise AA is default
 
   return (
     <ActionCard

@@ -110,9 +110,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     }
     if (image.type === 'component') {
       return (
-        <Box padding={2} marginRight={2} className={styles.logo}>
-          {image.component}
-        </Box>
+        <Hidden below="md">
+          <Box padding={2} marginRight={2} className={styles.logo}>
+            {image.component}
+          </Box>
+        </Hidden>
       )
     }
     if (!image.url || image.url.length === 0) return null

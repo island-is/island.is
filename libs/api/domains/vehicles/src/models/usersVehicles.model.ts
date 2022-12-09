@@ -79,6 +79,9 @@ export class VehiclesVehicle {
   @Field({ nullable: true })
   vehGroup?: string
 
+  @Field({ nullable: true, defaultValue: null })
+  vehGroupCode?: string
+
   @Field({ nullable: true })
   plateStatus?: string
 

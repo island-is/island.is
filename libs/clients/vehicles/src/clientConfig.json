@@ -2394,6 +2394,10 @@
             "type": "string",
             "nullable": true
           },
+          "vehGroupCode": {
+            "type": "string",
+            "nullable": true
+          },
           "plateStatus": {
             "type": "string",
             "nullable": true
