@@ -138,7 +138,7 @@ const parseRightsForPkPassInput = (rights?: Array<FlattenedAdrRightsDto>) => {
   return rightsString
 }
 
-export const createPkPassDataInput = (license: AdrDto) => {
+export const createPkPassDataInput = (license: AdrDto, nationalId: string) => {
   if (!license) return null
 
   const parsedLicense = parseAdrLicenseResponse(license)
@@ -170,6 +170,10 @@ export const createPkPassDataInput = (license: AdrDto) => {
       value: parsedLicense.gildirTil
         ? formatDateString(parsedLicense.gildirTil)
         : '',
+    },
+    {
+      identifier: 'kennitala',
+      value: nationalId,
     },
     {
       identifier: 'tankar',
