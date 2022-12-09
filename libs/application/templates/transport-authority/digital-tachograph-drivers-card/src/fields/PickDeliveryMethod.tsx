@@ -60,7 +60,8 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
       ${CHECK_TACHO_NET_EXISTS}
     `,
     {
-      onCompleted: (data) => {
+      onCompleted: (result) => {
+        const data = result.digitalTachographTachoNetExists
         setCardExistsInTachoNet(data?.exists || false)
         setValue('cardDelivery.cardExistsInTachoNet', data?.exists || false)
       },

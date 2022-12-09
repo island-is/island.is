@@ -33,16 +33,20 @@ export class DigitalTachographDriversCardClient {
     request: TachoNetCheckRequest,
   ): Promise<boolean> {
     try {
+      // Note: Default value must be null (not undefined or ''), if not supplied
+      const defaultValue = null
+
       const result = await this.driversCardApiWithAuth(
         auth,
       ).v1DrivercardsTachonetcheckPost({
         tachonetCheckRequest: {
-          firstName: request.firstName,
+          firstName: request.firstName || defaultValue,
           lastName: request.lastName,
           birthDate: request.birthDate,
-          birthPlace: request.birthPlace,
-          drivingLicenceNumber: request.drivingLicenceNumber,
-          drivingLicenceIssuingCountry: request.drivingLicenceIssuingCountry,
+          birthPlace: request.birthPlace || defaultValue,
+          drivingLicenceNumber: request.drivingLicenceNumber || defaultValue,
+          drivingLicenceIssuingCountry:
+            request.drivingLicenceIssuingCountry || defaultValue,
         },
       })
 
