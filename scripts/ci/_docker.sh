@@ -16,7 +16,8 @@ function docker_build() {
   # shellcheck disable=SC2086
   docker buildx build \
     --platform=linux/amd64 \
-    --no-cache \
+    --cache-from=type=local,src="$PROJECT_ROOT"/cache \
+    --cache-from=type=local,src="$PROJECT_ROOT"/cache_output \
     -f "${DIR}"/"$DOCKERFILE" \
     --target="$TARGET" \
     "${PUBLISH_TO_REGISTRY[@]}" \
