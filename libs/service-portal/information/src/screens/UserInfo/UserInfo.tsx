@@ -190,16 +190,20 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
-        <Divider />
-        <UserInfoLine
-          label={m.citizenship}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.citizenship?.name || ''
-          }
-          loading={loading}
-        />
+        {nationalRegistryUser?.citizenship?.name ? (
+          <>
+            <Divider />
+            <UserInfoLine
+              label={m.citizenship}
+              content={
+                error
+                  ? formatMessage(dataNotFoundMessage)
+                  : nationalRegistryUser.citizenship.name
+              }
+              loading={loading}
+            />
+          </>
+        ) : null}
         {!isDelegation && (
           <>
             <Divider />
