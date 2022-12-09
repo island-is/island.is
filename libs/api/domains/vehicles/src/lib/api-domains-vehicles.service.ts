@@ -222,7 +222,7 @@ export class VehiclesService {
       )
     }
 
-    // Get updatelocks
+    // Get debt status
     const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
       auth,
       permno,

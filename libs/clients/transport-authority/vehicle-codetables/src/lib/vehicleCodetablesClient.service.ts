@@ -8,7 +8,8 @@ export class VehicleCodetablesClient {
 
   public async getInsuranceCompanies(): Promise<InsuranceCompany[]> {
     const result = await this.codetablesApi.insurancecompaniesGet({
-      apiVersion: '1.0',
+      apiVersion: '2.0',
+      apiVersion2: '2.0',
     })
 
     return result.map((item) => ({
