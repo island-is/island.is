@@ -8,6 +8,8 @@ import {
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Discount } from '../models/discount.model'
+type DiscountWithTUser = Discount & { user: TUser }
 
 describe('ApiDomains: AirDiscountSchemeResolver', () => {
   let resolver: AirDiscountSchemeResolver
@@ -23,14 +25,22 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
     scope: [ApiScope.internal],
   })
 
-  const fabGetDiscount = (nationalId: string): TDiscount => ({
+  const fabGetDiscount = (nationalId: string): DiscountWithTUser => ({
+    user: {
+      ...fabTUser(nationalId),
+      name: '',
+    },
     connectionDiscountCodes: [],
     discountCode: 'GETDISCO',
     expiresIn: 86400,
     nationalId,
   })
 
-  const fabCreateDiscount = (nationalId: string): TDiscount => ({
+  const fabCreateDiscount = (nationalId: string): DiscountWithTUser => ({
+    user: {
+      ...fabTUser(nationalId),
+      name: '',
+    },
     connectionDiscountCodes: [],
     discountCode: 'CREATEDC',
     expiresIn: 86400,
