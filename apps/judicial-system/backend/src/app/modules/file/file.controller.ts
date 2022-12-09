@@ -31,6 +31,7 @@ import {
   prosecutorRule,
   registrarRule,
   representativeRule,
+  assistantRule,
 } from '../../guards'
 import {
   Case,
@@ -65,7 +66,13 @@ export class FileController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    registrarRule,
+    judgeRule,
+    assistantRule,
+  )
   @Post('file/url')
   @ApiCreatedResponse({
     type: PresignedPost,
@@ -81,7 +88,13 @@ export class FileController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    registrarRule,
+    judgeRule,
+    assistantRule,
+  )
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -97,7 +110,13 @@ export class FileController {
   }
 
   @UseGuards(CaseExistsGuard, CaseReadGuard)
-  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('files')
   @ApiOkResponse({
     type: CaseFile,
@@ -116,7 +135,13 @@ export class FileController {
     ViewCaseFileGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('file/:fileId/url')
   @ApiOkResponse({
     type: PresignedPost,
@@ -140,7 +165,7 @@ export class FileController {
     CaseNotCompletedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,

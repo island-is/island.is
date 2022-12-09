@@ -10,6 +10,7 @@ import {
   InstitutionType,
   investigationCases,
   isCourtRole,
+  isExtendedCourtRole,
   isIndictmentCase,
   isProsecutionRole,
   restrictionCases,
@@ -39,7 +40,7 @@ function getAllowedStates(
   }
 
   if (institutionType === InstitutionType.COURT) {
-    if (isIndictmentCase(caseType)) {
+    if (role === UserRole.ASSISTANT || isIndictmentCase(caseType)) {
       return [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
@@ -83,7 +84,7 @@ function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
 }
 
 function courtMustMatchUserInstitution(role: UserRole): boolean {
-  return isCourtRole(role)
+  return isExtendedCourtRole(role)
 }
 
 function isStateHiddenFromRole(
@@ -104,7 +105,7 @@ function getAllowedTypes(
     return [] // admins should only handle user management
   }
 
-  if (role === UserRole.REPRESENTATIVE) {
+  if (role === UserRole.REPRESENTATIVE || role === UserRole.ASSISTANT) {
     return indictmentCases
   }
 
@@ -188,7 +189,7 @@ function isHightenedSecurityCaseHiddenFromUser(
   prosecutorId?: string,
 ): boolean {
   return (
-    user.role === UserRole.PROSECUTOR &&
+    isProsecutionRole(user.role) &&
     Boolean(isHeightenedSecurityLevel) &&
     user.id !== creatingProsecutorId &&
     user.id !== prosecutorId
@@ -338,19 +339,18 @@ export function getCasesQueryFilter(user: User): WhereOptions {
         ],
       }
 
-  const blockHightenedSecurity =
-    user.role === UserRole.PROSECUTOR
-      ? [
-          {
-            [Op.or]: [
-              { is_heightened_security_level: { [Op.is]: null } },
-              { is_heightened_security_level: false },
-              { creating_prosecutor_id: user.id },
-              { prosecutor_id: user.id },
-            ],
-          },
-        ]
-      : []
+  const blockHightenedSecurity = isProsecutionRole(user.role)
+    ? [
+        {
+          [Op.or]: [
+            { is_heightened_security_level: { [Op.is]: null } },
+            { is_heightened_security_level: false },
+            { creating_prosecutor_id: user.id },
+            { prosecutor_id: user.id },
+          ],
+        },
+      ]
+    : []
 
   const blockDraftIndictmentsForCourt = isCourtRole(user.role)
     ? [
@@ -363,7 +363,9 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     : []
 
   const restrictCaseTypes =
-    user.role === UserRole.REPRESENTATIVE ? [{ type: indictmentCases }] : []
+    user.role === UserRole.REPRESENTATIVE || user.role === UserRole.ASSISTANT
+      ? [{ type: indictmentCases }]
+      : []
 
   return {
     [Op.and]: [

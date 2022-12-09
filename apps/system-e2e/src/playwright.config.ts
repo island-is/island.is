@@ -35,7 +35,10 @@ const config: PlaywrightTestConfig = {
         ['line'],
         [
           'playwright-tesults-reporter',
-          { 'tesults-target': process.env.TESULTS_TOKEN },
+          {
+            'tesults-target': process.env.TESULTS_TOKEN,
+            'tesults-build-name': process.env.COMMIT_INFO ?? 'unknown',
+          },
         ],
         ['html', { open: 'never' }],
       ]

@@ -34,10 +34,6 @@ export const OtherParentApproval: Form = buildForm({
               isRequestingRights,
               usePersonalAllowanceFromSpouse,
             } = getApplicationAnswers(application.answers)
-            const huh = getValueViaPath(
-              application.answers,
-              'personalAllowanceFromSpouse.usePersonalAllowance',
-            ) as YesOrNo
 
             if (
               isRequestingRights === YES &&

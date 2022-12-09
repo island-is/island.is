@@ -7,7 +7,7 @@ import {
   CaseFile,
   CaseFileCategory,
   completedCaseStates,
-  isCourtRole,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core, errors } from '@island.is/judicial-system-web/messages'
@@ -175,7 +175,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             </Box>
           ))}
         </Box>
-        {(user && isCourtRole(user.role)) ||
+        {(user && isExtendedCourtRole(user.role)) ||
         completedCaseStates.includes(workingCase.state) ? (
           <>
             {courtRecords && courtRecords.length > 0 && (
