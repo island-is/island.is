@@ -105,34 +105,53 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={3}>
           <Box paddingX={4}>
             <GridRow>
-              <Text variant="eyebrow" color="purple400">
-                {'#Malanumer'}
-              </Text>
+              <Box
+                marginRight={1}
+                borderRightWidth={'standard'}
+                borderColor={'purple300'}
+                paddingRight={1}
+              >
+                <Text variant="eyebrow" color="purple400">
+                  {'#Malanumer'}
+                </Text>
+              </Box>
+
               <Text variant="eyebrow" color="purple400">
                 {'#Dagsetning'}
               </Text>
             </GridRow>
-            <GridRow>
-              {/* <Stack space={2}>
-                <Text>{'fleh'}</Text>
-                <Text>{'fleh'}</Text>
-                <Text>{'fleh'}</Text>
-              </Stack> */}
+            <GridRow marginTop={3}>
+              <Box
+                marginRight={1}
+                borderRightWidth={'standard'}
+                borderColor={'blue200'}
+                paddingRight={1}
+              >
+                {' '}
+                <Text variant="eyebrow" color="blue400">
+                  {'Tag1'}
+                </Text>
+              </Box>
+              <Box
+                marginRight={1}
+                borderRightWidth={'standard'}
+                borderColor={'blue200'}
+                paddingRight={1}
+              >
+                {' '}
+                <Text variant="eyebrow" color="blue400">
+                  {'Tag2'}
+                </Text>
+              </Box>
               <Text variant="eyebrow" color="blue400">
-                {'Text1'}
-              </Text>
-              <Text variant="eyebrow" color="blue400">
-                {'Text2'}
-              </Text>
-              <Text variant="eyebrow" color="blue400">
-                {'Text3'}
+                {'Tag3'}
               </Text>
             </GridRow>
-            <Box marginBottom={6} paddingTop={3}>
+            <Box marginBottom={4} paddingTop={2}>
               <Text variant="h1" color="blue400">
                 {'#Titill máls'}
               </Text>
-              <Box marginBottom={6} marginTop={6}>
+              <Box marginBottom={6} marginTop={4}>
                 <Text variant="h4">{'Málsefni'}</Text>
                 <Text variant="default">
                   Lorem ipsum dolor, sit amet consectetur adipisicing elit.
@@ -187,7 +206,13 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
         <GridColumn span={'3/12'}>
           <Box>
             <Box padding={3}>
-              <CategoryCard heading="Niðurstöður í vinnslu" text="fleh" />
+              <CategoryCard
+                heading="Niðurstöður í vinnslu"
+                text=" Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Repellat dolorem perspiciatis aperiam. Itaque, ipsa ea.
+                  Nesciunt labore eveniet, ducimus ullam illo saepe animi. Nemo,
+                  fugiat? Corrupti rem expedita magni totam."
+              />
             </Box>
             <Box padding={3}>
               <CategoryCard heading="Ábyrgðaraðilli" text="fleh" />
