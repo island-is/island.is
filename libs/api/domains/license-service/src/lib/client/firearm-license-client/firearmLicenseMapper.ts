@@ -105,6 +105,7 @@ export const parseFirearmLicensePayload = (
     metadata: {
       licenseNumber: licenseData.licenseInfo?.licenseNumber?.toString() ?? '',
       expired,
+      expireDate: licenseData.licenseInfo?.expirationDate ?? undefined,
       links: [
         {
           label: getLabel('renewFirearmLicense', locale, label),
