@@ -24,6 +24,21 @@ export const diffModifiedOverMaxDate = (modified: string | undefined) => {
   return diffModifiedOverMaxDate
 }
 
+export const hideModalWithQueryParam = (): boolean => {
+  try {
+    const url = new URL(document.URL)
+    const urlSearchParams = url.searchParams ?? ''
+    const encodedParam = encodeURI(
+      urlSearchParams.get('hide_onboarding_modal') ?? '',
+    )
+
+    const shouldHide = encodedParam === 'true'
+    return shouldHide
+  } catch {
+    return false
+  }
+}
+
 export const showModal = (getUserProfile: UserProfile | undefined | null) => {
   if (!getUserProfile) {
     return false
@@ -32,15 +47,21 @@ export const showModal = (getUserProfile: UserProfile | undefined | null) => {
   const modalStorageValue = sessionStorage.getItem(onboardingModalStorage.key)
   const hasClosedInSession = modalStorageValue === onboardingModalStorage.value
 
+  if (hasClosedInSession) {
+    return false
+  }
+
+  const hideModalWithQueryParameters = hideModalWithQueryParam()
+
+  if (hideModalWithQueryParameters) {
+    return false
+  }
+
   const userProfileEmail = getUserProfile.email
   const userProfileTel = getUserProfile.mobilePhoneNumber
   const hasEmailAndTel = userProfileEmail && userProfileTel
 
   const diffOverMax = diffModifiedOverMaxDate(getUserProfile.modified)
-
-  if (hasClosedInSession) {
-    return false
-  }
 
   return (!hasEmailAndTel && !getUserProfile.modified) || diffOverMax
 }
