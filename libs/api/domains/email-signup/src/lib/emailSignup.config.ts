@@ -4,6 +4,8 @@ import { z } from 'zod'
 const schema = z.object({
   fiskistofaZenterEmail: z.string(),
   fiskistofaZenterPassword: z.string(),
+  fiskistofaZenterClientId: z.string(),
+  fiskistofaZenterClientPassword: z.string(),
 })
 
 export const EmailSignupConfig = defineConfig({
@@ -13,6 +15,10 @@ export const EmailSignupConfig = defineConfig({
     return {
       fiskistofaZenterEmail: env.required('FISKISTOFA_ZENTER_EMAIL'),
       fiskistofaZenterPassword: env.required('FISKISTOFA_ZENTER_PASSWORD'),
+      fiskistofaZenterClientId: env.required('FISKISTOFA_ZENTER_CLIENT_ID'),
+      fiskistofaZenterClientPassword: env.required(
+        'FISKISTOFA_ZENTER_CLIENT_PASSWORD',
+      ),
     }
   },
 })

@@ -10,6 +10,8 @@ enum FormFieldType {
   CHECKBOXES = 'checkboxes',
 }
 
+export const ZENTER_AUDIENCE_ID_SELECTOR_FIELD_NAME = 'zenterAudienceIdSelector'
+
 export class EmailSignupService {
   constructor(private config: ConfigType<typeof EmailSignupConfig>) {}
 
@@ -62,93 +64,79 @@ export class EmailSignupService {
       }))
   }
 
-  async createZenterEmailRecipient(
-    url: string,
+  private getZenterAudienceIdsFromSignupForm(
+    emailSignupModel: EmailSignup,
     inputFields: EmailSignupInput['inputFields'],
   ) {
-    const params = inputFields
-      .map((field) => `$${field.name}:String!`)
-      .join(',')
+    const audienceIdSelectorFieldModel = emailSignupModel.formFields?.find(
+      (field) => field.name === ZENTER_AUDIENCE_ID_SELECTOR_FIELD_NAME,
+    )
+    const audienceIdSelectorFieldDto = inputFields.find(
+      (field) => field.name === ZENTER_AUDIENCE_ID_SELECTOR_FIELD_NAME,
+    )
 
-    const values = inputFields
-      .map((field) => `${field.name}:$${field.name}`)
-      .join(',')
+    const emailConfig = audienceIdSelectorFieldModel?.emailConfig
+    const key = audienceIdSelectorFieldDto?.value
 
-    const variables = inputFields.reduce((acc, curr) => {
-      acc[curr.name] = curr.value
-      return acc
-    }, {} as Record<string, string>)
+    let audiences =
+      (emailSignupModel.configuration?.audiences as unknown[]) ?? []
 
-    return axios.post(url, {
-      query: `mutation(${params}) { addRecipient(${values}) { id } }`,
-      variables,
-    })
+    if (!!key && emailConfig) {
+      if (audienceIdSelectorFieldModel.type === FormFieldType.CHECKBOXES) {
+        audiences = Object.entries(JSON.parse(audienceIdSelectorFieldDto.value))
+          .filter(([_, value]) => value === 'true')
+          .map(([name]) => emailConfig[name])
+      } else if (emailConfig[key]) audiences = [emailConfig[key]]
+    }
+
+    return audiences
   }
 
-  async addZenterEmailRecipientToAudience(
-    url: string,
-    recipientId: number,
-    audienceId: number,
+  async subscribeToZenterViaImport(
+    emailSignupModel: EmailSignup,
+    inputFields: EmailSignupInput['inputFields'],
   ) {
-    return axios.post(url, {
-      query: `mutation(recipientId: Int!, audienceId: Int!) { addRecipientToAudience(recipientId:$recipientId,audienceId:$audienceId) { id } }`,
-      variables: { recipientId, audienceId },
+    const url =
+      (emailSignupModel.configuration?.signupUrl as string) ??
+      'https://samskipti.zenter.is/import'
+
+    const formData = new URLSearchParams()
+
+    formData.append('client_id', this.config.fiskistofaZenterClientId)
+    formData.append('password', this.config.fiskistofaZenterClientPassword)
+
+    inputFields
+      .filter((field) => field.name !== ZENTER_AUDIENCE_ID_SELECTOR_FIELD_NAME)
+      .forEach((field) => {
+        formData.append(field.name, field.value)
+      })
+
+    formData.append(
+      'audiences',
+      (this.getZenterAudienceIdsFromSignupForm(
+        emailSignupModel,
+        inputFields,
+      ) as unknown) as string,
+    )
+    const response = await axios.post(url, formData.toString(), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'text/plain',
+      },
     })
+    return { subscribed: response.data === 1 }
   }
 
   async subscribeToZenter(
     emailSignupModel: EmailSignup,
     inputFields: EmailSignupInput['inputFields'],
   ) {
-    const url = emailSignupModel.configuration?.signupUrl as string
+    const owner = emailSignupModel.configuration?.owner as string
 
-    if (!url) {
-      throw new Error('Email signup configuration does not provide a signupUrl')
+    if (owner !== 'fiskistofa') {
+      throw new Error('Email signup configuration does not provide an owner')
     }
 
-    const organization = emailSignupModel.configuration?.organization as string
-
-    if (organization !== 'fiskistofa') {
-      throw new Error(
-        'Email signup configuration does not provide an organizaion',
-      )
-    }
-
-    const tokenResponse = await axios.post(url, {
-      query:
-        'mutation($email:String!,$password:String!){ loginApiUser(email: $email,password: $password)}',
-      variables: {
-        email: this.config.fiskistofaZenterEmail,
-        password: this.config.fiskistofaZenterPassword,
-      },
-    })
-
-    // TODO: store token in memory and only get a new one if the old one got expired
-    const token = tokenResponse?.data?.data?.loginApiUser
-    if (!token) {
-      throw new Error('Could not get access token from zenter GraphQL API')
-    }
-
-    const urlWithToken = `${url}?token=${token}`
-
-    const { data } = await this.createZenterEmailRecipient(
-      urlWithToken,
-      inputFields,
-    )
-
-    console.log('recipient id', data)
-
-    // TODO: read from config instead of hardcoding audience id (and perhaps even have a specifically named field be able to control what audience the recipient will be signed up to)
-    const a = await this.addZenterEmailRecipientToAudience(
-      urlWithToken,
-      recipientId,
-      55085,
-    )
-
-    // a.data.errors
-
-    console.log('audience id', a)
-
-    return { subscribed: true }
+    return this.subscribeToZenterViaImport(emailSignupModel, inputFields)
   }
 }

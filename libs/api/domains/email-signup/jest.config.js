@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'api-domains-mailchimp',
+  displayName: 'api-domains-email-signup',
   preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
