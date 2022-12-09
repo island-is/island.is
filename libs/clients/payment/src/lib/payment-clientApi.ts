@@ -2,21 +2,17 @@ import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { Base64 } from 'js-base64'
-import type {
-  ChargeResponse,
-  Catalog,
-  PaymentServiceOptions,
-  Charge,
-} from './payment.type'
-import { PAYMENT_OPTIONS } from './payment.type'
+import type { ChargeResponse, Catalog, Charge } from './payment.type'
+import { ConfigType } from '@nestjs/config'
+import { PaymentClientModuleConfig } from './payment-client.config'
 
 export class PaymentAPI extends RESTDataSource {
   constructor(
-    @Inject(PAYMENT_OPTIONS)
-    private readonly options: PaymentServiceOptions,
+    @Inject(PaymentClientModuleConfig.KEY)
+    private config: ConfigType<typeof PaymentClientModuleConfig>,
   ) {
     super()
-    const { xRoadBaseUrl, xRoadProviderId } = this.options
+    const { xRoadBaseUrl, xRoadProviderId } = this.config
     this.baseURL = `${xRoadBaseUrl}/r1/${xRoadProviderId}/chargeFJS/`
     this.initialize({} as DataSourceConfig<any>)
   }
@@ -24,11 +20,11 @@ export class PaymentAPI extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
-    request.headers.set('X-Road-Client', this.options.xRoadClientId)
+    request.headers.set('X-Road-Client', this.config.xRoadClientId)
     request.headers.set(
       'Authorization',
       `Basic ${Base64.encode(
-        `${this.options.username}:${this.options.password}`,
+        `${this.config.username}:${this.config.password}`,
       )}`,
     )
   }

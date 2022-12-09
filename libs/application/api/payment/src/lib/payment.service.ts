@@ -2,17 +2,15 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
-import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
-import type {
-  Charge,
-  PaymentServiceOptions,
-  Item,
-} from '@island.is/clients/payment'
+import { PaymentAPI } from '@island.is/clients/payment'
+import type { Charge, Item } from '@island.is/clients/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Application as ApplicationModel } from '@island.is/application/api/core'
+import { PaymentModuleConfig } from './payment.config'
+import { ConfigType } from '@nestjs/config'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -33,8 +31,8 @@ export class PaymentService {
   constructor(
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
-    @Inject(PAYMENT_OPTIONS)
-    private paymentConfig: PaymentServiceOptions,
+    @Inject(PaymentModuleConfig.KEY)
+    private config: ConfigType<typeof PaymentModuleConfig>,
     private paymentApi: PaymentAPI,
   ) {}
 
@@ -51,7 +49,7 @@ export class PaymentService {
   }
 
   public makePaymentUrl(docNum: string): string {
-    return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
+    return `${this.config.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
   async createCharge(
@@ -61,9 +59,8 @@ export class PaymentService {
     // TODO: island.is x-road service path for callback.. ??
     // this can actually be a fixed url
     const callbackUrl =
-      ((this.paymentConfig.callbackBaseUrl +
-        payment.application_id) as string) +
-      this.paymentConfig.callbackAdditionUrl +
+      ((this.config.callbackBaseUrl + payment.application_id) as string) +
+      this.config.callbackAdditionUrl +
       payment.id
 
     const parsedDefinition = JSON.parse(

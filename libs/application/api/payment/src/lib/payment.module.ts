@@ -3,6 +3,9 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
+import { PaymentClientModule } from '@island.is/clients/payment'
+import { PaymentController } from './payment.controller'
+import { PaymentCallbackController } from './payment-callback.controller'
 
 @Module({
   imports: [
@@ -10,8 +13,10 @@ import { PaymentService } from './payment.service'
       useClass: SequelizeConfigService,
     }),
     SequelizeModule.forFeature([Payment]),
+    PaymentClientModule,
   ],
   providers: [PaymentService],
   exports: [PaymentService],
+  controllers: [PaymentController, PaymentCallbackController],
 })
-export class ApplicationApiPaymentModule {}
+export class PaymentModule {}

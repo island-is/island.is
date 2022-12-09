@@ -21,6 +21,8 @@ import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { ApplicationFilesConfig } from '@island.is/application/api/files'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
+import { PaymentModuleConfig } from '@island.is/application/api/payment'
+import { PaymentClientModuleConfig } from '@island.is/clients/payment'
 
 @Module({
   imports: [
@@ -45,6 +47,8 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
         ApplicationFilesConfig,
         FileStorageConfig,
         FinancialStatementsInaoClientConfig,
+        PaymentModuleConfig,
+        PaymentClientModuleConfig,
       ],
     }),
   ],
