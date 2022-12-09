@@ -7,12 +7,16 @@ import { verifyToken } from '../utils/tokenUtils'
 import { DecodedAssignmentToken } from '../types'
 import { BadSubject } from '@island.is/nest/problem'
 import { BYPASS_DELEGATION_KEY } from './bypass-delegation.decorator'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { ApplicationAccessService } from '../tools/applicationAccess.service'
 
 @Injectable()
 export class DelegationGuard implements CanActivate {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly reflector: Reflector,
+    private readonly applicationAccessService: ApplicationAccessService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async getTypeIdFromApplicationId(
@@ -70,9 +74,13 @@ export class DelegationGuard implements CanActivate {
       if (typeId) {
         const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
         const intersection =
-          applicationTemplate.allowedDelegations?.filter((delegation) =>
-            user.delegationType?.includes(delegation.type),
-          ) || []
+          (await applicationTemplate.allowedDelegations?.filter(
+            async (delegation) =>
+              this.applicationAccessService.isDelegatationAllowed(
+                delegation,
+                user,
+              ),
+          )) || []
         // returns true if the actors delegation type for the subject is allowed for this type of application
         if (intersection.length > 0) {
           return true

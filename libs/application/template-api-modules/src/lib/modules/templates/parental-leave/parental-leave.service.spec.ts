@@ -510,9 +510,7 @@ describe('ParentalLeaveService', () => {
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
 
       // Also need to mock the pdf here
-      jest
-        .spyOn(parentalLeaveService, 'getSelfEmployedPdf')
-        .mockImplementation(jest.fn())
+      jest.spyOn(parentalLeaveService, 'getPdf').mockImplementation(jest.fn())
 
       const auth: TemplateApiModuleActionProps['auth'] = {
         authorization: '',
@@ -536,9 +534,7 @@ describe('ParentalLeaveService', () => {
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
 
       // Also need to mock the pdf here
-      jest
-        .spyOn(parentalLeaveService, 'getSelfEmployedPdf')
-        .mockImplementation(jest.fn())
+      jest.spyOn(parentalLeaveService, 'getPdf').mockImplementation(jest.fn())
 
       const auth: TemplateApiModuleActionProps['auth'] = {
         authorization: '',

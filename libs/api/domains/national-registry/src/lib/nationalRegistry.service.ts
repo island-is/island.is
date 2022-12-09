@@ -30,8 +30,8 @@ export class NationalRegistryService {
         startDate: user.BannmerkingBreytt,
       },
       citizenship: {
-        code: user.Rikisfang,
-        name: user.RikisfangLand,
+        code: user.Rikisfang ?? '',
+        name: user.RikisfangLand ?? '',
       },
       address: {
         code: user.LoghHusk,
