@@ -119,7 +119,6 @@ export const cardTypeSection = buildSection({
           titleVariant: 'h5',
           space: 3,
         }),
-        // TODOx use newestCardIsValid?
         buildRadioField({
           title: '',
           id: 'cardTypeSelection.cardType',
@@ -159,6 +158,7 @@ export const cardTypeSection = buildSection({
           condition: (_, externalData) =>
             newestCardExists(externalData) &&
             !newestCardIsExpired(externalData) &&
+            newestCardIsValid(externalData) &&
             newestCardExpiresInMonths(externalData) < 3,
           options: [
             {
@@ -189,6 +189,7 @@ export const cardTypeSection = buildSection({
           condition: (_, externalData) =>
             newestCardExists(externalData) &&
             !newestCardIsExpired(externalData) &&
+            newestCardIsValid(externalData) &&
             newestCardExpiresInMonths(externalData) >= 3,
           options: [
             {
@@ -196,6 +197,36 @@ export const cardTypeSection = buildSection({
               label: cardType.labels.cardType.reissueOptionTitle,
               subLabel:
                 cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+            },
+            {
+              value: 'reprint',
+              label: cardType.labels.cardType.reprintOptionTitle,
+              subLabel:
+                cardType.labels.cardType.reprintOptionSubTitle.defaultMessage,
+            },
+          ],
+          width: 'half',
+          largeButtons: true,
+        }),
+        buildRadioField({
+          title: '',
+          id: 'cardTypeSelection.cardType',
+          condition: (_, externalData) =>
+            newestCardExists(externalData) &&
+            !newestCardIsExpired(externalData) &&
+            !newestCardIsValid(externalData),
+          options: [
+            {
+              value: 'reissue',
+              label: cardType.labels.cardType.reissueOptionTitle,
+              subLabel:
+                cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+            },
+            {
+              value: 'renewal',
+              label: cardType.labels.cardType.renewalOptionTitle,
+              subLabel:
+                cardType.labels.cardType.renewalOptionSubTitle.defaultMessage,
             },
             {
               value: 'reprint',
