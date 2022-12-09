@@ -1,4 +1,4 @@
-# application-api-payment
+# Application API Payment
 
 This library was generated with [Nx](https://nx.dev).
 

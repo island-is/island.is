@@ -140,6 +140,7 @@
   - [API](libs/application/api/README.md)
     - [Application API Core](libs/application/api/core/README.md)
     - [Application API Files](libs/application/api/files/README.md)
+    - [Application API Payment](libs/application/api/payment/README.md)
   - [Core](libs/application/core/README.md)
   - [Shared Data Providers](libs/application/data-providers/README.md)
   - [Template API Modules](libs/application/template-api-modules/README.md)
