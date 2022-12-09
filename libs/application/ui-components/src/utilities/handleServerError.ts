@@ -1,5 +1,4 @@
 import { ApolloError } from '@apollo/client'
-import * as Sentry from '@sentry/react'
 import { coreMessages } from '@island.is/application/core'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 import { toast } from '@island.is/island-ui/core'
@@ -14,8 +13,5 @@ export function handleServerError(
   toast.error(
     formatMessage(coreMessages.updateOrSubmitError, { error: message }),
   )
-  Sentry.captureException(error, {
-    extra: { problem },
-    level: Sentry.Severity.Warning,
-  })
+  console.error(error, problem)
 }

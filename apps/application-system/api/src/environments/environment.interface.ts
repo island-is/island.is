@@ -6,7 +6,6 @@ import { SmsServiceOptions } from '@island.is/nova-sms'
 export interface Environment {
   production: boolean
   environment: string
-  sentryDsn: string
   name: string
   baseApiUrl: string
   audit: AuditOptions

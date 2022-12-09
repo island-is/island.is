@@ -2,7 +2,6 @@ import isWithinInterval from 'date-fns/isWithinInterval'
 import parseISO from 'date-fns/parseISO'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import subtractDays from 'date-fns/subDays'
 import isValid from 'date-fns/isValid'
 import { AnswerValidationError, NO_ANSWER } from '@island.is/application/core'
 import { Application, StaticTextObject } from '@island.is/application/types'
@@ -73,9 +72,9 @@ export const validatePeriod = (
   }
 
   const dob = parseISO(expectedDateOfBirth)
-  const minimumStartDate = subtractDays(
+  const minimumStartDate = addMonths(
     dob,
-    minimumPeriodStartBeforeExpectedDateOfBirth,
+    -minimumPeriodStartBeforeExpectedDateOfBirth,
   )
 
   const maximumStartDate = addMonths(dob, usageMaxMonths - usageMinMonths)

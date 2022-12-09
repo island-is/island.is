@@ -276,4 +276,6 @@ const devConfig = () => ({
   },
 })
 export const getConfig =
-  process.env.NODE_ENV === 'production' ? prodConfig() : devConfig()
+  process.env.PROD_MODE === 'true' || process.env.NODE_ENV === 'production'
+    ? prodConfig()
+    : devConfig()

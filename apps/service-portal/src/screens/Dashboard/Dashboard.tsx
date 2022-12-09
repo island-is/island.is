@@ -25,9 +25,7 @@ import { useStore } from '../../store/stateProvider'
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
-import { AuthDelegationType } from '@island.is/service-portal/graphql'
 import * as styles from './Dashboard.css'
-import { useHistory } from 'react-router-dom'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -105,17 +103,9 @@ export const Dashboard: FC<{}> = () => {
   const location = useLocation()
   const navigation = useNavigation()
   const { formatMessage } = useLocale()
-  const history = useHistory()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
-
-  const delegationTypes = userInfo?.profile?.delegationType ?? []
-
-  const isLegalGuardian = delegationTypes.includes(
-    AuthDelegationType.LegalGuardian,
-  )
 
   useEffect(() => {
     PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
@@ -131,16 +121,15 @@ export const Dashboard: FC<{}> = () => {
     <Box>
       <Greeting />
       <GridContainer className={styles.relative}>
-        {!isLegalGuardian && (
-          <Box className={styles.imageAbsolute}>
-            <img
-              src={`./assets/images/${
-                IS_COMPANY ? 'coffee.svg' : 'dashboard.svg'
-              }`}
-              alt=""
-            />
-          </Box>
-        )}
+        <Box className={styles.imageAbsolute}>
+          <img
+            src={`./assets/images/${
+              IS_COMPANY ? 'coffee.svg' : 'dashboard.svg'
+            }`}
+            alt=""
+          />
+        </Box>
+
         <GridRow data-testid={'service-portal-dashboard'}>
           {navigation.map((rootItem) => {
             return rootItem.children?.map(

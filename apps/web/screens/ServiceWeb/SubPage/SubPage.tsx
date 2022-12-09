@@ -45,11 +45,12 @@ import { getSlugPart } from '../utils'
 
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { Locale } from 'locale'
+import { webRichText } from '@island.is/web/utils/richText'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -238,9 +239,7 @@ const SubPage: Screen<SubPageProps> = ({
                         <Text variant="h2" as="h2">
                           {question.title}
                         </Text>
-                        <Box>
-                          {richText(question.answer as SliceType[], undefined)}
-                        </Box>
+                        <Box>{webRichText(question.answer as SliceType[])}</Box>
                         <>
                           {question.relatedLinks?.length > 0 && (
                             <Box

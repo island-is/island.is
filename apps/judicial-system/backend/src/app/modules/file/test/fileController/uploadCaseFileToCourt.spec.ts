@@ -156,34 +156,18 @@ describe('FileController - Upload case file to court', () => {
   })
 
   each`
-    caseFileCategory                       | fileName             | courtDocumentFolder
-    ${CaseFileCategory.COURT_RECORD}       | ${'Þingbók'}        | ${
-    CourtDocumentFolder.COURT_DOCUMENTS
-  }
-    ${CaseFileCategory.RULING}             | ${'Dómur'}          | ${
-    CourtDocumentFolder.COURT_DOCUMENTS
-  }
-    ${CaseFileCategory.COVER_LETTER}       | ${'Fylgibréf'}      | ${
-    CourtDocumentFolder.INDICTMENT_DOCUMENTS
-  }
-    ${CaseFileCategory.INDICTMENT}         | ${'Ákæra'}          | ${
-    CourtDocumentFolder.INDICTMENT_DOCUMENTS
-  }
-    ${CaseFileCategory.CRIMINAL_RECORD}    | ${'Sakavottorð'}    | ${
-    CourtDocumentFolder.INDICTMENT_DOCUMENTS
-  }
-    ${CaseFileCategory.COST_BREAKDOWN}     | ${'Sakarkostnaður'} | ${
-    CourtDocumentFolder.INDICTMENT_DOCUMENTS
-  }
-    ${CaseFileCategory.CASE_FILE_CONTENTS} | ${'Skjalaskrá'}     | ${
-    CourtDocumentFolder.CASE_DOCUMENTS
-  }
-    ${CaseFileCategory.CASE_FILE}          | ${'Málsgögn'}       | ${
-    CourtDocumentFolder.CASE_DOCUMENTS
-  }
+    caseFileCategory                       | courtDocumentFolder
+    ${CaseFileCategory.COURT_RECORD}       | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.RULING}             | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.COVER_LETTER}       | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.INDICTMENT}         | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.CRIMINAL_RECORD}    | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.COST_BREAKDOWN}     | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.CASE_FILE_CONTENTS} | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CASE_FILE}          | ${CourtDocumentFolder.CASE_DOCUMENTS}
     `.describe(
     'indictment file upload to court',
-    ({ caseFileCategory, fileName, courtDocumentFolder }) => {
+    ({ caseFileCategory, courtDocumentFolder }) => {
       const user = { id: uuid() } as User
       const caseId = uuid()
       const courtId = uuid()
@@ -195,11 +179,12 @@ describe('FileController - Upload case file to court', () => {
       } as Case
       const fileId = uuid()
       const key = `uploads/${caseId}/${uuid()}/test.txt`
+      const fileName = 'test.txt'
       const fileType = 'text/plain'
       const caseFile = {
         id: fileId,
         key,
-        name: 'SomeName.txt',
+        name: fileName,
         type: fileType,
         category: caseFileCategory,
       } as CaseFile
@@ -222,8 +207,8 @@ describe('FileController - Upload case file to court', () => {
           courtId,
           courtCaseNumber,
           courtDocumentFolder,
-          `${fileName} ${courtCaseNumber}`,
-          `${fileName} ${courtCaseNumber}.txt`,
+          fileName,
+          fileName,
           fileType,
           content,
           user,

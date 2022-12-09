@@ -1,5 +1,9 @@
 import React, { FC, useState } from 'react'
-import { ActionCard, Modal } from '@island.is/service-portal/core'
+import {
+  ActionCard,
+  formatPlausiblePathToParams,
+  Modal,
+} from '@island.is/service-portal/core'
 import { Document, DocumentDetails } from '@island.is/api/schema'
 import { GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
@@ -7,7 +11,6 @@ import * as styles from './DocumentCard.css'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import { documentsOpenDocument } from '@island.is/plausible'
-import * as Sentry from '@sentry/react'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
@@ -66,25 +69,14 @@ const DocumentCard: FC<Props> = ({ document }) => {
       window.open(getPdfURL(doc.content))
       return
     }
-    Sentry.captureMessage('Unsupported document', Sentry.Severity.Error)
+    console.error('Unsupported document')
 
     setIsModalOpen(true)
   }
 
   const fetchDocument = async () => {
     setDocumentDetails({ loading: true })
-    Sentry.addBreadcrumb({
-      category: 'Document',
-      type: 'Document-Info',
-      message: `Fetching single document`,
-      data: {
-        id: document.id,
-        fileType: document.fileType,
-        subject: document.subject,
-        senderName: document.senderName,
-      },
-      level: Sentry.Severity.Info,
-    })
+
     // Note: opening window before fetching data, to prevent popup-blocker
     const windowRef = window.open()
     try {
@@ -97,21 +89,10 @@ const DocumentCard: FC<Props> = ({ document }) => {
         throw new Error('DocumentDetails is empty')
       }
 
-      Sentry.addBreadcrumb({
-        category: 'Document',
-        type: 'Document-Info',
-        message: `DocumentDetails received`,
-        data: {
-          id: document.id,
-          fileType: doc.fileType,
-          includesBase64Content: (!!doc.content).toString(),
-          includesHtml: (!!doc.html).toString(),
-          includesUrl: (!!doc.url).toString(),
-        },
-        level: Sentry.Severity.Info,
-      })
       setDocumentDetails({ documentDetails: doc })
-      documentsOpenDocument(pathname, document.subject)
+      documentsOpenDocument(
+        formatPlausiblePathToParams(pathname, document.subject),
+      )
       if (documentIsPdf(doc) && windowRef) {
         windowRef.location.assign(getPdfURL(doc.content))
         return
@@ -124,7 +105,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
       windowRef && windowRef.close()
       window.focus()
       window.setTimeout(displayErrorToast, 100)
-      Sentry.captureException(error)
+      console.error(error)
     }
   }
 

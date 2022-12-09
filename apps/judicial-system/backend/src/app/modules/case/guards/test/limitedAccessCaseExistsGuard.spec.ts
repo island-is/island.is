@@ -13,9 +13,10 @@ import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
 import { User } from '../../../user'
+import { CaseFile } from '../../../file'
 import { Case } from '../../models/case.model'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
-import { CaseFile } from '../../../file'
+import { attributes } from '../../limitedAccessCase.service'
 
 interface Then {
   result: boolean
@@ -55,40 +56,6 @@ describe('Restricted Case Exists Guard', () => {
 
   describe('database lookup', () => {
     const caseId = uuid()
-    const attributes: (keyof Case)[] = [
-      'id',
-      'created',
-      'modified',
-      'origin',
-      'type',
-      'state',
-      'policeCaseNumbers',
-      'defenderName',
-      'defenderNationalId',
-      'defenderEmail',
-      'defenderPhoneNumber',
-      'courtId',
-      'leadInvestigator',
-      'requestedCustodyRestrictions',
-      'creatingProsecutorId',
-      'prosecutorId',
-      'courtCaseNumber',
-      'courtDate',
-      'courtEndTime',
-      'decision',
-      'validToDate',
-      'isCustodyIsolation',
-      'isolationToDate',
-      'conclusion',
-      'rulingDate',
-      'registrarId',
-      'judgeId',
-      'courtRecordSignatoryId',
-      'courtRecordSignatureDate',
-      'parentCaseId',
-      'caseModifiedExplanation',
-      'seenByDefender',
-    ]
 
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))

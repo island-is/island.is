@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import slugify from '@sindresorhus/slugify'
+import { useMutation } from '@apollo/client/react'
 
 import {
   Box,
@@ -16,19 +18,24 @@ import {
   GenericFormMutation,
   GenericFormMutationVariables,
 } from '@island.is/web/graphql/schema'
-import slugify from '@sindresorhus/slugify'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
-import { useMutation } from '@apollo/client/react'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
+import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import * as styles from './Form.css'
+
+enum FormFieldType {
+  CHECKBOXES = 'checkboxes',
+  EMAIL = 'email',
+  ACCEPT_TERMS = 'acceptTerms',
+}
 
 interface FormFieldProps {
   field: FormType['fields'][0]
   slug: string
   value: string
   error?: string
-  onChange: (field: string, value: string | number) => void
+  onChange: (field: string, value: string) => void
 }
 
 interface FormProps {
@@ -36,9 +43,16 @@ interface FormProps {
   namespace: Record<string, string>
 }
 
-const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
+export const FormField = ({
+  field,
+  slug,
+  value,
+  error,
+  onChange,
+}: FormFieldProps) => {
   switch (field.type) {
     case 'input':
+    case 'email':
       return (
         <Input
           key={slug}
@@ -84,7 +98,7 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
           value={
             options.find((o) => o.value === value) ?? { label: value, value }
           }
-          onChange={({ value }: Option) => onChange(slug, value)}
+          onChange={({ value }: Option) => onChange(slug, value as string)}
           hasError={!!error}
           errorMessage={error}
         />
@@ -138,9 +152,38 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
           )}
           <Checkbox
             label={field.placeholder}
-            checked={value === 'Já'}
-            onChange={(e) => onChange(slug, e.target.checked ? 'Já' : 'Nei')}
+            checked={value === 'true'}
+            onChange={(e) =>
+              onChange(slug, e.target.checked ? 'true' : 'false')
+            }
           />
+        </Stack>
+      )
+    case 'checkboxes':
+      return (
+        <Stack space={2}>
+          <Text variant="h5" color="blue600">
+            {field.title}
+            {field.required && (
+              <span aria-hidden="true" className={styles.isRequiredStar}>
+                *
+              </span>
+            )}
+          </Text>
+          {field.options.map((option, idx) => {
+            const fieldValue = value ? JSON.parse(value)[option] : 'false'
+            return (
+              <Checkbox
+                key={idx}
+                label={option}
+                checked={fieldValue === 'true'}
+                onChange={(e) =>
+                  onChange(option, e.target.checked ? 'true' : 'false')
+                }
+                hasError={!!error}
+              />
+            )
+          })}
         </Stack>
       )
   }
@@ -204,8 +247,30 @@ export const Form = ({ form, namespace }: FormProps) => {
         }
 
         if (
+          field.type === FormFieldType.EMAIL &&
+          !isValidEmail.test(data[slug])
+        ) {
+          return {
+            field: slug,
+            error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
+          }
+        }
+
+        if (
           (field.required && !data[slug]) ||
-          (field.type === 'acceptTerms' && data[slug] !== 'Já')
+          (field.type === FormFieldType.ACCEPT_TERMS && data[slug] !== 'true')
+        ) {
+          return {
+            field: slug,
+            error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+          }
+        }
+
+        if (
+          field.type === FormFieldType.CHECKBOXES &&
+          data[slug] &&
+          field.required &&
+          !Object.values(JSON.parse(data[slug])).some((v) => v === 'true')
         ) {
           return {
             field: slug,
@@ -225,12 +290,26 @@ export const Form = ({ form, namespace }: FormProps) => {
   const formatBody = () => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
-        .map(
-          (field) =>
-            `${field.title}\nSvar: ${
-              data[slugify(field.title)] ?? 'Ekkert svar'
-            }\n\n`,
-        )
+        .map((field) => {
+          const value = data[slugify(field.title)]
+          if (field.type === FormFieldType.ACCEPT_TERMS) {
+            return `${field.title}\nSvar: ${
+              value === 'true'
+                ? 'Já'
+                : value === 'false'
+                ? 'Nei'
+                : 'Ekkert svar'
+            }\n\n`
+          }
+          if (field.type === FormFieldType.CHECKBOXES) {
+            const json = JSON.parse(value)
+            return `${field.title}\nSvar:\n\t${Object.entries(json)
+              .map(([k, v]) => `${k}: ${v === 'true' ? 'Já' : 'Nei'}`)
+              .join('\n\t')}\n\n`
+          }
+
+          return `${field.title}\nSvar: ${value ?? 'Ekkert svar'}\n\n`
+        })
         .join(''),
     )
   }
@@ -333,7 +412,21 @@ export const Form = ({ form, namespace }: FormProps) => {
                   slug={slug}
                   value={data[slug] ?? ''}
                   error={errors.find((error) => error.field === slug)?.error}
-                  onChange={onChange}
+                  onChange={(key, value) => {
+                    if (field.type === FormFieldType.CHECKBOXES) {
+                      const prevFieldData = data[slug]
+                      if (prevFieldData) {
+                        const json = JSON.parse(prevFieldData)
+                        json[key] =
+                          json[key] === 'false' || !json[key] ? 'true' : 'false'
+                        onChange(slug, JSON.stringify(json))
+                      } else {
+                        onChange(slug, JSON.stringify({ [key]: 'true' }))
+                      }
+                    } else {
+                      onChange(key, value)
+                    }
+                  }}
                 />
               )
             })}

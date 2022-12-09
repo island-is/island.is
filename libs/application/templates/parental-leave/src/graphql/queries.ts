@@ -44,6 +44,7 @@ export const GetApplicationInformation = gql`
         ratio
         paid
         firstPeriodStart
+        rightsCodePeriod
       }
     }
   }

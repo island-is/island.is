@@ -29,7 +29,10 @@ import {
   CaseState,
   CaseType,
   completedCaseStates,
+  indictmentCases,
+  investigationCases,
   isIndictmentCase,
+  restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -44,13 +47,16 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
+  representativeRule,
   staffRule,
+  assistantRule,
 } from '../../guards'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
+import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
   staffUpdateRule,
@@ -60,6 +66,10 @@ import {
   prosecutorUpdateRule,
   registrarTransitionRule,
   registrarUpdateRule,
+  representativeTransitionRule,
+  representativeUpdateRule,
+  assistantUpdateRule,
+  assistantTransitionRule,
 } from './guards/rolesRules'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -81,14 +91,14 @@ export class CaseController {
 
   private async validateAssignedUser(
     assignedUserId: string,
-    assignedUserRole: UserRole,
+    assignedUserRole: UserRole[],
     institutionId: string | undefined,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
-    if (assignedUser.role !== assignedUserRole) {
+    if (!assignedUserRole.includes(assignedUser.role)) {
       throw new ForbiddenException(
-        `User ${assignedUserId} is not a ${assignedUserRole}}`,
+        `User ${assignedUserId} does not have an acceptable role ${assignedUserRole}}`,
       )
     }
 
@@ -100,7 +110,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async create(
@@ -119,8 +129,10 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
+    representativeUpdateRule,
     judgeUpdateRule,
     registrarUpdateRule,
+    assistantUpdateRule,
     staffUpdateRule,
   )
   @Put('case/:caseId')
@@ -136,7 +148,7 @@ export class CaseController {
     if (caseToUpdate.prosecutorId) {
       await this.validateAssignedUser(
         caseToUpdate.prosecutorId,
-        UserRole.PROSECUTOR,
+        [UserRole.PROSECUTOR],
         theCase.creatingProsecutor?.institutionId,
       )
 
@@ -152,7 +164,7 @@ export class CaseController {
     if (caseToUpdate.judgeId) {
       await this.validateAssignedUser(
         caseToUpdate.judgeId,
-        UserRole.JUDGE,
+        [UserRole.JUDGE, UserRole.ASSISTANT],
         theCase.courtId,
       )
     }
@@ -160,13 +172,13 @@ export class CaseController {
     if (caseToUpdate.registrarId) {
       await this.validateAssignedUser(
         caseToUpdate.registrarId,
-        UserRole.REGISTRAR,
+        [UserRole.REGISTRAR],
         theCase.courtId,
       )
     }
 
     const updatedCase = (await this.caseService.update(
-      caseId,
+      theCase,
       caseToUpdate,
     )) as Case
 
@@ -176,7 +188,7 @@ export class CaseController {
     ) {
       // The court case number has changed, so the request must be uploaded to the new court case
       // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseConnectedToCourtCaseMessageToQueue(updatedCase.id)
+      this.caseService.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase)
     }
 
     return updatedCase
@@ -185,8 +197,10 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
+    representativeTransitionRule,
     judgeTransitionRule,
     registrarTransitionRule,
+    assistantTransitionRule,
   )
   @Put('case/:caseId/state')
   @ApiOkResponse({
@@ -200,7 +214,6 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    // Use theCase.modified when client is ready to send last modified timestamp with all updates
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
@@ -211,7 +224,7 @@ export class CaseController {
     }
 
     const updatedCase = await this.caseService.update(
-      caseId,
+      theCase,
       update as UpdateCaseDto,
       state !== CaseState.DELETED,
     )
@@ -232,7 +245,14 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+    staffRule,
+  )
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -246,7 +266,14 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+    staffRule,
+  )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
@@ -255,7 +282,13 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseReadGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:caseId/request')
   @Header('Content-Type', 'application/pdf')
@@ -277,8 +310,20 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('case/:caseId/caseFiles/:policeCaseNumber')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -308,7 +353,13 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseReadGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
@@ -331,7 +382,13 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseReadGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
@@ -352,7 +409,13 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
+    CaseReadGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
@@ -370,15 +433,6 @@ export class CaseController {
       `Getting the custody notice for case ${caseId} as a pdf document`,
     )
 
-    if (
-      theCase.type !== CaseType.CUSTODY &&
-      theCase.type !== CaseType.ADMISSION_TO_FACILITY
-    ) {
-      throw new BadRequestException(
-        `Cannot generate a custody notice for ${theCase.type} cases`,
-      )
-    }
-
     if (theCase.state !== CaseState.ACCEPTED) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.state} cases`,
@@ -390,7 +444,13 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
+  )
   @RolesRules(judgeRule, registrarRule)
   @Post('case/:caseId/courtRecord/signature')
   @ApiCreatedResponse({
@@ -431,7 +491,13 @@ export class CaseController {
       })
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
+  )
   @RolesRules(judgeRule, registrarRule)
   @Get('case/:caseId/courtRecord/signature')
   @ApiOkResponse({
@@ -462,7 +528,13 @@ export class CaseController {
     )
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
+  )
   @RolesRules(judgeRule)
   @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({
@@ -499,7 +571,13 @@ export class CaseController {
     })
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
+  )
   @RolesRules(judgeRule)
   @Get('case/:caseId/ruling/signature')
   @ApiOkResponse({
@@ -528,7 +606,13 @@ export class CaseController {
     )
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseReadGuard,
+  )
   @RolesRules(prosecutorRule)
   @Post('case/:caseId/extend')
   @ApiCreatedResponse({
@@ -554,7 +638,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(judgeRule, registrarRule)
+  @RolesRules(judgeRule, registrarRule, assistantRule)
   @Post('case/:caseId/court')
   @ApiCreatedResponse({
     type: Case,

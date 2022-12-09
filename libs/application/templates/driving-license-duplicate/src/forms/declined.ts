@@ -13,7 +13,7 @@ import { requirementsMet } from '../lib/utils'
 export const declined: Form = buildForm({
   id: 'declined',
   title: m.rejected,
-  mode: FormModes.APPLYING,
+  mode: FormModes.REJECTED,
   renderLastScreenButton: true,
   children: [
     buildMultiField({

@@ -202,7 +202,7 @@ export class SharedTemplateApiService {
   async createCharge(
     authorization: string,
     applicationId: string,
-    chargeItemCode: string,
+    chargeItemCodes: string[],
   ): Promise<PaymentChargeData['applicationPaymentCharge']> {
     return this.makeGraphqlQuery<PaymentChargeData>(
       authorization,
@@ -210,7 +210,7 @@ export class SharedTemplateApiService {
       {
         input: {
           applicationId,
-          chargeItemCode,
+          chargeItemCodes,
         },
       },
     )

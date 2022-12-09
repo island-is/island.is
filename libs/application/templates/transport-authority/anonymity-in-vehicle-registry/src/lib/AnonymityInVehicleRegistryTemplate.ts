@@ -37,6 +37,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Nafnleynd í ökutækjaskrá',
+          status: 'draft',
           actionCard: {
             tag: {
               label: m.actionCardDraft,
@@ -73,6 +74,7 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
           lifecycle: {
             shouldBeListed: true,
@@ -97,7 +99,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

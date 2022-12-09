@@ -44,6 +44,7 @@ export class OrganizationPageSyncService
         } catch (error) {
           logger.warn('Failed to import organization page', {
             error: error.message,
+            id: entry?.sys?.id,
           })
           return false
         }

@@ -63,7 +63,7 @@ function Panel({ flightLegs }: PropTypes) {
                   <Typography color="dark300" variant="pSmall">
                     {format(
                       new Date(flightLeg.flight.bookingDate),
-                      'dd. MMMM - k:mm',
+                      'dd. MMM yyyy - k:mm',
                       {
                         locale: is,
                       },

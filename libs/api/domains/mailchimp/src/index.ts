@@ -1,2 +1,2 @@
-export * from './lib/mailchimp.module'
-export * from './lib/mailchimp.resolver'
+export * from './lib/emailSignup.module'
+export * from './lib/emailSignup.resolver'

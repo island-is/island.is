@@ -27,7 +27,7 @@ export const generateAssignOtherSpouseApplicationEmail: AssignOtherSpuseEmail = 
     throw new Error('Could not find other Spouse email')
   }
 
-  const subject = 'Umsókn vegna hjónavígslu'
+  const subject = 'Umsókn um könnunarvottorð'
   const link = `${clientLocationOrigin}/${ApplicationConfigurations.MarriageConditions.slug}/${application.id}`
 
   return {

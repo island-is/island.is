@@ -118,10 +118,10 @@ export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
 export const INDICTMENTS_DEFENDANT_ROUTE = '/krafa/akaera/akaerdi'
+export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/krafa/akaera/malsgogn'
+export const INDICTMENTS_CASE_FILE_ROUTE = '/krafa/akaera/skjalaskra'
 export const INDICTMENTS_PROCESSING_ROUTE = '/krafa/akaera/malsmedferd'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/krafa/akaera/domskjol'
-export const INDICTMENTS_CASE_FILE_ROUTE = '/krafa/akaera/skjalaskra'
-export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/krafa/akaera/malsgogn'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/krafa/akaera/stadfesta'
 /* PROSECUTOR ROUTES END */
 
@@ -130,8 +130,8 @@ export const RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
 export const RESTRICTION_CASE_COURT_OVERVIEW_ROUTE = '/domur/krafa'
 export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/fyrirtokutimi'
-export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_RULING_ROUTE = '/domur/urskurdur'
+export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_CONFIRMATION_ROUTE = '/domur/stadfesta'
 export const RESTRICTION_CASE_MODIFY_RULING_ROUTE = '/domur/urskurdur/leidretta'
 

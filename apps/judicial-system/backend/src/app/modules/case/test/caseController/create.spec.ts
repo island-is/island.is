@@ -6,7 +6,9 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  CaseType,
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -14,9 +16,9 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { Defendant, DefendantService } from '../../../defendant'
 import { User } from '../../../user'
 import { Institution } from '../../../institution'
+import { CaseFile } from '../../../file'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
-import { CaseFile } from '../../../file'
 
 interface Then {
   result: Case
@@ -38,6 +40,7 @@ describe('CaseController - Create', () => {
       caseModel,
       caseController,
     } = await createTestingCaseModule()
+
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
@@ -60,7 +63,47 @@ describe('CaseController - Create', () => {
     }
   })
 
-  describe('case created', () => {
+  describe.each([...restrictionCases, ...investigationCases])(
+    '%s case created',
+    (type) => {
+      const userId = uuid()
+      const courtId = uuid()
+      const user = {
+        id: userId,
+        institution: { defaultCourtId: courtId },
+      } as TUser
+      const caseToCreate = {
+        type,
+        description: 'Some details',
+        policeCaseNumbers: ['007-2021-777'],
+        defenderName: 'John John',
+        defenderNationalId: '0000000009',
+        defenderEmail: 'john@dummy.is',
+        defenderPhoneNumber: '1234567',
+        sendRequestToDefender: false,
+        leadInvestigator: 'The Boss',
+      }
+
+      beforeEach(async () => {
+        await givenWhenThen(user, caseToCreate)
+      })
+
+      it('should create a case', () => {
+        expect(mockCaseModel.create).toHaveBeenCalledWith(
+          {
+            ...caseToCreate,
+            origin: CaseOrigin.RVG,
+            creatingProsecutorId: userId,
+            prosecutorId: userId,
+            courtId,
+          },
+          { transaction },
+        )
+      })
+    },
+  )
+
+  describe.each(indictmentCases)('%s case created', (type) => {
     const userId = uuid()
     const courtId = uuid()
     const user = {
@@ -68,13 +111,9 @@ describe('CaseController - Create', () => {
       institution: { defaultCourtId: courtId },
     } as TUser
     const caseToCreate = {
-      type: CaseType.AUTOPSY,
+      type,
       description: 'Some details',
       policeCaseNumbers: ['007-2021-777'],
-      defenderName: 'John John',
-      defenderNationalId: '0000000009',
-      defenderEmail: 'john@dummy.is',
-      defenderPhoneNumber: '1234567',
       sendRequestToDefender: false,
       leadInvestigator: 'The Boss',
     }
@@ -87,6 +126,7 @@ describe('CaseController - Create', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
           ...caseToCreate,
+          state: CaseState.DRAFT,
           origin: CaseOrigin.RVG,
           creatingProsecutorId: userId,
           prosecutorId: userId,

@@ -26,13 +26,16 @@ export const CemetryOperation = ({
   application: Application
 }) => {
   const { answers, externalData } = application
+
   const operatingYear = getValueViaPath(
     answers,
     'conditionalAbout.operatingYear',
   )
+
   const { data, loading } = useQuery(TaxInfoQuery, {
     variables: { year: operatingYear },
   })
+
   const { errors } = useFormContext()
   const { formatMessage } = useLocale()
   const currentUserType = getCurrentUserType(answers, externalData)

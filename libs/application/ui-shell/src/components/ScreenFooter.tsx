@@ -72,9 +72,7 @@ export const ScreenFooter: FC<FooterProps> = ({
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
-    (mode !== FormModes.REVIEW &&
-      mode !== FormModes.APPLYING &&
-      mode !== FormModes.EDITING)
+    (mode !== FormModes.IN_PROGRESS && mode !== FormModes.DRAFT)
   ) {
     return null
   }

@@ -51,6 +51,7 @@ export class EnhancedAssetSyncService
         } catch (error) {
           logger.warn('Failed to import project page', {
             error: error.message,
+            id: entry?.sys?.id,
           })
           return false
         }

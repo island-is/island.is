@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize/types'
 import each from 'jest-each'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -24,18 +25,26 @@ type GivenWhenThen = (
 
 describe('CaseController - Get court record signature confirmation', () => {
   let mockAwsS3Service: AwsS3Service
+  let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       awsS3Service,
+      sequelize,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockCaseModel = caseModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (
       caseId: string,
@@ -88,7 +97,7 @@ describe('CaseController - Get court record signature confirmation', () => {
             courtRecordSignatoryId: userId,
             courtRecordSignatureDate: expect.any(Date),
           },
-          { where: { id: caseId } },
+          { where: { id: caseId }, transaction },
         )
       })
     })

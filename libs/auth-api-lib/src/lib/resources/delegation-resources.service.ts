@@ -1,25 +1,26 @@
-import { isCompany } from 'kennitala'
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import type { Attributes, WhereOptions } from 'sequelize'
+import { isCompany } from 'kennitala'
 import { and, Op, or } from 'sequelize'
+import type { Attributes, WhereOptions } from 'sequelize'
+import { Includeable } from 'sequelize/types/model'
 
 import { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
 import { NoContentException } from '@island.is/nest/problem'
 
+import { DelegationConfig } from '../delegations/DelegationConfig'
+import { DelegationScope } from '../delegations/models/delegation-scope.model'
+import { Delegation } from '../delegations/models/delegation.model'
+import { DelegationDirection } from '../delegations/types/delegationDirection'
 import { ApiScopeListDTO } from './dto/api-scope-list.dto'
 import { ApiScopeTreeDTO } from './dto/api-scope-tree.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
+import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
 import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
-import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
-import { DelegationScope } from '../delegations/models/delegation-scope.model'
-import { Delegation } from '../delegations/models/delegation.model'
-import { DelegationConfig } from '../delegations/DelegationConfig'
 import { col } from './utils/col'
-import { Includeable } from 'sequelize/types/model'
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
@@ -40,16 +41,20 @@ export class DelegationResourcesService {
     private delegationConfig: ConfigType<typeof DelegationConfig>,
   ) {}
 
-  async findAllDomains(user: User, language?: string): Promise<Domain[]> {
+  async findAllDomains(
+    user: User,
+    language?: string,
+    direction?: DelegationDirection,
+  ): Promise<Domain[]> {
     const domains = await this.domainModel.findAll({
-      where: and(...this.apiScopeFilter(user, 'scopes')),
+      where: and(...this.apiScopeFilter({ user, prefix: 'scopes', direction })),
       include: [
         {
           model: ApiScope,
           attributes: [],
           required: true,
           duplicating: false,
-          include: [...this.apiScopeInclude(user)],
+          include: [...this.apiScopeInclude(user, direction)],
         },
       ],
     })
@@ -71,7 +76,7 @@ export class DelegationResourcesService {
         {
           name: domainName,
         },
-        ...this.apiScopeFilter(user, 'scopes'),
+        ...this.apiScopeFilter({ user, prefix: 'scopes' }),
       ),
       include: [
         {
@@ -100,8 +105,14 @@ export class DelegationResourcesService {
     user: User,
     domainName: string,
     language?: string,
+    direction?: DelegationDirection,
   ): Promise<ApiScopeTreeDTO[]> {
-    const scopes = await this.findScopesInternal(user, domainName, language)
+    const scopes = await this.findScopesInternal({
+      user,
+      domainName,
+      direction,
+      language,
+    })
     return scopes.map((node) => new ApiScopeListDTO(node))
   }
 
@@ -109,8 +120,14 @@ export class DelegationResourcesService {
     user: User,
     domainName: string,
     language?: string,
+    direction?: DelegationDirection,
   ): Promise<ApiScopeTreeDTO[]> {
-    const scopes = await this.findScopesInternal(user, domainName, language)
+    const scopes = await this.findScopesInternal({
+      user,
+      domainName,
+      direction,
+      language,
+    })
 
     const groupChildren = new Map<string, ApiScopeTreeDTO[]>()
     const scopeTree: Array<ApiScope | ApiScopeGroup> = []
@@ -137,19 +154,27 @@ export class DelegationResourcesService {
       }))
   }
 
-  async findScopeNames(user: User, domainName: string) {
-    const scopes = await this.findScopesInternal(user, domainName, undefined, [
-      'name',
-    ])
+  async findScopeNames(
+    user: User,
+    domainName: string,
+    direction?: DelegationDirection,
+  ) {
+    const scopes = await this.findScopesInternal({
+      user,
+      domainName,
+      direction,
+      attributes: ['name'],
+    })
     return scopes.map((scope) => scope.name)
   }
 
   async validateScopeAccess(
     user: User,
     domainName: string,
+    direction: DelegationDirection,
     scopesToCheck: Array<string>,
   ): Promise<boolean> {
-    const userScopes = await this.findScopeNames(user, domainName)
+    const userScopes = await this.findScopeNames(user, domainName, direction)
     if (userScopes.length === 0) {
       return false
     }
@@ -157,40 +182,66 @@ export class DelegationResourcesService {
     return scopesToCheck.every((scopeName) => userScopes.includes(scopeName))
   }
 
-  apiScopeFilter(user: User, prefix?: string) {
-    return [
+  apiScopeFilter({
+    user,
+    prefix,
+    direction,
+  }: {
+    user: User
+    prefix?: string
+    direction?: DelegationDirection
+  }) {
+    const apiScopeFilter: Array<WhereOptions<ApiScope>> = [
       {
         [col(prefix, 'allowExplicitDelegationGrant')]: true,
         [col(prefix, 'enabled')]: true,
       },
-      ...this.skipScopeFilter(user, prefix),
-      ...this.accessControlFilter(user, prefix),
-      ...this.delegationTypeFilter(user, prefix),
     ]
+
+    if (direction === DelegationDirection.OUTGOING) {
+      apiScopeFilter.push(
+        ...this.skipScopeFilter(user, prefix),
+        ...this.accessControlFilter(user, prefix),
+        ...this.delegationTypeFilter(user, prefix),
+      )
+    }
+
+    return apiScopeFilter
   }
 
-  apiScopeInclude(user: User) {
-    return [
-      this.accessControlInclude(user),
-      ...this.delegationTypeInclude(user),
-    ]
+  apiScopeInclude(user: User, direction?: DelegationDirection) {
+    if (direction === DelegationDirection.OUTGOING) {
+      return [
+        this.accessControlInclude(user),
+        ...this.delegationTypeInclude(user),
+      ]
+    } else {
+      return []
+    }
   }
 
-  private async findScopesInternal(
-    user: User,
-    domainName: string,
-    language?: string,
-    attributes?: Array<keyof Attributes<ApiScope>>,
-  ): Promise<ApiScope[]> {
+  private async findScopesInternal({
+    user,
+    domainName,
+    language,
+    direction,
+    attributes,
+  }: {
+    user: User
+    domainName: string
+    language?: string
+    direction?: DelegationDirection
+    attributes?: Array<keyof Attributes<ApiScope>>
+  }): Promise<ApiScope[]> {
     const scopes = await this.apiScopeModel.findAll({
       attributes: attributes as string[],
       where: and(
         {
           domainName,
         },
-        ...this.apiScopeFilter(user),
+        ...this.apiScopeFilter({ user, direction }),
       ),
-      include: [ApiScopeGroup, ...this.apiScopeInclude(user)],
+      include: [ApiScopeGroup, ...this.apiScopeInclude(user, direction)],
       order: [
         ['group_id', 'ASC NULLS FIRST'],
         ['order', 'ASC'],

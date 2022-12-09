@@ -29,6 +29,7 @@ import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -196,7 +197,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
               />
             </Box>
           )}
-          <Box>
+          <Box marginRight={2}>
             <a
               href="/app/skilavottord/my-cars"
               target="_blank"
@@ -209,6 +210,22 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
                 iconType="outline"
               >
                 {formatMessage(messages.recycleCar)}
+              </Button>
+            </a>
+          </Box>
+          <Box>
+            <a
+              href={SAMGONGUSTOFA_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="utility"
+                size="small"
+                icon="eyeOff"
+                iconType="outline"
+              >
+                {formatMessage(messages.vehicleNameSecret)}
               </Button>
             </a>
           </Box>

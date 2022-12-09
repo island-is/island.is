@@ -4,7 +4,7 @@ import { Form, FormModes } from '@island.is/application/types'
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: 'Samþykkt',
-  mode: FormModes.APPLYING,
+  mode: FormModes.APPROVED,
   children: [
     buildCustomField({
       id: 'approved',

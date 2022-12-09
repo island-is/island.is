@@ -4,12 +4,12 @@ import { Box, NewsletterSignup } from '@island.is/island-ui/core'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import {
   Image,
-  MailchimpSubscribeMutation,
-  MailchimpSubscribeMutationVariables,
+  EmailSignupSubscriptionMutation,
+  EmailSignupSubscriptionMutationVariables,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useMutation } from '@apollo/client/react'
-import { MAILING_LIST_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
+import { EMAIL_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 
 import * as styles from './MailingListSignup.css'
 
@@ -52,15 +52,22 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
   })
 
   const [subscribeToMailchimp] = useMutation<
-    MailchimpSubscribeMutation,
-    MailchimpSubscribeMutationVariables
-  >(MAILING_LIST_SIGNUP_MUTATION)
+    EmailSignupSubscriptionMutation,
+    EmailSignupSubscriptionMutationVariables
+  >(EMAIL_SIGNUP_MUTATION)
 
   const handleSubmit = ({ email }: FormProps) => {
     if (isValidEmail.test(email)) {
-      subscribeToMailchimp({ variables: { input: { signupID, email } } })
+      subscribeToMailchimp({
+        variables: {
+          input: {
+            signupID,
+            inputFields: [{ name: 'EMAIL', type: 'email', value: email }],
+          },
+        },
+      })
         .then((result) => {
-          if (result?.data?.mailchimpSubscribe?.subscribed) {
+          if (result?.data?.emailSignupSubscription?.subscribed) {
             const successMessage: string = n(
               'formSuccess',
               'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina. Takk fyrir.',
@@ -76,7 +83,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
             })
           }
         })
-        .catch((error) =>
+        .catch(() =>
           setStatus({
             type: 'error',
             message: n('formEmailUnknownError', 'Óþekkt villa.'),

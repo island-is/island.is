@@ -12,7 +12,7 @@ export const GeneralFishingLicenseForm: Form = buildForm({
   id: 'GeneralFishingLicenseForm',
   title: '',
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

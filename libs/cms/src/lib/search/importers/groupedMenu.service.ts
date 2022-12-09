@@ -32,7 +32,10 @@ export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import grouped menu', { error: error.message })
+          logger.warn('Failed to import grouped menu', {
+            error: error.message,
+            id: entry?.sys?.id,
+          })
           return false
         }
       })

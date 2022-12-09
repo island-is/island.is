@@ -9,18 +9,24 @@ import {
 } from '@island.is/application/api/core'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
+  AllowedDelegation,
   Application,
   ApplicationContext,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  RoleInState,
 } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { EventObject } from 'xstate'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 @Injectable()
 export class ApplicationAccessService {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   async findOneByIdAndNationalId(id: string, user: User) {
     const existingApplication = await this.applicationService.findOneById(
@@ -29,6 +35,7 @@ export class ApplicationAccessService {
     )
 
     if (!existingApplication) {
+      // Throws bad subject error if user is actor on application
       const actorNationalId = user.actor
         ? user.actor.nationalId
         : user.nationalId
@@ -36,9 +43,22 @@ export class ApplicationAccessService {
         id,
         actorNationalId,
       )
-
       if (actorApplication) {
         throw new BadSubject([{ nationalId: actorApplication.applicant }])
+      }
+
+      // Check if user has role in current state in application that allows access
+      const existingApplicationById = await this.applicationService.findOneById(
+        id,
+      )
+      if (existingApplicationById) {
+        const hasRole = await this.getRoleinState(
+          existingApplicationById as Application,
+          user.nationalId,
+        )
+        if (hasRole) {
+          return existingApplicationById
+        }
       }
 
       throw new NotFoundException(
@@ -49,16 +69,24 @@ export class ApplicationAccessService {
     return existingApplication as BaseApplication
   }
 
-  async canDeleteApplication(
+  async getRoleinState(
     application: Application,
     nationalId: string,
-  ): Promise<boolean> {
+  ): Promise<RoleInState<EventObject> | undefined> {
     const templateId = application.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
     const helper = new ApplicationTemplateHelper(application, template)
     const currentUserRole =
       template.mapUserToRole(nationalId, application) || ''
     const role = helper.getRoleInState(currentUserRole)
+    return role
+  }
+
+  async canDeleteApplication(
+    application: Application,
+    nationalId: string,
+  ): Promise<boolean> {
+    const role = await this.getRoleinState(application, nationalId)
     return role?.delete ?? false
   }
 
@@ -80,7 +108,7 @@ export class ApplicationAccessService {
     return true
   }
 
-  shouldShowApplicationOnOverview = (
+  async shouldShowApplicationOnOverview(
     application: Application,
     user: User,
     template?: ApplicationTemplate<
@@ -88,7 +116,7 @@ export class ApplicationAccessService {
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
-  ): boolean => {
+  ): Promise<boolean> {
     if (template === undefined) {
       return false
     }
@@ -102,10 +130,13 @@ export class ApplicationAccessService {
         if (!userDelegations) {
           return false
         }
-        const matchesAtLeastOneDelegation = template.allowedDelegations.some(
-          (d) => userDelegations.includes(d.type),
-        )
-        if (!matchesAtLeastOneDelegation) {
+
+        if (
+          !(await this.matchesAtLeastOneDelegation(
+            template.allowedDelegations,
+            user,
+          ))
+        ) {
           return false
         }
       }
@@ -118,5 +149,34 @@ export class ApplicationAccessService {
     const currentUserRole = template.mapUserToRole(nationalId, application)
     const templateHelper = new ApplicationTemplateHelper(application, template)
     return this.evaluateIfRoleShouldBeListed(currentUserRole, templateHelper)
+  }
+
+  private async matchesAtLeastOneDelegation(
+    delegations: AllowedDelegation[],
+    user: User,
+  ): Promise<boolean> {
+    let matchesAtLeastOneDelegation = false
+    for (const delegation of delegations) {
+      if (await this.isDelegatationAllowed(delegation, user)) {
+        matchesAtLeastOneDelegation = true
+        break
+      }
+    }
+    return matchesAtLeastOneDelegation
+  }
+
+  async isDelegatationAllowed(
+    delegation: AllowedDelegation,
+    user: User,
+  ): Promise<boolean | undefined> {
+    let featureAllowed = true
+    if (delegation.featureFlag) {
+      featureAllowed = await this.featureFlagService.getValue(
+        delegation.featureFlag,
+        false,
+        user,
+      )
+    }
+    return user.delegationType?.includes(delegation.type) && featureAllowed
   }
 }

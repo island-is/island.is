@@ -24,7 +24,9 @@ import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.mod
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
 
-const isRunningInDevelopment = process.env.NODE_ENV !== 'production'
+const isRunningInDevelopment = !(
+  process.env.PROD_MODE === 'true' || process.env.NODE_ENV === 'production'
+)
 const df = 'yyyy-MM-dd'
 
 enum PensionFundType {
