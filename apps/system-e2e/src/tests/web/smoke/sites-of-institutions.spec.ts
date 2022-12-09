@@ -14,14 +14,4 @@ test.describe.skip('Sites of institutions', () => {
       return
     })
   }
-
-  test('Þjónustuvefur opnast - https://island.is/adstod', () => {
-    return
-  })
-  test('Org pages opens https://island.is/s', () => {
-    return
-  })
-  test('Spjallmenni virkar', () => {
-    return
-  })
 })
