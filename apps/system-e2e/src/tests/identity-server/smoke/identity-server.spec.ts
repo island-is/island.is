@@ -1,4 +1,5 @@
 import { test } from '@playwright/test'
+
 test.describe.skip('Innsrkáning', () => {
   for (const { testCase, home } of [
     { testCase: 'Gefa umboð sem fyrirtæki', home: '/en' },

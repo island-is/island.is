@@ -1,4 +1,5 @@
 import { test } from '@playwright/test'
+
 test.describe.skip('Umsóknir', () => {
   for (const { testCase, home } of [
     {
