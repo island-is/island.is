@@ -28,9 +28,10 @@ export const mapChildPassports = (
   passports: IdentityDocumentChildrenResponse,
 ): IdentityDocumentChild => {
   return {
-    name: '',
+    name: passports.childrenName ?? '',
     nationalId: passports.childrenSSN ?? '',
-    secondParent: passports.secondParent ?? [],
+    secondParent: passports.secondParent ?? '',
+    secondParentName: passports.secondParentName ?? '',
     identityDocuments:
       passports.identityDocumentResponses?.map(mapPassports) || undefined,
   }

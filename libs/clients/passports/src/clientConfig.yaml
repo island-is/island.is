@@ -97,6 +97,66 @@ paths:
                   type: string
       security:
         - auth: []
+  /api/v1/preregistration/getbystatus/{status}:
+    get:
+      tags:
+        - Preregistration
+      operationId: Preregistration_GetPreregistration
+      parameters:
+        - name: status
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      security:
+        - auth: []
+  /api/v1/preregistration/{guid}:
+    delete:
+      tags:
+        - Preregistration
+      operationId: Preregistration_DeletePrereg
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      security:
+        - auth: []
 components:
   schemas:
     IdentityDocumentResponse:
@@ -151,11 +211,15 @@ components:
         childrenSSN:
           type: string
           nullable: true
-        secondParent:
-          type: array
+        childrenName:
+          type: string
           nullable: true
-          items:
-            type: string
+        secondParent:
+          type: string
+          nullable: true
+        secondParentName:
+          type: string
+          nullable: true
         identityDocumentResponses:
           type: array
           nullable: true
@@ -171,12 +235,24 @@ components:
         appliedForPersonId:
           type: string
           nullable: true
-        appliedByAPersonId:
+        priority:
+          type: integer
+          format: int32
+        deliveryName:
           type: string
           nullable: true
-        appliedByBPersonId:
-          type: string
+        deliveryAddress:
           nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/DeliveryAddress'
+        approvalA:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Approval'
+        approvalB:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Approval'
         contactInfo:
           nullable: true
           oneOf:
@@ -190,6 +266,64 @@ components:
           nullable: true
           items:
             $ref: '#/components/schemas/Document'
+    DeliveryAddress:
+      type: object
+      additionalProperties: false
+      properties:
+        street:
+          type: string
+          nullable: true
+        street2:
+          type: string
+          nullable: true
+        zipCode:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        city2:
+          type: string
+          nullable: true
+        region:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Region'
+        country:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Country'
+    Region:
+      type: object
+      additionalProperties: false
+      properties:
+        number:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+    Country:
+      type: object
+      additionalProperties: false
+      properties:
+        number:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+    Approval:
+      type: object
+      additionalProperties: false
+      properties:
+        personId:
+          type: string
+          nullable: true
+        approved:
+          type: string
+          format: date-time
+          nullable: true
     ContactInfo:
       type: object
       additionalProperties: false

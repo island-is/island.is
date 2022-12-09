@@ -22,17 +22,11 @@ export class PassportService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const type = getValueViaPath<'regular' | 'express'>(
-      answers,
-      'type',
-      'regular',
-    )
-
-    const chargeItemCode =
-      type === 'regular'
-        ? PASSPORT_CHARGE_CODES.REGULAR
-        : PASSPORT_CHARGE_CODES.EXPRESS
-
+    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
+    if (!chargeItemCode) {
+      throw new Error('chargeItemCode missing in request')
+    }
+    console.log('chargeItemCode', chargeItemCode)
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
@@ -85,7 +79,7 @@ export class PassportService {
     success: boolean
     orderId?: string[]
   }> {
-    console.log("HALLO AM I HERE???")
+    console.log('HALLO AM I HERE???')
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
@@ -106,34 +100,30 @@ export class PassportService {
         childsPersonalInfo,
         service,
       }: PassportSchema = application.answers as PassportSchema
-      console.log("HERE I AM !!", passport.userPassport)
+      console.log('HERE I AM !!', passport.userPassport)
       const forUser = !!passport.userPassport
       const result = forUser
-        ? await this.passportApi.preregisterIdentityDocument(
-          auth,
-          {
+        ? await this.passportApi.preregisterIdentityDocument(auth, {
             appliedForPersonId: personalInfo.nationalId,
             priority: service.type === 'regular' ? 0 : 1,
-
+            deliveryName: service.dropLocation,
             contactInfo: {
               phoneAtHome: personalInfo.phoneNumber,
               phoneAtWork: personalInfo.phoneNumber,
               phoneMobile: personalInfo.phoneNumber,
               email: personalInfo.email,
             },
-          },
-        )
-        : await this.passportApi.preregisterChildIdentityDocument(
-          auth,{
+          })
+        : await this.passportApi.preregisterChildIdentityDocument(auth, {
             appliedForPersonId: childsPersonalInfo.nationalId,
             priority: service.type === 'regular' ? 0 : 1,
             approvalA: {
               personId: childsPersonalInfo.guardian1.nationalId,
-              approved: '2022-12-06T13:50:14.454Z',
+              approved: new Date(),
             },
             approvalB: {
               personId: childsPersonalInfo.guardian2.nationalId,
-              approved: '2022-12-06T13:50:14.454Z',
+              approved: new Date(),
             },
             contactInfo: {
               phoneAtHome: childsPersonalInfo.guardian1.phoneNumber,
@@ -142,11 +132,11 @@ export class PassportService {
               email: childsPersonalInfo.guardian1.email,
             },
           })
-          console.log(result)
- 
-      // if (result.length < 1) {
+      console.log(result)
+
+      if (result.length < 1) {
         throw new Error(`Application submission failed (${result})`)
-      // }
+      }
 
       return {
         success: true,

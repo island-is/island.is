@@ -113,8 +113,8 @@ export const childsPersonalInfo = buildMultiField({
       defaultValue: (application: Application) => {
         return (
           (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].secondParent[0] ??
-          ''
+            ?.data as IdentityDocumentData).childPassports[0]
+            .secondParentName ?? ''
         )
       },
     }),
@@ -128,8 +128,7 @@ export const childsPersonalInfo = buildMultiField({
       defaultValue: (application: Application) => {
         return (
           (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].secondParent[0] ??
-          ''
+            ?.data as IdentityDocumentData).childPassports[0].secondParent ?? ''
         )
       },
     }),

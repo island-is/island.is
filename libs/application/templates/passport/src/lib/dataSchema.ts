@@ -73,6 +73,7 @@ export const dataSchema = z.object({
     dropLocation: z.string().min(1),
   }),
   approveExternalDataParentB: z.boolean().refine((v) => v),
+  chargeItemCode: z.string(),
 })
 
 export type PassportSchema = z.TypeOf<typeof dataSchema>

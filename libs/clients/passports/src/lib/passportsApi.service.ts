@@ -77,18 +77,29 @@ export class PassportsService {
     input: PreregistrationInput,
   ): Promise<string[]> {
     const { appliedForPersonId, approvalA, approvalB } = input
-    console.log("IN PREREGISTER CHILD", input)
-    const pdfDoc = this.createDocumentBuffer({
+    console.log('IN PREREGISTER CHILD', input)
+    const pdfBuffer = await this.createDocumentBuffer({
       appliedForPersonId,
       approvalA,
       approvalB,
     })
-    console.log("PDF DOC",pdfDoc)
+    const pdfDoc = Buffer.from(pdfBuffer).toString('base64')
+    console.log('PDF DOC', pdfDoc)
     return await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
       .preregistrationPreregistration({
         xRoadClient: this.xroadConfig.xRoadClient,
-        preregistration: input,
+        preregistration: {
+          ...input,
+          documents: [
+            {
+              name: 'samþykki',
+              documentType: 'pdf',
+              contentType: 'base64',
+              content: pdfDoc,
+            },
+          ],
+        },
       })
   }
 

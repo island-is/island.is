@@ -33,6 +33,7 @@ export const getPassport = `
             nationalId
             name
             secondParent
+            secondParentName
             identityDocuments {
             productionRequestID
             number

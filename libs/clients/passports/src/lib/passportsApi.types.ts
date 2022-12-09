@@ -16,7 +16,8 @@ export interface IdentityDocument {
 
 export interface IdentityDocumentChild {
   nationalId: string
-  secondParent: string[]
+  secondParent: string
+  secondParentName: string
   name: string
   identityDocuments?: IdentityDocument[]
 }
@@ -34,20 +35,41 @@ export interface Document {
   contentType?: string
   content?: string
 }
+
+export interface Region {
+  number?: string
+  name?: string
+}
+
+export interface DeliveryAddress {
+  street?: string
+  street2?: string
+  zipCode?: string
+  city?: string
+  city2?: string
+  region?: Region
+  country?: Country
+}
+
+export interface Country {
+  number?: string
+  name?: string
+}
+
+export interface Approval {
+  personId?: string
+  approved?: Date
+}
 export interface PreregistrationInput {
   guId?: string
   priority?: number
   appliedForPersonId?: string
-  approvalA?: {
-    personId?: string
-    approved?: string
-  }
-  approvalB?: {
-    personId?: string
-    approved?: string
-  }
+  approvalA?: Approval
+  approvalB?: Approval
   contactInfo?: ContactInfo
   documents?: Document[]
+  deliveryName?: string
+  deliveryAddress?: DeliveryAddress
 }
 
 export interface Passport {
