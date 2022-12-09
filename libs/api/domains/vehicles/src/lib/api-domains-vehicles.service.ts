@@ -16,12 +16,13 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import {
-  VehicleDebtStatusByPermno,
+  VehicleOwnerchangeChecksByPermno,
   VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithDebtStatus,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '../models/getCurrentVehicles.model'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { getVehicleOwnerchangeUpdatelocks } from '../utils/updatelocks'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'vehicles-service'
@@ -154,12 +155,14 @@ export class VehiclesService {
     }
   }
 
-  async getCurrentVehiclesWithDebtStatus(
+  async getCurrentVehiclesWithOwnerchangeChecks(
     auth: User,
     showOwned: boolean,
     showCoowned: boolean,
     showOperated: boolean,
-  ): Promise<VehiclesCurrentVehicleWithDebtStatus[] | null | ApolloError> {
+  ): Promise<
+    VehiclesCurrentVehicleWithOwnerchangeChecks[] | null | ApolloError
+  > {
     // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
     if (showOperated) {
       throw Error(
@@ -175,7 +178,7 @@ export class VehiclesService {
           showCoowned,
           showOperated,
         )
-      )?.map(async (vehicle: VehiclesCurrentVehicleWithDebtStatus) => {
+      )?.map(async (vehicle: VehiclesCurrentVehicleWithOwnerchangeChecks) => {
         // Get debt status
         const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
           auth,
@@ -187,7 +190,9 @@ export class VehiclesService {
         const vehicleDetails = await this.getVehicleDetail(auth, {
           permno: vehicle.permno,
         })
-        vehicle.updatelocks = vehicleDetails?.updatelocks
+        vehicle.updatelocks = getVehicleOwnerchangeUpdatelocks(
+          vehicleDetails?.updatelocks,
+        )
 
         // Get owner change validation
         // Note: Will just use today's date, since we dont have the purchase date at this point
@@ -206,14 +211,14 @@ export class VehiclesService {
     )
   }
 
-  async getVehicleDebtStatusByPermno(
+  async getVehicleOwnerchangeChecksByPermno(
     auth: User,
     permno: string,
-  ): Promise<VehicleDebtStatusByPermno | null | ApolloError> {
+  ): Promise<VehicleOwnerchangeChecksByPermno | null | ApolloError> {
     // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
     const myVehicles = await this.getCurrentVehicles(auth, true, true, false)
     const isOwnerOrCoOwner = !!myVehicles?.find(
-      (vehicle: VehiclesCurrentVehicleWithDebtStatus) =>
+      (vehicle: VehiclesCurrentVehicleWithOwnerchangeChecks) =>
         vehicle.permno === permno,
     )
     if (!isOwnerOrCoOwner) {
@@ -232,6 +237,9 @@ export class VehiclesService {
     const vehicleDetails = await this.getVehicleDetail(auth, {
       permno: permno,
     })
+    const updatelocks = getVehicleOwnerchangeUpdatelocks(
+      vehicleDetails?.updatelocks,
+    )
 
     // Get owner change validation
     // Note: Will just use today's date, since we dont have the purchase date at this point
@@ -244,7 +252,7 @@ export class VehiclesService {
 
     return {
       isDebtLess: debtStatus.isDebtLess,
-      updatelocks: vehicleDetails?.updatelocks,
+      updatelocks: updatelocks,
       ownerChangeErrorMessages: ownerChangeValidation?.hasError
         ? ownerChangeValidation.errorMessages
         : null,

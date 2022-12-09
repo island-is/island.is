@@ -26,7 +26,7 @@ export class OwnerChangeValidationMessage {
 }
 
 @ObjectType()
-export class VehiclesCurrentVehicleWithDebtStatus extends VehiclesCurrentVehicle {
+export class VehiclesCurrentVehicleWithOwnerchangeChecks extends VehiclesCurrentVehicle {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 
@@ -38,7 +38,7 @@ export class VehiclesCurrentVehicleWithDebtStatus extends VehiclesCurrentVehicle
 }
 
 @ObjectType()
-export class VehicleDebtStatusByPermno {
+export class VehicleOwnerchangeChecksByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 

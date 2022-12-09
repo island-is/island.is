@@ -9,9 +9,9 @@ export const GET_CURRENT_VEHICLES = `
   } 
 `
 
-export const GET_CURRENT_VEHICLES_WITH_DEBT_STATUS = `
-  query GetCurrentVehiclesWithDebtStatus($input: GetCurrentVehiclesInput!) {
-    currentVehiclesWithDebtStatus(input: $input) {
+export const GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS = `
+  query GetCurrentVehiclesWithOwnerchangeChecks($input: GetCurrentVehiclesInput!) {
+    currentVehiclesWithOwnerchangeChecks(input: $input) {
       permno
       make
       color
@@ -28,9 +28,9 @@ export const GET_CURRENT_VEHICLES_WITH_DEBT_STATUS = `
   } 
 `
 
-export const GET_VEHICLE_DEBT_STATUS_BY_PERMNO = `
-  query GetVehicleDebtStatusByPermno($permno: String!) {
-    vehicleDebtStatusByPermno(permno: $permno) {
+export const GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO = `
+  query GetVehicleOwnerchangeChecksByPermno($permno: String!) {
+    vehicleOwnerchangeChecksByPermno(permno: $permno) {
       isDebtLess
       updatelocks {
         lockNo

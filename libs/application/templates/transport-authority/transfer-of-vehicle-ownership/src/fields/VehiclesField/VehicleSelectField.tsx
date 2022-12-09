@@ -5,7 +5,7 @@ import { Box, CategoryCard, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   VehiclesCurrentVehicle,
   GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithDebtStatus,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '@island.is/api/schema'
 import { information, applicationCheck } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -34,7 +34,7 @@ export const VehicleSelectField: FC<
   const [
     selectedVehicle,
     setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithDebtStatus | null>(
+  ] = useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
     currentVehicle && currentVehicle.permno
       ? {
           permno: currentVehicle.permno,
@@ -71,17 +71,19 @@ export const VehicleSelectField: FC<
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            isDebtLess: response?.vehicleDebtStatusByPermno?.isDebtLess,
-            updatelocks: response?.vehicleDebtStatusByPermno?.updatelocks,
+            isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
+            updatelocks:
+              response?.vehicleOwnerchangeChecksByPermno?.updatelocks,
             ownerChangeErrorMessages:
-              response?.vehicleDebtStatusByPermno?.ownerChangeErrorMessages,
+              response?.vehicleOwnerchangeChecksByPermno
+                ?.ownerChangeErrorMessages,
           })
 
           const disabled =
-            !response?.vehicleDebtStatusByPermno?.isDebtLess ||
-            !!response?.vehicleDebtStatusByPermno?.updatelocks?.length ||
-            !!response?.vehicleDebtStatusByPermno?.ownerChangeErrorMessages
-              ?.length
+            !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
+            !!response?.vehicleOwnerchangeChecksByPermno?.updatelocks?.length ||
+            !!response?.vehicleOwnerchangeChecksByPermno
+              ?.ownerChangeErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
           setIsLoading(false)
