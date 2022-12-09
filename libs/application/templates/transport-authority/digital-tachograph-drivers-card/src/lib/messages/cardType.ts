@@ -47,6 +47,21 @@ export const cardType = {
         defaultMessage: 'Gildir til',
         description: 'Newest card card valid to',
       },
+      isValid: {
+        id: 'ta.dtdc.application:cardType.labels.newestCard.isValid',
+        defaultMessage: 'Staða',
+        description: 'Newest card is valid',
+      },
+      isValidYes: {
+        id: 'ta.dtdc.application:cardType.labels.newestCard.isValidYes',
+        defaultMessage: 'Er gilt',
+        description: 'Newest card is valid yes',
+      },
+      isValidNo: {
+        id: 'ta.dtdc.application:cardType.labels.newestCard.isValidNo',
+        defaultMessage: 'Er ekki gilt',
+        description: 'Newest card is valid no',
+      },
       countryOfIssue: {
         id: 'ta.dtdc.application:cardType.labels.newestCard.countryOfIssue',
         defaultMessage: 'Útgáfuland',

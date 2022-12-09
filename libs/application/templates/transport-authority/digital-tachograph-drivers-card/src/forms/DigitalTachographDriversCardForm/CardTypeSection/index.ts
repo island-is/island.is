@@ -12,6 +12,7 @@ import { Application } from '../../../types/schema'
 import format from 'date-fns/format'
 import {
   newestCardExists,
+  newestCardIsValid,
   newestCardExpiresInMonths,
   newestCardIsExpired,
 } from '../../../utils'
@@ -90,6 +91,19 @@ export const cardTypeSection = buildSection({
           },
         }),
         buildTextField({
+          id: 'newestCard.isValid',
+          title: cardType.labels.newestCard.isValid,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          condition: (_, externalData) => newestCardExists(externalData),
+          defaultValue: (application: Application) => {
+            return application.externalData?.newestDriversCard?.data?.isValid
+              ? cardType.labels.newestCard.isValidYes.defaultMessage
+              : cardType.labels.newestCard.isValidNo.defaultMessage
+          },
+        }),
+        buildTextField({
           id: 'newestCard.countryOfIssue',
           title: cardType.labels.newestCard.countryOfIssue,
           backgroundColor: 'white',
@@ -105,6 +119,7 @@ export const cardTypeSection = buildSection({
           titleVariant: 'h5',
           space: 3,
         }),
+        // TODOx use newestCardIsValid?
         buildRadioField({
           title: '',
           id: 'cardTypeSelection.cardType',

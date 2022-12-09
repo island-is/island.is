@@ -36,6 +36,15 @@ export const newestCardExists = (externalData: ExternalData) => {
   return !!cardNumber
 }
 
+export const newestCardIsValid = (externalData: ExternalData) => {
+  const isValid = getValueViaPath(
+    externalData,
+    'newestDriversCard.data.isValid',
+    false,
+  ) as boolean
+  return isValid
+}
+
 export const newestCardIsExpired = (externalData: ExternalData) => {
   const cardValidTo = getValueViaPath(
     externalData,
