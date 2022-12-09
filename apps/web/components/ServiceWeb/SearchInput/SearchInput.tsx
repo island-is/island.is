@@ -165,7 +165,6 @@ export const SearchInput = ({
                 onSelect(item)
               }}
             >
-              
               <Text as="span">{item.title}</Text>
             </Box>
           )
