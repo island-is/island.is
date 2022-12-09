@@ -11,9 +11,7 @@ import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
-import {
-  GET_SEARCH_RESULTS_QUERY,
-} from '@island.is/web/screens/queries'
+import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import {
   AsyncSearchInput,
   AsyncSearchSizes,
@@ -134,8 +132,6 @@ const useSearch = (
       const hasSpace = indexOfLastSpace !== -1
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
-
-    
 
       dispatch({
         type: 'searchString',
@@ -407,7 +403,6 @@ const Results = ({
       paddingY={2}
       paddingX={3}
     >
-     
       {autosuggest && search.results && search.results.items.length > 0 && (
         <>
           <div className={styles.menuRow}>

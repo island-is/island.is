@@ -83,5 +83,5 @@ export class SearcherInput {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  useQuery?: string = "default"
+  useQuery?: string = 'default'
 }

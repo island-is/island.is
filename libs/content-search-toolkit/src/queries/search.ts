@@ -3,7 +3,6 @@ import { tagAggregationQueryFragment } from './tagAggregation'
 import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
-import { query } from 'express'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   // normalizing all types before boosting
@@ -40,7 +39,7 @@ export const searchQuery = (
   ]
   const words = queryString.split(' ')
   const lastWord = words.pop()
-    
+
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
@@ -52,13 +51,10 @@ export const searchQuery = (
       },
     })
   } else {
-    
     switch (useQuery) {
-
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
-        
         should.push({ prefix: { title: lastWord } })
         words.forEach((word) => {
           should.push({ term: { title: word } })
