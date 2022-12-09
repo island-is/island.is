@@ -38,7 +38,9 @@ export const searchQuery = (
     'content',
     'content.stemmed',
   ]
-
+  const words = queryString.split(' ')
+  const lastWord = words.pop()
+    
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
@@ -50,11 +52,23 @@ export const searchQuery = (
       },
     })
   } else {
+    
     switch (useQuery) {
+
+      // the search logic used for search drop down suggestions
+      // term and prefix queries on content title
+      case 'suggestions':
+        
+        should.push({ prefix: { title: lastWord } })
+        words.forEach((word) => {
+          should.push({ term: { title: word } })
+        })
+        break
+
       // the search logic used for general site search
       // uses all analyzed fields
-      default:
       case 'default':
+      default:
         should.push({
           multi_match: {
             fields: fieldsWeights,
@@ -63,16 +77,6 @@ export const searchQuery = (
             operator: 'and',
             type: 'best_fields',
           },
-        })
-        break
-      // the search logic used for search drop down suggestions
-      // term and prefix queries on content title
-      case 'suggestions':
-        const words = queryString.split(' ')
-        const lastWord = words.pop()
-        should.push({ prefix: { title: lastWord } })
-        words.forEach((word) => {
-          should.push({ term: { title: word } })
         })
         break
     }
