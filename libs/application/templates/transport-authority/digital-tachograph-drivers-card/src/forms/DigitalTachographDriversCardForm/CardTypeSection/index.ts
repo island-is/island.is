@@ -121,6 +121,7 @@ export const cardTypeSection = buildSection({
           width: 'half',
           largeButtons: true,
         }),
+        // Note: This case might never happen, since we dont get drivers card from the API if already expired
         buildRadioField({
           title: '',
           id: 'cardTypeSelection.cardType',
