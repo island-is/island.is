@@ -27,6 +27,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'draft',
+          status: 'draft',
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -57,6 +58,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: 'Approved',
+          status: 'approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
@@ -86,7 +88,6 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

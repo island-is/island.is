@@ -1,5 +1,5 @@
 import { BLOCKS } from '@contentful/rich-text-types'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -9,6 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
+import { webRichText } from '@island.is/web/utils/richText'
 import * as styles from './OpinberNyskopunFooter.css'
 
 interface OpinberNyskopunFooterProps {
@@ -46,7 +47,7 @@ export const OpinberNyskopunFooter: React.FC<OpinberNyskopunFooterProps> = ({
                   <Text fontWeight="semiBold" color="white" marginBottom={2}>
                     {item.title}
                   </Text>
-                  {richText(item.content as SliceType[], {
+                  {webRichText(item.content as SliceType[], {
                     renderNode: {
                       [BLOCKS.PARAGRAPH]: (_node, children) => (
                         <Text color="white" variant="medium" marginBottom={2}>

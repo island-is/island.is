@@ -1,9 +1,14 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  readableIndictmentSubtypes,
+} from '@island.is/judicial-system/formatters'
 import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import InfoCard from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
@@ -43,7 +48,18 @@ const InfoCardClosedIndictment: React.FC = () => {
         },
         {
           title: formatMessage(m.offence),
-          value: capitalize(caseTypes[workingCase.type]),
+          value: isIndictmentCase(workingCase.type) ? (
+            <>
+              {readableIndictmentSubtypes(
+                workingCase.policeCaseNumbers,
+                workingCase.indictmentSubtypes,
+              ).map((subtype) => (
+                <Text key={subtype}>{capitalize(subtype)}</Text>
+              ))}
+            </>
+          ) : (
+            caseTypes[workingCase.type]
+          ),
         },
       ]}
       defendants={

@@ -31,9 +31,18 @@ export class EmailSignupResolver {
           // The checkboxes type can have many selected options
           if (field.type === FormFieldType.CHECKBOXES) {
             const fieldValues = JSON.parse(field.value)
+
+            // The field from the email signup model in the CMS (that's where we can access specific config)
+            const emailSignupModelField = emailSignupModel.formFields?.find(
+              (f) => f.id === field.id,
+            )
             const checkboxOptions = Object.entries(fieldValues)
               .filter(([_, value]) => value === 'true')
-              .map(([name, _]) => `${name}=1`)
+              .map(
+                ([name, _]) =>
+                  // The field name maps to a specific mailchimp related value in the email config
+                  `${emailSignupModelField?.emailConfig?.[name] ?? name}=1`,
+              )
               .join('&')
 
             // Make sure we don't add an extra &
@@ -46,8 +55,9 @@ export class EmailSignupResolver {
         })
         .join('&'),
     )
+
     return axios
-      .get(populatedUrl)
+      .get(encodeURI(populatedUrl))
       .then((response) => {
         return {
           subscribed: response?.data?.result === 'error' ? false : true,

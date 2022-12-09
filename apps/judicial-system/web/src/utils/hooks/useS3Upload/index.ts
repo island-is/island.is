@@ -226,7 +226,7 @@ export const useS3Upload = (workingCase: Case) => {
           updateFile(file)
         })
         .catch(() => {
-          // TODO: Log to sentry
+          // TODO: handle error
         })
     }
   }
@@ -285,7 +285,7 @@ export const useS3Upload = (workingCase: Case) => {
           }
         })
         .catch(() => {
-          // TODO: Log to Sentry and display an error message.
+          // TODO: handle error
         })
     }
   }

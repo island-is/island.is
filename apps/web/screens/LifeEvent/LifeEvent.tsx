@@ -3,7 +3,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
 import NextLink from 'next/link'
-import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
@@ -31,12 +31,14 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
 import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { webRichText } from '@island.is/web/utils/richText'
+import { Webreader } from '@island.is/web/components'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -49,6 +51,11 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   namespace,
   locale,
 }) => {
+  const { value: isWebReaderEnabledForLifeEventPages } = useFeatureFlag(
+    'isWebReaderEnabledForLifeEventPages',
+    false,
+  )
+
   useContentfulId(id)
   useLocalLinkTypeResolver()
 
@@ -142,11 +149,18 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Text variant="h1" as="h1">
-                  <span id={slugify(title)}>{title}</span>
+                  <span className="rs_read" id={slugify(title)}>
+                    {title}
+                  </span>
                 </Text>
+                {isWebReaderEnabledForLifeEventPages && (
+                  <Webreader readId={null} readClass="rs_read" />
+                )}
                 {intro && (
                   <Text variant="intro" as="p" paddingTop={2}>
-                    <span id={slugify(intro)}>{intro}</span>
+                    <span className="rs_read" id={slugify(intro)}>
+                      {intro}
+                    </span>
                   </Text>
                 )}
                 <Box
@@ -161,8 +175,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     position="right"
                   />
                 </Box>
-                <Box paddingTop={[3, 3, 4]}>
-                  {richText(content as SliceType[])}
+                <Box className="rs_read" paddingTop={[3, 3, 4]}>
+                  {webRichText(content as SliceType[])}
                 </Box>
               </GridColumn>
             </GridRow>

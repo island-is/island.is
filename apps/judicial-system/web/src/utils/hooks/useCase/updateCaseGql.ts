@@ -7,6 +7,7 @@ export const UpdateCaseMutation = gql`
       created
       modified
       type
+      indictmentSubtypes
       description
       state
       policeCaseNumbers
@@ -159,6 +160,7 @@ export const UpdateCaseMutation = gql`
       seenByDefender
       subpoenaType
       defendantWaivesRightToCounsel
+      crimeScenes
     }
   }
 `

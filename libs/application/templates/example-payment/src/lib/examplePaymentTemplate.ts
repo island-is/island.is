@@ -29,6 +29,7 @@ const template: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
+          status: 'draft',
           name: 'Draft',
           progress: 0.4,
           lifecycle: EphemeralStateLifeCycle,
@@ -58,6 +59,7 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           progress: 0.9,
           // Note: should be pruned at some time, so we can delete the FJS charge with it
           lifecycle: {
@@ -88,6 +90,7 @@ const template: ApplicationTemplate<
       },
       [States.DONE]: {
         meta: {
+          status: 'completed',
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
@@ -102,7 +105,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -51,6 +51,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.PREREQUISITES]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
@@ -63,10 +64,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Prerequisites').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
-              write: {
-                answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita', 'taxDataFetch'],
-              },
+              write: 'all',
               delete: true,
             },
           ],
@@ -90,6 +88,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.DRAFT]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'draft',
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.draft,
@@ -102,24 +101,8 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Application),
                 ),
               read: 'all',
+              write: 'all',
               delete: true,
-              write: {
-                answers: [
-                  'spouse',
-                  'relationshipStatus',
-                  'homeCircumstances',
-                  'student',
-                  'employment',
-                  'income',
-                  'incomeFiles',
-                  'taxReturnFiles',
-                  'personalTaxCredit',
-                  'bankInfo',
-                  'contactInfo',
-                  'formComment',
-                  'spouseEmailSuccess',
-                ],
-              },
             },
           ],
         },
@@ -137,6 +120,7 @@ const FinancialAidTemplate: ApplicationTemplate<
         entry: 'assignToSpouse',
         meta: {
           name: application.name.defaultMessage,
+          status: 'inprogress',
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.spouse,
@@ -149,10 +133,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.PrerequisitesSpouse),
                 ),
               read: 'all',
-              write: {
-                answers: ['approveExternalDataSpouse'],
-                externalData: ['taxDataFetchSpouse', 'veita'],
-              },
+              write: 'all',
             },
             {
               id: Roles.APPLICANT,
@@ -178,6 +159,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.SPOUSE]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'inprogress',
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.spouse,
@@ -190,16 +172,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Spouse),
                 ),
               read: 'all',
-              write: {
-                answers: [
-                  'spouseIncome',
-                  'spouseIncomeFiles',
-                  'spouseTaxReturnFiles',
-                  'spouseContactInfo',
-                  'spouseFormComment',
-                  'spouseName',
-                ],
-              },
+              write: 'all',
             },
             {
               id: Roles.APPLICANT,
@@ -219,6 +192,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'completed',
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.submitted,
@@ -236,6 +210,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.SPOUSE,
@@ -244,6 +219,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.SpouseSubmitted),
                 ),
               read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -254,6 +230,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'rejected',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,

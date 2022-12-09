@@ -1,8 +1,7 @@
 import React from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { UserDropdownItem } from './UserDropdownItem'
-import { m } from '@island.is/service-portal/core'
+import { userMessages } from '@island.is/shared/translations'
 
 interface UserProfileInfoProps {
   onClick: () => void
@@ -15,7 +14,7 @@ export const UserProfileInfo = ({ onClick }: UserProfileInfoProps) => {
 
   return (
     <UserDropdownItem
-      text={formatMessage(m.personalInformation)}
+      text={formatMessage(userMessages.personalInformation)}
       link={`${baseUrl}/minar-stillingar`}
       icon={{ type: 'outline', icon: 'settings' }}
       onClick={() => onClick()}

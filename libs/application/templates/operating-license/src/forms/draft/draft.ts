@@ -22,7 +22,7 @@ import { sectionOverview } from './sectionOverview'
 export const Draft: Form = buildForm({
   id: 'OperatingLicenseApplicationDraftForm',
   title: m.formName,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

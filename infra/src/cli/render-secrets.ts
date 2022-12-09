@@ -1,13 +1,7 @@
-import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
-import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
-import { SSM } from '@aws-sdk/client-ssm'
-
-const API_INITIALIZATION_OPTIONS = {
-  region: 'eu-west-1',
-  maxAttempts: 10,
-}
+import { renderHelmServices } from '../dsl/exports/helm'
+import { getSsmParams } from '../dsl/adapters/get-ssm-params'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
@@ -18,8 +12,6 @@ const EXCLUDED_ENVIRONMENT_NAMES = [
 const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/local-dev/IDENTITY_SERVER_CLIENT_SECRET',
 }
-
-const client = new SSM(API_INITIALIZATION_OPTIONS)
 
 export const renderSecretsCommand = async (service: string) => {
   renderSecrets(service).catch((error) => {
@@ -35,10 +27,11 @@ export const renderSecretsCommand = async (service: string) => {
 }
 
 export const renderSecrets = async (service: string) => {
-  const urls: string[] = []
-  const uberChart = new UberChart(Envs.dev01)
-  const services = Object.values(Charts).map(
-    (chart) => generateYamlForEnv(uberChart, ...chart.dev).services,
+  const services = await Promise.all(
+    Object.values(Charts).map(
+      async (chart) =>
+        (await renderHelmServices(Envs.dev01, chart.dev, chart.dev)).services,
+    ),
   )
 
   const secretRequests: [string, string][] = services
@@ -63,7 +56,9 @@ export const renderSecrets = async (service: string) => {
       return request
     })
 
-  const values = await getParams(secretRequests.map(([_, ssmName]) => ssmName))
+  const values = await getSsmParams(
+    secretRequests.map(([_, ssmName]) => ssmName),
+  )
 
   secretRequests.forEach(([envName, ssmName]) => {
     const escapedValue = values[ssmName]
@@ -71,25 +66,4 @@ export const renderSecrets = async (service: string) => {
       .replace(/'/g, "'\\''")
     console.log(`export ${envName}='${escapedValue}'`)
   })
-}
-
-const getParams = async (
-  ssmNames: string[],
-): Promise<{ [name: string]: string }> => {
-  const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {
-    const ch = Math.floor(i / 10)
-    all[ch] = ([] as string[]).concat(all[ch] || [], one)
-    return all
-  }, [])
-
-  const allParams = await Promise.all(
-    chunks.map((Names) =>
-      client.getParameters({ Names, WithDecryption: true }),
-    ),
-  )
-  return allParams
-    .map(({ Parameters }) =>
-      Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
-    )
-    .reduce((p, c) => ({ ...p, ...c }), {})
 }

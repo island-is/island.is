@@ -21,7 +21,6 @@ import {
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
-  DelegationType,
   DelegationValidity,
   UpdateDelegationDTO,
 } from '@island.is/auth-api-lib'
@@ -129,7 +128,7 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
-    const delegation = await this.delegationsService.findById(
+    const delegation = await this.delegationsService.findByIdOutgoing(
       user,
       delegationId,
     )
@@ -174,7 +173,7 @@ export class MeDelegationsController {
     @Body() delegation: UpdateDelegationDTO,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
-    const currentDelegation = await this.delegationsService.findById(
+    const currentDelegation = await this.delegationsService.findByIdOutgoing(
       user,
       delegationId,
     )

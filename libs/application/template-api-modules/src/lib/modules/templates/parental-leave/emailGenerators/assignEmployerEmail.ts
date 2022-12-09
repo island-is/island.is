@@ -1,11 +1,8 @@
 import get from 'lodash/get'
 
 import { Message } from '@island.is/email-service'
-
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
-import { isRunningInProduction } from '../constants'
-import { logger } from '@island.is/logging'
 
 export let assignLinkEmployerSMS = ''
 
@@ -20,8 +17,6 @@ export type AssignEmployerEmail = (
 export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
   props,
   assignLink,
-  senderName,
-  senderEmail,
 ): Message => {
   const {
     application,

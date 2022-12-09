@@ -37,6 +37,7 @@ export const Expenses = ({ getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.electionOffice)}
           onChange={() => onInputChange(INDIVIDUALOPERATIONIDS.electionOffice)}
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -51,6 +52,7 @@ export const Expenses = ({ getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.advertisements)}
           onChange={() => onInputChange(INDIVIDUALOPERATIONIDS.electionOffice)}
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -64,6 +66,7 @@ export const Expenses = ({ getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.travelCost)}
           onChange={() => onInputChange(INDIVIDUALOPERATIONIDS.travelCost)}
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -77,6 +80,7 @@ export const Expenses = ({ getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.otherCost)}
           onChange={() => onInputChange(INDIVIDUALOPERATIONIDS.otherCost)}
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>

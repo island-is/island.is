@@ -226,7 +226,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
       { files: UpdateFile[] },
       CaseFile[]
     >(`case/${caseId}/files`, { files: updates })
-    return { caseFiles: caseFiles }
+    return { caseFiles }
   }
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {

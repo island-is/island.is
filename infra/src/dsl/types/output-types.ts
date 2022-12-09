@@ -1,11 +1,5 @@
-import {
-  Hash,
-  PersistentVolumeClaim,
-  ReplicaCount,
-  Service,
-} from './input-types'
-import { UberChartType } from './charts'
-import { FeatureNames } from '../features'
+import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
+import { ReferenceResolver, EnvironmentConfig } from './charts'
 
 // Output types
 export type ContainerRunHelm = {
@@ -38,7 +32,7 @@ export type OutputPersistentVolumeClaim = {
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
 
-export interface ServiceHelm {
+export interface HelmService {
   replicaCount?: {
     min: number
     max: number
@@ -132,6 +126,12 @@ export interface ServiceHelm {
   files?: string[]
 }
 
+export interface LocalrunService {
+  env: ContainerEnvironmentVariables
+  command?: string[]
+  port?: number
+}
+
 export interface FeatureKubeJob {
   apiVersion: 'batch/v1'
   kind: 'Job'
@@ -152,9 +152,9 @@ export interface FeatureKubeJob {
   }
 }
 
-export type SerializeSuccess = {
+export type SerializeSuccess<T> = {
   type: 'success'
-  serviceDef: ServiceHelm
+  serviceDef: T[]
 }
 
 export type SerializeErrors = {
@@ -162,17 +162,40 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type SerializeMethod = (
-  service: Service,
-  uberChart: UberChartType,
-  featuresOn?: FeatureNames[],
-) => SerializeSuccess | SerializeErrors
+export type ServiceOutputType = HelmService | LocalrunService
 
-export type Services = {
-  [name: string]: ServiceHelm
+export type SerializeMethod<T extends ServiceOutputType> = (
+  service: ServiceDefinitionForEnv,
+  runtime: ReferenceResolver,
+  env: EnvironmentConfig,
+  featureDeployment?: string,
+) => Promise<SerializeSuccess<T> | SerializeErrors>
+
+export type Services<T extends ServiceOutputType> = {
+  [name: string]: T
 }
 
-export type ValueFile = {
+export type HelmValueFile = {
   namespaces: string[]
-  services: Services
+  services: Services<HelmService>
+}
+export type LocalrunValueFile = {
+  services: Services<LocalrunService>
+  mocks: Services<LocalrunService>
+}
+
+export interface OutputFormat<T extends ServiceOutputType> {
+  serializeService(
+    service: ServiceDefinitionForEnv,
+    runtime: ReferenceResolver,
+    env: EnvironmentConfig,
+    featureDeployment?: string,
+  ): Promise<SerializeSuccess<T> | SerializeErrors>
+
+  serviceMockDef(options: {
+    runtime: ReferenceResolver
+    env: EnvironmentConfig
+  }): T
+
+  featureDeployment(service: ServiceDefinition, env: EnvironmentConfig): void
 }

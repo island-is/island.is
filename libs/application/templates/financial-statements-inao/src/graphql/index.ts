@@ -6,6 +6,7 @@ export const getAvailableElections = gql`
       electionId
       name
       electionDate
+      genitiveName
     }
   }
 `

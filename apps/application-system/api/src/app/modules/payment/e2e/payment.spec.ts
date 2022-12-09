@@ -54,6 +54,18 @@ class MockPaymentService {
     }
   }
 
+  async findChargeItems() {
+    return [
+      {
+        performingOrgID: faker.datatype.number(),
+        chargeType: faker.random.word(),
+        chargeItemCode: TARGET_CHARGE_ITEM_CODE,
+        chargeItemName: faker.random.word(),
+        priceAmount: faker.datatype.number(),
+      },
+    ]
+  }
+
   async createCharge() {
     return {
       user4: 'amazing-user4-code-for-url',
@@ -104,7 +116,7 @@ describe('Application system payments API', () => {
     const response = await server
       .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
       .send({
-        chargeItemCode: TARGET_CHARGE_ITEM_CODE,
+        chargeItemCodes: [TARGET_CHARGE_ITEM_CODE],
       } as CreateChargeInput)
       .expect(201)
 

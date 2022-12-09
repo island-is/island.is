@@ -1,14 +1,15 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import {
   capitalize,
-  caseTypes,
+  indictmentSubtypes,
   formatDOB,
+  formatDate,
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
 import { Defendant } from '../modules/defendant'
 import { Case } from '../modules/case'
-import { Alignment, PageLink, PdfDocument } from './pdf'
+import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
 
 export function formatDefendant(defendant: Defendant) {
   const defendantDOB = formatDOB(
@@ -27,7 +28,7 @@ export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
   caseFiles: (() => Promise<{
-    date: string
+    date: Date
     name: string
     chapter: number
     buffer?: Buffer
@@ -48,7 +49,7 @@ export const createCaseFilesRecord = async (
   const chapters = [0, 1, 2, 3, 4, 5]
   const pageReferences: {
     chapter: number
-    date: string
+    date: Date
     name: string
     pageNumber: number
     pageLink: PageLink
@@ -90,7 +91,6 @@ export const createCaseFilesRecord = async (
   }
 
   pdfDocument
-    .addPageNumbers()
     .addPage(0)
     .addText(
       `${theCase.creatingProsecutor?.institution?.name.toUpperCase()}`,
@@ -121,20 +121,63 @@ export const createCaseFilesRecord = async (
     )
   }
 
+  const subtypes =
+    (theCase.indictmentSubtypes &&
+      theCase.indictmentSubtypes[policeCaseNumber]) ??
+    []
+
   pdfDocument
     .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
       bold: true,
       marginTop: 1,
       newLine: false,
     })
-    .addText(capitalize(caseTypes[theCase.type]), textFontSize, {
-      position: { x: defendantIndent },
-    })
-    .addText(
-      formatMessage(caseFilesRecord.tableOfContentsHeading),
-      subtitleFontSize,
-      { alignment: Alignment.Center, bold: true, marginTop: 9 },
+    .addParagraph(
+      capitalize(
+        subtypes.map((subtype) => indictmentSubtypes[subtype]).join(', '),
+      ),
+      textFontSize,
+      defendantIndent,
     )
+
+  if (theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]) {
+    pdfDocument
+      .addText(formatMessage(caseFilesRecord.crimeScene), textFontSize, {
+        bold: true,
+        marginTop: 1,
+        newLine: false,
+      })
+      .addParagraph(
+        `${theCase.crimeScenes[policeCaseNumber].place ?? ''}${
+          theCase.crimeScenes[policeCaseNumber].place &&
+          theCase.crimeScenes[policeCaseNumber].date
+            ? ' - '
+            : ''
+        }${
+          theCase.crimeScenes[policeCaseNumber].date
+            ? formatDate(
+                theCase.crimeScenes[policeCaseNumber].date,
+                'dd.MM.yyyy',
+              )
+            : ''
+        }`,
+        textFontSize,
+        defendantIndent,
+      )
+  }
+
+  pdfDocument.addText(
+    formatMessage(caseFilesRecord.tableOfContentsHeading),
+    subtitleFontSize,
+    { alignment: Alignment.Center, bold: true, marginTop: 9 },
+  )
+
+  const pageCount = pdfDocument.getPageCount()
+  const tableOfContentsLineReferences: {
+    lineLink: LineLink
+    pageNumber: number
+    pageLink: PageLink
+  }[] = []
 
   for (const chapter of chapters) {
     if (chapter === 0) {
@@ -158,23 +201,45 @@ export const createCaseFilesRecord = async (
     for (const pageReference of pageReferences.filter(
       (pageReference) => pageReference.chapter === chapter,
     )) {
-      pdfDocument
-        .addText(`${pageReference.pageNumber}`, textFontSize, {
-          alignment: Alignment.Right,
+      tableOfContentsLineReferences.push({
+        lineLink: pdfDocument
+          .addText('', textFontSize, { newLine: false })
+          .getCurrentLineLink(),
+        pageNumber: pageReference.pageNumber,
+        pageLink: pageReference.pageLink,
+      })
+
+      pdfDocument.addText(
+        `${formatDate(pageReference.date, 'dd.MM.yyyy')} - ${
+          pageReference.name
+        }`,
+        textFontSize,
+        {
+          maxWidth: 400,
           pageLink: pageReference.pageLink,
-          newLine: false,
-        })
-        .addText(
-          `${pageReference.date} - ${pageReference.name}`,
-          textFontSize,
-          {
-            maxWidth: 400,
-            pageLink: pageReference.pageLink,
-            position: { x: pageReferenceIndent },
-          },
-        )
+          position: { x: pageReferenceIndent },
+        },
+      )
     }
   }
+
+  const tableOfContentsPageCount = pdfDocument.getPageCount() - pageCount
+
+  for (const lineReference of tableOfContentsLineReferences) {
+    pdfDocument
+      .setCurrentLine(lineReference.lineLink)
+      .addText(
+        `${tableOfContentsPageCount + lineReference.pageNumber + 1}`,
+        textFontSize,
+        {
+          alignment: Alignment.Right,
+          pageLink: lineReference.pageLink,
+          newLine: false,
+        },
+      )
+  }
+
+  pdfDocument.addPageNumbers()
 
   return pdfDocument.getContents()
 }

@@ -97,7 +97,7 @@ export class Delegation extends Model<
   @UpdatedAt
   readonly modified?: Date
 
-  @HasMany(() => DelegationScope)
+  @HasMany(() => DelegationScope, { onDelete: 'cascade' })
   delegationScopes?: NonAttribute<DelegationScope[]>
 
   toDTO(): DelegationDTO {

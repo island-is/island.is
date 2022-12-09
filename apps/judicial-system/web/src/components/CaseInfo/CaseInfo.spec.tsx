@@ -9,7 +9,7 @@ const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
 
 describe('getDefendantLabel - Indictment', () => {
   const fn = (defendants: Defendant[]) =>
-    getDefendantLabel(formatMessage, defendants, CaseType.THEFT)
+    getDefendantLabel(formatMessage, defendants, CaseType.INDICTMENT)
 
   test('should render label for female', () => {
     const defendants = [{ gender: Gender.FEMALE }] as Defendant[]

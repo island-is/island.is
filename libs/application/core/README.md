@@ -166,15 +166,21 @@ You can see a simple example from the reference-template [here](https://github.c
 
 #### Status
 
-To define the _final_ state of your application, XState has a property called `type: 'final'`. It can be defined multiple times for your application states. For example, the Meta Application (link above) is either approved or rejected, and in both case the application is in its final state. A final state is final, and there are no events that lead out of it.
+We have a few different statuses that an application can be in. They are:
 
-This `type: 'final'` is important because, out of it, we define a `status` column in the application model. This `status` is the same for every application template and give us the general progress of the application. We have, at the moment, 3 different status as follow, and let us filters and list applications by status type.
+- `draft` - The application has been created but not submitted.
+- `inprogress` - The application has been submitted to another entity other than the applicant and has yet to receive some information from that party in order to be completed.
+- `completed` - The application has been submitted and requires no further action and is finished.
+- `rejected` - The application has been rejected by a 3rd party and is finished.
+- `approved` - The application has been approved by a 3rd party and is finished.
 
 ```typescript
 export enum ApplicationStatus {
   IN_PROGRESS = 'inprogress',
   COMPLETED = 'completed',
   REJECTED = 'rejected',
+  APPROVED = 'approved',
+  DRAFT = 'draft',
 }
 ```
 
@@ -188,12 +194,14 @@ type StateLifeCycle =
       // Controls visibility from my pages + /umsoknir/:type when in current state
       shouldBeListed: boolean
       shouldBePruned: false
+      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
   | {
       shouldBeListed: boolean
       shouldBePruned: true
       // If set to a number prune date will equal current timestamp + whenToPrune (ms)
       whenToPrune: number | ((application: Application) => Date)
+      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 ```
 

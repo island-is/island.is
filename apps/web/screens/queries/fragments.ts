@@ -175,6 +175,7 @@ export const slices = gql`
       answer {
         ...BaseSlices
       }
+      publishDate
     }
   }
 
@@ -603,6 +604,16 @@ export const slices = gql`
     id
     title
     powerBiEmbedProps
+    workspaceId
+    reportId
+    owner
+  }
+
+  fragment TableSliceFields on TableSlice {
+    __typename
+    id
+    title
+    tableContent
   }
 
   fragment EmailSignupFields on EmailSignup {
@@ -611,6 +622,7 @@ export const slices = gql`
     title
     description
     formFields {
+      id
       title
       name
       placeholder
@@ -656,6 +668,7 @@ export const slices = gql`
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
+    ...TableSliceFields
     ...EmailSignupFields
   }
 
@@ -674,7 +687,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-export const nestedAccordionAndFaqListFields = `
+export const nestedFields = `
   ... on AccordionSlice {
     ...AccordionSliceFields
     accordionItems {
@@ -692,6 +705,20 @@ export const nestedAccordionAndFaqListFields = `
       id
       question
       answer {
+        ...AllSlices
+      }
+      publishDate
+    }
+  }
+  ... on TabSection {
+    ...TabSectionFields 
+    tabs {
+      tabTitle
+      contentTitle
+      image {
+        ...ImageFields
+      }
+      body {
         ...AllSlices
       }
     }

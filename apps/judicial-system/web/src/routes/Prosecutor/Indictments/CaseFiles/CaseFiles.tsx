@@ -129,7 +129,9 @@ const CaseFiles: React.FC = () => {
           />
           <InputFileUpload
             fileList={files.filter(
-              (file) => file.category === CaseFileCategory.CASE_FILE,
+              (file) =>
+                file.category === CaseFileCategory.CASE_FILE &&
+                !file.policeCaseNumber,
             )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
@@ -144,7 +146,7 @@ const CaseFiles: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
         />

@@ -11,3 +11,14 @@ export interface Discount {
   nationalId: string
   expiresIn: number
 }
+
+export interface ExplicitCode {
+  id: string
+  code: string
+  employeeId: string
+  customerId: string
+  flightId?: string
+  comment: string
+  created: Date
+  modified: Date
+}

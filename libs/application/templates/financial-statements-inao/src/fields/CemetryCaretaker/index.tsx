@@ -24,7 +24,15 @@ import {
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import * as styles from './CemetryCaretaker.css'
 import { IdentityQuery } from '../../graphql'
-import { BOARDMEMEBER, CARETAKER, VALIDATOR } from '../../lib/constants'
+import {
+  BOARDMEMEBER,
+  CARETAKER,
+  APPLICANTASMEMBER,
+  ACTORASCARETAKER,
+  ACTORLONEBOARDMEMBER,
+} from '../../lib/constants'
+import { BoardMember } from '../../types'
+import { getBoardmembersAndCaretakers } from '../../lib/utils/helpers'
 
 type Props = {
   id: string
@@ -32,12 +40,6 @@ type Props = {
   answers: FinancialStatementsInao
   handleRemoveCaretaker: (index: number) => void
   errors: RecordObject<unknown> | undefined
-}
-
-type BoardMember = {
-  nationalId: string
-  name: string
-  role: string
 }
 
 const CareTakerRepeaterItem = ({
@@ -187,22 +189,48 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   useEffect(() => {
     if (fields.length === 0) handleAddCaretaker()
   }, [fields, handleAddCaretaker])
+
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
-      const caretakers = values.cemetryCaretaker
+      const actors = application.applicantActors
+      const currentActor: string = actors[actors.length - 1]
+      const allMembers = values.cemetryCaretaker
+      const { careTakers, boardMembers } = getBoardmembersAndCaretakers(
+        allMembers,
+      )
+      const caretakersIncludeActor =
+        careTakers.filter((careTaker) => careTaker === currentActor).length > 0
+
+      const boardMembersIncludeActor =
+        boardMembers.filter((boardMember) => boardMember === currentActor)
+          .length > 0
+
       const includesApplicant =
-        caretakers.filter(
+        allMembers.filter(
           (member: BoardMember) => member.nationalId === application.applicant,
         ).length > 0
 
-      if (includesApplicant) {
-        setError(VALIDATOR, {
+      if (caretakersIncludeActor) {
+        setError(ACTORASCARETAKER, {
+          type: 'custom',
+          message: formatMessage(m.errorcaretakerCanNotIncludeActor),
+        })
+        return [false, formatMessage(m.errorcaretakerCanNotIncludeActor)]
+      } else if (boardMembersIncludeActor && boardMembers.length <= 1) {
+        setError(ACTORLONEBOARDMEMBER, {
+          type: 'custom',
+          message: formatMessage(m.errorcaretakerCanNotIncludeActor),
+        })
+        return [false, formatMessage(m.errorcaretakerCanNotIncludeActor)]
+      } else if (includesApplicant) {
+        setError(APPLICANTASMEMBER, {
           type: 'custom',
           message: formatMessage(m.errormemberCanNotIncludeApplicant),
         })
         return [false, formatMessage(m.errormemberCanNotIncludeApplicant)]
+      } else {
+        return [true, null]
       }
-      return [true, null]
     })
 
   return (
@@ -241,9 +269,21 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
           }
         />
       ) : null}
-      {errors && errors.validator ? (
+      {errors && errors.applicantasmember ? (
         <InputError
           errorMessage={formatMessage(m.errormemberCanNotIncludeApplicant)}
+        />
+      ) : null}
+      {errors && errors.actorascaretaker ? (
+        <InputError
+          errorMessage={formatMessage(m.errorcaretakerCanNotIncludeActor)}
+        />
+      ) : null}
+      {errors && errors.actorloneboardmember ? (
+        <InputError
+          errorMessage={formatMessage(
+            m.errorBoardmembersCanNotJustIncludeActor,
+          )}
         />
       ) : null}
     </GridContainer>

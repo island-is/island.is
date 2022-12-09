@@ -20,7 +20,7 @@ import { format as formatKennitala } from 'kennitala'
 export const FormPrimary: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: m.prereqTitle,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'conditions',

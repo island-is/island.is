@@ -2,7 +2,6 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
-  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -13,6 +12,10 @@ import { EstateAsset, EstateMember } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 import { format as formatNationalId } from 'kennitala'
+import {
+  formatBankInfo,
+  formatCurrency,
+} from '@island.is/application/ui-components'
 
 export const overview = buildSection({
   id: 'overviewResidencePermit',
@@ -55,10 +58,12 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               ((answers.estate as any).estateMembers ?? []).map(
-                (member: EstateMember) => ({
+                (member: EstateMember | any) => ({
                   title: member.name,
                   description: [
-                    formatNationalId(member.nationalId),
+                    member.nationalId !== ''
+                      ? formatNationalId(member.nationalId)
+                      : member.dateOfBirth,
                     member.relation,
                   ],
                 }),
@@ -90,7 +95,9 @@ export const overview = buildSection({
               ((answers.estate as any).assets ?? []).map(
                 (asset: EstateAsset) => ({
                   title: asset.description,
-                  description: [asset.assetNumber],
+                  description: [
+                    `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                  ],
                 }),
               ),
           },
@@ -114,8 +121,12 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'overviewInventoryValue',
           title: m.inventoryValueTitle,
-          description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'inventoryValue'),
+          description: (application: Application) => {
+            const value =
+              getValueViaPath<string>(application.answers, 'inventoryValue') ??
+              ''
+            return formatCurrency(value)
+          },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -140,7 +151,11 @@ export const overview = buildSection({
               ((answers.estate as any)?.vehicles ?? []).map(
                 (vehicle: EstateAsset) => ({
                   title: vehicle.description,
-                  description: [vehicle.assetNumber],
+                  description: [
+                    m.propertyNumber.defaultMessage +
+                      ': ' +
+                      vehicle.assetNumber,
+                  ],
                 }),
               ),
           },
@@ -154,17 +169,25 @@ export const overview = buildSection({
           marginBottom: 'gutter',
           space: 'gutter',
         }),
-        buildKeyValueField({
-          label: m.bankAccount,
-          value: ({ answers }) =>
-            (answers.bankAccounts as any)[0].accountNumber,
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.bankAccountBalance,
-          value: ({ answers }) => (answers.bankAccounts as any)[0].balance,
-          width: 'half',
-        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'bankAccountsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              ((answers.bankAccounts as any) ?? []).map((account: any) => ({
+                title: formatBankInfo(account.accountNumber),
+                description: [
+                  `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
+                    account.balance,
+                  )}`,
+                ],
+              })),
+          },
+        ),
         buildDividerField({}),
         buildDescriptionField({
           id: 'overviewClaimsInfoTitle',
@@ -174,16 +197,25 @@ export const overview = buildSection({
           marginBottom: 'gutter',
           space: 'gutter',
         }),
-        buildKeyValueField({
-          label: m.claimsTitle,
-          value: ({ answers }) => (answers.claims as any)[0].publisher,
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.claimsAmount,
-          value: ({ answers }) => (answers.claims as any)[0].value,
-          width: 'half',
-        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'claimsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              ((answers.claims as any) ?? []).map((claim: any) => ({
+                title: claim.publisher,
+                description: [
+                  `${m.claimsAmount.defaultMessage}: ${formatCurrency(
+                    claim.value,
+                  )}`,
+                ],
+              })),
+          },
+        ),
         buildDividerField({}),
         buildDescriptionField({
           id: 'overviewStocksTitle',
@@ -193,31 +225,30 @@ export const overview = buildSection({
           marginBottom: 'gutter',
           space: 'gutter',
         }),
-        buildKeyValueField({
-          label: m.stocksOrganization,
-          value: ({ answers }) => (answers.stocks as any)[0].organization,
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.stocksSsn,
-          value: ({ answers }) => (answers.stocks as any)[0].ssn,
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.stocksFaceValue,
-          value: ({ answers }) => (answers.stocks as any)[0].faceValue,
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.stocksRateOfChange,
-          value: ({ answers }) => (answers.stocks as any)[0].rateOfExchange,
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.stocksValue,
-          value: ({ answers }) => (answers.stocks as any)[0].value,
-          width: 'half',
-        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'stocksCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              ((answers.stocks as any) ?? []).map((stock: any) => ({
+                title: stock.organization,
+                description: [
+                  `${m.stocksSsn.defaultMessage}: ${formatNationalId(
+                    stock.ssn,
+                  )}`,
+                  `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
+                  `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
+                  `${m.stocksValue.defaultMessage}: ${formatCurrency(
+                    stock.value,
+                  )}`,
+                ],
+              })),
+          },
+        ),
         buildDividerField({}),
         buildDescriptionField({
           id: 'overviewOtherAssetsHeader',
@@ -237,8 +268,14 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'overviewMOtherAssetsValue',
           title: m.otherAssetsValue,
-          description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'otherAssetsValue'),
+          description: (application: Application) => {
+            const value =
+              getValueViaPath<string>(
+                application.answers,
+                'otherAssetsValue',
+              ) ?? ''
+            return formatCurrency(value)
+          },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -265,11 +302,15 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'overviewMoneyAndDepositValue',
           title: m.moneyAndDepositValue,
-          description: (application: Application) =>
-            getValueViaPath<string>(
-              application.answers,
-              'moneyAndDepositBoxesValue',
-            ),
+          description: (application: Application) => {
+            const value =
+              getValueViaPath<string>(
+                application.answers,
+                'moneyAndDepositBoxesValue',
+              ) ?? ''
+
+            return formatCurrency(value)
+          },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -287,22 +328,26 @@ export const overview = buildSection({
           titleVariant: 'h3',
           marginBottom: 'gutter',
         }),
-        buildKeyValueField({
-          label: m.debtsCreditorName,
-          value: ({ answers }) => (answers.debts as any)[0].creditorName,
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.debtsSsn,
-          value: ({ answers }) =>
-            formatNationalId((answers.debts as any)[0].ssn),
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.debtsBalance,
-          value: ({ answers }) => (answers.debts as any)[0].balance,
-          width: 'half',
-        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'debtsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              ((answers.debts as any) ?? []).map((debt: any) => ({
+                title: debt.creditorName,
+                description: [
+                  `${m.debtsSsn.defaultMessage}: ${formatNationalId(debt.ssn)}`,
+                  `${m.debtsBalance.defaultMessage}: ${formatCurrency(
+                    debt.balance,
+                  )}`,
+                ],
+              })),
+          },
+        ),
         buildSubmitField({
           id: 'residencePermit.submit',
           title: '',

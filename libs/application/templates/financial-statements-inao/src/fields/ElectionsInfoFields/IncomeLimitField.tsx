@@ -9,10 +9,11 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { getFinancialLimit } from '../../graphql'
-import { ABOUTIDS, GREATER, LESS, USERTYPE } from '../../lib/constants'
+import { ABOUTIDS, GREATER } from '../../lib/constants'
+import { FSIUSERTYPE, LESS } from '../../types'
 
 type IncomeLimitProps = {
-  clientType?: USERTYPE
+  clientType?: FSIUSERTYPE
   year?: string
 }
 

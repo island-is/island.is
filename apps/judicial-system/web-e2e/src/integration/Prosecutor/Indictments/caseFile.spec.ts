@@ -1,7 +1,7 @@
 import {
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
-  INDICTMENTS_OVERVIEW_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
+  INDICTMENTS_PROCESSING_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
@@ -15,7 +15,7 @@ import {
 
 describe(`${INDICTMENTS_POLICE_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.MURDER)
+    const caseData = mockCase(CaseType.INDICTMENT)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
@@ -34,7 +34,7 @@ describe(`${INDICTMENTS_POLICE_CASE_FILES_ROUTE}/:id`, () => {
   })
 
   it('should show an success alert if all files have been moved under chapters', () => {
-    const caseData = mockCase(CaseType.MURDER)
+    const caseData = mockCase(CaseType.INDICTMENT)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
@@ -65,6 +65,6 @@ describe(`${INDICTMENTS_POLICE_CASE_FILES_ROUTE}/:id`, () => {
 
   it('should navigate to the correct page on continue', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should('contain', INDICTMENTS_OVERVIEW_ROUTE)
+    cy.url().should('contain', INDICTMENTS_PROCESSING_ROUTE)
   })
 })

@@ -20,7 +20,7 @@ import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 export const form: Form = buildForm({
   id: 'estateWithoutProperty',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
@@ -109,7 +109,7 @@ export const form: Form = buildForm({
             buildKeyValueField({
               label: m.acceptDebtsLabel,
               value: ({ answers: { acceptDebts } }) =>
-                (acceptDebts as string[]).includes(YES) ? YES : NO,
+                (acceptDebts as string[]).includes(YES) ? 'Já' : 'Nei',
             }),
             buildSubmitField({
               id: 'estateWithNoProperty.submit',

@@ -53,6 +53,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
@@ -84,6 +85,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       },
       [States.submitted]: {
         meta: {
+          status: 'completed',
           name: States.submitted,
           actionCard: {
             title: application.name,

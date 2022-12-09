@@ -1,10 +1,15 @@
 import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import {
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseScheduledGuard } from '../../guards/caseScheduled.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
+import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Get request pdf guards', () => {
@@ -18,8 +23,8 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     )
   })
 
-  it('should have five guards', () => {
-    expect(guards).toHaveLength(5)
+  it('should have six guards', () => {
+    expect(guards).toHaveLength(6)
   })
 
   describe('JwtAuthGuard', () => {
@@ -59,14 +64,29 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     })
   })
 
+  describe('CaseTypeGuerd', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = guards[3]
+    })
+
+    it('should have CaseTypeGuard as quard 4', () => {
+      expect(guard).toBeInstanceOf(CaseTypeGuard)
+      expect(guard).toEqual({
+        allowedCaseTypes: [...restrictionCases, ...investigationCases],
+      })
+    })
+  })
+
   describe('CaseScheduledGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[3]()
+      guard = new guards[4]()
     })
 
-    it('should have CaseScheduledGuard as quard 4', () => {
+    it('should have CaseScheduledGuard as quard 5', () => {
       expect(guard).toBeInstanceOf(CaseScheduledGuard)
     })
   })
@@ -75,10 +95,10 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[4]()
+      guard = new guards[5]()
     })
 
-    it('should have CaseDefenderGuard as quard 4', () => {
+    it('should have CaseDefenderGuard as quard 6', () => {
       expect(guard).toBeInstanceOf(CaseDefenderGuard)
     })
   })

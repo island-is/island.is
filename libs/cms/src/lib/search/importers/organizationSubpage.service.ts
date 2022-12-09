@@ -52,6 +52,7 @@ export class OrganizationSubpageSyncService
         } catch (error) {
           logger.warn('Failed to import organization subpage', {
             error: error.message,
+            id: entry?.sys?.id,
           })
           return false
         }

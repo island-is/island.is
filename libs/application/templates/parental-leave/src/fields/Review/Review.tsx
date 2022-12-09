@@ -42,6 +42,7 @@ import {
   getOtherParentId,
   getOtherParentName,
   formatPeriods,
+  getLastDayOfLastMonth,
 } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
@@ -56,6 +57,7 @@ import {
   NO_UNION,
   NO_PRIVATE_PENSION_FUND,
   PARENTAL_LEAVE,
+  SINGLE,
 } from '../../constants'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
@@ -67,7 +69,6 @@ import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
-import { currentDateStartTime } from '../../lib/parentalLeaveTemplateUtils'
 
 interface ReviewScreenProps {
   application: Application
@@ -148,7 +149,7 @@ export const Review: FC<ReviewScreenProps> = ({
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  const hasSelectedOtherParent = otherParent !== NO
+  const hasSelectedOtherParent = otherParent !== NO && otherParent !== SINGLE
 
   const otherParentWillApprove = requiresOtherParentApproval(
     application.answers,
@@ -329,12 +330,12 @@ export const Review: FC<ReviewScreenProps> = ({
         isEditable={editable && isPrimaryParent}
         editAction={() => goToScreen?.('otherParentObj')}
       >
-        {otherParent === NO && (
+        {(otherParent === NO || otherParent === SINGLE) && (
           <RadioValue
             label={formatMessage(
               parentalLeaveFormMessages.shared.otherParentTitle,
             )}
-            value={otherParent}
+            value={NO}
           />
         )}
 
@@ -714,7 +715,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <ReviewGroup
         isEditable={editable}
         canCloseEdit={groupHasNoErrors([
-          'usePersonalAllowance',
+          'personalAllowance.usePersonalAllowance',
           'personalAllowance.useAsMuchAsPossible',
           'personalAllowance.usage',
         ])}
@@ -725,8 +726,8 @@ export const Review: FC<ReviewScreenProps> = ({
             </Label>
 
             <RadioController
-              id="usePersonalAllowance"
-              name="usePersonalAllowance"
+              id="personalAllowance.usePersonalAllowance"
+              name="personalAllowance.usePersonalAllowance"
               defaultValue={usePersonalAllowance}
               split="1/2"
               options={[
@@ -749,7 +750,7 @@ export const Review: FC<ReviewScreenProps> = ({
                   usePersonalAllowance: s as YesOrNo,
                 }))
               }}
-              error={hasError('usePersonalAllowance')}
+              error={hasError('personalAllowance.usePersonalAllowance')}
             />
 
             {usePersonalAllowance === YES && (
@@ -983,7 +984,9 @@ export const Review: FC<ReviewScreenProps> = ({
       >
         <SummaryTimeline application={application} />
         {(!applicationFundId || applicationFundId === '') &&
-          new Date(periods[0].startDate).getTime() < currentDateStartTime() && (
+          periods.length > 0 &&
+          new Date(periods[0].startDate).getTime() <
+            getLastDayOfLastMonth().getTime() && (
             <p
               style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}
             >

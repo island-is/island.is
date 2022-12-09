@@ -24,6 +24,7 @@ export const Total = ({ name, total, label, title }: PropTypes) => {
         id={name}
         name={name}
         label={label}
+        rightAlign
         readOnly
         backgroundColor="blue"
         currency
