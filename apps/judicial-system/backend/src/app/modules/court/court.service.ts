@@ -9,10 +9,11 @@ import {
   IndictmentSubtypeMap,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
+import { User } from '../user'
 
 export enum CourtDocumentFolder {
   REQUEST_DOCUMENTS = 'Krafa og greinargerð',
@@ -166,7 +167,7 @@ export class CourtService {
     fileName: string,
     fileType: string,
     content: Buffer,
-    user?: User,
+    user?: TUser,
   ): Promise<string> {
     return this.courtClientService
       .uploadStream(courtId, {
@@ -204,7 +205,7 @@ export class CourtService {
   }
 
   async createCourtCase(
-    user: User,
+    user: TUser,
     caseId: string,
     courtId = '',
     type: CaseType,
@@ -251,7 +252,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: User,
+    user: TUser,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -283,6 +284,41 @@ export class CourtService {
             recipients,
             fromEmail,
             fromName,
+          },
+          reason,
+        )
+
+        throw reason
+      })
+  }
+
+  async updateCaseWithDefendant(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    defendantNationalId: string,
+    defenderEmail?: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .updateCaseWithDefendant(courtId, {
+        userIdNumber: user.nationalId,
+        caseId: courtCaseNumber,
+        defendant: {
+          idNumber: defendantNationalId,
+          lawyerEmail: defenderEmail,
+        },
+      })
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to update case with defendant',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            defenderEmail,
           },
           reason,
         )

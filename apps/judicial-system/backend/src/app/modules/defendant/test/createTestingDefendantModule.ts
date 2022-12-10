@@ -5,12 +5,17 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
+import { UserService } from '../../user'
+import { CourtService } from '../../court'
 import { CaseService } from '../../case'
 import { Defendant } from '../models/defendant.model'
 import { DefendantService } from '../defendant.service'
 import { DefendantController } from '../defendant.controller'
+import { InternalDefendantController } from '../internalDefendant.controller'
 
-jest.mock('../../case/case.service.ts')
+jest.mock('../../user/user.service')
+jest.mock('../../court/court.service')
+jest.mock('../../case/case.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
@@ -20,8 +25,10 @@ export const createTestingDefendantModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [DefendantController],
+    controllers: [DefendantController, InternalDefendantController],
     providers: [
+      UserService,
+      CourtService,
       CaseService,
       {
         provide: LOGGER_PROVIDER,
@@ -46,6 +53,10 @@ export const createTestingDefendantModule = async () => {
     ],
   }).compile()
 
+  const userService = defendantModule.get<UserService>(UserService)
+
+  const courtService = defendantModule.get<CourtService>(CourtService)
+
   const defendantModel = await defendantModule.resolve<typeof Defendant>(
     getModelToken(Defendant),
   )
@@ -58,9 +69,16 @@ export const createTestingDefendantModule = async () => {
     DefendantController,
   )
 
+  const internalDefendantController = defendantModule.get<InternalDefendantController>(
+    InternalDefendantController,
+  )
+
   return {
+    userService,
+    courtService,
     defendantModel,
     defendantService,
     defendantController,
+    internalDefendantController,
   }
 }

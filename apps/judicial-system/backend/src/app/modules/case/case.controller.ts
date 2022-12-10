@@ -139,6 +139,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case> {
@@ -188,7 +189,10 @@ export class CaseController {
     ) {
       // The court case number has changed, so the request must be uploaded to the new court case
       // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase)
+      this.caseService.addCaseConnectedToCourtCaseMessagesToQueue(
+        updatedCase,
+        user,
+      )
     }
 
     return updatedCase

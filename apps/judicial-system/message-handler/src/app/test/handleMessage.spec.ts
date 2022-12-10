@@ -4,11 +4,12 @@ import fetch from 'node-fetch'
 import type { Logger } from '@island.is/logging'
 import { NotificationType } from '@island.is/judicial-system/types'
 import {
-  Message,
+  CaseMessage,
   CaseFileMessage,
   MessageService,
   MessageType,
   PoliceCaseMessage,
+  DefendantMessage,
 } from '@island.is/judicial-system/message'
 
 import { appModuleConfig } from '../app.config'
@@ -25,7 +26,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (message: Message) => Promise<Then>
+type GivenWhenThen = (message: CaseMessage) => Promise<Then>
 
 describe('MessageHandlerService - Handle message', () => {
   const config = appModuleConfig()
@@ -34,7 +35,7 @@ describe('MessageHandlerService - Handle message', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    givenWhenThen = async (message: Message) => {
+    givenWhenThen = async (message: CaseMessage) => {
       const messageHandlerService = new MessageHandlerService(
         (undefined as unknown) as MessageService,
         (undefined as unknown) as CaseDeliveryService,
@@ -52,6 +53,44 @@ describe('MessageHandlerService - Handle message', () => {
 
       return then
     }
+  })
+
+  describe('deliver defendant to court', () => {
+    const defendantId = uuid()
+    const userId = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = (fetch as unknown) as jest.Mock
+      mockFetch.mockResolvedValueOnce(
+        Promise.resolve({
+          ok: true,
+          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
+        }),
+      )
+
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+        caseId,
+        defendantId,
+        userId,
+      } as DefendantMessage)
+    })
+
+    it('should deliver defendant to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/defendant/${defendantId}/deliverToCourt`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
   })
 
   describe('deliver case file to court', () => {

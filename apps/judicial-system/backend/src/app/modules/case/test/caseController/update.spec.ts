@@ -7,6 +7,7 @@ import {
   indictmentCases,
   investigationCases,
   restrictionCases,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { FileService } from '../../../file'
@@ -21,11 +22,16 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
+  user: User,
   theCase: Case,
   caseToUpdate: UpdateCaseDto,
 ) => Promise<Then>
 
 describe('CaseController - Update', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+  const defendantId1 = uuid()
+  const defendantId2 = uuid()
   const caseId = uuid()
   const policeCaseNumber = uuid()
   const courtCaseNumber = uuid()
@@ -34,6 +40,7 @@ describe('CaseController - Update', () => {
   const caseFile = { id: caseFileId, caseId, policeCaseNumber }
   const theCase = {
     id: caseId,
+    defendants: [{ id: defendantId1 }, { id: defendantId2 }],
     policeCaseNumbers,
     caseFiles: [caseFile],
     courtCaseNumber,
@@ -71,13 +78,19 @@ describe('CaseController - Update', () => {
 
     givenWhenThen = async (
       caseId: string,
+      user: User,
       theCase: Case,
       caseToUpdate: UpdateCaseDto,
     ) => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.update(caseId, theCase, caseToUpdate)
+        then.result = await caseController.update(
+          caseId,
+          user,
+          theCase,
+          caseToUpdate,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -95,7 +108,7 @@ describe('CaseController - Update', () => {
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
-      then = await givenWhenThen(caseId, theCase, caseToUpdate)
+      then = await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
     it('should update the case', () => {
@@ -116,7 +129,7 @@ describe('CaseController - Update', () => {
     } as UpdateCaseDto
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, caseToUpdate)
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
     it('should delete a case file', () => {
@@ -138,7 +151,7 @@ describe('CaseController - Update', () => {
     } as UpdateCaseDto
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, caseToUpdate)
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
     it('should update a case file', () => {
@@ -162,14 +175,28 @@ describe('CaseController - Update', () => {
         const mockFindOne = mockCaseModel.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
-        await givenWhenThen(caseId, theCase, caseToUpdate)
+        await givenWhenThen(caseId, user, theCase, caseToUpdate)
       })
 
       it('should post to queue', () => {
-        expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-          type: MessageType.DELIVER_REQUEST_TO_COURT,
-          caseId,
-        })
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.DELIVER_REQUEST_TO_COURT,
+            caseId,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            caseId,
+            defendantId: defendantId1,
+            userId: user.id,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            caseId,
+            defendantId: defendantId2,
+            userId: user.id,
+          },
+        ])
       })
     },
   )
@@ -202,7 +229,7 @@ describe('CaseController - Update', () => {
         const mockFindOne = mockCaseModel.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
-        await givenWhenThen(caseId, theCase, caseToUpdate)
+        await givenWhenThen(caseId, user, theCase, caseToUpdate)
       })
 
       it('should post to queue', () => {
@@ -246,7 +273,7 @@ describe('CaseController - Update', () => {
     const caseToUpdate = { courtCaseNumber }
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, caseToUpdate)
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
     it('should not post to queue', () => {

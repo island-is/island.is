@@ -20,7 +20,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
-  Message,
+  CaseMessage,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -58,7 +58,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { caseModuleConfig } from './case.config'
 
-export const includes: Includeable[] = [
+export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   { model: Institution, as: 'court' },
   {
@@ -99,10 +99,8 @@ export const includes: Includeable[] = [
   },
 ]
 
-export const defendantsOrder: OrderItem = [
-  { model: Defendant, as: 'defendants' },
-  'created',
-  'ASC',
+export const order: OrderItem[] = [
+  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
 ]
 
 @Injectable()
@@ -187,7 +185,7 @@ export class CaseService {
     theCase: Case,
   ): Promise<void> {
     const messages = theCase.policeCaseNumbers
-      .map<Message>((policeCaseNumber) => ({
+      .map<CaseMessage>((policeCaseNumber) => ({
         type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
         caseId: theCase.id,
         policeCaseNumber,
@@ -224,19 +222,33 @@ export class CaseService {
     ])
   }
 
-  addCaseConnectedToCourtCaseMessagesToQueue(theCase: Case): Promise<void> {
+  addCaseConnectedToCourtCaseMessagesToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     return isIndictmentCase(theCase.type)
       ? this.addIndictmentCaseConnectedToCourtCaseMessagesToQueue(theCase)
-      : this.messageService.sendMessageToQueue({
-          type: MessageType.DELIVER_REQUEST_TO_COURT,
-          caseId: theCase.id,
-        })
+      : this.messageService.sendMessagesToQueue(
+          [
+            {
+              type: MessageType.DELIVER_REQUEST_TO_COURT,
+              caseId: theCase.id,
+            },
+          ].concat(
+            theCase.defendants?.map((defendant) => ({
+              type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+              caseId: theCase.id,
+              defendantId: defendant.id,
+              userId: user.id,
+            })) ?? [],
+          ),
+        )
   }
 
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
-      include: includes,
-      order: [defendantsOrder],
+      include,
+      order,
       where: {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
@@ -273,8 +285,8 @@ export class CaseService {
 
   getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
-      include: includes,
-      order: [defendantsOrder],
+      include,
+      order,
       where: getCasesQueryFilter(user),
     })
   }
@@ -749,7 +761,7 @@ export class CaseService {
     )) as Case
 
     // No need to wait for now, but may consider including this in a transaction with the database update later
-    this.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase)
+    this.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase, user)
 
     return updatedCase
   }

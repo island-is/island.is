@@ -16,7 +16,7 @@ import { MessageService } from '@island.is/judicial-system/message'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { defendantsOrder, includes } from '../../case.service'
+import { order, include } from '../../case.service'
 
 interface Then {
   result: Case
@@ -136,8 +136,8 @@ describe('CaseController - Transition', () => {
             expect(then.result).toBe(theCase)
           } else {
             expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-              include: includes,
-              order: [defendantsOrder],
+              include,
+              order,
               where: {
                 id: caseId,
                 state: { [Op.not]: CaseState.DELETED },
