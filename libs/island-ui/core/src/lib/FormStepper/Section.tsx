@@ -74,7 +74,6 @@ export const Section: FC<{
             number={sectionIndex + 1}
           />
         </Box>
-
         <Box
           paddingTop={[0, 0, 2]}
           paddingRight={[2, 2, 0]}

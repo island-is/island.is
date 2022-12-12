@@ -1,13 +1,19 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 
 import {
   Box,
   GridContainer,
   GridRow,
   GridColumn,
-  FormStepper,
+  FormStepperV2,
   AlertBanner,
+  Section,
+  Button,
+  linkStyles,
+  Text,
+  Link,
 } from '@island.is/island-ui/core'
 import {
   UserRole,
@@ -16,7 +22,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { sections, pageLayout } from '@island.is/judicial-system-web/messages'
+import { pageLayout } from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
@@ -38,6 +44,20 @@ interface PageProps {
   isValid?: boolean
 }
 
+const RenderSubsectionChild: React.FC<{
+  isActive: boolean
+}> = ({ isActive, children }) => (
+  <Box className={styles.name}>
+    <Text
+      as="span"
+      lineHeight="lg"
+      fontWeight={isActive ? 'semiBold' : 'light'}
+    >
+      {children}
+    </Text>
+  </Box>
+)
+
 const PageLayout: React.FC<PageProps> = ({
   workingCase,
   children,
@@ -52,6 +72,14 @@ const PageLayout: React.FC<PageProps> = ({
   const { user } = useContext(UserContext)
   const { getSections } = useSections(activeSubSection, isValid, onNavigationTo)
   const { formatMessage } = useIntl()
+  // Remove the extension parts of the formstepper if the user is not applying for an extension
+  const sections =
+    activeSection === Sections.EXTENSION ||
+    activeSection === Sections.JUDGE_EXTENSION
+      ? getSections(workingCase, activeSubSection, user)
+      : getSections(workingCase, activeSubSection, user).filter(
+          (_, index) => index <= 2,
+        )
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -114,26 +142,48 @@ const PageLayout: React.FC<PageProps> = ({
                   <Box marginBottom={7} display={['none', 'none', 'block']}>
                     <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
-                  <FormStepper
-                    // Remove the extension parts of the formstepper if the user is not applying for an extension
-                    sections={
-                      activeSection === Sections.EXTENSION ||
-                      activeSection === Sections.JUDGE_EXTENSION
-                        ? getSections(workingCase, activeSubSection, user)
-                        : getSections(
-                            workingCase,
-                            activeSubSection,
-                            user,
-                          ).filter((_, index) => index <= 2)
-                    }
-                    formName={formatMessage(
-                      isIndictmentCase(workingCase?.type)
-                        ? sections.indictmentTitle
-                        : sections.title,
-                      { caseType: workingCase?.type },
-                    )}
-                    activeSection={activeSection}
-                    activeSubSection={activeSubSection}
+                  <FormStepperV2
+                    sections={sections.map((section, index) => (
+                      <Section
+                        section={section.name}
+                        sectionIndex={index}
+                        isActive={index === activeSection}
+                        subSections={section.children.map(
+                          (subSection, index) => {
+                            return subSection.href ? (
+                              <Link href={subSection.href} underline="small">
+                                <RenderSubsectionChild
+                                  isActive={index === activeSubSection}
+                                >
+                                  {subSection.name}
+                                </RenderSubsectionChild>
+                              </Link>
+                            ) : subSection.onClick ? (
+                              <Box
+                                component="button"
+                                onClick={subSection.onClick}
+                                className={cn(
+                                  linkStyles.underlineVisibilities['hover'],
+                                  linkStyles.underlines['small'],
+                                )}
+                              >
+                                <RenderSubsectionChild
+                                  isActive={index === activeSubSection}
+                                >
+                                  {subSection.name}
+                                </RenderSubsectionChild>
+                              </Box>
+                            ) : (
+                              <RenderSubsectionChild
+                                isActive={index === activeSubSection}
+                              >
+                                {subSection.name}
+                              </RenderSubsectionChild>
+                            )
+                          },
+                        )}
+                      />
+                    ))}
                   />
                 </Box>
               </div>

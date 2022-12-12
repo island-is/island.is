@@ -1,4 +1,4 @@
-import React, { FC, ReactElement } from 'react'
+import { FC, ReactElement } from 'react'
 
 import { Box } from '../Box/Box'
 import Section from './Section'
