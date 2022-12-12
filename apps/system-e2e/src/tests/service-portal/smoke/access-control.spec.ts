@@ -112,3 +112,21 @@ test.describe('Service portal, in access control', () => {
     })
   })
 })
+
+test.describe.skip('Aðgangsstýring', () => {
+  for (const { testCase, home } of [
+    { testCase: 'Aðgangsstýring - kanna að notandi missi umboð', home: '/en' },
+    {
+      testCase: 'Aðgangsstýring - kanna að bara ákv. umboð sjáist',
+      home: '/en',
+    },
+    { testCase: 'Aðgangsstýring - Veita eitt umboð', home: '/en' },
+    { testCase: 'Aðgangstýring - kanna að öll umboð sjáist', home: '/en' },
+    { testCase: 'Aðgansttýring - eyða umboði', home: '/en' },
+    { testCase: 'Aðgangsstýring - Veita öll umboð', home: '/en' },
+  ]) {
+    test(testCase, () => {
+      return
+    })
+  }
+})

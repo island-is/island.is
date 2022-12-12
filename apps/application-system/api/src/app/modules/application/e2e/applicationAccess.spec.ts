@@ -72,6 +72,28 @@ describe('ApplicationAccesService', () => {
       ApplicationAccessService,
     )
   })
+  it('should show on Overview if delegations and flags are correct', async () => {
+    const allowedDelegation: AllowedDelegation = {
+      type: 'ProcurationHolder',
+      featureFlag: Features.testing,
+    }
+    const applicationInDraft = createApplication({
+      state: 'draft',
+      applicant: procurationHolderUser.nationalId,
+    })
+
+    const template = createApplicationTemplate({
+      allowedDelegations: [allowedDelegation],
+    })
+
+    const results = await applicationAccessService.shouldShowApplicationOnOverview(
+      applicationInDraft,
+      procurationHolderUser,
+      template,
+    )
+
+    expect(results).toBe(true)
+  })
 
   it('should return true for correct delegation type and feature flag for isDelegationAllowed ', async () => {
     const allowedDelegation: AllowedDelegation = {
@@ -117,6 +139,54 @@ describe('ApplicationAccesService', () => {
       allowedDelegation,
       procurationHolderUser,
     )
+    expect(results).toBe(false)
+  })
+
+  it('should not show on Overview if delegation is does not match', async () => {
+    const allowedDelegation: AllowedDelegation = {
+      type: 'LegalGuardian',
+      featureFlag: Features.testing,
+    }
+
+    const applicationInDraft = createApplication({
+      state: 'draft',
+      applicant: procurationHolderUser.nationalId,
+    })
+
+    const template = createApplicationTemplate({
+      allowedDelegations: [allowedDelegation],
+    })
+
+    const results = await applicationAccessService.shouldShowApplicationOnOverview(
+      applicationInDraft,
+      procurationHolderUser,
+      template,
+    )
+
+    expect(results).toBe(false)
+  })
+
+  it('should not show on Overview if user has delegation and feature flag returns false', async () => {
+    const allowedDelegation: AllowedDelegation = {
+      type: 'LegalGuardian',
+      featureFlag: Features.testing,
+    }
+
+    const applicationInDraft = createApplication({
+      state: 'draft',
+      applicant: legalGuardianUser.nationalId,
+    })
+
+    const template = createApplicationTemplate({
+      allowedDelegations: [allowedDelegation],
+    })
+
+    const results = await applicationAccessService.shouldShowApplicationOnOverview(
+      applicationInDraft,
+      procurationHolderUser,
+      template,
+    )
+
     expect(results).toBe(false)
   })
 
