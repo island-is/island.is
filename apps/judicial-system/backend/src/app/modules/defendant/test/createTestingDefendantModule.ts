@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
 import { UserService } from '../../user'
@@ -13,6 +14,7 @@ import { DefendantService } from '../defendant.service'
 import { DefendantController } from '../defendant.controller'
 import { InternalDefendantController } from '../internalDefendant.controller'
 
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
 jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
@@ -27,6 +29,7 @@ export const createTestingDefendantModule = async () => {
     ],
     controllers: [DefendantController, InternalDefendantController],
     providers: [
+      MessageService,
       UserService,
       CourtService,
       CaseService,
@@ -53,6 +56,8 @@ export const createTestingDefendantModule = async () => {
     ],
   }).compile()
 
+  const messageService = defendantModule.get<MessageService>(MessageService)
+
   const userService = defendantModule.get<UserService>(UserService)
 
   const courtService = defendantModule.get<CourtService>(CourtService)
@@ -74,6 +79,7 @@ export const createTestingDefendantModule = async () => {
   )
 
   return {
+    messageService,
     userService,
     courtService,
     defendantModel,

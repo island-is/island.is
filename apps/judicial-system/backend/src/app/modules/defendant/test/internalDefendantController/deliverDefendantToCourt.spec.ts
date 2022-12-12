@@ -1,4 +1,7 @@
 import { uuid } from 'uuidv4'
+
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
+
 import { User } from '../../../user'
 import { CourtService } from '../../../court'
 import { Case } from '../../../case'
@@ -25,7 +28,7 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   const userId = uuid()
   const user = { id: userId } as User
   const defendantId = uuid()
-  const defendantNationalId = uuid()
+  const defendantNationalId = '1234567890'
   const defendant = {
     id: defendantId,
     nationalId: defendantNationalId,
@@ -41,15 +44,18 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     defenderEmail,
   } as Case
 
+  let mockMessageService: MessageService
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      messageService,
       courtService,
       internalDefendantController,
     } = await createTestingDefendantModule()
 
+    mockMessageService = messageService
     mockCourtService = courtService
     const mockUpdateCaseWithDefendant = mockCourtService.updateCaseWithDefendant as jest.Mock
     mockUpdateCaseWithDefendant.mockRejectedValue(new Error('Some error'))
@@ -107,6 +113,28 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
         defenderEmail,
       )
       expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('no national id', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        caseId,
+        defendantId,
+        { userId },
+        user,
+        theCase,
+        { ...defendant, noNationalId: true } as Defendant,
+      )
+    })
+
+    it('should send email to court', () => {
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
+        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+        caseId,
+      })
     })
   })
 
