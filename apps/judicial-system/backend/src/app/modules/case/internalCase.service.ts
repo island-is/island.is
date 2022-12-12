@@ -15,7 +15,6 @@ import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
-import { EmailService } from '@island.is/email-service'
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
@@ -122,8 +121,6 @@ export class InternalCaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
-    @Inject(forwardRef(() => EmailService))
-    private readonly emailService: EmailService,
     @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
