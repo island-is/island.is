@@ -715,7 +715,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <ReviewGroup
         isEditable={editable}
         canCloseEdit={groupHasNoErrors([
-          'usePersonalAllowance',
+          'personalAllowance.usePersonalAllowance',
           'personalAllowance.useAsMuchAsPossible',
           'personalAllowance.usage',
         ])}
@@ -726,8 +726,8 @@ export const Review: FC<ReviewScreenProps> = ({
             </Label>
 
             <RadioController
-              id="usePersonalAllowance"
-              name="usePersonalAllowance"
+              id="personalAllowance.usePersonalAllowance"
+              name="personalAllowance.usePersonalAllowance"
               defaultValue={usePersonalAllowance}
               split="1/2"
               options={[
@@ -750,7 +750,7 @@ export const Review: FC<ReviewScreenProps> = ({
                   usePersonalAllowance: s as YesOrNo,
                 }))
               }}
-              error={hasError('usePersonalAllowance')}
+              error={hasError('personalAllowance.usePersonalAllowance')}
             />
 
             {usePersonalAllowance === YES && (

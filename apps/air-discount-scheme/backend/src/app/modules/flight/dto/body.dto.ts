@@ -1,17 +1,16 @@
 import {
   IsOptional,
-  IsObject,
   IsEnum,
-  IsArray,
   ArrayMinSize,
   ValidateNested,
   IsString,
   IsNumber,
   IsISO8601,
   IsBoolean,
+  IsDate,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import type {
@@ -72,33 +71,84 @@ export class CreateFlightBody {
   @ApiProperty({ type: [CreateFlightLegBody] })
   readonly flightLegs!: CreateFlightLegBody[]
 }
+
+export class FlightLegTravel implements Travel {
+  @IsString()
+  @ApiPropertyOptional()
+  readonly from?: string
+
+  @IsString()
+  @ApiPropertyOptional()
+  readonly to?: string
+}
+
+export class FlightLegPeriod implements PeriodInput {
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  readonly from!: Date
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  readonly to!: Date
+}
+
+export class FlightLegRange implements RangeInput {
+  @ApiProperty()
+  @IsNumber()
+  readonly from!: number
+
+  @ApiProperty()
+  @IsNumber()
+  readonly to!: number
+}
+
 export class GetFlightLegsBody implements FlightLegsInput {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  nationalId?: string
+
+  @ApiPropertyOptional()
   @IsOptional()
   @IsEnum(Object.keys(Airlines))
   airline?: string
 
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsObject()
-  flightLeg?: Travel
+  @Type(() => FlightLegTravel)
+  @ValidateNested()
+  flightLeg?: FlightLegTravel
 
-  @IsOptional()
-  @IsObject()
-  period?: PeriodInput
+  @ApiProperty()
+  @Type(() => FlightLegPeriod)
+  @ValidateNested()
+  period!: FlightLegPeriod
 
+  @ApiPropertyOptional({
+    enum: States,
+    enumName: 'FlightLegState',
+    isArray: true,
+  })
   @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @IsEnum(States)
+  @IsEnum(States, { each: true })
   state?: string[]
 
-  @IsOptional()
-  @IsObject()
-  age?: RangeInput
+  @ApiProperty()
+  @Type(() => FlightLegRange)
+  @ValidateNested()
+  age!: FlightLegRange
 
+  @ApiPropertyOptional({
+    enum: ['kk', 'kvk', 'hvk'],
+    enumName: 'FlightLegGender',
+  })
   @IsOptional()
   @IsEnum(['kk', 'kvk', 'hvk'])
   gender?: 'kk' | 'kvk' | 'hvk'
 
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
   postalCode?: number

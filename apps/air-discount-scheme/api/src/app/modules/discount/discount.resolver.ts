@@ -15,6 +15,7 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { Discount } from './discount.model'
 import { User } from '../user'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -32,7 +33,7 @@ type DiscountWithTUser = Discount & { user: TUser }
 const TWO_HOURS = 7200 // seconds
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@Scopes(AirDiscountSchemeScope.default)
 @Resolver(() => Discount)
 export class DiscountResolver {
   @Query(() => [Discount], { nullable: true })
