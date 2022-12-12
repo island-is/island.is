@@ -55,7 +55,7 @@ export class DiscountResolver {
     const explicitUser = explicitDiscount?.user
     if (
       explicitUser &&
-      !relations.find((user) => user.nationalId === user.nationalId)
+      !relations.find((user) => explicitUser.nationalId === user.nationalId)
     ) {
       relations.push(explicitUser)
     }
