@@ -80,7 +80,6 @@ export class ApiScopesDTO {
   readonly emphasize!: boolean
 
   @IsBoolean()
-  @IsNotEmpty()
   @ApiProperty({
     example: false,
   })

@@ -316,7 +316,6 @@ export abstract class ClientBaseDTO {
   readonly promptDelegations!: boolean
 
   @IsBoolean()
-  @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
