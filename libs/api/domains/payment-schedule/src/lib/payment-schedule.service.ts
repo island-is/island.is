@@ -9,6 +9,7 @@ import {
 } from './graphql/dto'
 import { UpdateCurrentEmployerInput } from './graphql/dto/updateCurrentEmployerInput'
 import {
+  PaymentScheduleCompanyConditions,
   PaymentScheduleConditions,
   PaymentScheduleDebts,
   PaymentScheduleDistribution,
@@ -44,6 +45,27 @@ export class PaymentScheduleService {
     if (!conditions) {
       throw new Error('No conditions found for nationalId')
     }
+    return conditions
+  }
+
+  async getCompanyConditions(
+    user: User,
+  ): Promise<PaymentScheduleCompanyConditions> {
+    const { conditions, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).companyConditionsnationalIdGET8({
+      nationalId: user.nationalId,
+    })
+
+    if (error) {
+      this.logger.error('Error getting company conditions', error)
+      throw new Error('Error getting company conditions')
+    }
+
+    if (!conditions) {
+      throw new Error('No company conditions found for nationalId')
+    }
+
     return conditions
   }
 
