@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/shared/form-fields"]
     }
   },
-  "tags": []
+  "tags": ["lib:react"]
 }

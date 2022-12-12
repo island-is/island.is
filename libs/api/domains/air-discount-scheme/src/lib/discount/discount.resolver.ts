@@ -9,17 +9,17 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { AirDiscountSchemeService } from './api-domains-air-discount-scheme.service'
+import { DiscountService } from './discount.service'
 import { Discount } from '../models/discount.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
-export class AirDiscountSchemeResolver {
-  constructor(private airDiscountSchemeService: AirDiscountSchemeService) {}
+export class DiscountResolver {
+  constructor(private discountService: DiscountService) {}
 
-  @Query(() => [Discount])
+  @Query(() => [Discount], { name: 'airDiscountSchemeDiscounts' })
   async getDiscount(@CurrentUser() user: User) {
-    return this.airDiscountSchemeService.getCurrentDiscounts(user)
+    return this.discountService.getCurrentDiscounts(user)
   }
 }

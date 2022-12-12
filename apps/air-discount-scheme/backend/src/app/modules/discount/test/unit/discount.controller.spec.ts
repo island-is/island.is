@@ -9,6 +9,7 @@ import {
 import { NationalRegistryService } from '../../../nationalRegistry'
 import { FlightService } from '../../../flight'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import { UserService } from '../../../user/user.service'
 import {
   NationalRegistryClientConfig,
@@ -21,7 +22,7 @@ import { createTestUser } from '../../../../../../test/createTestUser'
 
 const auth: AuthUser = {
   nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  scope: [AirDiscountSchemeScope.default],
   authorization: '',
   client: '',
 }
