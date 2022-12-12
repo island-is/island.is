@@ -4,6 +4,7 @@ module.exports = {
   up: (queryInterface) => {
     return queryInterface.sequelize.query(`
       BEGIN;
+        UPDATE flight
         SET user_info = jsonb_set(user_info, '{gender}', '"x"')
         WHERE user_info ->> 'gender' = 'hvk';
       COMMIT;
@@ -13,6 +14,7 @@ module.exports = {
   down: (queryInterface) => {
     return queryInterface.sequelize.query(`
     BEGIN;
+        UPDATE flight
         SET user_info = jsonb_set(user_info, '{gender}', '"hvk"')
         WHERE user_info ->> 'gender' = 'x';
     COMMIT;

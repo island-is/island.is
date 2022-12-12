@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import {
-  UserGenderEnum,
-  UsersApi as AirDiscountSchemeApi,
-} from '@island.is/clients/air-discount-scheme'
+import { UsersApi as AirDiscountSchemeApi } from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -14,10 +11,7 @@ import {
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
 import { Discount as DiscountModel } from '../models/discount.model'
-
-// The Generated Enum cannot be assigned to the defined enum although the two are identical
-type RegistryTUser = Omit<TUser, 'gender'> & { gender: UserGenderEnum }
-type DiscountWithTUser = DiscountModel & { user: RegistryTUser }
+type DiscountWithTUser = DiscountModel & { user: TUser }
 
 const TWO_HOURS = 7200
 @Injectable()
@@ -59,7 +53,7 @@ export class AirDiscountSchemeService {
   }
 
   async getCurrentDiscounts(auth: User): Promise<DiscountWithTUser[]> {
-    const relations: RegistryTUser[] = await this.getUserRelations(auth)
+    const relations: TUser[] = await this.getUserRelations(auth)
 
     const discounts: DiscountWithTUser[] = []
     for (const relation of relations) {
@@ -123,7 +117,7 @@ export class AirDiscountSchemeService {
     return createDiscountResponse
   }
 
-  private async getUserRelations(auth: User): Promise<RegistryTUser[]> {
+  private async getUserRelations(auth: User): Promise<TUser[]> {
     const getRelationsResponse = await this.getADSWithAuth(auth)
       .privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
       .catch((e) => {

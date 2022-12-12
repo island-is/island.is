@@ -4,8 +4,6 @@ import {
   BaseUser as TBaseUser,
   User as TUser,
   Fund as TFund,
-  RegistryGender,
-  UncategorizedGender,
 } from '@island.is/air-discount-scheme/types'
 import { NationalRegistryUser } from '../nationalRegistry'
 
@@ -44,12 +42,7 @@ class BaseUser implements TBaseUser {
   // https://docs.nestjs.com/openapi/types-and-parameters#enums
   // We must manually set the enum property
   @ApiProperty({
-    enum: {
-      Male: RegistryGender.Male,
-      Female: RegistryGender.Female,
-      NonBinary: RegistryGender.NonBinary,
-      Uncategorized: UncategorizedGender.Uncategorized,
-    },
+    enum: ['kk', 'kvk', 'x', 'manneskja'],
   })
   gender: TUser['gender']
 

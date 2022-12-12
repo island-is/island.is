@@ -1,12 +1,6 @@
-export enum RegistryGender {
-  Male = 'kk',
-  Female = 'kvk',
-  NonBinary = 'x',
-}
+export type RegistryGender = 'kk' | 'kvk' | 'x'
 
-export enum UncategorizedGender {
-  Uncategorized = 'manneskja',
-}
+export type UncategorizedGender = 'manneskja'
 
 export type Gender = RegistryGender | UncategorizedGender
 
