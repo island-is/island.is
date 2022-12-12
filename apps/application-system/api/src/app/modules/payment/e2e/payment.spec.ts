@@ -130,7 +130,7 @@ describe('Application system payments API', () => {
     const response = await server
       .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
       .send({
-        chargeItemCodes: [TARGET_CHARGE_ITEM_CODE],
+        chargeItemCode: TARGET_CHARGE_ITEM_CODE,
       } as CreateChargeInput)
       .expect(201)
 
