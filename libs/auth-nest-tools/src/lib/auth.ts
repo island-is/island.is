@@ -3,6 +3,7 @@ import { JwtAct, JwtDelegationType } from './jwt.payload'
 export type AuthDelegationType = JwtDelegationType
 
 export interface Auth {
+  sub?: string
   nationalId?: string
   scope: string[]
   authorization: string
