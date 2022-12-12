@@ -88,3 +88,6 @@ fragmentTypes.json
 
 # Gitbook/Honkit
 _book
+
+# Ignore generated .html files when running `serve`
+apps/**/index.html
