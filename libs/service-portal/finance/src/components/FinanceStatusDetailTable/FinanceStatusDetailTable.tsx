@@ -98,8 +98,8 @@ const FinanceStatusDetailTable: FC<Props> = ({
                   >
                     <Button
                       variant="text"
-                      onClick={() =>
-                        formSubmit(`${downloadURL}${row.documentID}`)
+                      onClick={async () =>
+                        await formSubmit(`${downloadURL}${row.documentID}`)
                       }
                     >
                       {item.value}

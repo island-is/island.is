@@ -192,8 +192,8 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                       title: formatMessage(endOfYearMessage, {
                         year: previousYear,
                       }),
-                      onClick: () =>
-                        formSubmit(
+                      onClick: async () =>
+                        await formSubmit(
                           `${financeStatusData.downloadServiceURL}${previousYear}`,
                           true,
                         ),
@@ -202,8 +202,8 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                       title: formatMessage(endOfYearMessage, {
                         year: twoYearsAgo,
                       }),
-                      onClick: () =>
-                        formSubmit(
+                      onClick: async () =>
+                        await formSubmit(
                           `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
                           true,
                         ),

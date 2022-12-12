@@ -329,8 +329,8 @@ const DocumentScreen: FC<Props> = ({
                         <Button
                           variant="text"
                           size="medium"
-                          onClick={() =>
-                            formSubmit(
+                          onClick={async () =>
+                            await formSubmit(
                               `${data?.getDocumentsList?.downloadServiceURL}${listItem.id}`,
                             )
                           }

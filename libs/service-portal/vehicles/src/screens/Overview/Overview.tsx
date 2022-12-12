@@ -185,7 +185,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
           {modalFlagEnabled && !loading && ownershipPdf && (
             <Box marginRight={2}>
               <DropdownExport
-                onGetPDF={() => formSubmit(`${ownershipPdf}`)}
+                onGetPDF={async () => await formSubmit(`${ownershipPdf}`)}
                 onGetExcel={() =>
                   exportVehicleOwnedDocument(
                     filteredVehicles,

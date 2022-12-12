@@ -262,7 +262,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                     size="default"
                     type="button"
                     variant="utility"
-                    onClick={() => formSubmit(`${downloadServiceURL}`)}
+                    onClick={async () =>
+                      await formSubmit(`${downloadServiceURL}`)
+                    }
                   >
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>

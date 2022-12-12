@@ -105,8 +105,8 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
                 variant="text"
                 icon="document"
                 iconType="outline"
-                onClick={() =>
-                  formSubmit(`${paymentSchedule.downloadServiceURL}`)
+                onClick={async () =>
+                  await formSubmit(`${paymentSchedule.downloadServiceURL}`)
                 }
               >
                 PDF
