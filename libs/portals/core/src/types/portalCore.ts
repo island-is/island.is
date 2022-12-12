@@ -144,8 +144,6 @@ export interface PortalGlobalComponent {
   render: () => PortalModuleRenderValue<any>
 }
 
-export type LayoutSizes = 'fullwidth' | 'large' | 'default'
-
 export interface PortalModule {
   /**
    * The title of this module
@@ -188,12 +186,25 @@ export interface PortalModule {
   enabled?: (props: { userInfo: User; isCompany: boolean }) => boolean
 
   /**
-   * The layout size type of the module
+   * The layout type of the module
    */
-  layoutSize?: LayoutSizes
+  layout?:
+    | 'none' // Full screen
+    | 'full' // Full grid, i.e 12 cols
+    | 'default' // Narrow grid, i.e. 8 cols
 
   /**
-   * Module layout wrapper component for the module
+   * Module layout wrapper component,that wraps all the module content.
+   * This can be convenient to keep state between module routes.
+   * @example
+    moduleLayoutWrapper({ children }) {
+      return (
+        <SomeProvider>
+          <h1>I am module wrapper</h1>
+          {children}
+        </SomeProvider>
+      )
+    },
    */
   moduleLayoutWrapper?: React.FC<PortalModuleProps>
 }

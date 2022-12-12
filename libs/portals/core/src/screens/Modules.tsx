@@ -31,6 +31,7 @@ const RouteComponent = React.memo(
           path: route.path,
         })
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location])
 
     if (route.render === undefined) {
@@ -106,8 +107,7 @@ export const Modules = () => {
     })
 
     if (newActiveModule && activeModule?.name !== newActiveModule.name) {
-      console.log('======= UPDATE =======')
-      updateActiveModule(newActiveModule ?? null)
+      updateActiveModule(newActiveModule)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -9,15 +9,6 @@ import { DelegationPaths } from './lib/paths'
 export const delegationsModule: PortalModule = {
   name: m.accessControl,
   featureFlag: Features.outgoingDelegationsV2,
-  layoutSize: 'default',
-  moduleLayoutWrapper({ children }) {
-    return (
-      <>
-        <h1>I am wrapper</h1>
-        {children}
-      </>
-    )
-  },
   widgets: () => [],
   routes({ userInfo }) {
     const hasAccess = userInfo.scopes.includes(AuthScope.delegations)

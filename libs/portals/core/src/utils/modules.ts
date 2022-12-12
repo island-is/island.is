@@ -95,22 +95,18 @@ export const getActiveModule = ({
   userInfo,
   modules,
   apolloClient,
-}: GetActiveModuleArgs) => {
-  const activeModule = modules.find((module) => {
-    const paths = module
+}: GetActiveModuleArgs) =>
+  modules.find((module) =>
+    module
+      // Get all routes for the module
       .routes({
         userInfo,
         client: apolloClient,
       })
+      // Extract the path from each route
       .map(({ path }) => path)
+      // Flatten the array of arrays, since route path can be string or array of strings
       .flat()
-
-    if (paths.find((path) => path === pathname)) {
-      return true
-    }
-
-    return false
-  })
-
-  return activeModule
-}
+      // Find the route path that matches the current pathname
+      .find((path) => path === pathname),
+  )
