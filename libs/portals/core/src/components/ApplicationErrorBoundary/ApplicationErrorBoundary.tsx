@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import { useLocale } from '@island.is/localization'
 import * as styles from './ApplicationErrorBoundry.css'
 import { Box, Text, Tag, Button } from '@island.is/island-ui/core'
+import { m } from '../../lib/messages'
 
 interface PropTypes {
   children: React.ReactNode
@@ -57,17 +58,10 @@ const Error = () => {
           <Tag variant="red">{500}</Tag>
         </Box>
         <Text variant="h1" as="h1" marginBottom={3}>
-          {formatMessage({
-            id: 'sp:error-page-heading',
-            defaultMessage: 'Eitthvað fór úrskeiðis',
-          })}
+          {formatMessage(m.errorPageHeading)}
         </Text>
         <Text variant="default" as="p">
-          {formatMessage({
-            id: 'sp:error-page-text',
-            defaultMessage:
-              'Því miður hefur eitthvað farið úrskeiðis og ekki næst samband við vefþjón.',
-          })}
+          {formatMessage(m.errorPageText)}
         </Text>
         <Box marginTop={2}>
           <a href="https://island.is" target="_blank" rel="noreferrer">
