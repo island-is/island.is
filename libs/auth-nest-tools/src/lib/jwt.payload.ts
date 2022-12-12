@@ -6,6 +6,7 @@ export interface JwtAct {
 }
 
 export interface JwtPayload {
+  sub?: string
   nationalId?: string
   scope: string | string[]
   client_id: string

@@ -39,7 +39,7 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.MORTGAGE_CERTIFICATE,
+        [ChargeItemCode.MORTGAGE_CERTIFICATE],
       )
       return result
     } catch (exeption) {

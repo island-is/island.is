@@ -49,6 +49,7 @@ import {
   registrarRule,
   representativeRule,
   staffRule,
+  assistantRule,
 } from '../../guards'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
@@ -67,6 +68,8 @@ import {
   registrarUpdateRule,
   representativeTransitionRule,
   representativeUpdateRule,
+  assistantUpdateRule,
+  assistantTransitionRule,
 } from './guards/rolesRules'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -88,14 +91,14 @@ export class CaseController {
 
   private async validateAssignedUser(
     assignedUserId: string,
-    assignedUserRole: UserRole,
+    assignedUserRole: UserRole[],
     institutionId: string | undefined,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
-    if (assignedUser.role !== assignedUserRole) {
+    if (!assignedUserRole.includes(assignedUser.role)) {
       throw new ForbiddenException(
-        `User ${assignedUserId} is not a ${assignedUserRole}}`,
+        `User ${assignedUserId} does not have an acceptable role ${assignedUserRole}}`,
       )
     }
 
@@ -129,6 +132,7 @@ export class CaseController {
     representativeUpdateRule,
     judgeUpdateRule,
     registrarUpdateRule,
+    assistantUpdateRule,
     staffUpdateRule,
   )
   @Put('case/:caseId')
@@ -144,7 +148,7 @@ export class CaseController {
     if (caseToUpdate.prosecutorId) {
       await this.validateAssignedUser(
         caseToUpdate.prosecutorId,
-        UserRole.PROSECUTOR,
+        [UserRole.PROSECUTOR],
         theCase.creatingProsecutor?.institutionId,
       )
 
@@ -160,7 +164,7 @@ export class CaseController {
     if (caseToUpdate.judgeId) {
       await this.validateAssignedUser(
         caseToUpdate.judgeId,
-        UserRole.JUDGE,
+        [UserRole.JUDGE, UserRole.ASSISTANT],
         theCase.courtId,
       )
     }
@@ -168,7 +172,7 @@ export class CaseController {
     if (caseToUpdate.registrarId) {
       await this.validateAssignedUser(
         caseToUpdate.registrarId,
-        UserRole.REGISTRAR,
+        [UserRole.REGISTRAR],
         theCase.courtId,
       )
     }
@@ -196,6 +200,7 @@ export class CaseController {
     representativeTransitionRule,
     judgeTransitionRule,
     registrarTransitionRule,
+    assistantTransitionRule,
   )
   @Put('case/:caseId/state')
   @ApiOkResponse({
@@ -245,6 +250,7 @@ export class CaseController {
     representativeRule,
     judgeRule,
     registrarRule,
+    assistantRule,
     staffRule,
   )
   @Get('cases')
@@ -265,6 +271,7 @@ export class CaseController {
     representativeRule,
     judgeRule,
     registrarRule,
+    assistantRule,
     staffRule,
   )
   @Get('case/:caseId')
@@ -310,7 +317,13 @@ export class CaseController {
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, representativeRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('case/:caseId/caseFiles/:policeCaseNumber')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -625,7 +638,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(judgeRule, registrarRule)
+  @RolesRules(judgeRule, registrarRule, assistantRule)
   @Post('case/:caseId/court')
   @ApiCreatedResponse({
     type: Case,

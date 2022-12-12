@@ -94,6 +94,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlega yfirfarið upplýsingar um tengilið hér að neðan',
     description: 'Review contact info',
   },
+  reviewInfo: {
+    id: 'fsn.application:reviewInfo',
+    defaultMessage: 'Vinsamlega yfirfarið upplýsingarnar hér að neðan',
+    description: 'Review info',
+  },
   fullName: {
     id: 'fsn.application:fullName',
     defaultMessage: 'Fullt nafn',
@@ -165,7 +170,12 @@ export const m = defineMessages({
     id: 'fsn.application:SignatureMessage',
     defaultMessage:
       'Eftir að þú hefur sent inn umsókn mun rafræn undirritun verða send á netfangið',
-    description: 'Signature alert message',
+    description: 'Signature message',
+  },
+  SignaturePossible: {
+    id: 'fsn.application:SignaturePossible',
+    defaultMessage: 'svo hægt sé að undirrita hana með rafrænum skilríkjum.',
+    description: 'Signature possible message',
   },
   nationalId: {
     id: 'fsn.application:nationalId',
@@ -267,6 +277,11 @@ export const m = defineMessages({
     defaultMessage: 'Rekstrarniðurstaða alls',
     description: 'Operating Cost',
   },
+  operatingCostBefore: {
+    id: 'fsn.application:keyNumbers.operatingCostBeforeCapital',
+    defaultMessage: 'Rekstrarniðurstaða fyrir fjármagnsliði',
+    description: 'Operating Cost Capital',
+  },
   operatingYear: {
     id: 'fsn.application:keyNumbers.operatingYear',
     defaultMessage: 'Rekstrarár',
@@ -280,6 +295,11 @@ export const m = defineMessages({
   fillOutAppopriate: {
     id: 'fsn.application:fillOutAppopriate',
     defaultMessage: 'Vinsamlegast fylltu út þá reiti sem eiga við',
+    description: 'Fill out fields',
+  },
+  fillOutElectionInfo: {
+    id: 'fsn.application:fillOutElectionInfo',
+    defaultMessage: 'Vinsamlegast veldu þær kosningar sem við eiga',
     description: 'Fill out fields',
   },
   properties: {
@@ -662,6 +682,11 @@ export const m = defineMessages({
     defaultMessage: 'Senda umsókn',
     description: 'Send application',
   },
+  sendStatement: {
+    id: 'fsn.application:sendStatement',
+    defaultMessage: 'Senda yfirlýsingu',
+    description: 'Send statement',
+  },
   participated: {
     id: 'fsn.application:overview.participated',
     defaultMessage: 'tók þátt í kjöri til',
@@ -756,6 +781,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast veldu það sem við á',
     description: 'Please select',
   },
+  pleaseSelectElection: {
+    id: 'fsn.application:pleaseSelectElection',
+    defaultMessage: 'Vinsamlegast veldu þær kosningar sem við eiga',
+    description: 'Please select election',
+  },
   applicationAccept: {
     id: 'fsn.application:applicationAccept',
     defaultMessage: 'Umsókn móttekin',
@@ -806,6 +836,11 @@ export const m = defineMessages({
     id: 'fsn.application:individualReceivedMsgSecond',
     defaultMessage: 'hefur verið skilað þann',
     description: 'Second part of audit received message',
+  },
+  equityErrorTitle: {
+    id: 'fsn.application:equityErrorTitle',
+    defaultMessage: 'Ósamræmi í tölum',
+    description: 'Error msg title when E = S+E.fé is incorrect',
   },
   fetchErrorTitle: {
     id: 'fsn.application:fetchErrorMsg',

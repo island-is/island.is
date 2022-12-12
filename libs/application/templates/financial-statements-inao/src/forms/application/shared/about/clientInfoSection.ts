@@ -19,7 +19,14 @@ export const clientInfoSection = buildSection({
     buildMultiField({
       id: 'about',
       title: m.info,
-      description: m.reviewContact,
+      description: (application: Application) => {
+        const answers = application.answers
+        const externalData = application.externalData
+        const userType = getCurrentUserType(answers, externalData)
+        return userType === FSIUSERTYPE.INDIVIDUAL
+          ? m.reviewInfo
+          : m.reviewContact
+      },
       children: [
         buildCustomField({
           id: 'OperatingYear',

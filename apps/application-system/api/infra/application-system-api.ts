@@ -15,6 +15,8 @@ import {
   Finance,
   Properties,
   RskCompanyInfo,
+  VehicleServiceFjsV1,
+  TransportAuthority,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -233,6 +235,8 @@ export const serviceSetup = (services: {
       Finance,
       Properties,
       RskCompanyInfo,
+      VehicleServiceFjsV1,
+      TransportAuthority,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -265,6 +269,7 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+      VMST_ID: '/k8s/application-system/VMST_ID',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

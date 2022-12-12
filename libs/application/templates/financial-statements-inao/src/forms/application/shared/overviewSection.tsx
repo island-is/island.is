@@ -11,7 +11,18 @@ import { FSIUSERTYPE, LESS } from '../../../types'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: m.overviewSectionTitle,
+  title: (application) => {
+    const answers = application.answers
+    const externalData = application.externalData
+    if (getCurrentUserType(answers, externalData) === FSIUSERTYPE.INDIVIDUAL) {
+      return getValueViaPath(application.answers, 'election.incomeLimit') ===
+        LESS
+        ? m.statement
+        : m.overviewSectionTitle
+    } else {
+      return m.overviewSectionTitle
+    }
+  },
   children: [
     buildMultiField({
       id: 'overview',

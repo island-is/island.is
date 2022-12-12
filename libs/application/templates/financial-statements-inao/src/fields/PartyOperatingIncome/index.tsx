@@ -71,6 +71,16 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
           />
         </GridColumn>
       </GridRow>
+      <GridRow align="flexEnd">
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <Total
+            name={OPERATINGCOST.total}
+            label={formatMessage(m.operatingCost)}
+            title={formatMessage(m.operatingCostBefore)}
+            total={totalIncome - totalExpense}
+          />
+        </GridColumn>
+      </GridRow>
     </GridContainer>
   )
 }

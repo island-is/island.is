@@ -72,7 +72,6 @@ interface VMSTError {
 }
 
 type YesOrNo = typeof NO | typeof YES
-
 interface AnswerPeriod {
   startDate: string
   endDate: string
@@ -217,42 +216,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async getSelfEmployedPdf(application: Application, index = 0) {
-    try {
-      let filename = getValueViaPath(
-        application.answers,
-        `employer.selfEmployed.file[${index}].key`,
-      )
-
-      if (!filename) {
-        filename = getValueViaPath(
-          application.answers,
-          `fileUpload.selfEmployedFile[${index}].key`,
-        )
-      }
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get self employed attachment', { e })
-      throw new Error('Failed to get the self employed attachment')
-    }
-  }
-
-  async getStudentPdf(application: Application, index = 0) {
+  async getPdf(application: Application, index = 0, fileUpload: string) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        `fileUpload.studentFile[${index}].key`,
+        fileUpload + `[${index}].key`,
       )
 
       const Key = `${application.id}/${filename}`
@@ -267,80 +235,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return fileContent.toString('base64')
     } catch (e) {
-      this.logger.error('Cannot get student attachment', { e })
-      throw new Error('Failed to get the student attachment')
-    }
-  }
-
-  async getBenefitsPdf(application: Application, index = 0) {
-    try {
-      const filename = getValueViaPath(
-        application.answers,
-        `fileUpload.benefitsFile[${index}].key`,
-      )
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get benefits attachment', { e })
-      throw new Error('Failed to get the benefits attachment')
-    }
-  }
-
-  async getSingleParentPdf(application: Application, index = 0) {
-    try {
-      const filename = getValueViaPath(
-        application.answers,
-        `fileUpload.singleParent[${index}].key`,
-      )
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get single parent attachment', { e })
-      throw new Error('Failed to get the single parent attachment')
-    }
-  }
-
-  async getGenericPdf(application: Application, index = 0) {
-    try {
-      const filename = getValueViaPath(
-        application.answers,
-        `fileUpload.file[${index}].key`,
-      )
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get attachment', { e })
-      throw new Error('Failed to get the attachment')
+      this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
+      throw new Error('Failed to get the ' + fileUpload + ' attachment')
     }
   }
 
@@ -360,7 +256,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       if (selfEmployedPdfs?.length) {
         for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
-          const pdf = await this.getSelfEmployedPdf(application, i)
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.selfEmployedFile',
+          )
 
           attachments.push({
             attachmentType: apiConstants.attachments.selfEmployed,
@@ -375,7 +275,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
         if (oldSelfEmployedPdfs?.length) {
           for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
-            const pdf = await this.getSelfEmployedPdf(application, i)
+            const pdf = await this.getPdf(
+              application,
+              i,
+              'employer.selfEmployed.file',
+            )
 
             attachments.push({
               attachmentType: apiConstants.attachments.selfEmployed,
@@ -392,7 +296,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       if (stuydentPdfs?.length) {
         for (let i = 0; i <= stuydentPdfs.length - 1; i++) {
-          const pdf = await this.getStudentPdf(application, i)
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.studentFile',
+          )
 
           attachments.push({
             attachmentType: apiConstants.attachments.student,
@@ -410,7 +318,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       if (singleParentPdfs?.length) {
         for (let i = 0; i <= singleParentPdfs.length - 1; i++) {
-          const pdf = await this.getSingleParentPdf(application, i)
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.singleParent',
+          )
 
           attachments.push({
             attachmentType: apiConstants.attachments.artificialInsemination,
@@ -436,7 +348,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       if (benefitsPdfs?.length) {
         for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
-          const pdf = await this.getBenefitsPdf(application, i)
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.benefitsFile',
+          )
 
           attachments.push({
             attachmentType: apiConstants.attachments.unEmploymentBenefits,
@@ -453,7 +369,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     if (genericPdfs?.length) {
       for (let i = 0; i <= genericPdfs.length - 1; i++) {
-        const pdf = await this.getGenericPdf(application, i)
+        const pdf = await this.getPdf(application, i, 'fileUpload.file')
 
         attachments.push({
           attachmentType: apiConstants.attachments.other,

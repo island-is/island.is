@@ -1,6 +1,7 @@
 import { AuthDelegationType } from '@island.is/shared/types'
+import { Features } from '@island.is/feature-flags'
 
-export type AllowedDelegations = {
+export type AllowedDelegation = {
   type: AuthDelegationType
-  featureFlag?: string
+  featureFlag?: Features
 }

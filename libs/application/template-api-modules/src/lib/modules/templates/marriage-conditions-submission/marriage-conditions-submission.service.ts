@@ -82,7 +82,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
-      'AY129',
+      ['AY129'],
     )
 
     // last chance to validate before the user receives a dummy
