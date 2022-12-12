@@ -18,7 +18,6 @@ export interface WatsonChatPanelProps {
   serviceInstanceID: WatsonServiceInstance
   version?: string
   carbonTheme?: string
-  cssVariables?: Record<string, string>
 
   // What key in the 'ChatPanels' UI Configuration in Contentful stores the language pack for this chat bot
   namespaceKey?: 'default'

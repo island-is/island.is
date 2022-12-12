@@ -52,7 +52,13 @@ export interface UpsertPkPassResponse {
   }
   message?: string
   status?: number
+  // If the payload is invalid, smart solutions returns a 200 ok with an errors field.
+  errors?: {
+    message: string
+    path: string
+  }[]
 }
+
 export interface PkPassVerifyError {
   /**
    * HTTP status code from the service.

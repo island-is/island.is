@@ -14,6 +14,14 @@ export const prosecutorNotificationRule = {
   ],
 } as RolesRule
 
+// Allows representatives to send notifications
+export const representativeNotificationRule = {
+  role: UserRole.REPRESENTATIVE,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'type',
+  dtoFieldValues: [NotificationType.REVOKED],
+} as RolesRule
+
 // Allows judges to send notifiications
 export const judgeNotificationRule = {
   role: UserRole.JUDGE,
@@ -36,6 +44,18 @@ export const registrarNotificationRule = {
     NotificationType.RECEIVED_BY_COURT,
     NotificationType.COURT_DATE,
     NotificationType.MODIFIED,
+    NotificationType.DEFENDER_ASSIGNED,
+  ],
+} as RolesRule
+
+// Allows assistants to send notifications
+export const assistantNotificationRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'type',
+  dtoFieldValues: [
+    NotificationType.RECEIVED_BY_COURT,
+    NotificationType.COURT_DATE,
     NotificationType.DEFENDER_ASSIGNED,
   ],
 } as RolesRule

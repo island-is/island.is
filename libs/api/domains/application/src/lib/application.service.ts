@@ -60,11 +60,11 @@ export class ApplicationService {
   async createCharge(
     applicationId: string,
     auth: Auth,
-    chargeItemCode: string,
+    chargeItemCodes: string[],
   ) {
     return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
       applicationId: applicationId,
-      body: { chargeItemCode: chargeItemCode },
+      body: { chargeItemCodes: chargeItemCodes },
       authorization: auth.authorization,
     })
   }
