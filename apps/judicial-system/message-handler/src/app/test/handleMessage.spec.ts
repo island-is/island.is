@@ -14,7 +14,6 @@ import {
 
 import { appModuleConfig } from '../app.config'
 import { MessageHandlerService } from '../messageHandler.service'
-import { RulingNotificationService } from '../rulingNotification.service'
 import { InternalDeliveryService } from '../internalDelivery.service'
 import { CaseDeliveryService } from '../caseDelivery.service'
 
@@ -35,12 +34,17 @@ describe('MessageHandlerService - Handle message', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    const mockFetch = (fetch as unknown) as jest.Mock
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({ delivered: true }),
+    })
+
     givenWhenThen = async (message: CaseMessage) => {
       const messageHandlerService = new MessageHandlerService(
         (undefined as unknown) as MessageService,
         (undefined as unknown) as CaseDeliveryService,
         new InternalDeliveryService(config, logger),
-        new RulingNotificationService(config, logger),
         logger,
       )
       const then = {} as Then
@@ -61,14 +65,6 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_DEFENDANT_TO_COURT,
         caseId,
@@ -98,14 +94,6 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_CASE_FILE_TO_COURT,
         caseId,
@@ -133,14 +121,6 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
         caseId,
@@ -167,14 +147,6 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_REQUEST_TO_COURT,
         caseId,
@@ -200,14 +172,6 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
         caseId,
@@ -233,14 +197,6 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_SIGNED_RULING_TO_COURT,
         caseId,
@@ -262,18 +218,38 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('send defendants not updated at court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+        caseId,
+      })
+    })
+
+    it('should send a defendants not updated at court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('send ruling notification', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ notificationSent: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.SEND_RULING_NOTIFICATION,
         caseId,

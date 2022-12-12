@@ -10,6 +10,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { User } from '../user'
 import { CourtService } from '../court'
@@ -22,8 +23,9 @@ import { Defendant } from './models/defendant.model'
 @Injectable()
 export class DefendantService {
   constructor(
-    private readonly courtService: CourtService,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    private readonly courtService: CourtService,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -124,6 +126,19 @@ export class DefendantService {
     defendant: Defendant,
     user: User,
   ): Promise<DeliverResponse> {
+    if (
+      defendant.noNationalId ||
+      !defendant.nationalId ||
+      defendant.nationalId.length !== 10
+    ) {
+      await this.messageService.sendMessageToQueue({
+        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+        caseId: theCase.id,
+      })
+
+      return { delivered: true }
+    }
+
     return this.courtService
       .updateCaseWithDefendant(
         user,

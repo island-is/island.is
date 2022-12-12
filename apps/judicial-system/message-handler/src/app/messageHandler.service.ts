@@ -10,10 +10,10 @@ import {
   DefendantMessage,
 } from '@island.is/judicial-system/message'
 import type { CaseMessage } from '@island.is/judicial-system/message'
+import { NotificationType } from '@island.is/judicial-system/types'
 
 import { CaseDeliveryService } from './caseDelivery.service'
 import { InternalDeliveryService } from './internalDelivery.service'
-import { RulingNotificationService } from './rulingNotification.service'
 import { appModuleConfig } from './app.config'
 
 @Injectable()
@@ -25,7 +25,6 @@ export class MessageHandlerService implements OnModuleDestroy {
     private readonly messageService: MessageService,
     private readonly caseDeliveryService: CaseDeliveryService,
     private readonly internalDeliveryService: InternalDeliveryService,
-    private readonly rulingNotificationService: RulingNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -81,9 +80,18 @@ export class MessageHandlerService implements OnModuleDestroy {
           'deliverSignedRulingToCourt',
         )
         break
-      case MessageType.SEND_RULING_NOTIFICATION:
-        handled = await this.rulingNotificationService.sendRulingNotification(
+      case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
           message.caseId,
+          'notification',
+          { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+        )
+        break
+      case MessageType.SEND_RULING_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.RULING },
         )
         break
       default:
