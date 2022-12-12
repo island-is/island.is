@@ -63,7 +63,9 @@ export const ElectionStatement = ({
       <Box paddingY={2}>
         <AlertBanner
           title={`${formatMessage(m.SignatureTitle)}`}
-          description={`${formatMessage(m.SignatureMessage)} ${email}`}
+          description={`${formatMessage(
+            m.SignatureMessage,
+          )} ${email} ${formatMessage(m.SignaturePossible)}`}
           variant="info"
         />
       </Box>
@@ -74,6 +76,7 @@ export const ElectionStatement = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        sendText={formatMessage(m.sendStatement)}
       />
     </Box>
   )
