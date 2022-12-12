@@ -281,6 +281,14 @@ const useSections = (
                   isDefendantStepValidForSidebarIC(workingCase)
                     ? `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
+                onClick: () =>
+                  validateFormStepper(isValid, [], workingCase) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INDICTMENTS_DEFENDANT_ROUTE,
+                        )
+                    : undefined,
               },
               {
                 name: formatMessage(
