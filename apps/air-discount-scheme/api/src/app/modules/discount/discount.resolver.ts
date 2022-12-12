@@ -61,11 +61,14 @@ export class DiscountResolver {
     }
 
     return relations.reduce(
-      (promise: Promise<DiscountWithTUser[]>, relation: TUser) => {
-        return promise.then(async (acc) => {
+      (validRelations: Promise<DiscountWithTUser[]>, relation: TUser) => {
+        return validRelations.then(async (acc) => {
+          // Get discount for relation if discount exists
           let discount: TDiscount = await backendApi.getDiscount(
             relation.nationalId,
           )
+          // If discount is about to expire or if discount not found,
+          // create and store new discount for said relation
           if (!discount || discount.expiresIn <= TWO_HOURS) {
             discount = await backendApi.createDiscount(relation.nationalId)
           }
