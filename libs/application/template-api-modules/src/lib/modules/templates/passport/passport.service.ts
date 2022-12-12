@@ -4,7 +4,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { PASSPORT_CHARGE_CODES, YES, YesOrNo, DiscountCheck } from './constants'
+import { YES, YesOrNo, DiscountCheck } from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 import { PassportSchema } from '@island.is/application/templates/passport'
@@ -26,7 +26,6 @@ export class PassportService {
     if (!chargeItemCode) {
       throw new Error('chargeItemCode missing in request')
     }
-    console.log('chargeItemCode', chargeItemCode)
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
@@ -100,7 +99,7 @@ export class PassportService {
         childsPersonalInfo,
         service,
       }: PassportSchema = application.answers as PassportSchema
-      console.log('HERE I AM !!', passport.userPassport)
+
       const forUser = !!passport.userPassport
       const result = forUser
         ? await this.passportApi.preregisterIdentityDocument(auth, {
@@ -119,7 +118,7 @@ export class PassportService {
             priority: service.type === 'regular' ? 0 : 1,
             approvalA: {
               personId: childsPersonalInfo.guardian1.nationalId,
-              approved: new Date(),
+              approved: application.created,
             },
             approvalB: {
               personId: childsPersonalInfo.guardian2.nationalId,
@@ -132,7 +131,6 @@ export class PassportService {
               email: childsPersonalInfo.guardian1.email,
             },
           })
-      console.log(result)
 
       if (result.length < 1) {
         throw new Error(`Application submission failed (${result})`)

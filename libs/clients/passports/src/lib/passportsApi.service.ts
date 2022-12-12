@@ -12,6 +12,8 @@ import {
 import { mapChildPassports, mapPassports } from './passportsApi.utils'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
+import { uuid } from 'uuidv4'
+import { defaultDeliveryAddress } from './constants'
 
 @Injectable()
 export class PassportsService {
@@ -63,12 +65,21 @@ export class PassportsService {
     user: User,
     input: PreregistrationInput,
   ): Promise<string[]> {
-    console.log('preregister user')
+    const approval = { personId: '', approved: new Date() }
+
     return await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
       .preregistrationPreregistration({
         xRoadClient: this.xroadConfig.xRoadClient,
-        preregistration: input,
+        preregistration: {
+          ...input,
+          guId: uuid(),
+          approvalA: approval,
+          approvalB: approval,
+          deliveryAddress: defaultDeliveryAddress,
+          bioInfo: { height: 0 },
+          documents: [],
+        },
       })
   }
 
@@ -77,20 +88,20 @@ export class PassportsService {
     input: PreregistrationInput,
   ): Promise<string[]> {
     const { appliedForPersonId, approvalA, approvalB } = input
-    console.log('IN PREREGISTER CHILD', input)
     const pdfBuffer = await this.createDocumentBuffer({
       appliedForPersonId,
       approvalA,
       approvalB,
     })
     const pdfDoc = Buffer.from(pdfBuffer).toString('base64')
-    console.log('PDF DOC', pdfDoc)
     return await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
       .preregistrationPreregistration({
         xRoadClient: this.xroadConfig.xRoadClient,
         preregistration: {
           ...input,
+          bioInfo: { height: 0 },
+          deliveryAddress: defaultDeliveryAddress,
           documents: [
             {
               name: 'samþykki',
@@ -140,7 +151,7 @@ export class PassportsService {
 
     doc
       .fontSize(big)
-      .text('Umsókn um vegabréf með samþykki forráðamanna fyrir hönd: ')
+      .text('Umsókn um vegabréf með samþykki forsjáraðila fyrir hönd: ')
       .text(appliedForPersonId ?? '')
       .moveDown()
 
@@ -152,13 +163,13 @@ export class PassportsService {
       .moveDown()
 
       .font(fontBold)
-      .text('Forráðamaður A: ')
+      .text('Forsjáraðila A: ')
       .font(fontRegular)
       .text(`${approvalA?.personId}, ${approvalA?.approved}`)
       .moveDown()
 
       .font(fontBold)
-      .text('Forráðamaður B: ')
+      .text('Forsjáraðila B: ')
       .font(fontRegular)
       .text(`${approvalB?.personId}, ${approvalB?.approved}`)
       .moveDown()
