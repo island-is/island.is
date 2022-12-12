@@ -25,12 +25,12 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { Case } from '../case'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
-import { DeleteFileResponse } from './models/deleteFile.response'
-import { SignedUrl } from './models/signedUrl.model'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { UpdateFileDto } from './dto/updateFile.dto'
+import { PresignedPost } from './models/presignedPost.model'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { SignedUrl } from './models/signedUrl.model'
+import { CaseFile } from './models/file.model'
 
 // Files are stored in AWS S3 under a key which has the following format:
 // uploads/<uuid>/<uuid>/<filename>
@@ -65,13 +65,23 @@ export class FileService {
       })
   }
 
-  private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
+  private async deleteFileFromDatabase(
+    fileId: string,
+    transaction?: Transaction,
+  ): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
 
-    const [numberOfAffectedRows] = await this.fileModel.update(
-      { state: CaseFileState.DELETED, key: null },
-      { where: { id: fileId } },
-    )
+    const promisedUpdate = transaction
+      ? this.fileModel.update(
+          { state: CaseFileState.DELETED, key: null },
+          { where: { id: fileId }, transaction },
+        )
+      : this.fileModel.update(
+          { state: CaseFileState.DELETED, key: null },
+          { where: { id: fileId } },
+        )
+
+    const [numberOfAffectedRows] = await promisedUpdate
 
     if (numberOfAffectedRows !== 1) {
       // Tolerate failure, but log error
@@ -225,8 +235,11 @@ export class FileService {
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async deleteCaseFile(file: CaseFile): Promise<DeleteFileResponse> {
-    const success = await this.deleteFileFromDatabase(file.id)
+  async deleteCaseFile(
+    file: CaseFile,
+    transaction?: Transaction,
+  ): Promise<DeleteFileResponse> {
+    const success = await this.deleteFileFromDatabase(file.id, transaction)
 
     if (success && file.key) {
       // Fire and forget, no need to wait for the result

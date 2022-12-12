@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import {
   CaseFileCategory,
@@ -31,6 +31,7 @@ type GivenWhenThen = (
 describe('CaseController - Create court case', () => {
   let mockMessageService: MessageService
   let mockCourtService: CourtService
+  let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
@@ -38,6 +39,7 @@ describe('CaseController - Create court case', () => {
     const {
       messageService,
       courtService,
+      sequelize,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
@@ -45,6 +47,12 @@ describe('CaseController - Create court case', () => {
     mockMessageService = messageService
     mockCourtService = courtService
     mockCaseModel = caseModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (caseId: string, user: TUser, theCase: Case) => {
       const then = {} as Then
@@ -117,7 +125,7 @@ describe('CaseController - Create court case', () => {
     it('should update the court case number', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { courtCaseNumber },
-        { where: { id: caseId } },
+        { where: { id: caseId }, transaction },
       )
     })
   })

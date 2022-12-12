@@ -44,7 +44,7 @@ import {
   formatRulingModifiedHistory,
   createCaseFilesRecord,
 } from '../../formatters'
-import { CaseFile } from '../file'
+import { CaseFile, FileService } from '../file'
 import { DefendantService, Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
@@ -113,6 +113,7 @@ export class CaseService {
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
+    private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
@@ -301,34 +302,87 @@ export class CaseService {
   }
 
   async update(
-    caseId: string,
+    theCase: Case,
     update: UpdateCaseDto,
     returnUpdatedCase = true,
-    transaction?: Transaction,
   ): Promise<Case | undefined> {
-    const promisedUpdate = transaction
-      ? this.caseModel.update(update, {
-          where: { id: caseId },
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const [numberOfAffectedRows] = await this.caseModel.update(update, {
+          where: { id: theCase.id },
           transaction,
         })
-      : this.caseModel.update(update, {
-          where: { id: caseId },
-        })
 
-    const [numberOfAffectedRows] = await promisedUpdate
+        if (numberOfAffectedRows > 1) {
+          // Tolerate failure, but log error
+          this.logger.error(
+            `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
+          )
+        } else if (numberOfAffectedRows < 1) {
+          throw new InternalServerErrorException(
+            `Could not update case ${theCase.id}`,
+          )
+        }
 
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(`Could not update case ${caseId}`)
-    }
+        if (update.policeCaseNumbers && theCase.caseFiles) {
+          const oldPoliceCaseNumbers = theCase.policeCaseNumbers
+          const newPoliceCaseNumbers = update.policeCaseNumbers
+          const maxIndex = Math.max(
+            oldPoliceCaseNumbers.length,
+            newPoliceCaseNumbers.length,
+          )
 
-    if (returnUpdatedCase) {
-      return this.findById(caseId)
-    }
+          // Assumptions:
+          // 1. The police case numbers are in the same order as they were before
+          // 2. The police case numbers are not duplicated
+          // 3. At most one police case number is changed, added or removed
+          for (let i = 0; i < maxIndex; i++) {
+            // Police case number added
+            if (i === oldPoliceCaseNumbers.length) {
+              break
+            }
+
+            // Police case number deleted
+            if (
+              i === newPoliceCaseNumbers.length ||
+              (newPoliceCaseNumbers[i] !== oldPoliceCaseNumbers[i] &&
+                newPoliceCaseNumbers.length < oldPoliceCaseNumbers.length)
+            ) {
+              for (const caseFile of theCase.caseFiles) {
+                if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
+                  await this.fileService.deleteCaseFile(caseFile, transaction)
+                }
+              }
+
+              break
+            }
+
+            // Police case number unchanged
+            if (newPoliceCaseNumbers[i] === oldPoliceCaseNumbers[i]) {
+              continue
+            }
+
+            // Police case number changed
+            for (const caseFile of theCase.caseFiles) {
+              if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
+                await this.fileService.updateCaseFile(
+                  theCase.id,
+                  caseFile.id,
+                  { policeCaseNumber: newPoliceCaseNumbers[i] },
+                  transaction,
+                )
+              }
+            }
+
+            break
+          }
+        }
+      })
+      .then(() => {
+        if (returnUpdatedCase) {
+          return this.findById(theCase.id)
+        }
+      })
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
@@ -510,7 +564,7 @@ export class CaseService {
 
     // TODO: UpdateCaseDto does not contain courtRecordSignatoryId and courtRecordSignatureDate - create a new type for CaseService.update
     await this.update(
-      theCase.id,
+      theCase,
       {
         courtRecordSignatoryId: user.id,
         courtRecordSignatureDate: nowFactory(),
@@ -575,7 +629,7 @@ export class CaseService {
       // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
       const newRulingDate = nowFactory()
       await this.update(
-        theCase.id,
+        theCase,
         {
           rulingDate: newRulingDate,
           ...(!theCase.rulingDate
@@ -689,7 +743,7 @@ export class CaseService {
     )
 
     const updatedCase = (await this.update(
-      theCase.id,
+      theCase,
       { courtCaseNumber },
       true,
     )) as Case

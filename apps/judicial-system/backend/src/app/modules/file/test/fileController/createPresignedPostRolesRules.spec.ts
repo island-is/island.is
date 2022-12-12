@@ -1,4 +1,10 @@
-import { judgeRule, prosecutorRule, registrarRule } from '../../../../guards'
+import {
+  assistantRule,
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+} from '../../../../guards'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Create presigned post rules', () => {
@@ -12,13 +18,15 @@ describe('FileController - Create presigned post rules', () => {
     )
   })
 
-  it('should give permission to three role', () => {
-    expect(rules).toHaveLength(3)
+  it('should give permission to five role', () => {
+    expect(rules).toHaveLength(5)
   })
 
-  it('should give permission to prosecutors', () => {
+  it('should give permission to prosecutors, representatives, judges, registrars and assistants', () => {
     expect(rules).toContain(prosecutorRule)
+    expect(rules).toContain(representativeRule)
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
+    expect(rules).toContain(assistantRule)
   })
 })

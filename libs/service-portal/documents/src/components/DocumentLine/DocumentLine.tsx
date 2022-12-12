@@ -52,8 +52,8 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
           id: documentLine.id,
         },
       },
-      onCompleted: () => {
-        onClickHandler()
+      onCompleted: async () => {
+        await onClickHandler()
       },
     },
   )
@@ -127,9 +127,9 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
         [styles.unopened]: !documentLine.opened,
       })}
       // Check if data is already fetched, if so go straight to download/display
-      onClick={() => {
+      onClick={async () => {
         if (getFileByIdData && !loading) {
-          onClickHandler()
+          await onClickHandler()
         } else {
           getDocument({ variables: { input: { id: documentLine.id } } })
         }
