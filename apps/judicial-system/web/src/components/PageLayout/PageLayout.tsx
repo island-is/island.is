@@ -22,7 +22,6 @@ import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
-import { StepContext } from '../StepProvider/StepProvider'
 import * as styles from './PageLayout.css'
 
 interface PageProps {
@@ -31,9 +30,12 @@ interface PageProps {
   activeSection?: number
   isLoading: boolean
   notFound: boolean
-  activeSubSection?: number
   isExtension?: boolean
   showSidepanel?: boolean
+  // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
+  activeSubSection?: number
+  onNavigationTo?: (destination: string) => Promise<any> // TODO: Fix any
+  isValid?: boolean
 }
 
 const PageLayout: React.FC<PageProps> = ({
@@ -44,10 +46,11 @@ const PageLayout: React.FC<PageProps> = ({
   isLoading,
   notFound,
   showSidepanel = true,
+  onNavigationTo,
+  isValid,
 }) => {
   const { user } = useContext(UserContext)
-  const { flows } = useContext(StepContext)
-  const { getSections } = useSections()
+  const { getSections } = useSections(activeSubSection, isValid, onNavigationTo)
   const { formatMessage } = useIntl()
 
   useEffect(() => {
@@ -116,14 +119,8 @@ const PageLayout: React.FC<PageProps> = ({
                     sections={
                       activeSection === Sections.EXTENSION ||
                       activeSection === Sections.JUDGE_EXTENSION
-                        ? getSections(
-                            flows,
-                            workingCase,
-                            activeSubSection,
-                            user,
-                          )
+                        ? getSections(workingCase, activeSubSection, user)
                         : getSections(
-                            flows,
                             workingCase,
                             activeSubSection,
                             user,

@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   DefenderInfo,
@@ -23,7 +24,6 @@ import {
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   validateAndSendToServer,
@@ -41,11 +41,7 @@ import {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
 } from '../../components'
-import {
-  FlowType,
-  StepContext,
-  UserType,
-} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
+import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const StepOne: React.FC = () => {
   const {
@@ -58,22 +54,14 @@ export const StepOne: React.FC = () => {
     leadInvestigatorErrorMessage,
     setLeadInvestigatorErrorMessage,
   ] = useState<string>('')
-  const { isCreatingCase, updateCase } = useCase()
+  const { createCase, isCreatingCase, updateCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
   const { formatMessage } = useIntl()
   const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
     workingCase,
   )
-  const { flows } = useContext(StepContext)
-
-  const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
-    UserType.PROSECUTOR
-  ][
-    workingCase.id === ''
-      ? constants.CREATE_RESTRICTION_CASE_ROUTE
-      : constants.RESTRICTION_CASE_DEFENDANT_ROUTE
-  ]
+  const router = useRouter()
 
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {
@@ -109,6 +97,38 @@ export const StepOne: React.FC = () => {
     [workingCase.id, updateDefendantState, updateDefendant],
   )
 
+  const handleNavigateTo = useCallback(
+    async (destination: string) => {
+      if (!workingCase.id) {
+        const createdCase = await createCase(workingCase)
+
+        if (
+          createdCase &&
+          createdCase.defendants &&
+          createdCase.defendants.length > 0 &&
+          workingCase.defendants &&
+          workingCase.defendants.length > 0
+        ) {
+          await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
+            gender: workingCase.defendants[0].gender,
+            name: workingCase.defendants[0].name,
+            address: workingCase.defendants[0].address,
+            nationalId: workingCase.defendants[0].nationalId,
+            noNationalId: workingCase.defendants[0].noNationalId,
+            citizenship: workingCase.defendants[0].citizenship,
+          })
+
+          router.push(`${destination}/${createdCase.id}`)
+        }
+      } else {
+        router.push(`${destination}/${workingCase.id}`)
+      }
+    },
+    [createCase, router, updateDefendant, workingCase],
+  )
+
+  const stepIsValid = isDefendantStepValidRC(workingCase, clientPoliceNumbers)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -119,6 +139,8 @@ export const StepOne: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
+      onNavigationTo={stepIsValid ? handleNavigateTo : undefined}
+      isValid={stepIsValid}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.restrictionCases.defendant)}
@@ -219,8 +241,12 @@ export const StepOne: React.FC = () => {
             <FormFooter
               previousUrl={constants.CASES_ROUTE}
               nextIsLoading={isCreatingCase}
-              nextIsDisabled={!isValid}
-              onNextButtonClick={onContinue}
+              nextIsDisabled={!stepIsValid}
+              onNextButtonClick={() =>
+                handleNavigateTo(
+                  `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`,
+                )
+              }
               nextButtonText={formatMessage(
                 workingCase.id === '' ? core.createCase : core.continue,
               )}

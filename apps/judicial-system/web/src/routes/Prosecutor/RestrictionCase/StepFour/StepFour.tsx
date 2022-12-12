@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -24,11 +25,6 @@ import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  FlowType,
-  StepContext,
-  UserType,
-} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export const StepFour: React.FC = () => {
   const {
@@ -37,10 +33,7 @@ export const StepFour: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { flows } = useContext(StepContext)
-  const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
-    UserType.PROSECUTOR
-  ][constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]
+  const router = useRouter()
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
@@ -56,6 +49,10 @@ export const StepFour: React.FC = () => {
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
 
+  const stepIsValid = isPoliceReportStepValidRC(workingCase)
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}/${workingCase.id}`)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -65,6 +62,8 @@ export const StepFour: React.FC = () => {
       activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FOUR}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.restrictionCases.policeReport)}
@@ -235,8 +234,12 @@ export const StepFour: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={onContinue}
-          nextIsDisabled={!isValid}
+          onNextButtonClick={() => {
+            handleNavigationTo(
+              `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`,
+            )
+          }}
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
     </PageLayout>

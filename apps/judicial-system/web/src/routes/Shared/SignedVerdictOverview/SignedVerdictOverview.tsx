@@ -498,6 +498,7 @@ export const SignedVerdictOverview: React.FC = () => {
       activeSection={Sections.CASE_CLOSED}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid
     >
       <PageHeader
         title={formatMessage(titles.shared.closedCaseOverview, {

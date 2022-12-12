@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   BlueBox,
@@ -55,11 +56,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
-import {
-  FlowType,
-  StepContext,
-  UserType,
-} from '@island.is/judicial-system-web/src/components/StepProvider/StepProvider'
 
 export interface DemandsAutofillProps {
   defendant: Defendant
@@ -103,10 +99,7 @@ export const StepThree: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { flows } = useContext(StepContext)
-  const { onContinue, isValid } = flows[FlowType.RESTRICTION_CASES][
-    UserType.PROSECUTOR
-  ][constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]
+  const router = useRouter()
   const { formatMessage } = useIntl()
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
@@ -173,6 +166,10 @@ export const StepThree: React.FC = () => {
     [workingCase, formatMessage, setWorkingCase, setAndSendCaseToServer],
   )
 
+  const stepIsValid = isPoliceDemandsStepValidRC(workingCase)
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}/${workingCase.id}`)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -182,6 +179,8 @@ export const StepThree: React.FC = () => {
       activeSubSection={RestrictionCaseProsecutorSubsections.STEP_THREE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.restrictionCases.policeDemands)}
@@ -546,8 +545,12 @@ export const StepThree: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => onContinue()}
-          nextIsDisabled={!isValid}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`,
+            )
+          }
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
     </PageLayout>

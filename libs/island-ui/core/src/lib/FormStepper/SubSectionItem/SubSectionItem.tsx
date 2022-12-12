@@ -59,7 +59,7 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
       ) : onClick && currentState !== 'active' ? (
         <Box
           component="button"
-          onClick={() => onClick()}
+          onClick={onClick}
           className={cn(
             linkStyles.underlineVisibilities['hover'],
             linkStyles.underlines['small'],
