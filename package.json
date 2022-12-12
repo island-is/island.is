@@ -461,5 +461,15 @@
   "volta": {
     "node": "18.8.0"
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@3.2.3",
+  "workspaces": [
+    "apps/air-discount-scheme/web",
+    "apps/auth-admin-web",
+    "apps/contentful-role-permissions",
+    "apps/financial-aid/web-osk",
+    "apps/financial-aid/web-veita",
+    "apps/judicial-system/web",
+    "apps/skilavottord/web",
+    "apps/web"
+  ]
 }
