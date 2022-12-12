@@ -30,8 +30,7 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
       ...fabTUser(nationalId),
       // The DiscountWithTUser.user takes from both TUser and the User model
       // We fabricate TUser and name is simply the odd one out from between them.
-      // We're not checking for name here so it's simply left as blank.
-      name: '', 
+      name: 'Bergvin',
     },
     connectionDiscountCodes: [],
     discountCode: 'GETDISCO',
@@ -42,7 +41,7 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
   const fabCreateDiscount = (nationalId: string): DiscountWithTUser => ({
     user: {
       ...fabTUser(nationalId),
-      name: '',
+      name: 'Bergvin',
     },
     connectionDiscountCodes: [],
     discountCode: 'CREATEDC',
@@ -53,9 +52,9 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
   const fabTUser = (nationalId: string): TUser => ({
     address: 'Neinsstaðarból 18',
     city: 'Reykjavík',
-    firstName: '',
-    middleName: '',
-    lastName: '',
+    firstName: 'Bergvin',
+    middleName: 'Björn',
+    lastName: 'Bóason',
     gender: 'kk',
     nationalId,
     postalcode: 200,
