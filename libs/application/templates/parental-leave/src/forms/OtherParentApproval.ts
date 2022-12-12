@@ -30,14 +30,10 @@ export const OtherParentApproval: Form = buildForm({
         buildMultiField({
           id: 'multi',
           title: (application: Application) => {
-            const isRequestingRights = getValueViaPath(
-              application.answers,
-              'requestRights.isRequestingRights',
-            ) as YesOrNo
-            const usePersonalAllowanceFromSpouse = getValueViaPath(
-              application.answers,
-              'usePersonalAllowanceFromSpouse',
-            ) as YesOrNo
+            const {
+              isRequestingRights,
+              usePersonalAllowanceFromSpouse,
+            } = getApplicationAnswers(application.answers)
 
             if (
               isRequestingRights === YES &&
@@ -53,14 +49,10 @@ export const OtherParentApproval: Form = buildForm({
             return otherParentApprovalFormMessages.requestAllowance
           },
           description: (application: Application) => {
-            const isRequestingRights = getValueViaPath(
-              application.answers,
-              'requestRights.isRequestingRights',
-            ) as YesOrNo
-            const usePersonalAllowanceFromSpouse = getValueViaPath(
-              application.answers,
-              'usePersonalAllowanceFromSpouse',
-            ) as YesOrNo
+            const {
+              isRequestingRights,
+              usePersonalAllowanceFromSpouse,
+            } = getApplicationAnswers(application.answers)
 
             if (
               isRequestingRights === YES &&

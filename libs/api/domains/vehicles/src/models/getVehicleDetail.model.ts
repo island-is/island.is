@@ -306,4 +306,13 @@ export class VehiclesDetail {
 
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isStolen?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isDebtLess?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isOutOfCommission?: boolean
 }

@@ -39,8 +39,8 @@ const InfoCard: React.FC<Props> = (props) => {
           <>
             <Text variant="h4">{defendants.title}</Text>
             <Box marginBottom={defender ? [2, 2, 3, 3] : 0}>
-              {defendants.items.map((defendant, index) => (
-                <Text key={index}>
+              {defendants.items.map((defendant) => (
+                <Text key={defendant.id}>
                   <span className={styles.infoCardDefendant}>
                     <Text
                       as="span"
@@ -92,21 +92,8 @@ const InfoCard: React.FC<Props> = (props) => {
       </Box>
       <Box className={styles.infoCardDataContainer}>
         {data.map((dataItem, index) => {
-          const isLastItem = index === data.length - 1
-          const isLastTwoItems = isLastItem || index === data.length - 2
-
           return (
-            <Box
-              data-testid={`infoCardDataContainer${index}`}
-              className={styles.infoCardData}
-              marginBottom={[
-                isLastItem ? 0 : 2,
-                isLastItem ? 0 : 2,
-                isLastTwoItems ? 0 : 3,
-                isLastTwoItems ? 0 : 3,
-              ]}
-              key={index}
-            >
+            <Box data-testid={`infoCardDataContainer${index}`} key={index}>
               <Text variant="h4">{dataItem.title}</Text>
               {typeof dataItem.value === 'string' ? (
                 <Text>{dataItem.value}</Text>
