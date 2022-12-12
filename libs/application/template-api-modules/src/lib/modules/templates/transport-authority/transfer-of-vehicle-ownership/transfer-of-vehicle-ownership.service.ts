@@ -47,7 +47,7 @@ export class TransferOfVehicleOwnershipService {
       )
 
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         application.id,
         chargeItemCodes,
       )
@@ -78,7 +78,6 @@ export class TransferOfVehicleOwnershipService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
     if (!payment?.fulfilled) {
@@ -282,7 +281,6 @@ export class TransferOfVehicleOwnershipService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
     if (!payment?.fulfilled) {

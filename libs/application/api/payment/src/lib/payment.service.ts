@@ -1,30 +1,24 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
 import { PaymentAPI } from '@island.is/clients/payment'
-import type { Charge, Item } from '@island.is/clients/payment'
+import type { Charge, Item as ChargeItem } from '@island.is/clients/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
+
 import { Application as ApplicationModel } from '@island.is/application/api/core'
 import { PaymentModuleConfig } from './payment.config'
 import { ConfigType } from '@nestjs/config'
-
-const handleError = async (error: any) => {
-  logger.error(JSON.stringify(error))
-
-  if (error.json) {
-    const json = await error.json()
-
-    logger.error(json)
-
-    throw new ApolloError(JSON.stringify(json), error.status)
-  }
-
-  throw new ApolloError('Failed to resolve request', error.status)
-}
+import { formatCharge } from './models/Charge'
+import { PaymentType as BasePayment } from '@island.is/application/types'
+import { AuditService } from '@island.is/nest/audit'
+import { PaymentStatus } from './models/paymentStatus'
 
 @Injectable()
 export class PaymentService {
@@ -34,77 +28,128 @@ export class PaymentService {
     @Inject(PaymentModuleConfig.KEY)
     private config: ConfigType<typeof PaymentModuleConfig>,
     private paymentApi: PaymentAPI,
+    private readonly auditService: AuditService,
   ) {}
 
   async findPaymentByApplicationId(
     applicationId: string,
   ): Promise<Payment | null> {
-    return this.paymentModel
-      .findOne({
-        where: {
-          application_id: applicationId,
-        },
-      })
-      .catch(handleError)
+    return this.paymentModel.findOne({
+      where: {
+        application_id: applicationId,
+      },
+    })
+  }
+
+  async getStatus(applicationId: string): Promise<PaymentStatus> {
+    const foundPayment = await this.findPaymentByApplicationId(applicationId)
+    if (!foundPayment) {
+      throw new NotFoundException(
+        `payment object was not found for application id ${applicationId}`,
+      )
+    }
+
+    if (!foundPayment.user4) {
+      throw new InternalServerErrorException(
+        `valid payment object was not found for application id ${applicationId} - user4 not set`,
+      )
+    }
+    return {
+      fulfilled: foundPayment.fulfilled || false,
+      paymentUrl: this.makePaymentUrl(foundPayment.user4),
+    }
   }
 
   public makePaymentUrl(docNum: string): string {
     return `${this.config.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
-  async createCharge(
-    payment: Payment,
-    user: User,
-  ): Promise<CreateChargeResult> {
-    // TODO: island.is x-road service path for callback.. ??
-    // this can actually be a fixed url
-    const callbackUrl =
-      ((this.config.callbackBaseUrl + payment.application_id) as string) +
-      this.config.callbackAdditionUrl +
-      payment.id
-
-    const parsedDefinition = JSON.parse(
-      (payment.definition as unknown) as string,
-    )
-    const parsedDefinitionCharges = parsedDefinition.charges as [
-      {
-        chargeItemName: string
-        chargeItemCode: string
-        amount: number
+  private async createPaymentModel(
+    chargeItems: ChargeItem[],
+    applicationId: string,
+  ): Promise<Payment> {
+    const paymentModel: Pick<
+      BasePayment,
+      'application_id' | 'fulfilled' | 'amount' | 'definition' | 'expires_at'
+    > = {
+      application_id: applicationId,
+      fulfilled: false,
+      amount: chargeItems.reduce(
+        (sum, item) => sum + (item?.priceAmount || 0),
+        0,
+      ),
+      definition: {
+        performingOrganizationID: chargeItems[0].performingOrgID,
+        chargeType: chargeItems[0].chargeType,
+        charges: chargeItems.map((chargeItem) => ({
+          chargeItemName: chargeItem.chargeItemName,
+          chargeItemCode: chargeItem.chargeItemCode,
+          amount: chargeItem.priceAmount,
+        })),
       },
-    ]
-
-    const charge: Charge = {
-      // TODO: this needs to be unique, but can only handle 22 or 23 chars
-      // should probably be an id or token from the DB charge once implemented
-      chargeItemSubject: payment.id.substring(0, 22),
-      systemID: 'ISL',
-      // The OR values can be removed later when the system will be more robust.
-      performingOrgID: parsedDefinition.performingOrganizationID,
-      payeeNationalID: user.nationalId,
-      chargeType: parsedDefinition.chargeType,
-      performerNationalID: user.nationalId,
-      charges: parsedDefinitionCharges.map((parsedDefinitionCharge) => ({
-        chargeItemCode: parsedDefinitionCharge.chargeItemCode,
-        quantity: 1,
-        priceAmount: parsedDefinitionCharge.amount,
-        amount: parsedDefinitionCharge.amount,
-        reference: '',
-      })),
-      immediateProcess: true,
-      returnUrl: callbackUrl,
-      requestID: payment.id,
+      expires_at: new Date(),
     }
+    return await this.paymentModel.create(paymentModel)
+  }
 
-    const result = await this.paymentApi.createCharge(charge)
+  /**
+   * Builds a Charge object for the payment API endpoint and sends to FJS
+   * Saves the user4 from the response to the payment db entry
+   * @param payment
+   * @param user
+   * @returns Charge response result and a new payment callback Url
+   */
+  async createCharge(
+    user: User,
+    chargeItemCodes: string[],
+    applicationId: string,
+  ): Promise<CreateChargeResult> {
+    //.1 Get charge items from FJS
+    const chargeItems = await this.findChargeItems(chargeItemCodes)
+
+    //2. Create and insert payment db entry
+    const paymentModel = await this.createPaymentModel(
+      chargeItems,
+      applicationId,
+    )
+
+    //3. Send charge to FJS
+    const chargeResult = await this.paymentApi.createCharge(
+      formatCharge(
+        paymentModel,
+        this.config.callbackBaseUrl,
+        this.config.callbackAdditionUrl,
+        user,
+      ),
+    )
+
+    //4. update payment with user4 from charge result
+    await this.paymentModel.update(
+      {
+        user4: chargeResult.user4,
+      },
+      {
+        where: {
+          id: paymentModel.id,
+          application_id: applicationId,
+        },
+      },
+    )
+
+    this.auditService.audit({
+      auth: user,
+      action: 'createCharge',
+      resources: applicationId as string,
+      meta: { applicationId, id: paymentModel.id },
+    })
 
     return {
-      ...result,
-      paymentUrl: this.makePaymentUrl(result.user4),
+      id: paymentModel.id,
+      paymentUrl: this.makePaymentUrl(chargeResult.user4),
     }
   }
 
-  async findChargeItem(targetChargeItemCode: string): Promise<Item> {
+  async findChargeItem(targetChargeItemCode: string): Promise<ChargeItem> {
     const { item: items } = await this.paymentApi.getCatalog()
 
     const item = items.find(
@@ -118,7 +163,9 @@ export class PaymentService {
     return item
   }
 
-  async findChargeItems(targetChargeItemCodes: string[]): Promise<Item[]> {
+  async findChargeItems(
+    targetChargeItemCodes: string[],
+  ): Promise<ChargeItem[]> {
     const { item: allItems } = await this.paymentApi.getCatalog()
 
     const items = allItems.filter(({ chargeItemCode }) =>

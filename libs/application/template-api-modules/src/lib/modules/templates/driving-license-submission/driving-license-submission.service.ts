@@ -40,7 +40,7 @@ export class DrivingLicenseSubmissionService {
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
       [chargeItemCode],
     )
@@ -61,7 +61,6 @@ export class DrivingLicenseSubmissionService {
     const nationalId = application.applicant
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
 

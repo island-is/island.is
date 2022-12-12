@@ -33,11 +33,9 @@ export class MortgageCertificateSubmissionService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
-        id,
-        [ChargeItemCode.MORTGAGE_CERTIFICATE],
-      )
+      const result = this.sharedTemplateAPIService.createCharge(auth, id, [
+        ChargeItemCode.MORTGAGE_CERTIFICATE,
+      ])
       return result
     } catch (exeption) {
       return { id: '', paymentUrl: '' }
@@ -57,7 +55,6 @@ export class MortgageCertificateSubmissionService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
 

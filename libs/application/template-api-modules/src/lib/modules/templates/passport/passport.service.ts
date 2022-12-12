@@ -31,7 +31,7 @@ export class PassportService {
         : PASSPORT_CHARGE_CODES.EXPRESS
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
       [chargeItemCode],
     )
@@ -85,7 +85,6 @@ export class PassportService {
     const { answers } = application
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
 

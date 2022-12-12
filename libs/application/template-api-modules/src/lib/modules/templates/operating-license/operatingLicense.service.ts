@@ -44,7 +44,7 @@ export class OperatingLicenseService {
     }
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
       [chargeItemCode],
     )
@@ -64,7 +64,6 @@ export class OperatingLicenseService {
     orderId?: string
   }> {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
 

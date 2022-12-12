@@ -27,11 +27,9 @@ export class CriminalRecordSubmissionService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
-        id,
-        [ChargeItemCode.CRIMINAL_RECORD],
-      )
+      const result = this.sharedTemplateAPIService.createCharge(auth, id, [
+        ChargeItemCode.CRIMINAL_RECORD,
+      ])
       return result
     } catch (exeption) {
       return { id: '', paymentUrl: '' }
@@ -51,7 +49,6 @@ export class CriminalRecordSubmissionService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
 

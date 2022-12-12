@@ -32,7 +32,7 @@ export class GeneralFishingLicenseService {
     }
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       application.id,
       [chargeItemCode],
     )
@@ -49,7 +49,6 @@ export class GeneralFishingLicenseService {
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
 

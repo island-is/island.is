@@ -27,7 +27,7 @@ export class ExamplePaymentActionsService {
     }
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
       [chargeItemCode],
     )
@@ -45,7 +45,6 @@ export class ExamplePaymentActionsService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
 

@@ -6,8 +6,6 @@ import {
   Get,
   ParseUUIDPipe,
   Body,
-  NotFoundException,
-  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
@@ -17,7 +15,6 @@ import {
   ApiHeader,
   ApiOkResponse,
 } from '@nestjs/swagger'
-import { PaymentType as BasePayment } from '@island.is/application/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -28,12 +25,9 @@ import {
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
 import { CreatePaymentResponseDto } from './dto'
-import { InjectModel } from '@nestjs/sequelize'
-import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
-import { PaymentAPI } from '@island.is/clients/payment'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -50,9 +44,6 @@ export class PaymentController {
   constructor(
     private readonly auditService: AuditService,
     private readonly paymentService: PaymentService,
-    private readonly paymentAPI: PaymentAPI,
-    @InjectModel(Payment)
-    private paymentModel: typeof Payment,
   ) {}
   @Scopes(ApplicationScope.write)
   @Post('applications/:applicationId/payment')
@@ -62,58 +53,15 @@ export class PaymentController {
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
     @Body() payload: CreateChargeInput,
   ): Promise<CreatePaymentResponseDto> {
-    const chargeItems = await this.paymentService.findChargeItems(
+    const { id, paymentUrl } = await this.paymentService.createCharge(
+      user,
       payload.chargeItemCodes,
-    )
-
-    const paymentDto: Pick<
-      BasePayment,
-      'application_id' | 'fulfilled' | 'amount' | 'definition' | 'expires_at'
-    > = {
-      application_id: applicationId,
-      fulfilled: false,
-      amount: chargeItems.reduce(
-        (sum, item) => sum + (item?.priceAmount || 0),
-        0,
-      ),
-      definition: {
-        performingOrganizationID: chargeItems[0].performingOrgID,
-        chargeType: chargeItems[0].chargeType,
-        charges: chargeItems.map((chargeItem) => ({
-          chargeItemName: chargeItem.chargeItemName,
-          chargeItemCode: chargeItem.chargeItemCode,
-          amount: chargeItem.priceAmount,
-        })),
-      },
-      expires_at: new Date(),
-    }
-
-    const payment = await this.paymentModel.create(paymentDto)
-
-    const chargeResult = await this.paymentService.createCharge(payment, user)
-
-    this.auditService.audit({
-      auth: user,
-      action: 'createCharge',
-      resources: paymentDto.application_id as string,
-      meta: { applicationId: paymentDto.application_id, id: payment.id },
-    })
-
-    await this.paymentModel.update(
-      {
-        user4: chargeResult.user4,
-      },
-      {
-        where: {
-          id: payment.id,
-          application_id: applicationId,
-        },
-      },
+      applicationId,
     )
 
     return {
-      id: payment.id,
-      paymentUrl: chargeResult.paymentUrl,
+      id,
+      paymentUrl,
     }
   }
 
@@ -129,27 +77,6 @@ export class PaymentController {
   async getPaymentStatus(
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
-    const payment = await this.paymentService.findPaymentByApplicationId(
-      applicationId,
-    )
-
-    if (!payment) {
-      throw new NotFoundException(
-        `payment object was not found for application id ${applicationId}`,
-      )
-    }
-
-    if (!payment.user4) {
-      throw new InternalServerErrorException(
-        `valid payment object was not found for application id ${applicationId} - user4 not set`,
-      )
-    }
-
-    return {
-      // TODO: maybe treat the case where no payment was found differently?
-      // not sure how/if that case would/could come up.
-      fulfilled: payment.fulfilled || false,
-      paymentUrl: this.paymentService.makePaymentUrl(payment.user4),
-    }
+    return await this.paymentService.getStatus(applicationId)
   }
 }

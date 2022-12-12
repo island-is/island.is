@@ -29,7 +29,7 @@ export class DrivingLicenseDuplicateService {
     const chargeItemCode = 'AY110'
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
       [chargeItemCode],
     )
@@ -52,7 +52,6 @@ export class DrivingLicenseDuplicateService {
     const { answers } = application
     const nationalId = application.applicant
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
       application.id,
     )
 
