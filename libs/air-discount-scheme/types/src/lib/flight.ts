@@ -8,7 +8,7 @@ export type FlightLeg = {
   discountPrice: number
   financialState: string
   financialStateUpdated: Date
-  flight: Flight
+  flight?: Flight
   date: Date
   created: Date
   modified: Date
@@ -25,7 +25,7 @@ export type Flight = {
   nationalId: string
   userInfo: UserInfo
   bookingDate: Date
-  flightLegs: FlightLeg[]
+  flightLegs?: FlightLeg[]
   created: Date
   modified: Date
   connectable: boolean
