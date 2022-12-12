@@ -21,7 +21,7 @@ import {
   Feature,
   isInvestigationCase,
   isIndictmentCase,
-  isCourtRole,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -157,7 +157,7 @@ export const Cases: React.FC = () => {
       } else {
         routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
       }
-    } else if (isCourtRole(role)) {
+    } else if (isExtendedCourtRole(role)) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getRestrictionCaseCourtSections(caseToOpen, user),

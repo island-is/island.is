@@ -21,7 +21,6 @@ import {
   TypeAggregationResponse,
   RankEvaluationInput,
   GroupedRankEvaluationResponse,
-  rankEvaluationMetrics,
   ProcessEntryAggregationResponse,
 } from '../types'
 import {
@@ -201,23 +200,23 @@ export class ElasticService {
     })
   }
 
-  async getRankEvaluation<searchTermUnion extends string>(
+  async getRankEvaluation<SearchTermUnion extends string>(
     index: string,
     termRatings: RankEvaluationInput['termRatings'],
     metrics: RankEvaluationInput['metric'][],
-  ): Promise<GroupedRankEvaluationResponse<searchTermUnion>> {
+  ): Promise<GroupedRankEvaluationResponse<SearchTermUnion>> {
     // elasticsearch does not support multiple metric request per rank_eval call so we make multiple calls
     const requests = metrics.map(async (metric) => {
       const requestBody = rankEvaluationQuery({ termRatings, metric })
       const data = await this.rankEvaluation<
-        RankEvaluationResponse<searchTermUnion>,
+        RankEvaluationResponse<SearchTermUnion>,
         typeof requestBody
       >(index, requestBody)
       return data.body
     })
 
     const results = await Promise.all(requests)
-    return results.reduce<RankResultMap<searchTermUnion>>(
+    return results.reduce<RankResultMap<SearchTermUnion>>(
       (groupedResults, result, index) => {
         groupedResults[metrics[index]] = result
         return groupedResults

@@ -1,15 +1,15 @@
 import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
-import { OrderVehicleLicensePlateService } from './order-vehicle-registration-certificate.service'
+import { OrderVehicleRegistrationCertificateService } from './order-vehicle-registration-certificate.service'
 
-export class OrderVehicleLicensePlateModule {
+export class OrderVehicleRegistrationCertificateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: OrderVehicleLicensePlateModule,
+      module: OrderVehicleRegistrationCertificateModule,
       imports: [SharedTemplateAPIModule.register(baseConfig)],
-      providers: [OrderVehicleLicensePlateService],
-      exports: [OrderVehicleLicensePlateService],
+      providers: [OrderVehicleRegistrationCertificateService],
+      exports: [OrderVehicleRegistrationCertificateService],
     }
   }
 }
