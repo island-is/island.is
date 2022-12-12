@@ -4,7 +4,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 @Injectable()
-export class OrderVehicleLicensePlateService {
+export class OrderVehicleRegistrationCertificateService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
@@ -17,7 +17,7 @@ export class OrderVehicleLicensePlateService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        [ChargeItemCode.TRANSPORT_AUTHORITY_XXX],
       )
       return result
     } catch (exeption) {

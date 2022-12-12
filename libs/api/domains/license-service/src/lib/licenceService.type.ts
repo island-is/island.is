@@ -111,6 +111,7 @@ export type GenericUserLicenseMetadata = {
   links?: GenericUserLicenseMetaLinks[]
   licenseNumber: string
   expired: boolean | null
+  expireDate?: string
 }
 
 export type GenericUserLicensePayload = {

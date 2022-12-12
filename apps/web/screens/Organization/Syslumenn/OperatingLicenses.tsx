@@ -28,11 +28,12 @@ import {
   GET_OPERATING_LICENSES_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationWrapper,
   OperatingLicensesCsvExport,
+  Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
@@ -234,6 +235,10 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   subpage,
   namespace,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
@@ -325,6 +330,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       pageFeaturedImage={subpage.featuredImage}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -340,10 +346,13 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={2}>
+      <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 2}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
+        {isWebReaderEnabledForOrganizationPages && (
+          <Webreader readId={null} readClass="rs_read" />
+        )}
       </Box>
       {webRichText(subpage.description as SliceType[])}
       <Box marginBottom={3}>
