@@ -50,6 +50,13 @@ export const prosecutorUpdateRule = {
   dtoFields: prosecutorFields,
 } as RolesRule
 
+// Allows representatives to update a specific set of fields
+export const representativeUpdateRule = {
+  role: UserRole.REPRESENTATIVE,
+  type: RulesType.FIELD,
+  dtoFields: prosecutorFields,
+} as RolesRule
+
 const courtFields: (keyof UpdateCase)[] = [
   'defenderName',
   'defenderNationalId',
@@ -112,6 +119,13 @@ export const registrarUpdateRule = {
   dtoFields: courtFields,
 } as RolesRule
 
+// Allows assistants to update a specific set of fields
+export const assistantUpdateRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD,
+  dtoFields: courtFields,
+} as RolesRule
+
 // Allows staff to update a specific set of fields
 // In practice, only prison admins will be able to update these fields,
 // as write access is blocked for other staff roles
@@ -133,7 +147,19 @@ export const prosecutorTransitionRule = {
   ],
 } as RolesRule
 
-// Allows judges to receive, accept and reject cases
+// Allows representatives to open, submit and delete cases
+export const representativeTransitionRule = {
+  role: UserRole.REPRESENTATIVE,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.OPEN,
+    CaseTransition.SUBMIT,
+    CaseTransition.DELETE,
+  ],
+} as RolesRule
+
+// Allows judges to receive, accept, reject and dismiss cases
 export const judgeTransitionRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
@@ -152,4 +178,17 @@ export const registrarTransitionRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.RECEIVE],
+} as RolesRule
+
+// Allows assistants to receive, accept, reject and dismiss cases
+export const assistantTransitionRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.RECEIVE,
+    CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+    CaseTransition.DISMISS,
+  ],
 } as RolesRule

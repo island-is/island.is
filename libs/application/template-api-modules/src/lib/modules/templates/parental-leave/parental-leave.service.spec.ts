@@ -12,6 +12,7 @@ import {
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ParentalLeaveApi,
+  ApplicationInformationApi,
   Period as VmstPeriod,
   ParentalLeaveGetPeriodLengthRequest,
   ParentalLeaveGetPeriodEndDateRequest,
@@ -141,6 +142,12 @@ describe('ParentalLeaveService', () => {
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
+        },
+        {
+          provide: ApplicationInformationApi,
+          useClass: jest.fn(() => ({
+            applicationGetApplicationInformation: () => Promise.reject(),
+          })),
         },
         {
           provide: ParentalLeaveApi,
@@ -503,9 +510,7 @@ describe('ParentalLeaveService', () => {
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
 
       // Also need to mock the pdf here
-      jest
-        .spyOn(parentalLeaveService, 'getSelfEmployedPdf')
-        .mockImplementation(jest.fn())
+      jest.spyOn(parentalLeaveService, 'getPdf').mockImplementation(jest.fn())
 
       const auth: TemplateApiModuleActionProps['auth'] = {
         authorization: '',
@@ -529,9 +534,7 @@ describe('ParentalLeaveService', () => {
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
 
       // Also need to mock the pdf here
-      jest
-        .spyOn(parentalLeaveService, 'getSelfEmployedPdf')
-        .mockImplementation(jest.fn())
+      jest.spyOn(parentalLeaveService, 'getPdf').mockImplementation(jest.fn())
 
       const auth: TemplateApiModuleActionProps['auth'] = {
         authorization: '',
