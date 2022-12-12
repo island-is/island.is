@@ -80,15 +80,8 @@ const validateFormStepper = (
     ),
   }
 
-  console.log(
-    steps.filter(
-      (step) =>
-        validationForStep[step as keyof typeof validationForStep] === false,
-    ),
-  )
-
   return (
-    steps.filter(
+    steps.map(
       (step) =>
         validationForStep[step as keyof typeof validationForStep] === false,
     ).length > 0
