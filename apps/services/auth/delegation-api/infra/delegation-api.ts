@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -23,6 +23,22 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-delegation-api'> =
         prod: 'https://innskra.island.is',
       },
       XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
+      XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
+        dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+        staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+        prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      },
+      XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -30,7 +46,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-delegation-api'> =
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
     })
-    .xroad(Base, Client, RskProcuring, NationalRegistry)
+    .xroad(Base, Client, RskProcuring)
     .readiness('/liveness')
     .liveness('/liveness')
     .replicaCount({
