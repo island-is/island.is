@@ -11,7 +11,7 @@ export const EndorsementForm: Form = buildForm({
   id: 'Endorsement form',
   title: '',
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'intro',

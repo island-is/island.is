@@ -7,6 +7,8 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Icon,
+  Link,
 } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { ProjectChatPanel } from '../ProjectChatPanel'
@@ -14,6 +16,8 @@ import { ProjectHeader } from '../ProjectHeader'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { getSidebarNavigationComponent } from '../../utils'
 import { useRouter } from 'next/router'
+
+import * as styles from './ProjectWrapper.css'
 
 interface ProjectWrapperProps {
   withSidebar?: boolean
@@ -46,16 +50,23 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
 
   const aboveChildren = (
     <>
-      <Hidden above="sm">
-        <Box>
-          <Box marginY={2}>{projectPageSidebarNavigationComponent(true)}</Box>
+      {withSidebar && (
+        <Hidden above="sm">
+          <Box>
+            <Box marginY={2}>{projectPageSidebarNavigationComponent(true)}</Box>
+          </Box>
+        </Hidden>
+      )}
+      {breadcrumbItems?.length > 0 && (
+        <Box marginBottom={3}>
+          <Breadcrumbs items={breadcrumbItems} />
         </Box>
-      </Hidden>
-      <Box marginBottom={3}>
-        <Breadcrumbs items={breadcrumbItems} />
-      </Box>
+      )}
     </>
   )
+
+  const showBackLink =
+    !withSidebar && projectPage.backLink?.url && projectPage.backLink?.text
 
   return (
     <>
@@ -76,19 +87,60 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
           {children}
         </SidebarLayout>
       ) : (
-        <GridContainer>
-          <GridRow>
-            <GridColumn
-              paddingTop={6}
-              paddingBottom={6}
-              span={['12/12', '12/12', '10/12']}
-              offset={['0', '0', '1/12']}
-            >
-              {aboveChildren}
-              {children}
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+        <Box className={styles.fullWidthContainer}>
+          {showBackLink && (
+            <Hidden below="md">
+              <Link
+                href={projectPage.backLink.url}
+                underlineVisibility="always"
+                underline="normal"
+                color="blue400"
+                className={styles.linkContainer}
+              >
+                <Icon size="small" icon="arrowBack" />
+                {projectPage.backLink.text}
+              </Link>
+            </Hidden>
+          )}
+          <GridContainer>
+            {showBackLink && (
+              <Hidden above="sm">
+                <Box marginTop={4}>
+                  <Link
+                    href={projectPage.backLink.url}
+                    underlineVisibility="always"
+                    underline="normal"
+                    color="blue400"
+                    className={styles.linkContainerMobile}
+                  >
+                    <Icon size="small" icon="arrowBack" />
+                    {projectPage.backLink.text}
+                  </Link>
+                </Box>
+              </Hidden>
+            )}
+            <GridRow>
+              <GridColumn
+                paddingTop={6}
+                paddingBottom={6}
+                span={[
+                  '12/12',
+                  '12/12',
+                  projectPage.contentIsFullWidth ? '12/12' : '10/12',
+                ]}
+                offset={[
+                  '0',
+                  '0',
+                  projectPage.contentIsFullWidth ? '0' : '1/12',
+                ]}
+              >
+                {aboveChildren}
+
+                {children}
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
       )}
     </>
   )

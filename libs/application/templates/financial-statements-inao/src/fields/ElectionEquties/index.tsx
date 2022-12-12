@@ -83,6 +83,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
               name={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
+              rightAlign
               error={
                 errors &&
                 getErrorViaPath(
@@ -107,6 +108,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.currentAssets)
               }
+              rightAlign
               onChange={debounce(() => {
                 getTotalAssets()
                 clearErrors(EQUITIESANDLIABILITIESIDS.currentAssets)
@@ -130,6 +132,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.longTerm}
               name={EQUITIESANDLIABILITIESIDS.longTerm}
+              rightAlign
               onChange={debounce(() => {
                 getTotalLiabilities()
                 clearErrors(EQUITIESANDLIABILITIESIDS.longTerm)
@@ -147,6 +150,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.shortTerm}
               name={EQUITIESANDLIABILITIESIDS.shortTerm}
+              rightAlign
               onChange={debounce(() => {
                 getTotalLiabilities()
                 clearErrors(EQUITIESANDLIABILITIESIDS.shortTerm)
@@ -169,6 +173,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.totalEquity}
               name={EQUITIESANDLIABILITIESIDS.totalEquity}
+              rightAlign
               onChange={debounce(() => {
                 getTotalEquity()
                 clearErrors(EQUITIESANDLIABILITIESIDS.totalEquity)

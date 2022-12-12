@@ -1,0 +1,75 @@
+{
+  "data": {
+    "passes": {
+      "data": [
+        {
+          "whenCreated": "2022-09-26T13:25:27.024Z",
+          "whenModified": "2022-09-26T13:25:27.024Z",
+          "passTemplate": {
+            "id": "123"
+          },
+          "distributionUrl": "https://url.com",
+          "distributionQRCode": "123-bre64",
+          "id": "6143",
+          "status": "UNCLAIMED",
+          "inputFieldValues": [
+            {
+              "passInputField": {
+                "identifier": "gildir"
+              },
+              "value": "25.06.2028"
+            },
+            {
+              "passInputField": {
+                "identifier": "nafn"
+              },
+              "value": "gervimanni"
+            },
+            {
+              "passInputField": {
+                "identifier": "kt"
+              },
+              "value": "010130-4929"
+            },
+            {
+              "passInputField": {
+                "identifier": "heimilisfang"
+              },
+              "value": "Bretland"
+            },
+            {
+              "passInputField": {
+                "identifier": "postnr."
+              },
+              "value": "101 London"
+            },
+            {
+              "passInputField": {
+                "identifier": "numer"
+              },
+              "value": "010-2000-2257"
+            },
+            {
+              "passInputField": {
+                "identifier": "rettindi"
+              },
+              "value": "A B D E S"
+            },
+            {
+              "passInputField": {
+                "identifier": "skotvopn"
+              },
+              "value": "▶︎ Riffill WINCHESTER.\r\nHlaupvídd .30-06.\r\nNúmer 2389666.\r\n\r\n▶︎ Riffill WINCHESTER.\r\nHlaupvídd .22.\r\nNúmer 603.\r\n\r\n▶︎ Riffill BROWNING.\r\nHlaupvídd .308.\r\nNúmer 60183MZ351.\r\n\r\n▶︎ Riffill SCHMIDT-RUBIN.\r\nHlaupvídd 7,5x55.\r\nNúmer 905888.\r\n\r\n▶︎ Riffill COLT.\r\nHlaupvídd .223Rem.\r\nNúmer CST009336.\r\n\r\n▶︎ Riffill WINCHESTER.\r\nHlaupvídd .22lr.\r\nNúmer 611.\r\n\r\n▶︎ Riffill MAS.\r\nHlaupvídd 7,5mm.\r\nNúmer L853.\r\n\r\n▶︎ Haglabyssa ROBUST.\r\nHlaupvídd .30.\r\nNúmer MI-4606233.\r\n\r\n▶︎ Riffill BRNO.\r\nHlaupvídd .22.\r\nNúmer 4319.\r\n\r\n▶︎ Skammbyssa BERETTA.\r\nHlaupvídd .22short.\r\nNúmer C35553.\r\n\r\n▶︎ Riffill BRNO.\r\nHlaupvídd .300 WM.\r\nNúmer G24268.\r\n\r\n▶︎ Riffill ENFIELD.\r\nHlaupvídd .303.\r\nNúmer E4645.\r\n\r\n▶︎ Riffill JUKAR.\r\nHlaupvídd .50.\r\nNúmer 127629.\r\n\r\n▶︎ Riffill BRNO.\r\nHlaupvídd 8X57IS.\r\nNúmer 1397F.\r\n\r\n▶︎ Riffill ANSCHUTZ.\r\nHlaupvídd .22.\r\nNúmer 112267.\r\n\r\n▶︎ Riffill MOSIN-NAGANT.\r\nHlaupvídd 7,62.\r\nNúmer 509668.\r\n\r\n▶︎ Riffill REMINGTON.\r\nHlaupvídd .22lr.\r\nNúmer 27308.\r\n\r\n▶︎ Riffill MOSIN-NAGANT.\r\nHlaupvídd 7,62.\r\nNúmer 228154.\r\n\r\n▶︎ Skammbyssa BERETTA.\r\nHlaupvídd 9MM.\r\nNúmer J67150Z.\r\n\r\n▶︎ Riffill MOSIN-NAGANT.\r\nHlaupvídd 7,62x54R.\r\nNúmer 2578.\r\n\r\n▶︎ Skammbyssa HARRINGTON & RICHARDSON.\r\nHlaupvídd .22.\r\nNúmer AL91507.\r\n\r\n▶︎ Riffill MAUSER.\r\nHlaupvídd 8x57IS.\r\nNúmer 8111.\r\n\r\n▶︎ Riffill Swedish Mauser.\r\nHlaupvídd 6,5x55.\r\nNúmer 132268.\r\n\r\n▶︎ Riffill Krag-Jörgensen.\r\nHlaupvídd 8,58R.\r\nNúmer 122194.\r\n\r\n▶︎ Riffill REMINGTON.\r\nHlaupvídd .35Rem.\r\nNúmer C7502849.\r\n\r\n▶︎ Skammbyssa MAUSER.\r\nHlaupvídd 9m/m.\r\nNúmer 9079.\r\n\r\n▶︎ Skammbyssa UNIQUE.\r\nHlaupvídd 7,65mm.\r\nNúmer 34312.\r\n\r\n▶︎ Riffill LEE ENFIELD.\r\nHlaupvídd .303.\r\nNúmer 46922.\r\n\r\n▶︎ Riffill RUGER.\r\nHlaupvídd .22.\r\nNúmer 231-22941.\r\n\r\n▶︎ Riffill SAVAGE.\r\nHlaupvídd .22.\r\nNúmer 0372546.\r\n\r\n▶︎ Riffill MAUSER.\r\nHlaupvídd 8x57IS.\r\nNúmer 4014R.\r\n\r\n▶︎ Riffill MAUSER.\r\nHlaupvídd .30-06.\r\nNúmer 9401.\r\n\r\n▶︎ Riffill CZ.\r\nHlaupvídd .17HMR.\r\nNúmer B709929.\r\n\r\n▶︎ Skammbyssa Schmidt.\r\nHlaupvídd .22.\r\nNúmer 433076.\r\n\r\n▶︎ Haglabyssa BERETTA.\r\nHlaupvídd 12/89.\r\nNúmer AG050383.\r\n\r\n▶︎ Skammbyssa Raven.\r\nHlaupvídd .25.\r\nNúmer 1192795.\r\n\r\n▶︎ Riffill MARLIN.\r\nHlaupvídd 22lr.\r\nNúmer 19239646.\r\n\r\n▶︎ Skammbyssa ALFA.\r\nHlaupvídd .22lr.\r\nNúmer 8226302787.\r\n\r\n▶︎ Riffill MAUSER.\r\nHlaupvídd .308.\r\nNúmer FR8-18662.\r\n\r\n▶︎ Riffill MAS.\r\nHlaupvídd 7,5mm.\r\nNúmer F39526.\r\n\r\n▶︎ Riffill SAKO.\r\nHlaupvídd .308 Win.\r\nNúmer 238023.\r\n\r\n▶︎ Riffill SPRINGFIELD.\r\nHlaupvídd .30-06.\r\nNúmer 4072098.\r\n\r\n▶︎ Haglabyssa BERETTA.\r\nHlaupvídd 12/76.\r\nNúmer XA223105.\r\n\r\n▶︎ Riffill BROWNING.\r\nHlaupvídd .22.\r\nNúmer 78904.\r\n\r\n▶︎ Loftskammbyssa WEBLEY.\r\nHlaupvídd 4,5mm.\r\nNúmer 131241.\r\n\r\n▶︎ Riffill SCHMIDT-RUBIN.\r\nHlaupvídd 7,5x55.\r\nNúmer 674356.\r\n\r\n▶︎ Riffill MAUSER.\r\nHlaupvídd 6,5x55.\r\nNúmer 70079P.\r\n\r\n▶︎ Riffill MAUSER.\r\nHlaupvídd .308.\r\nNúmer 165.\r\n\r\n▶︎ Riffill CZ.\r\nHlaupvídd .308WIN.\r\nNúmer A295165.\r\n\r\n▶︎ Haglabyssa HERSTAL.\r\nHlaupvídd 12/76.\r\nNúmer OT2971."
+            },
+            {
+              "passInputField": {
+                "identifier": "utgefandi"
+              },
+              "value": "Lögreglan"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

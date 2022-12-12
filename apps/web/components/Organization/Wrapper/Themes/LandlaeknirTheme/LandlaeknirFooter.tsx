@@ -10,8 +10,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem, Slice } from '@island.is/web/graphql/schema'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
+import { webRichText } from '@island.is/web/utils/richText'
 import * as styles from './LandlaeknirFooter.css'
 
 const renderParagraphs = (
@@ -19,7 +20,7 @@ const renderParagraphs = (
   marginBottom: ResponsiveSpace = 2,
   bold = false,
 ) =>
-  richText(content as SliceType[], {
+  webRichText(content as SliceType[], {
     renderNode: {
       [BLOCKS.PARAGRAPH]: (_node, children) => (
         <Text

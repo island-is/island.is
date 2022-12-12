@@ -1,5 +1,20 @@
 import { YES, NO } from './constants'
 
+export interface MultipleBirths {
+  hasMultipleBirths: YesOrNo
+  multipleBirths?: number
+}
+
+export interface RequestRightsObj {
+  isRequestingRights: YesOrNo
+  requestDays: number
+}
+
+export interface GiveRightsObj {
+  isGivingRights: YesOrNo
+  requestDays: number
+}
+
 export interface PersonInformation {
   fullName: string
   genderCode: string
@@ -24,6 +39,7 @@ export interface VMSTPeriod {
   ratio: string
   firstPeriodStart: string
   paid: boolean
+  rightsCodePeriod: string
 }
 
 export interface Period {
@@ -34,6 +50,7 @@ export interface Period {
   useLength?: YesOrNo
   daysToUse?: string
   rawIndex?: number
+  rightCodePeriod?: string
 }
 
 export interface Payment {

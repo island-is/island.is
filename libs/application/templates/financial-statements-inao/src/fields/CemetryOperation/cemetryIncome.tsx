@@ -62,6 +62,7 @@ export const CemetryIncome = ({
           onChange={() => onInputChange(CEMETRYOPERATIONIDS.careIncome)}
           backgroundColor="blue"
           currency
+          rightAlign
           error={
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.careIncome)
           }
@@ -76,6 +77,7 @@ export const CemetryIncome = ({
           onChange={() => onInputChange(CEMETRYOPERATIONIDS.burialRevenue)}
           backgroundColor="blue"
           currency
+          rightAlign
           error={
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.burialRevenue)
           }
@@ -92,6 +94,7 @@ export const CemetryIncome = ({
           }
           backgroundColor="blue"
           currency
+          rightAlign
           error={
             errors &&
             getErrorViaPath(
@@ -104,12 +107,12 @@ export const CemetryIncome = ({
       <Box paddingY={1}>
         <InputController
           id={CEMETRYOPERATIONIDS.otherIncome}
-          loading={loading}
           name={CEMETRYOPERATIONIDS.otherIncome}
           label={formatMessage(m.otherIncome)}
           onChange={() => onInputChange(CEMETRYOPERATIONIDS.otherIncome)}
           backgroundColor="blue"
           currency
+          rightAlign
           error={
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.otherIncome)
           }

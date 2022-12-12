@@ -3,6 +3,7 @@ import { defineMessages, defineMessage } from 'react-intl'
 export const caseFiles = {
   modal: {
     fileNotFound: defineMessages({
+      // TODO: Remove title
       title: {
         id: 'judicial.system.core:modalfile_not_found.title',
         defaultMessage: 'Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt',

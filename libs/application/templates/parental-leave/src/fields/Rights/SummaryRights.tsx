@@ -8,10 +8,12 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getAvailablePersonalRightsInMonths,
+  getAvailablePersonalRightsSingleParentInMonths,
   getAvailableRightsInMonths,
+  getMultipleBirthsDays,
 } from '../../lib/parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
-import { YES } from '../../constants'
+import { SINGLE, YES } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface SummaryRightsProps {
@@ -24,14 +26,20 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
   const { formatMessage } = useLocale()
   const {
     isRequestingRights,
+    isRequestingRightsSecondary,
     requestDays,
     isGivingRights,
     giveDays,
+    otherParent,
   } = useApplicationAnswers(application)
-  const personalMonths = getAvailablePersonalRightsInMonths(application)
+  const personalMonths =
+    otherParent !== SINGLE
+      ? getAvailablePersonalRightsInMonths(application)
+      : getAvailablePersonalRightsSingleParentInMonths(application)
   const total = round(getAvailableRightsInMonths(application))
   const requested = daysToMonths(requestDays)
   const given = daysToMonths(Math.abs(giveDays))
+  const common = daysToMonths(getMultipleBirthsDays(application))
 
   return (
     <DataValue
@@ -52,20 +60,35 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               )}
             </Text>
 
-            {isRequestingRights === YES && requestDays > 0 && (
+            {common > 0 && (
               <>
                 {', '}
                 <Text as="span">
                   {formatMessage(
-                    parentalLeaveFormMessages.reviewScreen
-                      .rightsAllowanceRequested,
+                    parentalLeaveFormMessages.reviewScreen.rightsMultipleBirths,
                     {
-                      requested: round(requested),
+                      common: round(common),
                     },
                   )}
                 </Text>
               </>
             )}
+
+            {(isRequestingRights === YES || isRequestingRightsSecondary) &&
+              requestDays > 0 && (
+                <>
+                  {', '}
+                  <Text as="span">
+                    {formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .rightsAllowanceRequested,
+                      {
+                        requested: round(requested),
+                      },
+                    )}
+                  </Text>
+                </>
+              )}
 
             {isGivingRights === YES && giveDays !== 0 && (
               <>

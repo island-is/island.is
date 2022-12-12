@@ -16,6 +16,7 @@ import {
   truncate as truncateStyle,
   strikethrough as strikethroughStyle,
   whiteSpace as whiteSpaceStyle,
+  capitalizeFirstLetter as capitalizeFirstLetterStyle,
 } from './Text.css'
 import { TestSupport } from '@island.is/island-ui/utils'
 
@@ -56,6 +57,7 @@ export interface TextProps {
     | 'preWrap'
     | 'preLine'
     | 'breakSpaces'
+  capitalizeFirstLetter?: boolean
 }
 
 type GetTextStylesProps = Pick<
@@ -67,6 +69,7 @@ type GetTextStylesProps = Pick<
   | 'lineHeight'
   | 'strikethrough'
   | 'whiteSpace'
+  | 'capitalizeFirstLetter'
 >
 
 export const getTextStyles = ({
@@ -77,6 +80,7 @@ export const getTextStyles = ({
   variant = 'default',
   strikethrough,
   whiteSpace,
+  capitalizeFirstLetter,
 }: GetTextStylesProps) =>
   cn(base, {
     [variantStyles[variant!]]: variant,
@@ -88,6 +92,7 @@ export const getTextStyles = ({
     [truncateStyle]: truncate,
     [strikethroughStyle]: strikethrough,
     [whiteSpaceStyle[whiteSpace!]]: whiteSpace,
+    [capitalizeFirstLetterStyle]: capitalizeFirstLetter,
   })
 
 export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
@@ -111,6 +116,7 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
       strikethrough,
       whiteSpace,
       dataTestId,
+      capitalizeFirstLetter,
     },
     ref,
   ) => {
@@ -134,6 +140,7 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
           variant,
           strikethrough,
           whiteSpace,
+          capitalizeFirstLetter,
         })}
         ref={ref}
         title={title}

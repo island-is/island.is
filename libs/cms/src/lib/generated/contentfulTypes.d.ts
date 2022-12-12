@@ -1864,6 +1864,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Tilkynning */
+  tilkynning?: string | undefined
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -2153,6 +2156,9 @@ export interface IOrganizationFields {
 
   /** Shows up on the organizations page */
   showsUpOnTheOrganizationsPage?: boolean | undefined
+
+  /** Has A Landing Page */
+  hasALandingPage?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2198,6 +2204,7 @@ export interface IOrganizationPageFields {
     | 'rikislogmadur'
     | 'landskjorstjorn'
     | 'landing_page'
+    | 'fjarsysla-rikisins'
 
   /** Slices */
   slices?:
@@ -2457,6 +2464,15 @@ export interface IPowerBiSliceFields {
 
   /** Config */
   config: Record<string, any>
+
+  /** Workspace ID */
+  workSpaceId?: string | undefined
+
+  /** Report ID */
+  reportId?: string | undefined
+
+  /** Owner */
+  owner?: 'Fiskistofa' | undefined
 }
 
 /** A Slice that embeds a Power BI report */
@@ -2487,6 +2503,7 @@ export interface IProcessEntryFields {
     | 'Leyfisveitingagatt'
     | 'Drop and sign'
     | 'Paper'
+    | 'Ísland.is mínar síður'
 
   /** Process title */
   processTitle: string
@@ -2535,7 +2552,7 @@ export interface IProjectPageFields {
     | 'election'
     | 'ukraine'
     | 'opinbernyskopun'
-    | 'maelabord-fiskistofu'
+    | 'gagnasidur-fiskistofu'
 
   /** Sidebar */
   sidebar: boolean
@@ -2694,6 +2711,9 @@ export interface IQuestionAndAnswerFields {
 
   /** Answer */
   answer?: Document | undefined
+
+  /** Publish Date */
+  publishDate?: string | undefined
 }
 
 export interface IQuestionAndAnswer extends Entry<IQuestionAndAnswerFields> {

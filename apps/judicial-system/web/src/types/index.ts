@@ -33,10 +33,10 @@ export enum RestrictionCaseCourtSubsections {
 
 export enum IndictmentsProsecutorSubsections {
   DEFENDANT = 0,
-  PROCESSING = 1,
-  CASE_FILES = 2,
-  POLICE_CASE_FILES = 3,
-  CASE_FILE = 4,
+  POLICE_CASE_FILES = 1,
+  CASE_FILE = 2,
+  PROCESSING = 3,
+  CASE_FILES = 4,
   OVERVIEW = 5,
 }
 

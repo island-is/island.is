@@ -1,12 +1,13 @@
 import React from 'react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, ResponsiveProp, Space, Text } from '@island.is/island-ui/core'
 
 interface Props {
   title: string
   required?: boolean
   tooltip?: React.ReactNode
   description?: React.ReactNode
+  marginBottom?: ResponsiveProp<Space | 'auto'>
 }
 
 const SectionHeading: React.FC<Props> = ({
@@ -14,8 +15,9 @@ const SectionHeading: React.FC<Props> = ({
   required,
   tooltip,
   description,
+  marginBottom = 3,
 }) => (
-  <Box marginBottom={3}>
+  <Box marginBottom={marginBottom}>
     <Text as="h3" variant="h3">
       {title}
       {required && ' '}

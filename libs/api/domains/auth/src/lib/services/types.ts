@@ -7,7 +7,6 @@ import {
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
-import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
 import { ApiScope } from '../models'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
 import { ApiScopesInput } from '../dto/apiScopes.input'
@@ -80,10 +79,10 @@ export interface MergedDelegationDTO {
 }
 
 export enum DelegationProvider {
-  Thjodskra = 'thjodskra',
-  Fyrirtaekjaskra = 'fyrirtaekjaskra',
-  Talsmannagrunnur = 'talsmannagrunnur',
-  Delegationdb = 'delegationdb',
+  thjodskra = 'thjodskra',
+  fyrirtaekjaskra = 'fyrirtaekjaskra',
+  talsmannagrunnur = 'talsmannagrunnur',
+  delegationdb = 'delegationdb',
 }
 
 export enum DelegationType {

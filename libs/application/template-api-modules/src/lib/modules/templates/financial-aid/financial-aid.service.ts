@@ -7,7 +7,11 @@ import {
 } from '@island.is/application/templates/financial-aid'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import { ApplicationState, FileType } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationState,
+  FileType,
+  UserType,
+} from '@island.is/financial-aid/shared/lib'
 import { ApplicationApi } from '@island.is/clients/municipalities-financial-aid'
 import { UploadFile } from '@island.is/island-ui/core'
 
@@ -81,8 +85,14 @@ export class FinancialAidService {
             ?.directTaxPayments,
         )
       }
-      return externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-        ?.directTaxPayments
+      return externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.map(
+        (d) => {
+          d.userType = application.assignees.includes(auth.nationalId)
+            ? UserType.SPOUSE
+            : UserType.APPLICANT
+          return d
+        },
+      )
     }
 
     const files = this.formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)

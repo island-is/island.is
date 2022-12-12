@@ -31,7 +31,7 @@ import { personalOverview } from './overviewSection/personalOverview'
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
   title: m.formName,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

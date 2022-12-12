@@ -108,7 +108,7 @@ const Processing: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isProcessingStepValidIndictments(workingCase)}
           onNextButtonClick={handleNextButtonClick}
         />

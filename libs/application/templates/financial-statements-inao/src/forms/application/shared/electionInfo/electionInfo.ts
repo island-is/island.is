@@ -4,14 +4,15 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
-import { ABOUTIDS, USERTYPE } from '../../../../lib/constants'
+import { ABOUTIDS } from '../../../../lib/constants'
 import { getCurrentUserType } from '../../../../lib/utils/helpers'
+import { FSIUSERTYPE } from '../../../../types'
 
 export const electionInfoSection = buildSection({
   id: 'electionInfo',
   title: m.election,
   condition: (answers, externalData) =>
-    getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL,
+    getCurrentUserType(answers, externalData) === FSIUSERTYPE.INDIVIDUAL,
   children: [
     buildMultiField({
       id: 'election',
