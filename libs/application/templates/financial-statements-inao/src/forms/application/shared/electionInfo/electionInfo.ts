@@ -17,7 +17,7 @@ export const electionInfoSection = buildSection({
     buildMultiField({
       id: 'election',
       title: m.election,
-      description: m.fillOutAppopriate,
+      description: m.fillOutElectionInfo,
       children: [
         buildCustomField({
           id: 'election.availableElectionField',

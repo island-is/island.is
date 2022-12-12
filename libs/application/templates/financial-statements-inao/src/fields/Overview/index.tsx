@@ -90,12 +90,7 @@ export const Overview = ({
                 {formatMessage(m.income)}
               </Text>
             </Box>
-            <ValueLine
-              label={m.candidatesOwnContributions}
-              value={formatCurrency(
-                answers.individualIncome?.candidatesOwnContributions,
-              )}
-            />
+
             <ValueLine
               label={m.contributionsFromLegalEntities}
               value={formatCurrency(
@@ -106,6 +101,12 @@ export const Overview = ({
               label={m.contributionsFromIndividuals}
               value={formatCurrency(
                 answers.individualIncome?.individualContributions,
+              )}
+            />
+            <ValueLine
+              label={m.candidatesOwnContributions}
+              value={formatCurrency(
+                answers.individualIncome?.candidatesOwnContributions,
               )}
             />
             <ValueLine
