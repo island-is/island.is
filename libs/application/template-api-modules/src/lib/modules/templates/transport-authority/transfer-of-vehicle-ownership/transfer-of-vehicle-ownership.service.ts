@@ -125,9 +125,7 @@ export class TransferOfVehicleOwnershipService {
     | undefined
   > {
     try {
-      const chargeItemCodes = getChargeItemCodes(
-        application.answers as TransferOfVehicleOwnershipAnswers,
-      )
+      const chargeItemCodes = getChargeItemCodes()
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
