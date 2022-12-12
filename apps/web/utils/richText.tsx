@@ -61,13 +61,7 @@ const defaultRenderComponent = {
   GraphCard: (chart) => <ChartsCard chart={chart} />,
   OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
   EmailSignup: (slice) => <EmailSignup slice={slice} />,
-  FaqList: (slice: FaqListProps) => (
-    <FaqList
-      {...slice}
-      title={slice?.title ?? ''}
-      questions={slice?.questions ?? []}
-    />
-  ),
+  FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
 }
 
 export const webRichText = (
