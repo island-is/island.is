@@ -88,7 +88,7 @@ export const CemetryOperation = ({
           <Total
             name={OPERATINGCOST.total}
             label={formatMessage(m.operatingCost)}
-            title={formatMessage(m.operatingCost)}
+            title={formatMessage(m.operatingCostBefore)}
             total={totalIncome - totalExpense}
           />
         </GridColumn>

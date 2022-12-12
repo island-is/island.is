@@ -1,25 +1,28 @@
 export interface IdentityDocument {
-  productionRequestID: string
-  number: string
-  type: string
-  verboseType: string
-  subType: string
-  status: string
-  issuingDate: Date
-  expirationDate: Date
-  displayFirstName: string
-  displayLastName: string
-  mrzFirstName: string
-  mrzLastName: string
-  sex: string
+  productionRequestID?: string | null
+  number?: string | null
+  type?: string | null
+  verboseType?: string | null
+  subType?: string | null
+  status?: string | null
+  issuingDate?: Date | null
+  expirationDate?: Date | null
+  displayFirstName?: string | null
+  displayLastName?: string | null
+  mrzFirstName?: string | null
+  mrzLastName?: string | null
+  sex?: Gender | null
+  numberWithType?: string 
+  expiryStatus?: ExpiryStatus 
+  expiresWithinNoticeTime?: boolean 
 }
 
 export interface IdentityDocumentChild {
-  nationalId: string
-  secondParent: string
-  secondParentName: string
-  name: string
-  identityDocuments?: IdentityDocument[]
+  childNationalId?: string | null
+  secondParent?: string | null
+  secondParentName?: string | null
+  childName?: string | null
+  passports?: IdentityDocument[]
 }
 
 export interface ContactInfo {
@@ -69,10 +72,14 @@ export interface PreregistrationInput {
   contactInfo?: ContactInfo
   documents?: Document[]
   deliveryName?: string
-  deliveryAddress?: DeliveryAddress
+  deliveryAddress?: DeliveryAddress  
 }
 
 export interface Passport {
   userPassport?: IdentityDocument
   childPassports?: IdentityDocumentChild[]
 }
+
+export type Gender = 'F' | 'M' | 'X'
+
+export type ExpiryStatus = 'EXPIRED' | 'LOST'

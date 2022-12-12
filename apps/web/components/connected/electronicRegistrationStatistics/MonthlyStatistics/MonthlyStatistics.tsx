@@ -46,10 +46,6 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
     value: String(currentYear),
   })
 
-  useEffect(() => {
-    setSelectedRegistrationTypeOption({ label: 'Allt', value: 'Allt' })
-  }, [selectedYear])
-
   const { data: serverData, loading } = useQuery<QueryType>(
     GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY,
     {
@@ -71,13 +67,27 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
 
   useEffect(() => {
     if (!data) return
-    setRegistrationTypes(
-      extractRegistrationTypesFromData(data).map((type) => ({
-        label: type,
-        value: type,
-      })),
-    )
-  }, [data])
+
+    const types = extractRegistrationTypesFromData(data)
+    const typeOptions = types.map((type) => ({
+      label: type,
+      value: type,
+    }))
+
+    // Default back to viewing all registration types if the currently selected one isn't available for the selected year
+    if (!types.includes(selectedRegistrationTypeOption.value)) {
+      setSelectedRegistrationTypeOption(defaultSelection)
+    } else {
+      // Make sure to keep the reference intact since we're renewing the list
+      setSelectedRegistrationTypeOption(
+        typeOptions.find(
+          (type) => type.value === selectedRegistrationTypeOption.value,
+        ),
+      )
+    }
+
+    setRegistrationTypes(typeOptions)
+  }, [data, selectedRegistrationTypeOption.value])
 
   const yearOptions = useMemo(() => {
     const options = []

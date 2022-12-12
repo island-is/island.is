@@ -25,6 +25,38 @@ paths:
       tags:
         - IdentityDocument
       operationId: IdentityDocument_GetIdentityDocument
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentityDocumentResponse'
+      security:
+        - auth: []
+  /api/v1/identitydocument/childrenidentitydocument:
+    get:
+      tags:
+        - IdentityDocument
+      operationId: IdentityDocument_GetChildrenIdentityDocument
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentityDocumentChildrenResponse'
+      security:
+        - auth: []
+  /api/v1/preregistration:
+    post:
+      tags:
+        - Preregistration
+      operationId: Preregistration_preregistration
       parameters:
         - name: X-Road-Client
           in: header
