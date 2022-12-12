@@ -13,6 +13,7 @@ export class UserProfileProvider extends BasicDataProvider {
   async provide(): Promise<unknown> {
     const query = `query GetUserProfile {
       getUserProfile {
+        bankInfo
         email
         emailVerified
         mobilePhoneNumber
@@ -31,6 +32,7 @@ export class UserProfileProvider extends BasicDataProvider {
 
         const responseObj = response.data.getUserProfile
         if (
+          !responseObj?.bankInfo ||
           !responseObj?.mobilePhoneNumber ||
           !responseObj?.mobilePhoneNumberVerified ||
           !responseObj?.email ||
@@ -50,6 +52,7 @@ export class UserProfileProvider extends BasicDataProvider {
       return Promise.resolve({
         email: 'mockEmail@island.is',
         mobilePhoneNumber: '9999999',
+        bankInfo: '0000-11-222222',
       })
     }
 
