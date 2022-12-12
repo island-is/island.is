@@ -28,11 +28,11 @@ export const hideModalWithQueryParam = (): boolean => {
   try {
     const url = new URL(document.URL)
     const urlSearchParams = url.searchParams ?? ''
-    const encodedParam = encodeURI(
+    const queryParam = decodeURI(
       urlSearchParams.get('hide_onboarding_modal') ?? '',
     )
 
-    const shouldHide = encodedParam === 'true'
+    const shouldHide = queryParam === 'true'
     return shouldHide
   } catch {
     return false
