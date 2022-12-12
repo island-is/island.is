@@ -205,7 +205,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
             total={totalLiabilities}
             label={formatMessage(m.totalDebts)}
           />
-          <Box paddingY={1}>
+          <Box paddingBottom={1} paddingTop={2}>
             <InputController
               id={
                 CEMETRYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear
