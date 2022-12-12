@@ -69,20 +69,39 @@ export const PrerequisitesForm: Form = buildForm({
             buildDataProviderItem({
               id: 'identityRegistry',
               type: 'IdentityProvider',
-              title: externalData.labels.nationalRegistryTitle,
-              subTitle: externalData.labels.nationalRegistrySubTitle,
+              title: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyRegistryTitle
+                  : externalData.labels.nationalRegistryTitle,
+              subTitle: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyRegistrySubTitle
+                  : externalData.labels.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
-              title: externalData.labels.userProfileTitle,
-              subTitle: externalData.labels.userProfileSubTitle,
+              title: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyTaxTitle
+                  : externalData.labels.userProfileTitle,
+              subTitle: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyTaxSubTitle
+                  : externalData.labels.userProfileSubTitle,
             }),
             buildDataProviderItem({
               id: 'paymentPlanPrerequisites',
-              title: externalData.labels.paymentPlanTitle,
               type: 'PaymentPlanPrerequisitesProvider',
-              subTitle: externalData.labels.paymentPlanSubtitle,
+              title: (formValue) =>
+                isApplicantPerson(formValue)
+                  ? externalData.labels.paymentPlanTitle
+                  : '',
+
+              subTitle: (formValue) =>
+                isApplicantPerson(formValue)
+                  ? externalData.labels.paymentPlanSubtitle
+                  : '',
             }),
             buildDataProviderItem({
               id: 'additionalDataProviderMessage',

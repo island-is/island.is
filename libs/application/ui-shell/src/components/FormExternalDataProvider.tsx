@@ -17,16 +17,18 @@ import {
   coreErrorMessages,
   getErrorReasonIfPresent,
   isTranslationObject,
+  formatText,
 } from '@island.is/application/core'
 import {
+  Application,
   DataProviderItem,
   DataProviderPermissionItem,
   DataProviderResult,
   ExternalData,
+  FormText,
   FormValue,
   RecordObject,
   SetBeforeSubmitCallback,
-  StaticText,
 } from '@island.is/application/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
@@ -34,21 +36,24 @@ import { useLocale } from '@island.is/localization'
 import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData, hideSubmitErrorExternalData } from '../utils'
 
-const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
-  title,
-  subTitle,
-}) => {
+const ItemHeader: React.FC<{
+  title: FormText
+  subTitle?: FormText
+  application: Application
+}> = ({ title, subTitle, application }) => {
   const { formatMessage } = useLocale()
 
   return (
     <>
       <Text variant="h4" color="blue400">
-        {formatMessage(title)}
+        {formatText(title, application, formatMessage)}
       </Text>
 
       {subTitle && (
         <Text>
-          <Markdown>{formatMessage(subTitle)}</Markdown>
+          <Markdown>
+            {formatText(subTitle, application, formatMessage)}
+          </Markdown>
         </Text>
       )}
     </>
@@ -59,7 +64,13 @@ const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
   suppressProviderError: boolean
-}> = ({ dataProviderResult = {}, provider, suppressProviderError }) => {
+  application: Application
+}> = ({
+  dataProviderResult = {},
+  provider,
+  suppressProviderError,
+  application,
+}) => {
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
 
@@ -76,7 +87,7 @@ const ProviderItem: FC<{
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader title={title} subTitle={subTitle} />
+      <ItemHeader application={application} title={title} subTitle={subTitle} />
 
       {showError && (
         <Box marginTop={2}>
@@ -99,12 +110,13 @@ const ProviderItem: FC<{
 
 const PermissionItem: FC<{
   permission: DataProviderPermissionItem
-}> = ({ permission }) => {
+  application: Application
+}> = ({ permission, application }) => {
   const { title, subTitle } = permission
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader title={title} subTitle={subTitle} />
+      <ItemHeader application={application} title={title} subTitle={subTitle} />
     </Box>
   )
 }
@@ -121,6 +133,7 @@ const getExternalDataFromResponse = (
 ) => responseData?.updateApplicationExternalData?.externalData
 
 const FormExternalDataProvider: FC<{
+  application: Application
   applicationId: string
   addExternalData(data: ExternalData): void
   setBeforeSubmitCallback: SetBeforeSubmitCallback
@@ -131,6 +144,7 @@ const FormExternalDataProvider: FC<{
 }> = ({
   addExternalData,
   setBeforeSubmitCallback,
+  application,
   applicationId,
   externalData,
   externalDataProvider,
@@ -231,6 +245,7 @@ const FormExternalDataProvider: FC<{
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (
           <ProviderItem
+            application={application}
             provider={provider}
             key={provider.id}
             suppressProviderError={suppressProviderErrors}
@@ -239,7 +254,11 @@ const FormExternalDataProvider: FC<{
         ))}
         {otherPermissions &&
           otherPermissions.map((permission) => (
-            <PermissionItem permission={permission} key={permission.id} />
+            <PermissionItem
+              application={application}
+              permission={permission}
+              key={permission.id}
+            />
           ))}
       </Box>
       <Controller
