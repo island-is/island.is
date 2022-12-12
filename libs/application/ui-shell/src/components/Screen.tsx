@@ -341,6 +341,7 @@ const Screen: FC<ScreenProps> = ({
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
+                application={application}
                 addExternalData={addExternalData}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 applicationId={applicationId}

@@ -2,7 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { Flight } from './flight.model'
 
-@ObjectType()
+@ObjectType('AirDiscountSchemeFlightLeg')
 export class FlightLeg {
   @Field((_) => ID)
   id!: string

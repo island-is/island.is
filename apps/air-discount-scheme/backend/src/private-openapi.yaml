@@ -205,20 +205,62 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flight'
+      tags:
+        - Admin
+      security:
+        - bearer: []
   /api/private/flightLegs:
     post:
       operationId: PrivateFlightController_getFlightLegs
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetFlightLegsBody'
       responses:
-        '201':
+        '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlightLeg'
+      tags:
+        - Admin
+      security:
+        - bearer: []
   /api/private/flightLegs/confirmInvoice:
     post:
       operationId: PrivateFlightController_confirmInvoice
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmInvoiceBody'
       responses:
-        '201':
+        '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlightLeg'
+      tags:
+        - Admin
+      security:
+        - bearer: []
   /api/private/users/{nationalId}/flights:
     get:
       operationId: PrivateFlightController_getUserFlights
@@ -231,6 +273,16 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flight'
+      tags:
+        - Admin
+      security:
+        - bearer: []
   /api/private/users/{nationalId}/relations:
     get:
       operationId: PrivateUserController_getUserRelations
@@ -554,3 +606,189 @@ components:
         - nationalId
         - bookingDate
         - flightLegs
+    UserInfo:
+      type: object
+      properties:
+        age:
+          type: number
+        gender:
+          type: string
+        postalCode:
+          type: number
+      required:
+        - age
+        - gender
+        - postalCode
+    Flight:
+      type: object
+      properties:
+        id:
+          type: string
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+        nationalId:
+          type: string
+        bookingDate:
+          format: date-time
+          type: string
+        flightLegs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlightLeg'
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+        connectable:
+          type: boolean
+      required:
+        - id
+        - userInfo
+        - nationalId
+        - bookingDate
+        - created
+        - modified
+        - connectable
+    FlightLeg:
+      type: object
+      properties:
+        id:
+          type: string
+        airline:
+          type: string
+        cooperation:
+          type: string
+        flight:
+          $ref: '#/components/schemas/Flight'
+        origin:
+          type: string
+        destination:
+          type: string
+        isConnectingFlight:
+          type: boolean
+        originalPrice:
+          type: number
+        discountPrice:
+          type: number
+        financialState:
+          type: string
+        financialStateUpdated:
+          format: date-time
+          type: string
+        date:
+          format: date-time
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - airline
+        - cooperation
+        - flight
+        - origin
+        - destination
+        - isConnectingFlight
+        - originalPrice
+        - discountPrice
+        - financialState
+        - financialStateUpdated
+        - date
+        - created
+        - modified
+    FlightLegTravel:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+    FlightLegPeriod:
+      type: object
+      properties:
+        from:
+          format: date-time
+          type: string
+        to:
+          format: date-time
+          type: string
+      required:
+        - from
+        - to
+    FlightLegState:
+      type: string
+      enum:
+        - AWAITING_DEBIT
+        - SENT_DEBIT
+        - AWAITING_CREDIT
+        - SENT_CREDIT
+        - CANCELLED
+    FlightLegRange:
+      type: object
+      properties:
+        from:
+          type: number
+        to:
+          type: number
+      required:
+        - from
+        - to
+    FlightLegGender:
+      type: string
+      enum:
+        - kk
+        - kvk
+        - hvk
+    GetFlightLegsBody:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        airline:
+          type: string
+        flightLeg:
+          $ref: '#/components/schemas/FlightLegTravel'
+        period:
+          $ref: '#/components/schemas/FlightLegPeriod'
+        state:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlightLegState'
+        age:
+          $ref: '#/components/schemas/FlightLegRange'
+        gender:
+          $ref: '#/components/schemas/FlightLegGender'
+        postalCode:
+          type: number
+      required:
+        - period
+        - age
+    ConfirmInvoiceBody:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        airline:
+          type: string
+        flightLeg:
+          $ref: '#/components/schemas/FlightLegTravel'
+        period:
+          $ref: '#/components/schemas/FlightLegPeriod'
+        state:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlightLegState'
+        age:
+          $ref: '#/components/schemas/FlightLegRange'
+        gender:
+          $ref: '#/components/schemas/FlightLegGender'
+        postalCode:
+          type: number
+      required:
+        - period
+        - age

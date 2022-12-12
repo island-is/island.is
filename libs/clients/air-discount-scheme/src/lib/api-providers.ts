@@ -7,28 +7,33 @@ import {
   LazyDuringDevScope,
 } from '@island.is/nest/config'
 
-import { Configuration, UsersApi } from '../../gen/fetch'
+import { AdminApi, Configuration, UsersApi } from '../../gen/fetch'
 import { AirDiscountSchemeClientConfig } from './air-discount-scheme.config'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
-export const AirDiscountSchemeApiProvider: Provider<UsersApi> = {
-  provide: UsersApi,
+const provideApi = <T>(
+  Api: new (configuration: Configuration) => T,
+  scope: string[],
+): Provider<T> => ({
+  provide: Api,
   scope: LazyDuringDevScope,
   useFactory: (
     config: ConfigType<typeof AirDiscountSchemeClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
-    new UsersApi(
+    new Api(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-air-discount-scheme',
           timeout: config.timeout,
+          logErrorResponseBody: true,
           autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'auto',
                 issuer: idsClientConfig.issuer,
                 clientId: idsClientConfig.clientId,
                 clientSecret: idsClientConfig.clientSecret,
-                scope: config.tokenExchangeScope,
+                scope,
               }
             : undefined,
         }),
@@ -39,4 +44,11 @@ export const AirDiscountSchemeApiProvider: Provider<UsersApi> = {
       }),
     ),
   inject: [AirDiscountSchemeClientConfig.KEY, IdsClientConfig.KEY],
-}
+})
+
+export const UsersApiProvider = provideApi(UsersApi, [
+  AirDiscountSchemeScope.default,
+])
+export const AdminApiProvider = provideApi(AdminApi, [
+  AirDiscountSchemeScope.admin,
+])
