@@ -1,10 +1,13 @@
 import { EmailSignupResolver } from './emailSignup.resolver'
 import { Test } from '@nestjs/testing'
-import { CmsContentfulService, CmsModule } from '@island.is/cms'
+import { CmsContentfulService, CmsModule, EmailSignup } from '@island.is/cms'
 import axios from 'axios'
 import { emailSignup } from './fixtures/emailSignup'
 import { EmailSignupInput } from './dto/emailSignup.input'
 import { EmailSignupService } from './emailSignup.service'
+import { ZenterSignupService } from './services/zenter/zenter.service'
+import { MailchimpSignupService } from './services/mailchimp/mailchimp.service'
+import { ZENTER_IMPORT_ENDPOINT_URL } from './constants'
 
 describe('emailSignupResolver', () => {
   let emailSignupResolver: EmailSignupResolver
@@ -13,7 +16,24 @@ describe('emailSignupResolver', () => {
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CmsModule],
-      providers: [EmailSignupService, EmailSignupResolver],
+      providers: [
+        {
+          provide: ZenterSignupService,
+          useFactory() {
+            return new ZenterSignupService({
+              fiskistofaZenterClientId: '',
+              fiskistofaZenterClientPassword: '',
+              fiskistofaZenterEmail: '',
+              fiskistofaZenterPassword: '',
+              isConfigured: true,
+            })
+          },
+        },
+        MailchimpSignupService,
+        EmailSignupService,
+        EmailSignupResolver,
+        EmailSignupResolver,
+      ],
     }).compile()
 
     emailSignupResolver = moduleRef.get<EmailSignupResolver>(
@@ -102,6 +122,54 @@ describe('emailSignupResolver', () => {
       )
 
       expect(result?.subscribed).toBe(false)
+    })
+  })
+
+  describe('subscribeToZenter', () => {
+    it('should get a successful response if input is valid', async () => {
+      const testEmailSlice: EmailSignup = {
+        id: '456',
+        title: '',
+        configuration: {
+          owner: 'fiskistofa',
+        },
+        description: '',
+        formFields: [
+          {
+            id: '1',
+            options: [],
+            placeholder: '',
+            required: true,
+            title: '',
+            type: 'email',
+            name: 'email',
+            emailConfig: {},
+          },
+        ],
+        signupType: 'zenter',
+        translations: {},
+      }
+      jest
+        .spyOn(cmsContentfulService, 'getEmailSignup')
+        .mockImplementation(({ id }) =>
+          Promise.resolve(id === '456' ? testEmailSlice : null),
+        )
+
+      jest.spyOn(axios, 'post').mockImplementation((url) => {
+        console.log('yee', url, url === ZENTER_IMPORT_ENDPOINT_URL)
+        return Promise.resolve({
+          data: url === ZENTER_IMPORT_ENDPOINT_URL ? 1 : 0,
+        })
+      })
+
+      const result = await emailSignupResolver.emailSignupSubscription({
+        inputFields: [
+          { id: '1', name: 'email', type: 'email', value: 'test@example.com' },
+        ],
+        signupID: '456',
+      })
+
+      expect(result?.subscribed).toBe(true)
     })
   })
 })
