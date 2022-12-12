@@ -28,7 +28,10 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
   const fabGetDiscount = (nationalId: string): DiscountWithTUser => ({
     user: {
       ...fabTUser(nationalId),
-      name: '',
+      // The DiscountWithTUser.user takes from both TUser and the User model
+      // We fabricate TUser and name is simply the odd one out from between them.
+      // We're not checking for name here so it's simply left as blank.
+      name: '', 
     },
     connectionDiscountCodes: [],
     discountCode: 'GETDISCO',
