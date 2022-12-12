@@ -44,7 +44,6 @@ import {
 interface Section {
   name: string
   children: {
-    type: string
     name: string
     href?: string
     onClick?: () => void
@@ -116,7 +115,6 @@ const useSections = (
           ? []
           : [
               {
-                type: 'SUB_SECTION',
                 name: capitalize(
                   formatMessage(core.defendant, {
                     suffix: 'i',
@@ -133,7 +131,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
@@ -154,7 +151,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
@@ -178,7 +174,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.policeReport,
                 ),
@@ -203,7 +198,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.caseFiles,
                 ),
@@ -229,7 +223,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.overview,
                 ),
@@ -273,14 +266,12 @@ const useSections = (
           ? []
           : [
               {
-                type: 'SUB_SECTION',
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
                 href: `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection
                     .hearingArrangements,
@@ -292,7 +283,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.policeDemands,
                 ),
@@ -305,7 +295,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.policeReport,
                 ),
@@ -318,7 +307,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.caseFiles,
                 ),
@@ -332,7 +320,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.overview,
                 ),
@@ -361,7 +348,6 @@ const useSections = (
         ? []
         : [
             {
-              type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(core.indictmentDefendant, {
                   gender: Gender.MALE,
@@ -370,7 +356,6 @@ const useSections = (
               href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
             },
             {
-              type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
                   sections.indictmentCaseProsecutorSection.policeCaseFiles,
@@ -383,7 +368,6 @@ const useSections = (
                   : undefined,
             },
             {
-              type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
                   sections.indictmentCaseProsecutorSection.caseFile,
@@ -396,7 +380,6 @@ const useSections = (
                   : undefined,
             },
             {
-              type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
                   sections.indictmentCaseProsecutorSection.processing,
@@ -407,7 +390,6 @@ const useSections = (
                 : undefined,
             },
             {
-              type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
                   sections.indictmentCaseProsecutorSection.caseFiles,
@@ -420,7 +402,6 @@ const useSections = (
                   : undefined,
             },
             {
-              type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
                   sections.indictmentCaseProsecutorSection.overview,
@@ -453,7 +434,6 @@ const useSections = (
           ? []
           : [
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.courtSection.receptionAndAssignment,
                 ),
@@ -462,7 +442,6 @@ const useSections = (
                   : `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.courtSection.overview),
                 href:
                   !isModifyingRuling &&
@@ -472,7 +451,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.courtSection.hearingArrangements),
                 href:
                   !isModifyingRuling &&
@@ -482,7 +460,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.courtSection.ruling),
                 href:
                   !isModifyingRuling &&
@@ -493,7 +470,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.courtSection.courtRecord),
                 href:
                   !isModifyingRuling &&
@@ -505,7 +481,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.courtSection.conclusion),
                 href:
                   !isModifyingRuling &&
@@ -537,7 +512,6 @@ const useSections = (
           ? []
           : [
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.courtSection.receptionAndAssignment,
                 ),
@@ -546,7 +520,6 @@ const useSections = (
                   : `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseCourtSection.overview,
                 ),
@@ -558,7 +531,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseCourtSection.hearingArrangements,
                 ),
@@ -570,7 +542,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseCourtSection.ruling,
                 ),
@@ -583,7 +554,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseCourtSection.courtRecord,
                 ),
@@ -597,7 +567,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseCourtSection.conclusion,
                 ),
@@ -627,26 +596,22 @@ const useSections = (
           ? []
           : [
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.indictmentsCourtSection.overview),
                 href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.indictmentsCourtSection.receptionAndAssignment,
                 ),
                 href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.indictmentsCourtSection.subpoena),
                 href: isReceptionAndAssignmentStepValid(workingCase)
                   ? `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`
                   : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.indictmentsCourtSection.prosecutorAndDefender,
                 ),
@@ -657,7 +622,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.indictmentsCourtSection.courtRecord,
                 ),
@@ -686,14 +650,12 @@ const useSections = (
           ? []
           : [
               {
-                type: 'SUB_SECTION',
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
                 href: `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.extensionSection.hearingArrangements,
                 ),
@@ -707,7 +669,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.extensionSection.policeDemands),
                 href:
                   (activeSubSection && activeSubSection > 2) ||
@@ -720,7 +681,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.extensionSection.policeReport),
                 href:
                   (activeSubSection && activeSubSection > 3) ||
@@ -734,7 +694,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.extensionSection.caseFiles),
                 href:
                   (activeSubSection && activeSubSection > 4) ||
@@ -749,7 +708,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(sections.extensionSection.overview),
                 href:
                   isDefendantStepValidRC(
@@ -780,14 +738,12 @@ const useSections = (
           ? []
           : [
               {
-                type: 'SUB_SECTION',
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
                 href: `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseExtensionSection
                     .hearingArrangements,
@@ -799,7 +755,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.policeDemands,
                 ),
@@ -811,7 +766,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.policeReport,
                 ),
@@ -824,7 +778,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.caseFiles,
                 ),
@@ -838,7 +791,6 @@ const useSections = (
                     : undefined,
               },
               {
-                type: 'SUB_SECTION',
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.overview,
                 ),
