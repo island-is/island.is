@@ -123,8 +123,8 @@ export interface ExternalDataProvider extends FormItem {
 export interface DataProviderItem {
   readonly id: string
   readonly type: string | undefined
-  readonly title: StaticText
-  readonly subTitle?: StaticText
+  readonly title: FormText
+  readonly subTitle?: FormText
   readonly source?: string
   readonly parameters?: any
 }
