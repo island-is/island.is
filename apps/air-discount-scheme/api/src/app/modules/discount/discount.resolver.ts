@@ -50,7 +50,7 @@ export class DiscountResolver {
     // Check for explicit discount. If a discount exists but a person is ineligible
     // it means that an admin has created it explicitly and we report it back.
     // Otherwise the filter will have filtered out this user in previous
-    // iterations and then this does nothing.
+    // filters and then this does nothing.
     const explicitDiscount = await backendApi.getDiscount(user.nationalId)
     const explicitUser = explicitDiscount?.user
     if (
