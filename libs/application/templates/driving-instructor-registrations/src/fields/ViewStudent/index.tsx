@@ -219,7 +219,9 @@ const ViewStudent = ({
                 {formatMessage(m.viewStudentCompleteSchools)}
               </Text>
               {student.book?.drivingSchoolExams?.map((school, key) => {
-                const datePostfix = school.examDate? `- ${school.examDate}`:''
+                const datePostfix = school.examDate
+                  ? `- ${school.examDate}`
+                  : ''
                 return (
                   <Text key={key} variant="default">
                     {`${school.schoolTypeName}${datePostfix}`}
