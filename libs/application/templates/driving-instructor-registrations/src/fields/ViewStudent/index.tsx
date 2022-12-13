@@ -221,7 +221,7 @@ const ViewStudent = ({
               {student.book?.drivingSchoolExams?.map((school, key) => {
                 return (
                   <Text key={key} variant="default">
-                    {school.schoolTypeName}
+                    {`${school.schoolTypeName} - ${school.examDate}`}
                   </Text>
                 )
               })}
