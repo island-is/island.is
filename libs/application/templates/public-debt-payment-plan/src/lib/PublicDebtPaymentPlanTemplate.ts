@@ -41,14 +41,13 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   readyForProduction: true,
-  /* Add this when delegation implementation is ready.
-  /*allowedDelegations: [
+  allowedDelegations: [
     {
       type: 'ProcurationHolder',
       featureFlag:
         Features.applicationTemplatePublicDeptPaymentPlanAllowDelegation,
     },
-  ],*/
+  ],
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
