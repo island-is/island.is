@@ -13,11 +13,11 @@ import { Type } from 'class-transformer'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
+import { FlightLegsInput, Gender } from '@island.is/air-discount-scheme/types'
 import type {
   Travel,
   RangeInput,
   PeriodInput,
-  FlightLegsInput,
 } from '@island.is/air-discount-scheme/types'
 
 export class CreateFlightLegBody {
@@ -141,12 +141,11 @@ export class GetFlightLegsBody implements FlightLegsInput {
   age!: FlightLegRange
 
   @ApiPropertyOptional({
-    enum: ['kk', 'kvk', 'hvk'],
+    enum: ['kk', 'kvk', 'x', 'manneskja'],
     enumName: 'FlightLegGender',
   })
   @IsOptional()
-  @IsEnum(['kk', 'kvk', 'hvk'])
-  gender?: 'kk' | 'kvk' | 'hvk'
+  gender?: Gender
 
   @ApiPropertyOptional()
   @IsOptional()
