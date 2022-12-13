@@ -7,35 +7,37 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
-import { AuthDelegationDirection } from '@island.is/api/schema'
+import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
+import {
+  AuthDelegationDirection,
+  useAuthDelegationsOutgoingQuery,
+} from '@island.is/service-portal/graphql'
 import { AccessCard } from '../../access/AccessCard'
-import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteModal'
+import { AccessDeleteModal } from '../../access/AccessDeleteModal'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { DelegationsOutgoingHeader } from './DelegationsOutgoingHeader'
-import { DomainOption, useDomains } from '../../../hooks/useDomains/useDomains'
+import { DomainOption, useDomains } from '../../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../../constants/domain'
-import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated'
-import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [searchValue, setSearchValue] = useState('')
-  const [
-    delegation,
-    setDelegation,
-  ] = useState<AuthCustomDelegationOutgoing | null>(null)
+  const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
+    null,
+  )
   const { name: domainName } = useDomains()
 
   const { data, loading, refetch, error } = useAuthDelegationsOutgoingQuery({
     variables: {
       input: {
         domain: domainName,
-        direction: AuthDelegationDirection.outgoing,
+        direction: AuthDelegationDirection.Outgoing,
       },
       lang,
     },
+    skip: !domainName || !lang || !AuthDelegationDirection.Outgoing,
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
@@ -45,7 +47,7 @@ export const DelegationsOutgoing = () => {
   const delegations = useMemo(
     () =>
       sortBy(
-        data?.authDelegations as AuthCustomDelegationOutgoing[],
+        data?.authDelegations as AuthCustomDelegation[],
         (d) => d.to?.name,
       ) ?? [],
     [data?.authDelegations],
@@ -133,7 +135,7 @@ export const DelegationsOutgoing = () => {
           })
         }}
         isVisible={isDefined(delegation)}
-        delegation={delegation as AuthCustomDelegationOutgoing}
+        delegation={delegation as AuthCustomDelegation}
       />
     </>
   )

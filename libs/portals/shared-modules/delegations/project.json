@@ -5,7 +5,9 @@
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "libs/portals/shared-modules/delegations/**/*.{ts,tsx,js,jsx}"
@@ -14,7 +16,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/portals/shared-modules/delegations"],
+      "outputs": [
+        "coverage/libs/portals/shared-modules/delegations"
+      ],
       "options": {
         "jestConfig": "libs/portals/shared-modules/delegations/jest.config.js",
         "passWithNoTests": true
@@ -29,10 +33,12 @@
     "schemas/codegen": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "output": "libs/portals/shared-modules/delegations/src/**/*.codegen.ts",
+        "output": "libs/portals/shared-modules/delegations/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/portals/shared-modules/delegations/codegen.yml"
       }
     }
   },
-  "tags": ["lib:react"]
+  "tags": [
+    "lib:react"
+  ]
 }

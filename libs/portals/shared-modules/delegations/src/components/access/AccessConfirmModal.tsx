@@ -11,13 +11,10 @@ import { Modal, ModalProps } from '../Modal/Modal'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from './AccessList/AccessListContainer/AccessListContainer'
 import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
-import {
-  AuthCustomDelegation,
-  AuthCustomDelegationOutgoing,
-} from '../../types/customDelegation'
+import { AuthCustomDelegationOutgoing } from '../../types/customDelegation'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
-  delegation: AuthCustomDelegation
+  delegation: AuthCustomDelegationOutgoing
   scopes?: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]
   scopeTree: AuthScopeTreeQuery['authScopeTree']
   validityPeriod?: Date | null
@@ -55,9 +52,8 @@ export const AccessConfirmModal = ({
     setError(formError)
   }
 
-  const toName = (delegation as AuthCustomDelegationOutgoing)?.to?.name
-  const toNationalId = (delegation as AuthCustomDelegationOutgoing)?.to
-    ?.nationalId
+  const toName = delegation?.to?.name
+  const toNationalId = delegation?.to?.nationalId
   const fromName = userInfo?.profile.name
   const fromNationalId = userInfo?.profile.nationalId
 
