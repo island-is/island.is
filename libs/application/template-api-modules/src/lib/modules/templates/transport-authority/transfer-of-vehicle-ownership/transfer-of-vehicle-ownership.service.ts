@@ -18,7 +18,6 @@ import {
 } from './smsGenerators'
 import { EmailRecipient, EmailRole } from './types'
 import {
-  getDateAtNoonFromString,
   getAllRoles,
   getRecipients,
   getRecipientBySsn,
@@ -28,7 +27,6 @@ import {
   ChargeFjsV2ClientService,
   getChargeId,
 } from '@island.is/clients/charge-fjs-v2'
-import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
@@ -52,20 +50,12 @@ export class TransferOfVehicleOwnershipService {
       return
     }
 
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
-
-    // Note: If insurance company has not been supplied (we have not required the user to fill in at this point),
-    // then we will just send in a dummy value
-    let insuranceCompanyCode = answers?.insurance?.value
-    if (!insuranceCompanyCode) {
-      const dummyInsuranceCompanyCode = '6090' // VÍS
-      insuranceCompanyCode = dummyInsuranceCompanyCode
-    }
 
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       auth,
@@ -79,9 +69,9 @@ export class TransferOfVehicleOwnershipService {
           ssn: buyerSsn,
           email: answers?.buyer?.email,
         },
-        dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
-        saleAmount: Number(answers?.vehicle?.salePrice) || 0,
-        insuranceCompanyCode: insuranceCompanyCode,
+        dateOfPurchase: new Date(answers?.vehicle?.date),
+        saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
           ssn: coOwner.nationalId,
           email: coOwner.email,
@@ -91,26 +81,19 @@ export class TransferOfVehicleOwnershipService {
           email: operator.email,
           isMainOperator:
             buyerOperators.length > 1
-              ? operator.nationalId === answers.buyerMainOperator?.nationalId
+              ? operator.nationalId === answers?.buyerMainOperator?.nationalId
               : true,
         })),
       },
     )
 
-    // If we received error, lets try to use the errorNo to return a translated message
+    // If we get any error messages, we will just throw an error with a default title
+    // We will fetch these error messages again through graphql in the template, to be able
+    // to translate the error message
     if (result.hasError && result.errorMessages?.length) {
-      // Note: will only display first error for now
-      const firstError = result.errorMessages[0]
-
-      const message = getValueViaPath<{ defaultMessage: string }>(
-        messages,
-        'applicationCheck.validation.' + firstError.errorNo,
-      )?.defaultMessage
-      const defaultMessage = firstError.defaultMessage
-      const fallbackMessage =
-        messages.applicationCheck.validation['0'].defaultMessage
-
-      throw Error(message || defaultMessage || fallbackMessage)
+      throw Error(
+        messages.applicationCheck.validation.alertTitle.defaultMessage,
+      )
     }
   }
 
@@ -410,8 +393,8 @@ export class TransferOfVehicleOwnershipService {
         email: answers?.buyer?.email,
       },
       // Note: API throws error if timestamp is 00:00:00, so we will use noon
-      dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
-      saleAmount: Number(answers?.vehicle?.salePrice) || 0,
+      dateOfPurchase: new Date(answers?.vehicle?.date),
+      saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
         ssn: coOwner.nationalId,

@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const applicationCheck = {
   validation: defineMessages({
+    alertTitle: {
+      id: 'ta.tvo.application:applicationCheck.validation.alertTitle',
+      defaultMessage: 'Það kom upp villa',
+      description: 'Application check validation alert title',
+    },
     '0': {
       id: 'ta.tvo.application:applicationCheck.validation.0',
       defaultMessage: 'Það kom upp villa við að sannreyna gögn',

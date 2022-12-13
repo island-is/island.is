@@ -110,34 +110,39 @@ export const VehicleSelectField: FC<
   }
   if (!!selectedVehicle?.updatelocks?.length) {
     for (let i = 0; i < selectedVehicle.updatelocks.length; i++) {
+      const message = formatMessage(
+        getValueViaPath(
+          applicationCheck.locks,
+          selectedVehicle.updatelocks[i].lockNo || '',
+        ),
+      )
+      const fallbackMessage =
+        formatMessage(applicationCheck.locks['0']) +
+        ' - ' +
+        selectedVehicle.updatelocks[i].lockNo
+
       errorTags.push({
-        label:
-          formatMessage(
-            getValueViaPath(
-              applicationCheck.locks,
-              selectedVehicle.updatelocks[i].lockNo || '',
-            ),
-          ) ||
-          formatMessage(applicationCheck.locks['0']) +
-            ' - ' +
-            selectedVehicle.updatelocks[i].lockNo,
+        label: message || fallbackMessage,
       })
     }
   }
   if (!!selectedVehicle?.ownerChangeErrorMessages?.length) {
     for (let i = 0; i < selectedVehicle.ownerChangeErrorMessages.length; i++) {
+      const message = formatMessage(
+        getValueViaPath(
+          applicationCheck.validation,
+          selectedVehicle.ownerChangeErrorMessages[i].errorNo || '',
+        ),
+      )
+      const defaultMessage =
+        selectedVehicle.ownerChangeErrorMessages[i].defaultMessage
+      const fallbackMessage =
+        formatMessage(applicationCheck.validation['0']) +
+        ' - ' +
+        selectedVehicle.ownerChangeErrorMessages[i].errorNo
+
       errorTags.push({
-        label:
-          formatMessage(
-            getValueViaPath(
-              applicationCheck.validation,
-              selectedVehicle.ownerChangeErrorMessages[i].errorNo || '',
-            ),
-          ) ||
-          selectedVehicle.ownerChangeErrorMessages[i].defaultMessage ||
-          formatMessage(applicationCheck.validation['0']) +
-            ' - ' +
-            selectedVehicle.ownerChangeErrorMessages[i].errorNo,
+        label: message || defaultMessage || fallbackMessage,
       })
     }
   }

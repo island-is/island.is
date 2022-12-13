@@ -8,6 +8,7 @@ import {
   OwnerChange,
   OwnerChangeValidation,
 } from './vehicleOwnerChangeClient.types'
+import { getDateAtNoon } from './vehicleOwnerChangeClient.utils'
 
 @Injectable()
 export class VehicleOwnerChangeClient {
@@ -72,6 +73,16 @@ export class VehicleOwnerChangeClient {
     let errorList: ReturnTypeMessage[] = []
 
     try {
+      // Note: If insurance company has not been supplied (we have not required the user to fill in at this point),
+      // then we will just send in a dummy value
+      let insuranceCompanyCode = ownerChange.insuranceCompanyCode
+      if (!insuranceCompanyCode) {
+        const dummyInsuranceCompanyCode = '6090' // VÍS
+        insuranceCompanyCode = dummyInsuranceCompanyCode
+      }
+
+      const purchaseDate = getDateAtNoon(ownerChange.dateOfPurchase)
+
       // Note: we have manually changed this endpoint to void, since the messages we want only
       // come with error code 400. If this function returns an array of ReturnTypeMessage, then
       // we will get an error with code 204, since the openapi generator tries to convert empty result
@@ -85,9 +96,9 @@ export class VehicleOwnerChangeClient {
           sellerEmail: ownerChange.seller.email,
           personIdNumber: ownerChange.buyer.ssn,
           buyerEmail: ownerChange.buyer.email,
-          purchaseDate: ownerChange.dateOfPurchase,
+          purchaseDate: purchaseDate,
           saleAmount: ownerChange.saleAmount,
-          insuranceCompanyCode: ownerChange.insuranceCompanyCode,
+          insuranceCompanyCode: insuranceCompanyCode,
           useGroup: useGroup,
           operatorEmail: null,
           operators: null,
@@ -148,6 +159,8 @@ export class VehicleOwnerChangeClient {
   ): Promise<void> {
     const useGroup = '000'
 
+    const purchaseDate = getDateAtNoon(ownerChange.dateOfPurchase)
+
     await this.ownerchangeApiWithAuth(auth).rootPost({
       apiVersion: '2.0',
       apiVersion2: '2.0',
@@ -157,7 +170,7 @@ export class VehicleOwnerChangeClient {
         sellerEmail: ownerChange.seller.email,
         buyerPersonIdNumber: ownerChange.buyer.ssn,
         buyerEmail: ownerChange.buyer.email,
-        dateOfPurchase: ownerChange.dateOfPurchase,
+        dateOfPurchase: purchaseDate,
         saleAmount: ownerChange.saleAmount,
         insuranceCompanyCode: ownerChange.insuranceCompanyCode,
         useGroup: useGroup,

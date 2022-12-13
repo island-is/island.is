@@ -92,38 +92,43 @@ export const VehicleRadioField: FC<
                 </Box>
               )}
               {!!vehicle.updatelocks?.length &&
-                vehicle.updatelocks?.map((lock) => (
-                  <Box paddingLeft={2}>
-                    <Tag variant="red">
-                      {formatMessage(
-                        getValueViaPath(
-                          applicationCheck.locks,
-                          lock.lockNo || '',
-                        ),
-                      ) ||
-                        formatMessage(applicationCheck.locks['0']) +
-                          ' - ' +
-                          lock.lockNo}
-                    </Tag>
-                  </Box>
-                ))}
+                vehicle.updatelocks?.map((lock) => {
+                  const message = formatMessage(
+                    getValueViaPath(applicationCheck.locks, lock.lockNo || ''),
+                  )
+                  const fallbackMessage =
+                    formatMessage(applicationCheck.locks['0']) +
+                    ' - ' +
+                    lock.lockNo
+
+                  return (
+                    <Box paddingLeft={2}>
+                      <Tag variant="red">{message || fallbackMessage}</Tag>
+                    </Box>
+                  )
+                })}
               {!!vehicle.ownerChangeErrorMessages?.length &&
-                vehicle.ownerChangeErrorMessages?.map((error) => (
-                  <Box paddingLeft={2}>
-                    <Tag variant="red">
-                      {formatMessage(
-                        getValueViaPath(
-                          applicationCheck.validation,
-                          error.errorNo || '',
-                        ),
-                      ) ||
-                        error.defaultMessage ||
-                        formatMessage(applicationCheck.validation['0']) +
-                          ' - ' +
-                          error.errorNo}
-                    </Tag>
-                  </Box>
-                ))}
+                vehicle.ownerChangeErrorMessages?.map((error) => {
+                  const message = formatMessage(
+                    getValueViaPath(
+                      applicationCheck.validation,
+                      error.errorNo || '',
+                    ),
+                  )
+                  const defaultMessage = error.defaultMessage
+                  const fallbackMessage =
+                    formatMessage(applicationCheck.validation['0']) +
+                    ' - ' +
+                    error.errorNo
+
+                  return (
+                    <Box paddingLeft={2}>
+                      <Tag variant="red">
+                        {message || defaultMessage || fallbackMessage}
+                      </Tag>
+                    </Box>
+                  )
+                })}
             </Box>
           </Box>
         ),

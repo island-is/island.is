@@ -1,28 +1,84 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { VehicleInfolocksClient } from '@island.is/clients/transport-authority/vehicle-infolocks'
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
-import { CheckTachoNetInput } from './graphql/dto'
+import { OwnerChangeAnswers, CheckTachoNetInput } from './graphql/dto'
 import {
+  OwnerChangeValidation,
   InsuranceCompany,
   QualityPhotoAndSignature,
   CheckTachoNetExists,
   NewestDriversCard,
   DeliveryStation,
 } from './graphql/models'
+import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 
 @Injectable()
 export class TransportAuthorityApi {
   constructor(
+    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
     private readonly vehicleInfolocksClient: VehicleInfolocksClient,
     private readonly digitalTachographDriversCardClient: DigitalTachographDriversCardClient,
     private readonly drivingLicenseApi: DrivingLicenseApi,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
   ) {}
+
+  async validateApplicationForOwnerChange(
+    user: User,
+    answers: OwnerChangeAnswers,
+  ): Promise<OwnerChangeValidation | null> {
+    // No need to continue with this validation in user is neither seller nor buyer
+    // (only time application data changes is on state change from these roles)
+    const sellerSsn = answers?.seller?.nationalId
+    const buyerSsn = answers?.buyer?.nationalId
+    if (user.nationalId !== sellerSsn && user.nationalId !== buyerSsn) {
+      return null
+    }
+
+    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'operator',
+    )
+
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      user,
+      {
+        permno: answers?.vehicle?.plate,
+        seller: {
+          ssn: sellerSsn,
+          email: answers?.seller?.email,
+        },
+        buyer: {
+          ssn: buyerSsn,
+          email: answers?.buyer?.email,
+        },
+        dateOfPurchase: new Date(answers?.vehicle?.date),
+        saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        insuranceCompanyCode: answers?.insurance?.value || '',
+        coOwners: buyerCoOwners?.map((coOwner) => ({
+          ssn: coOwner.nationalId,
+          email: coOwner.email,
+        })),
+        operators: buyerOperators?.map((operator) => ({
+          ssn: operator.nationalId,
+          email: operator.email,
+          isMainOperator:
+            buyerOperators.length > 1
+              ? operator.nationalId === answers?.buyerMainOperator?.nationalId
+              : true,
+        })),
+      },
+    )
+
+    return result
+  }
 
   async getInsuranceCompanies(): Promise<InsuranceCompany[]> {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()

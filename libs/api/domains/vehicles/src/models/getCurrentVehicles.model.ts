@@ -17,7 +17,7 @@ export class VehiclesCurrentVehicle {
 }
 
 @ObjectType()
-export class OwnerChangeValidationMessage {
+export class OwnerChangeVehicleValidationMessage {
   @Field(() => String, { nullable: true })
   errorNo?: number | null
 
@@ -33,8 +33,8 @@ export class VehiclesCurrentVehicleWithOwnerchangeChecks extends VehiclesCurrent
   @Field(() => [VehiclesUpdatelocks], { nullable: true })
   updatelocks?: VehiclesUpdatelocks[]
 
-  @Field(() => [OwnerChangeValidationMessage], { nullable: true })
-  ownerChangeErrorMessages?: OwnerChangeValidationMessage[] | null
+  @Field(() => [OwnerChangeVehicleValidationMessage], { nullable: true })
+  ownerChangeErrorMessages?: OwnerChangeVehicleValidationMessage[] | null
 }
 
 @ObjectType()
@@ -45,6 +45,6 @@ export class VehicleOwnerchangeChecksByPermno {
   @Field(() => [VehiclesUpdatelocks], { nullable: true })
   updatelocks?: VehiclesUpdatelocks[]
 
-  @Field(() => [OwnerChangeValidationMessage], { nullable: true })
-  ownerChangeErrorMessages?: OwnerChangeValidationMessage[] | null
+  @Field(() => [OwnerChangeVehicleValidationMessage], { nullable: true })
+  ownerChangeErrorMessages?: OwnerChangeVehicleValidationMessage[] | null
 }

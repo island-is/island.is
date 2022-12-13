@@ -75,3 +75,15 @@ export const IDENTITY_QUERY = `
     }
   }
 `
+
+export const VALIDATE_VEHICLE_OWNER_CHANGE = `
+  query GetVehicleOwnerChangeValidation($answers: OwnerChangeAnswers!) {
+    vehicleOwnerChangeValidation(answers: $answers) {
+      hasError
+      errorMessages {
+        errorNo
+        defaultMessage
+      }
+    }
+  } 
+`
