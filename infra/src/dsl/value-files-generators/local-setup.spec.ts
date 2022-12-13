@@ -7,6 +7,7 @@ import {
   LocalrunOutput,
   SecretOptions,
 } from '../output-generators/map-to-localrun'
+import path from "path";
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -44,12 +45,6 @@ describe('Local setup', () => {
     expect(Object.keys(serviceDef.services)).toStrictEqual(['api'])
   })
   it('Should have mocks', async () => {
-    expect(serviceDef.mocks).toStrictEqual({
-      'mock-www-visir-is': {
-        'proxy-port': 9453,
-        'mountebank-imposter-config':
-          '{"protocol":"http","name":"mock-www-visir-is","port":9453,"stubs":[{"predicates":[{"equals":{}}],"responses":[{"proxy":{"to":"https://www.visir.is","mode":"proxyAlways","predicateGenerators":[{"matches":{"method":true,"path":true,"query":true,"body":true}}]}}]}]}',
-      },
-    })
+    expect(serviceDef.mocks).toStrictEqual(`docker run -it --rm -p 2525:2525 -p 9453:9453 -v ${path.resolve(__dirname, '..', '..', '..')}/mountebank-imposter-config.json:/app/default.json bbyars/mountebank:2.8.1 start --configfile=/app/default.json`)
   })
 })
