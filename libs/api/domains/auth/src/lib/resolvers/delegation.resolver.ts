@@ -10,7 +10,10 @@ import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import { Identity, IdentityService } from '@island.is/api/domains/identity'
+
+import { Identity } from '@island.is/api/domains/identity'
+import { IdentityClientService } from '@island.is/clients/identity'
+
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -38,7 +41,7 @@ export class DelegationResolver {
   constructor(
     private meDelegationsService: MeDelegationsService,
     private actorDelegationsService: ActorDelegationsService,
-    private identityService: IdentityService,
+    private identityService: IdentityClientService,
   ) {}
 
   @Query(() => [MergedDelegation], { name: 'authActorDelegations' })

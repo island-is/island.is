@@ -2,7 +2,7 @@ import { ScheduleType } from './schedule.enum'
 
 export interface DistributionInitialPosition {
   nationalId: string
-  scheduleType: ScheduleType
+  scheduleType: string
   minPayment: number
   maxPayment: number
   minCountMonth: number
