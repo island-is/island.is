@@ -216,7 +216,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     ) {
       return buildError(
         errorMessages.notAllowedToRequestRights,
-        'requestRights',
+        'transferRights',
       )
     }
 
@@ -242,7 +242,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       multipleBirthsRequestDays * 1 !== 0 &&
       selectedChild?.parentalRelation === ParentalRelations.primary
     ) {
-      return buildError(errorMessages.notAllowedToGiveRights, 'giveRights')
+      return buildError(errorMessages.notAllowedToGiveRights, 'transferRights')
     }
 
     return undefined
