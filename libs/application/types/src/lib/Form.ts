@@ -124,16 +124,16 @@ export interface DataProviderItem {
   readonly id: string
   readonly action?: string
   readonly order?: number
-  readonly title: StaticText
-  readonly subTitle?: StaticText
-  readonly source?: string
+  readonly title: FormText
+  readonly subTitle?: FormText
+  readonly source?: string //TODO see if we can remove this
 }
 
 export interface DataProviderBuilderItem {
   id?: string
   type?: string //TODO REMOVE THIS
-  title: StaticText
-  subTitle?: StaticText
+  title: FormText
+  subTitle?: FormText
   source?: string
   provider?: Provider
 }

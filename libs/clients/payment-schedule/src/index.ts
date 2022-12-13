@@ -7,4 +7,5 @@ export {
   ConditionsDT,
   DebtsAndSchedulesDT,
   ChargeTypesDT,
+  CompanyConditionsDT,
 } from './gen/fetch'

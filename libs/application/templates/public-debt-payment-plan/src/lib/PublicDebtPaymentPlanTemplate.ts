@@ -9,7 +9,6 @@ import {
   DefaultEvents,
   ApplicationConfigurations,
   defineTemplateApi,
-  NationalRegistryUserApi,
   UserProfileApi,
   IdentityApi,
 } from '@island.is/application/types'
@@ -17,6 +16,7 @@ import { PaymentPlanPrerequisitesApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
+import { AuthDelegationType } from 'delegation'
 
 const States = {
   draft: 'draft',
@@ -46,14 +46,13 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   readyForProduction: true,
-  /* Add this when delegation implementation is ready.
-  /*allowedDelegations: [
+  allowedDelegations: [
     {
-      type: 'ProcurationHolder',
+      type: AuthDelegationType.ProcurationHolder,
       featureFlag:
         Features.applicationTemplatePublicDeptPaymentPlanAllowDelegation,
     },
-  ],*/
+  ],
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],

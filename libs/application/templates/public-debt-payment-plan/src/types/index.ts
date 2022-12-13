@@ -87,6 +87,7 @@ export interface IdentityResult extends SuccessfulDataProviderResult {
 export type PaymentPlanExternalData = {
   paymentPlanPrerequisites?: PrerequisitesResult
   identity?: IdentityResult
+  nationalRegistry?: IdentityResult
   userProfile?: UserProfileResult
 }
 

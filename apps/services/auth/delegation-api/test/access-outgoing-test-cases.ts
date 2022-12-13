@@ -328,4 +328,21 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
       },
     ],
   },
+  // Should not see scopes that are not for the authenticated user.
+  notForAuthenticatedUser: {
+    user: currentUser,
+    domains: [
+      {
+        name: 'd1',
+        apiScopes: [
+          {
+            name: 's1',
+            allowExplicitDelegationGrant: true,
+            grantToAuthenticatedUser: false,
+          },
+        ],
+      },
+    ],
+    expected: [],
+  },
 }
