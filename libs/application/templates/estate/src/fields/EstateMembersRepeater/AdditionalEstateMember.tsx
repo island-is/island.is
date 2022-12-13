@@ -1,10 +1,5 @@
 import { useEffect } from 'react'
-import {
-  ArrayField,
-  Controller,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import {
   CheckboxController,
@@ -33,6 +28,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
+import { EstateMemberField } from '../../types'
 
 export const AdditionalEstateMember = ({
   application,
@@ -44,7 +40,7 @@ export const AdditionalEstateMember = ({
   error,
 }: {
   application: Application
-  field: Partial<ArrayField<any, 'id'>>
+  field: EstateMemberField
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string

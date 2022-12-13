@@ -15,7 +15,10 @@ import { useFormContext } from 'react-hook-form'
 export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title } = field
   const { formatMessage } = useLocale()
-  const { errors, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext()
   return (
     <Box>
       <Text variant="h4" as="h4">

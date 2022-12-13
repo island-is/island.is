@@ -19,7 +19,7 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { id } = field
-  const { fields, append, remove } = useFieldArray<ContactField>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
 
@@ -63,21 +63,17 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
         )
       })}
       {fields.length < 2 && (
-        <>
-          <Box marginY={3}>
-            <Button
-              variant="ghost"
-              icon="add"
-              iconType="outline"
-              size="small"
-              onClick={handleAddContact}
-            >
-              {formatMessage(
-                informationAboutInstitution.labels.contactAddPerson,
-              )}
-            </Button>
-          </Box>
-        </>
+        <Box marginY={3}>
+          <Button
+            variant="ghost"
+            icon="add"
+            iconType="outline"
+            size="small"
+            onClick={handleAddContact}
+          >
+            {formatMessage(informationAboutInstitution.labels.contactAddPerson)}
+          </Button>
+        </Box>
       )}
     </Box>
   )

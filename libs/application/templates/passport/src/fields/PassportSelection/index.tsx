@@ -19,7 +19,10 @@ export const PassportSelection: FC<FieldBaseProps> = ({
 }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { setValue, errors } = useFormContext()
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)

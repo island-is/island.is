@@ -1,10 +1,5 @@
 import { useEffect } from 'react'
-import {
-  ArrayField,
-  Controller,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import {
@@ -14,7 +9,7 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import { Asset } from '../../types'
+import { AssetFormValue } from '../../types'
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
@@ -28,7 +23,7 @@ export const AdditionalRealEstate = ({
   fieldName,
   error,
 }: {
-  field: Partial<ArrayField<Asset, 'id'>>
+  field: AssetFormValue
   fieldName: string
   index: number
   remove: (index: number) => void

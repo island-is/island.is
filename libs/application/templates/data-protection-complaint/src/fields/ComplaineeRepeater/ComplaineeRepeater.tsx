@@ -23,7 +23,7 @@ export const ComplaineeRepeater: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { answers } = application
   const { id } = field
-  const { fields, append, remove } = useFieldArray<ComplaineeField>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
 

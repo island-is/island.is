@@ -21,6 +21,8 @@ export enum OtherPropertiesEnum {
 
 export type Asset = Partial<EstateAsset & { initial: boolean; dummy?: boolean }>
 
+export type AssetFormValue = Asset & { id: string }
+
 export type Answers = {
   additionalInfo: string
   applicantEmail: string
@@ -61,6 +63,10 @@ export interface ElectPersonType {
   electedPersonNationalId?: string
   lookupError?: boolean
 }
+
+export type EstateMemberField = Partial<
+  EstateMember & { id: string; initial: boolean; dummy?: boolean }
+>
 
 export interface EstateMember {
   name: string

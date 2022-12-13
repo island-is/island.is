@@ -34,8 +34,11 @@ export const PartyOverview = ({
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
-  const { errors, setError, setValue } = useFormContext()
-
+  const {
+    setError,
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
   const [

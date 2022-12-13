@@ -12,7 +12,7 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { Answers, EstateMember } from '../../types'
+import { Answers, EstateMemberField } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -23,7 +23,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<EstateMember>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
   const { setValue } = useFormContext()
@@ -56,7 +56,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2} marginBottom={5}>
       <GridRow>
-        {fields.reduce((acc, member, index) => {
+        {fields.reduce((acc, member: EstateMemberField, index) => {
           if (member.nationalId === application.applicant) {
             const relation = getValueViaPath<string>(
               application.answers,
@@ -103,7 +103,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((member, index) => (
+      {fields.map((member: EstateMemberField, index) => (
         <Box key={member.id} hidden={member.initial || member?.dummy}>
           <AdditionalEstateMember
             application={application}

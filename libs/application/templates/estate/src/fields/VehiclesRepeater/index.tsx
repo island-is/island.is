@@ -11,7 +11,7 @@ import {
   ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
-import { Answers, Asset } from '../../types'
+import { Answers, AssetFormValue } from '../../types'
 
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
@@ -26,7 +26,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.estate?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
   const { control, setValue } = useFormContext()
@@ -51,7 +51,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, asset, index) => {
+        {fields.reduce((acc, asset: AssetFormValue, index) => {
           if (!asset.initial) {
             return acc
           }
@@ -88,7 +88,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field, index) => {
+      {fields.map((field: AssetFormValue, index) => {
         const fieldIndex = `${id}[${index}]`
         const vehicleNumberField = `${fieldIndex}.assetNumber`
         const vehicleTypeField = `${fieldIndex}.description`

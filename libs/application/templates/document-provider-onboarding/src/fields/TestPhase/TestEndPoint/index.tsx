@@ -28,7 +28,13 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
     value: string
   }
 
-  const { clearErrors, register, errors, trigger, getValues } = useFormContext()
+  const {
+    clearErrors,
+    register,
+    formState: { errors },
+    trigger,
+    getValues,
+  } = useFormContext()
   const { answers: formValue } = application
   const [variables, setendPointVariables] = useState<Variable[]>([])
   const [testEndPointError, setTestEndPointError] = useState<string | null>(
@@ -134,7 +140,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                hasError={errors.endPointObject?.endPoint !== undefined}
+                hasError={errors['endPointObject.endPoint'] !== undefined}
                 errorMessage={formatText(
                   m.testEndpointInputErrorMessage,
                   application,

@@ -41,7 +41,12 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
   const [automatedTestsError, setautomatedTestsError] = useState<string | null>(
     null,
   )
-  const { register, errors, trigger, getValues } = useForm()
+  const {
+    register,
+    formState: { errors },
+    trigger,
+    getValues,
+  } = useForm()
   const [runEndpointTests, { loading }] = useMutation(runEndpointTestsMutation)
 
   const nationalId = getValueViaPath<string>(

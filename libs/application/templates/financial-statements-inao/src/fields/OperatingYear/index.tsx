@@ -20,7 +20,9 @@ export const OperatingYear = () => {
   const { data, loading, error } = useQuery(getAuditConfig)
 
   const { formatMessage } = useLocale()
-  const { errors } = useFormContext()
+  const {
+    formState: { errors },
+  } = useFormContext()
 
   if (loading) {
     return (

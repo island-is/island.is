@@ -9,7 +9,7 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Answers, Asset } from '../../types'
+import { Answers, AssetFormValue } from '../../types'
 
 import { m } from '../../lib/messages'
 import { EstateAsset } from '@island.is/clients/syslumenn'
@@ -23,7 +23,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
 
@@ -52,7 +52,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, asset, index) => {
+        {fields.reduce((acc, asset: AssetFormValue, index) => {
           if (!asset.initial) {
             return acc
           }
@@ -93,7 +93,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field, index) => (
+      {fields.map((field: AssetFormValue, index) => (
         <Box key={field.id} hidden={field.initial || field?.dummy}>
           <AdditionalRealEstate
             field={field}

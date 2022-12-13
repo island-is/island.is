@@ -162,7 +162,10 @@ const BasicInput = ({
   format,
   label,
 }: BasicInputProps) => {
-  const { errors, register } = useFormContext()
+  const {
+    formState: { errors },
+    register,
+  } = useFormContext()
 
   return (
     <InputController

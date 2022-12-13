@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
-import { getValueViaPath, formatText } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  formatText,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Checkbox, Button, Link } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
@@ -67,8 +71,9 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 checked={value}
                 name="termsOfAgreement.userTerms"
                 hasError={
-                  errors?.termsOfAgreement?.userTerms &&
-                  getValues('termsOfAgreement.userTerms') === false
+                  errors &&
+                  getErrorViaPath(errors, 'termsOfAgreement.userTerms') ===
+                    'false'
                 }
                 errorMessage={formatText(
                   m.termsUserAgreementRequiredMessage,

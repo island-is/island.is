@@ -35,7 +35,7 @@ export const ElectionSelect = ({
   options,
 }: ElectionSelectProps) => {
   const { formatMessage } = useLocale()
-  const { errors, setValue } = useFormContext()
+  const { formState: {errors},  setValue } = useFormContext()
 
   useEffect(() => {
     getDefaultElection()

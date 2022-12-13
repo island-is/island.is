@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react'
 import {
-  ArrayField,
   Controller,
   useFieldArray,
   useFormContext,
@@ -21,7 +20,7 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Answers, EstateMember } from '../../types'
+import { Answers, EstateMemberField } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import * as styles from './EstateMemberRepeater.css'
 import { useLazyQuery } from '@apollo/client'
@@ -51,7 +50,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
     })) || []
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<EstateMember>({
+  const { fields, append, remove } = useFieldArray({
     name: `${id}.members`,
   })
 
@@ -77,7 +76,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, member, index) => {
+        {fields.reduce((acc, member: EstateMemberField, index) => {
           if (member.nationalId === application.applicant) {
             if (application.answers.applicantRelation !== member.relation) {
               member.relation = application.answers.applicantRelation
@@ -115,7 +114,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((member, index) => (
+      {fields.map((member: EstateMemberField, index) => (
         <Box key={member.id} hidden={member.initial || member?.dummy}>
           <Item
             field={member}
@@ -150,7 +149,7 @@ const Item = ({
   relationOptions,
   error,
 }: {
-  field: Partial<ArrayField<EstateMember, 'id'>>
+  field: EstateMemberField
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string

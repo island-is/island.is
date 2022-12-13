@@ -32,7 +32,11 @@ export const CemetryOverview = ({
   goToScreen,
   refetch,
 }: FieldBaseProps) => {
-  const { errors, setError, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setError,
+    setValue,
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
 
