@@ -124,6 +124,11 @@ export const useDomains = (includeDefaultOption = true) => {
         updateDomainByName(ISLAND_DOMAIN)
       }
     }
+
+    return () => {
+      // Clean up to prevent memory leaks
+      setDomainName(null)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.authDomains])
 
