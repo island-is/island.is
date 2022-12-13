@@ -415,6 +415,7 @@ export class CaseService {
           await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
         } else if (
           !isIndictmentCase(theCase.type) &&
+          theCase.courtCaseNumber &&
           theCase.defendants &&
           theCase.defendants.length > 0 &&
           updatedCase.defenderEmail !== theCase.defenderEmail
