@@ -1,5 +1,6 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
-import { devices } from '@playwright/test'
+import { expect } from '@playwright/test'
+import { urls } from './support/utils'
 import './addons'
 /**
  * Read environment variables from file.
@@ -113,5 +114,4 @@ const config: PlaywrightTestConfig = {
   //   port: 3000,
   // },
 }
-
 export default config

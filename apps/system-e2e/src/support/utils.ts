@@ -8,6 +8,7 @@ export enum BaseAuthority {
   ads = 'loftbru.dev01.devland.is',
   prod = 'island.is',
   local = 'localhost:4200',
+  localAs = 'localhost:4242',
 }
 
 export enum AuthUrl {
@@ -31,27 +32,32 @@ export const getEnvironmentUrls = (env: TestEnvironment) => {
       authUrl: string
       islandisBaseUrl: string
       adsBaseUrl: string
+      asBaseUrl: string
     }
   } = {
     dev: {
       authUrl: AuthUrl.dev,
       islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
       adsBaseUrl: getEnvironmentBaseUrl(BaseAuthority.ads),
+      asBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
     },
     staging: {
       authUrl: AuthUrl.staging,
       islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
       adsBaseUrl: getEnvironmentBaseUrl('loftbru.staging01.devland.is'),
+      asBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
     },
     prod: {
       authUrl: AuthUrl.prod,
       islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
       adsBaseUrl: getEnvironmentBaseUrl('loftbru.island.is'),
+      asBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
     },
     local: {
       authUrl: AuthUrl.local,
       islandisBaseUrl: `http://${BaseAuthority.local}`,
       adsBaseUrl: `http://${BaseAuthority.local}`,
+      asBaseUrl: `http://${BaseAuthority.localAs}`,
     },
   }
   return envs[env]
