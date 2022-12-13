@@ -10,6 +10,7 @@ import {
   investigationCases,
   isIndictmentCase,
   restrictionCases,
+  User,
 } from '@island.is/judicial-system/types'
 import { MessageService } from '@island.is/judicial-system/message'
 
@@ -52,6 +53,9 @@ describe('CaseController - Transition', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
+    const mockUpdate = mockCaseModel.update as jest.Mock
+    mockUpdate.mockResolvedValue([1])
+
     givenWhenThen = async (
       caseId: string,
       theCase: Case,
@@ -62,6 +66,7 @@ describe('CaseController - Transition', () => {
       try {
         then.result = await caseController.transition(
           caseId,
+          { id: uuid() } as User,
           theCase,
           transition,
         )
@@ -92,19 +97,15 @@ describe('CaseController - Transition', () => {
         ...restrictionCases,
         ...investigationCases,
         ...indictmentCases,
-      ]).describe('restriction case', (type) => {
+      ]).describe('%s case', (type) => {
         const caseId = uuid()
         const theCase = { id: caseId, type, state: oldState } as Case
         const updatedCase = { id: caseId, type, state: newState } as Case
         let then: Then
 
         beforeEach(async () => {
-          const mockUpdate = mockCaseModel.update as jest.Mock
-          mockUpdate.mockResolvedValueOnce([1])
-          transition !== CaseTransition.DELETE &&
-            (mockCaseModel.findOne as jest.Mock).mockResolvedValueOnce(
-              updatedCase,
-            )
+          const mockFindOne = mockCaseModel.findOne as jest.Mock
+          mockFindOne.mockResolvedValueOnce(updatedCase)
 
           then = await givenWhenThen(caseId, theCase, {
             transition,

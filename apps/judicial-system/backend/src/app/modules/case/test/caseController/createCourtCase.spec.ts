@@ -32,6 +32,8 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Create court case', () => {
+  const courtCaseNumber = uuid()
+
   let mockMessageService: MessageService
   let mockCourtService: CourtService
   let transaction: Transaction
@@ -56,6 +58,11 @@ describe('CaseController - Create court case', () => {
     mockTransaction.mockImplementationOnce(
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
+
+    const mockCreateCourtCase = mockCourtService.createCourtCase as jest.Mock
+    mockCreateCourtCase.mockResolvedValue(courtCaseNumber)
+    const mockUpdate = mockCaseModel.update as jest.Mock
+    mockUpdate.mockResolvedValue([1])
 
     givenWhenThen = async (caseId: string, user: TUser, theCase: Case) => {
       const then = {} as Then
@@ -94,9 +101,20 @@ describe('CaseController - Create court case', () => {
       indictmentSubtypes,
       courtId,
     } as Case
+    const returnedCase = {
+      id: caseId,
+      policeCaseNumbers,
+      indictmentSubtypes,
+      courtId,
+      courtCaseNumber,
+    } as Case
+    let then: Then
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase)
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      then = await givenWhenThen(caseId, user, theCase)
     })
 
     it('should create a court case', () => {
@@ -110,39 +128,12 @@ describe('CaseController - Create court case', () => {
         indictmentSubtypes,
       )
     })
-  })
-
-  describe('court case number updated', () => {
-    const user = {} as TUser
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
-    const courtCaseNumber = uuid()
-
-    beforeEach(async () => {
-      const mockCreateCourtCase = mockCourtService.createCourtCase as jest.Mock
-      mockCreateCourtCase.mockResolvedValueOnce(courtCaseNumber)
-
-      await givenWhenThen(caseId, user, theCase)
-    })
 
     it('should update the court case number', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { courtCaseNumber },
         { where: { id: caseId }, transaction },
       )
-    })
-  })
-
-  describe('case lookup', () => {
-    const user = {} as TUser
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
-
-    beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
-
-      await givenWhenThen(caseId, user, theCase)
     })
 
     it('should lookup the updated case', () => {
@@ -155,23 +146,6 @@ describe('CaseController - Create court case', () => {
           state: { [Op.not]: CaseState.DELETED },
         },
       })
-    })
-  })
-
-  describe('case returned', () => {
-    const user = {} as TUser
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
-    const returnedCase = { id: caseId } as Case
-    let then: Then
-
-    beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(returnedCase)
-
-      then = await givenWhenThen(caseId, user, theCase)
     })
 
     it('should return the case', () => {
@@ -193,11 +167,10 @@ describe('CaseController - Create court case', () => {
         id: caseId,
         type,
         defendants: [{ id: defendantId1 }, { id: defendantId2 }],
+        courtCaseNumber,
       } as Case
 
       beforeEach(async () => {
-        const mockUpdate = mockCaseModel.update as jest.Mock
-        mockUpdate.mockResolvedValueOnce([1])
         const mockFindOne = mockCaseModel.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(returnedCase)
 
@@ -249,11 +222,10 @@ describe('CaseController - Create court case', () => {
         { id: criminalRecordId, category: CaseFileCategory.CRIMINAL_RECORD },
         { id: costBreakdownId, category: CaseFileCategory.COST_BREAKDOWN },
       ],
+      courtCaseNumber,
     } as Case
 
     beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
@@ -322,8 +294,6 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockRejectedValueOnce(new Error('Some error'))
 

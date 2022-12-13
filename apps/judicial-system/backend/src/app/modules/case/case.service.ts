@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
@@ -56,7 +55,6 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
-import { caseModuleConfig } from './case.config'
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -170,16 +168,7 @@ export class CaseService {
     return theCase.id
   }
 
-  private addCompletedCaseMessagesToQueue(caseId: string): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
-      { type: MessageType.CASE_COMPLETED, caseId },
-      { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
-      { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
-      { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
-    ])
-  }
-
-  private addIndictmentCaseConnectedToCourtCaseMessagesToQueue(
+  private addMessagesForIndictmentCourtCaseConnectionToQueue(
     theCase: Case,
   ): Promise<void> {
     const messages = theCase.policeCaseNumbers
@@ -212,20 +201,12 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  // Note that the court record and ruling are not delieverd to court for indictment cases
-  addCompletedIndictmentCaseMessagesToQueue(theCase: Case): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
-      { type: MessageType.CASE_COMPLETED, caseId: theCase.id },
-      { type: MessageType.SEND_RULING_NOTIFICATION, caseId: theCase.id },
-    ])
-  }
-
-  addCaseConnectedToCourtCaseMessagesToQueue(
+  private addMessagesFoCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
     return isIndictmentCase(theCase.type)
-      ? this.addIndictmentCaseConnectedToCourtCaseMessagesToQueue(theCase)
+      ? this.addMessagesForIndictmentCourtCaseConnectionToQueue(theCase)
       : this.messageService.sendMessagesToQueue(
           [
             {
@@ -241,6 +222,23 @@ export class CaseService {
             })) ?? [],
           ),
         )
+  }
+
+  private addMessagesForCompletedCaseToQueue(caseId: string): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      { type: MessageType.CASE_COMPLETED, caseId },
+      { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
+      { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
+      { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
+    ])
+  }
+
+  // Note that the court record and ruling are not delieverd to court for indictment cases
+  addMessagesForCompletedIndictmentCaseToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      { type: MessageType.CASE_COMPLETED, caseId: theCase.id },
+      { type: MessageType.SEND_RULING_NOTIFICATION, caseId: theCase.id },
+    ])
   }
 
   async findById(caseId: string): Promise<Case> {
@@ -314,6 +312,7 @@ export class CaseService {
   async update(
     theCase: Case,
     update: UpdateCaseDto,
+    user: TUser,
     returnUpdatedCase = true,
   ): Promise<Case | undefined> {
     return this.sequelize
@@ -334,6 +333,7 @@ export class CaseService {
           )
         }
 
+        // Update police case numbers of case files if necessary
         if (update.policeCaseNumbers && theCase.caseFiles) {
           const oldPoliceCaseNumbers = theCase.policeCaseNumbers
           const newPoliceCaseNumbers = update.policeCaseNumbers
@@ -388,9 +388,19 @@ export class CaseService {
           }
         }
       })
-      .then(() => {
+      .then(async () => {
+        const updatedCase = await this.findById(theCase.id)
+
+        if (
+          updatedCase.courtCaseNumber &&
+          updatedCase.courtCaseNumber !== theCase.courtCaseNumber
+        ) {
+          // The court case number has changed, so the request must be uploaded to the new court case
+          await this.addMessagesFoCourtCaseConnectionToQueue(updatedCase, user)
+        }
+
         if (returnUpdatedCase) {
-          return this.findById(theCase.id)
+          return updatedCase
         }
       })
   }
@@ -579,6 +589,7 @@ export class CaseService {
         courtRecordSignatoryId: user.id,
         courtRecordSignatureDate: nowFactory(),
       } as UpdateCaseDto,
+      user,
       false,
     )
 
@@ -653,11 +664,11 @@ export class CaseService {
                 ),
               }),
         } as UpdateCaseDto,
+        user,
         false,
       )
 
-      // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.addCompletedCaseMessagesToQueue(theCase.id)
+      await this.addMessagesForCompletedCaseToQueue(theCase.id)
 
       return { documentSigned: true }
     } catch (error) {
@@ -755,11 +766,9 @@ export class CaseService {
     const updatedCase = (await this.update(
       theCase,
       { courtCaseNumber },
+      user,
       true,
     )) as Case
-
-    // No need to wait for now, but may consider including this in a transaction with the database update later
-    this.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase, user)
 
     return updatedCase
   }
