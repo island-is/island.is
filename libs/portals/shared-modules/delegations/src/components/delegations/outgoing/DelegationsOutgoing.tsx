@@ -37,6 +37,7 @@ export const DelegationsOutgoing = () => {
       },
       lang,
     },
+    skip: !domainName || !lang || !AuthDelegationDirection.Outgoing,
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
