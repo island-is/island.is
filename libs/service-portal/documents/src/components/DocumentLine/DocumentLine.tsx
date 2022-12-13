@@ -26,7 +26,6 @@ import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../utils/messages'
-import { userInfo } from 'os'
 
 interface Props {
   documentLine: Document
