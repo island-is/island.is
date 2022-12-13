@@ -12,6 +12,8 @@ export type {
   RangeInput,
   FlightLegsInput,
 } from './lib/flight'
-export type { User, BaseUser, Fund } from './lib/user'
+export type { User, BaseUser } from './lib/user'
+export { Fund } from './lib/user'
+export { Gender, RegistryGender, UncategorizedGender } from './lib/user'
 export type { AuthUser } from './lib/authUser'
 export { Role } from './lib/authUser'

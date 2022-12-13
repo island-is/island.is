@@ -370,6 +370,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       )}
                       documentLine={doc}
                       documentCategories={categoriesAvailable}
+                      userInfo={userInfo}
                     />
                   </Box>
                 ))}

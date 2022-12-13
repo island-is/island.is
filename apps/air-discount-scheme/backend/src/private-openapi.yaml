@@ -417,9 +417,10 @@ components:
         gender:
           type: string
           enum:
-            - kvk
             - kk
-            - hvk
+            - kvk
+            - x
+            - manneskja
         nationalId:
           type: string
         fund:
@@ -443,9 +444,10 @@ components:
         gender:
           type: string
           enum:
-            - kvk
             - kk
-            - hvk
+            - kvk
+            - x
+            - manneskja
         nationalId:
           type: string
         fund:
@@ -743,7 +745,8 @@ components:
       enum:
         - kk
         - kvk
-        - hvk
+        - x
+        - manneskja
     GetFlightLegsBody:
       type: object
       properties:

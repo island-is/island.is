@@ -65,7 +65,11 @@ export class DiscountService {
       if (isValid) {
         discounts.push({
           ...discount,
-          user: { ...relation, name: relation.firstName },
+          user: {
+            ...relation,
+            name: relation.firstName,
+            fund: discount.user.fund,
+          },
         })
         continue
       }
