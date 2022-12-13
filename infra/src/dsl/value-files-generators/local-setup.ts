@@ -76,7 +76,7 @@ export const getLocalrunValueFile = async (
                 responses: [
                   {
                     proxy: {
-                      to: target,
+                      to: target.replace('localhost', 'host.docker.internal'),
                       mode: 'proxyAlways',
                       predicateGenerators: [
                         {
