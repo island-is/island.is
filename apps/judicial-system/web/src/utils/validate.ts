@@ -181,20 +181,6 @@ export const isDefendantStepValidIC = (
   )
 }
 
-export const isDefendantStepValidForSidebarIC = (
-  workingCase: Case,
-): boolean => {
-  return (
-    (workingCase.id &&
-      isDefendantStepValidIC(
-        workingCase,
-        workingCase.type,
-        workingCase.policeCaseNumbers,
-      )) ||
-    false
-  )
-}
-
 export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
   const result =
     workingCase.policeCaseNumbers.length > 0 &&
@@ -213,14 +199,6 @@ export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
     ]).isValid
 
   return result
-}
-
-export const isDefendantStepValidForSidebarIndictments = (
-  workingCase: Case,
-): boolean => {
-  return workingCase.id && isDefendantStepValidIndictments(workingCase)
-    ? true
-    : false
 }
 
 export const isHearingArrangementsStepValidRC = (
