@@ -17,26 +17,12 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
-  isDefendantStepValidRC,
-  isCourtHearingArrangemenstStepValidRC,
   isCourtHearingArrangementsStepValidIC,
   isCourtRecordStepValidIC,
-  isCourtRecordStepValidRC,
-  isHearingArrangementsStepValidIC,
-  isHearingArrangementsStepValidRC,
-  isPoliceDemandsStepValidIC,
-  isPoliceDemandsStepValidRC,
-  isPoliceReportStepValidIC,
-  isPoliceReportStepValidRC,
   isRulingValidIC,
-  isRulingValidRC,
-  isProcessingStepValidIndictments,
   isReceptionAndAssignmentStepValid,
-  isSubpoenaStepValid,
-  isProsecutorAndDefenderStepValid,
-  isDefendantStepValidIC,
-  isDefendantStepValidIndictments,
 } from '../../validate'
+import { stepValidations } from '../../formHelper'
 
 interface Section {
   name: string
@@ -56,87 +42,7 @@ const validateFormStepper = (
     return false
   }
 
-  const validationForStep = {
-    [constants.CREATE_RESTRICTION_CASE_ROUTE]: isDefendantStepValidRC(
-      workingCase,
-      workingCase.policeCaseNumbers,
-    ),
-    [constants.CREATE_TRAVEL_BAN_ROUTE]: isDefendantStepValidRC(
-      workingCase,
-      workingCase.policeCaseNumbers,
-    ),
-    [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: isDefendantStepValidRC(
-      workingCase,
-      workingCase.policeCaseNumbers,
-    ),
-    [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: isHearingArrangementsStepValidRC(
-      workingCase,
-    ),
-    [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: isPoliceDemandsStepValidRC(
-      workingCase,
-    ),
-    [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: isPoliceReportStepValidRC(
-      workingCase,
-    ),
-    [constants.CREATE_INVESTIGATION_CASE_ROUTE]: isDefendantStepValidIC(
-      workingCase,
-      workingCase.type,
-      workingCase.policeCaseNumbers,
-    ),
-    [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: isDefendantStepValidIC(
-      workingCase,
-      workingCase.type,
-      workingCase.policeCaseNumbers,
-    ),
-    [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: isHearingArrangementsStepValidIC(
-      workingCase,
-    ),
-    [constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: isPoliceDemandsStepValidIC(
-      workingCase,
-    ),
-    [constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: isPoliceReportStepValidIC(
-      workingCase,
-    ),
-    [constants.INVESTIGATION_CASE_CASE_FILES_ROUTE]: true,
-    [constants.INDICTMENTS_DEFENDANT_ROUTE]: isDefendantStepValidIndictments,
-    [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: true,
-    [constants.INDICTMENTS_CASE_FILE_ROUTE]: true,
-    [constants.INDICTMENTS_PROCESSING_ROUTE]: isProcessingStepValidIndictments,
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: true,
-    [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: isReceptionAndAssignmentStepValid(
-      workingCase,
-    ),
-    [constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: true,
-    [constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: isCourtHearingArrangemenstStepValidRC(
-      workingCase,
-    ),
-    [constants.RESTRICTION_CASE_RULING_ROUTE]: isRulingValidRC(workingCase),
-    [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: isCourtRecordStepValidRC(
-      workingCase,
-    ),
-    [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: isReceptionAndAssignmentStepValid(
-      workingCase,
-    ),
-    [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: isReceptionAndAssignmentStepValid(
-      workingCase,
-    ),
-    [constants.INVESTIGATION_CASE_OVERVIEW_ROUTE]: true,
-    [constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: isCourtHearingArrangementsStepValidIC(
-      workingCase,
-    ),
-    [constants.INVESTIGATION_CASE_RULING_ROUTE]: isRulingValidIC(workingCase),
-    [constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE]: isCourtRecordStepValidIC(
-      workingCase,
-    ),
-    [constants.INDICTMENTS_OVERVIEW_ROUTE]: true,
-    [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: isReceptionAndAssignmentStepValid(
-      workingCase,
-    ),
-    [constants.INDICTMENTS_SUBPOENA_ROUTE]: isSubpoenaStepValid(workingCase),
-    [constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE]: isProsecutorAndDefenderStepValid(
-      workingCase,
-    ),
-  }
+  const validationForStep = stepValidations(workingCase)
 
   return steps.some(
     (step) =>
@@ -153,11 +59,6 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
-
-  const findLastValidStep = (section: Section) => {
-    const filterValidSteps = section.children.filter((c) => c.href)
-    return filterValidSteps[filterValidSteps.length - 1]
-  }
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
@@ -1195,7 +1096,6 @@ const useSections = (
     getInvestigationCaseCourtSections,
     getIndictmentsCourtSections,
     getSections,
-    findLastValidStep,
   }
 }
 

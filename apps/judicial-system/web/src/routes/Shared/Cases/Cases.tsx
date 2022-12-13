@@ -27,10 +27,10 @@ import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+import { findLastValidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -64,15 +64,6 @@ export const Cases: React.FC = () => {
 
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
-  const {
-    findLastValidStep,
-    getRestrictionCaseCourtSections,
-    getInvestigationCaseCourtSections,
-    getRestrictionCaseProsecutorSection,
-    getInvestigationCaseProsecutorSection,
-    getIndictmentCaseProsecutorSection,
-    getIndictmentsCourtSections,
-  } = useSections()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isRepresentative = user?.role === UserRole.REPRESENTATIVE
@@ -160,41 +151,39 @@ export const Cases: React.FC = () => {
     } else if (isExtendedCourtRole(role)) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
-          getRestrictionCaseCourtSections(caseToOpen, user),
-        ).href
+          constants.courtRestrictionCasesRoutes,
+          caseToOpen,
+        )
       } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
-          getInvestigationCaseCourtSections(caseToOpen, user),
-        ).href
+          constants.courtInvestigationCasesRoutes,
+          caseToOpen,
+        )
       } else {
         // Route to Indictment Overview section since it always a valid step and
         // would be skipped if we route to the last valid step
-        const routeToOpen =
-          getIndictmentsCourtSections(caseToOpen).children[0]?.href ||
-          `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseToOpen.id}`
-
-        routeTo = routeToOpen
+        routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
-          getRestrictionCaseProsecutorSection(caseToOpen, user),
-        ).href
+          constants.prosecutorRestrictionCasesRoutes,
+          caseToOpen,
+        )
       } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
-          getInvestigationCaseProsecutorSection(caseToOpen, user),
-        ).href
-      } else {
-        const lastValidStep = findLastValidStep(
-          getIndictmentCaseProsecutorSection(caseToOpen),
+          constants.prosecutorInvestigationCasesRoutes,
+          caseToOpen,
         )
-        routeTo =
-          lastValidStep?.href ??
-          `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${caseToOpen.id}`
+      } else {
+        routeTo = findLastValidStep(
+          constants.prosecutorIndictmentRoutes,
+          caseToOpen,
+        )
       }
     }
 
-    if (routeTo) router.push(routeTo)
+    if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
   }
 
   return (
