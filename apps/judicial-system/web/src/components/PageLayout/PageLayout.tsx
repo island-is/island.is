@@ -149,6 +149,7 @@ const PageLayout: React.FC<PageProps> = ({
                         isActive={index === activeSection}
                         subSections={section.children.map(
                           (subSection, index) => {
+                            // TODO: FIX - Cant click back in stepper if you are on last step
                             return subSection.href &&
                               activeSubSection &&
                               activeSubSection < index ? (

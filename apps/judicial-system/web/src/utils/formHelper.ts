@@ -306,6 +306,10 @@ export const findLastValidStep = (steps: string[], theCase: Case) => {
   const validationEntries = Object.entries(validations)
   const stepsToCheck = validationEntries.filter(([key]) => steps.includes(key))
 
+  if (stepsToCheck.every(([, value]) => value === true)) {
+    return steps[steps.length - 1]
+  }
+
   const [key] =
     stepsToCheck
       .slice()
