@@ -1,9 +1,9 @@
 import React, { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldErrors, FieldValues } from 'react-hook-form/dist/types'
 import * as kennitala from 'kennitala'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { formatText } from '@island.is/application/core'
+import { formatText, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -27,7 +27,13 @@ const fieldNames = {
 
 const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { setValue, watch, errors, clearErrors, setError } = useFormContext()
+  const {
+    setValue,
+    watch,
+    formState: { errors },
+    clearErrors,
+    setError,
+  } = useFormContext()
   const [getIdentity, { loading: queryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
@@ -99,8 +105,14 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
             icon={electedPersonName ? 'checkmarkCircle' : undefined}
             loading={queryLoading}
             error={
-              errors?.pickRole?.electPerson?.lookupError?.message ||
-              errors?.pickRole?.electPerson?.electedPersonNationalId ||
+              getErrorViaPath(
+                errors,
+                'pickRole.electPerson.lookupError.message',
+              ) ||
+              getErrorViaPath(
+                errors,
+                'pickRole.electPerson.electedPersonNationalId',
+              ) ||
               undefined
             }
           />

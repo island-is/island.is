@@ -1,9 +1,13 @@
 import React, { FC, useMemo, useState } from 'react'
-import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldValues } from 'react-hook-form/dist/types/fields'
+import { FieldErrors } from 'react-hook-form/dist/types/errors'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
-import { extractRepeaterIndexFromField } from '@island.is/application/core'
+import {
+  extractRepeaterIndexFromField,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
@@ -58,12 +62,15 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
 
   const fieldId = `periods[${currentIndex}].ratio`
 
-  let error
+  let error = getErrorViaPath(
+    errors,
+    `periods.[${currentIndex}].ratio?.message`,
+  )
 
-  if (errors?.periods?.[currentIndex]?.ratio?.message) {
-    error = errors?.periods?.[currentIndex]?.ratio?.message
+  if (error === '') {
+    error = getErrorViaPath(errors, `periods.[${currentIndex}].ratio?.message`)
   } else if (errors?.[fieldId]) {
-    error = errors?.[fieldId]
+    error = getErrorViaPath(errors, 'fieldId')
   }
 
   const options: SelectOption<string>[] = useMemo(() => {

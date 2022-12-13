@@ -9,7 +9,7 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import { AssetFormValue } from '../../types'
+import { AssetFormField } from '../../types'
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
@@ -23,7 +23,7 @@ export const AdditionalRealEstate = ({
   fieldName,
   error,
 }: {
-  field: AssetFormValue
+  field: AssetFormField
   fieldName: string
   index: number
   remove: (index: number) => void

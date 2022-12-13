@@ -33,8 +33,7 @@ const ValueLine = ({ title, value, hasDivider = true }: ValueLineProps) => {
 
 export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const answers = (application as Application)
-    .answers as FundingGovernmentProjects
+  const answers = application.answers as FundingGovernmentProjects
   const contactAnswer = answers.contacts
   const projectAnswer = answers.project
   return (

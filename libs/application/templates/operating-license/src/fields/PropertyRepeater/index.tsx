@@ -11,7 +11,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
-  ArrayField,
   Controller,
   useFieldArray,
   useFormContext,
@@ -20,13 +19,14 @@ import {
 import { useLazyQuery } from '@apollo/client'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
-import { Property } from '../../lib/constants'
+import { PropertyField } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
 
 export const PropertyRepeater: FC<FieldBaseProps> = ({ field }) => {
   const { formatMessage } = useLocale()
   const { id } = field
-  const { fields, append, remove } = useFieldArray<Property>({
+
+  const { fields, append, remove } = useFieldArray({
     name: `${id}`,
   })
 
@@ -77,7 +77,7 @@ const PropertyItem = ({
   fieldName,
   error,
 }: {
-  field: Partial<ArrayField<Property, 'id'>>
+  field: PropertyField
   fieldName: string
   index: number
   remove: (index: number) => void

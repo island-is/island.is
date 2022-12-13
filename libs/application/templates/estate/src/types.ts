@@ -21,7 +21,7 @@ export enum OtherPropertiesEnum {
 
 export type Asset = Partial<EstateAsset & { initial: boolean; dummy?: boolean }>
 
-export type AssetFormValue = Asset & { id: string }
+export type AssetFormField = Asset & { id: string }
 
 export type Answers = {
   additionalInfo: string

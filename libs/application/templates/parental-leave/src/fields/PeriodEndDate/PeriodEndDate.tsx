@@ -1,9 +1,10 @@
 import React, { FC, useEffect } from 'react'
-import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldErrors, FieldValues } from 'react-hook-form/dist/types'
 
 import {
   NO_ANSWER,
   extractRepeaterIndexFromField,
+  getErrorViaPath,
 } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -35,8 +36,14 @@ export const PeriodEndDate: FC<
   const { title, props } = field
   const currentIndex = extractRepeaterIndexFromField(field)
   const error =
-    (errors as FieldErrors<FieldValues>)?.periods?.[currentIndex]?.endDate
-      ?.message ?? (errors?.[`periods[${currentIndex}].endDate`] as string)
+    getErrorViaPath(
+      errors as FieldErrors<FieldValues>,
+      `periods[${currentIndex}].endDate.message`,
+    ) ??
+    getErrorViaPath(
+      errors as FieldErrors<FieldValues>,
+      `periods[${currentIndex}].endDate`,
+    )
   const fieldId = `periods[${currentIndex}].endDate`
 
   useEffect(() => {

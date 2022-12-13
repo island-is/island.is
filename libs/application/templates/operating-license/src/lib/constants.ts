@@ -125,6 +125,10 @@ export type Property = {
   customerCount: string
 }
 
+export type PropertyField = Partial<
+  Property & { id: string; initial: boolean; dummy?: boolean }
+>
+
 export const AttachmentProps: Attachment[] = [
   {
     id: 'attachments.healthLicense.file',

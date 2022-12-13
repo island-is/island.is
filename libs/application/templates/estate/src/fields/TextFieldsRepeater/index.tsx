@@ -9,7 +9,7 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import { Answers, AssetFormValue } from '../../types'
+import { Answers, AssetFormField } from '../../types'
 import * as styles from '../styles.css'
 
 type Props = {
@@ -51,7 +51,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
 
   return (
     <Box>
-      {fields.map((field: AssetFormValue, index) => {
+      {fields.map((field: AssetFormField, index) => {
         const fieldIndex = `${id}[${index}]`
 
         return (

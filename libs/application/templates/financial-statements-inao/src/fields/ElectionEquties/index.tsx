@@ -18,7 +18,6 @@ import { Total } from '../KeyNumbers'
 import {
   INPUTCHANGEINTERVAL,
   EQUITIESANDLIABILITIESIDS,
-  OPERATINGCOST,
   VALIDATOR,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
