@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -176,7 +176,10 @@ const PoliceDemands: React.FC = () => {
     workingCase,
   ])
 
-  const onNavigationTo = (destination: string) => router.push(destination)
+  const onNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
 
   const stepIsValid = isPoliceDemandsStepValidIC(workingCase)
 
@@ -339,9 +342,7 @@ const PoliceDemands: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

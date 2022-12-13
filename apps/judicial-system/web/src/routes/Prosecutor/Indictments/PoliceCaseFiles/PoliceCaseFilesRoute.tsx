@@ -309,7 +309,7 @@ const PoliceCaseFilesRoute = () => {
           onNextButtonClick={() =>
             onNavigationTo(constants.INDICTMENTS_CASE_FILE_ROUTE)
           }
-          nextIsDisabled={stepIsValid}
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

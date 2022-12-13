@@ -150,7 +150,8 @@ const PageLayout: React.FC<PageProps> = ({
                         subSections={section.children.map(
                           (subSection, index) => {
                             return subSection.href &&
-                              activeSubSection !== index ? (
+                              activeSubSection &&
+                              activeSubSection < index ? (
                               <Link href={subSection.href} underline="small">
                                 <RenderSubsectionChild
                                   isActive={index === activeSubSection}

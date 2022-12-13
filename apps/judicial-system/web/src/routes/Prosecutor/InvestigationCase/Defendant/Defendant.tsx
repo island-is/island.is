@@ -440,7 +440,7 @@ const Defendant = () => {
           previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() =>
             handleNavigateTo(
-              `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`,
+              constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
             )
           }
           nextIsDisabled={!stepIsValid}

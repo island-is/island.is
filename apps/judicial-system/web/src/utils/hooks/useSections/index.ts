@@ -137,12 +137,7 @@ const validateFormStepper = (
       workingCase,
     ),
   }
-  console.log(
-    steps.some(
-      (step) =>
-        validationForStep[step as keyof typeof validationForStep] === false,
-    ),
-  )
+
   return steps.some(
     (step) =>
       validationForStep[step as keyof typeof validationForStep] === false,
@@ -160,7 +155,7 @@ const useSections = (
   const router = useRouter()
 
   const findLastValidStep = (section: Section) => {
-    const filterValidSteps = section.children.filter((c) => c.onClick)
+    const filterValidSteps = section.children.filter((c) => c.href)
     return filterValidSteps[filterValidSteps.length - 1]
   }
 
@@ -190,10 +185,7 @@ const useSections = (
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
-                href:
-                  activeSubSection && activeSubSection > 1
-                    ? `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-                    : undefined,
+                href: `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -214,10 +206,7 @@ const useSections = (
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
-                href:
-                  activeSubSection && activeSubSection > 2
-                    ? `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`
-                    : undefined,
+                href: `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -237,10 +226,7 @@ const useSections = (
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.policeReport,
                 ),
-                href:
-                  activeSubSection && activeSubSection > 3
-                    ? `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`
-                    : undefined,
+                href: `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -261,10 +247,7 @@ const useSections = (
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.caseFiles,
                 ),
-                href:
-                  activeSubSection && activeSubSection > 4
-                    ? `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`
-                    : undefined,
+                href: `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -286,10 +269,7 @@ const useSections = (
                 name: formatMessage(
                   sections.restrictionCaseProsecutorSection.overview,
                 ),
-                href:
-                  activeSubSection && activeSubSection > 5
-                    ? `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`
-                    : undefined,
+                href: `${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
