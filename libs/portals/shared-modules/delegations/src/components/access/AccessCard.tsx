@@ -28,7 +28,7 @@ import {
 } from '../../types/customDelegation'
 
 const isDateExpired = (date?: string | null) =>
-  date ? new Date(date) < new Date() : true
+  date ? new Date(date) < new Date() : false
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
