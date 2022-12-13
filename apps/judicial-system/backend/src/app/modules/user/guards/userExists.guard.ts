@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 
-import { UserService } from '../../user'
+import { UserService } from '../user.service'
 
 @Injectable()
 export class UserExistsGuard implements CanActivate {

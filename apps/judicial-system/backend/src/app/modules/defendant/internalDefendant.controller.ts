@@ -16,16 +16,14 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { User } from '../user'
+import { User, CurrentUser, UserExistsGuard } from '../user'
 import { Case, CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
-import { CurrentUser } from './guards/user.decorator'
 import { CurrentDefendant } from './guards/defendant.decorator'
-import { UserExistsGuard } from './guards/userExistsGuard'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
+import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Defendant } from './models/defendant.model'
 import { DefendantService } from './defendant.service'
-import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
 
 @Controller('api/internal/case/:caseId/defendant/:defendantId')
 @ApiTags('internal defendants')

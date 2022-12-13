@@ -22,6 +22,7 @@ import {
   CaseMessage,
   MessageService,
   MessageType,
+  UserMessage,
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
@@ -227,6 +228,11 @@ export class CaseService {
               type: MessageType.DELIVER_REQUEST_TO_COURT,
               caseId: theCase.id,
             },
+            {
+              type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+              caseId: theCase.id,
+              userId: user.id,
+            },
           ].concat(this.getDeliverDefendantToCourtMessages(theCase, user)),
         )
   }
@@ -238,6 +244,17 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(
       this.getDeliverDefendantToCourtMessages(theCase, user),
     )
+  }
+
+  private addMessagesForProsecutorChangeToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+      caseId: theCase.id,
+      userId: user.id,
+    } as UserMessage)
   }
 
   private addMessagesForCompletedCaseToQueue(caseId: string): Promise<void> {
@@ -413,14 +430,22 @@ export class CaseService {
           updatedCase.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
-        } else if (
-          !isIndictmentCase(theCase.type) &&
-          theCase.courtCaseNumber &&
-          theCase.defendants &&
-          theCase.defendants.length > 0 &&
-          updatedCase.defenderEmail !== theCase.defenderEmail
-        ) {
-          await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
+        } else if (theCase.courtCaseNumber) {
+          if (updatedCase.prosecutorId !== theCase.prosecutorId) {
+            await this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
+          }
+
+          if (
+            !isIndictmentCase(theCase.type) &&
+            theCase.defendants &&
+            theCase.defendants.length > 0 &&
+            updatedCase.defenderEmail !== theCase.defenderEmail
+          ) {
+            await this.addMessagesForDefenderEmailChangeToQueue(
+              updatedCase,
+              user,
+            )
+          }
         }
 
         if (returnUpdatedCase) {

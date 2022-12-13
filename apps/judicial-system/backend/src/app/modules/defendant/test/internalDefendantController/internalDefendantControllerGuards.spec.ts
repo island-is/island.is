@@ -6,10 +6,10 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
+import { UserExistsGuard } from '../../../user'
 import { CaseExistsGuard, CaseTypeGuard } from '../../../case'
 import { InternalDefendantController } from '../../internalDefendant.controller'
 import { DefendantExistsGuard } from '../../guards/defendantExists.guard'
-import { UserExistsGuard } from '../../guards/userExistsGuard'
 
 describe('InternalDefendantController - guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

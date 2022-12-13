@@ -636,6 +636,28 @@ export class InternalCaseService {
     }
   }
 
+  async deliverProsecutorToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateCaseWithProsecutor(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        theCase.prosecutor?.nationalId ?? '',
+        '',
+        // theCase.prosecutor?.institution?.nationalId,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error('failed to update case with defendant', { reason })
+
+        return { delivered: false }
+      })
+  }
+
   async deliverCaseFilesRecordToCourt(
     theCase: Case,
     policeCaseNumber: string,

@@ -2,9 +2,10 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException, ExecutionContext } from '@nestjs/common'
 
-import { UserService } from '../../../user'
-import { createTestingDefendantModule } from '../../test/createTestingDefendantModule'
-import { UserExistsGuard } from '../userExistsGuard'
+import { Institution } from '../../../institution'
+import { User } from '../../user.model'
+import { createTestingUserModule } from '../../test/createTestingUserModule'
+import { UserExistsGuard } from '../userExists.guard'
 
 interface Then {
   result: boolean
@@ -15,16 +16,16 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('User exists guard', () => {
   const mockRequest = jest.fn()
-  let mockeUserService: UserService
+  let mockUserModel: typeof User
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { userService } = await createTestingDefendantModule()
+    const { userModel, userService } = await createTestingUserModule()
 
-    mockeUserService = userService
+    mockUserModel = userModel
 
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new UserExistsGuard(mockeUserService)
+      const guard = new UserExistsGuard(userService)
       const then: Then = {} as Then
 
       try {
@@ -48,14 +49,16 @@ describe('User exists guard', () => {
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
 
-      const mockFindById = mockeUserService.findById as jest.Mock
-      mockFindById.mockResolvedValueOnce(user)
+      const mockFindByPk = mockUserModel.findByPk as jest.Mock
+      mockFindByPk.mockResolvedValueOnce(user)
 
       then = await givenWhenThen()
     })
 
     it('should lookup user', () => {
-      expect(mockeUserService.findById).toHaveBeenCalledWith(userId)
+      expect(mockUserModel.findByPk).toHaveBeenCalledWith(userId, {
+        include: [{ model: Institution, as: 'institution' }],
+      })
     })
 
     it('should activate', () => {

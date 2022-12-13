@@ -8,6 +8,7 @@ import {
   CaseFileMessage,
   PoliceCaseMessage,
   DefendantMessage,
+  UserMessage,
 } from '@island.is/judicial-system/message'
 import type { CaseMessage } from '@island.is/judicial-system/message'
 import { NotificationType } from '@island.is/judicial-system/types'
@@ -37,10 +38,19 @@ export class MessageHandlerService implements OnModuleDestroy {
       case MessageType.CASE_COMPLETED:
         handled = await this.caseDeliveryService.deliverCase(message.caseId)
         break
+      case MessageType.DELIVER_PROSECUTOR_TO_COURT: {
+        const userMessage = message as UserMessage
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          `deliverProsecutorToCourt`,
+          { userId: userMessage.userId },
+        )
+        break
+      }
       case MessageType.DELIVER_DEFENDANT_TO_COURT: {
         const defendantMessage: DefendantMessage = message as DefendantMessage
         handled = await this.internalDeliveryService.deliver(
-          message.caseId,
+          defendantMessage.caseId,
           `defendant/${defendantMessage.defendantId}/deliverToCourt`,
           { userId: defendantMessage.userId },
         )
@@ -49,7 +59,7 @@ export class MessageHandlerService implements OnModuleDestroy {
       case MessageType.DELIVER_CASE_FILE_TO_COURT: {
         const caseFileMessage = message as CaseFileMessage
         handled = await this.internalDeliveryService.deliver(
-          message.caseId,
+          caseFileMessage.caseId,
           `file/${caseFileMessage.caseFileId}/deliverToCourt`,
         )
         break
@@ -57,7 +67,7 @@ export class MessageHandlerService implements OnModuleDestroy {
       case MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT: {
         const policeCaseMessage = message as PoliceCaseMessage
         handled = await this.internalDeliveryService.deliver(
-          message.caseId,
+          policeCaseMessage.caseId,
           `deliverCaseFilesRecordToCourt/${policeCaseMessage.policeCaseNumber}`,
         )
         break

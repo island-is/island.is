@@ -29,11 +29,13 @@ import {
   CreateDocumentApi,
   CreateThingbokApi,
   CreateEmailApi,
+  UpdateCaseWithProsecutorApi,
   UpdateCaseWithDefendantApi,
   CreateCaseData,
   CreateDocumentData,
   CreateThingbokRequest,
   CreateEmailData,
+  UpdateCaseWithProsecutorData,
   UpdateCaseWithDefendantData,
 } from '../../gen/fetch'
 import { UploadFile, UploadStreamApi } from './uploadStreamApi'
@@ -47,6 +49,10 @@ export type CreateThingbokArgs = Omit<
 >
 export type CreateEmailArgs = Omit<CreateEmailData, 'authenticationToken'>
 export type UploadStreamArgs = UploadFile
+export type UpdateCaseWithProsecutorArgs = Omit<
+  UpdateCaseWithProsecutorData,
+  'authenticationToken'
+>
 export type UpdateCaseWithDefendantArgs = Omit<
   UpdateCaseWithDefendantData,
   'authenticationToken'
@@ -98,6 +104,10 @@ export abstract class CourtClientService {
     args: CreateThingbokArgs,
   ): Promise<string>
   abstract createEmail(courtId: string, args: CreateEmailArgs): Promise<string>
+  abstract updateCaseWithProsecutor(
+    courtId: string,
+    args: UpdateCaseWithProsecutorArgs,
+  ): Promise<string>
   abstract updateCaseWithDefendant(
     courtId: string,
     args: UpdateCaseWithDefendantArgs,
@@ -115,6 +125,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
   private readonly createDocumentApi: CreateDocumentApi
   private readonly createThingbokApi: CreateThingbokApi
   private readonly createEmailApi: CreateEmailApi
+  private readonly updateCaseWithProsecutorApi: UpdateCaseWithProsecutorApi
   private readonly updateCaseWithDefendantApi: UpdateCaseWithDefendantApi
   private readonly uploadStreamApi: UploadStreamApi
   private readonly courtsCredentials: CourtsCredentials
@@ -163,6 +174,9 @@ export class CourtClientServiceImplementation implements CourtClientService {
     this.createDocumentApi = new CreateDocumentApi(providerConfiguration)
     this.createThingbokApi = new CreateThingbokApi(providerConfiguration)
     this.createEmailApi = new CreateEmailApi(providerConfiguration)
+    this.updateCaseWithProsecutorApi = new UpdateCaseWithProsecutorApi(
+      providerConfiguration,
+    )
     this.updateCaseWithDefendantApi = new UpdateCaseWithDefendantApi(
       providerConfiguration,
     )
@@ -352,6 +366,19 @@ export class CourtClientServiceImplementation implements CourtClientService {
     )
   }
 
+  updateCaseWithProsecutor(
+    courtId: string,
+    args: UpdateCaseWithProsecutorArgs,
+  ): Promise<string> {
+    return this.authenticatedRequest(
+      this.getConnectionState(courtId),
+      (authenticationToken) =>
+        this.updateCaseWithProsecutorApi.updateCaseWithProsecutor({
+          updateCaseWithProsecutorData: { ...args, authenticationToken },
+        }),
+    )
+  }
+
   updateCaseWithDefendant(
     courtId: string,
     args: UpdateCaseWithDefendantArgs,
@@ -396,6 +423,13 @@ export class CourtClientServiceUnavailableImplementation
   }
 
   async createEmail(_courtId: string, _args: CreateEmailArgs): Promise<string> {
+    throw new ServiceUnavailableException('Court API is not available')
+  }
+
+  async updateCaseWithProsecutor(
+    _courtId: string,
+    _args: UpdateCaseWithProsecutorArgs,
+  ): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }
 

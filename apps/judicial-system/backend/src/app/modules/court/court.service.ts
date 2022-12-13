@@ -292,6 +292,42 @@ export class CourtService {
       })
   }
 
+  async updateCaseWithProsecutor(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    prosecutorNationalId: string,
+    prosecutorsOfficeNationalId: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .updateCaseWithProsecutor(courtId, {
+        userIdNumber: user.nationalId,
+        caseId: courtCaseNumber,
+        prosecutor: {
+          companyIdNumber: prosecutorsOfficeNationalId,
+          prosecutorIdNumber: prosecutorNationalId,
+        },
+      })
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to update case with prosecutor',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            prosecutorNationalId,
+            prosecutorsOfficeNationalId,
+          },
+          reason,
+        )
+
+        throw reason
+      })
+  }
+
   async updateCaseWithDefendant(
     user: User,
     caseId: string,

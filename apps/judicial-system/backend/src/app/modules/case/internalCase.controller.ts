@@ -19,11 +19,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseEvent, EventService } from '../event'
+import { User, CurrentUser, UserExistsGuard } from '../user'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
+import { DeliverProsecutorToCourtDto } from './dto/deliverProsecutorToCourt.dto'
 import { Case } from './models/case.model'
 import { ArchiveResponse } from './models/archive.response'
 import { DeliverCompletedCaseResponse } from './models/deliverCompletedCase.response'
@@ -78,7 +80,28 @@ export class InternalCaseController {
     return this.internalCaseService.deliver(theCase)
   }
 
-  @UseGuards(CaseExistsGuard, new CaseTypeGuard([...indictmentCases]))
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    UserExistsGuard,
+  )
+  @Post('case/:caseId/deliverProsecutorToCourt')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a prosecutor to court',
+  })
+  deliverProsecutorToCourt(
+    @Param('caseId') caseId: string,
+    @Body() _: DeliverProsecutorToCourtDto,
+    @CurrentUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering the prosecutor for case ${caseId} to court`)
+
+    return this.internalCaseService.deliverProsecutorToCourt(theCase, user)
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @Post('case/:caseId/deliverCaseFilesRecordToCourt/:policeCaseNumber')
   @ApiOkResponse({
     type: DeliverResponse,

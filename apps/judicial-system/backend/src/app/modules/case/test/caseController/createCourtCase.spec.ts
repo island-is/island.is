@@ -184,6 +184,11 @@ describe('CaseController - Create court case', () => {
             caseId,
           },
           {
+            type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            caseId,
+            userId: user.id,
+          },
+          {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
             caseId,
             defendantId: defendantId1,

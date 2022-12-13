@@ -8,8 +8,10 @@ import {
   investigationCases,
   restrictionCases,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
+import { UserService } from '../../../user'
 import { FileService } from '../../../file'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
@@ -47,6 +49,7 @@ describe('CaseController - Update', () => {
   } as Case
 
   let mockMessageService: MessageService
+  let mockUserService: UserService
   let mockFileService: FileService
   let transaction: Transaction
   let mockCaseModel: typeof Case
@@ -55,6 +58,7 @@ describe('CaseController - Update', () => {
   beforeEach(async () => {
     const {
       messageService,
+      userService,
       fileService,
       sequelize,
       caseModel,
@@ -62,6 +66,7 @@ describe('CaseController - Update', () => {
     } = await createTestingCaseModule()
 
     mockMessageService = messageService
+    mockUserService = userService
     mockFileService = fileService
     mockCaseModel = caseModel
 
@@ -185,6 +190,11 @@ describe('CaseController - Update', () => {
             caseId,
           },
           {
+            type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            caseId,
+            userId: user.id,
+          },
+          {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
             caseId,
             defendantId: defendantId1,
@@ -233,6 +243,32 @@ describe('CaseController - Update', () => {
       })
     },
   )
+
+  describe('prosecutor updated for %s case', () => {
+    const prosecutorId = uuid()
+    const caseToUpdate = { prosecutorId }
+    const updatedCase = { ...theCase, prosecutorId }
+
+    beforeEach(async () => {
+      const mockFindById = mockUserService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce({
+        id: prosecutorId,
+        role: UserRole.PROSECUTOR,
+      })
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
+        type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+        caseId,
+        userId: user.id,
+      })
+    })
+  })
 
   describe.each(indictmentCases)(
     'court case number updated for %s case',
@@ -302,7 +338,7 @@ describe('CaseController - Update', () => {
     },
   )
 
-  describe('neither court case number nor defender email updated', () => {
+  describe('neither court case number nor defender email nor prosecutorId updated', () => {
     const caseToUpdate = { courtCaseNumber }
 
     beforeEach(async () => {

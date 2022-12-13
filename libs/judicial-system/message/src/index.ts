@@ -1,6 +1,7 @@
 export { MessageType } from './lib/message'
 export type {
   CaseMessage,
+  UserMessage,
   DefendantMessage,
   CaseFileMessage,
   PoliceCaseMessage,

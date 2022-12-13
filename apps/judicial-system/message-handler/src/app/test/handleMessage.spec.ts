@@ -10,6 +10,7 @@ import {
   MessageType,
   PoliceCaseMessage,
   DefendantMessage,
+  UserMessage,
 } from '@island.is/judicial-system/message'
 
 import { appModuleConfig } from '../app.config'
@@ -57,6 +58,34 @@ describe('MessageHandlerService - Handle message', () => {
 
       return then
     }
+  })
+
+  describe('deliver prosecutor to court', () => {
+    const userId = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+        caseId,
+        userId,
+      } as UserMessage)
+    })
+
+    it('should deliver prosecutor to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverProsecutorToCourt`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
   })
 
   describe('deliver defendant to court', () => {

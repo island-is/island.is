@@ -1,5 +1,6 @@
 export enum MessageType {
   CASE_COMPLETED = 'CASE_COMPLETED',
+  DELIVER_PROSECUTOR_TO_COURT = 'DELIVER_PROSECUTOR_TO_COURT',
   DELIVER_DEFENDANT_TO_COURT = 'DELIVER_DEFENDANT_TO_COURT',
   DELIVER_CASE_FILE_TO_COURT = 'DELIVER_CASE_FILE_TO_COURT',
   DELIVER_CASE_FILES_RECORD_TO_COURT = 'DELIVER_CASE_FILES_RECORD_TO_COURT',
@@ -17,10 +18,9 @@ export type CaseMessage = {
   nextRetry?: number
 }
 
-export type DefendantMessage = CaseMessage & {
-  defendantId: string
-  userId: string
-}
+export type UserMessage = CaseMessage & { userId: string }
+
+export type DefendantMessage = UserMessage & { defendantId: string }
 
 export type CaseFileMessage = CaseMessage & { caseFileId: string }
 
