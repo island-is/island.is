@@ -55,6 +55,7 @@ export class Client {
   supportsPersonalRepresentatives!: boolean
   supportsProcuringHolders!: boolean
   promptDelegations!: boolean
+  requireApiScopes!: boolean
   readonly created!: Date
   readonly modified?: Date
   allowedScopes?: ClientAllowedScope[]
