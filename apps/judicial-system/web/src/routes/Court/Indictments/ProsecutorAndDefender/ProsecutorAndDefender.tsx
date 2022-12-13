@@ -58,10 +58,16 @@ const HearingArrangements: React.FC = () => {
     [workingCase, setWorkingCase, setAndSendCaseToServer],
   )
 
-  const onNextButtonClick = useCallback(async () => {
-    await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
-    router.push(`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`)
-  }, [workingCase.id, sendNotification, router])
+  const onNavigationTo = useCallback(
+    async (destination: string) => {
+      await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
+      router.push(destination)
+    },
+    [workingCase.id, sendNotification, router],
+  )
+
+  const stepIsValid =
+    !isSendingNotification && isProsecutorAndDefenderStepValid(workingCase)
 
   return (
     <PageLayout
@@ -70,6 +76,8 @@ const HearingArrangements: React.FC = () => {
       activeSubSection={IndictmentsCourtSubsections.PROSECUTOR_AND_DEFENDER}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.indictments.prosecutorAndDefender)}
@@ -97,11 +105,12 @@ const HearingArrangements: React.FC = () => {
           nextIsLoading={isLoadingWorkingCase || isSendingNotification}
           nextButtonText={formatMessage(m.nextButtonText)}
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            isSendingNotification ||
-            !isProsecutorAndDefenderStepValid(workingCase)
+          nextIsDisabled={!stepIsValid}
+          onNextButtonClick={() =>
+            onNavigationTo(
+              `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
+            )
           }
-          onNextButtonClick={onNextButtonClick}
         />
       </FormContentContainer>
     </PageLayout>

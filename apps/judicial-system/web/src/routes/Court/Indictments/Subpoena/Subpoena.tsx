@@ -41,6 +41,9 @@ const Subpoena: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState(false)
+  const [nextRoute, setNextRoute] = useState<string>(
+    `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+  )
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -57,38 +60,42 @@ const Subpoena: React.FC = () => {
     )
   }
 
-  const handleNextButtonClick = useCallback(() => {
-    const hasSentNotification = workingCase?.notifications?.find(
-      (notification) => notification.type === NotificationType.COURT_DATE,
-    )
-
-    setAndSendCaseToServer(
-      [
-        {
-          courtDate: courtDate
-            ? formatDateForServer(new Date(courtDate))
-            : undefined,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-
-    if (hasSentNotification && !courtDateHasChanged) {
-      router.push(
-        `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+  const onNavigationTo = useCallback(
+    async (destination: string) => {
+      const hasSentNotification = workingCase?.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
       )
-    } else {
-      setModalVisible(true)
-    }
-  }, [
-    workingCase,
-    setAndSendCaseToServer,
-    courtDate,
-    setWorkingCase,
-    courtDateHasChanged,
-  ])
+
+      setAndSendCaseToServer(
+        [
+          {
+            courtDate: courtDate
+              ? formatDateForServer(new Date(courtDate))
+              : undefined,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (hasSentNotification && !courtDateHasChanged) {
+        router.push(destination)
+      } else {
+        setNextRoute(destination)
+        setModalVisible(true)
+      }
+    },
+    [
+      workingCase,
+      setAndSendCaseToServer,
+      courtDate,
+      setWorkingCase,
+      courtDateHasChanged,
+    ],
+  )
+
+  const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
   return (
     <PageLayout
@@ -97,6 +104,8 @@ const Subpoena: React.FC = () => {
       activeSubSection={IndictmentsCourtSubsections.SUBPEONA}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
       <FormContentContainer>
@@ -128,9 +137,9 @@ const Subpoena: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => onNavigationTo(nextRoute)}
           nextButtonText={formatMessage(strings.nextButtonText)}
-          nextIsDisabled={!isSubpoenaStepValid(workingCase, courtDate)}
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
       {modalVisible && (
@@ -140,14 +149,10 @@ const Subpoena: React.FC = () => {
           })}
           onPrimaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE)
-            router.push(
-              `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
-            )
+            router.push(nextRoute)
           }}
           onSecondaryButtonClick={() => {
-            router.push(
-              `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
-            )
+            router.push(nextRoute)
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
           secondaryButtonText={formatMessage(core.continue)}

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -17,8 +17,13 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { AlertMessage, Box, InputFileUpload } from '@island.is/island-ui/core'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import {
+  AlertMessage,
+  Box,
+  InputFileUpload,
+  toast,
+} from '@island.is/island-ui/core'
 import {
   useCase,
   useS3Upload,
@@ -41,6 +46,9 @@ const CourtRecord: React.FC = () => {
     FormContext,
   )
   const [modalVisible, setModalVisible] = useState<ModalTypes>(ModalTypes.NONE)
+  const [nextRoute, setNextRoute] = useState<string>(
+    `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`,
+  )
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
@@ -53,18 +61,22 @@ const CourtRecord: React.FC = () => {
     allFilesUploaded,
   } = useS3Upload(workingCase)
 
-  const handleNextButtonClick = async () => {
-    const transitionSuccessful = await transitionCase(
-      workingCase,
-      CaseTransition.ACCEPT,
-    )
+  const onNavigationTo = useCallback(
+    async (destination: string) => {
+      const transitionSuccessful = await transitionCase(
+        workingCase,
+        CaseTransition.ACCEPT,
+      )
 
-    if (transitionSuccessful) {
-      setModalVisible(ModalTypes.SUBMIT_CASE)
-    } else {
-      // TODO: Handle error
-    }
-  }
+      if (transitionSuccessful) {
+        setNextRoute(destination)
+        setModalVisible(ModalTypes.SUBMIT_CASE)
+      } else {
+        toast.error(formatMessage(errors.transitionCase))
+      }
+    },
+    [transitionCase, workingCase, formatMessage],
+  )
 
   return (
     <PageLayout
@@ -73,6 +85,8 @@ const CourtRecord: React.FC = () => {
       activeSubSection={IndictmentsCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={allFilesUploaded}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.courtRecord)} />
       <FormContentContainer>
@@ -118,7 +132,7 @@ const CourtRecord: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => onNavigationTo(nextRoute)}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(m.nextButtonText)}
@@ -129,12 +143,9 @@ const CourtRecord: React.FC = () => {
           title={formatMessage(m.modalTitle)}
           text={formatMessage(m.modalText)}
           onPrimaryButtonClick={() => {
-            router.push(
-              `${constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`,
-            )
+            router.push(nextRoute)
           }}
           primaryButtonText={formatMessage(core.closeModal)}
-          isPrimaryButtonLoading={false}
         />
       )}
     </PageLayout>
