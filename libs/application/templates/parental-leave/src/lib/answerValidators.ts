@@ -434,7 +434,8 @@ export const answerValidators: Record<string, AnswerValidator> = {
     return undefined
   },
   [VALIDATE_PERIODS]: (newAnswer: unknown, application: Application) => {
-    const periods = newAnswer as Period[]
+    // const periods = newAnswer as Period[]
+    const { periods } = getApplicationAnswers(application.answers)
 
     if (periods.length === 0) {
       return {

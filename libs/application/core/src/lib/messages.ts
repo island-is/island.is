@@ -233,6 +233,11 @@ export const coreMessages = defineMessages({
 })
 
 export const coreErrorMessages = defineMessages({
+  defaultTemplateApiError: {
+    id: 'application.system:core.defaultTemplateApiError',
+    defaultMessage: 'Villa kom upp',
+    description: 'Unkonwn template api error',
+  },
   defaultError: {
     id: 'application.system:core.default.error',
     defaultMessage: 'Ógilt gildi',
@@ -344,6 +349,44 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Vinsamlegast athugaðu hvort að rétt var slegið inn.',
     description: 'Error Message when no company search result is found',
   },
+  nationalRegistryAgeLimitNotMetTitle: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetTitle',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
+    description:
+      'Error Title when age restriciton from national registry is not met',
+  },
+  nationalRegistryAgeLimitNotMetSummary: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetSummary',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn ',
+    description:
+      'Error message when age restriciton from national registry is not met',
+  },
+  drivingLicenseNoTeachingRightsTitle: {
+    id:
+      'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
+    defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNoTeachingRightsSummary: {
+    id:
+      'application.system:core.fetch.data.drivingLicenseNoTeachingRightsSummary',
+    defaultMessage:
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða.',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNotEmployeeTitle: {
+    id: 'application.system:core.fetch.data.drivingLicenseNotEmployeeTitle',
+    defaultMessage: 'Ekki fannst staðfesting á skráningarréttindum',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNotEmployeeSummary: {
+    id: 'application.system:core.fetch.data.drivingLicenseNotEmployeeSummary',
+    defaultMessage:
+      'Vinsamlega hafðu samband við Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
+    description: 'Driving License provider no teaching rights error',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({
@@ -371,7 +414,7 @@ export const coreDelegationsMessages = defineMessages({
   delegationScreenTitleForOngoingApplication: {
     id:
       'application.system:core.delegations.delegationScreenTitleForOngoingApplication',
-    defaultMessage: 'Umsókn um stæðiskort',
+    defaultMessage: 'Umsókn',
     description: 'Delegations screen title for ongoing application',
   },
   delegationScreenSubtitleForOngoingApplication: {

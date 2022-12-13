@@ -66,6 +66,7 @@ export class FixtureFactory {
       showInDiscoveryDocument: apiScope.showInDiscoveryDocument ?? true,
       required: apiScope.required ?? false,
       emphasize: apiScope.emphasize ?? false,
+      grantToAuthenticatedUser: apiScope.grantToAuthenticatedUser ?? true,
       grantToLegalGuardians: apiScope.grantToLegalGuardians ?? false,
       grantToProcuringHolders: apiScope.grantToProcuringHolders ?? false,
       allowExplicitDelegationGrant:
