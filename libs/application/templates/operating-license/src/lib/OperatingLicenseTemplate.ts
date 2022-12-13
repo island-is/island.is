@@ -6,12 +6,21 @@ import {
   Application,
   DefaultEvents,
   ApplicationRole,
+  defineTemplateApi,
+  PaymentCatalogApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
-import { Roles, States, Events, ApiActions } from './constants'
+import {
+  Roles,
+  States,
+  Events,
+  ApiActions,
+  SYSLUMADUR_NATIONAL_ID,
+} from './constants'
 import { m } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { AuthDelegationType } from '../types/schema'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -59,6 +68,13 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                PaymentCatalogApi.configure({
+                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                  externalDataId: 'payment',
+                }),
+                UserProfileApi,
+              ],
             },
           ],
         },
@@ -75,9 +91,9 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           },
           progress: 0.9,
           lifecycle: pruneAfter(thirtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -103,9 +119,9 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.submitOperatingLicenseApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitOperatingLicenseApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

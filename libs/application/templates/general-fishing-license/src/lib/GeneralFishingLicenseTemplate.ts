@@ -7,12 +7,19 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
-import { AuthDelegationType } from '../types/schema'
+import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  DepartmentOfFisheriesPaymentCatalogApi,
+  ShipRegistryApi,
+  IdentityApi,
+} from '../dataProviders'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 const pruneAtMidnight = () => {
@@ -71,6 +78,12 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              api: [
+                NationalRegistryUserApi,
+                DepartmentOfFisheriesPaymentCatalogApi,
+                ShipRegistryApi,
+                IdentityApi,
+              ],
               write: 'all',
               delete: true,
             },
@@ -127,9 +140,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,9 +174,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

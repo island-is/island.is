@@ -17,6 +17,11 @@ import {
 } from '@island.is/application/templates/financial-statements-inao/types'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+} from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 
@@ -26,7 +31,6 @@ import {
   mapValuesToPartytype,
   mapValuesToCemeterytype,
 } from './mappers/mapValuesToUsertype'
-import { SharedTemplateApiService } from '../../shared'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -51,20 +55,17 @@ export interface DataResponse {
 }
 
 @Injectable()
-export class FinancialStatementsInaoTemplateService {
+export class FinancialStatementsInaoTemplateService extends BaseTemplateApiService {
   s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementsClientService: FinancialStatementsInaoClientService,
-    private readonly sharedService: SharedTemplateApiService,
   ) {
+    super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)
     this.s3 = new S3()
   }
 
-  private async getAttachment({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps): Promise<string> {
+  private async getAttachment(application: Application): Promise<string> {
     const attachments: AttachmentData[] | undefined = getValueViaPath(
       application.answers,
       'attachments.file',
@@ -139,7 +140,7 @@ export class FinancialStatementsInaoTemplateService {
 
       const fileName = noValueStatement
         ? undefined
-        : await this.getAttachment({ application, auth })
+        : await this.getAttachment(application)
 
       this.logger.info(
         `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', actorNationalId: '${
@@ -229,7 +230,7 @@ export class FinancialStatementsInaoTemplateService {
       ) as string
       const clientEmail = getValueViaPath(answers, 'about.email') as string
 
-      const fileName = await this.getAttachment({ application, auth })
+      const fileName = await this.getAttachment(application)
 
       const client = {
         nationalId: nationalId,
@@ -302,9 +303,7 @@ export class FinancialStatementsInaoTemplateService {
 
       const file = getValueViaPath(answers, 'attachments.file')
 
-      const fileName = file
-        ? await this.getAttachment({ application, auth })
-        : undefined
+      const fileName = file ? await this.getAttachment(application) : undefined
 
       const client = {
         nationalId: nationalId,
