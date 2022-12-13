@@ -2,11 +2,16 @@
   "root": "libs/portals/admin/air-discount-scheme",
   "sourceRoot": "libs/portals/admin/air-discount-scheme/src",
   "projectType": "library",
-  "tags": ["scope:portals-admin", "lib:portals-admin"],
+  "tags": [
+    "scope:portals-admin",
+    "lib:portals-admin"
+  ],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "libs/portals/admin/air-discount-scheme/**/*.{ts,tsx,js,jsx}"
@@ -15,7 +20,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/portals/admin/air-discount-scheme"],
+      "outputs": [
+        "coverage/libs/portals/admin/air-discount-scheme"
+      ],
       "options": {
         "jestConfig": "libs/portals/admin/air-discount-scheme/jest.config.js",
         "passWithNoTests": true

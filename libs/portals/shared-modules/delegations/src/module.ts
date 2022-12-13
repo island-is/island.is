@@ -37,7 +37,8 @@ export const delegationsModule: PortalModule = {
       {
         name: m.accessControlAccess,
         path: DelegationPaths.DelegationAccess,
-        render: () => lazy(() => import('./screens/AccessOutgoing')),
+        render: () =>
+          lazy(() => import('./screens/AccessOutgoing/AccessOutgoing')),
       },
     ]
 

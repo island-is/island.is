@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
+import classNames from 'classnames'
 
 import {
   Box,
@@ -9,31 +10,28 @@ import {
   Divider,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   formatPlausiblePathToParams,
   m as coreMessages,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
-import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
-import { servicePortalSaveAccessControl } from '@island.is/plausible'
-import {
-  useUpdateAuthDelegationMutation,
-  AuthScopeTreeQuery,
-} from '@island.is/service-portal/graphql'
-import { AccessFormScope, MappedScope } from './access.types'
-import { extendApiScope, formatScopeTreeToScope } from './access.utils'
-import { AccessItem } from './AccessItem/AccessItem'
-import { AccessConfirmModal } from './AccessConfirmModal'
 import { isDefined } from '@island.is/shared/utils'
-import { AccessDeleteModal } from './AccessDeleteModal'
-import { AccessListHeader } from './AccessList/AccessListHeader'
-import classNames from 'classnames'
-import * as commonAccessStyles from './access.css'
-import { DelegationPaths } from '../../lib/paths'
+import { useLocale } from '@island.is/localization'
+import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
+import { servicePortalSaveAccessControl } from '@island.is/plausible'
+import { AccessFormScope, MappedScope } from '../access.types'
+import { extendApiScope, formatScopeTreeToScope } from '../access.utils'
+import { AccessItem } from '../AccessItem/AccessItem'
+import { AccessConfirmModal } from '../AccessConfirmModal'
+import { AccessDeleteModal } from '../AccessDeleteModal/AccessDeleteModal'
+import { AccessListHeader } from '../AccessList/AccessListHeader'
+import { DelegationPaths } from '../../../lib/paths'
+import * as commonAccessStyles from '../access.css'
+import { AuthScopeTreeQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
+import { useUpdateAuthDelegationMutation } from './AccessForm.generated'
+import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 
 type AccessFormProps = {
-  delegation: AuthCustomDelegation
+  delegation: AuthCustomDelegationOutgoing
   scopeTree: AuthScopeTreeQuery['authScopeTree']
   validityPeriod: Date | null
 }
@@ -199,7 +197,7 @@ export const AccessForm = ({
         onDelete={() => history.push(DelegationPaths.Delegations)}
         onClose={() => setOpenDeleteModal(false)}
         isVisible={openDeleteModal}
-        delegation={delegation as AuthCustomDelegation}
+        delegation={delegation}
       />
     </>
   )

@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
+import { AuthDomainDirection } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import {
-  AuthDomainDirection,
-  useAuthDomainsQuery,
-} from '@island.is/service-portal/graphql'
-import { ALL_DOMAINS, ISLAND_DOMAIN } from '../constants/domain'
+import { ALL_DOMAINS, ISLAND_DOMAIN } from '../../constants/domain'
 import { useQueryParam } from '@island.is/service-portal/core'
 import { useLocation, useHistory } from 'react-router-dom'
 import { isDefined, storageFactory } from '@island.is/shared/utils'
+import { useAuthDomainsQuery } from './useDomains.generated'
 
 const sessionStore = storageFactory(() => sessionStorage)
 
@@ -48,7 +46,7 @@ export const useDomains = (includeDefaultOption = true) => {
     variables: {
       input: {
         lang,
-        direction: AuthDomainDirection.Outgoing,
+        direction: AuthDomainDirection.outgoing,
       },
     },
   })

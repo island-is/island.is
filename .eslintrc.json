@@ -203,7 +203,7 @@
       "rules": {}
     },
     {
-      "files": ["schema.d.ts"],
+      "files": ["schema.ts"],
       "rules": {
         "@typescript-eslint/no-explicit-any": "off"
       }

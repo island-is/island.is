@@ -15,15 +15,20 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AuthCustomDelegation } from '@island.is/api/schema'
-import { AuthDelegationType } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
 import { m as coreMessages } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
+import { AuthDelegationType } from '@island.is/api/schema'
+import {
+  AuthCustomDelegation,
+  AuthCustomDelegationIncoming,
+  AuthCustomDelegationOutgoing,
+} from '../../types/customDelegation'
 
-const isDateExpired = (date: string) => new Date(date) < new Date()
+const isDateExpired = (date?: string | null) =>
+  date ? new Date(date) < new Date() : true
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
@@ -97,7 +102,11 @@ export const AccessCard = ({
       default:
         label = formatMessage(m.delegationTypeCustom)
 
-        if (kennitala.isCompany(delegation.from.nationalId)) {
+        if (
+          kennitala.isCompany(
+            (delegation as AuthCustomDelegationIncoming)?.from?.nationalId,
+          )
+        ) {
           icon = 'business'
         }
     }
@@ -189,7 +198,9 @@ export const AccessCard = ({
             })}
           </VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
-            {isOutgoing ? delegation?.to?.name : delegation?.from?.name}
+            {isOutgoing
+              ? (delegation as AuthCustomDelegationOutgoing)?.to?.name
+              : (delegation as AuthCustomDelegationIncoming)?.from?.name}
           </Text>
         </Stack>
         <Inline space="smallGutter">

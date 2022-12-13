@@ -1,19 +1,20 @@
 import { isDefined } from '@island.is/shared/utils'
-import {
-  AuthCustomDelegation,
-  AuthDelegationScope,
-} from '@island.is/api/schema'
+import { AuthDelegationScope } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import { AlertBanner, Box, useBreakpoint } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
-import { AuthScopeTreeQuery } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
-import { AccessListContainer } from './AccessList/AccessListContainer'
+import { AccessListContainer } from './AccessList/AccessListContainer/AccessListContainer'
+import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
+import {
+  AuthCustomDelegation,
+  AuthCustomDelegationOutgoing,
+} from '../../types/customDelegation'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
@@ -54,8 +55,9 @@ export const AccessConfirmModal = ({
     setError(formError)
   }
 
-  const toName = delegation?.to?.name
-  const toNationalId = delegation?.to?.nationalId
+  const toName = (delegation as AuthCustomDelegationOutgoing)?.to?.name
+  const toNationalId = (delegation as AuthCustomDelegationOutgoing)?.to
+    ?.nationalId
   const fromName = userInfo?.profile.name
   const fromNationalId = userInfo?.profile.nationalId
 
