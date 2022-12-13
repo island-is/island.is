@@ -10,3 +10,7 @@ export const floatedImage = style({
     },
   }),
 })
+
+export const clearBoth = style({
+  clear: 'both',
+})

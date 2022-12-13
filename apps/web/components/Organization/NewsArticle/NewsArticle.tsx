@@ -60,7 +60,16 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
         </Box>
       )}
       <Box className="rs_read" paddingBottom={4} width="full">
-        {webRichText(newsItem.content as SliceType[])}
+        {webRichText(newsItem.content as SliceType[], {
+          renderComponent: {
+            // Make sure that images in the content are full width
+            Image: (slice) => (
+              <Box className={styles.clearBoth}>
+                <Image {...slice} thumbnail={slice.url + '?w=50'} />
+              </Box>
+            ),
+          },
+        })}
       </Box>
     </Box>
   )

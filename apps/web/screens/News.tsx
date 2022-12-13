@@ -244,7 +244,16 @@ const NewsListNew: Screen<NewsListProps> = ({
         </Box>
       )}
       <Box paddingBottom={4} width="full">
-        {webRichText(newsItem.content as SliceType[])}
+        {webRichText(newsItem.content as SliceType[], {
+          renderComponent: {
+            // Make sure that images in the content are full width
+            Image: (slice) => (
+              <Box className={styles.clearBoth}>
+                <Image {...slice} thumbnail={slice.url + '?w=50'} />
+              </Box>
+            ),
+          },
+        })}
       </Box>
     </>
   )
