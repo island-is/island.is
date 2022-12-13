@@ -201,6 +201,39 @@ describe('CaseController - Update', () => {
     },
   )
 
+  describe.each([...restrictionCases, ...investigationCases])(
+    'defender email updated for %s case',
+    (type) => {
+      const defenderEmail = uuid()
+      const caseToUpdate = { defenderEmail }
+      const updatedCase = { ...theCase, type, defenderEmail }
+
+      beforeEach(async () => {
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      })
+
+      it('should post to queue', () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            caseId,
+            defendantId: defendantId1,
+            userId: user.id,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            caseId,
+            defendantId: defendantId2,
+            userId: user.id,
+          },
+        ])
+      })
+    },
+  )
+
   describe.each(indictmentCases)(
     'court case number updated for %s case',
     (type) => {
@@ -269,7 +302,7 @@ describe('CaseController - Update', () => {
     },
   )
 
-  describe('court case number not updated', () => {
+  describe('neither court case number nor defender email updated', () => {
     const caseToUpdate = { courtCaseNumber }
 
     beforeEach(async () => {

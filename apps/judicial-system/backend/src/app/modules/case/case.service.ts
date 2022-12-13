@@ -53,8 +53,8 @@ import { EventService } from '../event'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
-import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { Case } from './models/case.model'
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -201,6 +201,20 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  private getDeliverDefendantToCourtMessages(
+    theCase: Case,
+    user: TUser,
+  ): CaseMessage[] {
+    return (
+      theCase.defendants?.map((defendant) => ({
+        type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+        caseId: theCase.id,
+        defendantId: defendant.id,
+        userId: user.id,
+      })) ?? []
+    )
+  }
+
   private addMessagesForCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
@@ -213,15 +227,17 @@ export class CaseService {
               type: MessageType.DELIVER_REQUEST_TO_COURT,
               caseId: theCase.id,
             },
-          ].concat(
-            theCase.defendants?.map((defendant) => ({
-              type: MessageType.DELIVER_DEFENDANT_TO_COURT,
-              caseId: theCase.id,
-              defendantId: defendant.id,
-              userId: user.id,
-            })) ?? [],
-          ),
+          ].concat(this.getDeliverDefendantToCourtMessages(theCase, user)),
         )
+  }
+
+  private addMessagesForDefenderEmailChangeToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue(
+      this.getDeliverDefendantToCourtMessages(theCase, user),
+    )
   }
 
   private addMessagesForCompletedCaseToQueue(caseId: string): Promise<void> {
@@ -391,12 +407,19 @@ export class CaseService {
       .then(async () => {
         const updatedCase = await this.findById(theCase.id)
 
+        // Update the court case if necessary
         if (
           updatedCase.courtCaseNumber &&
           updatedCase.courtCaseNumber !== theCase.courtCaseNumber
         ) {
-          // The court case number has changed, so the request must be uploaded to the new court case
           await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
+        } else if (
+          !isIndictmentCase(theCase.type) &&
+          theCase.defendants &&
+          theCase.defendants.length > 0 &&
+          updatedCase.defenderEmail !== theCase.defenderEmail
+        ) {
+          await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
         }
 
         if (returnUpdatedCase) {
