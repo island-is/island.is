@@ -12,7 +12,6 @@ import { NotFound } from './NotFound'
 import { PortalRoute } from '../types/portalCore'
 import { usePortalMeta } from '../components/PortalMetaProvider'
 import { plausiblePageviewDetail } from '../lib/plausiblePageviewDetail'
-import { getActiveModule } from '../utils/modules'
 
 type RouteComponentProps = {
   route: PortalRoute
@@ -31,8 +30,7 @@ const RouteComponent = React.memo(
           path: route.path,
         })
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location])
+    }, [basePath, location, route.path, route.render])
 
     if (route.render === undefined) {
       return null
@@ -94,24 +92,8 @@ const RouteLoader = React.memo(
 )
 
 export const Modules = () => {
-  const { routes, modules, updateActiveModule, activeModule } = useModules()
+  const { routes } = useModules()
   const { userInfo, client } = useModuleProps()
-  const { pathname } = useLocation()
-
-  useEffect(() => {
-    const newActiveModule = getActiveModule({
-      userInfo,
-      apolloClient: client,
-      modules,
-      pathname,
-    })
-
-    if (newActiveModule && activeModule?.name !== newActiveModule.name) {
-      updateActiveModule(newActiveModule)
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
 
   return (
     <Box paddingY={1}>
