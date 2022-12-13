@@ -7,14 +7,14 @@ import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
 
 export const delegationsModule: PortalModule = {
-  name: 'Aðgangsstýring',
+  name: m.accessControl,
   featureFlag: Features.outgoingDelegationsV2,
   widgets: () => [],
   routes({ userInfo }) {
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
-    const accessControlCommonFields = {
+    const commonProps = {
       name: m.accessControlDelegations,
       path: DelegationPaths.Delegations,
       navHide: !hasAccess,
@@ -24,11 +24,11 @@ export const delegationsModule: PortalModule = {
 
     const routes: PortalRoute[] = [
       {
-        ...accessControlCommonFields,
+        ...commonProps,
         path: DelegationPaths.Delegations,
       },
       {
-        ...accessControlCommonFields,
+        ...commonProps,
         path: DelegationPaths.DelegationsIncoming,
       },
       {
