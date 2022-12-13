@@ -15,7 +15,7 @@ type DiscountWithTUser = DiscountModel & { user: TUser }
 
 const TWO_HOURS = 7200
 @Injectable()
-export class AirDiscountSchemeService {
+export class DiscountService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,

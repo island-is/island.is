@@ -4,7 +4,7 @@ import { Fund } from './fund.model'
 import { FlightLeg } from './flightLeg.model'
 import { Role } from '@island.is/air-discount-scheme/types'
 
-@ObjectType()
+@ObjectType('AirDiscountSchemeUser')
 export class User {
   @Field((_) => ID)
   nationalId!: string

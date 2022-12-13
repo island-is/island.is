@@ -1,5 +1,6 @@
 import { Query, Resolver, Context, ResolveField, Parent } from '@nestjs/graphql'
 
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import type { User as TUser } from '@island.is/air-discount-scheme/types'
 import {
   Flight,
@@ -35,7 +36,7 @@ export class UserResolver {
   }
 
   @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
+  @Scopes(AirDiscountSchemeScope.default)
   @ResolveField('meetsADSRequirements')
   resolveMeetsADSRequirements(@Parent() user: TUser): boolean {
     if (user.fund) {
@@ -45,7 +46,7 @@ export class UserResolver {
   }
 
   @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
+  @Scopes(AirDiscountSchemeScope.default)
   @ResolveField('flightLegs', () => [FlightLeg])
   async resolveFlights(
     @CurrentUser() user: AuthUser,

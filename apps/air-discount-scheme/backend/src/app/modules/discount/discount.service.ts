@@ -108,26 +108,25 @@ export class DiscountService {
     for (let i = 0; i < connectableFlightCounts; i++) {
       const flight = connectableFlights.pop()
       if (flight && !previousFlightIds.includes(flight.id)) {
-        const flightLegsCount = flight.flightLegs.length
-        let validUntil = new Date(
-          Date.parse(flight.flightLegs[0].date.toString()),
-        )
+        const flightLegs = flight.flightLegs ?? []
+        const flightLegsCount = flightLegs.length
+        let validUntil = new Date(Date.parse(flightLegs[0].date.toString()))
 
-        if (REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].origin)) {
+        if (REYKJAVIK_FLIGHT_CODES.includes(flightLegs[0].origin)) {
           validUntil = new Date(
             validUntil.getTime() + CONNECTING_FLIGHT_GRACE_PERIOD,
           )
         } else if (
           REYKJAVIK_FLIGHT_CODES.includes(
-            flight.flightLegs[flightLegsCount - 1].destination,
+            flightLegs[flightLegsCount - 1].destination,
           )
         ) {
           validUntil = new Date(validUntil.getTime())
         }
 
         const flightId = flight.id
-        const flightDesc = `${flight.flightLegs[0].origin}-${
-          flight.flightLegs[flightLegsCount - 1].destination
+        const flightDesc = `${flightLegs[0].origin}-${
+          flightLegs[flightLegsCount - 1].destination
         }`
         const connectionDiscountCode = this.generateDiscountCode()
 
