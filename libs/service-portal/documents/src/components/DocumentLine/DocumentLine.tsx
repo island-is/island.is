@@ -8,6 +8,7 @@ import {
   DocumentCategory,
   DocumentDetails,
 } from '@island.is/api/schema'
+import { User } from '@island.is/shared/types'
 import { getAccessToken } from '@island.is/auth/react'
 import {
   Box,
@@ -25,11 +26,13 @@ import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../utils/messages'
+import { userInfo } from 'os'
 
 interface Props {
   documentLine: Document
   img?: string
   documentCategories?: DocumentCategory[]
+  userInfo?: User
 }
 
 const GET_DOCUMENT_BY_ID = gql`
@@ -39,7 +42,12 @@ const GET_DOCUMENT_BY_ID = gql`
     }
   }
 `
-const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
+const DocumentLine: FC<Props> = ({
+  documentLine,
+  img,
+  documentCategories,
+  userInfo,
+}) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
   const { formatMessage } = useLocale()
@@ -52,8 +60,8 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
           id: documentLine.id,
         },
       },
-      onCompleted: async () => {
-        await onClickHandler()
+      onCompleted: () => {
+        onClickHandler()
       },
     },
   )
@@ -78,7 +86,9 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
       const tokenInput = document.createElement('input')
 
       const token = await getAccessToken()
-      if (!token) return
+      const accessToken = token ?? userInfo?.access_token
+
+      if (!accessToken) return
 
       form.appendChild(documentIdInput)
       form.appendChild(tokenInput)
@@ -97,7 +107,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
       // National Id values
       tokenInput.type = 'hidden'
       tokenInput.name = '__accessToken'
-      tokenInput.value = token
+      tokenInput.value = accessToken
 
       document.body.appendChild(form)
       form.submit()
@@ -129,7 +139,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
       // Check if data is already fetched, if so go straight to download/display
       onClick={async () => {
         if (getFileByIdData && !loading) {
-          await onClickHandler()
+          onClickHandler()
         } else {
           getDocument({ variables: { input: { id: documentLine.id } } })
         }
