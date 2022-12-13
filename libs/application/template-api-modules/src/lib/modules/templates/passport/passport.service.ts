@@ -78,20 +78,19 @@ export class PassportService {
     success: boolean
     orderId?: string[]
   }> {
-    console.log('HALLO AM I HERE???')
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )
 
-    if (!isPayment?.fulfilled) {
-      this.logger.error(
-        'Trying to submit Passportapplication that has not been paid.',
-      )
-      throw new Error(
-        'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
-      )
-    }
+    // if (!isPayment?.fulfilled) {
+    //   this.logger.error(
+    //     'Trying to submit Passportapplication that has not been paid.',
+    //   )
+    //   throw new Error(
+    //     'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+    //   )
+    // }
     try {
       const {
         passport,
@@ -116,6 +115,7 @@ export class PassportService {
         : await this.passportApi.preregisterChildIdentityDocument(auth, {
             appliedForPersonId: childsPersonalInfo.nationalId,
             priority: service.type === 'regular' ? 0 : 1,
+            deliveryName: service.dropLocation,
             approvalA: {
               personId: childsPersonalInfo.guardian1.nationalId,
               approved: application.created,

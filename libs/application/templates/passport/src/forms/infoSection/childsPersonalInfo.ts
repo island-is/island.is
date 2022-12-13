@@ -25,7 +25,7 @@ export const childsPersonalInfo = buildMultiField({
       defaultValue: (application: Application) => {
         return (
           (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].name ?? ''
+            ?.data as IdentityDocumentData).childPassports[0].childName ?? ''
         )
       },
     }),
@@ -39,7 +39,7 @@ export const childsPersonalInfo = buildMultiField({
       defaultValue: (application: Application) => {
         return (
           (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].nationalId ?? ''
+            ?.data as IdentityDocumentData).childPassports[0].childNationalId ?? ''
         )
       },
     }),

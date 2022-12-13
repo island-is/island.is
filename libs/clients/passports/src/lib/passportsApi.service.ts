@@ -1,7 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { XRoadConfig, ConfigType } from '@island.is/nest/config'
-import { Injectable, Inject, Logger } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { IdentityDocumentApi, IdentityDocumentResponse, PreregistrationApi } from '../../gen/fetch'
 import {
   Gender,
@@ -10,11 +10,11 @@ import {
   Passport,
   PreregistrationInput,
 } from './passportsApi.types'
-import { mapChildPassports, mapPassports } from './passportsApi.utils'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 import { uuid } from 'uuidv4'
 import { defaultDeliveryAddress } from './constants'
+import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import isBefore from 'date-fns/isBefore'
@@ -26,9 +26,9 @@ const LOG_CATEGORY = 'passport-service'
 @Injectable()
 export class PassportsService {
   constructor(
-    @Inject(XRoadConfig.KEY)
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(XRoadConfig.KEY)
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private identityDocumentApi: IdentityDocumentApi,
     private preregistrationApi: PreregistrationApi,
@@ -149,47 +149,12 @@ export class PassportsService {
     }
   }
 
-  async getPassports(user: User): Promise<IdentityDocument[]> {
-    const identityDocuments = await this.identityDocumentApi
-      .withMiddleware(new AuthMiddleware(user))
-      .identityDocumentGetIdentityDocument({
-        xRoadClient: this.xroadConfig.xRoadClient,
-      })
-    return identityDocuments.map(mapPassports)
-  }
-
-  async getChildPassports(user: User): Promise<IdentityDocumentChild[]> {
-    const identityDocuments: IdentityDocumentChild[] = await this.identityDocumentApi
-      .withMiddleware(new AuthMiddleware(user))
-      .identityDocumentGetChildrenIdentityDocument({
-        xRoadClient: this.xroadConfig.xRoadClient,
-      })
-      .then((res) =>
-        res.filter((child) => !!child.childrenSSN).map(mapChildPassports),
-      )
-
-    const children = await Promise.all(
-      identityDocuments?.map(
-        async (passports): Promise<IdentityDocumentChild> => {
-          const individual = passports.childNationalId ? await this.individualApi.getIndividual(
-            passports.childNationalId,
-          ) : {name: ''}
-          return {
-            ...passports,
-            name: individual?.name,
-          } as IdentityDocumentChild
-        },
-      ),
-    )
-
-    return children
-  }
 
   async preregisterIdentityDocument(
     user: User,
     input: PreregistrationInput,
   ): Promise<string[]> {
-    const approval = { personId: '', approved: new Date() }
+    const approval = { personId: user.nationalId, approved: new Date() }
 
     return await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
@@ -201,7 +166,7 @@ export class PassportsService {
           approvalA: approval,
           approvalB: approval,
           deliveryAddress: defaultDeliveryAddress,
-          bioInfo: { height: 0 },
+          // bioInfo: { height: 100 },
           documents: [],
         },
       })
@@ -224,7 +189,8 @@ export class PassportsService {
         xRoadClient: this.xroadConfig.xRoadClient,
         preregistration: {
           ...input,
-          bioInfo: { height: 0 },
+          guId: uuid(),
+          // bioInfo: { height: 100 },
           deliveryAddress: defaultDeliveryAddress,
           documents: [
             {
@@ -239,20 +205,11 @@ export class PassportsService {
   }
 
   async getCurrentPassport(user: User): Promise<Passport> {
-    const userPassports = await this.getPassports(user)
-    const childPassports = await this.getChildPassports(user)
-    const userPassport: IdentityDocument | null =
-      userPassports
-        // .filter(
-        //   (passport) => passport.subType === 'A' && !!passport.expirationDate,
-        // )
-        // .sort(
-        //   (a, b) => b?.expirationDate.getDate() - a.expirationDate.getDate(),
-        // )
-        .pop() || null
+    const userPassports = await this.getIdentityDocument(user)
+    const childPassports = await this.getIdentityDocumentChildren(user)
 
     return {
-      userPassport: userPassport || undefined,
+      userPassport: userPassports ?  userPassports[0] : undefined,
       childPassports: childPassports,
     }
   }

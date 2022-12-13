@@ -12,46 +12,50 @@ export const getSyslumennDistrictCommissionersAgencies = `
 `
 
 export const getPassport = `
-      query getPassport {
-        getPassport {
-          userPassport {
-            productionRequestID
-            number
-            type
-            verboseType
-            subType
-            status
-            issuingDate
-            expirationDate
-            displayFirstName
-            displayLastName
-            mrzFirstName
-            mrzLastName
-            sex
-          }
-          childPassports {
-            nationalId
-            name
-            secondParent
-            secondParentName
-            identityDocuments {
-            productionRequestID
-            number
-            type
-            verboseType
-            subType
-            status
-            issuingDate
-            expirationDate
-            displayFirstName
-            displayLastName
-            mrzFirstName
-            mrzLastName
-            sex
-            }
-          }
+  query getPassport {
+    getPassport {
+      userPassport {
+        number
+        type
+        verboseType
+        subType
+        status
+        issuingDate
+        expirationDate
+        displayFirstName
+        displayLastName
+        mrzFirstName
+        mrzLastName
+        sex
+        numberWithType
+        expiryStatus
+        expiresWithinNoticeTime
+      }
+      childPassports {
+        childNationalId
+        childName
+        secondParent
+        secondParentName
+        passports {
+        number
+        type
+        verboseType
+        subType
+        status
+        issuingDate
+        expirationDate
+        displayFirstName
+        displayLastName
+        mrzFirstName
+        mrzLastName
+        sex
+        numberWithType
+        expiryStatus
+        expiresWithinNoticeTime
         }
       }
+    }
+  }
     `
 
 export const hasDisabilityLicense = `

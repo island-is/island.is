@@ -87,7 +87,6 @@ export type ChildsPersonalInfo = {
 }
 
 export type IdentityDocument = {
-  productionRequestID: string
   number: string
   type: string
   verboseType: string
@@ -103,11 +102,11 @@ export type IdentityDocument = {
 }
 
 export interface IdentityDocumentChild {
-  nationalId: string
+  childNationalId: string
   secondParent: string
   secondParentName: string
-  name: string
-  identityDocuments?: IdentityDocument[]
+  childName: string
+  passports?: IdentityDocument[]
 }
 
 export interface IdentityDocumentData {

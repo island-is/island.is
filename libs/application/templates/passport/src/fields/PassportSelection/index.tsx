@@ -134,21 +134,21 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           options: identityDocumentData.childPassports.map(
             (child: IdentityDocumentChild) => {
               return {
-                label: child.name,
-                value: child.nationalId,
-                subLabel: child.identityDocuments?.length
+                label: child.childName,
+                value: child.childNationalId,
+                subLabel: child.passports?.length
                   ? formatMessage(m.passportNumber) +
                     ' ' +
-                    child.identityDocuments[0].subType +
-                    child.identityDocuments[0].number
+                    child.passports[0].subType +
+                    child.passports[0].number
                   : '',
-                tag: child.identityDocuments
-                  ? tag(child.identityDocuments?.[0])
+                tag: child.passports
+                  ? tag(child.passports?.[0])
                   : undefined,
-                disabled: child.identityDocuments
-                  ? tag(child.identityDocuments?.[0]).label ===
+                disabled: child.passports
+                  ? tag(child.passports?.[0]).label ===
                       m.orderedTag.defaultMessage ||
-                    tag(child.identityDocuments?.[0]).variant === 'mint'
+                    tag(child.passports?.[0]).variant === 'mint'
                   : false,
               }
             },
