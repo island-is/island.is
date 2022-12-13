@@ -1,15 +1,6 @@
 import { BodyInit, Headers, Response, ResponseInit } from 'node-fetch'
 import { UnknownProblem } from '@island.is/shared/problem'
 
-const MAX_TEXT_BODY_LENGTH = 512
-
-const trimBody = (body: string) => {
-  if (body.length > MAX_TEXT_BODY_LENGTH) {
-    return `${body.slice(0, MAX_TEXT_BODY_LENGTH)}...`
-  }
-  return body
-}
-
 export class FetchError extends Error {
   name = 'FetchError'
 
@@ -46,7 +37,7 @@ export class FetchError extends Error {
         error.problem = body
       }
     } else if (includeBody) {
-      error.body = trimBody(await response.clone().text())
+      error.body = await response.clone().text()
     }
 
     return error
