@@ -220,13 +220,6 @@ export const isHearingArrangementsStepValidRC = (
 export const isHearingArrangementsStepValidIC = (
   workingCase: Case,
 ): boolean => {
-  console.log(
-    (workingCase.prosecutor &&
-      workingCase.court &&
-      validate([[workingCase.requestedCourtDate, ['empty', 'date-format']]])
-        .isValid) ||
-      false,
-  )
   return (
     (workingCase.prosecutor &&
       workingCase.court &&

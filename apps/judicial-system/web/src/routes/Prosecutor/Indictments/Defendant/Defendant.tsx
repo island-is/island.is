@@ -226,7 +226,7 @@ const Defendant: React.FC = () => {
     [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
   )
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
         const createdCase = await createCase(workingCase)
@@ -350,7 +350,7 @@ const Defendant: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.defendant)}
@@ -464,9 +464,9 @@ const Defendant: React.FC = () => {
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)
           }
-          nextIsDisabled={stepIsValid}
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isCreatingCase}
           nextButtonText={formatMessage(
             workingCase.id === '' ? core.createCase : core.continue,

@@ -78,6 +78,11 @@ const validateFormStepper = (
     [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: isPoliceReportStepValidRC(
       workingCase,
     ),
+    [constants.CREATE_INVESTIGATION_CASE_ROUTE]: isDefendantStepValidIC(
+      workingCase,
+      workingCase.type,
+      workingCase.policeCaseNumbers,
+    ),
     [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: isDefendantStepValidIC(
       workingCase,
       workingCase.type,
@@ -132,7 +137,12 @@ const validateFormStepper = (
       workingCase,
     ),
   }
-
+  console.log(
+    steps.some(
+      (step) =>
+        validationForStep[step as keyof typeof validationForStep] === false,
+    ),
+  )
   return steps.some(
     (step) =>
       validationForStep[step as keyof typeof validationForStep] === false,
@@ -150,7 +160,7 @@ const useSections = (
   const router = useRouter()
 
   const findLastValidStep = (section: Section) => {
-    const filterValidSteps = section.children.filter((c) => c.href)
+    const filterValidSteps = section.children.filter((c) => c.onClick)
     return filterValidSteps[filterValidSteps.length - 1]
   }
 
@@ -330,7 +340,7 @@ const useSections = (
                   activeSubSection && activeSubSection > 1
                     ? `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
-                onClick: () =>
+                onClick:
                   validateFormStepper(
                     isValid,
                     [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE],
@@ -350,7 +360,7 @@ const useSections = (
                   activeSubSection && activeSubSection > 2
                     ? `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${id}`
                     : undefined,
-                onClick: () =>
+                onClick:
                   validateFormStepper(
                     isValid,
                     [
@@ -374,7 +384,7 @@ const useSections = (
                     ? `${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${id}`
                     : undefined,
 
-                onClick: () =>
+                onClick:
                   validateFormStepper(
                     isValid,
                     [
@@ -398,7 +408,7 @@ const useSections = (
                   activeSubSection && activeSubSection > 4
                     ? `${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${id}`
                     : undefined,
-                onClick: () =>
+                onClick:
                   validateFormStepper(
                     isValid,
                     [
@@ -423,7 +433,7 @@ const useSections = (
                   activeSubSection && activeSubSection > 5
                     ? `${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${id}`
                     : undefined,
-                onClick: () =>
+                onClick:
                   validateFormStepper(
                     isValid,
                     [
@@ -475,7 +485,7 @@ const useSections = (
                 activeSubSection && activeSubSection > 1
                   ? `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`
                   : undefined,
-              onClick: () =>
+              onClick:
                 validateFormStepper(
                   isValid,
                   [constants.INDICTMENTS_DEFENDANT_ROUTE],
@@ -497,7 +507,7 @@ const useSections = (
                 activeSubSection && activeSubSection > 2
                   ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
                   : undefined,
-              onClick: () =>
+              onClick:
                 validateFormStepper(
                   isValid,
                   [
@@ -522,7 +532,7 @@ const useSections = (
                 activeSubSection && activeSubSection > 3
                   ? `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`
                   : undefined,
-              onClick: () =>
+              onClick:
                 validateFormStepper(
                   isValid,
                   [
@@ -548,7 +558,7 @@ const useSections = (
                 activeSubSection && activeSubSection > 4
                   ? `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`
                   : undefined,
-              onClick: () =>
+              onClick:
                 validateFormStepper(
                   isValid,
                   [
@@ -575,7 +585,7 @@ const useSections = (
                 activeSubSection && activeSubSection > 5
                   ? `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${id}`
                   : undefined,
-              onClick: () =>
+              onClick:
                 validateFormStepper(
                   isValid,
                   [
@@ -625,7 +635,7 @@ const useSections = (
                   !isModifyingRuling && activeSubSection && activeSubSection > 1
                     ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
                     : undefined,
-                onClick: () =>
+                onClick:
                   validateFormStepper(
                     isValid,
                     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE],

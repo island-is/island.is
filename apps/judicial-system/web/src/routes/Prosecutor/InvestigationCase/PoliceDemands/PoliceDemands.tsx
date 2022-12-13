@@ -31,6 +31,19 @@ import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/u
 
 import * as constants from '@island.is/judicial-system/consts'
 
+export const formatInstitutionName = (name: string | undefined) => {
+  if (!name) return ''
+
+  if (name.startsWith('Lögreglustjórinn')) {
+    return name.replace('Lögreglustjórinn', 'lögreglustjóranum')
+  }
+  if (name.endsWith('saksóknari')) {
+    return name.toLocaleLowerCase().replace('saksóknari', 'saksóknara')
+  }
+
+  return ''
+}
+
 const PoliceDemands: React.FC = () => {
   const {
     workingCase,
@@ -49,19 +62,6 @@ const PoliceDemands: React.FC = () => {
   useDeb(workingCase, 'demands')
   useDeb(workingCase, 'lawsBroken')
   useDeb(workingCase, 'legalBasis')
-
-  const formatInstitutionName = (name: string | undefined) => {
-    if (!name) return ''
-
-    if (name.startsWith('Lögreglustjórinn')) {
-      return name.replace('Lögreglustjórinn', 'lögreglustjóranum')
-    }
-    if (name.endsWith('saksóknari')) {
-      return name.toLocaleLowerCase().replace('saksóknari', 'saksóknara')
-    }
-
-    return ''
-  }
 
   useEffect(() => {
     const courtClaimPrefill: Partial<
