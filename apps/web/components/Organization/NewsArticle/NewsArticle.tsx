@@ -48,7 +48,9 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
       {Boolean(newsItem.image) && (
         <Box
           paddingY={2}
-          className={cn({ [styles.image]: newsItem.fullWidthImageInContent })}
+          className={cn({
+            [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
+          })}
         >
           <Image
             {...newsItem.image}
