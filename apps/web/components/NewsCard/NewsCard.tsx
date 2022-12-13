@@ -1,5 +1,4 @@
 import React from 'react'
-import { useMeasure } from 'react-use'
 import {
   Text,
   Box,
@@ -34,10 +33,8 @@ export const NewsCard: React.FC<NewsCardProps> = ({
   titleAs = 'h3',
   mini,
 }) => {
-  const [ref, { width }] = useMeasure()
   const { format } = useDateUtils()
 
-  // TODO: test this
   const showImage = true
 
   const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
@@ -51,7 +48,6 @@ export const NewsCard: React.FC<NewsCardProps> = ({
         className={styles.mini}
       >
         <Box
-          ref={ref}
           display="flex"
           flexGrow={1}
           width="full"
@@ -82,7 +78,6 @@ export const NewsCard: React.FC<NewsCardProps> = ({
       borderWidth="standard"
     >
       <Box
-        ref={ref}
         display="flex"
         flexDirection="row"
         background="white"
