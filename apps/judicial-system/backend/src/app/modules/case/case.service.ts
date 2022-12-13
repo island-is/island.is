@@ -201,7 +201,7 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private addMessagesFoCourtCaseConnectionToQueue(
+  private addMessagesForCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -396,7 +396,7 @@ export class CaseService {
           updatedCase.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           // The court case number has changed, so the request must be uploaded to the new court case
-          await this.addMessagesFoCourtCaseConnectionToQueue(updatedCase, user)
+          await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
         }
 
         if (returnUpdatedCase) {
