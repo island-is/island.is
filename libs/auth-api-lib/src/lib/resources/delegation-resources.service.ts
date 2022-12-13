@@ -21,6 +21,7 @@ import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
 import { col } from './utils/col'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
@@ -299,7 +300,7 @@ export class DelegationResourcesService {
     if (
       !user.delegationType ||
       !user.actor ||
-      !user.delegationType.includes('Custom')
+      !user.delegationType.includes(AuthDelegationType.Custom)
     ) {
       return []
     }
@@ -341,10 +342,10 @@ export class DelegationResourcesService {
     }
 
     const delegationOr: Array<WhereOptions<ApiScope>> = []
-    if (user.delegationType.includes('ProcurationHolder')) {
+    if (user.delegationType.includes(AuthDelegationType.ProcurationHolder)) {
       delegationOr.push({ [col(prefix, 'grantToProcuringHolders')]: true })
     }
-    if (user.delegationType.includes('Custom')) {
+    if (user.delegationType.includes(AuthDelegationType.Custom)) {
       delegationOr.push({
         [col(prefix, 'delegationScopes', 'delegation', 'toNationalId')]: user
           .actor.nationalId,

@@ -23,6 +23,7 @@ const ContractOverview = ({ application, parentKey }: Props) => {
   const applicant = externalData.nationalRegistry.data
   const childResidenceInfo = childrenResidenceInfo(
     applicant,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
 
@@ -62,7 +63,8 @@ const ContractOverview = ({ application, parentKey }: Props) => {
           text={m.contract.childBenefit.text}
           textProps={{ marginBottom: 0 }}
           format={{
-            currentResidenceParentName: childResidenceInfo.current.parentName,
+            currentResidenceParentName:
+              childResidenceInfo?.current?.parentName || '',
           }}
         />
       </Box>
