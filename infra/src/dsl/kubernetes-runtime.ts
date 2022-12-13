@@ -1,6 +1,7 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
 import { ReferenceResolver, EnvironmentConfig } from './types/charts'
 import { getMockName, hostPortNumber } from './mocks/mocks-support'
+import {Mocks} from "./value-files-generators/helm-value-file";
 
 export class Kubernetes implements ReferenceResolver {
   releaseName: string
@@ -9,9 +10,12 @@ export class Kubernetes implements ReferenceResolver {
   ports: { [name: string]: number } = {}
   mocks: { [name: string]: string } = {}
 
-  constructor(env: EnvironmentConfig) {
+  withMocks: Mocks
+
+  constructor(env: EnvironmentConfig, withMocks?: Mocks) {
     this.releaseName = env.releaseName
     this.feature = env.feature
+    this.withMocks = withMocks ?? 'no-mocks'
   }
 
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
@@ -22,7 +26,7 @@ export class Kubernetes implements ReferenceResolver {
         ? `${this.releaseName}-${to.name}`
         : `${this.releaseName}-${to.name}.${to.namespace}.svc.cluster.local`
     } else {
-      if (this.feature) {
+      if (this.withMocks === 'with-mocks') {
         const { name, host } = getMockName(to)
         this.ports[name] = this.ports[name] ?? hostPortNumber(host)
         this.mocks[name] = host
