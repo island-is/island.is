@@ -86,6 +86,9 @@
       "@island.is/api/domains/electronic-registration-statistics": [
         "libs/api/domains/electronic-registration-statistics/src/index.ts"
       ],
+      "@island.is/api/domains/email-signup": [
+        "libs/api/domains/email-signup/src/index.ts"
+      ],
       "@island.is/api/domains/endorsement-system": [
         "libs/api/domains/endorsement-system/src/index.ts"
       ],
@@ -121,9 +124,6 @@
       ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
-      ],
-      "@island.is/api/domains/mailchimp": [
-        "libs/api/domains/mailchimp/src/index.ts"
       ],
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
@@ -567,6 +567,9 @@
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/portals/admin/air-discount-scheme": [
+        "libs/portals/admin/air-discount-scheme/src/index.ts"
+      ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
