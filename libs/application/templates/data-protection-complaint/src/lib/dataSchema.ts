@@ -38,8 +38,8 @@ export const DataProtectionComplaintSchema = z.object({
     nationalRegistry: z.object({
       data: z.object({
         address: z.object({
-          city: z.string(),
-          code: z.string(),
+          locality: z.string(),
+          municipalityCode: z.string(),
           postalCode: z.string(),
           streetAddress: z.string(),
         }),
@@ -49,7 +49,6 @@ export const DataProtectionComplaintSchema = z.object({
           name: z.string(),
         }),
         fullName: z.string(),
-        legalResidence: z.string(),
         nationalId: z.string(),
       }),
       date: z.string(),
@@ -93,7 +92,9 @@ export const DataProtectionComplaintSchema = z.object({
       params: error.nationalId,
     }),
     address: z.string().refine((x) => !!x, { params: error.required }),
-    postalCode: z.string().refine((x) => !!x, { params: error.required }),
+    postalCode: z
+      .string()
+      .refine((x) => +x >= 100 && +x <= 999, { params: error.required }),
     city: z.string().refine((x) => !!x, { params: error.required }),
     email: optionalEmail,
     phoneNumber: z.string().optional(),
@@ -137,7 +138,7 @@ export const DataProtectionComplaintSchema = z.object({
   complaint: z.object({
     description: z
       .string()
-      .nonempty()
+      .min(1)
       .refine((x) => !!x, { params: error.required })
       .refine((x) => x?.split(' ').filter((item) => item).length <= 500, {
         params: error.wordCountReached,

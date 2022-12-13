@@ -60,6 +60,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -278,7 +279,9 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           institutionTitle={n('organization')}
           institution={article.organization[0].title}
           locale={activeLocale}
-          linkProps={{ href: article.organization[0].link }}
+          linkProps={{
+            href: getOrganizationLink(article.organization[0], activeLocale),
+          }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
       )}
@@ -609,7 +612,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 institution={{
                   title: article.organization[0].title,
                   label: n('organization'),
-                  href: article.organization[0].link,
+                  href: getOrganizationLink(
+                    article.organization[0],
+                    activeLocale,
+                  ),
                 }}
                 responsibleParty={article.responsibleParty.map(
                   (responsibleParty) => ({
@@ -622,7 +628,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   (relatedOrganization) => ({
                     title: relatedOrganization.title,
                     label: n('relatedOrganization'),
-                    href: relatedOrganization.link,
+                    href: getOrganizationLink(
+                      relatedOrganization,
+                      activeLocale,
+                    ),
                   }),
                 )}
                 locale={activeLocale}

@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import capitalize from 'lodash/capitalize'
+import cn from 'classnames'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { Screen } from '../types'
@@ -44,14 +45,16 @@ import {
 import {
   NewsCard,
   HeadWithSocialSharing,
-  TableSlice,
+  Webreader,
 } from '@island.is/web/components'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { CustomNextError } from '../units/errors'
 import useContentfulId from '../hooks/useContentfulId'
 import { webRichText } from '../utils/richText'
+
+import * as styles from './News.css'
 
 const PERPAGE = 10
 
@@ -81,6 +84,10 @@ const NewsListNew: Screen<NewsListProps> = ({
   selectedTagSlug,
   namespace,
 }) => {
+  const { value: isWebReaderEnabledForNews } = useFeatureFlag(
+    'isWebReaderEnabledForNews',
+    false,
+  )
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const { format, getMonthByIndex } = useDateUtils()
@@ -216,11 +223,19 @@ const NewsListNew: Screen<NewsListProps> = ({
       <Text variant="h1" as="h1" paddingTop={[3, 3, 3, 5]} paddingBottom={2}>
         {newsItem.title}
       </Text>
+      {isWebReaderEnabledForNews && (
+        <Webreader marginTop={0} readId={null} readClass="rs_read" />
+      )}
       <Text variant="intro" as="p" paddingBottom={2}>
         {newsItem.intro}
       </Text>
       {Boolean(newsItem.image) && (
-        <Box paddingY={2}>
+        <Box
+          paddingY={2}
+          className={cn({
+            [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
+          })}
+        >
           <Image
             {...newsItem.image}
             url={newsItem.image.url + '?w=774&fm=webp&q=80'}
@@ -229,7 +244,16 @@ const NewsListNew: Screen<NewsListProps> = ({
         </Box>
       )}
       <Box paddingBottom={4} width="full">
-        {webRichText(newsItem.content as SliceType[])}
+        {webRichText(newsItem.content as SliceType[], {
+          renderComponent: {
+            // Make sure that images in the content are full width
+            Image: (slice) => (
+              <Box className={styles.clearBoth}>
+                <Image {...slice} thumbnail={slice.url + '?w=50'} />
+              </Box>
+            ),
+          },
+        })}
       </Box>
     </>
   )
@@ -329,9 +353,16 @@ const NewsListNew: Screen<NewsListProps> = ({
             {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
           </Text>
         )}
-        {newsItemContent && <Box width="full">{newsItemContent}</Box>}
+        {!newsItemContent && isWebReaderEnabledForNews && (
+          <Webreader readId={null} readClass="rs_read" />
+        )}
+        {newsItemContent && (
+          <Box className="rs_read" width="full">
+            {newsItemContent}
+          </Box>
+        )}
         {!!newsList.length && (
-          <Box marginTop={spacing}>
+          <Box className="rs_read" marginTop={spacing}>
             {newsList.map(({ title, intro, image, slug, date }, index) => {
               const mini = index > 2
 

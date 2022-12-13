@@ -68,6 +68,8 @@ const CaseFile = () => {
                         caseFile.category === CaseFileCategory.CASE_FILE,
                     ) ?? []
                   }
+                  subtypes={workingCase.indictmentSubtypes}
+                  crimeScenes={workingCase.crimeScenes}
                 />
               ))}
             </Accordion>

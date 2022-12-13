@@ -74,7 +74,9 @@ export class DrivingLicenseBookClientApiFactory {
     if (token) {
       return api.withMiddleware(new AuthHeaderMiddleware(`Bearer ${token}`))
     } else {
-      throw new Error('Syslumenn client configuration and login went wrong')
+      throw new Error(
+        'Driving license book client configuration and login went wrong',
+      )
     }
   }
 
@@ -179,6 +181,7 @@ export class DrivingLicenseBookClientApiFactory {
       data,
     } = await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
       teacherSsn: user.nationalId,
+      showExpired: false,
     })
     if (!data) {
       this.logger.error(`${LOGTAG} Error fetching students for teacher`)
@@ -201,6 +204,7 @@ export class DrivingLicenseBookClientApiFactory {
     const api = await this.create()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
+      showInactiveBooks: false,
     })
     const activeBook = await this.getActiveBookId(nationalId)
 

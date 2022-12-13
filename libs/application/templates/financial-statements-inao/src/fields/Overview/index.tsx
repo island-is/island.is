@@ -44,6 +44,7 @@ export const Overview = ({
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
+
   const [
     submitApplication,
     { error: submitError, loading },
@@ -83,7 +84,7 @@ export const Overview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersIncomeAndExpenses)}
+            {formatMessage(m.expensesIncome)}
           </Text>
         </Box>
         <GridRow>
@@ -93,12 +94,7 @@ export const Overview = ({
                 {formatMessage(m.income)}
               </Text>
             </Box>
-            <ValueLine
-              label={m.candidatesOwnContributions}
-              value={formatCurrency(
-                answers.individualIncome?.candidatesOwnContributions,
-              )}
-            />
+
             <ValueLine
               label={m.contributionsFromLegalEntities}
               value={formatCurrency(
@@ -109,6 +105,12 @@ export const Overview = ({
               label={m.contributionsFromIndividuals}
               value={formatCurrency(
                 answers.individualIncome?.individualContributions,
+              )}
+            />
+            <ValueLine
+              label={m.candidatesOwnContributions}
+              value={formatCurrency(
+                answers.individualIncome?.candidatesOwnContributions,
               )}
             />
             <ValueLine
@@ -159,7 +161,7 @@ export const Overview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersDebt)}
+            {formatMessage(m.propertiesAndDebts)}
           </Text>
         </Box>
         <AssetDebtEquityOverview answers={answers} />

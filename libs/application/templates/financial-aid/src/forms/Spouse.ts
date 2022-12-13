@@ -14,7 +14,7 @@ import { Routes } from '../lib/constants'
 export const Spouse: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: Routes.SPOUSEINCOME,
@@ -41,9 +41,9 @@ export const Spouse: Form = buildForm({
     }),
     buildSection({
       condition: (_, externalData) =>
-        ((externalData as unknown) as ExternalData)?.taxDataFetchSpouse?.data
+        ((externalData as unknown) as ExternalData)?.taxDataSpouse?.data
           ?.municipalitiesDirectTaxPayments?.success === false ||
-        ((externalData as unknown) as ExternalData)?.taxDataFetchSpouse?.data
+        ((externalData as unknown) as ExternalData)?.taxDataSpouse?.data
           ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
       id: Routes.SPOUSETAXRETURNFILES,
       title: m.taxReturnForm.general.sectionTitle,

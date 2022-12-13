@@ -17,13 +17,20 @@ import { errorMessages } from './messages'
 
 const PersonalAllowance = z
   .object({
+    usePersonalAllowance: z.enum([YES, NO]),
     usage: z
       .string()
-      .refine((x) => parseFloat(x) >= 0 && parseFloat(x) <= 100)
+      .refine((x) => parseFloat(x) > 0 && parseFloat(x) <= 100)
       .optional(),
-    useAsMuchAsPossible: z.enum([YES, NO]),
+    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
-  .optional()
+  .refine(
+    (schema) =>
+      schema.usePersonalAllowance === YES ? !!schema.useAsMuchAsPossible : true,
+    {
+      path: ['useAsMuchAsPossible'],
+    },
+  )
 
 /**
  * Both periods and employer objects had been removed from here, and the logic has
@@ -137,8 +144,13 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
-  usePersonalAllowance: z.enum([YES, NO]),
-  usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
+  multipleBirths: z.object({
+    hasMultipleBirths: z.enum([YES, NO]),
+    multipleBirths: z
+      .string()
+      .refine((v) => !isNaN(Number(v)))
+      .optional(),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

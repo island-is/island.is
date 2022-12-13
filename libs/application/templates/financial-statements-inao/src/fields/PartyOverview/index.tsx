@@ -74,7 +74,7 @@ export const PartyOverview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersIncomeAndExpenses)}
+            {formatMessage(m.expensesIncome)}
           </Text>
         </Box>
         <GridRow>
@@ -159,7 +159,7 @@ export const PartyOverview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersDebt)}
+            {formatMessage(m.propertiesAndDebts)}
           </Text>
         </Box>
 

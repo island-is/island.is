@@ -9,7 +9,7 @@ import { Form, FormModes } from '@island.is/application/types'
 export const payment: Form = buildForm({
   id: 'DrivingLicenseDuplicateApplicationPaymentForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: false,
   children: [
     buildSection({

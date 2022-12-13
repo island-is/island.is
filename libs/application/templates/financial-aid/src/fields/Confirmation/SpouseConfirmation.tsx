@@ -20,9 +20,7 @@ const SpouseConfirmation = ({ application }: FAFieldBaseProps) => {
           : undefined
       }
       missingIncomeFiles={missingIncomeFiles}
-      municipalityHomepage={
-        externalData?.nationalRegistry?.data?.municipality?.homepage
-      }
+      municipalityHomepage={externalData.municipality.data?.homepage}
     />
   )
 }

@@ -6,6 +6,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import type {
   CaseType,
   CreateCase,
+  CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 
@@ -53,4 +54,8 @@ export class CreateCaseInput implements CreateCase {
   @Allow()
   @Field({ nullable: true })
   readonly leadInvestigator?: string
+
+  @Allow()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly crimeScenes?: CrimeSceneMap
 }

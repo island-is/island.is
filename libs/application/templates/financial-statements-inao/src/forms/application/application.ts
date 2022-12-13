@@ -21,6 +21,11 @@ import {
   currencyStringToNumber,
   getCurrentUserType,
 } from '../../lib/utils/helpers'
+import {
+  CurrentUserTypeProvider,
+  IndentityApiProvider,
+  UserProfileApi,
+} from '../../dataProviders'
 import { FSIUSERTYPE, LESS } from '../../types'
 
 export const getApplication = (allowFakeData = false): Form => {
@@ -29,7 +34,7 @@ export const getApplication = (allowFakeData = false): Form => {
     title: '',
     renderLastScreenButton: false,
     renderLastScreenBackButton: false,
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     logo: Logo,
     children: [
       buildSection({
@@ -42,16 +47,19 @@ export const getApplication = (allowFakeData = false): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'IdentityProvider',
+                provider: IndentityApiProvider,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
+                provider: UserProfileApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
+              }),
+              buildDataProviderItem({
+                provider: CurrentUserTypeProvider,
+                title: '',
+                subTitle: '',
               }),
             ],
           }),

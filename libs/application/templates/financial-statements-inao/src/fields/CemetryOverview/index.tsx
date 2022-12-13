@@ -89,7 +89,7 @@ export const CemetryOverview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersIncomeAndExpenses)}
+            {formatMessage(m.expensesIncome)}
           </Text>
         </Box>
         <GridRow>
@@ -176,7 +176,7 @@ export const CemetryOverview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersDebt)}
+            {formatMessage(m.propertiesAndDebts)}
           </Text>
         </Box>
         <GridRow>
@@ -198,13 +198,14 @@ export const CemetryOverview = ({
             <ValueLine
               label={m.totalAssets}
               value={formatCurrency(answers.cemetryAsset.total)}
+              isTotal
             />
           </GridColumn>
 
           <GridColumn span={['12/12', '6/12']}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
-                {formatMessage(m.debtsAndEquity)}
+                {formatMessage(m.debts)}
               </Text>
             </Box>
             <ValueLine
@@ -220,6 +221,11 @@ export const CemetryOverview = ({
               label={m.totalLiabilities}
               value={formatCurrency(answers.cemetryLiability?.total)}
             />
+            <Box paddingTop={3} paddingBottom={2}>
+              <Text variant="h4" as="h4">
+                {formatMessage(m.equity)}
+              </Text>
+            </Box>
             <ValueLine
               label={m.equityAtTheBeginningOfTheYear}
               value={formatCurrency(
@@ -331,8 +337,10 @@ export const CemetryOverview = ({
       longTermDebt === '0' ? (
         <Box paddingTop={4}>
           <AlertBanner
-            title={`${formatMessage(m.SignatureTitle)}`}
-            description={`${formatMessage(m.SignatureMessage)} ${email}`}
+            title={`${formatMessage(m.SignatureMessage)}`}
+            description={`${formatMessage(
+              m.SignatureMessage,
+            )} ${email} ${formatMessage(m.SignaturePossible)}`}
             variant="info"
           />
         </Box>

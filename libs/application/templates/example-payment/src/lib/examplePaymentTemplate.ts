@@ -8,11 +8,13 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
+import { PaymentCatalogApi } from '@island.is/application/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -29,6 +31,7 @@ const template: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
+          status: 'draft',
           name: 'Draft',
           progress: 0.4,
           lifecycle: EphemeralStateLifeCycle,
@@ -45,6 +48,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              api: [PaymentCatalogApi],
               delete: true,
             },
           ],
@@ -58,6 +62,7 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           progress: 0.9,
           // Note: should be pruned at some time, so we can delete the FJS charge with it
           lifecycle: {
@@ -66,9 +71,9 @@ const template: ApplicationTemplate<
             // Applications that stay in this state for 1 hour will be pruned automatically
             whenToPrune: 1 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -88,12 +93,13 @@ const template: ApplicationTemplate<
       },
       [States.DONE]: {
         meta: {
+          status: 'completed',
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -102,7 +108,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

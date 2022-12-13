@@ -1,14 +1,11 @@
 import dynamic from 'next/dynamic'
 import { ProjectPage } from '@island.is/web/graphql/schema'
+import { FiskistofaFooter } from '@island.is/web/components'
 
 const OpinberNyskopunFooter = dynamic(() =>
   import('./themes/OpinberNyskopun/OpinberNyskopunFooter').then(
     (mod) => mod.OpinberNyskopunFooter,
   ),
-)
-
-const FiskistofaFooter = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.FiskistofaFooter),
 )
 
 interface ProjectFooterProps {
@@ -21,7 +18,7 @@ export const ProjectFooter = ({ projectPage }: ProjectFooterProps) => {
   switch (projectPage.theme) {
     case 'opinbernyskopun':
       return <OpinberNyskopunFooter footerItems={footerItems} />
-    case 'maelabord-fiskistofu':
+    case 'gagnasidur-fiskistofu':
       return <FiskistofaFooter footerItems={footerItems} />
     default:
       return null

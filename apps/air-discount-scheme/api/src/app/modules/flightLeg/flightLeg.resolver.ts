@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import type { FlightLeg as TFlightLeg } from '@island.is/air-discount-scheme/types'
 import { FlightLegsInput, ConfirmInvoiceInput } from './dto'
 import { FlightLeg } from './flightLeg.model'
@@ -18,7 +19,7 @@ import { Role } from '@island.is/air-discount-scheme/types'
 import { RolesGuard } from '../auth/roles.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@Scopes(AirDiscountSchemeScope.admin)
 @Resolver(() => FlightLeg)
 export class FlightLegResolver {
   @Roles(Role.ADMIN)

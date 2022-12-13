@@ -15,7 +15,7 @@ import { institutionApplicationMessages as m } from '../lib/messages'
 export const application: Form = buildForm({
   id: 'InstitutionCollaborationApplicationForm',
   title: m.applicant.formName,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'applicantSection',

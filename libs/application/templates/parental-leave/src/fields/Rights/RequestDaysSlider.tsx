@@ -4,20 +4,31 @@ import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getMaxMultipleBirthsAndDefaultMonths,
+  getMaxMultipleBirthsInMonths,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import {
-  maxDaysToGiveOrReceive,
   defaultMonths,
-  maxMonths,
   daysInMonth,
+  maxDaysToGiveOrReceive,
 } from '../../config'
 import { YES } from '../../constants'
 
 const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const maxDays = maxDaysToGiveOrReceive
+  const alreadySelectedMonths = getMaxMultipleBirthsAndDefaultMonths(
+    application.answers,
+  )
+  const maxMonths =
+    alreadySelectedMonths + Math.ceil(maxDaysToGiveOrReceive / daysInMonth)
+  const multipleBirthsInMonths = getMaxMultipleBirthsInMonths(
+    application.answers,
+  )
   const { id } = field
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
@@ -27,12 +38,34 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
     requestDays === 0 ? 1 : requestDays,
   )
 
-  const requestedMonths = defaultMonths + chosenRequestDays / daysInMonth
+  const requestedMonths =
+    defaultMonths + multipleBirthsInMonths + chosenRequestDays / daysInMonth
 
   const daysStringKey =
     chosenRequestDays > 1
       ? parentalLeaveFormMessages.shared.requestRightsDays
       : parentalLeaveFormMessages.shared.requestRightsDay
+
+  const boxChartKeysWithMultipleBirths: BoxChartKey[] = [
+    {
+      label: () => ({
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
+        values: { months: defaultMonths },
+      }),
+      bulletStyle: 'blue',
+    },
+    {
+      label: () => ({
+        ...parentalLeaveFormMessages.shared.yourMultipleBirthsRightsInMonths,
+        values: { months: multipleBirthsInMonths },
+      }),
+      bulletStyle: 'purple',
+    },
+    {
+      label: () => ({ ...daysStringKey, values: { day: chosenRequestDays } }),
+      bulletStyle: 'greenWithLines',
+    },
+  ]
 
   const boxChartKeys: BoxChartKey[] = [
     {
@@ -82,13 +115,21 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
               return 'blue'
             }
 
+            if (index < alreadySelectedMonths) {
+              return 'purple'
+            }
+
             if (index < requestedMonths) {
               return 'greenWithLines'
             }
 
             return 'grayWithLines'
           }}
-          keys={boxChartKeys as BoxChartKey[]}
+          keys={
+            defaultMonths === alreadySelectedMonths
+              ? boxChartKeys
+              : boxChartKeysWithMultipleBirths
+          }
         />
       </Box>
 

@@ -65,8 +65,8 @@ export const serviceSetup = (services: {
       },
       IdentityServer__KeyManagement__Enabled: {
         dev: 'true',
-        staging: 'false',
-        prod: 'false',
+        staging: 'true',
+        prod: 'true',
       },
       PersistenceSettings__BaseAddress: ref(
         (h) => `http://${h.svc(services.authIdsApi)}`,
@@ -74,6 +74,7 @@ export const serviceSetup = (services: {
       PersistenceSettings__UserProfileBaseAddress:
         'http://web-service-portal-api.service-portal.svc.cluster.local',
       Application__MinCompletionPortThreads: '10',
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',

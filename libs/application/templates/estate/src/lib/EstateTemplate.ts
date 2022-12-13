@@ -10,6 +10,7 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
@@ -37,17 +38,18 @@ const EstateTemplate: ApplicationTemplate<
       [States.prerequisites]: {
         meta: {
           name: '',
+          status: 'draft',
           progress: 0,
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.syslumennOnEntry,
+          onEntry: defineTemplateApi({
+            action: ApiActions.syslumennOnEntry,
             shouldPersistToExternalData: true,
             throwOnError: false,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -70,6 +72,7 @@ const EstateTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: '',
+          status: 'draft',
           actionCard: {
             title: '', //TBD
             description: '', //TBD
@@ -120,6 +123,7 @@ const EstateTemplate: ApplicationTemplate<
       [States.done]: {
         meta: {
           name: 'Approved',
+          status: 'approved',
           progress: 1,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
@@ -149,7 +153,6 @@ const EstateTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

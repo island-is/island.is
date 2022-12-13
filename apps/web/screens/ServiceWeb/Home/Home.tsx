@@ -192,8 +192,14 @@ const Home: Screen<HomeProps> = ({
                             {n('popularQuestions', 'Algengar spurningar')}
                           </Text>
                           <Stack space={2}>
-                            {featuredQNAs.map(
-                              ({ title, slug, category }, index) => {
+                            {featuredQNAs
+                              .filter(
+                                (item) =>
+                                  !!item.title &&
+                                  !!item.slug &&
+                                  !!item.category,
+                              )
+                              .map(({ title, slug, category }, index) => {
                                 return (
                                   <Box key={index}>
                                     <TopicCard
@@ -209,8 +215,7 @@ const Home: Screen<HomeProps> = ({
                                     </TopicCard>
                                   </Box>
                                 )
-                              },
-                            )}
+                              })}
                           </Stack>
                         </Box>
                       </GridColumn>

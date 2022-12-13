@@ -20,11 +20,11 @@
       },
       "outputs": ["coverage/libs/api/domains/endorsement-system"]
     },
-    "dev/init": {
+    "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "yarn nx run services-endorsements-api:dev/init $NX_OPTIONS",
+          "yarn nx run services-endorsements-api:dev-init $NX_OPTIONS",
           "yarn nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
           "yarn nx run api-domains-endorsement-system:schemas/openapi-generator $NX_OPTIONS"
         ],

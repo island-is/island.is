@@ -49,7 +49,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
                 ?.fullName,
               value: '1',
               subLabel:
-                formatMessage(m.passportNumber) + identityDocumentNumber,
+                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
               tag: {
                 variant: 'red',
                 label:
@@ -85,7 +85,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: 'Barn 1',
               subLabel:
-                formatMessage(m.passportNumber) + identityDocumentNumber,
+                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
               tag: {
                 variant: 'red',
                 outlined: true,
@@ -105,7 +105,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: 'Barn 3',
               subLabel:
-                formatMessage(m.passportNumber) + identityDocumentNumber,
+                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
               value: '3',
               tag: {
                 variant: 'blue',
@@ -117,7 +117,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: 'Barn 4',
               subLabel:
-                formatMessage(m.passportNumber) + identityDocumentNumber,
+                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
               value: '4',
               tag: {
                 variant: 'mint',

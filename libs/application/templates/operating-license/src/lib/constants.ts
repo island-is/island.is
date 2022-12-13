@@ -147,3 +147,5 @@ export const AttachmentProps: Attachment[] = [
     label: attachmentNames.four.defaultMessage,
   },
 ]
+
+export const SYSLUMADUR_NATIONAL_ID = '6509142520'

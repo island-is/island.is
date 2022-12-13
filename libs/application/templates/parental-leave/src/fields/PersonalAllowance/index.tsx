@@ -55,7 +55,7 @@ export const PersonalAllowance: FC<FieldBaseProps> = ({
           ],
           onSelect: (s: string) => {
             const allowance =
-              id === 'usePersonalAllowance'
+              id === 'personalAllowance.usePersonalAllowance'
                 ? 'personalAllowance'
                 : 'personalAllowanceFromSpouse'
 

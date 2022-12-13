@@ -17,7 +17,7 @@ import {
   IndictmentsCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
 import { isProsecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import { NotificationType } from '@island.is/judicial-system/types'
@@ -95,7 +95,7 @@ const HearingArrangements: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase || isSendingNotification}
-          nextButtonText={formatMessage(core.continue)}
+          nextButtonText={formatMessage(m.nextButtonText)}
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
             isSendingNotification ||

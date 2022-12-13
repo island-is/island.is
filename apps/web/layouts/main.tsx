@@ -152,7 +152,7 @@ const Layout: NextComponentType<
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  const { route, pathname, query, asPath } = useRouter()
+  const { asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
 
   const menuTabs = [
@@ -199,12 +199,12 @@ const Layout: NextComponentType<
         },
       ]
         .concat(
-          customAlertBanners.map((banner) => ({
+          customAlertBanners?.map((banner) => ({
             bannerId: `custom-alert-${stringHash(
               JSON.stringify(banner ?? {}),
             )}`,
             ...banner,
-          })),
+          })) ?? [],
         )
         .filter(
           (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,

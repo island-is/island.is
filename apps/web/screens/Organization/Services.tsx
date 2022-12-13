@@ -31,9 +31,13 @@ import {
   GET_ORGANIZATION_SERVICES_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
+import {
+  getThemeConfig,
+  OrganizationWrapper,
+  Webreader,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -62,6 +66,10 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   sort,
   namespace,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -70,11 +78,11 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url.includes(`${organizationPage.slug}/thjonusta`) ||
-        primaryLink.url.includes(`${organizationPage.slug}/services`),
+        primaryLink?.url?.includes(`${organizationPage.slug}/thjonusta`) ||
+        primaryLink?.url?.includes(`${organizationPage.slug}/services`),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -116,7 +124,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   groups = groups.filter((x) =>
     services
       .filter((x) => parameters.categories.includes(x.category?.slug))
-      .map((x) => x.group.slug)
+      .map((x) => x.group?.slug)
       .includes(x.value),
   )
 
@@ -130,6 +138,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={false}
       stickySidebar={false}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -148,9 +157,17 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-            <Text variant="h1" as="h1" marginBottom={4} marginTop={1}>
+            <Text
+              variant="h1"
+              as="h1"
+              marginBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}
+              marginTop={1}
+            >
               {n('allServices', 'Öll þjónusta')}
             </Text>
+            {isWebReaderEnabledForOrganizationPages && (
+              <Webreader marginBottom={4} readId={null} readClass="rs_read" />
+            )}
           </GridColumn>
         </GridRow>
         <GridRow marginBottom={4}>

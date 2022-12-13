@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 
-import { IdentityModule } from '@island.is/api/domains/identity'
+import { IdentityClientModule } from '@island.is/clients/identity'
+
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
-
 import { ActorDelegationsService } from './services/actorDelegations.service'
 import { ApiScopeServiceV1 } from './services-v1/apiScope.service'
 import { ApiScopeServiceV2 } from './services-v2/apiScope.service'
@@ -55,7 +55,7 @@ import { CmsModule } from '@island.is/cms'
     AuthPublicApiClientModule,
     AuthDelegationApiClientModule,
     FeatureFlagModule,
-    IdentityModule,
+    IdentityClientModule,
   ],
 })
 export class AuthModule {}

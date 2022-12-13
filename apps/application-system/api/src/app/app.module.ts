@@ -20,6 +20,7 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { ApplicationFilesConfig } from '@island.is/application/api/files'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 
 @Module({
@@ -44,6 +45,7 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
         signingModuleConfig,
         ApplicationFilesConfig,
         FileStorageConfig,
+        CompanyRegistryConfig,
         FinancialStatementsInaoClientConfig,
       ],
     }),
