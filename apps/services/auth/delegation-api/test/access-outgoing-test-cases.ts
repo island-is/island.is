@@ -1,4 +1,5 @@
 import { AuthScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   createCurrentUser,
   createNationalId,
@@ -57,7 +58,7 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
   procuringHolderScopes: {
     user: createCurrentUser({
       nationalIdType: 'company',
-      delegationType: 'ProcurationHolder',
+      delegationType: AuthDelegationType.ProcurationHolder,
       scope: [AuthScope.delegations],
     }),
     domains: [
@@ -97,7 +98,7 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
   customDelegationScopes: {
     user: createCurrentUser({
       nationalIdType: 'company',
-      delegationType: 'Custom',
+      delegationType: AuthDelegationType.Custom,
       scope: [AuthScope.delegations],
     }),
     delegations: [
@@ -143,7 +144,7 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
   unrelatedCustomDelegations: {
     user: createCurrentUser({
       nationalIdType: 'company',
-      delegationType: 'Custom',
+      delegationType: AuthDelegationType.Custom,
       scope: [AuthScope.delegations],
     }),
     delegations: [
@@ -175,7 +176,10 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
     user: createCurrentUser({
       nationalIdType: 'company',
       scope: [AuthScope.delegations],
-      delegationType: ['ProcurationHolder', 'Custom'],
+      delegationType: [
+        AuthDelegationType.ProcurationHolder,
+        AuthDelegationType.Custom,
+      ],
     }),
     accessTo: ['s1', 's2', 's3'],
     delegations: [
@@ -219,7 +223,10 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
     user: createCurrentUser({
       nationalIdType: 'company',
       scope: [AuthScope.delegations],
-      delegationType: ['ProcurationHolder', 'Custom'],
+      delegationType: [
+        AuthDelegationType.ProcurationHolder,
+        AuthDelegationType.Custom,
+      ],
     }),
     customScopeRules: [
       { scopeName: 's1', onlyForDelegationType: ['ProcurationHolder'] },

@@ -10,6 +10,8 @@ import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedu
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
 import { Injectable, Type } from '@nestjs/common'
+import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
+import type { Locale } from '@island.is/shared/types'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -43,11 +45,23 @@ export interface BaseTemplateAPIModuleConfig {
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
   applicationService: Type<BaseTemplateApiApplicationService>
+  userProfile: {
+    serviceBasePath: string
+  }
+  nationalRegistry: {
+    baseSoapUrl: string
+    user: string
+    password: string
+    host: string
+  }
+  islykill: IslykillApiModuleConfig
 }
 
-export interface TemplateApiModuleActionProps {
+export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments
   auth: User
+  currentUserLocale: Locale
+  params?: Params
 }
 
 export interface EmailTemplateGeneratorProps {

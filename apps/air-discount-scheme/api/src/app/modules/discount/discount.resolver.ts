@@ -43,37 +43,40 @@ export class DiscountResolver {
   ): Promise<DiscountWithTUser[]> {
     let relations: TUser[] = await backendApi.getUserRelations(user.nationalId)
 
-    // Check for explicit discount. If a discount exists but a person is ineligible
-    // it means that an admin has created it explicitly and we report it back.
-    const explicitDiscount = await backendApi.getDiscount(user.nationalId)
-    const explicitDiscountWithUser = [
-      {
-        ...explicitDiscount,
-        user: relations.find(
-          (relation) => relation.nationalId === user.nationalId,
-        ),
-      },
-    ]
-
     // Should not generate discountcodes for users who do not meet requirements
     relations = relations.filter(
       (user) => user.fund.credit === user.fund.total - user.fund.used,
     )
 
-    if (explicitDiscount && relations.length === 0) {
-      return explicitDiscountWithUser
+    // Check for explicit discount. If a discount exists but a person is ineligible
+    // it means that an admin has created it explicitly and we report it back.
+    // Otherwise the filter will have filtered out this user in previous
+    // filters and then this does nothing.
+    const explicitDiscount = await backendApi.getDiscount(user.nationalId)
+    const explicitUser = explicitDiscount?.user
+    if (
+      explicitUser &&
+      !relations.find((user) => explicitUser.nationalId === user.nationalId)
+    ) {
+      relations.push(explicitUser)
     }
 
     return relations.reduce(
-      (promise: Promise<DiscountWithTUser[]>, relation: TUser) => {
-        return promise.then(async (acc) => {
+      (validRelations: Promise<DiscountWithTUser[]>, relation: TUser) => {
+        return validRelations.then(async (acc) => {
+          // Get discount for relation if discount exists
           let discount: TDiscount = await backendApi.getDiscount(
             relation.nationalId,
           )
+          // If discount is about to expire or if discount not found,
+          // create and store new discount for said relation
           if (!discount || discount.expiresIn <= TWO_HOURS) {
             discount = await backendApi.createDiscount(relation.nationalId)
           }
-          return [...acc, { ...discount, user: relation }]
+          return [
+            ...acc,
+            { ...discount, user: { ...relation, fund: discount.user.fund } },
+          ]
         })
       },
       Promise.resolve([]),

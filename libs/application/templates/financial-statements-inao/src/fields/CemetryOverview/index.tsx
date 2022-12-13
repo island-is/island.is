@@ -333,8 +333,10 @@ export const CemetryOverview = ({
       longTermDebt === '0' ? (
         <Box paddingTop={4}>
           <AlertBanner
-            title={`${formatMessage(m.SignatureTitle)}`}
-            description={`${formatMessage(m.SignatureMessage)} ${email}`}
+            title={`${formatMessage(m.SignatureMessage)}`}
+            description={`${formatMessage(
+              m.SignatureMessage,
+            )} ${email} ${formatMessage(m.SignaturePossible)}`}
             variant="info"
           />
         </Box>

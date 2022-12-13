@@ -8,10 +8,16 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
+import {
+  CurrentApplicationApi,
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  MunicipalityApi,
+  TaxDataApi,
+} from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -30,20 +36,27 @@ export const Prerequisites: Form = buildForm({
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: DataProviderTypes.NationalRegistry,
+              provider: NationalRegistryUserApi,
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),
             buildDataProviderItem({
-              id: 'veita',
-              type: DataProviderTypes.Veita,
+              provider: NationalRegistrySpouseApi,
               title: '',
-              subTitle: undefined,
+              subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'taxDataFetch',
-              type: DataProviderTypes.TaxDataFetch,
+              provider: MunicipalityApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: CurrentApplicationApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: TaxDataApi,
               title: m.externalData.taxData.title,
               subTitle: m.externalData.taxData.dataInfo,
             }),
