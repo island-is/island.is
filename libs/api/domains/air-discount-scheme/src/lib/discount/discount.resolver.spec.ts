@@ -8,6 +8,8 @@ import {
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Discount } from '../models/discount.model'
+type DiscountWithTUser = Discount & { user: TUser }
 
 describe('ApiDomains: DiscountResolver', () => {
   let resolver: DiscountResolver
@@ -23,14 +25,24 @@ describe('ApiDomains: DiscountResolver', () => {
     scope: [ApiScope.internal],
   })
 
-  const fabGetDiscount = (nationalId: string): TDiscount => ({
+  const fabGetDiscount = (nationalId: string): DiscountWithTUser => ({
+    user: {
+      ...fabTUser(nationalId),
+      // The DiscountWithTUser.user takes from both TUser and the User model
+      // We fabricate TUser and name is simply the odd one out from between them.
+      name: 'Bergvin',
+    },
     connectionDiscountCodes: [],
     discountCode: 'GETDISCO',
     expiresIn: 86400,
     nationalId,
   })
 
-  const fabCreateDiscount = (nationalId: string): TDiscount => ({
+  const fabCreateDiscount = (nationalId: string): DiscountWithTUser => ({
+    user: {
+      ...fabTUser(nationalId),
+      name: 'Bergvin',
+    },
     connectionDiscountCodes: [],
     discountCode: 'CREATEDC',
     expiresIn: 86400,
@@ -40,9 +52,9 @@ describe('ApiDomains: DiscountResolver', () => {
   const fabTUser = (nationalId: string): TUser => ({
     address: 'Neinsstaðarból 18',
     city: 'Reykjavík',
-    firstName: '',
-    middleName: '',
-    lastName: '',
+    firstName: 'Bergvin',
+    middleName: 'Björn',
+    lastName: 'Bóason',
     gender: 'kk',
     nationalId,
     postalcode: 200,
