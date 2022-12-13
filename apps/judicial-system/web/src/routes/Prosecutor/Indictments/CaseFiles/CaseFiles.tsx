@@ -1,5 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   ProsecutorCaseInfo,
@@ -35,6 +36,12 @@ const CaseFiles: React.FC = () => {
     allFilesUploaded,
   } = useS3Upload(workingCase)
 
+  const stepIsValid = allFilesUploaded
+  const onNavigationTo = useCallback(
+    (destination: string) => router.push(destination),
+    [],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -42,6 +49,8 @@ const CaseFiles: React.FC = () => {
       activeSubSection={IndictmentsProsecutorSubsections.CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.caseFiles)}
@@ -146,8 +155,12 @@ const CaseFiles: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!allFilesUploaded}
+          onNextButtonClick={() =>
+            onNavigationTo(
+              `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`,
+            )
+          }
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

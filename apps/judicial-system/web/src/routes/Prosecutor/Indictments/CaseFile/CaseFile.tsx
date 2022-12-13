@@ -1,6 +1,7 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { LayoutGroup } from 'framer-motion'
+import router from 'next/router'
 
 import {
   FormContentContainer,
@@ -28,6 +29,10 @@ const CaseFile = () => {
     FormContext,
   )
   const { formatMessage } = useIntl()
+  const onNavigationTo = useCallback(
+    (destination: string) => router.push(destination),
+    [],
+  )
 
   return (
     <PageLayout
@@ -36,6 +41,8 @@ const CaseFile = () => {
       activeSubSection={IndictmentsProsecutorSubsections.CASE_FILE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={true}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.caseFile)}
@@ -93,7 +100,11 @@ const CaseFile = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={() =>
+            onNavigationTo(
+              `${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`,
+            )
+          }
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

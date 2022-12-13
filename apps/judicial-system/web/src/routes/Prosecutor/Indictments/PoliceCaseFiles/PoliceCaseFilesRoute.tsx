@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
@@ -268,6 +269,12 @@ const PoliceCaseFilesRoute = () => {
     [setAllUploaded],
   )
 
+  const stepIsValid = !Object.values(allUploaded).some((v) => v)
+  const onNavigationTo = useCallback(
+    (destination: string) => router.push(destination),
+    [],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -275,6 +282,8 @@ const PoliceCaseFilesRoute = () => {
       activeSubSection={IndictmentsProsecutorSubsections.POLICE_CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
@@ -297,8 +306,12 @@ const PoliceCaseFilesRoute = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={Object.values(allUploaded).some((v) => v)}
+          onNextButtonClick={() =>
+            onNavigationTo(
+              `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`,
+            )
+          }
+          nextIsDisabled={stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

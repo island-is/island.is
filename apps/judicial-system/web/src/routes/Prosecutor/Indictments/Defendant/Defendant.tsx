@@ -226,53 +226,52 @@ const Defendant: React.FC = () => {
     [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
   )
 
-  const handleNextButtonClick = async (theCase: Case) => {
-    if (!theCase.id) {
-      const createdCase = await createCase(theCase)
+  const onNavigationTo = useCallback(
+    async (destination: string) => {
+      if (!workingCase.id) {
+        const createdCase = await createCase(workingCase)
 
-      if (createdCase) {
-        workingCase.defendants?.forEach(async (defendant, index) => {
-          if (
-            index === 0 &&
-            createdCase.defendants &&
-            createdCase.defendants.length > 0
-          ) {
-            await updateDefendant(
-              createdCase.id,
-              createdCase.defendants[0].id,
-              {
+        if (createdCase) {
+          workingCase.defendants?.forEach(async (defendant, index) => {
+            if (
+              index === 0 &&
+              createdCase.defendants &&
+              createdCase.defendants.length > 0
+            ) {
+              await updateDefendant(
+                createdCase.id,
+                createdCase.defendants[0].id,
+                {
+                  gender: defendant.gender,
+                  name: defendant.name,
+                  address: defendant.address,
+                  nationalId: defendant.nationalId,
+                  noNationalId: defendant.noNationalId,
+                  citizenship: defendant.citizenship,
+                },
+              )
+            } else {
+              await createDefendant(createdCase.id, {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
                 nationalId: defendant.nationalId,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
-              },
-            )
-          } else {
-            await createDefendant(createdCase.id, {
-              gender: defendant.gender,
-              name: defendant.name,
-              address: defendant.address,
-              nationalId: defendant.nationalId,
-              noNationalId: defendant.noNationalId,
-              citizenship: defendant.citizenship,
-            })
-          }
-        })
-        router.push(
-          `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${createdCase.id}`,
-        )
+              })
+            }
+          })
+          router.push(`${destination}/${createdCase.id}`)
+        } else {
+          // TODO handle error
+          return
+        }
       } else {
-        // TODO handle error
-        return
+        router.push(`${destination}/${workingCase.id}`)
       }
-    } else {
-      router.push(
-        `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${theCase.id}`,
-      )
-    }
-  }
+    },
+    [createCase, createDefendant, router, updateDefendant, workingCase],
+  )
 
   const handleDeleteDefendant = async (defendant: TDefendant) => {
     if (workingCase.defendants && workingCase.defendants.length > 1) {
@@ -341,6 +340,8 @@ const Defendant: React.FC = () => {
     }
   }
 
+  const stepIsValid = isDefendantStepValidIndictments(workingCase)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -348,6 +349,8 @@ const Defendant: React.FC = () => {
       activeSubSection={IndictmentsProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.defendant)}
@@ -460,8 +463,12 @@ const Defendant: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
-          onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isDefendantStepValidIndictments(workingCase)}
+          onNextButtonClick={() =>
+            onNavigationTo(
+              `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`,
+            )
+          }
+          nextIsDisabled={stepIsValid}
           nextIsLoading={isCreatingCase}
           nextButtonText={formatMessage(
             workingCase.id === '' ? core.createCase : core.continue,
