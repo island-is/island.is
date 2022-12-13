@@ -121,7 +121,7 @@ yargs(process.argv.slice(2))
           env,
           habitat,
           featureYaml,
-          'with-mocks',
+          'no-mocks',
         ),
         argv.output,
       )
