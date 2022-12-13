@@ -464,9 +464,7 @@ const Defendant: React.FC = () => {
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)
           }
           nextIsDisabled={stepIsValid}
           nextIsLoading={isCreatingCase}

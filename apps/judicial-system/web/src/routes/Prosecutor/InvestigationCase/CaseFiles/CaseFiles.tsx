@@ -65,8 +65,8 @@ export const CaseFiles: React.FC = () => {
   useDeb(workingCase, 'caseFilesComments')
 
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
   )
 
   return (
@@ -175,7 +175,7 @@ export const CaseFiles: React.FC = () => {
           previousUrl={`${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             onNavigationTo(
-              `${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`,
+              constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
             )
           }
           nextIsDisabled={!allFilesUploaded || isUploading}

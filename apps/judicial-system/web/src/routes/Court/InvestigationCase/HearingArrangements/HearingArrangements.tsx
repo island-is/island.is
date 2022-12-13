@@ -117,9 +117,9 @@ const HearingArrangements = () => {
       )
 
       if (hasSentNotification && !courtDateHasChanged) {
-        router.push(destination)
+        router.push(`${destination}/${workingCase.id}`)
       } else {
-        setNextRoute(destination)
+        setNextRoute(`${destination}/${workingCase.id}`)
         setModalVisible(true)
       }
     },
@@ -311,9 +311,7 @@ const HearingArrangements = () => {
             <FormFooter
               previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
               onNextButtonClick={() =>
-                onNavigationTo(
-                  `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
-                )
+                onNavigationTo(constants.INVESTIGATION_CASE_RULING_ROUTE)
               }
               nextIsDisabled={!stepIsValid}
               nextButtonText={formatMessage(m.continueButton.label)}
@@ -338,8 +336,8 @@ const HearingArrangements = () => {
                   NotificationType.COURT_DATE,
                 )
 
-                if (notificationSent) {
-                  router.push(`${nextRoute}/${workingCase.id}`)
+                if (notificationSent && nextRoute) {
+                  router.push(nextRoute)
                 }
               }}
               onSecondaryButtonClick={async () => {
@@ -349,8 +347,8 @@ const HearingArrangements = () => {
                   true,
                 )
 
-                if (notificationSent) {
-                  router.push(`${nextRoute}/${workingCase.id}`)
+                if (notificationSent && nextRoute) {
+                  router.push(nextRoute)
                 }
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}

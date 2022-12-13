@@ -43,6 +43,9 @@ export const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
 
   const [modalVisible, setModalVisible] = useState(false)
+  const [nextRoute, setNextRoute] = useState<string>(
+    constants.RESTRICTION_CASE_RULING_ROUTE,
+  )
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const {
@@ -122,8 +125,9 @@ export const HearingArrangements: React.FC = () => {
       )
 
       if (hasSentNotification && !courtDateHasChanged) {
-        router.push(destination)
+        router.push(`${destination}/${workingCase.id}`)
       } else {
+        setNextRoute(`${destination}/${workingCase.id}`)
         setModalVisible(true)
       }
     },
@@ -198,9 +202,7 @@ export const HearingArrangements: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.RESTRICTION_CASE_RULING_ROUTE)
           }
           nextButtonText={formatMessage(m.continueButton.label)}
           nextIsDisabled={!stepIsValid}
@@ -227,9 +229,7 @@ export const HearingArrangements: React.FC = () => {
           onSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(
-              `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
-            )
+            router.push(nextRoute)
           }}
           onPrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -238,9 +238,7 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(
-                `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
-              )
+              router.push(nextRoute)
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

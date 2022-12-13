@@ -180,9 +180,7 @@ export const StepFive: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(
-              `${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`,
-            )
+            handleNavigationTo(constants.RESTRICTION_CASE_OVERVIEW_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
         />

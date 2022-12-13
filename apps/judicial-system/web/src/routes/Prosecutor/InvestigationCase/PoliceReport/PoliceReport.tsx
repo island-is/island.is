@@ -63,8 +63,8 @@ const PoliceReport = () => {
 
   const stepIsValid = isPoliceReportStepValidIC(workingCase)
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
   )
 
   return (
@@ -258,9 +258,7 @@ const PoliceReport = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INVESTIGATION_CASE_CASE_FILES_ROUTE)
           }
           nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
           nextIsLoading={isLoadingWorkingCase}

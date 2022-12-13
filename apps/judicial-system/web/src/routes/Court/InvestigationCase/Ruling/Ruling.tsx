@@ -127,15 +127,16 @@ const Ruling = () => {
     initialAutoFillDone,
     setInitialAutoFillDone,
   ])
+
   const onNavigationTo = useCallback(
     async (destination: string) => {
       if (isModifyingRuling) {
         requestRulingSignature()
       } else {
-        router.push(destination)
+        router.push(`${destination}/${workingCase.id}`)
       }
     },
-    [isModifyingRuling, requestRulingSignature],
+    [isModifyingRuling, requestRulingSignature, workingCase.id],
   )
   const stepIsValid = isRulingValidIC(workingCase)
 
@@ -484,9 +485,7 @@ const Ruling = () => {
           }
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE)
           }
         />
       </FormContentContainer>

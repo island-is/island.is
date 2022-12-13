@@ -74,8 +74,6 @@ export const CourtRecord: React.FC = () => {
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  const id = router.query.id
-
   useDeb(workingCase, 'courtAttendees')
   useDeb(workingCase, 'sessionBookings')
   useDeb(workingCase, 'accusedAppealAnnouncement')
@@ -247,8 +245,8 @@ export const CourtRecord: React.FC = () => {
 
   const stepIsValid = isCourtRecordStepValidRC(workingCase)
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [router],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
   )
 
   return (
@@ -547,9 +545,7 @@ export const CourtRecord: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`,
-            )
+            onNavigationTo(constants.RESTRICTION_CASE_CONFIRMATION_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           hideNextButton={

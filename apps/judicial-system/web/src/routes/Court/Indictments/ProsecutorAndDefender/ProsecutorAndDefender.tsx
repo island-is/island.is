@@ -61,7 +61,7 @@ const HearingArrangements: React.FC = () => {
   const onNavigationTo = useCallback(
     async (destination: string) => {
       await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
-      router.push(destination)
+      router.push(`${destination}/${workingCase.id}`)
     },
     [workingCase.id, sendNotification, router],
   )
@@ -107,9 +107,7 @@ const HearingArrangements: React.FC = () => {
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
           }
         />
       </FormContentContainer>

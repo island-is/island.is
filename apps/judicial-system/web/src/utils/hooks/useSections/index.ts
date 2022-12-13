@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import {
   Case,
   CaseState,
+  CaseType,
   Gender,
   InstitutionType,
   isInvestigationCase,
@@ -57,6 +58,10 @@ const validateFormStepper = (
 
   const validationForStep = {
     [constants.CREATE_RESTRICTION_CASE_ROUTE]: isDefendantStepValidRC(
+      workingCase,
+      workingCase.policeCaseNumbers,
+    ),
+    [constants.CREATE_TRAVEL_BAN_ROUTE]: isDefendantStepValidRC(
       workingCase,
       workingCase.policeCaseNumbers,
     ),
@@ -128,12 +133,12 @@ const validateFormStepper = (
     ),
   }
 
-  return (
-    steps.map(
-      (step) =>
-        validationForStep[step as keyof typeof validationForStep] === false,
-    ).length > 0
+  return steps.some(
+    (step) =>
+      validationForStep[step as keyof typeof validationForStep] === false,
   )
+    ? false
+    : true
 }
 
 const useSections = (
@@ -182,7 +187,11 @@ const useSections = (
                 onClick:
                   validateFormStepper(
                     isValid,
-                    [constants.RESTRICTION_CASE_DEFENDANT_ROUTE],
+                    [
+                      workingCase.type === CaseType.CUSTODY
+                        ? constants.RESTRICTION_CASE_DEFENDANT_ROUTE
+                        : constants.CREATE_TRAVEL_BAN_ROUTE,
+                    ],
                     workingCase,
                   ) && onNavigationTo
                     ? async () =>
@@ -244,7 +253,7 @@ const useSections = (
                 ),
                 href:
                   activeSubSection && activeSubSection > 4
-                    ? `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`
+                    ? `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`
                     : undefined,
                 onClick:
                   validateFormStepper(
@@ -988,6 +997,8 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): Section => {
+    const section = getRestrictionCaseProsecutorSection(workingCase, user)
+
     return {
       name: formatMessage(sections.extensionSection.title),
       children:
@@ -998,45 +1009,61 @@ const useSections = (
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
-                href: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[0].href,
+                href:
+                  (section.children.length > 0 && section.children[0].href) ||
+                  undefined,
               },
               {
                 name: formatMessage(
                   sections.extensionSection.hearingArrangements,
                 ),
-                href: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[1].href,
-                onClick: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[1].onClick,
+                href:
+                  (section.children.length > 0 && section.children[1].href) ||
+                  undefined,
+                onClick:
+                  (section.children.length > 0 &&
+                    section.children[1].onClick) ||
+                  undefined,
               },
               {
                 name: formatMessage(sections.extensionSection.policeDemands),
-                href: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[2].href,
-                onClick: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[2].onClick,
+                href:
+                  (section.children.length > 0 && section.children[2].href) ||
+                  undefined,
+                onClick:
+                  (section.children.length > 0 &&
+                    section.children[2].onClick) ||
+                  undefined,
               },
               {
                 name: formatMessage(sections.extensionSection.policeReport),
-                href: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[3].href,
-                onClick: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[3].onClick,
+                href:
+                  (section.children.length > 0 && section.children[3].href) ||
+                  undefined,
+                onClick:
+                  (section.children.length > 0 &&
+                    section.children[3].onClick) ||
+                  undefined,
               },
               {
                 name: formatMessage(sections.extensionSection.caseFiles),
-                href: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[4].href,
-                onClick: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[4].onClick,
+                href:
+                  (section.children.length > 0 && section.children[4].href) ||
+                  undefined,
+                onClick:
+                  (section.children.length > 0 &&
+                    section.children[4].onClick) ||
+                  undefined,
               },
               {
                 name: formatMessage(sections.extensionSection.overview),
-                href: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[5].href,
-                onClick: getRestrictionCaseCourtSections(workingCase, user)
-                  .children[5].onClick,
+                href:
+                  (section.children.length > 0 && section.children[5].href) ||
+                  undefined,
+                onClick:
+                  (section.children.length > 0 &&
+                    section.children[5].onClick) ||
+                  undefined,
               },
             ],
     }
@@ -1046,6 +1073,8 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): Section => {
+    const section = getInvestigationCaseProsecutorSection(workingCase, user)
+
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
       children:
@@ -1056,54 +1085,55 @@ const useSections = (
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
-                href: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[0].href,
+                href:
+                  (section.children.length > 0 && section.children[5].href) ||
+                  undefined,
               },
               {
                 name: formatMessage(
                   sections.investigationCaseExtensionSection
                     .hearingArrangements,
                 ),
-                href: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[1].href,
-                onClick: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[1].onClick,
+                href:
+                  (section.children.length > 0 && section.children[1].href) ||
+                  undefined,
+                onClick: section.children[1].onClick,
               },
               {
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.policeDemands,
                 ),
-                href: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[2].href,
-                onClick: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[2].onClick,
+                href:
+                  (section.children.length > 0 && section.children[2].href) ||
+                  undefined,
+                onClick: section.children[2].onClick,
               },
               {
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.policeReport,
                 ),
-                href: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[3].href,
-                onClick: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[3].onClick,
+                href:
+                  (section.children.length > 0 && section.children[3].href) ||
+                  undefined,
+                onClick: section.children[3].onClick,
               },
               {
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.caseFiles,
                 ),
-                href: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[4].href,
-                onClick: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[4].onClick,
+                href:
+                  (section.children.length > 0 && section.children[4].href) ||
+                  undefined,
+                onClick: section.children[4].onClick,
               },
               {
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.overview,
                 ),
-                href: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[5].href,
-                onClick: getInvestigationCaseCourtSections(workingCase, user)
-                  .children[5].onClick,
+                href:
+                  (section.children.length > 0 && section.children[5].href) ||
+                  undefined,
+                onClick: section.children[5].onClick,
               },
             ],
     }

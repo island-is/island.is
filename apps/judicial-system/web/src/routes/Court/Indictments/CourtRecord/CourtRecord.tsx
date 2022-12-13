@@ -47,7 +47,7 @@ const CourtRecord: React.FC = () => {
   )
   const [modalVisible, setModalVisible] = useState<ModalTypes>(ModalTypes.NONE)
   const [nextRoute, setNextRoute] = useState<string>(
-    `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`,
+    constants.INDICTMENTS_OVERVIEW_ROUTE,
   )
 
   const { formatMessage } = useIntl()
@@ -143,7 +143,7 @@ const CourtRecord: React.FC = () => {
           title={formatMessage(m.modalTitle)}
           text={formatMessage(m.modalText)}
           onPrimaryButtonClick={() => {
-            router.push(nextRoute)
+            router.push(`${nextRoute}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(core.closeModal)}
         />

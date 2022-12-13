@@ -235,9 +235,7 @@ export const StepFour: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() => {
-            handleNavigationTo(
-              `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`,
-            )
+            handleNavigationTo(constants.RESTRICTION_CASE_CASE_FILES_ROUTE)
           }}
           nextIsDisabled={!stepIsValid}
         />

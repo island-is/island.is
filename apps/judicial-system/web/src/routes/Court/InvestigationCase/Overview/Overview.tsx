@@ -91,8 +91,8 @@ const Overview = () => {
   ])
 
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
   )
 
   return (
@@ -305,7 +305,7 @@ const Overview = () => {
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
             onNavigationTo(
-              `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`,
+              constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
             )
           }
           nextIsDisabled={uploadState === UploadState.UPLOADING}

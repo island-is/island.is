@@ -38,8 +38,8 @@ const CaseFiles: React.FC = () => {
 
   const stepIsValid = allFilesUploaded
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
   )
 
   return (
@@ -156,9 +156,7 @@ const CaseFiles: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

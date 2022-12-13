@@ -97,8 +97,8 @@ export const JudgeOverview: React.FC = () => {
   ])
 
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [router],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
   )
 
   return (
@@ -349,7 +349,7 @@ export const JudgeOverview: React.FC = () => {
           previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           onNextButtonClick={() =>
             onNavigationTo(
-              `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
+              constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
             )
           }
           nextIsDisabled={uploadState === UploadState.UPLOADING}

@@ -125,10 +125,10 @@ const ReceptionAndAssignment = () => {
 
   const getNextRoute = () => {
     return isRestrictionCase(workingCase.type)
-      ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
+      ? constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE
       : isInvestigationCase(workingCase.type)
-      ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
-      : `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`
+      ? constants.INVESTIGATION_CASE_OVERVIEW_ROUTE
+      : constants.INDICTMENTS_SUBPOENA_ROUTE
   }
 
   const getActiveSubSection = () => {
@@ -140,8 +140,8 @@ const ReceptionAndAssignment = () => {
 
   const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [router],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
   )
 
   return (

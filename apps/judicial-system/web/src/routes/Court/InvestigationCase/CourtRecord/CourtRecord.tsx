@@ -212,8 +212,8 @@ const CourtRecord = () => {
 
   const stepIsValid = isCourtRecordStepValidIC(workingCase)
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
   )
 
   return (
@@ -513,9 +513,7 @@ const CourtRecord = () => {
           previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           hideNextButton={

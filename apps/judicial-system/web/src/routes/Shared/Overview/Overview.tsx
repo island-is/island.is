@@ -27,7 +27,6 @@ import { overview as m } from './Overview.strings'
 
 const Overview = () => {
   const router = useRouter()
-  const id = router.query.id
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
@@ -37,8 +36,8 @@ const Overview = () => {
   const isDefender = router.pathname.includes(constants.DEFENDER_ROUTE)
 
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [router],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
   )
   return (
     <PageLayout
@@ -84,7 +83,7 @@ const Overview = () => {
             nextIsLoading={isLoadingWorkingCase}
             onNextButtonClick={() =>
               onNavigationTo(
-                `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
               )
             }
             nextButtonText={formatMessage(core.continue)}

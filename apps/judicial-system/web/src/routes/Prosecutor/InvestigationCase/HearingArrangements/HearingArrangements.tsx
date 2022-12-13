@@ -66,6 +66,9 @@ const HearingArrangements = () => {
     updateCase,
     setAndSendCaseToServer,
   } = useCase()
+  const [nextRoute, setNextRoute] = useState<string>(
+    constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+  )
 
   const [
     isNotificationModalVisible,
@@ -98,6 +101,7 @@ const HearingArrangements = () => {
         ) {
           router.push(`${destination}/${workingCase.id}`)
         } else {
+          setNextRoute(`${destination}/${workingCase.id}`)
           setIsNotificationModalVisible(true)
         }
       } else {
@@ -221,7 +225,7 @@ const HearingArrangements = () => {
               previousUrl={`${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () =>
                 await onNavigationTo(
-                  `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
                 )
               }
               nextIsDisabled={!stepIsValid}
@@ -235,11 +239,7 @@ const HearingArrangements = () => {
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
               onClose={() => setIsNotificationModalVisible(false)}
-              onSecondaryButtonClick={() =>
-                router.push(
-                  `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-                )
-              }
+              onSecondaryButtonClick={() => router.push(nextRoute)}
               onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
@@ -247,9 +247,7 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(
-                    `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-                  )
+                  router.push(nextRoute)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}

@@ -30,8 +30,8 @@ const CaseFile = () => {
   )
   const { formatMessage } = useIntl()
   const onNavigationTo = useCallback(
-    (destination: string) => router.push(destination),
-    [],
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
   )
 
   return (
@@ -101,9 +101,7 @@ const CaseFile = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
         />

@@ -42,7 +42,7 @@ const Subpoena: React.FC = () => {
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState(false)
   const [nextRoute, setNextRoute] = useState<string>(
-    `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+    constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
   )
   const { formatMessage } = useIntl()
   const {
@@ -80,9 +80,9 @@ const Subpoena: React.FC = () => {
       )
 
       if (hasSentNotification && !courtDateHasChanged) {
-        router.push(destination)
+        router.push(`${destination}/${workingCase.id}`)
       } else {
-        setNextRoute(destination)
+        setNextRoute(`${destination}/${workingCase.id}`)
         setModalVisible(true)
       }
     },

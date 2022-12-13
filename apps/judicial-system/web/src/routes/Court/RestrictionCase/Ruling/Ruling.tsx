@@ -230,10 +230,10 @@ export const Ruling: React.FC = () => {
       if (isModifyingRuling) {
         requestRulingSignature()
       } else {
-        router.push(destination)
+        router.push(`${destination}/${workingCase.id}`)
       }
     },
-    [isModifyingRuling, requestRulingSignature, router],
+    [isModifyingRuling, requestRulingSignature, router, workingCase.id],
   )
   const stepIsValid = isRulingValidRC(workingCase)
 
@@ -824,9 +824,7 @@ export const Ruling: React.FC = () => {
             isModifyingRuling ? isRequestingRulingSignature : false
           }
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.RESTRICTION_CASE_COURT_RECORD_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextButtonText={

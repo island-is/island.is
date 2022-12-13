@@ -139,7 +139,7 @@ export const StepOne: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
-      onNavigationTo={stepIsValid ? handleNavigateTo : undefined}
+      onNavigationTo={handleNavigateTo}
       isValid={stepIsValid}
     >
       <PageHeader
@@ -244,7 +244,7 @@ export const StepOne: React.FC = () => {
               nextIsDisabled={!stepIsValid}
               onNextButtonClick={() =>
                 handleNavigateTo(
-                  `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`,
+                  constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
                 )
               }
               nextButtonText={formatMessage(

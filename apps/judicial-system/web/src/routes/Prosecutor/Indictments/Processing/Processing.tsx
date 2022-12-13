@@ -71,7 +71,7 @@ const Processing: React.FC = () => {
         await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
       }
 
-      router.push(destination)
+      router.push(`${destination}/${workingCase.id}`)
     },
     [router, setWorkingCase, transitionCase, workingCase],
   )
@@ -117,9 +117,7 @@ const Processing: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            onNavigationTo(
-              `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`,
-            )
+            onNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
           }
         />
       </FormContentContainer>
