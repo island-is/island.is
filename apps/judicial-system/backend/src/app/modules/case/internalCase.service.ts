@@ -648,7 +648,7 @@ export class InternalCaseService {
         theCase.courtCaseNumber ?? '',
         theCase.prosecutor?.nationalId ?? '',
         '',
-        // theCase.prosecutor?.institution?.nationalId,
+        // theCase.creatingProsecutor?.institution?.nationalId,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
