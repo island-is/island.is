@@ -11,7 +11,7 @@ This application template allows applicants to apply for parental leave. For fur
 
 Below you'll find a flow chart for the application:
 
-![](./assets/flow-chart.png)
+![](./assets/parental-leave-flow-chart.png)
 
 ### Glossary
 
@@ -31,6 +31,8 @@ This state is a temporary state that all new applications will be created in. It
 
 The purpose of this state is to be a guard into the actual application. To advance to the next state, an applicant will need to be expecting a child. To verify this, there is an external data step which fetches data from VMST and Þjóðskrá.
 
+Applicants choose which application type they are applying for. How many children will give birth.
+
 #### Draft
 
 Valid applicants will be able to advance to this state where they can start the actual application and fill in all the relevant data.
@@ -41,7 +43,7 @@ When the primary parent requests transferal of rights, then the other secondary 
 
 #### Employer waiting to assign
 
-If the applicant is employed by an employer (not self employed), then they are asked to provide an email address which a confirmation email will be sent to. When the employer receives the email they can click a link which automatically assigns them to the application and advances it to the next state
+If the applicant is employed by an employer (not self employed, student, getting benefits or apply for parental-leave grant), then they are asked to provide an email address which a confirmation email will be sent to. When the employer receives the email they can click a link which automatically assigns them to the application and advances it to the next state
 
 #### Employer approval
 
@@ -52,6 +54,26 @@ The employer can then approve or request changes
 #### Vinnumalastofnun approval
 
 Applications that have been sent to VMST
+
+#### Edit or add periods
+
+Applicants make changes in periods or/and add more periods in their application
+
+#### Employer approval edits
+
+Employers review new periods selected/added by applicants then approve or request changes
+
+#### Additional document required
+
+VMST asks for additional documents while processing the application
+
+#### Approval
+
+Applicantions have been approved by VMST
+
+#### Close
+
+Applicants finished all his/her rights or parental-leave time is expired
 
 ### Parental leave template API module
 
