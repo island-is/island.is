@@ -324,7 +324,8 @@ describe.each(Object.keys(accessOutgoingTestCases))(
 
     if (
       inaccessible.length > 0 &&
-      testCase !== accessOutgoingTestCases.noExplicitDelegationGrant
+      testCase !== accessOutgoingTestCases.noExplicitDelegationGrant &&
+      testCase !== accessOutgoingTestCases.notForAuthenticatedUser
     ) {
       it.each(inaccessible)(
         "PATCH /v1/me/delegations/:id fails updating scopes you don't have access to in $name",

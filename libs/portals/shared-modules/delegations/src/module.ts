@@ -1,4 +1,4 @@
-import { AuthScope } from '@island.is/auth/scopes'
+import { delegationScopes } from '@island.is/auth/scopes'
 import { lazy } from 'react'
 import { Features } from '@island.is/feature-flags'
 
@@ -11,7 +11,9 @@ export const delegationsModule: PortalModule = {
   featureFlag: Features.outgoingDelegationsV2,
   widgets: () => [],
   routes({ userInfo }) {
-    const hasAccess = userInfo.scopes.includes(AuthScope.delegations)
+    const hasAccess = delegationScopes.some((scope) =>
+      userInfo.scopes.includes(scope),
+    )
     const accessControlCommonFields = {
       name: m.accessControlDelegations,
       path: DelegationPaths.Delegations,
