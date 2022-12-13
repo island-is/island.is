@@ -1,7 +1,11 @@
 import * as constants from '@island.is/judicial-system/consts'
 import { Case } from '@island.is/judicial-system/types'
 
-import { findLastValidStep, hasDateChanged, toggleInArray } from './formHelper'
+import {
+  findFirstInvalidStep,
+  hasDateChanged,
+  toggleInArray,
+} from './formHelper'
 
 describe('toggleInArray', () => {
   it.each`
@@ -77,7 +81,7 @@ describe('hasDateChanged', () => {
 
 describe('findLastValidStep', () => {
   it('should return the last valid step', () => {
-    const lastValidStep = findLastValidStep(
+    const lastValidStep = findFirstInvalidStep(
       [
         constants.INVESTIGATION_CASE_CASE_FILES_ROUTE,
         constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
@@ -86,11 +90,11 @@ describe('findLastValidStep', () => {
       { policeCaseNumbers: ['test'] } as Case,
     )
 
-    expect(lastValidStep).toEqual(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)
+    expect(lastValidStep).toEqual(constants.INDICTMENTS_PROCESSING_ROUTE)
   })
 
   it('should return the first step if no valid steps are found', () => {
-    const lastValidStep = findLastValidStep(
+    const lastValidStep = findFirstInvalidStep(
       [
         constants.INDICTMENTS_PROCESSING_ROUTE,
         constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
@@ -103,7 +107,7 @@ describe('findLastValidStep', () => {
   })
 
   it('should return the last step if all steps are valid', () => {
-    const lastValidStep = findLastValidStep(
+    const lastValidStep = findFirstInvalidStep(
       [
         constants.INVESTIGATION_CASE_CASE_FILES_ROUTE,
         constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,

@@ -301,7 +301,7 @@ export const stepValidations = (theCase: Case): stepValidationsType => {
   }
 }
 
-export const findLastValidStep = (steps: string[], theCase: Case) => {
+export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
   const validations = stepValidations(theCase)
   const validationEntries = Object.entries(validations)
   const stepsToCheck = validationEntries.filter(([key]) => steps.includes(key))
@@ -310,10 +310,6 @@ export const findLastValidStep = (steps: string[], theCase: Case) => {
     return steps[steps.length - 1]
   }
 
-  const [key] =
-    stepsToCheck
-      .slice()
-      .reverse()
-      .find(([, value]) => value === true) || []
-  return key ?? steps[0]
+  const [key] = stepsToCheck.find(([, value]) => value === false) || []
+  return key
 }

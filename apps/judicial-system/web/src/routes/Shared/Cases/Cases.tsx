@@ -30,7 +30,7 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import { findLastValidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -150,12 +150,12 @@ export const Cases: React.FC = () => {
       }
     } else if (isExtendedCourtRole(role)) {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(
+        routeTo = findFirstInvalidStep(
           constants.courtRestrictionCasesRoutes,
           caseToOpen,
         )
       } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(
+        routeTo = findFirstInvalidStep(
           constants.courtInvestigationCasesRoutes,
           caseToOpen,
         )
@@ -166,17 +166,17 @@ export const Cases: React.FC = () => {
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(
+        routeTo = findFirstInvalidStep(
           constants.prosecutorRestrictionCasesRoutes,
           caseToOpen,
         )
       } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(
+        routeTo = findFirstInvalidStep(
           constants.prosecutorInvestigationCasesRoutes,
           caseToOpen,
         )
       } else {
-        routeTo = findLastValidStep(
+        routeTo = findFirstInvalidStep(
           constants.prosecutorIndictmentRoutes,
           caseToOpen,
         )
