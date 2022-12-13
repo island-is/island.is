@@ -6,7 +6,7 @@ import {
   Validate,
   ValidationRule,
   ValidationValueMessage,
-} from 'react-hook-form/dist/types/form'
+} from 'react-hook-form/dist/types/validator'
 
 type ControllerRules = Partial<{
   required: string | boolean | ValidationValueMessage<boolean>
@@ -15,7 +15,7 @@ type ControllerRules = Partial<{
   maxLength: ValidationRule<number>
   minLength: ValidationRule<number>
   pattern: ValidationRule<RegExp>
-  validate: Validate
+  validate: Validate<string>
 }>
 
 interface Props {

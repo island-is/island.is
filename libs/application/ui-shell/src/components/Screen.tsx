@@ -128,7 +128,11 @@ const Screen: FC<ScreenProps> = ({
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-  const { handleSubmit, errors: formErrors, reset } = hookFormData
+  const {
+    handleSubmit,
+    formState: { errors: formErrors },
+    reset,
+  } = hookFormData
 
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
@@ -277,7 +281,7 @@ const Screen: FC<ScreenProps> = ({
           {},
           {
             ...formValue,
-            [screen.id]: newRepeaterItems as Answer[],
+            [screen.id]: newRepeaterItems as FormValue[],
           },
         ),
       )
