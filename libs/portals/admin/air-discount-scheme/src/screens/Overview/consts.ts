@@ -47,7 +47,7 @@ export const genderOptions = [
     value: 'kvk',
   },
   {
-    label: 'hvk',
-    value: 'hvk',
+    label: 'x',
+    value: 'x',
   },
 ]
