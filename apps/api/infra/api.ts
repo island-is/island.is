@@ -20,6 +20,7 @@ import {
   Vehicles,
   AdrAndMachine,
   Firearm,
+  DisabilityLicense,
   VehicleServiceFjsV1,
   TransportAuthority,
 } from '../../../infra/src/dsl/xroad'
@@ -236,6 +237,7 @@ export const serviceSetup = (services: {
     .xroad(
       AdrAndMachine,
       Firearm,
+      DisabilityLicense,
       Base,
       Client,
       HealthInsurance,
