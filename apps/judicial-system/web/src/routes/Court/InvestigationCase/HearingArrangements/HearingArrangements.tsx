@@ -64,6 +64,7 @@ const HearingArrangements = () => {
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
+  const [nextRoute, setNextRoute] = useState<string>()
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -96,38 +97,45 @@ const HearingArrangements = () => {
     workingCase,
   ])
 
-  const handleNextButtonClick = useCallback(() => {
-    const hasSentNotification = workingCase?.notifications?.find(
-      (notification) => notification.type === NotificationType.COURT_DATE,
-    )
-
-    setAndSendCaseToServer(
-      [
-        {
-          courtDate: courtDate
-            ? formatDateForServer(new Date(courtDate))
-            : undefined,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-
-    if (hasSentNotification && !courtDateHasChanged) {
-      router.push(
-        `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+  const onNavigationTo = useCallback(
+    async (destination: string) => {
+      const hasSentNotification = workingCase?.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
       )
-    } else {
-      setModalVisible(true)
-    }
-  }, [
+
+      setAndSendCaseToServer(
+        [
+          {
+            courtDate: courtDate
+              ? formatDateForServer(new Date(courtDate))
+              : undefined,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (hasSentNotification && !courtDateHasChanged) {
+        router.push(destination)
+      } else {
+        setNextRoute(destination)
+        setModalVisible(true)
+      }
+    },
+    [
+      workingCase,
+      setAndSendCaseToServer,
+      courtDate,
+      setWorkingCase,
+      courtDateHasChanged,
+    ],
+  )
+
+  const stepIsValid = isCourtHearingArrangementsStepValidIC(
     workingCase,
-    setAndSendCaseToServer,
     courtDate,
-    setWorkingCase,
-    courtDateHasChanged,
-  ])
+  )
 
   return (
     <PageLayout
@@ -138,6 +146,8 @@ const HearingArrangements = () => {
       activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      onNavigationTo={onNavigationTo}
+      isValid={stepIsValid}
     >
       <PageHeader
         title={formatMessage(
@@ -300,10 +310,12 @@ const HearingArrangements = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={handleNextButtonClick}
-              nextIsDisabled={
-                !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
+              onNextButtonClick={() =>
+                onNavigationTo(
+                  `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+                )
               }
+              nextIsDisabled={!stepIsValid}
               nextButtonText={formatMessage(m.continueButton.label)}
             />
           </FormContentContainer>
@@ -327,9 +339,7 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(
-                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
-                  )
+                  router.push(`${nextRoute}/${workingCase.id}`)
                 }
               }}
               onSecondaryButtonClick={async () => {
@@ -340,9 +350,7 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(
-                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
-                  )
+                  router.push(`${nextRoute}/${workingCase.id}`)
                 }
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}

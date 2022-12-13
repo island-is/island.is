@@ -546,7 +546,7 @@ export const CourtRecord: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={() =>
+          onNextButtonClick={() =>
             onNavigationTo(
               `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`,
             )

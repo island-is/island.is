@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -127,6 +127,17 @@ const Ruling = () => {
     initialAutoFillDone,
     setInitialAutoFillDone,
   ])
+  const onNavigationTo = useCallback(
+    async (destination: string) => {
+      if (isModifyingRuling) {
+        requestRulingSignature()
+      } else {
+        router.push(destination)
+      }
+    },
+    [isModifyingRuling, requestRulingSignature],
+  )
+  const stepIsValid = isRulingValidIC(workingCase)
 
   return (
     <PageLayout
@@ -137,6 +148,8 @@ const Ruling = () => {
       activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.ruling)}
@@ -469,17 +482,12 @@ const Ruling = () => {
               ? isRequestingRulingSignature || isLoadingWorkingCase
               : isLoadingWorkingCase
           }
-          nextUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isRulingValidIC(workingCase)}
-          onNextButtonClick={() => {
-            if (isModifyingRuling) {
-              requestRulingSignature()
-            } else {
-              router.push(
-                `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
-              )
-            }
-          }}
+          nextIsDisabled={!stepIsValid}
+          onNextButtonClick={() =>
+            onNavigationTo(
+              `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
+            )
+          }
         />
       </FormContentContainer>
       {modalVisible === 'SigningModal' && (
