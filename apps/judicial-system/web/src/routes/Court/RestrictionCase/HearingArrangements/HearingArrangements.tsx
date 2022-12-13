@@ -102,38 +102,44 @@ export const HearingArrangements: React.FC = () => {
     workingCase,
   ])
 
-  const handleNextButtonClick = useCallback(() => {
-    const hasSentNotification = workingCase?.notifications?.find(
-      (notification) => notification.type === NotificationType.COURT_DATE,
-    )
-
-    setAndSendCaseToServer(
-      [
-        {
-          courtDate: courtDate
-            ? formatDateForServer(new Date(courtDate))
-            : undefined,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-
-    if (hasSentNotification && !courtDateHasChanged) {
-      router.push(
-        `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+  const onNavigationTo = useCallback(
+    async (destination: string) => {
+      const hasSentNotification = workingCase?.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
       )
-    } else {
-      setModalVisible(true)
-    }
-  }, [
+
+      setAndSendCaseToServer(
+        [
+          {
+            courtDate: courtDate
+              ? formatDateForServer(new Date(courtDate))
+              : undefined,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (hasSentNotification && !courtDateHasChanged) {
+        router.push(destination)
+      } else {
+        setModalVisible(true)
+      }
+    },
+    [
+      workingCase,
+      setAndSendCaseToServer,
+      courtDate,
+      setWorkingCase,
+      courtDateHasChanged,
+    ],
+  )
+
+  const stepIsValid = isCourtHearingArrangemenstStepValidRC(
     workingCase,
-    setAndSendCaseToServer,
     courtDate,
-    setWorkingCase,
-    courtDateHasChanged,
-  ])
+  )
 
   return (
     <PageLayout
@@ -144,6 +150,8 @@ export const HearingArrangements: React.FC = () => {
       activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      onNavigationTo={onNavigationTo}
+      isValid={stepIsValid}
     >
       <PageHeader
         title={formatMessage(titles.court.restrictionCases.hearingArrangements)}
@@ -189,11 +197,13 @@ export const HearingArrangements: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={handleNextButtonClick}
-          nextButtonText={formatMessage(m.continueButton.label)}
-          nextIsDisabled={
-            !isCourtHearingArrangemenstStepValidRC(workingCase, courtDate)
+          onNextButtonClick={() =>
+            onNavigationTo(
+              `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+            )
           }
+          nextButtonText={formatMessage(m.continueButton.label)}
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
       {modalVisible && (

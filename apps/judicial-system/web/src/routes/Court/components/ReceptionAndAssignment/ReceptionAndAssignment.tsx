@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
@@ -138,6 +138,12 @@ const ReceptionAndAssignment = () => {
         RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
   }
 
+  const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
+  const onNavigationTo = useCallback(
+    (destination: string) => router.push(destination),
+    [router],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -145,6 +151,8 @@ const ReceptionAndAssignment = () => {
       activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={onNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.shared.receptionAndAssignment)}
@@ -191,8 +199,8 @@ const ReceptionAndAssignment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
-          nextUrl={getNextRoute()}
-          nextIsDisabled={!isReceptionAndAssignmentStepValid(workingCase)}
+          onNextButtonClick={() => onNavigationTo(getNextRoute())}
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
     </PageLayout>
