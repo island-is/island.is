@@ -7,10 +7,7 @@ RUN apk add -U git
 WORKDIR /build
 
 # Adding and installing packages
-ADD package.json yarn.lock .yarnrc.yml ./
-COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
-RUN CI=true yarn install --immutable
 
 FROM deps as src
 
@@ -27,7 +24,7 @@ ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-
+RUN yarn workspaces focus ${APP}
 RUN yarn run build ${APP} --prod
 
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
