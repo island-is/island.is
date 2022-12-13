@@ -72,6 +72,7 @@ libs/localization/messages.json
 /generated_files.tar.gz
 openapi.yaml
 api.graphql
+schema.d.ts
 schema.tsx
 schema.ts
 possibleTypes.json

@@ -170,7 +170,7 @@ Create an `codegen.yml` file in your project
 schema:
   - PATH/api.graphql
 generates:
-  PATH/schema.ts:
+  PATH/schema.d.ts:
     plugins:
       - ...
 hooks:
@@ -190,7 +190,7 @@ Finally, you need to add it inside your `project.json`
 ```
 
 {% hint style="info" %}
-You should use one of the following names for the generated file from the codegen.yml configuration: `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
+You should use one of the following names for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
 {% endhint %}
 
 ## Generating schema and client types
