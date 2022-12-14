@@ -17,6 +17,9 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  UserProfileApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 
 import {
@@ -48,6 +51,7 @@ import {
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
+import { ChildrenApi } from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -124,6 +128,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [UserProfileApi, NationalRegistryUserApi, ChildrenApi],
             },
           ],
         },
@@ -153,10 +158,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.25,
-          onExit: {
-            apiModuleAction: ApiModuleActions.validateApplication,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -200,10 +205,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignOtherParent,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignOtherParent,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -272,11 +277,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -304,10 +308,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -402,11 +406,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -435,11 +438,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.sendApplication,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -645,10 +648,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
-          onExit: {
-            apiModuleAction: ApiModuleActions.validateApplication,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -697,10 +700,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -811,11 +814,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -854,11 +856,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.sendApplication,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

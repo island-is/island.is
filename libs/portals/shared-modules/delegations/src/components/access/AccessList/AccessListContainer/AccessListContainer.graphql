@@ -1,0 +1,22 @@
+fragment AuthApiScope on AuthApiScope {
+  name
+  displayName
+  description
+}
+
+query AuthScopeTree($input: AuthApiScopesInput!) {
+  authScopeTree(input: $input) {
+    __typename
+    ... on AuthApiScope {
+      ...AuthApiScope
+    }
+    ... on AuthApiScopeGroup {
+      name
+      displayName
+      description
+      children {
+        ...AuthApiScope
+      }
+    }
+  }
+}

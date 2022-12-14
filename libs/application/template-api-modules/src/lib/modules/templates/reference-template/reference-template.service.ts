@@ -2,18 +2,47 @@ import { Injectable } from '@nestjs/common'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-
+import { getValueViaPath } from '@island.is/application/core'
 import {
   generateApplicationApprovedEmail,
   generateAssignApplicationEmail,
 } from './emailGenerators'
+import { ApplicationTypes } from '@island.is/application/types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
-export class ReferenceTemplateService {
+export class ReferenceTemplateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.EXAMPLE)
+  }
+
+  async getReferenceData({ application }: TemplateApiModuleActionProps) {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    const name = getValueViaPath(
+      application.externalData,
+      'nationalRegistry.data.name',
+    ) as string
+
+    return {
+      referenceData: {
+        name,
+        some: 'data',
+        numbers: 123,
+      },
+    }
+  }
+
+  async getAnotherReferenceData({ application }: TemplateApiModuleActionProps) {
+    return {
+      anotherData: {
+        stuff: 'someDataString',
+      },
+    }
+  }
 
   // A test action that can be used in the ReferenceApplicationTemplate to see
   // what happens when an api action fails
