@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -20,6 +21,12 @@ import {
   existsAndKMarking,
   exists,
 } from '../util/mortgageCertificateValidation'
+import {
+  NationalRegistryUserApi,
+  NationalRegistryRealEstateApi,
+  UserProfileApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -59,9 +66,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
-          onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.validateMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -77,6 +84,12 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                NationalRegistryRealEstateApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+              ],
               delete: true,
             },
           ],
@@ -109,9 +122,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
-          onEntry: {
-            apiModuleAction: ApiActions.submitRequestToSyslumenn,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitRequestToSyslumenn,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -144,9 +157,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
-          onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.validateMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -219,12 +232,12 @@ const template: ApplicationTemplate<
           },
           progress: 0.8,
           lifecycle: pruneAfterDays(1 / 24),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -255,9 +268,9 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.getMortgageCertificate,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.getMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

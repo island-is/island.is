@@ -116,6 +116,7 @@ describe('CriminalRecordSubmissionService', () => {
       const res = await criminalRecordSubmissionService.submitApplication({
         application,
         auth: user,
+        currentUserLocale: 'is',
       })
 
       expect(res).toEqual({

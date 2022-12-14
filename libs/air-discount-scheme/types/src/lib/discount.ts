@@ -1,3 +1,5 @@
+import { User } from './user'
+
 export type ConnectionDiscountCode = {
   code: string
   flightId: string
@@ -6,6 +8,7 @@ export type ConnectionDiscountCode = {
 }
 
 export interface Discount {
+  user: User
   discountCode: string
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
