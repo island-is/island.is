@@ -6,6 +6,8 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
@@ -45,6 +47,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [NationalRegistryUserApi],
               delete: true,
             },
           ],
@@ -61,11 +64,11 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
           status: 'approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.CreateEndorsementList,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
