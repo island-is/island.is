@@ -130,11 +130,13 @@ export class ApplicationAccessService {
         if (!userDelegations) {
           return false
         }
-        const matchesAtLeastOneDelegation = await template.allowedDelegations.some(
-          async (d) => await this.isDelegatationAllowed(d, user),
-        )
 
-        if (!matchesAtLeastOneDelegation) {
+        if (
+          !(await this.matchesAtLeastOneDelegation(
+            template.allowedDelegations,
+            user,
+          ))
+        ) {
           return false
         }
       }
@@ -147,6 +149,20 @@ export class ApplicationAccessService {
     const currentUserRole = template.mapUserToRole(nationalId, application)
     const templateHelper = new ApplicationTemplateHelper(application, template)
     return this.evaluateIfRoleShouldBeListed(currentUserRole, templateHelper)
+  }
+
+  private async matchesAtLeastOneDelegation(
+    delegations: AllowedDelegation[],
+    user: User,
+  ): Promise<boolean> {
+    let matchesAtLeastOneDelegation = false
+    for (const delegation of delegations) {
+      if (await this.isDelegatationAllowed(delegation, user)) {
+        matchesAtLeastOneDelegation = true
+        break
+      }
+    }
+    return matchesAtLeastOneDelegation
   }
 
   async isDelegatationAllowed(

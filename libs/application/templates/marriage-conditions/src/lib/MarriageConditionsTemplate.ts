@@ -10,6 +10,10 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
@@ -19,6 +23,7 @@ import {
   getApplicationFeatureFlags,
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
+import { MaritalStatusApi } from '../dataProviders'
 
 const pruneAfter = (time: number) => {
   return {
@@ -74,6 +79,12 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                DistrictsApi,
+                MaritalStatusApi,
+              ],
               delete: true,
             },
           ],
@@ -88,9 +99,9 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.9,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -122,9 +133,9 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.assignSpouse,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.assignSpouse,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -153,6 +164,12 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                DistrictsApi,
+                MaritalStatusApi,
+              ],
             },
           ],
         },
@@ -171,11 +188,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

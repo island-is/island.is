@@ -102,7 +102,7 @@ identity-server:
     Datadog__Metrics__Port: '5003'
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
-    IdentityServer__KeyManagement__Enabled: 'false'
+    IdentityServer__KeyManagement__Enabled: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     NODE_OPTIONS: '--max-old-space-size=2000'
     NO_UPDATE_NOTIFIER: 'true'
@@ -268,8 +268,6 @@ services-auth-delegation-api:
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
