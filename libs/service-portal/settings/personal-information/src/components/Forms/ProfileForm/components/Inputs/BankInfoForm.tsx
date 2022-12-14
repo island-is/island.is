@@ -26,7 +26,12 @@ interface Props {
 export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, errors, getValues } = useForm()
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm()
   const [inputPristine, setInputPristine] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string>()
 

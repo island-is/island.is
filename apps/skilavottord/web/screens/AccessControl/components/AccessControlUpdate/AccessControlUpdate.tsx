@@ -32,7 +32,13 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   roles,
   currentPartner,
 }) => {
-  const { control, errors, reset, handleSubmit, watch } = useForm({
+  const {
+    control,
+    reset,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
 

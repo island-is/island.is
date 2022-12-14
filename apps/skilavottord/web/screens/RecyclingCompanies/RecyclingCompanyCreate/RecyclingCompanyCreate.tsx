@@ -57,7 +57,11 @@ const RecyclingCompanyCreate: FC = () => {
       ],
     },
   )
-  const { control, errors, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
   const {

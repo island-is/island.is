@@ -10,7 +10,11 @@ interface Props {
   organisationId: string
 }
 export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
   const { formatMessage } = useLocale()
 
   const { updateHelpDesk, loading } = useUpdateHelpDesk(organisationId)

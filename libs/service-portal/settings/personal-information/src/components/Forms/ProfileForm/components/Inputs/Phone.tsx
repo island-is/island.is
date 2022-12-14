@@ -42,7 +42,13 @@ export const InputPhone: FC<Props> = ({
   telDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues, setValue } = useForm()
+  const {
+    handleSubmit,
+    control,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,

@@ -22,7 +22,11 @@ interface Props {
 }
 
 export const InstitutionForm: FC<Props> = ({ organisation }) => {
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
   const { formatMessage } = useLocale()
   const { updateOrganisation, loading } = useUpdateOrganisation()
 

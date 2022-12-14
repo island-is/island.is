@@ -23,7 +23,11 @@ export const TechnicalContactForm: FC<Props> = ({
   organisationId,
   technicalContact,
 }) => {
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
   const { formatMessage } = useLocale()
   const { updateTechnicalContact, loading } = useUpdateTechnicalContact(
     organisationId,

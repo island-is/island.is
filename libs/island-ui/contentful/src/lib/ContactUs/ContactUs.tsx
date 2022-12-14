@@ -55,7 +55,11 @@ export const ContactUs: FC<ContactUsProps> = ({
   successMessage = 'Takk fyrir að hafa samband ...',
   errorMessage = 'Eitthvað fór úrskeiðis',
 }) => {
-  const { handleSubmit, register, errors } = useForm<ContactUsFormState>()
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<ContactUsFormState>()
 
   useEffect(() => {
     if (state === 'error') {

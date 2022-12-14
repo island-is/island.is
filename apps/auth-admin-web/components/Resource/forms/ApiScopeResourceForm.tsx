@@ -16,7 +16,11 @@ interface Props {
 }
 
 const ApiScopeResourceForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors } = useForm<ApiResourceScopeDTO>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ApiResourceScopeDTO>()
   const [apiResources, setApiResources] = useState<ApiResource[]>([])
   const [selectedApiResource, setSelectedApiResource] = useState<ApiResource>(
     new ApiResource(),

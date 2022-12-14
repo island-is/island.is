@@ -59,7 +59,11 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
   isFetching,
 }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
   return (
     <Box marginY={3}>
       <form onSubmit={handleSubmit(onSubmit)}>

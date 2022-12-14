@@ -14,7 +14,12 @@ interface Props {
 }
 
 const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, reset } = useForm<UserClaimDTO>()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UserClaimDTO>()
   const [visible, setVisible] = useState<boolean>(false)
   const [isAvailable, setIsAvailable] = useState<boolean>(true)
   const [claimLength, setClaimLength] = useState<number>(0)

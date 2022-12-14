@@ -16,7 +16,11 @@ export const ResponsibleContactForm: FC<Props> = ({
   organisationId,
   administrativeContact,
 }) => {
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
   const { formatMessage } = useLocale()
   const {
     updateAdministrativeContact,

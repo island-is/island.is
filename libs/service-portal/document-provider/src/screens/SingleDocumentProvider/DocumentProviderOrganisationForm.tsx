@@ -21,7 +21,11 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
   setOrganisationName,
 }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
 
   const { updateOrganisation, loading } = useUpdateOrganisation(
     (data: OnCompletedArgumentsType) => {

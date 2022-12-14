@@ -28,7 +28,11 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
   organisationNationalId,
 }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
   const { updateHelpDesk, loading: loadingUpdate } = useUpdateHelpDesk(
     organisationId,
   )

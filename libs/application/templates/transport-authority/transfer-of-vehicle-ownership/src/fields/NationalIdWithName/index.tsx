@@ -38,7 +38,10 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   const { id } = field
   const usedId = customId.length > 0 ? customId : id
   const { formatMessage } = useLocale()
-  const { setValue, errors } = useFormContext()
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${usedId}.name`
   const nationaIdField = `${usedId}.nationalId`

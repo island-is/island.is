@@ -92,7 +92,12 @@ const RecyclingCompanyUpdate: FC = () => {
     },
   )
 
-  const { control, errors, reset, handleSubmit } = useForm({
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
   const {

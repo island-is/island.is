@@ -32,7 +32,12 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
       'ApiScopePersonalRepresentativePermissions',
     ),
   )
-  const { register, handleSubmit, errors, watch } = useForm<Inputs>()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>()
   const selectedItem = watch('permissionType')
 
   useEffect(() => {

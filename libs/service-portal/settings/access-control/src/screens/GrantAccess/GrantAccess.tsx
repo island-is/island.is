@@ -65,7 +65,13 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   const [name, setName] = useState('')
-  const { handleSubmit, control, errors, watch, reset } = useForm({
+  const {
+    handleSubmit,
+    control,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
   const [

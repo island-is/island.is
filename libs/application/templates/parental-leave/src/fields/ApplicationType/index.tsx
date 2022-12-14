@@ -14,7 +14,9 @@ import { getApplicationTypeOptions } from '../../lib/parentalLeaveUtils'
 export const ApplicationType: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title } = field
   const { formatMessage } = useLocale()
-  const { errors } = useFormContext()
+  const {
+    formState: { errors },
+  } = useFormContext()
   return (
     <Box>
       <Text variant="h4" as="h4">

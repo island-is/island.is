@@ -16,7 +16,11 @@ interface Props {
 
 export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
