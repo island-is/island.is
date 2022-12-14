@@ -132,8 +132,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
       <input
         type="hidden"
         value={userMessageId}
-        ref={register({ required: true })}
-        name={typeField}
+        {...register(typeField, { required: true })}
       />
     </Box>
   )

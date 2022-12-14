@@ -270,8 +270,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       ) : (
         <input
           type="hidden"
-          name={`${entry}.paymentMode`}
-          ref={register({ required: true })}
+          {...register(`${entry}.paymentMode`, { required: true })}
           value={paymentMode}
         />
       )}

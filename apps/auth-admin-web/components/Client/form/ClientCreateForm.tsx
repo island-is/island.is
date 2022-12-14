@@ -620,8 +620,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       type="checkbox"
                       defaultChecked={client.requireApiScopes}
                       className="client__input"
-                      name="client.requireApiScopes"
-                      ref={register}
+                      {...register('client.requireApiScopes')}
                       title={localization.fields['requireApiScopes'].helpText}
                     />
                     <HelpBox

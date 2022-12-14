@@ -86,8 +86,7 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
       <input
         type="hidden"
         value={userMessageId}
-        ref={register({ required: true })}
-        name={typeField}
+        {...register(typeField, { required: true })}
       />
     </Box>
   )

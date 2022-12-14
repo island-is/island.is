@@ -452,9 +452,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                       {localization.fields['grantToAuthenticatedUser'].label}
                     </label>
                     <input
-                      ref={register}
                       id="apiScope.grantToAuthenticatedUser"
-                      name="apiScope.grantToAuthenticatedUser"
+                      {...register('apiScope.grantToAuthenticatedUser')}
                       type="checkbox"
                       defaultChecked={props.apiScope.grantToAuthenticatedUser}
                       className="api-scope-form__checkbox"

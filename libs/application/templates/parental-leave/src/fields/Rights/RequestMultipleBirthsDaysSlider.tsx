@@ -102,38 +102,29 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
 
       <input
         type="hidden"
-        ref={register}
-        name={id}
+        {...register(id)}
         value={chosenRequestDays.toString()}
       />
 
       <input
         type="hidden"
-        ref={register}
-        name="requestRights.isRequestingRights"
+        {...register('requestRights.isRequestingRights')}
         value={NO}
       />
 
       <input
         type="hidden"
-        ref={register}
-        name="requestRights.requestDays"
+        {...register('requestRights.requestDays')}
         value={0}
       />
 
       <input
         type="hidden"
-        ref={register}
-        name="giveRights.isGivingRights"
+        {...register('giveRights.isGivingRights')}
         value={NO}
       />
 
-      <input
-        type="hidden"
-        ref={register}
-        name="giveRights.giveDays"
-        value={0}
-      />
+      <input type="hidden" {...register('giveRights.giveDays')} value={0} />
     </>
   )
 }
