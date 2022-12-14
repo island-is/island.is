@@ -108,7 +108,7 @@ export const VehicleSelectField: FC<
       label: formatMessage(information.labels.pickVehicle.isNotDebtLessTag),
     })
   }
-  if (!!selectedVehicle?.updatelocks?.length) {
+  if (selectedVehicle?.updatelocks?.length) {
     for (let i = 0; i < selectedVehicle.updatelocks.length; i++) {
       const message = formatMessage(
         getValueViaPath(
@@ -126,7 +126,7 @@ export const VehicleSelectField: FC<
       })
     }
   }
-  if (!!selectedVehicle?.ownerChangeErrorMessages?.length) {
+  if (selectedVehicle?.ownerChangeErrorMessages?.length) {
     for (let i = 0; i < selectedVehicle.ownerChangeErrorMessages.length; i++) {
       const message = formatMessage(
         getValueViaPath(

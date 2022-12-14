@@ -1,4 +1,4 @@
-import { QualityPhotoAndSignature } from '../types/schema'
+import { QualityPhotoAndSignature } from '@island.is/api/schema'
 import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
