@@ -10,6 +10,7 @@ export * from './screens/Modules'
 
 // Hooks
 export * from './hooks/useModuleProps'
+export * from './hooks/useNavigation'
 
 // Components
 export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'
