@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import capitalize from 'lodash/capitalize'
+import cn from 'classnames'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { Screen } from '../types'
@@ -52,6 +53,8 @@ import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { CustomNextError } from '../units/errors'
 import useContentfulId from '../hooks/useContentfulId'
 import { webRichText } from '../utils/richText'
+
+import * as styles from './News.css'
 
 const PERPAGE = 10
 
@@ -227,7 +230,12 @@ const NewsListNew: Screen<NewsListProps> = ({
         {newsItem.intro}
       </Text>
       {Boolean(newsItem.image) && (
-        <Box paddingY={2}>
+        <Box
+          paddingY={2}
+          className={cn({
+            [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
+          })}
+        >
           <Image
             {...newsItem.image}
             url={newsItem.image.url + '?w=774&fm=webp&q=80'}
@@ -236,7 +244,16 @@ const NewsListNew: Screen<NewsListProps> = ({
         </Box>
       )}
       <Box paddingBottom={4} width="full">
-        {webRichText(newsItem.content as SliceType[])}
+        {webRichText(newsItem.content as SliceType[], {
+          renderComponent: {
+            // Make sure that images in the content are full width
+            Image: (slice) => (
+              <Box className={styles.clearBoth}>
+                <Image {...slice} thumbnail={slice.url + '?w=50'} />
+              </Box>
+            ),
+          },
+        })}
       </Box>
     </>
   )

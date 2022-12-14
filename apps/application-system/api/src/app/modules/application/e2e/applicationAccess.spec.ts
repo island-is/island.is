@@ -10,6 +10,7 @@ import * as faker from 'faker'
 import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AllowedDelegation } from '@island.is/application/types'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const testApplicationTemplate = createApplicationTemplate()
 
@@ -23,11 +24,11 @@ const createMockUser = (nationalId?: string) => {
 }
 
 const procurationHolderUser = createCurrentUser({
-  delegationType: 'ProcurationHolder',
+  delegationType: AuthDelegationType.ProcurationHolder,
 })
 
 const legalGuardianUser = createCurrentUser({
-  delegationType: 'LegalGuardian',
+  delegationType: AuthDelegationType.LegalGuardian,
 })
 
 describe('ApplicationAccesService', () => {
@@ -74,7 +75,7 @@ describe('ApplicationAccesService', () => {
   })
   it('should show on Overview if delegations and flags are correct', async () => {
     const allowedDelegation: AllowedDelegation = {
-      type: 'ProcurationHolder',
+      type: AuthDelegationType.ProcurationHolder,
       featureFlag: Features.testing,
     }
     const applicationInDraft = createApplication({
@@ -97,7 +98,7 @@ describe('ApplicationAccesService', () => {
 
   it('should return true for correct delegation type and feature flag for isDelegationAllowed ', async () => {
     const allowedDelegation: AllowedDelegation = {
-      type: 'ProcurationHolder',
+      type: AuthDelegationType.ProcurationHolder,
       featureFlag: Features.testing,
     }
     const results = await applicationAccessService.isDelegatationAllowed(
@@ -109,7 +110,7 @@ describe('ApplicationAccesService', () => {
 
   it('should return true with no flag and valid delegation type for isDelegationAllowed', async () => {
     const allowedDelegation: AllowedDelegation = {
-      type: 'LegalGuardian',
+      type: AuthDelegationType.LegalGuardian,
     }
     const results = await applicationAccessService.isDelegatationAllowed(
       allowedDelegation,
@@ -120,7 +121,7 @@ describe('ApplicationAccesService', () => {
 
   it('should return false on false feature flag for isDelegationAllowed', async () => {
     const allowedDelegation: AllowedDelegation = {
-      type: 'LegalGuardian',
+      type: AuthDelegationType.LegalGuardian,
       featureFlag: Features.testing,
     }
     const results = await applicationAccessService.isDelegatationAllowed(
@@ -132,7 +133,7 @@ describe('ApplicationAccesService', () => {
 
   it('should return false on invalid delegation type for isDelegationAllowed', async () => {
     const allowedDelegation: AllowedDelegation = {
-      type: 'PersonalRepresentative',
+      type: AuthDelegationType.PersonalRepresentative,
       featureFlag: Features.testing,
     }
     const results = await applicationAccessService.isDelegatationAllowed(
@@ -144,7 +145,7 @@ describe('ApplicationAccesService', () => {
 
   it('should not show on Overview if delegation is does not match', async () => {
     const allowedDelegation: AllowedDelegation = {
-      type: 'LegalGuardian',
+      type: AuthDelegationType.LegalGuardian,
       featureFlag: Features.testing,
     }
 
@@ -168,7 +169,7 @@ describe('ApplicationAccesService', () => {
 
   it('should not show on Overview if user has delegation and feature flag returns false', async () => {
     const allowedDelegation: AllowedDelegation = {
-      type: 'LegalGuardian',
+      type: AuthDelegationType.LegalGuardian,
       featureFlag: Features.testing,
     }
 

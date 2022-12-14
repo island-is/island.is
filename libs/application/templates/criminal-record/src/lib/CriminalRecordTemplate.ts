@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -16,6 +17,12 @@ import { Events, States, Roles } from './constants'
 import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SyslumadurPaymentCatalogApi,
+  CriminalRecordApi,
+} from '../dataProviders'
 
 const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -62,6 +69,12 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+                CriminalRecordApi,
+              ],
             },
           ],
         },
@@ -84,12 +97,12 @@ const template: ApplicationTemplate<
           },
           progress: 0.8,
           lifecycle: pruneAfterDays(1 / 24),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -120,9 +133,9 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.getCriminalRecord,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.getCriminalRecord,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

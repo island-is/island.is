@@ -7,6 +7,10 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  HealthInsuranceApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
@@ -67,6 +71,11 @@ const HealthInsuranceTemplate: ApplicationTemplate<
               ],
               delete: true,
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                HealthInsuranceApi,
+                UserProfileApi,
+              ],
             },
           ],
         },
@@ -109,9 +118,9 @@ const HealthInsuranceTemplate: ApplicationTemplate<
         meta: {
           status: 'completed',
           name: applicationName,
-          onEntry: {
-            apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE.sendApplyHealthInsuranceApplication,
+          }),
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
