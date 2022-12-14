@@ -59,8 +59,8 @@ const DocumentLine: FC<Props> = ({
           id: documentLine.id,
         },
       },
-      onCompleted: async () => {
-        await onClickHandler()
+      onCompleted: () => {
+        onClickHandler()
       },
     },
   )
@@ -138,7 +138,7 @@ const DocumentLine: FC<Props> = ({
       // Check if data is already fetched, if so go straight to download/display
       onClick={async () => {
         if (getFileByIdData && !loading) {
-          await onClickHandler()
+          onClickHandler()
         } else {
           getDocument({ variables: { input: { id: documentLine.id } } })
         }
