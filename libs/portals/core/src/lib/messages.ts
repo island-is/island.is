@@ -1,42 +1,99 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  overview: {
-    id: 'service.portal:overview',
-    defaultMessage: 'Yfirlit',
-  },
-  couldNotFetch: {
-    id: 'service.portal:could-not-fetch',
-    defaultMessage: 'Tókst ekki að sækja',
-  },
-  somethingWrong: {
-    id: 'service.portal:something-went-wrong',
-    defaultMessage: 'Eitthvað fór úrskeiðis',
-  },
   accessDenied: {
-    id: 'service.portal:accessDenied',
     defaultMessage: 'Ekki með aðgang',
-  },
-  accessNeeded: {
-    id: 'service.portal:access-needed',
-    defaultMessage: 'Umboð vantar',
-  },
-  accessNeededText: {
-    id: 'service.portal:access-needed-text',
-    defaultMessage: 'Umboð vantar',
+    id: 'portals:accessDenied',
   },
   accessDeniedText: {
-    id: 'service.portal:accessDeniedText',
     defaultMessage:
       'Því miður vantar þig umboð til þess að hafa aðgang að þessu svæði. Vinsamlegast hafðu samband við viðeigandi aðila sem sér um þessi mál.',
+    id: 'portals:accessDeniedText',
+  },
+  accessNeeded: {
+    defaultMessage: 'Umboð vantar',
+    id: 'portals:access-needed',
+  },
+  accessNeededText: {
+    defaultMessage: 'Umboð vantar',
+    id: 'portals:access-needed-text',
+  },
+  buttonCancel: {
+    defaultMessage: 'Hætta við',
+    description: 'Cancel',
+    id: 'portals:button.cancel',
+  },
+  buttonDestroy: {
+    defaultMessage: 'Eyða',
+    description: 'Delete',
+    id: 'portals:button.delete',
+  },
+  buttonEdit: {
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+    id: 'portals:button.edit',
+  },
+  buttonRenew: {
+    defaultMessage: 'Endurnýja',
+    description: 'Renew',
+    id: 'portals:button.renew',
+  },
+  chooseDate: {
+    defaultMessage: 'Veldu dagsetningu',
+    id: 'portals:choose-date',
+  },
+  clearSelected: {
+    defaultMessage: 'Hreinsa val',
+    id: 'portals:clear-selected',
+  },
+  codeConfirmation: {
+    defaultMessage: 'Staðfesta',
+    id: 'portals:code-confirmation',
+  },
+  couldNotFetch: {
+    defaultMessage: 'Tókst ekki að sækja',
+    id: 'portals:could-not-fetch',
+  },
+  date: {
+    defaultMessage: 'Dagsetning',
+    id: 'portals:date',
+  },
+  errorFetch: {
+    defaultMessage: 'Ekki tókst að sækja gögn',
+    id: 'portals:could-not-fetch-data',
+  },
+  errorPageHeading: {
+    defaultMessage: 'Eitthvað fór úrskeiðis',
+    id: 'portals:error-page-heading',
+  },
+  errorPageText: {
+    defaultMessage:
+      'Því miður hefur eitthvað farið úrskeiðis og ekki næst samband við vefþjón.',
+    id: 'portals:error-page-text',
+  },
+  loadingScreen: {
+    defaultMessage: 'Er að hlaða nauðsynlegum gögnum',
+    id: 'portals:loading-screen',
   },
   notFound: {
-    id: 'service.portal:not-found',
     defaultMessage: 'Síða finnst ekki',
+    id: 'portals:not-found',
   },
   notFoundMessage: {
-    id: 'service.portal:not-found-message',
     defaultMessage:
       'Ekkert fannst á slóðinni {path}. Mögulega hefur síðan verið fjarlægð eða færð til',
+    id: 'portals:not-found-message',
+  },
+  overview: {
+    defaultMessage: 'Yfirlit',
+    id: 'portals:overview',
+  },
+  somethingWrong: {
+    defaultMessage: 'Eitthvað fór úrskeiðis',
+    id: 'portals:something-went-wrong',
+  },
+  view: {
+    defaultMessage: 'Skoða',
+    id: 'portals:view',
   },
 })

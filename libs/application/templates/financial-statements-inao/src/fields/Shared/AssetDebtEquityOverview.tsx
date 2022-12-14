@@ -5,6 +5,7 @@ import { m } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
 import { useLocale } from '@island.is/localization'
 import { formatCurrency } from '../../lib/utils/helpers'
+import { sectionColumn } from './styles/overviewStyles.css'
 
 export const AssetDebtEquityOverview = ({
   answers,
@@ -15,7 +16,7 @@ export const AssetDebtEquityOverview = ({
 
   return (
     <GridRow>
-      <GridColumn span={['12/12', '6/12']}>
+      <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
         <Box paddingTop={3} paddingBottom={2}>
           <Text variant="h4" as="h4">
             {formatMessage(m.properties)}
@@ -36,7 +37,7 @@ export const AssetDebtEquityOverview = ({
         />
       </GridColumn>
 
-      <GridColumn span={['12/12', '6/12']}>
+      <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
         <Box paddingTop={3} paddingBottom={2}>
           <Text variant="h4" as="h4">
             {formatMessage(m.debtsAndEquity)}

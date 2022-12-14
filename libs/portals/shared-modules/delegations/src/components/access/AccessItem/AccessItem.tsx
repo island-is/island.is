@@ -9,7 +9,6 @@ import {
   useBreakpoint,
   Button,
 } from '@island.is/island-ui/core'
-import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   CheckboxController,
   DatePickerController,
@@ -21,6 +20,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { Scope } from '../access.types'
 import { accessMessages, DATE_FORMAT, isApiScopeGroup } from '../access.utils'
 import classNames from 'classnames'
+import { AuthCustomDelegation } from '../../../types/customDelegation'
 import * as commonAccessStyles from '../access.css'
 
 const getDefaultDate = () => addYears(new Date(), 1)

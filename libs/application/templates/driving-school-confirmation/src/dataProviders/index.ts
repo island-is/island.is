@@ -1,2 +1,4 @@
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
-export { EmployeeProvider } from './EmployeeProvider'
+export {
+  EmployeeApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
