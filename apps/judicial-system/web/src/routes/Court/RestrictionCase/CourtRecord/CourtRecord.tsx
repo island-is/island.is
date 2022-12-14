@@ -244,7 +244,7 @@ export const CourtRecord: React.FC = () => {
   ])
 
   const stepIsValid = isCourtRecordStepValidRC(workingCase)
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
@@ -259,7 +259,7 @@ export const CourtRecord: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.restrictionCases.courtRecord)}
@@ -545,7 +545,7 @@ export const CourtRecord: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(constants.RESTRICTION_CASE_CONFIRMATION_ROUTE)
+            handleNavigationTo(constants.RESTRICTION_CASE_CONFIRMATION_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           hideNextButton={

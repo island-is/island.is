@@ -60,7 +60,7 @@ const Subpoena: React.FC = () => {
     )
   }
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       const hasSentNotification = workingCase?.notifications?.find(
         (notification) => notification.type === NotificationType.COURT_DATE,
@@ -105,7 +105,7 @@ const Subpoena: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
       <FormContentContainer>
@@ -137,7 +137,7 @@ const Subpoena: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() => onNavigationTo(nextRoute)}
+          onNextButtonClick={() => handleNavigationTo(nextRoute)}
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!stepIsValid}
         />

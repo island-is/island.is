@@ -80,7 +80,7 @@ const Defendant = () => {
     workingCase,
   )
 
-  const handleNavigateTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
         const createdCase = await createCase(workingCase)
@@ -251,7 +251,7 @@ const Defendant = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
       isValid={stepIsValid}
-      onNavigationTo={handleNavigateTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.investigationCases.defendant)}
@@ -439,7 +439,7 @@ const Defendant = () => {
         <FormFooter
           previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() =>
-            handleNavigateTo(
+            handleNavigationTo(
               constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
             )
           }

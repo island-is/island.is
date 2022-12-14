@@ -91,7 +91,7 @@ export const HearingArrangements: React.FC = () => {
     return false
   }
 
-  const handleNavigateTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase) {
         return
@@ -141,7 +141,7 @@ export const HearingArrangements: React.FC = () => {
       isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={stepIsValid ? handleNavigateTo : undefined}
+      onNavigationTo={stepIsValid ? handleNavigationTo : undefined}
     >
       <PageHeader
         title={formatMessage(
@@ -238,7 +238,7 @@ export const HearingArrangements: React.FC = () => {
             <FormFooter
               previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () =>
-                await handleNavigateTo(
+                await handleNavigationTo(
                   constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
                 )
               }

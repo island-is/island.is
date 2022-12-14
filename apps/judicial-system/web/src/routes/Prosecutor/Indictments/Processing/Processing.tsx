@@ -65,7 +65,7 @@ const Processing: React.FC = () => {
     return false
   }
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (workingCase.state === CaseState.NEW) {
         await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
@@ -84,7 +84,7 @@ const Processing: React.FC = () => {
       activeSubSection={IndictmentsProsecutorSubsections.PROCESSING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
       <PageHeader
@@ -117,7 +117,7 @@ const Processing: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
           }
         />
       </FormContentContainer>

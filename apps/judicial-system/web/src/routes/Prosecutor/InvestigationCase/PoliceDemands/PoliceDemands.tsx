@@ -176,7 +176,7 @@ const PoliceDemands: React.FC = () => {
     workingCase,
   ])
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
@@ -194,7 +194,7 @@ const PoliceDemands: React.FC = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(
@@ -342,7 +342,7 @@ const PoliceDemands: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE)
+            handleNavigationTo(constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

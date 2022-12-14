@@ -75,7 +75,7 @@ const HearingArrangements = () => {
     setIsNotificationModalVisible,
   ] = useState<boolean>(false)
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase) {
         return
@@ -143,7 +143,7 @@ const HearingArrangements = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(
@@ -224,7 +224,7 @@ const HearingArrangements = () => {
             <FormFooter
               previousUrl={`${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () =>
-                await onNavigationTo(
+                await handleNavigationTo(
                   constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
                 )
               }

@@ -37,7 +37,7 @@ const CaseFiles: React.FC = () => {
   } = useS3Upload(workingCase)
 
   const stepIsValid = allFilesUploaded
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
@@ -50,7 +50,7 @@ const CaseFiles: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.caseFiles)}
@@ -156,7 +156,7 @@ const CaseFiles: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

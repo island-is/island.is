@@ -97,7 +97,7 @@ export const StepOne: React.FC = () => {
     [workingCase.id, updateDefendantState, updateDefendant],
   )
 
-  const handleNavigateTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
         const createdCase = await createCase(workingCase)
@@ -139,7 +139,7 @@ export const StepOne: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
-      onNavigationTo={handleNavigateTo}
+      onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
       <PageHeader
@@ -243,7 +243,7 @@ export const StepOne: React.FC = () => {
               nextIsLoading={isCreatingCase}
               nextIsDisabled={!stepIsValid}
               onNextButtonClick={() =>
-                handleNavigateTo(
+                handleNavigationTo(
                   constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
                 )
               }

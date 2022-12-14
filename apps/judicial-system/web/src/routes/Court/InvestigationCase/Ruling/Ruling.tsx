@@ -128,7 +128,7 @@ const Ruling = () => {
     setInitialAutoFillDone,
   ])
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (isModifyingRuling) {
         requestRulingSignature()
@@ -150,7 +150,7 @@ const Ruling = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.ruling)}
@@ -485,7 +485,7 @@ const Ruling = () => {
           }
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE)
+            handleNavigationTo(constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE)
           }
         />
       </FormContentContainer>
