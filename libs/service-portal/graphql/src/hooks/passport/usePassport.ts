@@ -21,7 +21,7 @@ export const passportFragment = gql`
   }
 `
 
-const GetIdentityDocumentQuery = gql`
+export const GetIdentityDocumentQuery = gql`
   query GetIdentityDocumentQuery {
     getIdentityDocument {
       ...identityDocumentFragment
