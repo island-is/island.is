@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { AsyncSearchInput, Box, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 interface SidebarShipSearchInputProps {
   namespace: {
@@ -22,23 +23,26 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
     const searchValueIsNumber =
       !isNaN(Number(searchValue)) && searchValue.length > 0
     if (searchValueIsNumber) {
-      const basePath = router.asPath.split('?')[0].split('#')[0]
-      const pathname = n('shipDetailsHref', '/v/gagnasidur-fiskistofu')
+      const pathname = n('b', '/v/gagnasidur-fiskistofu')
       const query = {
         ...router.query,
-        [n('shipDetailsNumberQueryParam', 'nr')]: searchValue,
+        [n('a', 'nr')]: searchValue,
         selectedTab: router.query?.selectedTab ?? 'skip',
       }
-      router
-        .push({
-          pathname,
-          query,
-        })
-        .then(() => {
-          if (pathname === basePath) {
-            router.reload()
-          }
-        })
+
+      const params = new URLSearchParams()
+
+      for (const [name, value] of Object.entries(query)) {
+        params.append(name, value as string)
+      }
+
+      const url = `${pathname}?${params}`
+
+      window.open(
+        url,
+        shouldLinkOpenInNewWindow(pathname) ? '_blank' : '_self',
+        'noopener,noreferrer',
+      )
     } else {
       const query = { ...router.query, name: searchValue }
       router.push({
