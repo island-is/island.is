@@ -112,7 +112,7 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
   const [hiddenValues, setHiddenValues] = useState(
     calculateHiddenValues(defaultValue, requestDays, giveDays),
   )
-  
+
   const onSelect = (selected: string) => {
     const option = selected as TransferRightsOption
 
