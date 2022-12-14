@@ -51,7 +51,7 @@ export const CemetryOperation = ({
       <CemeteryIncomeLimit currentUserType={currentUserType} />
       <GridRow align="spaceBetween">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Text paddingY={1} as="h2" variant="h4">
+          <Text paddingY={1} as="h3" variant="h4">
             {formatMessage(m.income)}
           </Text>
           <CemetryIncome
@@ -67,7 +67,7 @@ export const CemetryOperation = ({
           />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Text paddingY={1} as="h2" variant="h4">
+          <Text paddingY={1} as="h3" variant="h4">
             {formatMessage(m.expenses)}
           </Text>
           <CemetryExpenses
