@@ -10,6 +10,7 @@ export * from './screens/Modules'
 
 // hooks
 export * from './hooks/useModuleProps'
+export * from './hooks/useNavigation'
 export * from './hooks/useQueryParam'
 
 // utils
