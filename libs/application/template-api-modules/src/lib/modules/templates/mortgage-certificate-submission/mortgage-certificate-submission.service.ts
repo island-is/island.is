@@ -11,7 +11,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
-import { Application } from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   NationalRegistry,
   UserProfile,
@@ -19,14 +19,17 @@ import {
   ValidateMortgageCertificateResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class MortgageCertificateSubmissionService {
+export class MortgageCertificateSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly mortgageCertificateService: MortgageCertificateService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.MORTGAGE_CERTIFICATE)
+  }
 
   async createCharge({
     application: { id },

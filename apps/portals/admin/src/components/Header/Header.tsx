@@ -23,7 +23,6 @@ export const Header = () => {
             justifyContent="spaceBetween"
             alignItems="center"
             width="full"
-            background="white"
           >
             <Inline alignY="center">
               <Link to={'/'}>

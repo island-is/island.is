@@ -1,4 +1,6 @@
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import { ProviderErrorReason } from '@island.is/shared/problem'
+import { StaticText } from 'static-text'
 
 export interface DecodedAssignmentToken {
   applicationId: string
@@ -9,7 +11,7 @@ export interface DecodedAssignmentToken {
 }
 
 export interface StateChangeResult {
-  error?: string
+  error?: ProviderErrorReason | StaticText
   hasError: boolean
   hasChanged: boolean
   application: Application
@@ -18,5 +20,5 @@ export interface StateChangeResult {
 export interface TemplateAPIModuleActionResult {
   updatedApplication: Application
   hasError: boolean
-  error?: string
+  error?: ProviderErrorReason | StaticText
 }

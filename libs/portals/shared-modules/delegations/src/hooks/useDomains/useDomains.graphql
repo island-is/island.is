@@ -1,0 +1,9 @@
+query AuthDomains($input: AuthDomainsInput!) {
+  authDomains(input: $input) {
+    name
+    displayName
+    description
+    nationalId
+    organisationLogoKey
+  }
+}

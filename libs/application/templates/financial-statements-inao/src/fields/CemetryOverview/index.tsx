@@ -22,6 +22,7 @@ import { m } from '../../lib/messages'
 import { AboutOverview, FileValueLine, ValueLine } from '../Shared'
 import {
   columnStyle,
+  sectionColumn,
   starterColumnStyle,
 } from '../Shared/styles/overviewStyles.css'
 import BottomBar from '../../components/BottomBar'
@@ -89,7 +90,7 @@ export const CemetryOverview = ({
           </Text>
         </Box>
         <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.income)}
@@ -119,7 +120,7 @@ export const CemetryOverview = ({
               value={formatCurrency(answers.cemetryIncome?.total)}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.expenses)}
@@ -176,7 +177,7 @@ export const CemetryOverview = ({
           </Text>
         </Box>
         <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.properties)}
@@ -198,7 +199,7 @@ export const CemetryOverview = ({
             />
           </GridColumn>
 
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.debts)}
@@ -333,8 +334,10 @@ export const CemetryOverview = ({
       longTermDebt === '0' ? (
         <Box paddingTop={4}>
           <AlertBanner
-            title={`${formatMessage(m.SignatureTitle)}`}
-            description={`${formatMessage(m.SignatureMessage)} ${email}`}
+            title={`${formatMessage(m.SignatureMessage)}`}
+            description={`${formatMessage(
+              m.SignatureMessage,
+            )} ${email} ${formatMessage(m.SignaturePossible)}`}
             variant="info"
           />
         </Box>

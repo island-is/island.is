@@ -1,4 +1,6 @@
 import {
+  FaqList,
+  FaqListProps,
   renderConnectedComponent,
   richText,
   SliceType,
@@ -53,13 +55,13 @@ const webRenderConnectedComponent = (slice) => {
 
 const defaultRenderComponent = {
   PowerBiSlice: (slice: PowerBiSliceSchema) => <PowerBiSlice slice={slice} />,
-  AccordionSlice: (slice: AccordionSliceSchema) => (
-    <AccordionSlice slice={slice} />
-  ),
+  AccordionSlice: (slice: AccordionSliceSchema) =>
+    slice.accordionItems && <AccordionSlice slice={slice} />,
   ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
   GraphCard: (chart) => <ChartsCard chart={chart} />,
   OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
   EmailSignup: (slice) => <EmailSignup slice={slice} />,
+  FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
 }
 
 export const webRichText = (

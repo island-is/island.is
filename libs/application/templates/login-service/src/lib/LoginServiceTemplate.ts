@@ -8,6 +8,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { LoginServiceSchema } from './dataSchema'
 import { application } from './messages'
@@ -90,9 +91,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 import {
   Text,
   NavigationItem,
@@ -39,8 +40,6 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
@@ -66,6 +65,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   sort,
   namespace,
 }) => {
+  const router = useRouter()
   const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
     'isWebReaderEnabledForOrganizationPages',
     false,
@@ -80,9 +80,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
-      active:
-        primaryLink?.url?.includes(`${organizationPage.slug}/thjonusta`) ||
-        primaryLink?.url?.includes(`${organizationPage.slug}/services`),
+      active: primaryLink?.url === router.asPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -127,9 +125,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       .map((x) => x.group?.slug)
       .includes(x.value),
   )
-
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
 
   return (
     <OrganizationWrapper
@@ -247,7 +242,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <FocusableBox
               key={article.slug}
               href={url.href}
-              target={isMobile ? '' : '_blank'}
               borderRadius="large"
             >
               {({ isFocused }) => (
@@ -275,9 +269,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { getArticles },
-    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -286,17 +277,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: query.slug as string,
           lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetArticlesArgs>({
-      query: GET_ORGANIZATION_SERVICES_QUERY,
-      variables: {
-        input: {
-          organization: query.slug as string,
-          lang: locale as ContentLanguage,
-          sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
-          size: 500,
         },
       },
     }),
@@ -316,6 +296,21 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           : {},
       ),
   ])
+
+  const {
+    data: { getArticles },
+  } = await apolloClient.query<Query, QueryGetArticlesArgs>({
+    query: GET_ORGANIZATION_SERVICES_QUERY,
+    variables: {
+      input: {
+        organization:
+          getOrganizationPage?.organization?.slug ?? (query.slug as string),
+        lang: locale as ContentLanguage,
+        sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
+        size: 500,
+      },
+    },
+  })
 
   if (!getArticles) {
     throw new CustomNextError(404, 'Organization services page not found')
