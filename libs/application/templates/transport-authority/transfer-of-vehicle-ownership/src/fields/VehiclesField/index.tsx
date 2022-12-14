@@ -19,7 +19,7 @@ export const VehiclesField: FC<FieldBaseProps> = (props) => {
   }, [setValue])
   return (
     <Box paddingTop={2}>
-      {currentVehicleList.length > 5 ? (
+      {currentVehicleList.length > 10 ? (
         <VehicleSelectField
           currentVehicleList={currentVehicleList}
           {...props}

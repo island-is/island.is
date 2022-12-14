@@ -1,7 +1,14 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useState } from 'react'
-import { Box, CategoryCard, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  CategoryCard,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import {
   VehiclesCurrentVehicle,
   GetVehicleDetailInput,
@@ -102,50 +109,11 @@ export const VehicleSelectField: FC<
     [getVehicleDetails],
   )
 
-  const errorTags = []
-  if (!selectedVehicle?.isDebtLess) {
-    errorTags.push({
-      label: formatMessage(information.labels.pickVehicle.isNotDebtLessTag),
-    })
-  }
-  if (selectedVehicle?.updatelocks?.length) {
-    for (let i = 0; i < selectedVehicle.updatelocks.length; i++) {
-      const message = formatMessage(
-        getValueViaPath(
-          applicationCheck.locks,
-          selectedVehicle.updatelocks[i].lockNo || '',
-        ),
-      )
-      const fallbackMessage =
-        formatMessage(applicationCheck.locks['0']) +
-        ' - ' +
-        selectedVehicle.updatelocks[i].lockNo
-
-      errorTags.push({
-        label: message || fallbackMessage,
-      })
-    }
-  }
-  if (selectedVehicle?.ownerChangeErrorMessages?.length) {
-    for (let i = 0; i < selectedVehicle.ownerChangeErrorMessages.length; i++) {
-      const message = formatMessage(
-        getValueViaPath(
-          applicationCheck.validation,
-          selectedVehicle.ownerChangeErrorMessages[i].errorNo || '',
-        ),
-      )
-      const defaultMessage =
-        selectedVehicle.ownerChangeErrorMessages[i].defaultMessage
-      const fallbackMessage =
-        formatMessage(applicationCheck.validation['0']) +
-        ' - ' +
-        selectedVehicle.ownerChangeErrorMessages[i].errorNo
-
-      errorTags.push({
-        label: message || defaultMessage || fallbackMessage,
-      })
-    }
-  }
+  const disabled =
+    selectedVehicle &&
+    (!selectedVehicle.isDebtLess ||
+      !!selectedVehicle.updatelocks?.length ||
+      !!selectedVehicle.ownerChangeErrorMessages?.length)
 
   return (
     <Box>
@@ -170,11 +138,72 @@ export const VehicleSelectField: FC<
           <Box>
             {selectedVehicle && (
               <CategoryCard
-                colorScheme={errorTags.length > 0 ? 'red' : 'blue'}
+                colorScheme={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
-                tags={errorTags}
               />
+            )}
+            {selectedVehicle && disabled && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="error"
+                  title={formatMessage(
+                    information.labels.pickVehicle.hasErrorTitle,
+                  )}
+                  message={
+                    <Box>
+                      <BulletList>
+                        {!selectedVehicle.isDebtLess && (
+                          <Bullet>
+                            {formatMessage(
+                              information.labels.pickVehicle.isNotDebtLessTag,
+                            )}
+                          </Bullet>
+                        )}
+                        {!!selectedVehicle.updatelocks?.length &&
+                          selectedVehicle.updatelocks?.map((lock) => {
+                            const message = formatMessage(
+                              getValueViaPath(
+                                applicationCheck.locks,
+                                lock.lockNo || '',
+                              ),
+                            )
+                            const fallbackMessage =
+                              formatMessage(applicationCheck.locks['0']) +
+                              ' - ' +
+                              lock.lockNo
+
+                            return <Bullet>{message || fallbackMessage}</Bullet>
+                          })}
+                        {!!selectedVehicle.ownerChangeErrorMessages?.length &&
+                          selectedVehicle.ownerChangeErrorMessages?.map(
+                            (error) => {
+                              const message = formatMessage(
+                                getValueViaPath(
+                                  applicationCheck.validation,
+                                  error.errorNo || '',
+                                ),
+                              )
+                              const defaultMessage = error.defaultMessage
+                              const fallbackMessage =
+                                formatMessage(
+                                  applicationCheck.validation['0'],
+                                ) +
+                                ' - ' +
+                                error.errorNo
+
+                              return (
+                                <Bullet>
+                                  {message || defaultMessage || fallbackMessage}
+                                </Bullet>
+                              )
+                            },
+                          )}
+                      </BulletList>
+                    </Box>
+                  }
+                />
+              </Box>
             )}
           </Box>
         )}

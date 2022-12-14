@@ -47,6 +47,11 @@ export const information = {
         defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle placeholder',
       },
+      hasErrorTitle: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.hasErrorTitle',
+        defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
+        description: 'Pick vehicle has an error title',
+      },
       isNotDebtLessTag: {
         id:
           'ta.tvo.application:information.labels.pickVehicle.isNotDebtLessTag',

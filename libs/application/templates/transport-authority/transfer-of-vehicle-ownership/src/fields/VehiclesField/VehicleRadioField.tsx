@@ -1,4 +1,12 @@
-import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  SkeletonLoader,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import {
@@ -72,7 +80,7 @@ export const VehicleRadioField: FC<
       options.push({
         value: `${index}`,
         label: (
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+          <Box display="flex" flexDirection="column">
             <Box>
               <Text variant="default" color={disabled ? 'dark200' : 'dark400'}>
                 {vehicle.make}
@@ -81,55 +89,64 @@ export const VehicleRadioField: FC<
                 {vehicle.color} - {vehicle.permno}
               </Text>
             </Box>
-            <Box display="flex" flexDirection="row" wrap="wrap">
-              {!vehicle.isDebtLess && (
-                <Box paddingLeft={2}>
-                  <Tag variant="red">
-                    {formatMessage(
-                      information.labels.pickVehicle.isNotDebtLessTag,
-                    )}
-                  </Tag>
-                </Box>
-              )}
-              {!!vehicle.updatelocks?.length &&
-                vehicle.updatelocks?.map((lock) => {
-                  const message = formatMessage(
-                    getValueViaPath(applicationCheck.locks, lock.lockNo || ''),
-                  )
-                  const fallbackMessage =
-                    formatMessage(applicationCheck.locks['0']) +
-                    ' - ' +
-                    lock.lockNo
+            {disabled && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="error"
+                  title={formatMessage(
+                    information.labels.pickVehicle.hasErrorTitle,
+                  )}
+                  message={
+                    <Box>
+                      <BulletList>
+                        {!vehicle.isDebtLess && (
+                          <Bullet>
+                            {formatMessage(
+                              information.labels.pickVehicle.isNotDebtLessTag,
+                            )}
+                          </Bullet>
+                        )}
+                        {!!vehicle.updatelocks?.length &&
+                          vehicle.updatelocks?.map((lock) => {
+                            const message = formatMessage(
+                              getValueViaPath(
+                                applicationCheck.locks,
+                                lock.lockNo || '',
+                              ),
+                            )
+                            const fallbackMessage =
+                              formatMessage(applicationCheck.locks['0']) +
+                              ' - ' +
+                              lock.lockNo
 
-                  return (
-                    <Box paddingLeft={2}>
-                      <Tag variant="red">{message || fallbackMessage}</Tag>
-                    </Box>
-                  )
-                })}
-              {!!vehicle.ownerChangeErrorMessages?.length &&
-                vehicle.ownerChangeErrorMessages?.map((error) => {
-                  const message = formatMessage(
-                    getValueViaPath(
-                      applicationCheck.validation,
-                      error.errorNo || '',
-                    ),
-                  )
-                  const defaultMessage = error.defaultMessage
-                  const fallbackMessage =
-                    formatMessage(applicationCheck.validation['0']) +
-                    ' - ' +
-                    error.errorNo
+                            return <Bullet>{message || fallbackMessage}</Bullet>
+                          })}
+                        {!!vehicle.ownerChangeErrorMessages?.length &&
+                          vehicle.ownerChangeErrorMessages?.map((error) => {
+                            const message = formatMessage(
+                              getValueViaPath(
+                                applicationCheck.validation,
+                                error.errorNo || '',
+                              ),
+                            )
+                            const defaultMessage = error.defaultMessage
+                            const fallbackMessage =
+                              formatMessage(applicationCheck.validation['0']) +
+                              ' - ' +
+                              error.errorNo
 
-                  return (
-                    <Box paddingLeft={2}>
-                      <Tag variant="red">
-                        {message || defaultMessage || fallbackMessage}
-                      </Tag>
+                            return (
+                              <Bullet>
+                                {message || defaultMessage || fallbackMessage}
+                              </Bullet>
+                            )
+                          })}
+                      </BulletList>
                     </Box>
-                  )
-                })}
-            </Box>
+                  }
+                />
+              </Box>
+            )}
           </Box>
         ),
         disabled: disabled,

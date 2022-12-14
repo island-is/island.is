@@ -9,6 +9,7 @@ import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { hasReviewerApproved } from '../../../utils'
+import { InsuranceCompany } from '@island.is/api/schema'
 
 interface Props {
   noInsuranceError: boolean
@@ -30,9 +31,22 @@ export const InsuranceSection: FC<
     setStep && setStep('insurance')
   }
 
+  const insuranceCompanyList = getValueViaPath(
+    application.externalData,
+    'insuranceCompanyList.data',
+    [],
+  ) as InsuranceCompany[]
+
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
+
+  const getInsurance = () => {
+    const insuranceName = insuranceCompanyList?.find(
+      (insureanceItem) => insureanceItem.code === insurance,
+    )
+    return insuranceName ? insuranceName.name : undefined
+  }
 
   return (
     <ReviewGroup
@@ -50,7 +64,7 @@ export const InsuranceSection: FC<
             {formatMessage(overview.labels.insuranceTitle)}
           </Text>
           <Text color={noInsuranceError ? 'red600' : 'dark400'}>
-            {insurance || formatMessage(overview.labels.noChosenInsurance)}
+            {getInsurance() || formatMessage(overview.labels.noChosenInsurance)}
           </Text>
         </GridColumn>
       </GridRow>
