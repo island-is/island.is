@@ -20,11 +20,11 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
-import * as constants from '@island.is/judicial-system/consts'
 import {
   sections as formStepperSections,
   pageLayout,
 } from '@island.is/judicial-system-web/messages'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
@@ -44,6 +44,15 @@ interface PageProps {
   activeSubSection?: number
   onNavigationTo?: (destination: string) => Promise<unknown>
   isValid?: boolean
+}
+
+export interface RouteSection {
+  name: string
+  children: {
+    name: string
+    href?: string
+    onClick?: () => void
+  }[]
 }
 
 const RenderSubsectionChild: React.FC<{
@@ -80,6 +89,42 @@ const PageLayout: React.FC<PageProps> = ({
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  const renderSections = (sections: RouteSection[]) =>
+    sections.map((section, index) => (
+      <Section
+        section={section.name}
+        sectionIndex={index}
+        isActive={index === activeSection}
+        isComplete={activeSection ? index < activeSection : false}
+        subSections={section.children.map((subSection, index) =>
+          subSection.href && activeSubSection && activeSubSection > index ? (
+            <Link href={subSection.href} underline="small">
+              <RenderSubsectionChild isActive={index === activeSubSection}>
+                {subSection.name}
+              </RenderSubsectionChild>
+            </Link>
+          ) : subSection.onClick ? (
+            <Box
+              component="button"
+              onClick={subSection.onClick}
+              className={cn(
+                linkStyles.underlineVisibilities['hover'],
+                linkStyles.underlines['small'],
+              )}
+            >
+              <RenderSubsectionChild isActive={index === activeSubSection}>
+                {subSection.name}
+              </RenderSubsectionChild>
+            </Box>
+          ) : (
+            <RenderSubsectionChild isActive={index === activeSubSection}>
+              {subSection.name}
+            </RenderSubsectionChild>
+          ),
+        )}
+      />
+    ))
 
   return isLoading ? (
     <Skeleton />
@@ -148,55 +193,7 @@ const PageLayout: React.FC<PageProps> = ({
                       )}
                     </Text>
                   </Box>
-                  <FormStepperV2
-                    sections={sections.map((section, index) => (
-                      <Section
-                        section={section.name}
-                        sectionIndex={index}
-                        isActive={index === activeSection}
-                        isComplete={
-                          activeSection ? index < activeSection : false
-                        }
-                        subSections={section.children.map(
-                          (subSection, index) => {
-                            // TODO: FIX - Cant click back in stepper if you are on last step
-                            return subSection.href &&
-                              activeSubSection &&
-                              activeSubSection > index ? (
-                              <Link href={subSection.href} underline="small">
-                                <RenderSubsectionChild
-                                  isActive={index === activeSubSection}
-                                >
-                                  {subSection.name}
-                                </RenderSubsectionChild>
-                              </Link>
-                            ) : subSection.onClick ? (
-                              <Box
-                                component="button"
-                                onClick={subSection.onClick}
-                                className={cn(
-                                  linkStyles.underlineVisibilities['hover'],
-                                  linkStyles.underlines['small'],
-                                )}
-                              >
-                                <RenderSubsectionChild
-                                  isActive={index === activeSubSection}
-                                >
-                                  {subSection.name}
-                                </RenderSubsectionChild>
-                              </Box>
-                            ) : (
-                              <RenderSubsectionChild
-                                isActive={index === activeSubSection}
-                              >
-                                {subSection.name}
-                              </RenderSubsectionChild>
-                            )
-                          },
-                        )}
-                      />
-                    ))}
-                  />
+                  <FormStepperV2 sections={renderSections(sections)} />
                 </Box>
               </div>
             </GridColumn>

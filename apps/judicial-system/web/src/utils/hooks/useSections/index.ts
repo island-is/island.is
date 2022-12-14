@@ -17,15 +17,7 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations } from '../../formHelper'
-
-interface Section {
-  name: string
-  children: {
-    name: string
-    href?: string
-    onClick?: () => void
-  }[]
-}
+import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -56,7 +48,7 @@ const useSections = (
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
     user?: User,
-  ): Section => {
+  ): RouteSection => {
     const { type, id } = workingCase
 
     return {
@@ -189,7 +181,7 @@ const useSections = (
   const getInvestigationCaseProsecutorSection = (
     workingCase: Case,
     user?: User,
-  ): Section => {
+  ): RouteSection => {
     const { id } = workingCase
 
     return {
@@ -312,7 +304,9 @@ const useSections = (
     }
   }
 
-  const getIndictmentCaseProsecutorSection = (workingCase: Case): Section => {
+  const getIndictmentCaseProsecutorSection = (
+    workingCase: Case,
+  ): RouteSection => {
     const { id } = workingCase
 
     const caseHasBeenSentToCourt =
@@ -451,7 +445,7 @@ const useSections = (
   const getRestrictionCaseCourtSections = (
     workingCase: Case,
     user?: User,
-  ): Section => {
+  ): RouteSection => {
     const { id } = workingCase
     const isModifyingRuling = router.pathname.includes(
       constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE,
@@ -581,7 +575,7 @@ const useSections = (
   const getInvestigationCaseCourtSections = (
     workingCase: Case,
     user?: User,
-  ): Section => {
+  ): RouteSection => {
     const { id } = workingCase
     const isModifyingRuling = router.pathname.includes(
       constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -805,7 +799,7 @@ const useSections = (
   const getRestrictionCaseExtenstionSections = (
     workingCase: Case,
     user?: User,
-  ): Section => {
+  ): RouteSection => {
     const section = getRestrictionCaseProsecutorSection(workingCase, user)
 
     return {
@@ -881,7 +875,7 @@ const useSections = (
   const getInvestigationCaseExtenstionSections = (
     workingCase: Case,
     user?: User,
-  ): Section => {
+  ): RouteSection => {
     const section = getInvestigationCaseProsecutorSection(workingCase, user)
 
     return {
@@ -948,7 +942,7 @@ const useSections = (
     }
   }
 
-  const getSections = (workingCase?: Case, user?: User): Section[] => {
+  const getSections = (workingCase?: Case, user?: User): RouteSection[] => {
     return [
       isRestrictionCase(workingCase?.type)
         ? getRestrictionCaseProsecutorSection(workingCase || ({} as Case), user)
