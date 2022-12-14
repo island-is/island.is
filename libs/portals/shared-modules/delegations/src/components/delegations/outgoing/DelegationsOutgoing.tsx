@@ -7,37 +7,39 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
-import { AuthCustomDelegation } from '@island.is/api/schema'
+import {
+  AuthCustomDelegation,
+  AuthDelegationDirection,
+} from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import {
-  AuthDelegationDirection,
-  useAuthDelegationsOutgoingQuery,
-} from '@island.is/service-portal/graphql'
 import { AccessCard } from '../../access/AccessCard'
-import { AccessDeleteModal } from '../../access/AccessDeleteModal'
+import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteModal'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { DelegationsOutgoingHeader } from './DelegationsOutgoingHeader'
-import { DomainOption, useDomains } from '../../../hooks/useDomains'
+import { DomainOption, useDomains } from '../../../hooks/useDomains/useDomains'
 import { ALL_DOMAINS } from '../../../constants/domain'
+import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated'
+import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [searchValue, setSearchValue] = useState('')
-  const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
-    null,
-  )
+  const [
+    delegation,
+    setDelegation,
+  ] = useState<AuthCustomDelegationOutgoing | null>(null)
   const { name: domainName } = useDomains()
 
   const { data, loading, refetch, error } = useAuthDelegationsOutgoingQuery({
     variables: {
       input: {
         domain: domainName,
-        direction: AuthDelegationDirection.Outgoing,
+        direction: AuthDelegationDirection.outgoing,
       },
       lang,
     },
-    skip: !domainName || !lang || !AuthDelegationDirection.Outgoing,
+    skip: !domainName || !lang || !AuthDelegationDirection.outgoing,
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
@@ -112,7 +114,9 @@ export const DelegationsOutgoing = () => {
                       key={delegation.id}
                       delegation={delegation}
                       onDelete={(delegation) => {
-                        setDelegation(delegation)
+                        setDelegation(
+                          delegation as AuthCustomDelegationOutgoing,
+                        )
                       }}
                       variant="outgoing"
                     />

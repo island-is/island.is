@@ -1,21 +1,18 @@
-import { AuthCustomDelegation } from '@island.is/api/schema'
+import { useEffect } from 'react'
 import { useAuth } from '@island.is/auth/react'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
-import { Modal, ModalProps } from '../../Modal/Modal'
-import { IdentityCard } from '../../IdentityCard/IdentityCard'
-import { useAuthScopeTreeLazyQuery } from '@island.is/service-portal/graphql'
-import { useEffect } from 'react'
-import { AccessListContainer } from '../../access/AccessList/AccessListContainer'
+import { Modal, ModalProps } from '../../../Modal/Modal'
+import { IdentityCard } from '../../../IdentityCard/IdentityCard'
+import { AccessListContainer } from '../../../access/AccessList/AccessListContainer/AccessListContainer'
+import { useAuthScopeTreeLazyQuery } from '../../../access/AccessList/AccessListContainer/AccessListContainer.generated'
+import { AuthCustomDelegationIncoming } from '../../../../types/customDelegation'
 
-type DelegationIncomingModalProps = Pick<
-  ModalProps,
-  'onClose' | 'isVisible'
-> & {
-  delegation?: AuthCustomDelegation
-}
+type DelegationIncomingModalProps = {
+  delegation?: AuthCustomDelegationIncoming
+} & Pick<ModalProps, 'onClose' | 'isVisible'>
 
 export const DelegationIncomingModal = ({
   delegation,
