@@ -73,7 +73,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ item: any }> = (
               loading={isLoading}
               error={isError}
               label={intl.formatMessage({ id: 'vehicleDetail.firstReg' })}
-              value={intl.formatDate(new Date(item?.firstRegDate))}
+              value={item?.firstRegDate ? intl.formatDate(new Date(item?.firstRegDate)) : '-'}
             />
             <Input
               loading={isLoading}

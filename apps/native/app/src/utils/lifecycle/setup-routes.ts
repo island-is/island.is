@@ -216,7 +216,7 @@ export function setupRoutes() {
         children: [
           {
             component: {
-              name: ComponentRegistry.UserScreen,
+              name: ComponentRegistry.PersonalInfoScreen,
             },
           },
         ],

@@ -249,7 +249,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   }))
 
   return (
-    <SafeAreaView>
+    <>
       <BottomTabsIndicator index={3} total={5} />
       <Animated.FlatList
         ref={flatListRef}
@@ -300,7 +300,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         onRefresh={() => res?.refetch()}
       />
       {!isSearch && <TopLine scrollY={scrollY} />}
-    </SafeAreaView>
+    </>
   )
 }
 
