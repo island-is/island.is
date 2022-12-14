@@ -1,11 +1,9 @@
 import { useParams } from 'react-router-dom'
-import { AuthCustomDelegation } from '@island.is/api/schema'
+import { AuthDomainDirection } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import {
-  AuthDomainDirection,
-  useAuthDelegationQuery,
-  useAuthScopeTreeLazyQuery,
-} from '@island.is/service-portal/graphql'
+import { useAuthScopeTreeLazyQuery } from '../components/access/AccessList/AccessListContainer/AccessListContainer.generated'
+import { useAuthDelegationQuery } from '../screens/AccessOutgoing/AccessOutgoing.generated'
+import { AuthCustomDelegationOutgoing } from '../types/customDelegation'
 
 /**
  * Wrapper hook for fetching delegation by id from url param
@@ -32,7 +30,7 @@ export const useDelegation = (direction?: AuthDomainDirection) => {
     },
     onCompleted(data) {
       const delegation = data?.authDelegation
-        ? (data.authDelegation as AuthCustomDelegation)
+        ? (data.authDelegation as AuthCustomDelegationOutgoing)
         : undefined
 
       if (delegation) {
@@ -54,7 +52,7 @@ export const useDelegation = (direction?: AuthDomainDirection) => {
   return {
     scopeTree: authScopeTree,
     delegation: data?.authDelegation
-      ? (data.authDelegation as AuthCustomDelegation)
+      ? (data.authDelegation as AuthCustomDelegationOutgoing)
       : undefined,
     delegationLoading,
     scopeTreeLoading,
