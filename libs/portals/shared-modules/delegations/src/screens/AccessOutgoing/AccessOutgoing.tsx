@@ -9,13 +9,13 @@ import {
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
-import { NotFound } from '@island.is/service-portal/core'
+import { m, NotFound } from '@island.is/portals/core'
+import { AuthDomainDirection } from '@island.is/api/schema'
+
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { AccessForm } from '../../components/access/AccessForm/AccessForm'
 import { useDelegation } from '../../hooks/useDelegation'
 import { AccessHeader } from '../../components/access/AccessHeader/AccessHeader'
-import { AuthDomainDirection } from '@island.is/api/schema'
 
 const AccessOutgoing = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
