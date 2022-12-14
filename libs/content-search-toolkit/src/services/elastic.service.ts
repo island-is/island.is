@@ -111,8 +111,8 @@ export class ElasticService {
    */
   private filterDoc<T>(obj: T): boolean {
     const visited = new Set()
-    const filterDocRecursive = (o: T) => {
-      if (visited.has(o)) return false
+    const filterDocRecursive = <O>(o: O): boolean => {
+      if (visited.has(o) || !visited) return false
 
       // Only add objects to the visited set
       if (typeof o === 'object') visited.add(o)
@@ -126,7 +126,7 @@ export class ElasticService {
           delete o[key]
           deleted = true
         }
-        return this.filterDoc(o[key])
+        return filterDocRecursive(o[key])
       }
       return deleted
     }
