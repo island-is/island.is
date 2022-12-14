@@ -35,6 +35,7 @@ import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
+import { filterDoc } from './utils'
 
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
@@ -104,35 +105,6 @@ export class ElasticService {
     await this.bulkRequest(index, requests)
   }
 
-  /**
-   * @param {T} err Error object
-   * @return {boolean} True iff a document was removed
-   * Filter the HUMONGOUS documents in an error object
-   */
-  private filterDoc<T>(obj: T): boolean {
-    const visited = new Set()
-    const filterDocRecursive = <O>(o: O): boolean => {
-      if (visited.has(o) || !visited) return false
-
-      // Only add objects to the visited set
-      if (typeof o === 'object') visited.add(o)
-
-      let deleted = false
-      if (Object.keys(o).length == 0) return false
-      for (const key in o) {
-        const value = o[key]
-        // Only HUMONGOUS documents should reach this limit
-        if (typeof value == 'string' && value.length > 10000) {
-          delete o[key]
-          deleted = true
-        }
-        return filterDocRecursive(o[key])
-      }
-      return deleted
-    }
-    return filterDocRecursive(obj)
-  }
-
   async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
@@ -149,7 +121,7 @@ export class ElasticService {
         // not all errors are thrown log if the response has any errors
         if (response.body.errors) {
           // Filter HUGE request object
-          this.filterDoc(response)
+          filterDoc(response)
           logger.error('Failed to import some documents in bulk import', {
             response,
           })
@@ -160,7 +132,7 @@ export class ElasticService {
       return true
     } catch (error) {
       // Filter HUGE request object
-      this.filterDoc(error)
+      filterDoc(error)
       logger.error('Elasticsearch request failed on bulk import', error)
       throw error
     }
