@@ -216,11 +216,12 @@ export const AdrAndMachine = new XroadConf({
 export const CourtBankruptcyCert = new XroadConf({
   env: {
     XROAD_COURT_BANKRUPTCY_CERT_PATH: {
-      dev: 'IS-DEV/GOV/10019/Domstolasyslan',
-      staging: 'IS-TEST/GOV/4707171140/Domstolasyslan',
-      prod: 'IS/GOV/4707171140/Domstolasyslan'
-    }
-  }
+      dev: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+      staging:
+        'IS-TEST/GOV/4707171140/TODO-STAGING-DOES-NOT-EXIST/Domstolasyslan',
+      prod: 'IS/GOV/4707171140/Domstolasyslan-PROD-1/Domstolasyslan',
+    },
+  },
 })
 
 export const Firearm = new XroadConf({
