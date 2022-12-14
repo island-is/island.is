@@ -12,6 +12,8 @@ import {
   FishingLicense,
   MunicipalitiesFinancialAid,
   ChargeFjsV2,
+  VehicleServiceFjsV1,
+  TransportAuthority,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -134,6 +136,7 @@ export const serviceSetup = (services: {
         dev: 'https://beta.dev01.devland.is/umsoknir',
         staging: 'https://beta.staging01.devland.is/umsoknir',
         prod: 'https://island.is/umsoknir',
+        local: 'http://localhost:4200/umsoknir',
       },
       APPLICATION_ATTACHMENT_BUCKET: {
         dev: 'island-is-dev-storage-application-system',
@@ -224,6 +227,8 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      VehicleServiceFjsV1,
+      TransportAuthority,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -254,6 +259,7 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
       FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
+      VMST_ID: '/k8s/application-system/VMST_ID',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

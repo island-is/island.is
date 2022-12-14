@@ -1,8 +1,9 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
-import { SerializeSuccess } from './types/output-types'
+import { Kubernetes } from './kubernetes-runtime'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -19,31 +20,36 @@ const Staging: EnvironmentConfig = {
 
 describe('Healthchecks definitions', () => {
   describe('Liveness', () => {
-    it('defined with path only', () => {
-      const sut = service('api').liveness('/ready')
-      const result = serializeService(
-        sut,
-        new UberChart(Staging),
-      ) as SerializeSuccess
-      expect(result.serviceDef.healthCheck).toEqual({
+    it('defined with path only', async () => {
+      const sut = service('api').liveness('/ready').healthPort(5000)
+      const result = (await generateOutputOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(Staging),
+        env: Staging,
+      })) as SerializeSuccess<HelmService>
+      expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',
           initialDelaySeconds: 3,
           timeoutSeconds: 3,
         },
+        port: 5000,
         readiness: { path: '/', initialDelaySeconds: 3, timeoutSeconds: 3 },
       })
     })
-    it('defined with object', () => {
+    it('defined with object', async () => {
       const sut = service('api').liveness({
         path: '/ready',
         initialDelaySeconds: 10,
       })
-      const result = serializeService(
-        sut,
-        new UberChart(Staging),
-      ) as SerializeSuccess
-      expect(result.serviceDef.healthCheck).toEqual({
+      const result = (await generateOutputOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(Staging),
+        env: Staging,
+      })) as SerializeSuccess<HelmService>
+      expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',
           initialDelaySeconds: 10,

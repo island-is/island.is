@@ -24,7 +24,11 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
     if (searchValueIsNumber) {
       const basePath = router.asPath.split('?')[0].split('#')[0]
       const pathname = n('shipDetailsHref', '/v/gagnasidur-fiskistofu')
-      const query = { nr: searchValue, selectedTab: 'skip' }
+      const query = {
+        ...router.query,
+        nr: searchValue,
+        selectedTab: router.query?.selectedTab ?? 'skip',
+      }
       router
         .push({
           pathname,
@@ -36,9 +40,7 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
           }
         })
     } else {
-      const query = {
-        name: searchValue,
-      }
+      const query = { ...router.query, name: searchValue }
       router.push({
         pathname: n('shipSearchHref', '/s/fiskistofa/skipaleit'),
         query,

@@ -6,11 +6,11 @@ import {
   MessageType,
   MessageService,
   CaseFileMessage,
+  PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
 import type { Message } from '@island.is/judicial-system/message'
 
 import { CaseDeliveryService } from './caseDelivery.service'
-import { ProsecutorDocumentsDeliveryService } from './prosecutorDocumentsDelivery.service'
 import { InternalDeliveryService } from './internalDelivery.service'
 import { RulingNotificationService } from './rulingNotification.service'
 import { appModuleConfig } from './app.config'
@@ -23,7 +23,6 @@ export class MessageHandlerService implements OnModuleDestroy {
   constructor(
     private readonly messageService: MessageService,
     private readonly caseDeliveryService: CaseDeliveryService,
-    private readonly prosecutorDocumentsDeliveryService: ProsecutorDocumentsDeliveryService,
     private readonly internalDeliveryService: InternalDeliveryService,
     private readonly rulingNotificationService: RulingNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -35,11 +34,6 @@ export class MessageHandlerService implements OnModuleDestroy {
     let handled = false
 
     switch (message.type) {
-      case MessageType.CASE_CONNECTED_TO_COURT_CASE:
-        handled = await this.prosecutorDocumentsDeliveryService.deliverProsecutorDocuments(
-          message.caseId,
-        )
-        break
       case MessageType.CASE_COMPLETED:
         handled = await this.caseDeliveryService.deliverCase(message.caseId)
         break
@@ -47,6 +41,20 @@ export class MessageHandlerService implements OnModuleDestroy {
         handled = await this.internalDeliveryService.deliver(
           message.caseId,
           `file/${(message as CaseFileMessage).caseFileId}/deliverToCourt`,
+        )
+        break
+      case MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          `deliverCaseFilesRecordToCourt/${
+            (message as PoliceCaseMessage).policeCaseNumber
+          }`,
+        )
+        break
+      case MessageType.DELIVER_REQUEST_TO_COURT:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'deliverRequestToCourt',
         )
         break
       case MessageType.DELIVER_COURT_RECORD_TO_COURT:

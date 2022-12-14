@@ -1,9 +1,11 @@
-import { generateYamlForFeature } from './serialize-to-yaml'
-import { ref, service, ServiceBuilder } from './dsl'
-import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
-import { SerializeSuccess } from './types/output-types'
+import { ref, service } from './dsl'
+import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
+import { getFeatureAffectedServices } from './feature-deployments'
+import { HelmValueFile } from './types/output-types'
+import { getHelmValueFile } from './value-files-generators/helm-value-file'
+import { renderers } from './upstream-dependencies'
+import { generateOutput } from './processing/rendering-pipeline'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -20,40 +22,51 @@ const Dev: EnvironmentConfig = {
 }
 
 describe('Feature-deployment support', () => {
-  const dependencyA = service('service-a').namespace('A')
-  const dependencyB = service('service-b')
-  const dependencyC = service('service-c')
-  const apiService: ServiceBuilder<'graphql'> = service('graphql')
-    .env({
-      A: ref((h) => `${h.svc(dependencyA)}`),
-      B: ref(
-        (h) =>
-          `${h.featureDeploymentName ? 'feature-' : ''}${h.svc(dependencyB)}`,
-      ),
-    })
-    .initContainer({
-      containers: [
-        {
-          command: 'node',
-        },
-      ],
-      postgres: {},
-    })
-    .ingress({
-      primary: {
-        host: { dev: 'a', staging: 'a', prod: 'a' },
-        paths: ['/'],
-      },
-    })
-    .postgres()
+  let values: HelmValueFile
 
-  const chart = new UberChart(Dev)
-  const values = generateYamlForFeature(
-    chart,
-    [apiService, dependencyA, dependencyB],
-    [dependencyA, dependencyC],
-    [dependencyC],
-  )
+  beforeEach(async () => {
+    const dependencyA = service('service-a').namespace('A')
+    const dependencyB = service('service-b')
+    const dependencyC = service('service-c')
+    const apiService = service('graphql')
+      .env({
+        A: ref((h) => `${h.svc(dependencyA)}`),
+        B: ref(
+          (h) =>
+            `${h.featureDeploymentName ? 'feature-' : ''}${h.svc(dependencyB)}`,
+        ),
+      })
+      .initContainer({
+        containers: [
+          {
+            command: 'node',
+          },
+        ],
+        postgres: {},
+      })
+      .ingress({
+        primary: {
+          host: { dev: 'a', staging: 'a', prod: 'a' },
+          paths: ['/'],
+        },
+      })
+      .postgres()
+
+    const services1 = await getFeatureAffectedServices(
+      [apiService, dependencyA, dependencyB],
+      [dependencyA, dependencyC],
+      [dependencyC],
+      Dev,
+    )
+    const chart1 = new Kubernetes(Dev)
+    const services = await generateOutput({
+      runtime: chart1,
+      services: services1,
+      outputFormat: renderers.helm,
+      env: Dev,
+    })
+    values = getHelmValueFile(chart1, services, 'no-mocks', Dev)
+  })
 
   it('dynamic service name generation', () => {
     expect(values.services.graphql.env).toEqual({

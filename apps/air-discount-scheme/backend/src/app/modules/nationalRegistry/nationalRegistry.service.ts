@@ -9,6 +9,7 @@ import {
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { Gender } from '@island.is/air-discount-scheme/types'
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -221,15 +222,20 @@ export class NationalRegistryService {
   ) {}
 
   // Þjóðskrá API gender keys
-  private mapGender(genderId: string): 'kk' | 'kvk' | 'hvk' | 'óvíst' {
-    if (['1', '3'].includes(genderId)) {
-      return 'kk'
-    } else if (['2', '4'].includes(genderId)) {
-      return 'kvk'
-    } else if (['7', '8'].includes(genderId)) {
-      return 'hvk'
+  private mapGender(genderId: string): Gender {
+    switch (genderId) {
+      case '1':
+      case '3':
+        return 'kk'
+      case '2':
+      case '4':
+        return 'kvk'
+      case '7':
+      case '8':
+        return 'x'
+      default:
+        return 'manneskja'
     }
-    return 'óvíst'
   }
 
   private createNationalRegistryUser(

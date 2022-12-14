@@ -817,6 +817,10 @@ export const m = defineMessages({
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
   },
+  passport: {
+    id: 'service.portal:passport',
+    defaultMessage: 'Vegabréf',
+  },
   yes: {
     id: 'service.portal:yes',
     defaultMessage: 'Já',

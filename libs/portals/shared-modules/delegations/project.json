@@ -1,0 +1,31 @@
+{
+  "root": "libs/portals/shared-modules/delegations",
+  "sourceRoot": "libs/portals/shared-modules/delegations/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/portals/shared-modules/delegations/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/portals/shared-modules/delegations"],
+      "options": {
+        "jestConfig": "libs/portals/shared-modules/delegations/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/shared-modules/delegations/src/{components,screens,hooks}/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": ["lib:react"]
+}

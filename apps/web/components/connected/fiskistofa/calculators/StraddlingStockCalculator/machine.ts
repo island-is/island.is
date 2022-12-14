@@ -240,28 +240,37 @@ export const machine = createMachine<Context, Event, State>(
   {
     services: {
       getData: async (context: Context, event: GetDataEvent) => {
-        const [
-          fiskistofaGetShipStatusForCalendarYearResponse,
-          fiskistofaGetQuotaTypesForCalendarYearResponse,
-        ] = await Promise.all([
-          context.apolloClient?.query<{
+        let fiskistofaGetShipStatusForCalendarYearResponse = null
+
+        try {
+          fiskistofaGetShipStatusForCalendarYearResponse = await context.apolloClient?.query<{
             fiskistofaGetShipStatusForCalendarYear: FiskistofaShipStatusInformationResponse
           }>({
             query: GET_SHIP_STATUS_FOR_CALENDAR_YEAR,
             variables: event.variables,
             fetchPolicy: 'no-cache',
-          }),
-          context.apolloClient?.query<{
-            fiskistofaGetQuotaTypesForCalendarYear: FiskistofaQuotaTypeResponse
-          }>({
-            query: GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
-            variables: {
-              input: {
-                year: event.variables.input.year,
+          })
+        } catch (err) {
+          // In case of an error we still want the user to be able to add categories and calculate values
+          fiskistofaGetShipStatusForCalendarYearResponse = {
+            data: {
+              fiskistofaGetShipStatusForCalendarYear: {
+                fiskistofaShipStatus: { catchQuotaCategories: [] },
               },
             },
-          }),
-        ])
+          }
+        }
+
+        const fiskistofaGetQuotaTypesForCalendarYearResponse = await context.apolloClient?.query<{
+          fiskistofaGetQuotaTypesForCalendarYear: FiskistofaQuotaTypeResponse
+        }>({
+          query: GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
+          variables: {
+            input: {
+              year: event.variables.input.year,
+            },
+          },
+        })
 
         const fiskistofaShipStatus =
           fiskistofaGetShipStatusForCalendarYearResponse?.data

@@ -119,7 +119,8 @@
         "parallel": true
       }
     },
-    "docker-express": {}
+    "docker-express": {},
+    "service-service-portal-api": {}
   },
   "tags": []
 }

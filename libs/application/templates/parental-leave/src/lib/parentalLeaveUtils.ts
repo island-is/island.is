@@ -536,6 +536,11 @@ export function getApplicationExternalData(
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
+  const userBankInfo = getValueViaPath(
+    externalData,
+    'userProfile.data.bankInfo',
+  ) as string
+
   const applicantGenderCode = getValueViaPath(
     externalData,
     'person.data.genderCode',
@@ -568,6 +573,7 @@ export function getApplicationExternalData(
     navId,
     userEmail,
     userPhoneNumber,
+    userBankInfo,
   }
 }
 
@@ -670,17 +676,19 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
 
-  const usePersonalAllowance = getValueViaPath(
-    answers,
-    'usePersonalAllowance',
-    NO,
-  ) as YesOrNo
+  const usePersonalAllowance =
+    (getValueViaPath(
+      answers,
+      'personalAllowance.usePersonalAllowance',
+    ) as YesOrNo) ??
+    (getValueViaPath(answers, 'usePersonalAllowance', NO) as YesOrNo)
 
-  const usePersonalAllowanceFromSpouse = getValueViaPath(
-    answers,
-    'usePersonalAllowanceFromSpouse',
-    NO,
-  ) as YesOrNo
+  const usePersonalAllowanceFromSpouse =
+    (getValueViaPath(
+      answers,
+      'personalAllowanceFromSpouse.usePersonalAllowance',
+    ) as YesOrNo) ??
+    (getValueViaPath(answers, 'usePersonalAllowanceFromSpouse', NO) as YesOrNo)
 
   const personalUseAsMuchAsPossible = getValueViaPath(
     answers,
@@ -1013,12 +1021,17 @@ export const getLastValidPeriodEndDate = (
   const today = new Date()
   const beginningOfMonth = getBeginningOfThisMonth()
 
-  // LastPeriod's endDate is in current month then Applicant could only start from next month
+  // LastPeriod's endDate is in current month
   if (
     lastEndDate.getMonth() === today.getMonth() &&
     lastEndDate.getFullYear() === today.getFullYear()
   ) {
-    return addMonths(beginningOfMonth, 1)
+    // Applicant has to start from begining of next month if today is >= 20
+    if (today.getDate() >= 20) {
+      return addMonths(beginningOfMonth, 1)
+    }
+
+    return lastEndDate
   }
 
   // Current Date is >= 20 and lastEndDate is in the past then Applicant could only start from next month

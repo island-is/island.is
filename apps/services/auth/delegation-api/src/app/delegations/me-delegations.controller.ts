@@ -30,7 +30,7 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { AuthScope } from '@island.is/auth/scopes'
+import { delegationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlag,
@@ -53,8 +53,8 @@ const delegationId: DocumentationParamOptions = {
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.outgoingDelegationsV2)
-@Scopes(AuthScope.delegations)
-@ApiSecurity('ias', [AuthScope.delegations])
+@Scopes(...delegationScopes)
+@ApiSecurity('ias', delegationScopes)
 @ApiTags('me/delegations')
 @Controller({
   path: 'me/delegations',
