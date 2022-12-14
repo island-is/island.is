@@ -6,9 +6,10 @@ import { AccessListItem } from './AccessListItem'
 import * as commonAccessStyles from '../access.css'
 import { Fragment } from 'react'
 import classNames from 'classnames'
+import isString from 'lodash/isString'
 
 interface AccessListProps {
-  validityPeriod?: Date | null
+  validityPeriod?: Date | string | null
   scopes: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]
   scopeTree: AuthScopeTree
 }
@@ -91,7 +92,13 @@ export const AccessList = ({
           : commonAccessStyles.gridThreeCols,
       )}
     >
-      {lg && <AccessListHeader validityPeriod={validityPeriod} />}
+      {lg && (
+        <AccessListHeader
+          validityPeriod={
+            isString(validityPeriod) ? new Date(validityPeriod) : validityPeriod
+          }
+        />
+      )}
       <Box className={commonAccessStyles.divider}>
         <Divider />
       </Box>

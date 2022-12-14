@@ -9,7 +9,7 @@ export const header = style({
   alignItems: 'center',
   width: '100%',
   height: theme.headerHeight.small,
-  backgroundColor: theme.color.white,
+  backgroundColor: theme.color.blue100,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       height: theme.headerHeight.large,

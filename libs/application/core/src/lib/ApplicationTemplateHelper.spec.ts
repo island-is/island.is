@@ -11,7 +11,8 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  ApplicationTemplateAPIAction,
+  TemplateApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { buildForm } from './formBuilders'
 import { DefaultStateLifeCycle } from './constants'
@@ -370,16 +371,16 @@ describe('ApplicationTemplate', () => {
     })
 
     it('should return onEntry action with expected default values', () => {
-      const expectedAction: ApplicationTemplateAPIAction = {
-        apiModuleAction: 'testAction',
-        externalDataId: 'testAction',
+      const expectedAction: TemplateApi = defineTemplateApi({
+        action: 'testAction',
+        order: 0,
         shouldPersistToExternalData: true,
         throwOnError: true,
-      }
+      })
 
-      const testActionConfig: ApplicationTemplateAPIAction = {
-        apiModuleAction: 'testAction',
-      }
+      const testActionConfig: TemplateApi = defineTemplateApi({
+        action: 'testAction',
+      })
 
       set(
         template,
@@ -402,19 +403,19 @@ describe('ApplicationTemplate', () => {
     })
 
     it('should not overwrite custom values with default values', () => {
-      const expectedAction: ApplicationTemplateAPIAction = {
-        apiModuleAction: 'testAction',
+      const expectedAction: TemplateApi = defineTemplateApi({
+        action: 'testAction',
         externalDataId: 'customExternalDataId',
         shouldPersistToExternalData: false,
         throwOnError: false,
-      }
+      })
 
-      const testActionConfig: ApplicationTemplateAPIAction = {
-        apiModuleAction: 'testAction',
+      const testActionConfig: TemplateApi = defineTemplateApi({
+        action: 'testAction',
         externalDataId: 'customExternalDataId',
         shouldPersistToExternalData: false,
         throwOnError: false,
-      }
+      })
 
       set(
         template,
