@@ -109,19 +109,28 @@ export class ElasticService {
    * @return {boolean} True iff a document was removed
    * Filter the HUMONGOUS documents in an error object
    */
-  private filterDoc<T>(o: T): boolean {
-    let deleted = false
-    if (Object.keys(o).length == 0) return false
-    for (const key in o) {
-      const value = o[key]
-      // Only HUMONGOUS documents should reach this limit
-      if (typeof value == 'string' && value.length > 10000) {
-        delete o[key]
-        deleted = true
+  private filterDoc<T>(obj: T): boolean {
+    const visited = new Set()
+    const filterDocRecursive = (o: T) => {
+      if (visited.has(o)) return false
+
+      // Only add objects to the visited set
+      if (typeof o === 'object') visited.add(o)
+
+      let deleted = false
+      if (Object.keys(o).length == 0) return false
+      for (const key in o) {
+        const value = o[key]
+        // Only HUMONGOUS documents should reach this limit
+        if (typeof value == 'string' && value.length > 10000) {
+          delete o[key]
+          deleted = true
+        }
+        return this.filterDoc(o[key])
       }
-      return this.filterDoc(o[key])
+      return deleted
     }
-    return deleted
+    return filterDocRecursive(obj)
   }
 
   async bulkRequest(index: string, requests: Record<string, unknown>[]) {
