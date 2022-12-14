@@ -57,7 +57,7 @@
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                                 @island-is/juni
 /libs/api/domains/communications/                                                                   @island-is/juni @island-is/stefna
 /apps/services/user-notification/                                                                   @island-is/juni
-/apps/air-discount-scheme/                                                                          @island-is/juni @island.is/aranja
+/apps/air-discount-scheme/                                                                          @island-is/juni @island-is/aranja
 /libs/air-discount-scheme/                                                                          @island-is/juni
 /libs/application/templates/p-sign/                                                                 @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission                  @island-is/juni
