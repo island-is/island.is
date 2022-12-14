@@ -37,7 +37,7 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
       }
 
       const url = `${pathname}?${params}`
-
+      //
       window.open(
         url,
         shouldLinkOpenInNewWindow(pathname) ? '_blank' : '_self',
