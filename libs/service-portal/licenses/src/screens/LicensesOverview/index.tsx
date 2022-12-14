@@ -13,10 +13,15 @@ import { Locale } from '@island.is/shared/types'
 import {
   GenericLicenseType,
   GenericUserLicenseFetchStatus,
+  GetChildrenIdentityDocumentQuery,
   useChildrenPassport,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
-import { IdentityDocumentModel, Query } from '@island.is/api/schema'
+import {
+  IdentityDocumentModel,
+  IdentityDocumentModelChild,
+  Query,
+} from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
 
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
@@ -106,6 +111,11 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     },
   ] = useLazyQuery(GetIdentityDocumentQuery)
 
+  const [
+    getPassportDataChild,
+    { data: childIdentityDocumentData, loading: childrenLoading },
+  ] = useLazyQuery(GetChildrenIdentityDocumentQuery)
+
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
@@ -139,6 +149,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   useEffect(() => {
     if (passportEnabled) {
       getPassportData()
+      getPassportDataChild()
     }
   }, [passportEnabled])
 
@@ -155,7 +166,9 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     | IdentityDocumentModel[]
     | undefined
 
-  const { data: childrenData, loading: childrenLoading } = useChildrenPassport()
+  const childrenData = childIdentityDocumentData?.getIdentityDocumentChildren as
+    | IdentityDocumentModelChild[]
+    | undefined
 
   const isLoading = loading || passportLoading
   const isGenericLicenseEmpty = genericLicenses.every(

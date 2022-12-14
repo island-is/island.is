@@ -22,6 +22,7 @@ import { defineMessage } from 'react-intl'
 import { formatDate } from '../../utils/dateUtils'
 import { m } from '../../lib/messages'
 import {
+  GetChildrenIdentityDocumentQuery,
   GetIdentityDocumentQuery,
   IdentityDocumentModel,
   IdentityDocumentModelChild,
@@ -70,7 +71,10 @@ const PassportDetail: ServicePortalModuleComponent = () => {
     { data: identityDocumentData, loading, error },
   ] = useLazyQuery(GetIdentityDocumentQuery)
 
-  const { data: childPassportData } = useChildrenPassport()
+  const [
+    getPassportDataChild,
+    { data: childIdentityDocumentData },
+  ] = useLazyQuery(GetChildrenIdentityDocumentQuery)
 
   useEffect(() => {
     const isPassportFlagEnabled = async () => {
@@ -89,6 +93,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
   useEffect(() => {
     if (passportEnabled) {
       getPassportData()
+      getPassportDataChild()
     }
   }, [passportEnabled])
 
@@ -99,6 +104,10 @@ const PassportDetail: ServicePortalModuleComponent = () => {
   }
   const passportData = identityDocumentData?.getIdentityDocument as
     | IdentityDocumentModel[]
+    | undefined
+
+  const childPassportData = childIdentityDocumentData?.getIdentityDocumentChildren as
+    | IdentityDocumentModelChild[]
     | undefined
 
   const data =
