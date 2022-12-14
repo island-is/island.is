@@ -9,7 +9,6 @@ export const up = compose(
     addToClients: [
       '@vegagerdin.is/air-discount-scheme',
       '@island.is/clients/api',
-      '@island.is/clients/dev',
     ],
     addToResource: '@vegagerdin.is',
   }),
