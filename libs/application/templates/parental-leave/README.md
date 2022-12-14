@@ -31,7 +31,7 @@ This state is a temporary state that all new applications will be created in. It
 
 The purpose of this state is to be a guard into the actual application. To advance to the next state, an applicant will need to be expecting a child. To verify this, there is an external data step which fetches data from VMST and Þjóðskrá.
 
-Applicants choose which application type they are applying for. How many children will give birth.
+Applicants choose which application type ( parental-leave or parental-grant ) they are applying for. How many children will give birth.
 
 #### Draft
 
