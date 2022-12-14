@@ -180,6 +180,7 @@ export const getChildrenAndExistingApplications = (
         expectedDateOfBirth === child.expectedDateOfBirth,
     )
 
+    // This supports to cover otherParent multipleBirths case
     if (!isAlreadyInList && !hasAlreadyAppliedForChild) {
       children.push(child)
     }
@@ -192,6 +193,9 @@ export const getChildrenAndExistingApplications = (
     )
 
     // TODO: revisit this when we include twins in application
+    // Noted: Have not seen multipleBirths pregnancy status yet
+    // primary parents get pregnancy status before due date and it returns 1 expected date
+    // If she started the application after child/chilren is/are born then pregnancy status is false
     if (!hasAlreadyAppliedForChild) {
       children.push({
         expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
