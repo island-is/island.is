@@ -1,14 +1,6 @@
 import { filterDoc } from './index'
 
 describe('filterDoc', () => {
-  it('should handle circular objects being passed', () => {
-    const test: Record<string, unknown> = {
-      a: 3,
-    }
-    test.b = test
-    const result = filterDoc(test)
-    expect(result).toBe(false)
-  })
   it('should prune fields that are longer than the letter limit', () => {
     const test: Record<string, unknown> = {
       a: 'some-value',
@@ -16,7 +8,10 @@ describe('filterDoc', () => {
         c: 'some-really-long-value-that-should-get-pruned',
       },
     }
+
+    // Also make the test object circular
     test.d = test
+
     const result = filterDoc(test, new Set(), 20)
     expect(result).toBe(true)
     expect(test.b).toStrictEqual({})
