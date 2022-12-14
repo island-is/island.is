@@ -120,6 +120,7 @@
     "clients-auth-delegation-api": "libs/clients/auth/delegation-api",
     "clients-auth-public-api": "libs/clients/auth/public-api",
     "clients-charge-fjs-v2": "libs/clients/charge-fjs-v2",
+    "clients-court-bankruptcy-cert": "libs/clients/court-bankruptcy-cert",
     "clients-criminal-record": "libs/clients/criminal-record",
     "clients-data-protection-complaint": "libs/clients/data-protection-complaint",
     "clients-disability-license": "libs/clients/disability-license",

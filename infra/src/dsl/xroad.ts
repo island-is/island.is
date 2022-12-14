@@ -213,6 +213,16 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const CourtBankruptcyCert = new XroadConf({
+  env: {
+    XROAD_COURT_BANKRUPTCY_CERT_PATH: {
+      dev: 'IS-DEV/GOV/10019/Domstolasyslan',
+      staging: 'IS-TEST/GOV/4707171140/Domstolasyslan',
+      prod: 'IS/GOV/4707171140/Domstolasyslan'
+    }
+  }
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {
