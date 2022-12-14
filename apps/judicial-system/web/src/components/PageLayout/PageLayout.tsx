@@ -55,7 +55,7 @@ export interface RouteSection {
   }[]
 }
 
-const RenderSubsectionChild: React.FC<{
+const SubsectionChild: React.FC<{
   isActive: boolean
 }> = ({ isActive, children }) => (
   <Box className={styles.name}>
@@ -100,9 +100,9 @@ const PageLayout: React.FC<PageProps> = ({
         subSections={section.children.map((subSection, index) =>
           subSection.href && activeSubSection && activeSubSection > index ? (
             <Link href={subSection.href} underline="small">
-              <RenderSubsectionChild isActive={index === activeSubSection}>
+              <SubsectionChild isActive={index === activeSubSection}>
                 {subSection.name}
-              </RenderSubsectionChild>
+              </SubsectionChild>
             </Link>
           ) : subSection.onClick ? (
             <Box
@@ -113,14 +113,14 @@ const PageLayout: React.FC<PageProps> = ({
                 linkStyles.underlines['small'],
               )}
             >
-              <RenderSubsectionChild isActive={index === activeSubSection}>
+              <SubsectionChild isActive={index === activeSubSection}>
                 {subSection.name}
-              </RenderSubsectionChild>
+              </SubsectionChild>
             </Box>
           ) : (
-            <RenderSubsectionChild isActive={index === activeSubSection}>
+            <SubsectionChild isActive={index === activeSubSection}>
               {subSection.name}
-            </RenderSubsectionChild>
+            </SubsectionChild>
           ),
         )}
       />
