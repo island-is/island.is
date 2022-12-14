@@ -71,7 +71,7 @@ export const Overview = ({
   }
 
   return (
-    <Box marginBottom={2} role="region" aria-label={formatMessage(m.overview)}>
+    <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
         <AboutOverview answers={answers} />
@@ -79,7 +79,7 @@ export const Overview = ({
       <Divider />
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
-          <Text id="operating Income" variant="h3" as="h3">
+          <Text variant="h3" as="h3">
             {formatMessage(m.expensesIncome)}
           </Text>
         </Box>
