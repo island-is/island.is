@@ -32,8 +32,8 @@ describe('Local setup', () => {
   })
   it('Always pass', () => {
     expect.any
-})
-/*  it('Should have services', () => {
+  })
+  /*  it('Should have services', () => {
     expect(Object.keys(serviceDef.services)).toStrictEqual([
       'api',
       'mock-server',

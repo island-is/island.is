@@ -45,12 +45,11 @@ describe('Egress', () => {
       Staging,
     )
   })
-it('Always pass', () => {
+  it('Always pass', () => {
     expect.any
-})
-  
+  })
 
- /* it('Variable has address of the mock', () => {
+  /* it('Variable has address of the mock', () => {
     expect(serviceDef.serviceDef[0].env['A']).toBe(
       'http://web-mock-server:9209',
     )
