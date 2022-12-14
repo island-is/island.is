@@ -30,7 +30,7 @@ const RouteComponent = React.memo(
           path: route.path,
         })
       }
-    }, [location])
+    }, [basePath, location, route.path, route.render])
 
     if (route.render === undefined) {
       return null

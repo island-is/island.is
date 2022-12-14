@@ -23,23 +23,7 @@ export function verifyExternalData(
       return false
     }
   }
-  return true
-}
 
-export function hideSubmitErrorExternalData(
-  externalData: ExternalData,
-  dataProviders: DataProviderItem[],
-): boolean {
-  for (let i = 0; i < dataProviders.length; i++) {
-    const { id } = dataProviders[i]
-    const dataProviderResult = externalData[id]
-    if (
-      (!dataProviderResult || dataProviderResult.status === 'failure') &&
-      !dataProviderResult.hideSubmitError
-    ) {
-      return false
-    }
-  }
   return true
 }
 

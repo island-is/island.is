@@ -341,13 +341,7 @@ const HearingArrangements = () => {
                 }
               }}
               onSecondaryButtonClick={async () => {
-                const notificationSent = await sendNotification(
-                  workingCase.id,
-                  NotificationType.COURT_DATE,
-                  true,
-                )
-
-                if (notificationSent && nextRoute) {
+                if (nextRoute) {
                   router.push(nextRoute)
                 }
               }}
