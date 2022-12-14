@@ -193,7 +193,6 @@ export const courtRestrictionCasesRoutes = [
   RESTRICTION_CASE_RULING_ROUTE,
   RESTRICTION_CASE_COURT_RECORD_ROUTE,
   RESTRICTION_CASE_CONFIRMATION_ROUTE,
-  RESTRICTION_CASE_MODIFY_RULING_ROUTE,
 ]
 
 export const courtInvestigationCasesRoutes = [

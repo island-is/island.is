@@ -39,6 +39,7 @@ const Overview = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+
   return (
     <PageLayout
       workingCase={workingCase}

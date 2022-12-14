@@ -144,9 +144,9 @@ export const Cases: React.FC = () => {
       caseToOpen.state === CaseState.DISMISSED
     ) {
       if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = `${constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else {
-        routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
       }
     } else if (isExtendedCourtRole(role)) {
       if (isRestrictionCase(caseToOpen.type)) {

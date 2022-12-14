@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -56,7 +56,9 @@ export const HearingArrangements: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [nextRoute, setNextRoute] = useState<string>()
+  const [nextRoute, setNextRoute] = useState<string>(
+    constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+  )
 
   const {
     sendNotification,
@@ -95,7 +97,7 @@ export const HearingArrangements: React.FC = () => {
         return
       }
 
-      setNextRoute(destination ?? '') // TODO: Not optional
+      setNextRoute(`${destination}/${workingCase.id}`)
 
       const caseOpened =
         workingCase.state === CaseState.NEW
@@ -115,7 +117,7 @@ export const HearingArrangements: React.FC = () => {
             (notification) => notification.type === NotificationType.HEADS_UP,
           )
         ) {
-          router.push(`${destination}/${workingCase.id}`)
+          router.push(nextRoute)
         } else {
           setModalVisible(true)
         }
@@ -123,7 +125,14 @@ export const HearingArrangements: React.FC = () => {
         toast.error(formatMessage(errors.transitionCase))
       }
     },
-    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
+    [
+      formatMessage,
+      nextRoute,
+      router,
+      setWorkingCase,
+      transitionCase,
+      workingCase,
+    ],
   )
 
   const stepIsValid =
@@ -255,13 +264,7 @@ export const HearingArrangements: React.FC = () => {
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
               onClose={() => setModalVisible(false)}
-              onSecondaryButtonClick={() =>
-                router.push(
-                  `${
-                    nextRoute || constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
-                  }/${workingCase.id}`,
-                )
-              }
+              onSecondaryButtonClick={() => router.push(nextRoute)}
               errorMessage={
                 sendNotificationError
                   ? formatMessage(errors.sendNotification)
@@ -274,12 +277,7 @@ export const HearingArrangements: React.FC = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(
-                    `${
-                      nextRoute ||
-                      constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
-                    }/${workingCase.id}`,
-                  )
+                  router.push(nextRoute)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}

@@ -47,7 +47,7 @@ const CourtRecord: React.FC = () => {
   )
   const [modalVisible, setModalVisible] = useState<ModalTypes>(ModalTypes.NONE)
   const [nextRoute, setNextRoute] = useState<string>(
-    constants.INDICTMENTS_OVERVIEW_ROUTE,
+    constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   )
 
   const { formatMessage } = useIntl()

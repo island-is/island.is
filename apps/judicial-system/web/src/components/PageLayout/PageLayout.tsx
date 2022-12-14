@@ -21,7 +21,10 @@ import {
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { pageLayout } from '@island.is/judicial-system-web/messages'
+import {
+  sections as formStepperSections,
+  pageLayout,
+} from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
@@ -39,7 +42,7 @@ interface PageProps {
   showSidepanel?: boolean
   // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
   activeSubSection?: number
-  onNavigationTo?: (destination: string) => Promise<any> // TODO: Fix any
+  onNavigationTo?: (destination: string) => Promise<unknown>
   isValid?: boolean
 }
 
@@ -69,16 +72,14 @@ const PageLayout: React.FC<PageProps> = ({
   isValid,
 }) => {
   const { user } = useContext(UserContext)
-  const { getSections } = useSections(activeSubSection, isValid, onNavigationTo)
+  const { getSections } = useSections(isValid, onNavigationTo)
   const { formatMessage } = useIntl()
   // Remove the extension parts of the formstepper if the user is not applying for an extension
   const sections =
     activeSection === Sections.EXTENSION ||
     activeSection === Sections.JUDGE_EXTENSION
-      ? getSections(workingCase, activeSubSection, user)
-      : getSections(workingCase, activeSubSection, user).filter(
-          (_, index) => index <= 2,
-        )
+      ? getSections(workingCase, user)
+      : getSections(workingCase, user).filter((_, index) => index <= 2)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -141,6 +142,16 @@ const PageLayout: React.FC<PageProps> = ({
                   <Box marginBottom={7} display={['none', 'none', 'block']}>
                     <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
+                  <Box marginBottom={6}>
+                    <Text variant="h3" as="h3">
+                      {formatMessage(
+                        isIndictmentCase(workingCase?.type)
+                          ? formStepperSections.indictmentTitle
+                          : formStepperSections.title,
+                        { caseType: workingCase?.type },
+                      )}
+                    </Text>
+                  </Box>
                   <FormStepperV2
                     sections={sections.map((section, index) => (
                       <Section
@@ -155,7 +166,7 @@ const PageLayout: React.FC<PageProps> = ({
                             // TODO: FIX - Cant click back in stepper if you are on last step
                             return subSection.href &&
                               activeSubSection &&
-                              activeSubSection < index ? (
+                              activeSubSection > index ? (
                               <Link href={subSection.href} underline="small">
                                 <RenderSubsectionChild
                                   isActive={index === activeSubSection}
