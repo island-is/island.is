@@ -56,5 +56,3 @@ export const IntroHeader = ({
     </GridRow>
   )
 }
-
-export default IntroHeader
