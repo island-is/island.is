@@ -10,14 +10,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ModuleAlertBannerSection } from './ModuleAlertMessageSection/ModuleAlertMessageSection'
 
-interface IntroHeaderProps {
+export interface IntroHeaderProps {
   title: MessageDescriptor | string
   intro?: MessageDescriptor | string
   img?: string
   hideImgPrint?: boolean
   marginBottom?: BoxProps['marginBottom']
+  children?: React.ReactNode
 }
 
 export const IntroHeader = ({
@@ -26,6 +26,7 @@ export const IntroHeader = ({
   img,
   hideImgPrint = false,
   marginBottom = 6,
+  children,
 }: IntroHeaderProps) => {
   const { formatMessage } = useLocale()
 
@@ -50,9 +51,7 @@ export const IntroHeader = ({
           </Hidden>
         </GridColumn>
       )}
-      <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
-        <ModuleAlertBannerSection />
-      </GridColumn>
+      {children}
     </GridRow>
   )
 }
