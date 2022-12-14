@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { Box, Tabs } from '@island.is/island-ui/core'
-import { IntroHeader, m as coreMessages } from '@island.is/service-portal/core'
+import { IntroHeader } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { isDefined } from '@island.is/shared/utils'
@@ -48,7 +48,7 @@ const AccessControl = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(coreMessages.accessControl)}
+        title={formatMessage(m.accessControl)}
         intro={formatMessage(
           onlyOutgoingDelegations
             ? {
@@ -80,16 +80,12 @@ const AccessControl = () => {
             tabs={[
               {
                 id: TAB_DELEGATION_OUTGOING_ID,
-                label: formatMessage(
-                  coreMessages.accessControlDelegationsOutgoing,
-                ),
+                label: formatMessage(m.accessControlDelegationsOutgoing),
                 content: <DelegationsOutgoing />,
               },
               {
                 id: TAB_DELEGATION_INCOMING_ID,
-                label: formatMessage(
-                  coreMessages.accessControlDelegationsIncoming,
-                ),
+                label: formatMessage(m.accessControlDelegationsIncoming),
                 content: <DelegationsIncoming />,
               },
             ]}

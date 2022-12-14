@@ -6,11 +6,10 @@ import {
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatNationalId } from '@island.is/service-portal/core'
+import { formatNationalId } from '@island.is/portals/core'
 import { useEffect, useState } from 'react'
 import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../../Modal/Modal'
-import { m } from '@island.is/service-portal/core'
 import { IdentityCard } from '../../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
@@ -19,6 +18,7 @@ import {
   AuthCustomDelegation,
   AuthCustomDelegationOutgoing,
 } from '../../../types/customDelegation'
+import { m } from '../../../lib/messages'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation?: AuthCustomDelegation
