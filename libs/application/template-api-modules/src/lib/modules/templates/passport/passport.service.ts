@@ -3,20 +3,39 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { YES, YesOrNo, DiscountCheck } from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 import { PassportSchema } from '@island.is/application/templates/passport'
 import { PassportsService } from '@island.is/clients/passports'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
-export class PassportService {
+export class PassportService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private passportApi: PassportsService,
-  ) {}
+  ) {   super(ApplicationTypes.PASSPORT)}
+
+  async identityDocument({application, auth }: TemplateApiModuleActionProps) {
+    const identityDocument = await this.passportApi.getCurrentPassport(auth)
+    if(!identityDocument) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    } else {
+      return identityDocument
+    }
+  }
+
 
   async createCharge({
     application: { id, answers },

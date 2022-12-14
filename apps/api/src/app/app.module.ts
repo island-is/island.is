@@ -17,7 +17,8 @@ import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
-import { MailchimpModule } from '@island.is/api/domains/mailchimp'
+import { EmailSignupModule } from '@island.is/api/domains/email-signup'
+import { ZenterSignupConfig } from '@island.is/api/domains/email-signup'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -205,7 +206,7 @@ const autoSchemaFile = environment.production
       },
     }),
     CommunicationsModule,
-    MailchimpModule,
+    EmailSignupModule,
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
@@ -294,6 +295,7 @@ const autoSchemaFile = environment.production
         FiskistofaClientConfig,
         PowerBiConfig,
         DisabilityLicenseClientConfig,
+        ZenterSignupConfig,
       ],
     }),
   ],
