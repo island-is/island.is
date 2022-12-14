@@ -1,22 +1,20 @@
 import { isDefined } from '@island.is/shared/utils'
-import { AuthCustomDelegation } from '@island.is/api/schema'
+import { AuthDelegationScope } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import { AlertBanner, Box, useBreakpoint } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
-import {
-  AuthDelegationScope,
-  AuthScopeTreeQuery,
-} from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
-import { AccessListContainer } from './AccessList/AccessListContainer'
+import { AccessListContainer } from './AccessList/AccessListContainer/AccessListContainer'
+import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
+import { AuthCustomDelegationOutgoing } from '../../types/customDelegation'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
-  delegation: AuthCustomDelegation
+  delegation: AuthCustomDelegationOutgoing
   scopes?: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]
   scopeTree: AuthScopeTreeQuery['authScopeTree']
   validityPeriod?: Date | null

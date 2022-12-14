@@ -10,6 +10,7 @@ import {
   investigationCases,
   restrictionCases,
   User as TUser,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -70,6 +71,7 @@ describe('CaseController - Create', () => {
       const courtId = uuid()
       const user = {
         id: userId,
+        role: UserRole.PROSECUTOR,
         institution: { defaultCourtId: courtId },
       } as TUser
       const caseToCreate = {
@@ -108,6 +110,7 @@ describe('CaseController - Create', () => {
     const courtId = uuid()
     const user = {
       id: userId,
+      role: UserRole.PROSECUTOR,
       institution: { defaultCourtId: courtId },
     } as TUser
     const caseToCreate = {

@@ -10,6 +10,7 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
@@ -44,11 +45,11 @@ const EstateTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.syslumennOnEntry,
+          onEntry: defineTemplateApi({
+            action: ApiActions.syslumennOnEntry,
             shouldPersistToExternalData: true,
             throwOnError: false,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

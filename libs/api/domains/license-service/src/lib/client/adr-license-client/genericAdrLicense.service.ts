@@ -86,7 +86,7 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
       return null
     }
 
-    const inputValues = createPkPassDataInput(license)
+    const inputValues = createPkPassDataInput(license, format(user.nationalId))
     if (!inputValues) return null
     //Fetch template from api?
     return {
