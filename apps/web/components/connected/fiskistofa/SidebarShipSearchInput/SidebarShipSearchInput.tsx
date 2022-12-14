@@ -26,7 +26,7 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
       const pathname = n('shipDetailsHref', '/v/gagnasidur-fiskistofu')
       const query = {
         ...router.query,
-        nr: searchValue,
+        [n('shipDetailsNumberQueryParam', 'nr')]: searchValue,
         selectedTab: router.query?.selectedTab ?? 'skip',
       }
       router

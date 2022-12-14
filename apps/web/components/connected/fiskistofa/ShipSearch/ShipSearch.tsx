@@ -44,10 +44,15 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
   const router = useRouter()
 
   const getShipDetailsHref = (id: number) => {
-    return `${n(
+    const href = n(
       'shipDetailsHref',
       '/v/gagnasidur-fiskistofu?selectedTab=skip',
-    )}&nr=${id}`
+    ) as string
+
+    return `${href}${href?.includes('?') ? '&' : '?'}${n(
+      'shipDetailsNumberQueryParam',
+      'nr',
+    )}=${id}`
   }
 
   const [loadShips, { data, error, loading, called }] = useLazyQuery<
