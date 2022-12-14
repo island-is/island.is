@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { Box, Tabs } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { isDefined } from '@island.is/shared/utils'

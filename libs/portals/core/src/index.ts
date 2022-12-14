@@ -10,6 +10,7 @@ export * from './screens/Modules'
 
 // hooks
 export * from './hooks/useModuleProps'
+export * from './hooks/useQueryParam'
 
 // utils
 export * from './utils/formatNationalId'
@@ -24,3 +25,4 @@ export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'
 export * from './components/LoadingScreen/LoadingScreen'
 export * from './components/ModulesProvider'
 export * from './components/PortalMetaProvider'
+export * from './components/IntroHeader'

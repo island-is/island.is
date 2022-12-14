@@ -18,7 +18,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader } from '@island.is/portals/core'
 import {
   formatNationalId,
   m as coreMessages,
