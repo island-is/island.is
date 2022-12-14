@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Charge } from '@island.is/clients/payment'
+import { Charge } from '@island.is/clients/charge-fjs-v2'
 import { Payment } from '../payment.model'
 
 export function formatCharge(

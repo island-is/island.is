@@ -6,9 +6,14 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
-import { PaymentClientModule } from '@island.is/clients/payment'
 import { PaymentController } from './payment.controller'
 import { PaymentCallbackController } from './payment-callback.controller'
+import {
+  ChargeFjsV2ClientConfig,
+  ChargeFjsV2ClientModule,
+} from '@island.is/clients/charge-fjs-v2'
+import { ConfigModule } from '@nestjs/config'
+import { XRoadConfig } from '@island.is/nest/config'
 
 @Module({
   imports: [
@@ -16,8 +21,13 @@ import { PaymentCallbackController } from './payment-callback.controller'
       useClass: SequelizeConfigService,
     }),
     SequelizeModule.forFeature([Payment]),
-    PaymentClientModule,
+    // PaymentClientModule,
     ApplicationApiCoreModule,
+    ChargeFjsV2ClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [XRoadConfig, ChargeFjsV2ClientConfig],
+    }),
   ],
   providers: [PaymentService],
   exports: [PaymentService],

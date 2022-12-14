@@ -24,10 +24,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
-import { CreatePaymentResponseDto } from './dto'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
-import { CreateChargeInput } from './dto/createChargeInput.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -45,25 +43,6 @@ export class PaymentController {
     private readonly auditService: AuditService,
     private readonly paymentService: PaymentService,
   ) {}
-  @Scopes(ApplicationScope.write)
-  @Post('applications/:applicationId/payment')
-  @ApiCreatedResponse({ type: CreatePaymentResponseDto })
-  async createCharge(
-    @CurrentUser() user: User,
-    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
-    @Body() payload: CreateChargeInput,
-  ): Promise<CreatePaymentResponseDto> {
-    const { id, paymentUrl } = await this.paymentService.createCharge(
-      user,
-      payload.chargeItemCodes,
-      applicationId,
-    )
-
-    return {
-      id,
-      paymentUrl,
-    }
-  }
 
   @Scopes(ApplicationScope.read)
   @Get('applications/:applicationId/payment-status')

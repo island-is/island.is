@@ -36,9 +36,14 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const result = this.sharedTemplateAPIService.createCharge(auth, id, [
-        ChargeItemCode.CRIMINAL_RECORD,
-      ])
+      const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
+      const result = this.sharedTemplateAPIService.createCharge(
+        auth,
+        id,
+        SYSLUMADUR_NATIONAL_ID,
+        [ChargeItemCode.CRIMINAL_RECORD],
+      )
       return result
     } catch (exeption) {
       return { id: '', paymentUrl: '' }

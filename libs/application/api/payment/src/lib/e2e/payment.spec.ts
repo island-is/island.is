@@ -52,16 +52,6 @@ class MockPaymentService {
     }
   }
 
-  async findChargeItem() {
-    return {
-      performingOrgID: faker.datatype.number(),
-      chargeType: faker.random.word(),
-      chargeItemCode: TARGET_CHARGE_ITEM_CODE,
-      chargeItemName: faker.random.word(),
-      priceAmount: faker.datatype.number(),
-    }
-  }
-
   async findChargeItems() {
     return [
       {

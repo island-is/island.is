@@ -11,7 +11,7 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     prerequisitesSection,
-    informationSection,
+    // informationSection,
     paymentSection,
     conclusionSection,
   ],

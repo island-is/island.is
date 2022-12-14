@@ -143,7 +143,6 @@
     "clients-national-registry-v1": "libs/clients/national-registry/v1",
     "clients-national-registry-v2": "libs/clients/national-registry/v2",
     "clients-passports": "libs/clients/passports",
-    "clients-payment": "libs/clients/payment",
     "clients-payment-schedule": "libs/clients/payment-schedule",
     "clients-regulations": "libs/clients/regulations",
     "clients-rsk-company-registry": "libs/clients/rsk/company-registry",

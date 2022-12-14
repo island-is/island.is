@@ -7,12 +7,13 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
-import { PaymentAPI } from '@island.is/clients/payment'
-import type { Charge, Item as ChargeItem } from '@island.is/clients/payment'
+import {
+  CatalogItem,
+  ChargeFjsV2ClientService,
+} from '@island.is/clients/charge-fjs-v2'
 import { User } from '@island.is/auth-nest-tools'
 import { getSlugFromType } from '@island.is/application/core'
 import { CreateChargeResult } from './payment.type'
-
 import {
   Application as ApplicationModel,
   ApplicationService,
@@ -31,7 +32,7 @@ export class PaymentService {
     private paymentModel: typeof Payment,
     @Inject(PaymentModuleConfig.KEY)
     private config: ConfigType<typeof PaymentModuleConfig>,
-    private paymentApi: PaymentAPI,
+    private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly auditService: AuditService,
     private readonly applicationService: ApplicationService,
   ) {}
@@ -89,7 +90,7 @@ export class PaymentService {
   }
 
   private async createPaymentModel(
-    chargeItems: ChargeItem[],
+    chargeItems: CatalogItem[],
     applicationId: string,
   ): Promise<Payment> {
     const paymentModel: Pick<
@@ -125,11 +126,15 @@ export class PaymentService {
    */
   async createCharge(
     user: User,
+    performingOrganizationID: string,
     chargeItemCodes: string[],
     applicationId: string,
   ): Promise<CreateChargeResult> {
     //.1 Get charge items from FJS
-    const chargeItems = await this.findChargeItems(chargeItemCodes)
+    const chargeItems = await this.findChargeItems(
+      performingOrganizationID,
+      chargeItemCodes,
+    )
 
     //2. Create and insert payment db entry
     const paymentModel = await this.createPaymentModel(
@@ -138,7 +143,7 @@ export class PaymentService {
     )
 
     //3. Send charge to FJS
-    const chargeResult = await this.paymentApi.createCharge(
+    const chargeResult = await this.chargeFjsV2ClientService.createCharge(
       formatCharge(
         paymentModel,
         this.config.callbackBaseUrl,
@@ -173,20 +178,6 @@ export class PaymentService {
     }
   }
 
-  async findChargeItem(targetChargeItemCode: string): Promise<ChargeItem> {
-    const { item: items } = await this.paymentApi.getCatalog()
-
-    const item = items.find(
-      ({ chargeItemCode }) => chargeItemCode === targetChargeItemCode,
-    )
-
-    if (!item) {
-      throw new Error('Bad chargeItemCode or empty catalog')
-    }
-
-    return item
-  }
-
   public makeDelegationPaymentUrl(
     docNum: string,
     loginHint: string,
@@ -204,9 +195,14 @@ export class PaymentService {
   }
 
   async findChargeItems(
+    performingOrganizationID: string,
     targetChargeItemCodes: string[],
-  ): Promise<ChargeItem[]> {
-    const { item: allItems } = await this.paymentApi.getCatalog()
+  ): Promise<CatalogItem[]> {
+    const {
+      item: allItems,
+    } = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+      performingOrganizationID,
+    )
 
     const items = allItems.filter(({ chargeItemCode }) =>
       targetChargeItemCodes.includes(chargeItemCode),

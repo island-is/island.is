@@ -42,6 +42,8 @@ export class TransferOfVehicleOwnershipService {
     | undefined
   > {
     try {
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
       const chargeItemCodes = getChargeItemCodes(
         application.answers as TransferOfVehicleOwnershipAnswers,
       )
@@ -49,6 +51,7 @@ export class TransferOfVehicleOwnershipService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
+        SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
       )
       return result

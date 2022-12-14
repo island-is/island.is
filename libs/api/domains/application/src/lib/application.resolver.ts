@@ -26,9 +26,6 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
-import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.input'
-import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
-import { CreatePaymentResponseDto } from '../../gen/fetch'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
@@ -63,18 +60,6 @@ export class ApplicationResolver {
       fulfilled: status.fulfilled,
       paymentUrl: status.paymentUrl,
     }
-  }
-
-  @Mutation(() => ApplicationPaymentChargeResponse, { nullable: true })
-  async applicationPaymentCharge(
-    @Args('input') input: ApplicationPaymentChargeInput,
-    @CurrentUser() user: User,
-  ): Promise<CreatePaymentResponseDto> {
-    return this.applicationService.createCharge(
-      input.applicationId,
-      user,
-      input.chargeItemCodes,
-    )
   }
 
   @Query(() => [Application], { nullable: true })

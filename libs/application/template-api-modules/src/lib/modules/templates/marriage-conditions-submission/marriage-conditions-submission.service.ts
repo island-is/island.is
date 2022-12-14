@@ -79,9 +79,12 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     application: { id },
     auth,
   }: TemplateApiModuleActionProps) {
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
+      SYSLUMADUR_NATIONAL_ID,
       ['AY129'],
     )
 

@@ -14,9 +14,14 @@ export class DigitalTachographCompanyCardService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const result = this.sharedTemplateAPIService.createCharge(auth, id, [
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
-      ])
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
+      const result = this.sharedTemplateAPIService.createCharge(
+        auth,
+        id,
+        SAMGONGUSTOFA_NATIONAL_ID,
+        [ChargeItemCode.TRANSPORT_AUTHORITY_XXX],
+      )
       return result
     } catch (exeption) {
       return { id: '', paymentUrl: '' }

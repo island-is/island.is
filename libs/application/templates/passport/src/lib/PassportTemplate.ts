@@ -83,7 +83,7 @@ const PassportTemplate: ApplicationTemplate<
                 UserProfileApi,
                 PaymentCatalogApi.configure({
                   externalDataId: 'payment',
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
                 }),
                 MockProviderApi.configure({
                   externalDataId: 'identityDocument',
@@ -169,7 +169,7 @@ const PassportTemplate: ApplicationTemplate<
                 UserProfileApi,
                 PaymentCatalogApi.configure({
                   externalDataId: 'payment',
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
                 }),
                 MockProviderApi.configure({
                   externalDataId: 'identityDocument',

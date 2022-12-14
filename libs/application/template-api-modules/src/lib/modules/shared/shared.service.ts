@@ -16,12 +16,7 @@ import {
   SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
-import {
-  PAYMENT_QUERY,
-  PAYMENT_STATUS_QUERY,
-  PaymentChargeData,
-  PaymentStatusData,
-} from './shared.queries'
+import { PAYMENT_STATUS_QUERY, PaymentStatusData } from './shared.queries'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
@@ -200,10 +195,12 @@ export class SharedTemplateApiService {
   async createCharge(
     user: User,
     applicationId: string,
+    performingOrganizationID: string,
     chargeItemCodes: string[],
   ) {
     return this.paymentService.createCharge(
       user,
+      performingOrganizationID,
       chargeItemCodes,
       applicationId,
     )
