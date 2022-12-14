@@ -10,6 +10,7 @@ import { Op } from 'sequelize'
 import { PaymentAPI } from '@island.is/clients/payment'
 import type { Charge, Item as ChargeItem } from '@island.is/clients/payment'
 import { User } from '@island.is/auth-nest-tools'
+import { getSlugFromType } from '@island.is/application/core'
 import { CreateChargeResult } from './payment.type'
 
 import {
@@ -274,7 +275,4 @@ export class PaymentService {
       },
     })
   }
-}
-function getSlugFromType(typeId: any): any {
-  throw new Error('Function not implemented.')
 }
