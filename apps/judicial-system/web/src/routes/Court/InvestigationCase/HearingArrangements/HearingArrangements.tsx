@@ -333,17 +333,9 @@ const HearingArrangements = () => {
                 }
               }}
               onSecondaryButtonClick={async () => {
-                const notificationSent = await sendNotification(
-                  workingCase.id,
-                  NotificationType.COURT_DATE,
-                  true,
+                router.push(
+                  `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
                 )
-
-                if (notificationSent) {
-                  router.push(
-                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
-                  )
-                }
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
