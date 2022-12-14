@@ -78,7 +78,7 @@ describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       .should('have.any.key', 'courtDate')
 
     cy.getByTestid('modal').should('be.visible')
-    cy.getByTestid('modalSecondaryButton').click()
+    cy.getByTestid('modalPrimaryButton').click()
     cy.wait('@SendNotificationMutation')
       .its('request.body.variables.input.type')
       .should('equal', 'COURT_DATE')
