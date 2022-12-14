@@ -1899,6 +1899,9 @@ export interface INewsFields {
 
   /** Generic tags */
   genericTags?: IGenericTag[] | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2210,13 +2213,14 @@ export interface IOrganizationPageFields {
   slices?:
     | (
         | IAccordionSlice
+        | ILifeEventPageListSlice
         | IBigBulletList
         | IDistricts
         | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
         | IFeaturedArticles
         | ISectionHeading
-        | ILifeEventPageListSlice
         | ILogoListSlice
         | IMultipleStatistics
         | IOneColumnText

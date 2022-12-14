@@ -11,6 +11,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { FundingGovernmentProjectsSchema } from './dataSchema'
 import { application } from './messages'
@@ -93,9 +94,9 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

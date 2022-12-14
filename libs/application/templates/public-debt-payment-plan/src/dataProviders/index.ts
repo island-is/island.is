@@ -1,6 +1,11 @@
+import { defineTemplateApi } from '@island.is/application/types'
+
 export {
-  NationalRegistryProvider,
-  IdentityProvider,
-  UserProfileProvider,
-} from '@island.is/application/data-providers'
-export * from './paymentPlanPrerequisites'
+  NationalRegistryUserApi,
+  UserProfileApi,
+  IdentityApi,
+} from '@island.is/application/types'
+
+export const PaymentPlanPrerequisitesApi = defineTemplateApi({
+  action: 'paymentPlanPrerequisites',
+})
