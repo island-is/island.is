@@ -47,7 +47,7 @@ const CourtRecord: React.FC = () => {
   )
   const [modalVisible, setModalVisible] = useState<ModalTypes>(ModalTypes.NONE)
   const [nextRoute, setNextRoute] = useState<string>(
-    constants.INDICTMENTS_OVERVIEW_ROUTE,
+    constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   )
 
   const { formatMessage } = useIntl()
@@ -61,7 +61,7 @@ const CourtRecord: React.FC = () => {
     allFilesUploaded,
   } = useS3Upload(workingCase)
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       const transitionSuccessful = await transitionCase(
         workingCase,
@@ -86,7 +86,7 @@ const CourtRecord: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={allFilesUploaded}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.courtRecord)} />
       <FormContentContainer>
@@ -132,7 +132,7 @@ const CourtRecord: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => onNavigationTo(nextRoute)}
+          onNextButtonClick={() => handleNavigationTo(nextRoute)}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(m.nextButtonText)}

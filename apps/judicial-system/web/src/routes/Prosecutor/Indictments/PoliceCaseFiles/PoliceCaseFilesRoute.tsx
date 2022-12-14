@@ -270,7 +270,7 @@ const PoliceCaseFilesRoute = () => {
   )
 
   const stepIsValid = !Object.values(allUploaded).some((v) => v)
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
@@ -283,7 +283,7 @@ const PoliceCaseFilesRoute = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
@@ -307,9 +307,9 @@ const PoliceCaseFilesRoute = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INDICTMENTS_CASE_FILE_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILE_ROUTE)
           }
-          nextIsDisabled={stepIsValid}
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

@@ -90,7 +90,7 @@ const Overview = () => {
     workingCase,
   ])
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
@@ -105,7 +105,7 @@ const Overview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.overview)}
@@ -304,7 +304,7 @@ const Overview = () => {
           previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
-            onNavigationTo(
+            handleNavigationTo(
               constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
             )
           }

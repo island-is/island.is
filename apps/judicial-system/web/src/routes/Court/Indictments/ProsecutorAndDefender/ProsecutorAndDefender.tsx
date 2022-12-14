@@ -58,7 +58,7 @@ const HearingArrangements: React.FC = () => {
     [workingCase, setWorkingCase, setAndSendCaseToServer],
   )
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
       router.push(`${destination}/${workingCase.id}`)
@@ -77,7 +77,7 @@ const HearingArrangements: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.indictments.prosecutorAndDefender)}
@@ -107,7 +107,7 @@ const HearingArrangements: React.FC = () => {
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
           }
         />
       </FormContentContainer>

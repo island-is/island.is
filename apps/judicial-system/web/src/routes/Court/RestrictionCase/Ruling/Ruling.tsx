@@ -225,7 +225,7 @@ export const Ruling: React.FC = () => {
     workingCase,
   ])
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (isModifyingRuling) {
         requestRulingSignature()
@@ -247,7 +247,7 @@ export const Ruling: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
@@ -824,7 +824,7 @@ export const Ruling: React.FC = () => {
             isModifyingRuling ? isRequestingRulingSignature : false
           }
           onNextButtonClick={() =>
-            onNavigationTo(constants.RESTRICTION_CASE_COURT_RECORD_ROUTE)
+            handleNavigationTo(constants.RESTRICTION_CASE_COURT_RECORD_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextButtonText={

@@ -64,7 +64,7 @@ export const CaseFiles: React.FC = () => {
 
   useDeb(workingCase, 'caseFilesComments')
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
@@ -79,7 +79,7 @@ export const CaseFiles: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={allFilesUploaded && !isUploading}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.investigationCases.caseFiles)}
@@ -174,7 +174,7 @@ export const CaseFiles: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(
+            handleNavigationTo(
               constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
             )
           }

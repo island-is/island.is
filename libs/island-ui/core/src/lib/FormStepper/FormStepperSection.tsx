@@ -10,6 +10,7 @@ import { theme as islandUITheme } from '@island.is/island-ui/theme'
 import * as styles from './FormStepperSection.css'
 import * as types from './types'
 import { useWindowSize } from 'react-use'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 function getSubSectionsInSection(
   section: types.FormStepperSection,
@@ -39,6 +40,7 @@ export const FormStepperSection: FC<{
   activeSubSection,
   showSubSectionIcon = false,
 }) => {
+  useDeprecatedComponent('FormStepperSection', 'FormStepperSectionV2')
   const subSections = getSubSectionsInSection(section, subSection)
   const hasSubSections = subSections.length > 0
   const containerRef = useRef<HTMLDivElement>(null)

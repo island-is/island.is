@@ -139,7 +139,7 @@ const ReceptionAndAssignment = () => {
   }
 
   const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
@@ -152,7 +152,7 @@ const ReceptionAndAssignment = () => {
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.shared.receptionAndAssignment)}
@@ -199,7 +199,7 @@ const ReceptionAndAssignment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
-          onNextButtonClick={() => onNavigationTo(getNextRoute())}
+          onNextButtonClick={() => handleNavigationTo(getNextRoute())}
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>

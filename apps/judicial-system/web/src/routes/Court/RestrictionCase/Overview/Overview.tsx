@@ -96,7 +96,7 @@ export const JudgeOverview: React.FC = () => {
     workingCase,
   ])
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
@@ -111,7 +111,7 @@ export const JudgeOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.restrictionCases.overview)}
@@ -348,7 +348,7 @@ export const JudgeOverview: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           onNextButtonClick={() =>
-            onNavigationTo(
+            handleNavigationTo(
               constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
             )
           }

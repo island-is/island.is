@@ -38,6 +38,7 @@ export const link = style({
 
 export const name = style({
   whiteSpace: 'nowrap',
+  textAlign: 'left',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {

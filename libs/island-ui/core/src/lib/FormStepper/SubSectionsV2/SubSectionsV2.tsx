@@ -3,29 +3,22 @@ import useComponentSize from '@rehooks/component-size'
 import cn from 'classnames'
 
 import { Box } from '../../Box/Box'
-import * as styles from './SubSectionsV2.css'
-import { useDeprecatedComponent } from '../../private/useDeprecatedComponent'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
+import * as styles from './SubSectionsV2.css'
 
 export const SubSections: FC<{
   isActive?: boolean
   subSections?: React.ReactNodeArray
 }> = ({ isActive = false, subSections }) => {
-  useDeprecatedComponent('SubSections', 'SubSectionsV2')
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight } = useComponentSize(containerRef)
   const [containerHeight, setContainerHeight] = useState<string | number>(
     'auto',
   )
-  const isClient = typeof window === 'object'
 
   useEffect(() => {
-    if (!isClient) {
-      return
-    }
-
     setContainerHeight((isActive && activeHeight) || 0)
-  }, [activeHeight, isActive, isClient])
+  }, [activeHeight, isActive])
 
   return (
     <Box

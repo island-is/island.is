@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -56,7 +56,9 @@ export const HearingArrangements: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [nextRoute, setNextRoute] = useState<string>()
+  const [nextRoute, setNextRoute] = useState<string>(
+    constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+  )
 
   const {
     sendNotification,
@@ -89,13 +91,13 @@ export const HearingArrangements: React.FC = () => {
     return false
   }
 
-  const handleNavigateTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase) {
         return
       }
 
-      setNextRoute(destination ?? '') // TODO: Not optional
+      setNextRoute(`${destination}/${workingCase.id}`)
 
       const caseOpened =
         workingCase.state === CaseState.NEW
@@ -139,7 +141,7 @@ export const HearingArrangements: React.FC = () => {
       isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}
-      onNavigationTo={stepIsValid ? handleNavigateTo : undefined}
+      onNavigationTo={stepIsValid ? handleNavigationTo : undefined}
     >
       <PageHeader
         title={formatMessage(
@@ -236,7 +238,7 @@ export const HearingArrangements: React.FC = () => {
             <FormFooter
               previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () =>
-                await handleNavigateTo(
+                await handleNavigationTo(
                   constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
                 )
               }
@@ -255,13 +257,7 @@ export const HearingArrangements: React.FC = () => {
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
               onClose={() => setModalVisible(false)}
-              onSecondaryButtonClick={() =>
-                router.push(
-                  `${
-                    nextRoute || constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
-                  }/${workingCase.id}`,
-                )
-              }
+              onSecondaryButtonClick={() => router.push(nextRoute)}
               errorMessage={
                 sendNotificationError
                   ? formatMessage(errors.sendNotification)
@@ -274,12 +270,7 @@ export const HearingArrangements: React.FC = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(
-                    `${
-                      nextRoute ||
-                      constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE
-                    }/${workingCase.id}`,
-                  )
+                  router.push(nextRoute)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}

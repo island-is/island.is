@@ -35,10 +35,11 @@ const Overview = () => {
   const caseIsClosed = completedCaseStates.includes(workingCase.state)
   const isDefender = router.pathname.includes(constants.DEFENDER_ROUTE)
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -49,7 +50,7 @@ const Overview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={
@@ -82,7 +83,7 @@ const Overview = () => {
             previousUrl={`${constants.CASES_ROUTE}`}
             nextIsLoading={isLoadingWorkingCase}
             onNextButtonClick={() =>
-              onNavigationTo(
+              handleNavigationTo(
                 constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
               )
             }

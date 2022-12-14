@@ -1,16 +1,16 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
-import { validate, Validation } from './validate'
+import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
   value: string,
-  validations: Validation[],
+  validations: validations.Validation[],
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
@@ -32,12 +32,12 @@ export const removeTabsValidateAndSet = (
 }
 
 export const removeErrorMessageIfValid = (
-  validations: Validation[],
+  validationsToRun: validations.Validation[],
   value: string,
   errorMessage?: string,
   errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const isValid = validate([[value, validations]]).isValid
+  const isValid = validations.validate([[value, validationsToRun]]).isValid
 
   if (errorMessage !== '' && errorMessageSetter && isValid) {
     errorMessageSetter('')
@@ -45,11 +45,11 @@ export const removeErrorMessageIfValid = (
 }
 
 export const validateAndSetErrorMessage = (
-  validations: Validation[],
+  validationsToRun: validations.Validation[],
   value: string,
   errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const validation = validate([[value, validations]])
+  const validation = validations.validate([[value, validationsToRun]])
 
   if (!validation.isValid && errorMessageSetter) {
     errorMessageSetter(validation.errorMessage)
@@ -60,7 +60,7 @@ export const validateAndSetErrorMessage = (
 export const validateAndSet = (
   field: keyof UpdateCase,
   value: string,
-  validations: Validation[],
+  validations: validations.Validation[],
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
@@ -77,7 +77,7 @@ export const validateAndSet = (
 export const validateAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
-  validations: Validation[],
+  validations: validations.Validation[],
   theCase: Case,
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
@@ -93,7 +93,7 @@ export const validateAndSendTimeToServer = (
   field: keyof UpdateCase,
   currentValue: string | undefined,
   time: string,
-  validations: Validation[],
+  validationsToRun: validations.Validation[],
   theCase: Case,
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
@@ -101,7 +101,7 @@ export const validateAndSendTimeToServer = (
   if (currentValue) {
     const paddedTime = padTimeWithZero(time)
 
-    const validation = validate([[paddedTime, validations]])
+    const validation = validations.validate([[paddedTime, validationsToRun]])
 
     if (!validation.isValid && setErrorMessage) {
       setErrorMessage(validation.errorMessage)
@@ -155,7 +155,9 @@ export const setCheckboxAndSendToServer = (
 }
 
 export const getTimeFromDate = (date: string | undefined) => {
-  return date?.includes('T') ? formatDate(date, TIME_FORMAT) : undefined
+  return date?.includes('T')
+    ? formatDate(date, constants.TIME_FORMAT)
+    : undefined
 }
 
 export const hasDateChanged = (
@@ -168,4 +170,146 @@ export const hasDateChanged = (
     return compareAsc(newDate, new Date(currentDate)) !== 0
   }
   return false
+}
+
+type stepValidationsType = {
+  [constants.CREATE_RESTRICTION_CASE_ROUTE]: boolean
+  [constants.CREATE_TRAVEL_BAN_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: boolean
+  [constants.CREATE_INVESTIGATION_CASE_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_CASE_FILES_ROUTE]: boolean
+  [constants.INDICTMENTS_DEFENDANT_ROUTE]: boolean
+  [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: boolean
+  [constants.INDICTMENTS_CASE_FILE_ROUTE]: boolean
+  [constants.INDICTMENTS_PROCESSING_ROUTE]: boolean
+  [constants.INDICTMENTS_CASE_FILES_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_RULING_ROUTE]: boolean
+  [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: boolean
+  [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_OVERVIEW_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_RULING_ROUTE]: boolean
+  [constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE]: boolean
+  [constants.INDICTMENTS_OVERVIEW_ROUTE]: boolean
+  [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: boolean
+  [constants.INDICTMENTS_SUBPOENA_ROUTE]: boolean
+  [constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE]: boolean
+}
+
+export const stepValidations = (theCase: Case): stepValidationsType => {
+  return {
+    [constants.CREATE_RESTRICTION_CASE_ROUTE]: validations.isDefendantStepValidRC(
+      theCase,
+      theCase.policeCaseNumbers,
+    ),
+    [constants.CREATE_TRAVEL_BAN_ROUTE]: validations.isDefendantStepValidRC(
+      theCase,
+      theCase.policeCaseNumbers,
+    ),
+    [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: validations.isDefendantStepValidRC(
+      theCase,
+      theCase.policeCaseNumbers,
+    ),
+    [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: validations.isHearingArrangementsStepValidRC(
+      theCase,
+    ),
+    [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: validations.isPoliceDemandsStepValidRC(
+      theCase,
+    ),
+    [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: validations.isPoliceReportStepValidRC(
+      theCase,
+    ),
+    [constants.CREATE_INVESTIGATION_CASE_ROUTE]: validations.isDefendantStepValidIC(
+      theCase,
+      theCase.type,
+      theCase.policeCaseNumbers,
+    ),
+    [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: validations.isDefendantStepValidIC(
+      theCase,
+      theCase.type,
+      theCase.policeCaseNumbers,
+    ),
+    [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: validations.isHearingArrangementsStepValidIC(
+      theCase,
+    ),
+    [constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: validations.isPoliceDemandsStepValidIC(
+      theCase,
+    ),
+    [constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: validations.isPoliceReportStepValidIC(
+      theCase,
+    ),
+    [constants.INVESTIGATION_CASE_CASE_FILES_ROUTE]: true,
+    [constants.INDICTMENTS_DEFENDANT_ROUTE]: validations.isDefendantStepValidIndictments(
+      theCase,
+    ),
+    [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: true,
+    [constants.INDICTMENTS_CASE_FILE_ROUTE]: true,
+    [constants.INDICTMENTS_PROCESSING_ROUTE]: validations.isProcessingStepValidIndictments(
+      theCase,
+    ),
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: true,
+    [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: validations.isReceptionAndAssignmentStepValid(
+      theCase,
+    ),
+    [constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: true,
+    [constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: validations.isCourtHearingArrangemenstStepValidRC(
+      theCase,
+    ),
+    [constants.RESTRICTION_CASE_RULING_ROUTE]: validations.isRulingValidRC(
+      theCase,
+    ),
+    [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: validations.isCourtRecordStepValidRC(
+      theCase,
+    ),
+    [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: validations.isReceptionAndAssignmentStepValid(
+      theCase,
+    ),
+    [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: validations.isReceptionAndAssignmentStepValid(
+      theCase,
+    ),
+    [constants.INVESTIGATION_CASE_OVERVIEW_ROUTE]: true,
+    [constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: validations.isCourtHearingArrangementsStepValidIC(
+      theCase,
+    ),
+    [constants.INVESTIGATION_CASE_RULING_ROUTE]: validations.isRulingValidIC(
+      theCase,
+    ),
+    [constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE]: validations.isCourtRecordStepValidIC(
+      theCase,
+    ),
+    [constants.INDICTMENTS_OVERVIEW_ROUTE]: true,
+    [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: validations.isReceptionAndAssignmentStepValid(
+      theCase,
+    ),
+    [constants.INDICTMENTS_SUBPOENA_ROUTE]: validations.isSubpoenaStepValid(
+      theCase,
+    ),
+    [constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE]: validations.isProsecutorAndDefenderStepValid(
+      theCase,
+    ),
+  }
+}
+
+export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
+  const validations = stepValidations(theCase)
+  const validationEntries = Object.entries(validations)
+  const stepsToCheck = validationEntries.filter(([key]) => steps.includes(key))
+
+  if (stepsToCheck.every(([, value]) => value === true)) {
+    return steps[steps.length - 1]
+  }
+
+  const [key] = stepsToCheck.find(([, value]) => value === false) || []
+  return key
 }

@@ -29,7 +29,7 @@ const CaseFile = () => {
     FormContext,
   )
   const { formatMessage } = useIntl()
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
@@ -42,7 +42,7 @@ const CaseFile = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.caseFile)}
@@ -101,7 +101,7 @@ const CaseFile = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
         />

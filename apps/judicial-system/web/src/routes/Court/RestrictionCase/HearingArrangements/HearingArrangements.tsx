@@ -105,7 +105,7 @@ export const HearingArrangements: React.FC = () => {
     workingCase,
   ])
 
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     async (destination: string) => {
       const hasSentNotification = workingCase?.notifications?.find(
         (notification) => notification.type === NotificationType.COURT_DATE,
@@ -154,7 +154,7 @@ export const HearingArrangements: React.FC = () => {
       activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
       <PageHeader
@@ -202,7 +202,7 @@ export const HearingArrangements: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(constants.RESTRICTION_CASE_RULING_ROUTE)
+            handleNavigationTo(constants.RESTRICTION_CASE_RULING_ROUTE)
           }
           nextButtonText={formatMessage(m.continueButton.label)}
           nextIsDisabled={!stepIsValid}

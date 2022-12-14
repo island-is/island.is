@@ -20,8 +20,11 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
+import {
+  sections as formStepperSections,
+  pageLayout,
+} from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
-import { pageLayout } from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
@@ -39,19 +42,24 @@ interface PageProps {
   showSidepanel?: boolean
   // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
   activeSubSection?: number
-  onNavigationTo?: (destination: string) => Promise<any> // TODO: Fix any
+  onNavigationTo?: (destination: string) => Promise<unknown>
   isValid?: boolean
+}
+
+export interface RouteSection {
+  name: string
+  children: {
+    name: string
+    href?: string
+    onClick?: () => void
+  }[]
 }
 
 const RenderSubsectionChild: React.FC<{
   isActive: boolean
 }> = ({ isActive, children }) => (
   <Box className={styles.name}>
-    <Text
-      as="span"
-      lineHeight="lg"
-      fontWeight={isActive ? 'semiBold' : 'light'}
-    >
+    <Text as="div" lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
       {children}
     </Text>
   </Box>
@@ -69,20 +77,54 @@ const PageLayout: React.FC<PageProps> = ({
   isValid,
 }) => {
   const { user } = useContext(UserContext)
-  const { getSections } = useSections(activeSubSection, isValid, onNavigationTo)
+  const { getSections } = useSections(isValid, onNavigationTo)
   const { formatMessage } = useIntl()
   // Remove the extension parts of the formstepper if the user is not applying for an extension
   const sections =
     activeSection === Sections.EXTENSION ||
     activeSection === Sections.JUDGE_EXTENSION
-      ? getSections(workingCase, activeSubSection, user)
-      : getSections(workingCase, activeSubSection, user).filter(
-          (_, index) => index <= 2,
-        )
+      ? getSections(workingCase, user)
+      : getSections(workingCase, user).filter((_, index) => index <= 2)
 
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  const renderSections = (sections: RouteSection[]) =>
+    sections.map((section, index) => (
+      <Section
+        section={section.name}
+        sectionIndex={index}
+        isActive={index === activeSection}
+        isComplete={activeSection ? index < activeSection : false}
+        subSections={section.children.map((subSection, index) =>
+          subSection.href && activeSubSection && activeSubSection > index ? (
+            <Link href={subSection.href} underline="small">
+              <RenderSubsectionChild isActive={index === activeSubSection}>
+                {subSection.name}
+              </RenderSubsectionChild>
+            </Link>
+          ) : subSection.onClick ? (
+            <Box
+              component="button"
+              onClick={subSection.onClick}
+              className={cn(
+                linkStyles.underlineVisibilities['hover'],
+                linkStyles.underlines['small'],
+              )}
+            >
+              <RenderSubsectionChild isActive={index === activeSubSection}>
+                {subSection.name}
+              </RenderSubsectionChild>
+            </Box>
+          ) : (
+            <RenderSubsectionChild isActive={index === activeSubSection}>
+              {subSection.name}
+            </RenderSubsectionChild>
+          ),
+        )}
+      />
+    ))
 
   return isLoading ? (
     <Skeleton />
@@ -141,50 +183,17 @@ const PageLayout: React.FC<PageProps> = ({
                   <Box marginBottom={7} display={['none', 'none', 'block']}>
                     <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
-                  <FormStepperV2
-                    sections={sections.map((section, index) => (
-                      <Section
-                        section={section.name}
-                        sectionIndex={index}
-                        isActive={index === activeSection}
-                        subSections={section.children.map(
-                          (subSection, index) => {
-                            return subSection.href &&
-                              activeSubSection !== index ? (
-                              <Link href={subSection.href} underline="small">
-                                <RenderSubsectionChild
-                                  isActive={index === activeSubSection}
-                                >
-                                  {subSection.name}
-                                </RenderSubsectionChild>
-                              </Link>
-                            ) : subSection.onClick ? (
-                              <Box
-                                component="button"
-                                onClick={subSection.onClick}
-                                className={cn(
-                                  linkStyles.underlineVisibilities['hover'],
-                                  linkStyles.underlines['small'],
-                                )}
-                              >
-                                <RenderSubsectionChild
-                                  isActive={index === activeSubSection}
-                                >
-                                  {subSection.name}
-                                </RenderSubsectionChild>
-                              </Box>
-                            ) : (
-                              <RenderSubsectionChild
-                                isActive={index === activeSubSection}
-                              >
-                                {subSection.name}
-                              </RenderSubsectionChild>
-                            )
-                          },
-                        )}
-                      />
-                    ))}
-                  />
+                  <Box marginBottom={6}>
+                    <Text variant="h3" as="h3">
+                      {formatMessage(
+                        isIndictmentCase(workingCase?.type)
+                          ? formStepperSections.indictmentTitle
+                          : formStepperSections.title,
+                        { caseType: workingCase?.type },
+                      )}
+                    </Text>
+                  </Box>
+                  <FormStepperV2 sections={renderSections(sections)} />
                 </Box>
               </div>
             </GridColumn>

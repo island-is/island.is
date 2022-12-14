@@ -62,7 +62,7 @@ const PoliceReport = () => {
   }, [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase])
 
   const stepIsValid = isPoliceReportStepValidIC(workingCase)
-  const onNavigationTo = useCallback(
+  const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
@@ -76,7 +76,7 @@ const PoliceReport = () => {
       activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FOUR}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      onNavigationTo={onNavigationTo}
+      onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
       <PageHeader
@@ -258,9 +258,9 @@ const PoliceReport = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            onNavigationTo(constants.INVESTIGATION_CASE_CASE_FILES_ROUTE)
+            handleNavigationTo(constants.INVESTIGATION_CASE_CASE_FILES_ROUTE)
           }
-          nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>
