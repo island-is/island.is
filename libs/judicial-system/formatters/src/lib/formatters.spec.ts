@@ -336,4 +336,19 @@ describe('readableIndictmentSubtypes', () => {
       indictmentSubtypes[IndictmentSubtype.THEFT],
     ])
   })
+
+  test('should remove duplicates from indictment subtypes', () => {
+    const policeCaseNumbers: string[] = ['220-2020-202', '220-2020-203']
+    const rawIndictmentSubtypes: IndictmentSubtypeMap = {
+      '220-2020-202': [IndictmentSubtype.RAPE, IndictmentSubtype.THEFT],
+      '220-2020-203': [IndictmentSubtype.RAPE, IndictmentSubtype.THEFT],
+    }
+
+    expect(
+      readableIndictmentSubtypes(policeCaseNumbers, rawIndictmentSubtypes),
+    ).toEqual([
+      indictmentSubtypes[IndictmentSubtype.RAPE],
+      indictmentSubtypes[IndictmentSubtype.THEFT],
+    ])
+  })
 })
