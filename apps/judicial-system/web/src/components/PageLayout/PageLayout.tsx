@@ -50,11 +50,7 @@ const RenderSubsectionChild: React.FC<{
   isActive: boolean
 }> = ({ isActive, children }) => (
   <Box className={styles.name}>
-    <Text
-      as="span"
-      lineHeight="lg"
-      fontWeight={isActive ? 'semiBold' : 'light'}
-    >
+    <Text as="div" lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
       {children}
     </Text>
   </Box>
