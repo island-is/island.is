@@ -23,7 +23,7 @@ export const PaymentClientModuleConfig = defineConfig({
       'IS-DEV/GOV/10021/FJS-Public',
     ),
 
-    username: env.required('XROAD_PAYMENT_USER'),
-    password: env.required('XROAD_PAYMENT_PASSWORD'),
+    username: env.required('XROAD_PAYMENT_USER', ''),
+    password: env.required('XROAD_PAYMENT_PASSWORD', ''),
   }),
 })
