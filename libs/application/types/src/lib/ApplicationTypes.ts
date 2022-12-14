@@ -9,6 +9,7 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
+  INHERITANCE_REPORT = 'InheritaneReport',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
@@ -81,6 +82,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.LOGIN_SERVICE]: {
     slug: 'innskraningarthjonusta',
     translation: 'ls.application',
+  },
+  [ApplicationTypes.INHERITANCE_REPORT]: {
+    slug: 'erfdafjarskyrsla',
+    translation: 'ir.application',
   },
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
