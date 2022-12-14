@@ -17,8 +17,8 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles, core } from '@island.is/judicial-system-web/messages'
-import { Box, Button } from '@island.is/island-ui/core'
+import { titles, core, errors } from '@island.is/judicial-system-web/messages'
+import { Box, Button, toast } from '@island.is/island-ui/core'
 import {
   Case,
   Defendant as TDefendant,
@@ -263,14 +263,21 @@ const Defendant: React.FC = () => {
           })
           router.push(`${destination}/${createdCase.id}`)
         } else {
-          // TODO handle error
+          toast.error(formatMessage(errors.createCase))
           return
         }
       } else {
         router.push(`${destination}/${workingCase.id}`)
       }
     },
-    [createCase, createDefendant, router, updateDefendant, workingCase],
+    [
+      createCase,
+      createDefendant,
+      formatMessage,
+      router,
+      updateDefendant,
+      workingCase,
+    ],
   )
 
   const handleDeleteDefendant = async (defendant: TDefendant) => {
@@ -284,7 +291,7 @@ const Defendant: React.FC = () => {
         if (defendantDeleted && workingCase.defendants) {
           removeDefendantFromState(defendant)
         } else {
-          // TODO: handle error
+          toast.error(formatMessage(errors.deleteDefendant))
         }
       } else {
         removeDefendantFromState(defendant)
