@@ -15,15 +15,10 @@ export const SubSections: FC<{
   const [containerHeight, setContainerHeight] = useState<string | number>(
     'auto',
   )
-  const isClient = typeof window === 'object'
 
   useEffect(() => {
-    if (!isClient) {
-      return
-    }
-
     setContainerHeight((isActive && activeHeight) || 0)
-  }, [activeHeight, isActive, isClient])
+  }, [activeHeight, isActive])
 
   return (
     <Box
