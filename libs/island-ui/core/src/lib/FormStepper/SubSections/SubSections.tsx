@@ -55,7 +55,6 @@ export const SubSections: FC<{
               }
               showIcon={showSubSectionIcon}
               href={subSection.href}
-              onClick={subSection.onClick}
             >
               {subSection.name}
             </SubSectionItem>
