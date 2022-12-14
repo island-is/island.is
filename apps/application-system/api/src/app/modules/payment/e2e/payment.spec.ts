@@ -10,6 +10,7 @@ import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { PaymentService } from '../payment.service'
 import { AppModule } from '../../../app.module'
+import { ApplicationService } from '@island.is/application/api/core'
 
 let app: INestApplication
 
@@ -36,6 +37,13 @@ class MockPaymentApi {
   }
 }
 
+class MockApplicationService {
+  async findOneById() {
+    return {
+      typeId: 'DrivingLicense',
+    }
+  }
+}
 // TODO: mock the client instead - we are essentially not testing the service
 class MockPaymentService {
   async findApplicationById() {
@@ -54,6 +62,18 @@ class MockPaymentService {
     }
   }
 
+  async findChargeItems() {
+    return [
+      {
+        performingOrgID: faker.datatype.number(),
+        chargeType: faker.random.word(),
+        chargeItemCode: TARGET_CHARGE_ITEM_CODE,
+        chargeItemName: faker.random.word(),
+        priceAmount: faker.datatype.number(),
+      },
+    ]
+  }
+
   async createCharge() {
     return {
       user4: 'amazing-user4-code-for-url',
@@ -64,6 +84,10 @@ class MockPaymentService {
 
   makePaymentUrl() {
     return 'asdf'
+  }
+
+  makeDelegationPaymentUrl() {
+    return 'paymentUrl'
   }
 
   async findPaymentByApplicationId() {
@@ -81,6 +105,8 @@ beforeAll(async () => {
   app = await setup(AppModule, {
     override: (builder) =>
       builder
+        .overrideProvider(ApplicationService)
+        .useClass(MockApplicationService)
         .overrideProvider(PaymentAPI)
         .useClass(MockPaymentApi)
         .overrideGuard(IdsUserGuard)
@@ -104,7 +130,7 @@ describe('Application system payments API', () => {
     const response = await server
       .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
       .send({
-        chargeItemCode: TARGET_CHARGE_ITEM_CODE,
+        chargeItemCodes: [TARGET_CHARGE_ITEM_CODE],
       } as CreateChargeInput)
       .expect(201)
 

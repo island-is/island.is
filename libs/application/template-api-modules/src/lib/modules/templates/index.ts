@@ -32,8 +32,8 @@ import { ChangeOperatorOfVehicleModule } from './transport-authority/change-oper
 import { DigitalTachographCompanyCardModule } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.module'
 import { DigitalTachographDriversCardModule } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.module'
 import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
-import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
-import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
+import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
+import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 
 export const modules = [
@@ -110,6 +110,6 @@ export { ChangeOperatorOfVehicleService } from './transport-authority/change-ope
 export { DigitalTachographCompanyCardService } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.service'
 export { DigitalTachographDriversCardService } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.service'
 export { DigitalTachographWorkshopCardService } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.service'
-export { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.service'
-export { OrderVehicleLicensePlateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
+export { OrderVehicleLicensePlateService } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.service'
+export { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 export { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'

@@ -21,6 +21,8 @@ import {
   AdrAndMachine,
   Firearm,
   DisabilityLicense,
+  VehicleServiceFjsV1,
+  TransportAuthority,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -157,6 +159,7 @@ export const serviceSetup = (services: {
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
       NO_UPDATE_NOTIFIER: 'true',
+      FISKISTOFA_ZENTER_CLIENT_ID: '1114',
     })
 
     .secrets({
@@ -218,6 +221,8 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
       FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL',
       FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD',
+      FISKISTOFA_ZENTER_CLIENT_PASSWORD:
+        '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD',
       FISKISTOFA_API_URL: '/k8s/api/FISKISTOFA_API_URL',
       FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET',
@@ -254,6 +259,8 @@ export const serviceSetup = (services: {
       MunicipalitiesFinancialAid,
       Vehicles,
       Passports,
+      VehicleServiceFjsV1,
+      TransportAuthority,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

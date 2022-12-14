@@ -15,7 +15,8 @@ import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
-import { MailchimpModule } from '@island.is/api/domains/mailchimp'
+import { EmailSignupModule } from '@island.is/api/domains/email-signup'
+import { ZenterSignupConfig } from '@island.is/api/domains/email-signup'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -38,6 +39,7 @@ import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
+import { PassportModule } from '@island.is/api/domains/passport'
 import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -68,6 +70,7 @@ import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
+import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { PowerBiModule } from '@island.is/api/domains/powerbi'
 import { PowerBiConfig } from '@island.is/api/domains/powerbi'
 
@@ -203,7 +206,7 @@ const autoSchemaFile = environment.production
       },
     }),
     CommunicationsModule,
-    MailchimpModule,
+    EmailSignupModule,
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
@@ -225,6 +228,7 @@ const autoSchemaFile = environment.production
     FinancialStatementsInaoModule,
     VehiclesModule,
     AssetsModule,
+    PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
@@ -255,6 +259,7 @@ const autoSchemaFile = environment.production
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
+    TransportAuthorityApiModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -290,6 +295,7 @@ const autoSchemaFile = environment.production
         FileStorageConfig,
         FiskistofaClientConfig,
         PowerBiConfig,
+        ZenterSignupConfig,
       ],
     }),
   ],

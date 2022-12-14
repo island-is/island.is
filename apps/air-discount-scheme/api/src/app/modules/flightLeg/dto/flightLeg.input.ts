@@ -5,6 +5,7 @@ import {
   RangeInput,
   PeriodInput,
   FlightLegsInput as TFlightLegsInput,
+  RegistryGender,
 } from '@island.is/air-discount-scheme/types'
 
 @InputType()
@@ -52,7 +53,7 @@ export class FlightLegsInput implements TFlightLegsInput {
   age: Range
 
   @Field((_) => String, { nullable: true })
-  gender: 'kk' | 'kvk' | 'hvk'
+  gender: RegistryGender
 
   @Field((_) => Int, { nullable: true })
   postalCode: number

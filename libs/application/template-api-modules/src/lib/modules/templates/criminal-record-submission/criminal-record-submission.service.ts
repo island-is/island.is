@@ -30,7 +30,7 @@ export class CriminalRecordSubmissionService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.CRIMINAL_RECORD,
+        [ChargeItemCode.CRIMINAL_RECORD],
       )
       return result
     } catch (exeption) {
