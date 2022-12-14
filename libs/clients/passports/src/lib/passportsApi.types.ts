@@ -12,9 +12,9 @@ export interface IdentityDocument {
   mrzFirstName?: string | null
   mrzLastName?: string | null
   sex?: Gender | null
-  numberWithType?: string 
-  expiryStatus?: ExpiryStatus 
-  expiresWithinNoticeTime?: boolean 
+  numberWithType?: string
+  expiryStatus?: ExpiryStatus
+  expiresWithinNoticeTime?: boolean
 }
 
 export interface IdentityDocumentChild {
@@ -72,7 +72,7 @@ export interface PreregistrationInput {
   contactInfo?: ContactInfo
   documents?: Document[]
   deliveryName?: string
-  deliveryAddress?: DeliveryAddress  
+  deliveryAddress?: DeliveryAddress
 }
 
 export interface Passport {

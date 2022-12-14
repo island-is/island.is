@@ -2,7 +2,11 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { XRoadConfig, ConfigType } from '@island.is/nest/config'
 import { Injectable, Inject } from '@nestjs/common'
-import { IdentityDocumentApi, IdentityDocumentResponse, PreregistrationApi } from '../../gen/fetch'
+import {
+  IdentityDocumentApi,
+  IdentityDocumentResponse,
+  PreregistrationApi,
+} from '../../gen/fetch'
 import {
   Gender,
   IdentityDocument,
@@ -12,14 +16,12 @@ import {
 } from './passportsApi.types'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
-import { uuid } from 'uuidv4'
-import { defaultDeliveryAddress } from './constants'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import isBefore from 'date-fns/isBefore'
 import differenceInMonths from 'date-fns/differenceInMonths'
-import { ExpiryStatus } from './passportsApi.types';
+import { ExpiryStatus } from './passportsApi.types'
 
 const LOG_CATEGORY = 'passport-service'
 
@@ -149,26 +151,17 @@ export class PassportsService {
     }
   }
 
-
   async preregisterIdentityDocument(
     user: User,
     input: PreregistrationInput,
   ): Promise<string[]> {
     const approval = { personId: user.nationalId, approved: new Date() }
-
+    console.log(input)
     return await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
       .preregistrationPreregistration({
         xRoadClient: this.xroadConfig.xRoadClient,
-        preregistration: {
-          ...input,
-          guId: uuid(),
-          approvalA: approval,
-          approvalB: approval,
-          deliveryAddress: defaultDeliveryAddress,
-          // bioInfo: { height: 100 },
-          documents: [],
-        },
+        preregistration: input,
       })
   }
 
@@ -183,15 +176,13 @@ export class PassportsService {
       approvalB,
     })
     const pdfDoc = Buffer.from(pdfBuffer).toString('base64')
+
     return await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
       .preregistrationPreregistration({
         xRoadClient: this.xroadConfig.xRoadClient,
         preregistration: {
           ...input,
-          guId: uuid(),
-          // bioInfo: { height: 100 },
-          deliveryAddress: defaultDeliveryAddress,
           documents: [
             {
               name: 'samþykki',
@@ -209,7 +200,7 @@ export class PassportsService {
     const childPassports = await this.getIdentityDocumentChildren(user)
 
     return {
-      userPassport: userPassports ?  userPassports[0] : undefined,
+      userPassport: userPassports ? userPassports[0] : undefined,
       childPassports: childPassports,
     }
   }

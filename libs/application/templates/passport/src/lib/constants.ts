@@ -54,7 +54,7 @@ export type DistrictCommissionerAgencies = {
 
 export type SubmitResponse = {
   success: boolean
-  orderId?: string
+  orderId?: string[]
 }
 
 export type Passport = {

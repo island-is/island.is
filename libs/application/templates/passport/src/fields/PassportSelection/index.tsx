@@ -142,9 +142,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
                     child.passports[0].subType +
                     child.passports[0].number
                   : '',
-                tag: child.passports
-                  ? tag(child.passports?.[0])
-                  : undefined,
+                tag: child.passports ? tag(child.passports?.[0]) : undefined,
                 disabled: child.passports
                   ? tag(child.passports?.[0]).label ===
                       m.orderedTag.defaultMessage ||

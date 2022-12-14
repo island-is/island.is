@@ -39,7 +39,8 @@ export const childsPersonalInfo = buildMultiField({
       defaultValue: (application: Application) => {
         return (
           (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].childNationalId ?? ''
+            ?.data as IdentityDocumentData).childPassports[0].childNationalId ??
+          ''
         )
       },
     }),
@@ -68,11 +69,7 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) =>
-        formatKennitala(
-          (application.externalData.nationalRegistry?.data as {
-            nationalId?: string
-          })?.nationalId ?? '',
-        ),
+        formatKennitala(application.applicant),
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.email',

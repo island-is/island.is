@@ -83,14 +83,14 @@ export class PassportService {
       application.id,
     )
 
-    // if (!isPayment?.fulfilled) {
-    //   this.logger.error(
-    //     'Trying to submit Passportapplication that has not been paid.',
-    //   )
-    //   throw new Error(
-    //     'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
-    //   )
-    // }
+    if (!isPayment?.fulfilled) {
+      this.logger.error(
+        'Trying to submit Passportapplication that has not been paid.',
+      )
+      throw new Error(
+        'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+      )
+    }
     try {
       const {
         passport,
@@ -102,7 +102,7 @@ export class PassportService {
       const forUser = !!passport.userPassport
       const result = forUser
         ? await this.passportApi.preregisterIdentityDocument(auth, {
-            appliedForPersonId: personalInfo.nationalId,
+            appliedForPersonId: auth.nationalId,
             priority: service.type === 'regular' ? 0 : 1,
             deliveryName: service.dropLocation,
             contactInfo: {
@@ -117,11 +117,17 @@ export class PassportService {
             priority: service.type === 'regular' ? 0 : 1,
             deliveryName: service.dropLocation,
             approvalA: {
-              personId: childsPersonalInfo.guardian1.nationalId,
+              personId: childsPersonalInfo.guardian1.nationalId.replace(
+                '-',
+                '',
+              ),
               approved: application.created,
             },
             approvalB: {
-              personId: childsPersonalInfo.guardian2.nationalId,
+              personId: childsPersonalInfo.guardian2.nationalId.replace(
+                '-',
+                '',
+              ),
               approved: new Date(),
             },
             contactInfo: {
@@ -138,7 +144,7 @@ export class PassportService {
 
       return {
         success: true,
-        orderId: result,
+        // orderId: result,
       }
     } catch (e) {
       this.log('error', 'Submitting passport failed', {

@@ -229,15 +229,15 @@ components:
       type: object
       additionalProperties: false
       properties:
-        guId:
-          type: string
-          nullable: true
         appliedForPersonId:
           type: string
           nullable: true
         priority:
           type: integer
           format: int32
+        personalComment:
+          type: string
+          nullable: true
         deliveryName:
           type: string
           nullable: true
@@ -257,10 +257,6 @@ components:
           nullable: true
           oneOf:
             - $ref: '#/components/schemas/ContactInfo'
-        bioInfo:
-          nullable: true
-          oneOf:
-            - $ref: '#/components/schemas/BioInfo'
         documents:
           type: array
           nullable: true
@@ -339,17 +335,6 @@ components:
           nullable: true
         email:
           type: string
-          nullable: true
-        personalComment:
-          type: string
-          nullable: true
-    BioInfo:
-      type: object
-      additionalProperties: false
-      properties:
-        height:
-          type: integer
-          format: int32
           nullable: true
     Document:
       type: object

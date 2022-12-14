@@ -30,15 +30,16 @@ export const Done: Form = buildForm({
         },
       }),
       children: [
-        buildDescriptionField({
-          id: 'applicationNr',
-          title: m.applicationCompleteNumber,
-          titleVariant: 'h3',
-          description: (application: Application) =>
-            (application.externalData.submitPassportApplication
-              ?.data as SubmitResponse)?.orderId ?? '',
-          space: 'gutter',
-        }),
+        // TODO: Add back in once preregistration service starts returing an orederID
+        // buildDescriptionField({
+        //   id: 'applicationNr',
+        //   title: m.applicationCompleteNumber,
+        //   titleVariant: 'h3',
+        //   description: (application: Application) =>
+        //     (application.externalData.submitPassportApplication
+        //       ?.data as SubmitResponse)?.orderId ?? '',
+        //   space: 'gutter',
+        // }),
         buildDescriptionField({
           id: 'nextStepsDescription',
           title: m.applicationCompleteNextSteps,
