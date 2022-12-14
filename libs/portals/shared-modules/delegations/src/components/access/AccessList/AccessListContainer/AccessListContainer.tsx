@@ -1,4 +1,4 @@
-import { AuthCustomDelegation } from '@island.is/api/schema'
+import { AuthDelegationScope } from '@island.is/api/schema'
 import {
   Box,
   Hidden,
@@ -7,12 +7,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AuthDelegationScope } from '@island.is/service-portal/graphql'
 
-import { AccessDate } from '../AccessDate/AccessDate'
-import { AccessList } from './AccessList'
-import { AccessListLoading } from './AccessListLoading'
-import { AuthScopeTree } from '../access.types'
+import { AccessDate } from '../../AccessDate/AccessDate'
+import { AccessList } from '../AccessList'
+import { AccessListLoading } from '../AccessListLoading'
+import { AuthScopeTree } from '../../access.types'
+import { AuthCustomDelegation } from '../../../../types/customDelegation'
 
 type AccessListContainerProps = {
   delegation?: AuthCustomDelegation
