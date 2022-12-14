@@ -11,7 +11,13 @@ import {
 } from '@island.is/application/core'
 import { attachmentNames, m } from '../../lib/messages'
 import { UPLOAD_ACCEPT } from '../../lib/constants'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  PaymentCatalogApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { applicationInfo } from './sectionApplicationInfo'
 import { subSectionOperationInfo } from './subSectionOperationInfo'
 import { subSectionPropertyRepeater } from './subSectionPropertyRepeater'
@@ -37,8 +43,7 @@ export const Draft: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
@@ -61,8 +66,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionCriminalRecordSubtitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'FeeInfoProvider',
+              provider: PaymentCatalogApi,
               title: '',
             }),
           ],

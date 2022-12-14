@@ -102,6 +102,11 @@ describe('FileService', () => {
           status: 'success',
           date: new Date().toISOString(),
         },
+        childrenCustodyInformation: {
+          data: [child],
+          status: 'success',
+          date: new Date().toISOString(),
+        },
       },
     } as unknown) as Application)
 

@@ -38,8 +38,8 @@ export const DataProtectionComplaintSchema = z.object({
     nationalRegistry: z.object({
       data: z.object({
         address: z.object({
-          city: z.string(),
-          code: z.string(),
+          locality: z.string(),
+          municipalityCode: z.string(),
           postalCode: z.string(),
           streetAddress: z.string(),
         }),
@@ -49,7 +49,6 @@ export const DataProtectionComplaintSchema = z.object({
           name: z.string(),
         }),
         fullName: z.string(),
-        legalResidence: z.string(),
         nationalId: z.string(),
       }),
       date: z.string(),

@@ -33,17 +33,20 @@ import {
   SINGLE,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
-import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
+
 import {
   calculatePeriodLength,
   daysToMonths,
   monthsToDays,
 } from '../lib/directorateOfLabour.utils'
 import {
+  YesOrNo,
+  Period,
+  PersonInformation,
   ChildInformation,
   ChildrenAndExistingApplications,
-} from '../dataProviders/Children/types'
-import { YesOrNo, Period, PersonInformation } from '../types'
+  PregnancyStatusAndRightsResults,
+} from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 import {
