@@ -2250,12 +2250,12 @@ export const errorMessages = defineMessages({
   },
   notAllowedToGiveRights: {
     id: 'pl.application:errors.not.allowed.to.give.rights',
-    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga!"',
+    defaultMessage: 'Ekki er hægt að færa daga ef allur sameiginlegur réttur vegna fjölbura er nýttur. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
   },
   notAllowedToRequestRights: {
     id: 'pl.application:errors.not.allowed.to.request.rights',
-    defaultMessage: 'icel-trans: "Ekki hægt að biðja um daga!"',
+    defaultMessage: 'Ekki er hægt að óska eftir dögum ef ekki er nýttur allur sameiginlegur réttur vegna fjölbura. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to request days!',
   },
 })
