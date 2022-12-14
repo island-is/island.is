@@ -7,12 +7,18 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
 import { application, stateDescriptions, stateLabels } from './messages'
+import {
+  ChildrenCustodyInformationApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 import { pruneAfterDays } from '@island.is/application/core'
 
 type Events =
@@ -79,8 +85,17 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'approveChildSupportTerms',
                   'confirmContract',
                 ],
-                externalData: ['userProfile', 'nationalRegistry'],
+                externalData: [
+                  NationalRegistryUserApi.externalDataId,
+                  ChildrenCustodyInformationApi.externalDataId,
+                  UserProfileApi.externalDataId,
+                ],
               },
+              api: [
+                ChildrenCustodyInformationApi,
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
             },
           ],
         },
@@ -99,9 +114,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.inReview,
           },
           lifecycle: pruneAfterDays(28),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.sendNotificationToCounterParty,
+          }),
           roles: [
             {
               id: Roles.ParentB,
@@ -161,9 +176,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             tag: { label: stateLabels.submitted },
           },
           lifecycle: pruneAfterDays(365),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,
@@ -198,9 +213,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             },
           },
           lifecycle: pruneAfterDays(365),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.rejectApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.rejectApplication,
+          }),
           roles: [
             {
               id: Roles.ParentB,
@@ -229,9 +244,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             tag: { label: stateLabels.rejected, variant: 'red' },
           },
           lifecycle: pruneAfterDays(365),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.rejectedApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.rejectedApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,
@@ -261,9 +276,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             tag: { label: stateLabels.approved, variant: 'blueberry' },
           },
           lifecycle: pruneAfterDays(365),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.approveApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.approveApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,
@@ -294,9 +309,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           externalData,
           answers,
         } = (context.application as unknown) as CRCApplication
-        const applicant = externalData.nationalRegistry.data
+        const children = externalData.childrenCustodyInformation.data
         const selectedChildren = getSelectedChildrenFromExternalData(
-          applicant.children,
+          children,
           answers.selectedChildren,
         )
         const otherParent = selectedChildren[0].otherParent
@@ -305,7 +320,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            assignees: [otherParent.nationalId],
+            assignees: [otherParent?.nationalId ?? ''],
           },
         }
       }),

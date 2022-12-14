@@ -14,11 +14,10 @@ const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { id, answers, externalData, assignees } = application
 
   const { municipalitiesDirectTaxPayments, municipalitiesPersonalTaxReturn } =
-    assignees.includes(
-      externalData?.nationalRegistry?.data?.applicant?.nationalId,
-    ) && externalData?.taxDataFetchSpouse?.data
-      ? externalData.taxDataFetchSpouse.data
-      : externalData.taxDataFetch.data
+    assignees.includes(externalData.nationalRegistry.data.nationalId) &&
+    externalData?.taxDataSpouse?.data
+      ? externalData.taxDataSpouse.data
+      : externalData.taxData.data
 
   const taxReturnFetchFailed =
     municipalitiesPersonalTaxReturn?.personalTaxReturn === null

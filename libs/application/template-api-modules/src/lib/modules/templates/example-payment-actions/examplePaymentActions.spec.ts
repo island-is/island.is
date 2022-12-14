@@ -82,6 +82,7 @@ describe('ExamplePaymentActionsService', () => {
       const res = await service.createCharge({
         application,
         auth: user,
+        currentUserLocale: 'is',
       })
 
       expect(res).toEqual({

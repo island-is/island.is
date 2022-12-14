@@ -27,6 +27,9 @@ export const ADS_POSTAL_CODES = {
   Vestmannaeyjar: 900,
 }
 const DEFAULT_AVAILABLE_LEGS = 6
+
+// This doesn't need to be updated year by year
+// unless deviations from the 6 default flightlegs occur
 const AVAILABLE_FLIGHT_LEGS: { [year: string]: number } = {
   '2020': 2,
   '2021': 6,
@@ -156,7 +159,7 @@ export class FlightService {
 
     // If a user flightLeg exists such that the incoming flightLeg makes a valid connection
     // pair, return true
-    for (const flightLeg of existingFlight.flightLegs) {
+    for (const flightLeg of existingFlight.flightLegs ?? []) {
       if (
         this.hasConnectingFlightPotentialFromFlightLegs(flightLeg, incomingLeg)
       ) {
@@ -224,7 +227,7 @@ export class FlightService {
     })
   }
 
-  findAllLegsByFilter(body: GetFlightLegsBody | any): Promise<FlightLeg[]> {
+  findAllLegsByFilter(body: GetFlightLegsBody): Promise<FlightLeg[]> {
     const awaitingCredit =
       financialStateMachine.states[States.awaitingCredit].key
     return this.flightLegModel.findAll({
@@ -424,7 +427,7 @@ export class FlightService {
 
   delete(flight: Flight): Promise<FlightLeg[]> {
     return Promise.all(
-      flight.flightLegs.map((flightLeg: FlightLeg) =>
+      (flight.flightLegs ?? []).map((flightLeg: FlightLeg) =>
         this.deleteFlightLeg(flightLeg),
       ),
     )

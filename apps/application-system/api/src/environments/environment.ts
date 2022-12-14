@@ -92,7 +92,22 @@ const devConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
+    userProfile: {
+      serviceBasePath: 'http://localhost:3366',
+    },
+    nationalRegistry: {
+      baseSoapUrl: 'https://localhost:8443',
+      user: process.env.SOFFIA_USER ?? '',
+      password: process.env.SOFFIA_PASS ?? '',
+      host: 'soffiaprufa.skra.is',
+    },
+    islykill: {
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+    },
   },
+
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
@@ -175,6 +190,20 @@ const prodConfig = {
       XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    },
+    userProfile: {
+      serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,
+    },
+    nationalRegistry: {
+      baseSoapUrl: process.env.SOFFIA_SOAP_URL,
+      user: process.env.SOFFIA_USER,
+      password: process.env.SOFFIA_PASS,
+      host: process.env.SOFFIA_HOST_URL,
+    },
+    islykill: {
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
     },
   },
   contentful: {

@@ -1,6 +1,7 @@
 import * as faker from 'faker'
 
-import { AuthDelegationType, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import { createNationalId } from './nationalId'
 import type { NationalIdType } from './nationalId'
