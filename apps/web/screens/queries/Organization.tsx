@@ -110,6 +110,16 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         slug
         email
         phone
+        publishedMaterialSearchFilterGenericTags {
+          id
+          title
+          slug
+          genericTagGroup {
+            id
+            title
+            slug
+          }
+        }
         logo {
           url
         }

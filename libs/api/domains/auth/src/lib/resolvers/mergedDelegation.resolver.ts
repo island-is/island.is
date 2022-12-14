@@ -1,7 +1,8 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
-import { Identity, IdentityService } from '@island.is/api/domains/identity'
+import { IdentityClientService } from '@island.is/clients/identity'
+import { Identity } from '@island.is/api/domains/identity'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 import { MergedDelegation } from '../models'
@@ -11,7 +12,7 @@ import { DelegationType } from '../../../../../../clients/auth/public-api/gen/fe
 @UseGuards(IdsUserGuard)
 @Resolver(() => MergedDelegation)
 export class MergedDelegationResolver {
-  constructor(private identityService: IdentityService) {}
+  constructor(private identityService: IdentityClientService) {}
 
   @ResolveField('to', () => Identity)
   async resolveTo(

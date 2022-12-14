@@ -9,7 +9,11 @@ import {
   buildDataProviderItem,
   buildDateField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
 
@@ -31,8 +35,7 @@ export const PetitionApplicationForm: Form = buildForm({
           checkboxLabel: m.externalDataSection.agree,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: '',
               subTitle: '',
             }),

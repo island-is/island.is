@@ -14,11 +14,17 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
+import { ChildrenApi } from '../dataProviders'
 import {
   isEligibleForParentalLeave,
   getSelectedChild,
@@ -283,8 +289,7 @@ export const PrerequisitesForm: Form = buildForm({
               checkboxLabel: parentalLeaveFormMessages.shared.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
-                  id: 'userProfile',
-                  type: 'UserProfileProvider',
+                  provider: UserProfileApi,
                   title:
                     parentalLeaveFormMessages.shared
                       .userProfileInformationTitle,
@@ -293,16 +298,14 @@ export const PrerequisitesForm: Form = buildForm({
                       .userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'person',
-                  type: 'PersonInformationProvider',
+                  provider: NationalRegistryUserApi,
                   title:
                     parentalLeaveFormMessages.shared.familyInformationTitle,
                   subTitle:
                     parentalLeaveFormMessages.shared.familyInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'children',
-                  type: 'Children',
+                  provider: ChildrenApi,
                   title:
                     parentalLeaveFormMessages.shared.childrenInformationTitle,
                   subTitle:

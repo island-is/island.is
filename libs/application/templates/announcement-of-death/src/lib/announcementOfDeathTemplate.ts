@@ -8,12 +8,18 @@ import {
   Application,
   DefaultEvents,
   StateLifeCycle,
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  ExistingApplicationApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
+import { DeathNoticeApi } from '../dataProviders'
+import { determineMessageFromApplicationAnswers } from './utils'
 
 const HalfYearLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -33,7 +39,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ANNOUNCEMENT_OF_DEATH,
-  name: m.applicationTitle,
+  name: m.applicationTitle, //TODO: add in once merged => determineMessageFromApplicationAnswers,
   institution: m.applicationInstitution,
   dataSchema: dataSchema,
   readyForProduction: false,
@@ -50,11 +56,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           actionCard: {
             title: m.applicationTitle,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.syslumennOnEntry,
+          onEntry: defineTemplateApi({
+            action: ApiActions.syslumennOnEntry,
             shouldPersistToExternalData: true,
             throwOnError: false,
-          },
+          }),
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
@@ -74,6 +80,19 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                DeathNoticeApi,
+                NationalRegistryUserApi,
+                UserProfileApi,
+                ExistingApplicationApi.configure({
+                  params: {
+                    states: [States.DRAFT],
+                    where: {
+                      applicant: 'applicant',
+                    },
+                  },
+                }),
+              ],
             },
           ],
         },
@@ -91,11 +110,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.5,
           lifecycle: HalfYearLifeCycle,
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -111,6 +130,17 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
+              api: [
+                ExistingApplicationApi.configure({
+                  params: {
+                    states: [States.DRAFT],
+                    where: {
+                      applicant: 'applicant',
+                    },
+                  },
+                }),
+              ],
             },
           ],
         },
@@ -140,11 +170,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: DayLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.assignElectedPerson,
+          onEntry: defineTemplateApi({
+            action: ApiActions.assignElectedPerson,
             shouldPersistToExternalData: false,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

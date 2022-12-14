@@ -7,12 +7,13 @@ import {
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AuthCustomDelegation } from '@island.is/api/schema'
 import { AccessDate } from '../AccessDate/AccessDate'
+
 import * as styles from './AccessHeader.css'
+import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 
 interface AccessHeaderProps {
-  delegation?: AuthCustomDelegation
+  delegation?: AuthCustomDelegationOutgoing
   showValidityPeriodMobile?: boolean
   children: React.ReactNode
 }
