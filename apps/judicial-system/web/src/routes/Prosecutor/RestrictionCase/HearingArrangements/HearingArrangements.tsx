@@ -117,7 +117,7 @@ export const HearingArrangements: React.FC = () => {
             (notification) => notification.type === NotificationType.HEADS_UP,
           )
         ) {
-          router.push(nextRoute)
+          router.push(`${destination}/${workingCase.id}`)
         } else {
           setModalVisible(true)
         }
@@ -125,14 +125,7 @@ export const HearingArrangements: React.FC = () => {
         toast.error(formatMessage(errors.transitionCase))
       }
     },
-    [
-      formatMessage,
-      nextRoute,
-      router,
-      setWorkingCase,
-      transitionCase,
-      workingCase,
-    ],
+    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
   )
 
   const stepIsValid =
