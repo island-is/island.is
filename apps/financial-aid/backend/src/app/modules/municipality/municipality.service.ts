@@ -35,6 +35,42 @@ export class MunicipalityService {
   async findByMunicipalityId(
     municipalityId: string,
   ): Promise<MunicipalityModel> {
+    return await this.municipalityModel.findOne({
+      attributes: {
+        exclude: [
+          'navUrl',
+          'usingNav',
+          'navUsername',
+          'navPassword',
+          'created',
+          'modified',
+        ],
+      },
+      where: { municipalityId },
+      include: [
+        {
+          model: AidModel,
+          as: 'individualAid',
+          where: {
+            municipalityId,
+            type: AidType.INDIVIDUAL,
+          },
+        },
+        {
+          model: AidModel,
+          as: 'cohabitationAid',
+          where: {
+            municipalityId,
+            type: AidType.COHABITATION,
+          },
+        },
+      ],
+    })
+  }
+
+  async findByMunicipalityIdWithNav(
+    municipalityId: string,
+  ): Promise<MunicipalityModel> {
     return this.decryptNavPassword(
       await this.municipalityModel.findOne({
         where: { municipalityId },

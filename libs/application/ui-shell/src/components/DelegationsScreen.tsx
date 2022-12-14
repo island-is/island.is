@@ -183,7 +183,8 @@ export const DelegationsScreen = ({
   const screenTexts = {
     title: formatMessage(
       screenData.screenType === ScreenType.ONGOING
-        ? coreDelegationsMessages.delegationScreenTitleForOngoingApplication
+        ? screenData.templateName ||
+            coreDelegationsMessages.delegationScreenTitleForOngoingApplication
         : screenData.screenType === ScreenType.NEW
         ? coreDelegationsMessages.delegationScreenTitle
         : coreDelegationsMessages.delegationScreenTitleApplicationNoDelegationSupport,
