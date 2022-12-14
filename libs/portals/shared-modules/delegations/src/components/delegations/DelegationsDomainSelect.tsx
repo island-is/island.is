@@ -1,7 +1,7 @@
 import { Select, SkeletonLoader } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { useDomains, DomainOption } from '../../hooks/useDomains'
+import { useDomains, DomainOption } from '../../hooks/useDomains/useDomains'
 
 interface DelegationsHeaderProps {
   onDomainChange(domainOption: DomainOption): void

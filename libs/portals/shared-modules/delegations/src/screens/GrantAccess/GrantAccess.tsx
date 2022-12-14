@@ -28,14 +28,14 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
 import { IdentityCard } from '../../components/IdentityCard/IdentityCard'
-import * as styles from './GrantAccess.css'
+import { DomainOption, useDomains } from '../../hooks/useDomains/useDomains'
+import { ALL_DOMAINS } from '../../constants/domain'
+import { DelegationPaths } from '../../lib/paths'
 import {
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,
-} from '@island.is/service-portal/graphql'
-import { DomainOption, useDomains } from '../../hooks/useDomains'
-import { ALL_DOMAINS } from '../../constants/domain'
-import { DelegationPaths } from '../../lib/paths'
+} from './GrantAccess.generated'
+import * as styles from './GrantAccess.css'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])

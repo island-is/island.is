@@ -372,10 +372,14 @@ export class SmartSolutionsApi {
       )
 
     if (containsActiveOrUnclaimed) {
+      this.logger.debug(
+        'Some existing passes are currently active or unclaimed',
+      )
       const activePasses = existingPasses?.data.filter(
         (p) => p.status === PassStatus.Active,
       )
       if (activePasses?.length) {
+        this.logger.debug('Active pkpass found')
         return activePasses[0]
       }
 
@@ -384,14 +388,26 @@ export class SmartSolutionsApi {
       )
 
       if (unclaimedPasses?.length) {
+        this.logger.debug('Unclaimed pkpass found')
         return unclaimedPasses[0]
       }
     }
+
+    this.logger.debug('No active pkpass found for user, will create a new one')
 
     const response = await this.upsertPkPass(payload)
 
     if (response?.data?.upsertPass) {
       return response?.data?.upsertPass
+    }
+
+    if (response?.errors) {
+      const firstError = response.errors[0]
+      this.logger.warn('the pkpass service returned some errors', {
+        serviceStatus: response?.status,
+        serviceMessage: firstError.message,
+        category: LOG_CATEGORY,
+      })
     }
 
     this.logger.warn(

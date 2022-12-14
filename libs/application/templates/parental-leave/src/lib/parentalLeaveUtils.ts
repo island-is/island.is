@@ -33,17 +33,20 @@ import {
   SINGLE,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
-import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
+
 import {
   calculatePeriodLength,
   daysToMonths,
   monthsToDays,
 } from '../lib/directorateOfLabour.utils'
 import {
+  YesOrNo,
+  Period,
+  PersonInformation,
   ChildInformation,
   ChildrenAndExistingApplications,
-} from '../dataProviders/Children/types'
-import { YesOrNo, Period, PersonInformation } from '../types'
+  PregnancyStatusAndRightsResults,
+} from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 import {
@@ -536,6 +539,11 @@ export function getApplicationExternalData(
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
+  const userBankInfo = getValueViaPath(
+    externalData,
+    'userProfile.data.bankInfo',
+  ) as string
+
   const applicantGenderCode = getValueViaPath(
     externalData,
     'person.data.genderCode',
@@ -568,6 +576,7 @@ export function getApplicationExternalData(
     navId,
     userEmail,
     userPhoneNumber,
+    userBankInfo,
   }
 }
 

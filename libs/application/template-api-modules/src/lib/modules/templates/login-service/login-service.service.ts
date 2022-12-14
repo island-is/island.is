@@ -9,14 +9,18 @@ import {
 } from './emailGenerators'
 import type { LoginServiceConfig } from './config/loginServiceConfig'
 import { LOGIN_SERVICE_CONFIG } from './config/loginServiceConfig'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class LoginServiceService {
+export class LoginServiceService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGIN_SERVICE_CONFIG)
     private loginServiceConfig: LoginServiceConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.LOGIN_SERVICE)
+  }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
