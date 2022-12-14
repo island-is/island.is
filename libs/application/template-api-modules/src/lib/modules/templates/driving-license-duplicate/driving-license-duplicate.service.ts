@@ -52,6 +52,7 @@ export class DrivingLicenseDuplicateService {
     const { answers } = application
     const nationalId = application.applicant
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
       application.id,
     )
 

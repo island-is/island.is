@@ -12,7 +12,10 @@ import type { Charge, Item as ChargeItem } from '@island.is/clients/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 
-import { Application as ApplicationModel } from '@island.is/application/api/core'
+import {
+  Application as ApplicationModel,
+  ApplicationService,
+} from '@island.is/application/api/core'
 import { PaymentModuleConfig } from './payment.config'
 import { ConfigType } from '@nestjs/config'
 import { formatCharge } from './models/Charge'
@@ -29,6 +32,7 @@ export class PaymentService {
     private config: ConfigType<typeof PaymentModuleConfig>,
     private paymentApi: PaymentAPI,
     private readonly auditService: AuditService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async findPaymentByApplicationId(
@@ -41,7 +45,7 @@ export class PaymentService {
     })
   }
 
-  async getStatus(applicationId: string): Promise<PaymentStatus> {
+  async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
     if (!foundPayment) {
       throw new NotFoundException(
@@ -54,9 +58,28 @@ export class PaymentService {
         `valid payment object was not found for application id ${applicationId} - user4 not set`,
       )
     }
+    const application = await this.applicationService.findOneById(applicationId)
+
+    let applicationSlug
+    if (application?.typeId) {
+      applicationSlug = getSlugFromType(application.typeId)
+    } else {
+      throw new NotFoundException(
+        `application type id was not found for application id ${applicationId}`,
+      )
+    }
+
+    const callbackUrl = `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
+
     return {
+      // TODO: maybe treat the case where no payment was found differently?
+      // not sure how/if that case would/could come up.
       fulfilled: foundPayment.fulfilled || false,
-      paymentUrl: this.makePaymentUrl(foundPayment.user4),
+      paymentUrl: this.makeDelegationPaymentUrl(
+        foundPayment.user4,
+        user.sub ?? user.nationalId,
+        callbackUrl,
+      ),
     }
   }
 
@@ -163,6 +186,22 @@ export class PaymentService {
     return item
   }
 
+  public makeDelegationPaymentUrl(
+    docNum: string,
+    loginHint: string,
+    callbackUrl: string,
+  ): string {
+    const targetLinkUri = `${this.makePaymentUrl(
+      docNum,
+    )}&returnURL=${callbackUrl}`
+
+    return `${this.config.arkBaseUrl}/quickpay/pay?iss=${
+      this.config.authIssuer
+    }&login_hint=${loginHint}&target_link_uri=${encodeURIComponent(
+      targetLinkUri,
+    )}`
+  }
+
   async findChargeItems(
     targetChargeItemCodes: string[],
   ): Promise<ChargeItem[]> {
@@ -235,4 +274,7 @@ export class PaymentService {
       },
     })
   }
+}
+function getSlugFromType(typeId: any): any {
+  throw new Error('Function not implemented.')
 }

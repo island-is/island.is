@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetInitialScheduleInput, GetScheduleDistributionInput } from './dto'
 import {
+  PaymentScheduleCompanyConditions,
   PaymentScheduleConditions,
   PaymentScheduleDebts,
   PaymentScheduleDistribution,
@@ -23,7 +24,7 @@ import { UpdateCurrentEmployerResponse } from './models/updateCurrentEmployer.mo
 import { GetIsEmployerValidInput } from './dto/isEmployerValidInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.internalProcuring)
 @Resolver()
 export class PaymentScheduleResolver {
   constructor(private paymentScheduleService: PaymentScheduleService) {}
@@ -37,6 +38,17 @@ export class PaymentScheduleResolver {
     @CurrentUser() user: User,
   ): Promise<PaymentScheduleConditions> {
     return await this.paymentScheduleService.getConditions(user)
+  }
+
+  @Query(() => PaymentScheduleCompanyConditions, {
+    name: 'paymentScheduleCompanyConditions',
+    nullable: true,
+  })
+  @Audit()
+  async companyConditions(
+    @CurrentUser() user: User,
+  ): Promise<PaymentScheduleCompanyConditions> {
+    return await this.paymentScheduleService.getCompanyConditions(user)
   }
 
   @Query(() => [PaymentScheduleDebts], {

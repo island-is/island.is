@@ -7,13 +7,17 @@ import { getValueViaPath } from '@island.is/application/core'
 import { PASSPORT_CHARGE_CODES, YES, YesOrNo, DiscountCheck } from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class PassportService {
+export class PassportService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.PASSPORT)
+  }
 
   async createCharge({
     application: { id, answers },
@@ -85,6 +89,7 @@ export class PassportService {
     const { answers } = application
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
       application.id,
     )
 

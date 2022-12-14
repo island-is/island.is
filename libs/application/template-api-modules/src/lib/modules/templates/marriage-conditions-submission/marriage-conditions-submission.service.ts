@@ -9,16 +9,71 @@ import {
   Person,
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
-import { PersonTypes } from './types'
-import { MarriageConditionsAnswers } from '@island.is/application/templates/marriage-conditions/types'
+import {
+  ALLOWED_MARITAL_STATUSES,
+  maritalStatuses,
+  PersonTypes,
+  YES,
+} from './types'
+import {
+  MarriageConditionsAnswers,
+  MarriageConditionsFakeData,
+} from '@island.is/application/templates/marriage-conditions/types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
-export class MarriageConditionsSubmissionService {
+export class MarriageConditionsSubmissionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+    private readonly nationalRegistryService: NationalRegistryXRoadService,
+  ) {
+    super(ApplicationTypes.MARRIAGE_CONDITIONS)
+  }
+
+  async maritalStatus({ auth, application }: TemplateApiModuleActionProps) {
+    const fakeData = getValueViaPath<MarriageConditionsFakeData>(
+      application.answers,
+      'fakeData',
+    )
+    const useFakeData = fakeData?.useFakeData === YES
+    if (useFakeData) {
+      return this.handleReturn(fakeData?.maritalStatus || '')
+    }
+
+    const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
+    const maritalStatus = spouse?.maritalStatus || '1'
+    return this.handleReturn(maritalStatus)
+  }
+
+  private formatMaritalStatus(maritalCode: string): string {
+    return maritalStatuses[maritalCode]
+  }
+
+  private allowedCodes(maritalCode: string): boolean {
+    return ALLOWED_MARITAL_STATUSES.includes(maritalCode)
+  }
+
+  private handleReturn(maritalStatus: string) {
+    if (this.allowedCodes(maritalStatus)) {
+      return Promise.resolve({
+        maritalStatus: this.formatMaritalStatus(maritalStatus),
+      })
+    } else {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+  }
 
   async createCharge({
     application: { id },
@@ -40,6 +95,7 @@ export class MarriageConditionsSubmissionService {
 
   async assignSpouse({ application, auth }: TemplateApiModuleActionProps) {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
       application.id,
     )
 

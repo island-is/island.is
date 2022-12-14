@@ -1,4 +1,7 @@
-import { SequelizeConfigService } from '@island.is/application/api/core'
+import {
+  ApplicationApiCoreModule,
+  SequelizeConfigService,
+} from '@island.is/application/api/core'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
@@ -14,6 +17,7 @@ import { PaymentCallbackController } from './payment-callback.controller'
     }),
     SequelizeModule.forFeature([Payment]),
     PaymentClientModule,
+    ApplicationApiCoreModule,
   ],
   providers: [PaymentService],
   exports: [PaymentService],

@@ -5,6 +5,8 @@ const PaymentModule = z.object({
   callbackBaseUrl: z.string(),
   callbackAdditionUrl: z.string(),
   arkBaseUrl: z.string(),
+  clientLocationOrigin: z.string(),
+  authIssuer: z.string(),
 })
 
 export const PaymentModuleConfig = defineConfig({
@@ -19,6 +21,14 @@ export const PaymentModuleConfig = defineConfig({
     callbackBaseUrl: env.required(
       'XROAD_PAYMENT_BASE_CALLBACK_URL',
       'https://localhost:3333/applications/',
+    ),
+    clientLocationOrigin: env.required(
+      'CLIENT_LOCATION_ORIGIN',
+      `http://localhost:${process.env.WEB_FRONTEND_PORT ?? '4242'}/umsoknir`,
+    ),
+    authIssuer: env.required(
+      'IDENTITY_SERVER_ISSUER_URL',
+      'https://identity-server.dev01.devland.is',
     ),
   }),
 })

@@ -18,6 +18,7 @@ import { AwsModule } from '@island.is/nest/aws'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
+import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import { ApplicationChargeModule } from './charge/application-charge.module'
 import { ApplicationFilesModule } from '@island.is/application/api/files'
 import { PaymentModule } from '@island.is/application/api/payment'
@@ -42,6 +43,10 @@ import { PaymentModule } from '@island.is/application/api/payment'
     ApplicationChargeModule,
   ],
   controllers: [ApplicationController],
-  providers: [ApplicationAccessService, ApplicationValidationService],
+  providers: [
+    ApplicationAccessService,
+    ApplicationValidationService,
+    TemplateApiActionRunner,
+  ],
 })
 export class ApplicationModule {}

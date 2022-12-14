@@ -6,26 +6,31 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { ApplicationTypes, FormValue } from '@island.is/application/types'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,
 } from './emailGenerators'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { FetchError } from '@island.is/clients/middlewares'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
 }
 
 @Injectable()
-export class DrivingLicenseSubmissionService {
+export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.DRIVING_LICENSE)
+  }
 
   async createCharge({
     application: { id, answers },
@@ -61,6 +66,7 @@ export class DrivingLicenseSubmissionService {
     const nationalId = application.applicant
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
       application.id,
     )
 
@@ -153,24 +159,37 @@ export class DrivingLicenseSubmissionService {
       .nationalId
     const teacherNationalId = application.applicant
 
-    const result = await this.drivingLicenseService.newDrivingAssessment(
-      studentNationalId as string,
-      teacherNationalId,
-    )
-
-    if (result.success) {
-      await this.sharedTemplateAPIService.sendEmail(
-        generateDrivingAssessmentApprovalEmail,
-        application,
+    try {
+      const result = await this.drivingLicenseService.newDrivingAssessment(
+        studentNationalId as string,
+        teacherNationalId,
       )
-    } else {
-      throw new Error(
-        `Unexpected error (creating driver's license): '${result.errorMessage}'`,
-      )
-    }
 
-    return {
-      success: result.success,
+      if (result.success) {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateDrivingAssessmentApprovalEmail,
+          application,
+        )
+        return {
+          success: result.success,
+        }
+      } else {
+        throw new Error(
+          `Unexpected error (creating driver's license): '${result.errorMessage}'`,
+        )
+      }
+    } catch (e) {
+      if (e instanceof Error && e.name === 'FetchError') {
+        const err = (e as unknown) as FetchError
+        throw new TemplateApiError(
+          {
+            title:
+              err.problem?.title || coreErrorMessages.failedDataProviderSubmit,
+            summary: err.problem?.detail || '',
+          },
+          400,
+        )
+      }
     }
   }
 }

@@ -36,6 +36,7 @@ export class DigitalTachographCompanyCardService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
       application.id,
     )
 

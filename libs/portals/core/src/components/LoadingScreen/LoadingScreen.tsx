@@ -1,5 +1,6 @@
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 import * as styles from './LoadingScreen.css'
 
 interface LoadingScreenProps {
@@ -16,13 +17,7 @@ export const LoadingScreen = ({ ariaLabel }: LoadingScreenProps) => {
       alignItems="center"
       className={styles.fullScreen}
       role="progressbar"
-      aria-valuetext={
-        ariaLabel ??
-        formatMessage({
-          id: 'portals:loading-screen',
-          defaultMessage: 'Er að hlaða nauðsynlegum gögnum',
-        })
-      }
+      aria-valuetext={ariaLabel ?? formatMessage(m.loadingScreen)}
     >
       <LoadingDots large />
     </Box>

@@ -78,6 +78,7 @@ export class TransferOfVehicleOwnershipService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
       application.id,
     )
     if (!payment?.fulfilled) {
@@ -281,6 +282,7 @@ export class TransferOfVehicleOwnershipService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
       application.id,
     )
     if (!payment?.fulfilled) {

@@ -7,6 +7,9 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -72,6 +75,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },
@@ -91,12 +95,12 @@ const template: ApplicationTemplate<
           },
           progress: 0.4,
           lifecycle: pruneAfterDays(1 / 24),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.initReview,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.initReview,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -134,10 +138,10 @@ const template: ApplicationTemplate<
               pruneInDaysATen(application, 8),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.addReview,
+          onEntry: defineTemplateApi({
+            action: ApiActions.addReview,
             shouldPersistToExternalData: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -196,9 +200,9 @@ const template: ApplicationTemplate<
           status: 'rejected',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          onEntry: {
-            apiModuleAction: ApiActions.rejectApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.rejectApplication,
+          }),
           actionCard: {
             tag: {
               label: application.actionCardRejected,
@@ -239,9 +243,9 @@ const template: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           actionCard: {
             tag: {
               label: application.actionCardDone,

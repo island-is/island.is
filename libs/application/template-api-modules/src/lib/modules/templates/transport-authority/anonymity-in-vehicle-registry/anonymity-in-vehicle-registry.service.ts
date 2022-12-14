@@ -36,6 +36,7 @@ export class AnonymityInVehicleRegistryService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
       application.id,
     )
 

@@ -209,8 +209,8 @@ export class SharedTemplateApiService {
     )
   }
 
-  async getPaymentStatus(applicationId: string) {
-    return this.paymentService.getStatus(applicationId)
+  async getPaymentStatus(user: User, applicationId: string) {
+    return this.paymentService.getStatus(user, applicationId)
   }
 
   async addAttachment(

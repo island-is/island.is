@@ -11,17 +11,23 @@ import type { InstitutionCollaborationConfig } from './config/institutionApplica
 import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
 import { FileStorageService } from '@island.is/file-storage'
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+} from '@island.is/application/types'
 import { InstitutionAttachment } from './types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class InstitutionCollaborationService {
+export class InstitutionCollaborationService extends BaseTemplateApiService {
   constructor(
     @Inject(INSTITUTION_COLLABORATION_CONFIG)
     private institutionConfig: InstitutionCollaborationConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly fileStorageService: FileStorageService,
-  ) {}
+  ) {
+    super(ApplicationTypes.INSTITUTION_COLLABORATION)
+  }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const attachments = await this.prepareAttachments(application)

@@ -1,5 +1,7 @@
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { DistrictsProvider } from './DistrictsProvider'
-export { FeeInfoProvider } from './FeeInfoProvider'
-export { IdentityDocumentProvider } from './IdentityDocumentProvider'
+export {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  PaymentCatalogApi,
+  MockProviderApi,
+  DistrictsApi,
+} from '@island.is/application/types'

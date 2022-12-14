@@ -179,6 +179,7 @@
   - [Firearm License](libs/clients/firearm-license/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
+  - [Identity](libs/clients/identity/README.md)
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
   - [MMS](libs/clients/mms/README.md)
@@ -260,6 +261,7 @@
 
 - [Problems](handbook/reference/problems/README.md)
   - [403 Bad Subject](handbook/reference/problems/bad-subject.md)
+  - [400 500 Template API Error](handbook/reference/problems/template-api-error.md)
   - [400 Validation Failed](handbook/reference/problems/validation-failed.md)
 
 ## Misc

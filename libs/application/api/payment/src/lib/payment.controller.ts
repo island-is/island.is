@@ -75,8 +75,9 @@ export class PaymentController {
     description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
+    @CurrentUser() user: User,
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
-    return await this.paymentService.getStatus(applicationId)
+    return await this.paymentService.getStatus(user, applicationId)
   }
 }

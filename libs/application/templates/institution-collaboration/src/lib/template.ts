@@ -6,6 +6,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 
@@ -88,9 +89,9 @@ const template: ApplicationTemplate<
                 ),
             },
           ],
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
         },
       },
     },
