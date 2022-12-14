@@ -260,7 +260,7 @@ const PoliceReport = () => {
           onNextButtonClick={() =>
             handleNavigationTo(constants.INVESTIGATION_CASE_CASE_FILES_ROUTE)
           }
-          nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>
