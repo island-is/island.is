@@ -7,4 +7,6 @@ This library should only contain generic code
 
 Run the following command to unit test the util functions:
 
-`yarn nx test content-search-toolkit`
+```
+yarn nx test content-search-toolkit
+```
