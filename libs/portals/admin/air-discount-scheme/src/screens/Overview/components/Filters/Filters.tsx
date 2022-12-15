@@ -204,6 +204,10 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                   )
                 }}
               />
+              <CheckboxController
+                id="isExplicit"
+                options={[{ value: 'true', label: 'Handvirkur kóði' }]}
+              />
             </Stack>
             <Stack space={2}>
               <Text variant="h5">Fjármál</Text>
