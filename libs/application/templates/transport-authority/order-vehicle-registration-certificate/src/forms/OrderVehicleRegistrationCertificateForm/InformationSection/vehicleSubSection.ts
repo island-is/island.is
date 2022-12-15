@@ -1,4 +1,4 @@
-import { Application, VehiclesCurrentVehicle } from '@island.is/api/schema'
+import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
@@ -6,6 +6,7 @@ import {
   buildDescriptionField,
   buildCustomField,
 } from '@island.is/application/core'
+import { VehiclesCurrentVehicle } from '../../../types'
 import { information } from '../../../lib/messages'
 import { getSelectedVehicle } from '../../../utils'
 

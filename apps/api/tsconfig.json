@@ -9,5 +9,9 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "allowJs": true
+  }
 }

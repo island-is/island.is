@@ -7,8 +7,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  NationalRegistryUserApi,
-  UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
@@ -20,6 +18,13 @@ import { application } from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../types'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+  CurrentVehiclesApi,
+  InsuranceCompaniesApi,
+} from '../dataProviders'
 
 const pruneInDaysAtTen = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -78,7 +83,13 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SamgongustofaPaymentCatalogApi,
+                CurrentVehiclesApi,
+                InsuranceCompaniesApi,
+              ],
             },
           ],
         },

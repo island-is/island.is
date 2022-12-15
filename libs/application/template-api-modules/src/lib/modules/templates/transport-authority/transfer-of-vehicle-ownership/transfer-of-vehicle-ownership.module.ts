@@ -11,6 +11,13 @@ import {
   ChargeFjsV2ClientConfig,
   ChargeFjsV2ClientModule,
 } from '@island.is/clients/charge-fjs-v2'
+import {
+  VehicleCodetablesClientModule,
+  VehicleCodetablesClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-codetables'
+import { VehiclesClientModule } from '@island.is/clients/vehicles'
+import { VehiclesClientConfig } from '@island.is/clients/vehicles'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 export class TransferOfVehicleOwnershipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -18,11 +25,19 @@ export class TransferOfVehicleOwnershipModule {
       module: TransferOfVehicleOwnershipModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        VehicleOwnerChangeClientModule,
         ChargeFjsV2ClientModule,
+        VehicleOwnerChangeClientModule,
+        VehicleCodetablesClientModule,
+        VehiclesClientModule,
+        AuthModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [VehicleOwnerChangeClientConfig, ChargeFjsV2ClientConfig],
+          load: [
+            ChargeFjsV2ClientConfig,
+            VehicleOwnerChangeClientConfig,
+            VehicleCodetablesClientConfig,
+            VehiclesClientConfig,
+          ],
         }),
       ],
       providers: [TransferOfVehicleOwnershipService],

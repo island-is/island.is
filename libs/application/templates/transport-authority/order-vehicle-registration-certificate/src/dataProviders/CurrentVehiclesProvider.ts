@@ -4,7 +4,7 @@ import {
   StaticText,
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
-import { VehiclesCurrentVehicle } from '@island.is/api/schema'
+import { VehiclesCurrentVehicle } from '../types'
 import { GET_CURRENT_VEHICLES } from '../graphql/queries'
 import { externalData } from '../lib/messages'
 

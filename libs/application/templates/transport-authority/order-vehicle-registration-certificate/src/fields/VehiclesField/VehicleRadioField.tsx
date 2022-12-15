@@ -1,6 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { FC, useState } from 'react'
-import { VehiclesCurrentVehicle } from '@island.is/api/schema'
+import { VehiclesCurrentVehicle } from '../../types'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'

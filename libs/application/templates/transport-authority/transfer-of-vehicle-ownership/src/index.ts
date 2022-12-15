@@ -10,5 +10,6 @@ export const messages = appMessages
 export type TransferOfVehicleOwnershipAnswers = TransferOfVehicleOwnership
 
 export * from './utils'
+export * from './lib/messages/externalData'
 
 export default template
