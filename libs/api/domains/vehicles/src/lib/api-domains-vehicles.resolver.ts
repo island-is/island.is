@@ -97,6 +97,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
   }
 
+  //TODOx remove?
   @Scopes(ApiScope.internal)
   @Query(() => [VehiclesCurrentVehicle], {
     name: 'currentVehicles',

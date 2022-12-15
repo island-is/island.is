@@ -10,6 +10,7 @@ import { TransportAuthorityApi } from '../transportAuthority.service'
 export class MainResolver {
   constructor(private readonly transportAuthorityApi: TransportAuthorityApi) {}
 
+  //TODOx remove?
   @Query(() => [InsuranceCompany])
   transportAuthorityInsuranceCompanies() {
     return this.transportAuthorityApi.getInsuranceCompanies()
