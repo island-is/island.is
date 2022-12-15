@@ -56,7 +56,7 @@ const ActiveCases: React.FC<Props> = (props) => {
     isDeleting: (custom: number) =>
       custom === requestToRemoveIndex ? { x: '-150px' } : { x: '0px' },
     isNotDeleting: { x: 0 },
-    deleted: { opacity: 0, scale: 0.8, duration: 3000 },
+    deleted: { opacity: 0, scale: 0.8 },
   }
 
   const { user } = useContext(UserContext)
