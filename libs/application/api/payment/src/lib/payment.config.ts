@@ -13,7 +13,7 @@ export const PaymentModuleConfig = defineConfig({
   name: 'PaymentModule',
   schema: PaymentModule,
   load: (env) => ({
-    arkBaseUrl: env.required('ARK_BASE_URL'),
+    arkBaseUrl: env.required('ARK_BASE_URL', 'https://uat.arkid.is'),
     callbackAdditionUrl: env.required(
       'XROAD_PAYMENT_ADDITION_CALLBACK_URL',
       '/',
