@@ -44,6 +44,7 @@ import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
+import { PaymentService } from '@island.is/application/api/payment'
 
 const nationalId = '1234564321'
 let id = 0
@@ -141,6 +142,10 @@ describe('ParentalLeaveService', () => {
     const module = await Test.createTestingModule({
       providers: [
         ParentalLeaveService,
+        {
+          provide: PaymentService,
+          useValue: {}, //not used
+        },
         {
           provide: ChildrenService,
           useValue: {},
