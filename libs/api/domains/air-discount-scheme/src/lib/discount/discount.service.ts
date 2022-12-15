@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import { UsersApi as AirDiscountSchemeApi } from '@island.is/clients/air-discount-scheme'
+import {
+  FlightLeg,
+  UsersApi as AirDiscountSchemeApi,
+} from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -12,7 +15,6 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { Discount as DiscountModel } from '../models/discount.model'
 
-const TWO_HOURS = 7200
 @Injectable()
 export class DiscountService {
   constructor(
@@ -28,6 +30,16 @@ export class DiscountService {
       'Failed to resolve request',
       error?.message ?? error?.response?.message,
     )
+  }
+
+  discountIsValid(discount: TDiscount): boolean {
+    const TWO_HOURS = 7200
+    if (discount.expiresIn <= TWO_HOURS) {
+      return false
+    }
+
+    const { credit } = discount.user.fund
+    return credit >= 1
   }
 
   private handleJSONError(e: FetchError) {
@@ -56,12 +68,12 @@ export class DiscountService {
 
     const discounts: DiscountModel[] = []
     for (const relation of relations) {
-      const discount: TDiscount = (await this.getDiscount(
+      const discount: TDiscount | null = await this.getDiscount(
         auth,
         relation.nationalId,
-      )) as TDiscount
-      const isValid = discount && discount.expiresIn > TWO_HOURS
-      if (isValid) {
+      )
+
+      if (discount && this.discountIsValid(discount)) {
         discounts.push({
           ...discount,
           user: {
@@ -87,6 +99,27 @@ export class DiscountService {
     }
 
     return discounts
+  }
+
+  async getFlightLegsByUser(auth: User): Promise<FlightLeg[]> {
+    const getFlightsResponse = await this.getADSWithAuth(auth)
+      .privateFlightControllerGetUserFlights({ nationalId: auth.nationalId })
+      .catch((e) => {
+        this.handle4xx(e)
+      })
+
+    if (!getFlightsResponse) {
+      return []
+    }
+    const flightLegs: FlightLeg[] = []
+
+    getFlightsResponse.forEach((flight) => {
+      if (flight?.flightLegs) {
+        flightLegs.push(...flight.flightLegs)
+      }
+    })
+
+    return flightLegs
   }
 
   private async getDiscount(
@@ -131,9 +164,6 @@ export class DiscountService {
       return []
     }
 
-    // Should not generate discountcodes for users who do not meet requirements
-    return getRelationsResponse.filter(
-      ({ fund: { credit, used, total } }) => credit <= total - used,
-    )
+    return getRelationsResponse
   }
 }
