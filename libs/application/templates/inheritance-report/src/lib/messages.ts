@@ -165,4 +165,223 @@ export const m = defineMessages({
     defaultMessage: 'Dánardagur ekki skráður',
     description: '',
   },
+
+  // Estate Properties
+  propertiesTitle: {
+    id: 'ir.application:propertiesTitle',
+    defaultMessage: 'Eignir',
+    description: '',
+  },
+  propertiesDescription: {
+    id: 'ir.application:propertiesDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  realEstate: {
+    id: 'ir.application:realEstate',
+    defaultMessage: 'Fasteignir',
+    description: '',
+  },
+  realEstateRepeaterHeader: {
+    id: 'ir.application:realEstateRepeaterHeader',
+    defaultMessage: 'Fasteign',
+    description: '',
+  },
+  realEstateDescription: {
+    id: 'ir.application:realEstateDescription',
+    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
+    description: '',
+  },
+  inventoryTitle: {
+    id: 'ir.application:inventoryTitle',
+    defaultMessage: 'Innbú',
+    description: '',
+  },
+  inventoryDescription: {
+    id: 'ir.application:inventoryDescription',
+    defaultMessage: 'Til dæmis bækur og málverk',
+    description: '',
+  },
+  inventoryTextField: {
+    id: 'ir.application:inventoryTextField',
+    defaultMessage: 'Upplýsingar um innbú',
+    description: '',
+  },
+  inventoryValueTitle: {
+    id: 'ir.application:inventoryValueTitle',
+    defaultMessage: 'Matsverð samtals',
+    description: '',
+  },
+  inventoryTextFieldPlaceholder: {
+    id: 'ir.application:inventoryTextFieldPlaceholder',
+    defaultMessage: 'Skráðu inn upplýsingar um innbú hér',
+    description: '',
+  },
+  vehicles: {
+    id: 'ir.application:vehicles',
+    defaultMessage: 'Farartæki',
+    description: '',
+  },
+  vehiclesDescription: {
+    id: 'ir.application:vehiclesDescription',
+    defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
+    description: '',
+  },
+
+  // Bank Info
+  estateBankInfo: {
+    id: 'ir.application:estateBankInfo',
+    defaultMessage: 'Innstæður í bönkum og sparisjóðum',
+    description: '',
+  },
+  estateBankInfoDescription: {
+    id: 'ir.application:estateBankInfoDescription',
+    defaultMessage:
+      'Innstæður í bæði innlendum og erlendum bönkum og sparisjóðum',
+    description: '',
+  },
+  bankAccount: {
+    id: 'ir.application:bankAccount',
+    defaultMessage: 'Bankareikningur',
+    description: '',
+  },
+  bankAccountBalance: {
+    id: 'ir.application:bankAccountBalance',
+    defaultMessage: 'Innistæða með vöxtum á dánardegi',
+    description: '',
+  },
+  bankAccountPlaceholder: {
+    id: 'ir.application:bankAccountPlaceholder',
+    defaultMessage: 'xxxx - xx - xxxxxx',
+    description: '',
+  },
+  bankAccountRepeaterButton: {
+    id: 'ir.application:bankAccountRepeaterButton',
+    defaultMessage: 'Bæta við bankareikning',
+    description: '',
+  },
+
+  // Claims
+  claimsTitle: {
+    id: 'ir.application:claimsTitle',
+    defaultMessage: 'Verðbréf og kröfur',
+    description: '',
+  },
+  claimsDescription: {
+    id: 'ir.application:claimsDescription',
+    defaultMessage: 'Útgefandi og fjárhæð með vöxtum',
+    description: '',
+  },
+  claimsPublisher: {
+    id: 'ir.application:claimsPublisher',
+    defaultMessage: 'Útgefandi',
+    description: '',
+  },
+  claimsAmount: {
+    id: 'ir.application:claimsAmount',
+    defaultMessage: 'Fjárhæð með vöxtum á dánardegi',
+    description: '',
+  },
+  claimsRepeaterButton: {
+    id: 'ir.application:claimsRepeaterButton',
+    defaultMessage: 'Bæta við verðbréfum',
+    description: '',
+  },
+
+  // Stocks
+  stocksTitle: {
+    id: 'ir.application:stocksTitle',
+    defaultMessage: 'Hlutabréf',
+    description: '',
+  },
+  stocksDescription: {
+    id: 'ir.application:stocksDescription',
+    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
+    description: '',
+  },
+  stocksOrganization: {
+    id: 'ir.application:stocksOrganization',
+    defaultMessage: 'Útgefandi',
+    description: '',
+  },
+  stocksSsn: {
+    id: 'ir.application:stocksSsn',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  stocksFaceValue: {
+    id: 'ir.application:stocksFaceValue',
+    defaultMessage: 'Nafnverð',
+    description: '',
+  },
+  stocksRateOfChange: {
+    id: 'ir.application:stocksRateOfChange',
+    defaultMessage: 'Gengi',
+    description: '',
+  },
+  stocksValue: {
+    id: 'ir.application:stocksValue',
+    defaultMessage: 'Verðmæti á dánardegi',
+    description: '',
+  },
+  stocksRepeaterButton: {
+    id: 'ir.application:stocksRepeaterButton',
+    defaultMessage: 'Bæta við hlutabréfum',
+    description: '',
+  },
+
+  // Money & deposit
+  moneyAndDepositTitle: {
+    id: 'ir.application:moneyAndDepositTitle',
+    defaultMessage: 'Peningar og bankahólf',
+    description: '',
+  },
+  moneyAndDepositDescription: {
+    id: 'ir.application:moneyAndDepositDescription',
+    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
+    description: '',
+  },
+  moneyAndDepositText: {
+    id: 'ir.application:moneyAndDepositText',
+    defaultMessage: 'Upplýsingar um peninga eða bankahólf',
+    description: '',
+  },
+  moneyAndDepositPlaceholder: {
+    id: 'ir.application:moneyAndDepositPlaceholder',
+    defaultMessage: 'Skráðu inn upplýsingar hér',
+    description: '',
+  },
+  moneyAndDepositValue: {
+    id: 'ir.application:moneyAndDepositValue',
+    defaultMessage: 'Fjárhæð á dánardegi',
+    description: '',
+  },
+
+  // Other assets
+  otherAssetsTitle: {
+    id: 'ir.application:otherAssetsTitle',
+    defaultMessage: 'Aðrar eignir',
+    description: '',
+  },
+  otherAssetsDescription: {
+    id: 'ir.application:otherAssetsDescription',
+    defaultMessage: 'Til dæmis hugverkaréttindi, búseturéttur o.fl.',
+    description: '',
+  },
+  otherAssetsText: {
+    id: 'ir.application:otherAssetsText',
+    defaultMessage: 'Upplýsingar um aðrar eignir',
+    description: '',
+  },
+  otherAssetsPlaceholder: {
+    id: 'ir.application:otherAssetsPlaceholder',
+    defaultMessage: 'Skráðu inn upplýsingar hér',
+    description: '',
+  },
+  otherAssetsValue: {
+    id: 'ir.application:otherAssetsValue',
+    defaultMessage: 'Fjárhæð á dánardegi',
+    description: '',
+  },
 })

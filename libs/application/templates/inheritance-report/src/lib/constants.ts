@@ -19,3 +19,8 @@ export type InheritanceReportEvent =
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export enum ApiActions {
+  completeApplication = 'completeApplication',
+  syslumennOnEntry = 'syslumennOnEntry',
+}

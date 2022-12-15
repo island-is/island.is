@@ -35,6 +35,7 @@ import { DigitalTachographWorkshopCardModule } from './transport-authority/digit
 import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
 import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
+import { InheritanceReportTemplateModule } from './inheritance-report/inheritance-report.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -64,6 +65,7 @@ export const modules = [
   OperatingLicenseModule,
   FinancialStatementsInaoTemplateModule,
   EstateTemplateModule,
+  InheritanceReportTemplateModule,
   DrivingLicenseDuplicateModule,
   AnonymityInVehicleRegistryModule,
   ChangeCoOwnerOfVehicleModule,
@@ -103,6 +105,7 @@ export { PassportService } from './passport/passport.service'
 export { OperatingLicenseService } from './operating-license/operatingLicense.service'
 export { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 export { EstateTemplateService } from './estate/estate.service'
+export { InheritanceReportTemplateService } from './inheritance-report/inheritance-report.service'
 export { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 export { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
 export { ChangeCoOwnerOfVehicleService } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.service'

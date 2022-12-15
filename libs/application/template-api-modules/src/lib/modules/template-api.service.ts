@@ -29,6 +29,7 @@ import {
   OperatingLicenseService,
   FinancialStatementsInaoTemplateService,
   EstateTemplateService,
+  InheritanceReportTemplateService,
   DrivingLicenseDuplicateService,
   AnonymityInVehicleRegistryService,
   ChangeCoOwnerOfVehicleService,
@@ -87,6 +88,7 @@ export class TemplateAPIService {
     private readonly operatingLicenseService: OperatingLicenseService,
     private readonly financialStatementsInaoService: FinancialStatementsInaoTemplateService,
     private readonly estateTemplateService: EstateTemplateService,
+    private readonly inheritanceReportTemplateService: InheritanceReportTemplateService,
     private readonly drivingLicenseDuplicateService: DrivingLicenseDuplicateService,
     private readonly anonymityInVehicleRegistryService: AnonymityInVehicleRegistryService,
     private readonly changeCoOwnerOfVehicleService: ChangeCoOwnerOfVehicleService,
@@ -128,6 +130,7 @@ export class TemplateAPIService {
       | OperatingLicenseService
       | FinancialStatementsInaoTemplateService
       | EstateTemplateService
+      | InheritanceReportTemplateService
       | DrivingLicenseDuplicateService
       | AnonymityInVehicleRegistryService
       | ChangeCoOwnerOfVehicleService
@@ -219,6 +222,11 @@ export class TemplateAPIService {
       case ApplicationTypes.ESTATE:
         return this.tryRunningActionOnService(
           this.estateTemplateService,
+          action,
+        )
+      case ApplicationTypes.INHERITANCE_REPORT:
+        return this.tryRunningActionOnService(
+          this.inheritanceReportTemplateService,
           action,
         )
       case ApplicationTypes.ACCIDENT_NOTIFICATION:

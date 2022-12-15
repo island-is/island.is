@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/types'
 import { m } from './messages'
 import { inheritanceReportSchema } from './dataSchema'
-import { InheritanceReportEvent, Roles, States } from './constants'
+import { ApiActions, InheritanceReportEvent, Roles, States } from './constants'
 import { Features } from '@island.is/feature-flags'
 
 const InheritanceReportTemplate: ApplicationTemplate<
@@ -35,6 +35,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.syslumennOnEntry,
+            shouldPersistToExternalData: true,
+            throwOnError: false,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
