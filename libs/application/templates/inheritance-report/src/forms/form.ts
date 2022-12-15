@@ -533,9 +533,34 @@ export const form: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'assetOverview',
+      title: 'Yfirlit',
+      children: [
+        buildMultiField({
+          id: 'assetOverview',
+          title: 'Yfirlit',
+          description: '',
+          children: [],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'debts',
       title: 'Skuldir',
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'debts',
+          title: 'Skuldir',
+          description: '',
+          children: [
+            buildDescriptionField({
+              id: 'space_debts',
+              space: 'gutter',
+              title: '',
+            }),
+          ],
+        }),
+      ],
     }),
   ],
 })

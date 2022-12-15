@@ -303,7 +303,7 @@ export const m = defineMessages({
   },
   bankAccount: {
     id: 'ir.application:bankAccount',
-    defaultMessage: 'Bankareikningur',
+    defaultMessage: 'Innistæða',
     description: '',
   },
   bankAccountBalance: {
