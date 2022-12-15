@@ -21,7 +21,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
   InheritanceReportEvent
 > = {
   type: ApplicationTypes.INHERITANCE_REPORT,
-  name: '',
+  name: m.applicationName,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
   featureFlag: Features.estateApplication,

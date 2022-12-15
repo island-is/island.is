@@ -9,7 +9,7 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
-  INHERITANCE_REPORT = 'InheritaneReport',
+  INHERITANCE_REPORT = 'InheritanceReport',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',

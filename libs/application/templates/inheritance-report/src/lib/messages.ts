@@ -2,20 +2,25 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   // Application begin
+  applicationName: {
+    id: 'ir.application:applicationName',
+    defaultMessage: 'Erfðafjárskýrsla eftir andlát',
+    description: '',
+  },
   institutionName: {
     id: 'ir.application:institution.name',
     defaultMessage: 'Sýslumenn',
-    description: 'Institution name',
+    description: '',
   },
   draftTitle: {
     id: 'ir.application:draft.title',
     defaultMessage: 'Drög',
-    description: 'Draft title',
+    description: '',
   },
   draftDescription: {
     id: 'ir.application:draft.description',
     defaultMessage: 'Drög að ólokinni umsókn',
-    description: 'Draft description',
+    description: '',
   },
   institution: {
     id: 'ir.application:institution',
