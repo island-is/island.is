@@ -9,6 +9,9 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { inheritanceReportSchema } from './dataSchema'
@@ -35,11 +38,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.syslumennOnEntry,
+          onEntry: defineTemplateApi({
+            action: ApiActions.syslumennOnEntry,
             shouldPersistToExternalData: true,
             throwOnError: false,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -49,6 +52,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
+              api: [NationalRegistryUserApi, UserProfileApi],
               delete: true,
             },
           ],

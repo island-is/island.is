@@ -5,18 +5,18 @@ import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 
-import { InheritanceReportTemplateService } from './inheritance-report.service'
+import { InheritanceReportService } from './inheritance-report.service'
 
-export class InheritanceReportTemplateModule {
+export class InheritanceReportModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: InheritanceReportTemplateModule,
+      module: InheritanceReportModule,
       imports: [
         SharedTemplateAPIModule.register(config),
         SyslumennClientModule,
       ],
-      providers: [InheritanceReportTemplateService],
-      exports: [InheritanceReportTemplateService],
+      providers: [InheritanceReportService],
+      exports: [InheritanceReportService],
     }
   }
 }

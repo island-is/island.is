@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
   buildDescriptionField,
@@ -11,13 +10,19 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { UserProfile, Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { isEstateInfo } from '../lib/utils/isEstateInfo'
 import format from 'date-fns/format'
+
+import {
+  Form,
+  FormModes,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',
@@ -37,26 +42,22 @@ export const form: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckbox,
           dataProviders: [
             buildDataProviderItem({
-              id: 'estateNoticeProvider',
-              type: '', //'EstateNoticeProvider'
+              provider: NationalRegistryUserApi, //'EstateNoticeProvider'
               title: m.deceasedInfoProviderTitle,
               subTitle: m.deceasedInfoProviderSubtitle,
             }),
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: m.personalInfoProviderTitle,
               subTitle: m.personalInfoProviderSubtitle,
             }),
             buildDataProviderItem({
-              id: 'financialInformation',
-              type: '',
+              provider: NationalRegistryUserApi, //TBD,
               title: m.financialInformationProviderTitle,
               subTitle: m.financialInformationProviderSubtitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: m.settingsInfoProviderTitle,
               subTitle: m.settingsInfoProviderSubtitle,
             }),
@@ -99,7 +100,7 @@ export const form: Form = buildForm({
               readOnly: true,
               width: 'half',
               defaultValue: ({ externalData }: Application) => {
-                return externalData.nationalRegistry?.data.address.streetName
+                return externalData.nationalRegistry?.data.address.streetAddress
               },
             }),
             buildTextField({

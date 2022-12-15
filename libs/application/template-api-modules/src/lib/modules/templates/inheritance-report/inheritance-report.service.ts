@@ -1,31 +1,18 @@
-import { Injectable } from '@nestjs/common'
-
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import { Inject, Injectable } from '@nestjs/common'
 import { EstateInfo, SyslumennService } from '@island.is/clients/syslumenn'
-import cloneDeep from 'lodash/cloneDeep'
 import { estateTransformer } from './utils'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ApplicationTypes } from '@island.is/application/types'
+import { TemplateApiModuleActionProps } from '../../../types'
 
 @Injectable()
-export class InheritanceReportTemplateService {
+export class InheritanceReportService extends BaseTemplateApiService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-  ) {}
-
-  stringifyObject(obj: Record<string, unknown>): Record<string, string> {
-    const stringer = cloneDeep(obj)
-
-    Object.keys(stringer).forEach((key) => {
-      if (typeof stringer[key] !== 'object') {
-        stringer[key] = `${stringer[key]}`
-      } else if (typeof stringer[key] === 'object') {
-        this.stringifyObject(stringer[key] as Record<string, unknown>)
-      }
-    })
-
-    // Assert from object traversal
-    return stringer as Record<string, string>
+  ) {
+    super(ApplicationTypes.INHERITANCE_REPORT)
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
