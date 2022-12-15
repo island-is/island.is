@@ -6,6 +6,10 @@
     "types": [],
     "target": "es6"
   },
-  "include": ["**/*.ts", "../../../../apps/application-system/api/src/app/modules/application/e2e/payment/payment.spec.ts", "../../../../apps/application-system/api/src/app/modules/application/e2e/payment/payment.service.spec.ts"],
+  "include": [
+    "**/*.ts",
+    "../../../../apps/application-system/api/src/app/modules/application/e2e/payment/payment.spec.ts",
+    "../../../../apps/application-system/api/src/app/modules/application/e2e/payment/payment.service.spec.ts"
+  ],
   "exclude": ["**/*.spec.ts", "**/*.test.ts"]
 }
