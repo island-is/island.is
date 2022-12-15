@@ -1,14 +1,6 @@
 import { Pass, PassTemplate } from '../../gen/schema'
 
-export interface VerifyPassResult {
-  valid: boolean
-  data?: string
-  name?: string
-  nationalId?: string
-  photo?: string
-  error?: PkPassVerifyError
-}
-
+/** SERVICE RESPONSES */
 export interface VerifyPassResponse {
   valid: boolean
   data?: {
@@ -19,63 +11,84 @@ export interface VerifyPassResponse {
     path: string
   }[]
 }
-
 export interface ListPassesResponse {
   data?: {
-    passes?: ListPassesDTO
+    passes?: {
+      data: Array<Pass>
+    }
   }
+  errors?: {
+    message: string
+    path: string
+  }[]
 }
-
-export interface PassTemplatesDTO {
-  data: Array<PassTemplate>
-}
-
-export interface ListPassesDTO {
-  data: Array<Pass>
-}
-
-export interface ListTemplatesResponse {
-  data?: PassTemplate[]
-  message?: string
-  status?: number
-}
-export interface PassTemplateDTO {
-  passTemplate: {
-    id: string
-    name: string
-  }
-}
-
-export interface UpsertPkPassResponse {
+export interface UpsertPassResponse {
   data: {
-    upsertPass: Pass
+    upsertPass?: Pass
   }
-  message?: string
-  status?: number
-  // If the payload is invalid, smart solutions returns a 200 ok with an errors field.
   errors?: {
     message: string
     path: string
   }[]
 }
 
-export interface PkPassVerifyError {
+export interface PassTemplatesResponse {
+  data: {
+    passTemplates?: {
+      data: Array<PassTemplate>
+    }
+  }
+  errors?: {
+    message: string
+    path: string
+  }[]
+}
+
+/** RESULTS */
+
+export type GeneratePassResult = ListPassResult | UpsertPassResult
+export interface VerifyPassResult {
+  type: 'verify'
+  valid: boolean
+  error?: ServiceError
+}
+
+export interface ListPassResult {
+  type: 'list-passes'
+  data?: Array<Pass> | 'No passes found'
+  error?: ServiceError
+}
+
+export interface UpsertPassResult {
+  type: 'upsert'
+  data?: Pass
+  error?: ServiceError
+}
+
+export interface ListTemplatesResult {
+  type: 'list-templates'
+  data?: Array<PassTemplate> | 'No templates found'
+}
+
+/** SERVICE ERRORS */
+
+export interface ServiceErrorResponse {
+  message?: string
+  status?: VerifyPassServiceStatusCode
+  data?: unknown
+}
+
+export interface ServiceError {
   /**
    * HTTP status code from the service.
    * Needed while `status` was always the same, use `serviceError.status` for
    * error reported by API.
    */
   statusCode: number
-  serviceError?: PkPassServiceErrorResponse
+  serviceError?: ServiceErrorResponse
 }
 
-export interface PkPassServiceErrorResponse {
-  message?: string
-  status?: PkPassServiceVerifyPassStatusCode
-  data?: unknown
-}
-
-export type PkPassServiceVerifyPassStatusCode =
+export type VerifyPassServiceStatusCode =
   /** License OK */
   | 1
   /** License expired */

@@ -2,23 +2,23 @@ import fetch, { Response } from 'node-fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
-  UpsertPkPassResponse,
-  PassTemplatesDTO,
-  PkPassServiceErrorResponse,
-  ListPassesDTO,
   VerifyPassResponse,
   ListPassesResponse,
+  ServiceErrorResponse,
+  UpsertPassResponse,
+  PassTemplatesResponse,
+  UpsertPassResult,
   VerifyPassResult,
-  PkPassServiceVerifyPassStatusCode,
+  ListPassResult,
+  VerifyPassServiceStatusCode,
+  GeneratePassResult,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
-  Pass,
   PassDataInput,
   PassStatus,
-  PassTemplatePageInfo,
 } from '../../gen/schema'
-import { ErrorMessageToStatusCodeMap } from './utils'
+import { ErrorMessageToStatusCodeMap, MapError } from './utils'
 import { Inject } from '@nestjs/common'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
 /** Category to attach each log message to */
@@ -49,7 +49,7 @@ export class SmartSolutionsApi {
     })
   }
 
-  async listPkPasses(queryId: string): Promise<ListPassesDTO | null> {
+  async listPkPasses(queryId: string): Promise<ListPassResult | null> {
     if (!this.config.passTemplateId) {
       this.logger.warn('Missing pass template id!', {
         category: LOG_CATEGORY,
@@ -108,7 +108,7 @@ export class SmartSolutionsApi {
     }
 
     if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
+      const responseErrors: ServiceErrorResponse = {}
       try {
         const json = await res.json()
         responseErrors.message = json?.message ?? undefined
@@ -135,19 +135,33 @@ export class SmartSolutionsApi {
         exception: e,
         category: LOG_CATEGORY,
       })
-      //return null
+      return null
     }
 
     const response = json as ListPassesResponse
 
-    if (response?.data?.passes?.data) {
-      const passesDTO: ListPassesDTO = {
-        data: response.data.passes.data,
+    if (!response?.errors) {
+      const passesResult: ListPassResult = {
+        type: 'list-passes',
+        data: response?.data?.passes?.data ?? undefined,
       }
-      return passesDTO
+      return passesResult
     }
 
-    return null
+    const responseErrors: ServiceErrorResponse = {}
+    const resError = response.errors[0]
+
+    responseErrors.message = resError.message ?? undefined
+    responseErrors.data = JSON.stringify(res) ?? undefined
+    responseErrors.status = MapError(resError.message) ?? undefined
+
+    return {
+      type: 'list-passes',
+      error: {
+        statusCode: res.status,
+        serviceError: responseErrors,
+      },
+    }
   }
 
   async verifyPkPass(
@@ -193,7 +207,7 @@ export class SmartSolutionsApi {
       return null
     }
     if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
+      const responseErrors: ServiceErrorResponse = {}
       try {
         const json = await res.json()
         responseErrors.message = json?.message ?? undefined
@@ -212,6 +226,7 @@ export class SmartSolutionsApi {
       }
 
       return {
+        type: 'verify',
         valid: false,
         error: {
           statusCode: res.status,
@@ -234,6 +249,7 @@ export class SmartSolutionsApi {
     const response = json as VerifyPassResponse
     if (!response.errors) {
       return {
+        type: 'verify',
         valid: true,
       }
     }
@@ -243,11 +259,11 @@ export class SmartSolutionsApi {
       resError.message in ErrorMessageToStatusCodeMap
         ? (ErrorMessageToStatusCodeMap[
             resError.message
-          ] as PkPassServiceVerifyPassStatusCode)
-        : (99 as PkPassServiceVerifyPassStatusCode)
+          ] as VerifyPassServiceStatusCode)
+        : (99 as VerifyPassServiceStatusCode)
 
     if (mappedError) {
-      const responseErrors: PkPassServiceErrorResponse = {}
+      const responseErrors: ServiceErrorResponse = {}
 
       if (!payload.code || !payload.date) {
         const errorMessage = 'Request contains some field errors'
@@ -257,8 +273,8 @@ export class SmartSolutionsApi {
         responseErrors.status =
           (ErrorMessageToStatusCodeMap[
             errorMessage
-          ] as PkPassServiceVerifyPassStatusCode) ??
-          (99 as PkPassServiceVerifyPassStatusCode)
+          ] as VerifyPassServiceStatusCode) ??
+          (99 as VerifyPassServiceStatusCode)
       } else {
         responseErrors.message = resError.message ?? undefined
         responseErrors.data = JSON.stringify(res) ?? undefined
@@ -266,6 +282,7 @@ export class SmartSolutionsApi {
       }
 
       return {
+        type: 'verify',
         valid: false,
         error: {
           statusCode: res.status,
@@ -276,9 +293,7 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async upsertPkPass(
-    payload: PassDataInput,
-  ): Promise<UpsertPkPassResponse | null> {
+  async upsertPkPass(payload: PassDataInput): Promise<UpsertPassResult | null> {
     const createPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
         upsertPass(data: $inputData) {
@@ -319,7 +334,7 @@ export class SmartSolutionsApi {
     }
 
     if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
+      const responseErrors: ServiceErrorResponse = {}
       try {
         const json = await res.json()
         responseErrors.message = json?.message ?? undefined
@@ -349,10 +364,36 @@ export class SmartSolutionsApi {
       return null
     }
 
-    const response = json as UpsertPkPassResponse
+    const response = json as UpsertPassResponse
 
-    if (response) {
-      return response
+    if (response.data.upsertPass) {
+      return {
+        type: 'upsert',
+        data: response.data.upsertPass,
+      }
+    }
+    if (response.errors) {
+      const resError = response.errors[0]
+      const responseErrors: ServiceErrorResponse = {}
+
+      const errorMessage = resError
+        .toString()
+        .startsWith('Missing following mandatory')
+        ? 'Request contains some field errors'
+        : resError.toString()
+      const mappedError = MapError(errorMessage)
+
+      responseErrors.message = resError.message ?? undefined
+      responseErrors.data = JSON.stringify(res) ?? undefined
+      responseErrors.status = mappedError ?? undefined
+
+      return {
+        type: 'upsert',
+        error: {
+          statusCode: res.status,
+          serviceError: responseErrors,
+        },
+      }
     }
 
     return null
@@ -361,35 +402,35 @@ export class SmartSolutionsApi {
   async generatePkPass(
     payload: PassDataInput,
     nationalId: string,
-  ): Promise<Pass | null> {
+  ): Promise<GeneratePassResult | null> {
     const existingPasses = await this.listPkPasses(nationalId)
 
-    const containsActiveOrUnclaimed =
-      existingPasses?.data &&
-      existingPasses?.data.some(
+    if (
+      existingPasses?.data !== 'No passes found' &&
+      existingPasses?.data?.some(
         (p) =>
           p.status === PassStatus.Active || p.status === PassStatus.Unclaimed,
       )
-
-    if (containsActiveOrUnclaimed) {
-      this.logger.debug(
-        'Some existing passes are currently active or unclaimed',
-      )
+    ) {
       const activePasses = existingPasses?.data.filter(
         (p) => p.status === PassStatus.Active,
       )
       if (activePasses?.length) {
-        this.logger.debug('Active pkpass found')
-        return activePasses[0]
+        return {
+          type: 'upsert',
+          data: activePasses[0],
+        }
       }
 
-      const unclaimedPasses = existingPasses?.data.filter(
+      const unclaimedPasses = existingPasses?.data?.filter(
         (p) => p.status === PassStatus.Unclaimed,
       )
 
       if (unclaimedPasses?.length) {
-        this.logger.debug('Unclaimed pkpass found')
-        return unclaimedPasses[0]
+        return {
+          type: 'upsert',
+          data: unclaimedPasses[0],
+        }
       }
     }
 
@@ -397,27 +438,19 @@ export class SmartSolutionsApi {
 
     const response = await this.upsertPkPass(payload)
 
-    if (response?.data?.upsertPass) {
-      return response?.data?.upsertPass
+    if (response?.error) {
+      return {
+        type: 'upsert',
+        error: response.error,
+      }
     }
 
-    if (response?.errors) {
-      const firstError = response.errors[0]
-      this.logger.warn('the pkpass service returned some errors', {
-        serviceStatus: response?.status,
-        serviceMessage: firstError.message,
-        category: LOG_CATEGORY,
-      })
+    if (response?.data) {
+      return {
+        type: 'upsert',
+        data: response.data,
+      }
     }
-
-    this.logger.warn(
-      'the pkpass service response did not include a generated pass',
-      {
-        serviceStatus: response?.status,
-        serviceMessage: response?.message,
-        category: LOG_CATEGORY,
-      },
-    )
 
     return null
   }
@@ -426,19 +459,37 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<string | null> {
-    const pkPass = await this.generatePkPass(payload, nationalId)
-    return pkPass?.distributionQRCode ?? null
+    let pass
+    const response = await this.generatePkPass(payload, nationalId)
+    if (response?.type == 'list-passes') {
+      pass =
+        response.data !== 'No passes found'
+          ? response.data?.[0].distributionQRCode
+          : null
+    } else {
+      pass = response?.data?.distributionQRCode
+    }
+    return pass ?? null
   }
 
   async generatePkPassUrl(
     payload: PassDataInput,
     nationalId: string,
   ): Promise<string | null> {
-    const pkPass = await this.generatePkPass(payload, nationalId)
-    return pkPass?.distributionUrl ?? null
+    let pass
+    const response = await this.generatePkPass(payload, nationalId)
+    if (response?.type == 'list-passes') {
+      pass =
+        response.data !== 'No passes found'
+          ? response.data?.[0].distributionUrl
+          : null
+    } else {
+      pass = response?.data?.distributionUrl
+    }
+    return pass ?? null
   }
 
-  async listTemplates(): Promise<PassTemplatesDTO | null> {
+  async listTemplates(): Promise<PassTemplatesResponse | null> {
     const listTemplatesQuery = {
       query: `
         query passTemplateQuery {
@@ -471,7 +522,7 @@ export class SmartSolutionsApi {
     }
 
     if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
+      const responseErrors: ServiceErrorResponse = {}
       try {
         const json = await res.json()
         responseErrors.message = json?.message ?? undefined
@@ -501,13 +552,13 @@ export class SmartSolutionsApi {
       //return null
     }
 
-    const response = json as PassTemplatePageInfo
+    const response = json as PassTemplatesResponse
 
-    if (response?.data) {
-      const passTemplatesDto: PassTemplatesDTO = {
+    if (response?.data.passTemplates) {
+      const passTemplates: PassTemplatesResponse = {
         data: response.data,
       }
-      return passTemplatesDto
+      return passTemplates
     }
 
     return null
