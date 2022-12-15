@@ -1,8 +1,4 @@
-export type JwtDelegationType =
-  | 'ProcurationHolder'
-  | 'LegalGuardian'
-  | 'PersonalRepresentative'
-  | 'Custom'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export interface JwtAct {
   client_id: string
@@ -10,12 +6,13 @@ export interface JwtAct {
 }
 
 export interface JwtPayload {
+  sub?: string
   nationalId?: string
   scope: string | string[]
   client_id: string
   act?: JwtAct
   client_nationalId?: string
-  delegationType?: JwtDelegationType[]
+  delegationType?: AuthDelegationType[]
   actor?: {
     nationalId: string
     scope?: string | string[]

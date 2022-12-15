@@ -12,12 +12,16 @@ import {
   getValueViaPath,
   buildDateField,
   buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import {
   Form,
   FormModes,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -31,6 +35,7 @@ import {
 } from '../lib/constants'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
+import { MaritalStatusApi } from '../dataProviders'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { Religions } from '../dataProviders/ReligionsProvider'
@@ -39,7 +44,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'MarriageConditionsApplicationDraftForm',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
@@ -71,7 +76,33 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             subTitle: m.dataCollectionSubtitle,
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: dataCollection,
+            dataProviders: [
+              buildDataProviderItem({
+                provider: NationalRegistryUserApi,
+                title: m.dataCollectionNationalRegistryTitle,
+                subTitle: m.dataCollectionNationalRegistrySubtitle,
+              }),
+              buildDataProviderItem({
+                provider: UserProfileApi,
+                title: m.dataCollectionUserProfileTitle,
+                subTitle: m.dataCollectionUserProfileSubtitle,
+              }),
+              buildDataProviderItem({
+                id: 'birthCertificate',
+                type: '',
+                title: m.dataCollectionBirthCertificateTitle,
+                subTitle: m.dataCollectionBirthCertificateDescription,
+              }),
+              buildDataProviderItem({
+                provider: MaritalStatusApi,
+                title: m.dataCollectionMaritalStatusTitle,
+                subTitle: m.dataCollectionMaritalStatusDescription,
+              }),
+              buildDataProviderItem({
+                provider: DistrictsApi,
+                title: '',
+              }),
+            ],
           }),
         ],
       }),
@@ -200,7 +231,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
                         .nationalRegistry.data as User
-                      return nationalRegistry.address.streetAddress
+                      return nationalRegistry.address?.streetAddress
                     },
                   }),
                   buildTextField({
@@ -267,7 +298,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
                   buildDateField({
-                    id: 'ceremony.withPeriod.dateFrom',
+                    id: 'ceremony.period.dateFrom',
                     title: m.ceremonyPeriodFrom,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
@@ -276,7 +307,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
                   buildDateField({
-                    id: 'ceremony.withPeriod.dateTil',
+                    id: 'ceremony.period.dateTo',
                     title: m.ceremonyPeriodTil,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
@@ -285,10 +316,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
                   buildDateField({
-                    id: 'ceremony.withDate.date',
+                    id: 'ceremony.date',
                     title: m.ceremonyDate,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
+                    minDate: new Date(),
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
@@ -296,11 +328,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'space',
                     space: 'containerGutter',
                     title: '',
-                    condition: (answers) =>
-                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildRadioField({
-                    id: 'ceremony.withDate.ceremonyPlace',
+                    id: 'ceremony.place.ceremonyPlace',
                     title: m.ceremonyPlace,
                     options: [
                       {
@@ -318,11 +348,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     ],
                     largeButtons: false,
                     width: 'full',
-                    condition: (answers) =>
-                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildSelectField({
-                    id: 'ceremony.withDate.office',
+                    id: 'ceremony.place.office',
                     title: m.ceremonyAtDistrictsOffice,
                     placeholder: m.ceremonyChooseDistrict,
                     options: ({
@@ -341,12 +369,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     condition: (answers) =>
                       getValueViaPath(
                         answers,
-                        'ceremony.withDate.ceremonyPlace',
+                        'ceremony.place.ceremonyPlace',
                       ) === CeremonyPlaces.office &&
-                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
+                      !!getValueViaPath(answers, 'ceremony.hasDate'),
                   }),
                   buildSelectField({
-                    id: 'ceremony.withDate.society',
+                    id: 'ceremony.place.society',
                     title: m.ceremonyAtReligiousLifeViewingSociety,
                     placeholder: m.ceremonyChooseSociety,
                     options: ({
@@ -362,9 +390,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     condition: (answers) =>
                       getValueViaPath(
                         answers,
-                        'ceremony.withDate.ceremonyPlace',
+                        'ceremony.place.ceremonyPlace',
                       ) === CeremonyPlaces.society &&
-                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
+                      !!getValueViaPath(answers, 'ceremony.hasDate'),
                   }),
                 ],
               }),

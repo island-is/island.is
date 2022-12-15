@@ -3,23 +3,20 @@ import {
   Appraisal,
   UnitsOfUseModel,
 } from './propertyUnitsOfUse.model'
-import { PropertyOwnersModel } from './propertyOwners.model'
+import { PropertyOwnersModel, PropertyOwner } from './propertyOwners.model'
 import { LandModel } from './Land.model'
-import {
-  Extensions,
-  Field,
-  MiddlewareContext,
-  ObjectType,
-} from '@nestjs/graphql'
+import { Extensions, Field, ObjectType } from '@nestjs/graphql'
+import { MiddlewareContext } from '@nestjs/graphql'
 
-const isNotOwner = ({ source }: MiddlewareContext): boolean => {
-  const owners = (source as PropertyDetail).registeredOwners?.registeredOwners
-  if (!owners) return true
-  return owners.some((owner) => owner.ssn == source.nationalId)
+export const isPropertyOwner = ({ source }: MiddlewareContext) => {
+  const owners: PropertyOwner[] =
+    (source as PropertyDetail).registeredOwners?.registeredOwners ?? []
+  const isOwner = owners.some((owner) => owner.ssn == source.nationalId)
+  return isOwner
 }
 @Extensions({
   filterFields: {
-    condition: isNotOwner,
+    condition: isPropertyOwner,
     fields: ['defaultAddress', 'land', 'propertyNumber'],
   },
 })

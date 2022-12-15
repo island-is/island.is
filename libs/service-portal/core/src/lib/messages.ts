@@ -543,13 +543,13 @@ export const m = defineMessages({
     id: 'service.portal:delegations',
     defaultMessage: 'Umboð',
   },
-  accessControlDelegationsToMe: {
+  accessControlDelegationsIncoming: {
     id: 'service.portal:to-me',
-    defaultMessage: 'Umboð til mín',
+    defaultMessage: 'Til mín',
   },
-  accessControlDelegationsFromMe: {
+  accessControlDelegationsOutgoing: {
     id: 'service.portal:from-me',
-    defaultMessage: 'Umboð frá mér',
+    defaultMessage: 'Frá mér',
   },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
@@ -817,23 +817,20 @@ export const m = defineMessages({
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
   },
+  passport: {
+    id: 'service.portal:passport',
+    defaultMessage: 'Vegabréf',
+  },
+  yes: {
+    id: 'service.portal:yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'service.portal:no',
+    defaultMessage: 'Nei',
+  },
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
-  },
-  buttonCancel: {
-    id: 'service.portal:button.cancel',
-    defaultMessage: 'Hætta við',
-    description: 'Cancel',
-  },
-  buttonDestroy: {
-    id: 'service.portal:button.delete',
-    defaultMessage: 'Eyða',
-    description: 'Delete',
-  },
-  buttonRenew: {
-    id: 'service.portal:button.renew',
-    defaultMessage: 'Endurnýja',
-    description: 'Renew',
   },
 })

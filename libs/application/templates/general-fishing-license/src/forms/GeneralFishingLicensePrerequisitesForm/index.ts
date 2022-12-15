@@ -13,7 +13,7 @@ import { externalDataSection } from './externalDataSection'
 export const GeneralFishingLicensePrerequisitesForm: Form = buildForm({
   id: 'GeneralFishingLicensePrerequisitesForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: false,
   children: [
     externalDataSection,

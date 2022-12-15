@@ -12,6 +12,9 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .secrets({
       SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL',
@@ -33,6 +36,7 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .liveness('/liveness')
     .readiness('/liveness')

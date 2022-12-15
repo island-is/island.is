@@ -15,3 +15,12 @@ export const starterColumnStyle = style({
   paddingTop: '1.5rem',
   paddingBottom: '1rem',
 })
+
+export const sectionColumn = style({
+  '@media': {
+    print: {
+      flexBasis: '50%',
+      maxWidth: '50%',
+    },
+  },
+})

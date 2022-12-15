@@ -63,7 +63,9 @@ export const ElectionsInfoFields = ({
         : ''
 
       const electionName = currentElectionInfo?.name
+      const genitiveName = currentElectionInfo?.genitiveName
       setValue(ABOUTIDS.electionName, electionName)
+      setValue(ABOUTIDS.genitiveName, genitiveName)
       dispatch({
         type: UPDATE_ELECTION_ACTION,
         payload: {

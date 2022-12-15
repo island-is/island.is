@@ -22,6 +22,9 @@ export const serviceSetup = (): ServiceBuilder<'icelandic-names-registry-backend
         },
       ],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .secrets({
       ALLOWED_NATIONAL_IDS:
@@ -33,6 +36,7 @@ export const serviceSetup = (): ServiceBuilder<'icelandic-names-registry-backend
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .grantNamespaces('islandis')
     .liveness('/liveness')

@@ -1,9 +1,9 @@
 import { service, ServiceBuilder } from './dsl'
-import { UberChart } from './uber-chart'
-import { MissingSetting } from './types/input-types'
-import { serializeService } from './map-to-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import { Kubernetes } from './kubernetes-runtime'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -33,20 +33,24 @@ describe('Volume Support', () => {
     },
   )
 
-  const stagingWithVolumes = serializeService(
-    sut,
-    new UberChart(Staging),
-  ) as SerializeSuccess
-
+  let stagingWithVolumes: SerializeSuccess<HelmService>
+  beforeEach(async () => {
+    stagingWithVolumes = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+  })
   it('Support multi volume definitions', () => {
-    expect(stagingWithVolumes.serviceDef.pvcs![0]).toEqual({
+    expect(stagingWithVolumes.serviceDef[0].pvcs![0]).toEqual({
       name: 'something',
       size: '1Gi',
       accessModes: 'ReadOnlyMany',
       mountPath: '/storage_one',
       storageClass: 'efs-csi',
     }),
-      expect(stagingWithVolumes.serviceDef.pvcs![1]).toEqual({
+      expect(stagingWithVolumes.serviceDef[0].pvcs![1]).toEqual({
         name: 'somethingelse',
         size: '1Gi',
         accessModes: 'ReadWriteMany',
@@ -54,17 +58,19 @@ describe('Volume Support', () => {
         storageClass: 'efs-csi',
       })
   })
-  it('Support default name for volumes', () => {
+  it('Support default name for volumes', async () => {
     const sut: ServiceBuilder<'api'> = service('api').volumes({
       size: '1Gi',
       accessModes: 'ReadOnly',
       mountPath: '/storage_one',
     })
-    const stagingWithDefaultVolume = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
-    expect(stagingWithDefaultVolume.serviceDef.pvcs![0]).toEqual({
+    const stagingWithDefaultVolume = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+    expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
       name: 'api',
       size: '1Gi',
       accessModes: 'ReadOnlyMany',

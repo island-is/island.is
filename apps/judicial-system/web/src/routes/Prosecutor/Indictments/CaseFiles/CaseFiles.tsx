@@ -129,7 +129,9 @@ const CaseFiles: React.FC = () => {
           />
           <InputFileUpload
             fileList={files.filter(
-              (file) => file.category === CaseFileCategory.CASE_FILE,
+              (file) =>
+                file.category === CaseFileCategory.CASE_FILE &&
+                !file.policeCaseNumber,
             )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}

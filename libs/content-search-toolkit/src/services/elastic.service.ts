@@ -21,7 +21,6 @@ import {
   TypeAggregationResponse,
   RankEvaluationInput,
   GroupedRankEvaluationResponse,
-  rankEvaluationMetrics,
   ProcessEntryAggregationResponse,
 } from '../types'
 import {
@@ -36,6 +35,7 @@ import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
+import { filterDoc } from './utils'
 
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
@@ -105,30 +105,6 @@ export class ElasticService {
     await this.bulkRequest(index, requests)
   }
 
-  /**
-   * @param {T} err Error object
-   * @return {boolean} True iff a document was removed
-   * Filter the HUMONGOUS documents in an error object
-   */
-  private filterDoc<T>(o: T, parent?: string): boolean {
-    let deleted = false
-    if (Object.keys(o).length == 0) return false
-    for (const key in o) {
-      const value = o[key]
-      // A document is typically nested in request.params.body
-      if (
-        key == 'doc' ||
-        (key == 'body' && parent == 'params') ||
-        (key == 'body' && typeof value == 'string' && value.match(/^\{?"?doc/))
-      ) {
-        delete o[key]
-        deleted = true
-      }
-      return this.filterDoc(o[key])
-    }
-    return deleted
-  }
-
   async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
@@ -145,7 +121,7 @@ export class ElasticService {
         // not all errors are thrown log if the response has any errors
         if (response.body.errors) {
           // Filter HUGE request object
-          this.filterDoc(response)
+          filterDoc(response)
           logger.error('Failed to import some documents in bulk import', {
             response,
           })
@@ -156,7 +132,7 @@ export class ElasticService {
       return true
     } catch (error) {
       // Filter HUGE request object
-      this.filterDoc(error)
+      filterDoc(error)
       logger.error('Elasticsearch request failed on bulk import', error)
       throw error
     }
@@ -205,23 +181,23 @@ export class ElasticService {
     })
   }
 
-  async getRankEvaluation<searchTermUnion extends string>(
+  async getRankEvaluation<SearchTermUnion extends string>(
     index: string,
     termRatings: RankEvaluationInput['termRatings'],
     metrics: RankEvaluationInput['metric'][],
-  ): Promise<GroupedRankEvaluationResponse<searchTermUnion>> {
+  ): Promise<GroupedRankEvaluationResponse<SearchTermUnion>> {
     // elasticsearch does not support multiple metric request per rank_eval call so we make multiple calls
     const requests = metrics.map(async (metric) => {
       const requestBody = rankEvaluationQuery({ termRatings, metric })
       const data = await this.rankEvaluation<
-        RankEvaluationResponse<searchTermUnion>,
+        RankEvaluationResponse<SearchTermUnion>,
         typeof requestBody
       >(index, requestBody)
       return data.body
     })
 
     const results = await Promise.all(requests)
-    return results.reduce<RankResultMap<searchTermUnion>>(
+    return results.reduce<RankResultMap<SearchTermUnion>>(
       (groupedResults, result, index) => {
         groupedResults[metrics[index]] = result
         return groupedResults

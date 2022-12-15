@@ -10,7 +10,7 @@ test.describe('Service portal', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'service-portal.json',
+      storageState: 'service-portal-afrika.json',
       homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
       phoneNumber: '0103019',
       idsLoginOn: true,

@@ -22,6 +22,7 @@ if (userMocked) {
       ApiScope.financeOverview,
       ApiScope.financeSalary,
       ApiScope.internal,
+      ApiScope.licenses,
       ApiScope.meDetails,
     ],
   })

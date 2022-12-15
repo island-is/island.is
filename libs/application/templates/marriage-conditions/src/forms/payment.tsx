@@ -10,7 +10,7 @@ export const getPayment = (): Form => {
   return buildForm({
     id: 'MarriageConditionsApplicationPaymentForm',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.IN_PROGRESS,
     renderLastScreenButton: false,
     children: [
       buildSection({

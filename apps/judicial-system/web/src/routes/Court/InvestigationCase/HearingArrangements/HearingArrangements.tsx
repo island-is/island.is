@@ -13,6 +13,7 @@ import {
   Modal,
   PageLayout,
   useCourtArrangements,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   NotificationType,
@@ -23,7 +24,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
@@ -333,17 +333,9 @@ const HearingArrangements = () => {
                 }
               }}
               onSecondaryButtonClick={async () => {
-                const notificationSent = await sendNotification(
-                  workingCase.id,
-                  NotificationType.COURT_DATE,
-                  true,
+                router.push(
+                  `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
                 )
-
-                if (notificationSent) {
-                  router.push(
-                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
-                  )
-                }
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

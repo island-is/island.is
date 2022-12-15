@@ -35,15 +35,11 @@ export const overview = {
     defaultMessage: 'Ákæra hefur verið send á dómstól',
     description: 'Titill í modal glugga á Yfirlit ákæru skefi í ákærum.',
   }),
+  // TODO: Remove modalButtonText
   modalButtonText: defineMessage({
     id: 'judicial.system.indictments:overview.modal_button_text',
     defaultMessage: 'Loka glugga',
     description: 'Texti í hnapp í modal glugga á Yfirlit ákæru skefi í ákærum.',
-  }),
-  caseFilesHeading: defineMessage({
-    id: 'judicial.system.indictments:overview.case_files_heading',
-    defaultMessage: 'Skjöl málsins',
-    description: 'Titill á skjöl málsins hluta á Yfirlit ákæru skefi í ákærum.',
   }),
   caseSendToCourt: defineMessage({
     id: 'judicial.system.indictments:overview.case_send_to_court',

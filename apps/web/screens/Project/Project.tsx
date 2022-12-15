@@ -9,7 +9,11 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
-import { linkResolver, useNamespace } from '@island.is/web/hooks'
+import {
+  linkResolver,
+  useFeatureFlag,
+  useNamespace,
+} from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
@@ -19,10 +23,8 @@ import {
   Stepper,
   stepperUtils,
   Form,
-  PowerBiSlice,
-  AccordionSlice,
-  TableSlice,
-  EmailSignup,
+  TabSectionSlice,
+  Webreader,
 } from '@island.is/web/components'
 import {
   Box,
@@ -30,13 +32,14 @@ import {
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 import { getThemeConfig } from './utils'
 import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
 import { ProjectFooter } from './components/ProjectFooter'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -54,6 +57,10 @@ const ProjectPage: Screen<PageProps> = ({
   stepOptionsFromNamespace,
   locale,
 }) => {
+  const { value: isWebReaderEnabledForProjectPages } = useFeatureFlag(
+    'isWebReaderEnabledForProjectPages',
+    false,
+  )
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -132,19 +139,21 @@ const ProjectPage: Screen<PageProps> = ({
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage.sidebar}
       >
+        {!subpage && isWebReaderEnabledForProjectPages && (
+          <Webreader marginTop={0} readId={null} readClass="rs_read" />
+        )}
         {!!subpage && (
           <Box marginBottom={1}>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
+            {isWebReaderEnabledForProjectPages && (
+              <Webreader readId={null} readClass="rs_read" />
+            )}
             {subpage.content &&
-              richText(subpage.content as SliceType[], {
+              webRichText(subpage.content as SliceType[], {
                 renderComponent: {
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
-                  PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
-                  AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
-                  TableSlice: (slice) => <TableSlice slice={slice} />,
-                  EmailSignup: (slice) => <EmailSignup slice={slice} />,
                 },
               })}
           </Box>
@@ -178,13 +187,16 @@ const ProjectPage: Screen<PageProps> = ({
           </Text>
         )}
         {content &&
-          richText(content, {
+          webRichText(content, {
             renderComponent: {
               Form: (slice) => <Form form={slice} namespace={namespace} />,
-              PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
-              AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
-              TableSlice: (slice) => <TableSlice slice={slice} />,
-              EmailSignup: (slice) => <EmailSignup slice={slice} />,
+              TabSection: (slice) => (
+                <TabSectionSlice
+                  slice={slice}
+                  contentColumnProps={{ span: '1/1' }}
+                  contentPaddingTop={0}
+                />
+              ),
             },
           })}
         {!subpage && projectPage.stepper && (

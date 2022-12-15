@@ -32,7 +32,10 @@ export class LinkSyncService implements CmsSyncProvider<ILink> {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import link', { error: error.message })
+          logger.warn('Failed to import link', {
+            error: error.message,
+            id: entry?.sys?.id,
+          })
           return false
         }
       })

@@ -12,11 +12,17 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  defineTemplateApi,
+  MockProviderApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
+
 import { m } from './messages'
 import { assign } from 'xstate'
+import { ApiActions } from '../shared'
+import { ReferenceDataApi, EphemiralApi } from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
 
 const States = {
@@ -71,6 +77,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Skilyrði',
           progress: 0,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
@@ -88,6 +95,34 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              read: 'all',
+              api: [
+                ReferenceDataApi.configure({
+                  params: {
+                    id: 1986,
+                  },
+                }),
+                NationalRegistryUserApi.configure({
+                  params: {
+                    ageToValidate: 18,
+                  },
+                }),
+                UserProfileApi,
+                MockProviderApi.configure({
+                  externalDataId: 'referenceMock',
+                  params: {
+                    mocked: true,
+                    mockObject: {
+                      mockString: 'This is a mocked string',
+                      mockArray: [
+                        'Need to mock providers?',
+                        'Use this handy templateApi',
+                      ],
+                    },
+                  },
+                }),
+                EphemiralApi,
+              ],
               delete: true,
             },
           ],
@@ -105,6 +140,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             description: m.draftDescription,
           },
           progress: 0.25,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -134,9 +170,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.createApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createApplication,
+          }),
+          status: 'inprogress',
           roles: [
             {
               id: Roles.APPLICANT,
@@ -167,10 +204,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
+          status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          onExit: {
-            apiModuleAction: ApiActions.completeApplication,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.completeApplication,
+          }),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -207,6 +245,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          status: 'approved',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -219,12 +258,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.rejected]: {
         meta: {
           name: 'Rejected',
           progress: 1,
+          status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -236,7 +275,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -91,8 +91,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           <GridRow>
             <GridColumn span="12/12">
               <Input
-                id=""
-                name=""
+                id="formerInsurance.country"
+                name="formerInsurance.country"
                 label={formatText(
                   m.formerInsuranceCountry,
                   application,

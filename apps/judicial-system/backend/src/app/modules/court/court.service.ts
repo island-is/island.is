@@ -5,7 +5,8 @@ import { Injectable } from '@nestjs/common'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -20,14 +21,14 @@ export enum CourtDocumentFolder {
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
 }
 
-export type SubType = Exclude<CaseType, CaseType.INDICTMENT>
+export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
 
-type CourtSubTypes = {
-  [c in SubType | IndictmentSubType]: string | [string, string]
+type CourtSubtypes = {
+  [c in Subtype]: string | [string, string]
 }
 
-// Maps case types to sub types in the court system
-export const courtSubTypes: CourtSubTypes = {
+// Maps case types to subtypes in the court system
+export const courtSubtypes: CourtSubtypes = {
   ALCOHOL_LAWS: 'Áfengislagabrot',
   CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
   INDECENT_EXPOSURE: 'Blygðunarsemisbrot',
@@ -124,6 +125,38 @@ export class CourtService {
     }`
   }
 
+  private getCourtSubtype(
+    type: CaseType,
+    isExtension: boolean,
+    policeCaseNumbers: string[],
+    indictmentSubtypes?: IndictmentSubtypeMap,
+  ): string {
+    let subtype: Subtype
+
+    if (type === CaseType.INDICTMENT) {
+      if (
+        policeCaseNumbers.length === 0 ||
+        !indictmentSubtypes ||
+        !indictmentSubtypes[policeCaseNumbers[0]] ||
+        indictmentSubtypes[policeCaseNumbers[0]].length === 0
+      ) {
+        throw 'Subtype is required for indictments'
+      }
+      // Use the first indictment subtype of the first police case number
+      subtype = indictmentSubtypes[policeCaseNumbers[0]][0]
+    } else {
+      subtype = type
+    }
+
+    let courtSubtype = courtSubtypes[subtype]
+
+    if (Array.isArray(courtSubtype)) {
+      courtSubtype = courtSubtype[isExtension ? 1 : 0]
+    }
+
+    return courtSubtype
+  }
+
   async createDocument(
     caseId: string,
     courtId = '',
@@ -177,27 +210,21 @@ export class CourtService {
     type: CaseType,
     policeCaseNumbers: string[],
     isExtension: boolean,
-    indictmentSubType?: IndictmentSubType,
+    indictmentSubtypes?: IndictmentSubtypeMap,
   ): Promise<string> {
     try {
+      const courtSubtype = this.getCourtSubtype(
+        type,
+        isExtension,
+        policeCaseNumbers,
+        indictmentSubtypes,
+      )
+
       const isIndictment = isIndictmentCase(type)
-
-      if (isIndictment && !indictmentSubType) {
-        throw 'Sub type is required for indictments'
-      }
-
-      // At this point we know that we have a valid sub type
-      const subType = (isIndictment ? indictmentSubType : type) as SubType
-
-      let courtSubType = courtSubTypes[subType]
-
-      if (Array.isArray(courtSubType)) {
-        courtSubType = courtSubType[isExtension ? 1 : 0]
-      }
 
       return this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
-        subtype: courtSubType as string,
+        subtype: courtSubtype as string,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',

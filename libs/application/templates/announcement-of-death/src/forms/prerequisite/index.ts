@@ -11,7 +11,14 @@ import {
   getValueViaPath,
   buildRadioField,
 } from '@island.is/application/core'
-import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  ExistingApplicationApi,
+} from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
@@ -19,13 +26,14 @@ import { sectionExistingApplication } from './sectionExistingApplication'
 import kennitala from 'kennitala'
 import format from 'date-fns/format'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
+import { DeathNoticeApi } from '../../dataProviders'
 
 export const prerequisite = (): Form => {
   return buildForm({
     id: 'AnnouncementOfDeathApplicationDraftForm',
     title: '', // m.applicationTitle,
     logo: CoatOfArms,
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
@@ -40,26 +48,22 @@ export const prerequisite = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: NationalRegistryUserApi,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
+                provider: UserProfileApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
               buildDataProviderItem({
-                id: 'deathNotice',
-                type: 'DeathNoticeProvider',
+                provider: DeathNoticeApi,
                 title: m.dataCollectionEstateTitle,
                 subTitle: m.dataCollectionEstateSubtitle,
               }),
               buildDataProviderItem({
-                id: 'existingApplication',
-                type: 'ExistingApplicationProvider',
+                provider: ExistingApplicationApi,
                 title: '',
               }),
             ],

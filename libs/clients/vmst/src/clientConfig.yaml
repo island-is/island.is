@@ -560,6 +560,9 @@ components:
             $ref: '#/components/schemas/Attachment'
         testData:
           type: string
+        noOfChildren:
+          type: string
+          nullable: true
     PaymentInfo:
       type: object
       additionalProperties: false

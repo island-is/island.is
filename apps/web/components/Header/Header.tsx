@@ -88,7 +88,7 @@ export const Header: FC<HeaderProps> = ({
                           activeLocale={locale}
                           placeholder={t.searchPlaceholder}
                           autocomplete={true}
-                          autosuggest={false}
+                          autosuggest={true}
                         />
                       </Box>
                     )}
