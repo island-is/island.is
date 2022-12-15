@@ -1,21 +1,25 @@
 import { createContext, useContext } from 'react'
-import { PortalNavigationItem } from '../types/portalCore'
+import { PortalNavigationItem, PortalType } from '../types/portalCore'
 
 export type PortalMetaContextProps = {
+  portalType: PortalType
   basePath: string
   masterNav?: PortalNavigationItem
 }
 
 const PortalMetaContext = createContext<PortalMetaContextProps>({
+  portalType: 'my-pages',
   basePath: '',
   masterNav: undefined,
 })
 
 type PortalMetaProviderProps = PortalMetaContextProps & {
+  portalType: PortalType
   children: React.ReactNode
 }
 
 export const PortalMetaProvider = ({
+  portalType,
   basePath,
   masterNav,
   children,
@@ -23,6 +27,7 @@ export const PortalMetaProvider = ({
   return (
     <PortalMetaContext.Provider
       value={{
+        portalType,
         basePath,
         masterNav,
       }}

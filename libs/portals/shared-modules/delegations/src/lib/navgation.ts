@@ -13,25 +13,25 @@ export const delegationsNavigation: PortalNavigationItem = {
     {
       name: m.accessControlDelegations,
       path: DelegationPaths.Delegations,
-      navHide: true,
+      navHide: false, //true,
       children: [
         {
           name: m.accessControlGrant,
           path: DelegationPaths.DelegationsGrant,
-          navHide: true,
+          navHide: false, // true,
         },
       ],
     },
     {
       name: m.accessControlDelegationsIncoming,
       path: DelegationPaths.DelegationsIncoming,
-      navHide: true,
+      navHide: false, // false,
       breadcrumbHide: true,
     },
     {
       name: m.accessControlAccess,
       path: DelegationPaths.DelegationAccess,
-      navHide: true,
+      navHide: false, //true,
     },
   ],
 }

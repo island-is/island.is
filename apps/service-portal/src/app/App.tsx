@@ -26,7 +26,10 @@ export const App = () => {
   return (
     <div className={styles.page}>
       <ApolloProvider client={client}>
-        <PortalMetaProvider basePath={ServicePortalPath.MinarSidurPath}>
+        <PortalMetaProvider
+          basePath={ServicePortalPath.MinarSidurPath}
+          portalType="my-pages"
+        >
           <StateProvider
             initialState={store.initialState}
             reducer={store.reducer}

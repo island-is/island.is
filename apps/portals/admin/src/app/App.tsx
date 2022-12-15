@@ -26,6 +26,7 @@ export const App = () => {
       <PortalMetaProvider
         basePath={AdminPortalPaths.Base}
         masterNav={masterNavigation}
+        portalType="admin"
       >
         <LocaleProvider locale={defaultLanguage} messages={{}}>
           <ApplicationErrorBoundary>

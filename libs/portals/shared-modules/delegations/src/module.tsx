@@ -2,7 +2,11 @@ import { delegationScopes } from '@island.is/auth/scopes'
 import { lazy } from 'react'
 import { Features } from '@island.is/feature-flags'
 
-import { PortalModule, PortalRoute } from '@island.is/portals/core'
+import {
+  PortalModule,
+  PortalRoute,
+  SubNavigation,
+} from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 
@@ -12,6 +16,15 @@ export const delegationsModule: PortalModule = {
   widgets: () => [],
   enabled({ userInfo }) {
     return delegationScopes.some((scope) => userInfo.scopes.includes(scope))
+  },
+  layout: 'full',
+  moduleLayoutWrapper({ children, portalType }) {
+    return (
+      <div style={{ display: 'flex' }}>
+        {portalType === 'admin' && <SubNavigation />}
+        {children}
+      </div>
+    )
   },
   routes({ userInfo }) {
     const hasAccess = delegationScopes.some((scope) =>

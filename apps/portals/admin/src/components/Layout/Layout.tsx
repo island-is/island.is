@@ -15,6 +15,7 @@ import {
   useModules,
   useModuleProps,
   PortalModule,
+  usePortalMeta,
 } from '@island.is/portals/core'
 
 const boxProps = {
@@ -79,7 +80,7 @@ const LayoutOuterContainer: FC = ({ children }) => (
 
 export const Layout: FC = ({ children }) => {
   useNamespaces(['admin.portal', 'global'])
-
+  const { portalType } = usePortalMeta()
   const { activeModule } = useModules()
   const moduleProps = useModuleProps()
   const { layout = 'default', moduleLayoutWrapper: ModuleLayoutWrapper } =
@@ -88,7 +89,7 @@ export const Layout: FC = ({ children }) => {
   if (ModuleLayoutWrapper) {
     return (
       <LayoutOuterContainer>
-        <ModuleLayoutWrapper {...moduleProps}>
+        <ModuleLayoutWrapper {...moduleProps} portalType={portalType}>
           <LayoutModuleContainer layout={layout}>
             {children}
           </LayoutModuleContainer>
