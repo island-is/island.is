@@ -19,11 +19,13 @@ export class PassportService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private passportApi: PassportsService,
-  ) {   super(ApplicationTypes.PASSPORT)}
+  ) {
+    super(ApplicationTypes.PASSPORT)
+  }
 
-  async identityDocument({application, auth }: TemplateApiModuleActionProps) {
+  async identityDocument({ application, auth }: TemplateApiModuleActionProps) {
     const identityDocument = await this.passportApi.getCurrentPassport(auth)
-    if(!identityDocument) {
+    if (!identityDocument) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
@@ -31,11 +33,9 @@ export class PassportService extends BaseTemplateApiService {
         },
         400,
       )
-    } else {
-      return identityDocument
     }
+    return identityDocument
   }
-
 
   async createCharge({
     application: { id, answers },
