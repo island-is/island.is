@@ -11,7 +11,7 @@ import { AccessDenied } from './AccessDenied'
 import { NotFound } from './NotFound'
 import { PortalRoute } from '../types/portalCore'
 import { usePortalMeta } from '../components/PortalMetaProvider'
-import { plausiblePageviewDetail } from '../lib/plausiblePageviewDetail'
+import { plausiblePageviewDetail } from '../utils/plausible'
 
 type RouteComponentProps = {
   route: PortalRoute

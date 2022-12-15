@@ -190,7 +190,7 @@ describe('answerValidators', () => {
         answerValidators['requestRights'](newAnswer, newApplication),
       ).toStrictEqual({
         message: errorMessages.notAllowedToRequestRights,
-        path: 'requestRights',
+        path: 'transferRights',
         values: undefined,
       })
     })
@@ -246,7 +246,7 @@ describe('answerValidators', () => {
         answerValidators['giveRights'](newAnswer, newApplication),
       ).toStrictEqual({
         message: errorMessages.notAllowedToGiveRights,
-        path: 'giveRights',
+        path: 'transferRights',
         values: undefined,
       })
     })
