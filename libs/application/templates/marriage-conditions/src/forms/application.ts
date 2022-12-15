@@ -12,12 +12,16 @@ import {
   getValueViaPath,
   buildDateField,
   buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import {
   Form,
   FormModes,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -31,6 +35,7 @@ import {
 } from '../lib/constants'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
+import { MaritalStatusApi } from '../dataProviders'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { Religions } from '../dataProviders/ReligionsProvider'
@@ -71,7 +76,33 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             subTitle: m.dataCollectionSubtitle,
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: dataCollection,
+            dataProviders: [
+              buildDataProviderItem({
+                provider: NationalRegistryUserApi,
+                title: m.dataCollectionNationalRegistryTitle,
+                subTitle: m.dataCollectionNationalRegistrySubtitle,
+              }),
+              buildDataProviderItem({
+                provider: UserProfileApi,
+                title: m.dataCollectionUserProfileTitle,
+                subTitle: m.dataCollectionUserProfileSubtitle,
+              }),
+              buildDataProviderItem({
+                id: 'birthCertificate',
+                type: '',
+                title: m.dataCollectionBirthCertificateTitle,
+                subTitle: m.dataCollectionBirthCertificateDescription,
+              }),
+              buildDataProviderItem({
+                provider: MaritalStatusApi,
+                title: m.dataCollectionMaritalStatusTitle,
+                subTitle: m.dataCollectionMaritalStatusDescription,
+              }),
+              buildDataProviderItem({
+                provider: DistrictsApi,
+                title: '',
+              }),
+            ],
           }),
         ],
       }),
@@ -200,7 +231,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
                         .nationalRegistry.data as User
-                      return nationalRegistry.address.streetAddress
+                      return nationalRegistry.address?.streetAddress
                     },
                   }),
                   buildTextField({

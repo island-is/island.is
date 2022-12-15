@@ -1,5 +1,5 @@
 import { AuthApiScope, AuthApiScopeGroup } from '@island.is/api/schema'
-import { AuthScopeTreeQuery } from '@island.is/service-portal/graphql'
+import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
 
 export const GROUP = 'group'
 export const SCOPE = 'scope'

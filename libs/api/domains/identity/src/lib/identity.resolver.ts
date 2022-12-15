@@ -5,13 +5,13 @@ import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 
 import { IdentityInput } from './identity.input'
-import { IdentityService } from './identity.service'
 import { Identity } from './models'
+import { IdentityClientService } from '@island.is/clients/identity'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Identity)
 export class IdentityResolver {
-  constructor(private identityService: IdentityService) {}
+  constructor(private identityService: IdentityClientService) {}
 
   @Query(() => Identity, { name: 'identity', nullable: true })
   getIdentity(

@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { passportFragment } from './usePassport'
 
-const GetChildrenIdentityDocumentQuery = gql`
+export const GetChildrenIdentityDocumentQuery = gql`
   query GetChildrenIdentityDocumentQuery {
     getIdentityDocumentChildren {
       childNationalId

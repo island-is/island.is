@@ -108,13 +108,18 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Application, { nullable: true })
-  updateApplicationExternalData(
+  async updateApplicationExternalData(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
-    return this.applicationService.updateExternalData(input, user, locale)
+    const res = await this.applicationService.updateExternalData(
+      input,
+      user,
+      locale,
+    )
+    return res
   }
 
   @Mutation(() => Application, { nullable: true })
