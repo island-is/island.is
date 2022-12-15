@@ -25,7 +25,7 @@ import { ModuleAlertBannerSection } from '@island.is/service-portal/core'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
-    getDiscount {
+    airDiscountSchemeDiscounts {
       nationalId
       discountCode
       connectionDiscountCodes {
@@ -42,6 +42,19 @@ const AirDiscountQuery = gql`
           used
           total
         }
+        flightLegs {
+          id
+          airline
+          cooperation
+          financialState
+          travel
+          originalPrice
+          discountPrice
+          flight {
+            id
+            bookingDate
+          }
+        }
       }
     }
   }
@@ -57,8 +70,9 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
-  const airDiscounts = data?.getDiscount
+  const airDiscounts = data?.airDiscountSchemeDiscounts
 
+  console.log(airDiscounts)
   if (error && !loading) {
     return (
       <ErrorScreen

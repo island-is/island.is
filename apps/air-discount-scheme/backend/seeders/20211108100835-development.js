@@ -3,7 +3,7 @@ const faker = require('faker')
 
 // Good to have one test user accumulate more than the statistically
 // likely singular flight leg.
-const specific_test_user = faker.phone.phoneNumber('##########')
+const specific_test_user = '0101303019'
 
 const pairings = [
   [
