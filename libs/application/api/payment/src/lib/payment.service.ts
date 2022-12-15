@@ -10,6 +10,7 @@ import { Op } from 'sequelize'
 import {
   CatalogItem,
   ChargeFjsV2ClientService,
+  ExtraData,
 } from '@island.is/clients/charge-fjs-v2'
 import { User } from '@island.is/auth-nest-tools'
 import { getSlugFromType } from '@island.is/application/core'
@@ -92,6 +93,7 @@ export class PaymentService {
   private async createPaymentModel(
     chargeItems: CatalogItem[],
     applicationId: string,
+    performingOrganizationID: string,
   ): Promise<Payment> {
     const paymentModel: Pick<
       BasePayment,
@@ -104,7 +106,7 @@ export class PaymentService {
         0,
       ),
       definition: {
-        performingOrganizationID: chargeItems[0].performingOrgID,
+        performingOrganizationID: performingOrganizationID,
         chargeType: chargeItems[0].chargeType,
         charges: chargeItems.map((chargeItem) => ({
           chargeItemName: chargeItem.chargeItemName,
@@ -129,6 +131,7 @@ export class PaymentService {
     performingOrganizationID: string,
     chargeItemCodes: string[],
     applicationId: string,
+    extraData: ExtraData[] | undefined,
   ): Promise<CreateChargeResult> {
     //.1 Get charge items from FJS
     const chargeItems = await this.findChargeItems(
@@ -140,6 +143,7 @@ export class PaymentService {
     const paymentModel = await this.createPaymentModel(
       chargeItems,
       applicationId,
+      performingOrganizationID,
     )
 
     //3. Send charge to FJS
@@ -148,6 +152,7 @@ export class PaymentService {
         paymentModel,
         this.config.callbackBaseUrl,
         this.config.callbackAdditionUrl,
+        extraData,
         user,
       ),
     )
@@ -214,14 +219,10 @@ export class PaymentService {
 
     const firstItem = items[0]
     const notSame = items.find(
-      (item) =>
-        item.performingOrgID !== firstItem.performingOrgID ||
-        item.chargeType !== firstItem.chargeType,
+      (item) => item.chargeType !== firstItem.chargeType,
     )
     if (notSame) {
-      throw new Error(
-        'Not all chargeItemCodes have the same performingOrgID or chargeType',
-      )
+      throw new Error('Not all chargeItemCodes have the same chargeType')
     }
 
     return items
