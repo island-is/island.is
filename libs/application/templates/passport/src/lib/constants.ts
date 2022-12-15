@@ -76,7 +76,7 @@ export type PersonalInfo = {
   nationalId: string
   email: string
   phoneNumber: string
-  hasDisabilityDiscount: Array<string>
+  hasDisabilityDiscount: string[]
   hasDisabilityDiscountChecked: boolean
 }
 

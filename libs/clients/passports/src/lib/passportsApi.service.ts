@@ -1,5 +1,4 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { XRoadConfig, ConfigType } from '@island.is/nest/config'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -12,6 +11,7 @@ import {
   IdentityDocument,
   IdentityDocumentChild,
   Passport,
+  PreregisterResponse,
   PreregistrationInput,
 } from './passportsApi.types'
 import PDFDocument from 'pdfkit'
@@ -34,7 +34,6 @@ export class PassportsService {
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private identityDocumentApi: IdentityDocumentApi,
     private preregistrationApi: PreregistrationApi,
-    private individualApi: NationalRegistryClientService,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -154,22 +153,27 @@ export class PassportsService {
   async preregisterIdentityDocument(
     user: User,
     input: PreregistrationInput,
-  ): Promise<string[]> {
-    const approval = { personId: user.nationalId, approved: new Date() }
-    console.log(input)
-    return await this.preregistrationApi
-      .withMiddleware(new AuthMiddleware(user))
-      .preregistrationPreregistration({
-        xRoadClient: this.xroadConfig.xRoadClient,
-        preregistration: input,
-      })
+  ): Promise<PreregisterResponse> {
+    try {
+      const res = await this.preregistrationApi
+        .withMiddleware(new AuthMiddleware(user))
+        .preregistrationPreregistration({
+          xRoadClient: this.xroadConfig.xRoadClient,
+          preregistration: input,
+        })
+      return {success: !!res}
+    } catch (e) {
+      this.handleError(e)
+      return {success: false}
+    }
   }
 
   async preregisterChildIdentityDocument(
     user: User,
     input: PreregistrationInput,
-  ): Promise<string[]> {
-    const { appliedForPersonId, approvalA, approvalB } = input
+  ): Promise<PreregisterResponse> {
+    try {
+       const { appliedForPersonId, approvalA, approvalB } = input
     const pdfBuffer = await this.createDocumentBuffer({
       appliedForPersonId,
       approvalA,
@@ -177,7 +181,7 @@ export class PassportsService {
     })
     const pdfDoc = Buffer.from(pdfBuffer).toString('base64')
 
-    return await this.preregistrationApi
+    const res =  await this.preregistrationApi
       .withMiddleware(new AuthMiddleware(user))
       .preregistrationPreregistration({
         xRoadClient: this.xroadConfig.xRoadClient,
@@ -193,6 +197,12 @@ export class PassportsService {
           ],
         },
       })
+      return {success: !!res}
+    } catch (e) {
+      this.handleError(e)
+      return {success: false}
+    }
+   
   }
 
   async getCurrentPassport(user: User): Promise<Passport> {

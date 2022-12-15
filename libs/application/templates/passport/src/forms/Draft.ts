@@ -20,6 +20,7 @@ import {
   PaymentCatalogApi,
   UserProfileApi,
   DistrictsApi,
+  YES,
 } from '@island.is/application/types'
 import { IdentityDocumentApi } from '../dataProviders'
 import {
@@ -33,6 +34,7 @@ import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
 import { personalOverview } from './overviewSection/personalOverview'
+import { includes } from '../../../../../../apps/judicial-system/backend/src/app/modules/case/case.service';
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -125,7 +127,7 @@ export const Draft: Form = buildForm({
                   ((application.answers.passport as Passport)?.userPassport !==
                     '' &&
                     (application.answers.personalInfo as PersonalInfo)
-                      ?.hasDisabilityDiscountChecked) ||
+                      ?.hasDisabilityDiscount.includes(YES)) ||
                   (application.answers.passport as Passport)?.childPassport !==
                     ''
                 return [

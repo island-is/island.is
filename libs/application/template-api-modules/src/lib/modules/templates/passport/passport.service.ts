@@ -157,14 +157,11 @@ export class PassportService extends BaseTemplateApiService {
             },
           })
 
-      if (result.length < 1) {
+      if (!result || !result.success) {
         throw new Error(`Application submission failed (${result})`)
       }
 
-      return {
-        success: true,
-        // orderId: result,
-      }
+      return result
     } catch (e) {
       this.log('error', 'Submitting passport failed', {
         e,
