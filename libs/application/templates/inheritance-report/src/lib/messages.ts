@@ -218,6 +218,11 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu inn upplýsingar um innbú hér',
     description: '',
   },
+  addInventory: {
+    id: 'ir.application:addInventory',
+    defaultMessage: 'Bæta við innbúi',
+    description: 'Add property',
+  },
   vehicles: {
     id: 'ir.application:vehicles',
     defaultMessage: 'Farartæki',
@@ -227,6 +232,56 @@ export const m = defineMessages({
     id: 'ir.application:vehiclesDescription',
     defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
     description: '',
+  },
+  propertyNumber: {
+    id: 'ir.application:propertyNumber',
+    defaultMessage: 'Fastanúmer',
+    description: 'Property number label',
+  },
+  propertyShare: {
+    id: 'ir.application:propertyShare',
+    defaultMessage: 'Eignarhluti',
+    description: 'Property share label',
+  },
+  inheritanceDisableMember: {
+    id: 'ir.application:inheritanceDisableMember',
+    defaultMessage: 'Afvirkja',
+    description: 'Inheritance step disable member of estate',
+  },
+  inheritanceEnableMember: {
+    id: 'ir.application:inheritanceEnableMember',
+    defaultMessage: 'Virkja',
+    description: 'Inheritance step enable member of estate',
+  },
+  addProperty: {
+    id: 'ir.application:addProperty',
+    defaultMessage: 'Bæta við fasteign',
+    description: 'Add property',
+  },
+  vehiclesTitle: {
+    id: 'ir.application:vehiclesTitle',
+    defaultMessage: 'Faratæki',
+    description: 'Vehicles title',
+  },
+  vehiclesPlaceholder: {
+    id: 'ir.application:vehiclesPlaceholder',
+    defaultMessage: 't.d. Toyota Yaris',
+    description: 'Placeholder for vehicles type',
+  },
+  addVehicle: {
+    id: 'ir.application:addVehicle',
+    defaultMessage: 'Bæta við ökutæki',
+    description: 'Add vehicle',
+  },
+  vehicleNumberLabel: {
+    id: 'ir.application:vehicleNumberLabel',
+    defaultMessage: 'Skráninganúmer ökutækis',
+    description: 'Vehicle number label',
+  },
+  vehicleTypeLabel: {
+    id: 'ir.application:vehicleTypeLabel',
+    defaultMessage: 'Tegund faratækis',
+    description: 'Vehicle type label',
   },
 
   // Bank Info
@@ -332,29 +387,34 @@ export const m = defineMessages({
   },
 
   // Money & deposit
-  moneyAndDepositTitle: {
-    id: 'ir.application:moneyAndDepositTitle',
-    defaultMessage: 'Peningar og bankahólf',
+  moneyTitle: {
+    id: 'ir.application:moneyTitle',
+    defaultMessage: 'Peningar',
     description: '',
   },
-  moneyAndDepositDescription: {
-    id: 'ir.application:moneyAndDepositDescription',
-    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
+  moneyDescription: {
+    id: 'ir.application:moneyDescription',
+    defaultMessage: 'Samtals fjárhæð peninga',
     description: '',
   },
-  moneyAndDepositText: {
-    id: 'ir.application:moneyAndDepositText',
-    defaultMessage: 'Upplýsingar um peninga eða bankahólf',
+  moneyText: {
+    id: 'ir.application:moneyText',
+    defaultMessage: 'Upplýsingar um peninga',
     description: '',
   },
-  moneyAndDepositPlaceholder: {
-    id: 'ir.application:moneyAndDepositPlaceholder',
+  moneyPlaceholder: {
+    id: 'ir.application:moneyPlaceholder',
     defaultMessage: 'Skráðu inn upplýsingar hér',
     description: '',
   },
-  moneyAndDepositValue: {
-    id: 'ir.application:moneyAndDepositValue',
+  moneyValue: {
+    id: 'ir.application:moneyValue',
     defaultMessage: 'Fjárhæð á dánardegi',
+    description: '',
+  },
+  addMoney: {
+    id: 'ir.application:addMoney',
+    defaultMessage: 'Bæta við peningum',
     description: '',
   },
 
@@ -382,6 +442,16 @@ export const m = defineMessages({
   otherAssetsValue: {
     id: 'ir.application:otherAssetsValue',
     defaultMessage: 'Fjárhæð á dánardegi',
+    description: '',
+  },
+  addAsset: {
+    id: 'ir.application:addAsset',
+    defaultMessage: 'Bæta við öðrum eignum',
+    description: '',
+  },
+  assetHeaderText: {
+    id: 'ir.application:assetHeaderText',
+    defaultMessage: 'Eign',
     description: '',
   },
 })

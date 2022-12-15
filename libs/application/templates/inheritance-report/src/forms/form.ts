@@ -190,7 +190,7 @@ export const form: Form = buildForm({
               title: '',
               space: 'containerGutter',
             }),
-            buildCheckboxField({
+            /*buildCheckboxField({
               id: 'undividedEstate',
               title: '',
               defaultValue: '',
@@ -202,7 +202,7 @@ export const form: Form = buildForm({
                   label: 'Arfleifandi sat í óskiptu búi',
                 },
               ],
-            }),
+            }),*/
           ],
         }),
       ],
@@ -226,43 +226,10 @@ export const form: Form = buildForm({
                   description: m.realEstateDescription,
                   titleVariant: 'h3',
                 }),
-
-                /*buildCustomField({
+                buildCustomField({
                   title: '',
                   id: 'estate.assets',
                   component: 'RealEstateRepeater',
-                }),*/
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'inventory',
-          title: m.inventoryTitle,
-          children: [
-            buildMultiField({
-              id: 'inventory',
-              title: m.propertiesTitle,
-              description: m.propertiesDescription,
-              children: [
-                buildDescriptionField({
-                  id: 'membersOfEstateTitle',
-                  title: m.inventoryTitle,
-                  description: m.inventoryDescription,
-                  titleVariant: 'h3',
-                }),
-                buildTextField({
-                  id: 'inventory',
-                  title: m.inventoryTextField,
-                  placeholder: m.inventoryTextFieldPlaceholder,
-                  variant: 'textarea',
-                  rows: 7,
-                }),
-                buildTextField({
-                  id: 'inventoryValue',
-                  title: m.inventoryValueTitle,
-                  width: 'half',
-                  variant: 'currency',
                 }),
               ],
             }),
@@ -288,6 +255,53 @@ export const form: Form = buildForm({
                   id: 'estate.vehicles',
                   component: 'VehiclesRepeater',
                 }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'inventory',
+          title: m.inventoryTitle,
+          children: [
+            buildMultiField({
+              id: 'inventory',
+              title: m.propertiesTitle,
+              description: m.propertiesDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'membersOfEstateTitle',
+                  title: m.inventoryTitle,
+                  description: m.inventoryDescription,
+                  titleVariant: 'h3',
+                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'inventory',
+                    component: 'TextFieldsRepeater',
+                  },
+                  {
+                    fields: [
+                      {
+                        title: m.inventoryTextField.defaultMessage,
+                        id: 'inventory',
+                        placeholder:
+                          m.inventoryTextFieldPlaceholder.defaultMessage,
+                        variant: 'textarea',
+                        rows: 7,
+                        width: 'full',
+                      },
+                      {
+                        title: m.inventoryValueTitle.defaultMessage,
+                        id: 'inventoryValue',
+                        currency: true,
+                        width: 'half',
+                      },
+                    ],
+                    repeaterButtonText: m.addInventory.defaultMessage,
+                    repeaterHeaderText: m.inventoryTitle.defaultMessage,
+                  },
+                ),
               ],
             }),
           ],
@@ -434,33 +448,38 @@ export const form: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'moneyAndDedosit',
-          title: m.moneyAndDepositTitle,
+          id: 'money',
+          title: m.moneyTitle,
           children: [
             buildMultiField({
-              id: 'moneyAndDedosit',
+              id: 'money',
               title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
-                  id: 'moneyAndDedositTitle',
-                  title: m.moneyAndDepositTitle,
-                  description: m.moneyAndDepositDescription,
+                  id: 'moneyTitle',
+                  title: m.moneyTitle,
+                  description: m.moneyDescription,
                   titleVariant: 'h3',
                 }),
-                buildTextField({
-                  id: 'moneyAndDepositBoxesInfo',
-                  title: m.moneyAndDepositText,
-                  placeholder: m.moneyAndDepositPlaceholder,
-                  variant: 'textarea',
-                  rows: 7,
-                }),
-                buildTextField({
-                  id: 'moneyAndDepositBoxesValue',
-                  title: m.moneyAndDepositValue,
-                  width: 'half',
-                  variant: 'currency',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'money',
+                    component: 'TextFieldsRepeater',
+                  },
+                  {
+                    fields: [
+                      {
+                        title: m.moneyTitle.defaultMessage,
+                        id: 'moneyValue',
+                        currency: true,
+                      },
+                    ],
+                    repeaterButtonText: m.addMoney.defaultMessage,
+                    repeaterHeaderText: m.moneyTitle.defaultMessage,
+                  },
+                ),
               ],
             }),
           ],
@@ -480,19 +499,32 @@ export const form: Form = buildForm({
                   description: m.otherAssetsDescription,
                   titleVariant: 'h3',
                 }),
-                buildTextField({
-                  id: 'otherAssets',
-                  title: m.otherAssetsText,
-                  placeholder: m.otherAssetsPlaceholder,
-                  variant: 'textarea',
-                  rows: 7,
-                }),
-                buildTextField({
-                  id: 'otherAssetsValue',
-                  title: m.otherAssetsValue,
-                  width: 'half',
-                  variant: 'currency',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'otherAssets',
+                    component: 'TextFieldsRepeater',
+                  },
+                  {
+                    fields: [
+                      {
+                        title: m.otherAssetsText.defaultMessage,
+                        id: 'otherAssets',
+                        placeholder: m.otherAssetsPlaceholder.defaultMessage,
+                        variant: 'textarea',
+                        rows: 7,
+                        width: 'full',
+                      },
+                      {
+                        title: m.otherAssetsValue.defaultMessage,
+                        id: 'otherAssetsValue',
+                        currency: true,
+                      },
+                    ],
+                    repeaterButtonText: m.addAsset.defaultMessage,
+                    repeaterHeaderText: m.assetHeaderText.defaultMessage,
+                  },
+                ),
               ],
             }),
           ],
