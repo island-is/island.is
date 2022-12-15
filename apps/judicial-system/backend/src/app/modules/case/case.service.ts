@@ -22,7 +22,6 @@ import {
   CaseMessage,
   MessageService,
   MessageType,
-  UserMessage,
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
@@ -169,39 +168,6 @@ export class CaseService {
     return theCase.id
   }
 
-  private addMessagesForIndictmentCourtCaseConnectionToQueue(
-    theCase: Case,
-  ): Promise<void> {
-    const messages = theCase.policeCaseNumbers
-      .map<CaseMessage>((policeCaseNumber) => ({
-        type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
-        caseId: theCase.id,
-        policeCaseNumber,
-      }))
-      .concat(
-        theCase.caseFiles
-          ?.filter(
-            (caseFile) =>
-              (caseFile.category &&
-                [
-                  CaseFileCategory.COVER_LETTER,
-                  CaseFileCategory.INDICTMENT,
-                  CaseFileCategory.CRIMINAL_RECORD,
-                  CaseFileCategory.COST_BREAKDOWN,
-                ].includes(caseFile.category)) ||
-              (caseFile.category === CaseFileCategory.CASE_FILE &&
-                !caseFile.policeCaseNumber),
-          )
-          .map((caseFile) => ({
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            caseId: theCase.id,
-            caseFileId: caseFile.id,
-          })) ?? [],
-      )
-
-    return this.messageService.sendMessagesToQueue(messages)
-  }
-
   private getDeliverDefendantToCourtMessages(
     theCase: Case,
     user: TUser,
@@ -216,24 +182,70 @@ export class CaseService {
     )
   }
 
+  private getDeliverProsecutorToCourtMessages(
+    theCase: Case,
+    user: TUser,
+  ): CaseMessage[] {
+    return [
+      {
+        type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+        caseId: theCase.id,
+        userId: user.id,
+      } as CaseMessage,
+    ]
+  }
+
+  private addMessagesForIndictmentCourtCaseConnectionToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue(
+      this.getDeliverProsecutorToCourtMessages(theCase, user).concat(
+        theCase.policeCaseNumbers
+          .map<CaseMessage>((policeCaseNumber) => ({
+            type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+            caseId: theCase.id,
+            policeCaseNumber,
+          }))
+          .concat(
+            theCase.caseFiles
+              ?.filter(
+                (caseFile) =>
+                  (caseFile.category &&
+                    [
+                      CaseFileCategory.COVER_LETTER,
+                      CaseFileCategory.INDICTMENT,
+                      CaseFileCategory.CRIMINAL_RECORD,
+                      CaseFileCategory.COST_BREAKDOWN,
+                    ].includes(caseFile.category)) ||
+                  (caseFile.category === CaseFileCategory.CASE_FILE &&
+                    !caseFile.policeCaseNumber),
+              )
+              .map((caseFile) => ({
+                type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                caseId: theCase.id,
+                caseFileId: caseFile.id,
+              })) ?? [],
+          ),
+      ),
+    )
+  }
+
   private addMessagesForCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
     return isIndictmentCase(theCase.type)
-      ? this.addMessagesForIndictmentCourtCaseConnectionToQueue(theCase)
+      ? this.addMessagesForIndictmentCourtCaseConnectionToQueue(theCase, user)
       : this.messageService.sendMessagesToQueue(
           [
             {
               type: MessageType.DELIVER_REQUEST_TO_COURT,
               caseId: theCase.id,
             },
-            {
-              type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
-              caseId: theCase.id,
-              userId: user.id,
-            },
-          ].concat(this.getDeliverDefendantToCourtMessages(theCase, user)),
+          ]
+            .concat(this.getDeliverProsecutorToCourtMessages(theCase, user))
+            .concat(this.getDeliverDefendantToCourtMessages(theCase, user)),
         )
   }
 
@@ -250,11 +262,9 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessageToQueue({
-      type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
-      caseId: theCase.id,
-      userId: user.id,
-    } as UserMessage)
+    return this.messageService.sendMessagesToQueue(
+      this.getDeliverProsecutorToCourtMessages(theCase, user),
+    )
   }
 
   private addMessagesForCompletedCaseToQueue(caseId: string): Promise<void> {
