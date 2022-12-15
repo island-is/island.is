@@ -103,11 +103,10 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
       <Text> You can even access the answers to past questions: </Text>
       {Object.keys(formValue).map((k) => (
         <Text key={k}>
-          <strong>{k}:</strong> {formValue[k].toString()}
+          <strong>{k}:</strong> {formValue.k ? formValue.k.toString() : ''}
         </Text>
       ))}
       <Text>
-        {' '}
         And you can also manipulate other schema entries, this one is the first
         question you already answered:
       </Text>

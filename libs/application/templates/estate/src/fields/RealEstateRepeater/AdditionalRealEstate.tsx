@@ -102,6 +102,7 @@ export const AdditionalRealEstate = ({
         name={shareField}
         control={control}
         defaultValue={field.share || ''}
+        render={() => <input type="hidden" />}
       />
       <Text variant="h4">
         {formatMessage(m.realEstateRepeaterHeader) + ' ' + (index + 1)}
