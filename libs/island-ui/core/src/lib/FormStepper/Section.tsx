@@ -14,12 +14,11 @@ import SubSections from './SubSectionsV2/SubSectionsV2'
 
 export const Section: FC<{
   theme?: types.FormStepperThemes
-  section: React.ReactNode
+  section: string
   subSections?: Array<React.ReactNode>
   sectionIndex: number
   isActive?: boolean
   isComplete?: boolean
-  isLastSection?: boolean
 }> = ({
   theme = types.FormStepperThemes.PURPLE,
   section,
@@ -27,7 +26,6 @@ export const Section: FC<{
   sectionIndex,
   isActive = false,
   isComplete = false,
-  isLastSection = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight, width: activeWidth } = useComponentSize(
@@ -67,7 +65,7 @@ export const Section: FC<{
         <Box paddingTop={[0, 0, 2]}>
           <SectionNumber
             theme={theme}
-            lineHeight={isLastSection ? 0 : containerHeight}
+            lineHeight={containerHeight}
             currentState={
               isActive ? 'active' : isComplete ? 'previous' : 'next'
             }
