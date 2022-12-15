@@ -7,7 +7,11 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { ConfigModule } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
-import { PaymentModule } from '@island.is/application/api/payment'
+import {
+  PaymentModule,
+  PaymentModuleConfig,
+} from '@island.is/application/api/payment'
+import { PaymentClientModuleConfig } from '@island.is/clients/payment'
 
 @Module({
   imports: [
@@ -15,7 +19,12 @@ import { PaymentModule } from '@island.is/application/api/payment'
     ChargeFjsV2ClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, ChargeFjsV2ClientConfig],
+      load: [
+        XRoadConfig,
+        ChargeFjsV2ClientConfig,
+        PaymentModuleConfig,
+        PaymentClientModuleConfig,
+      ],
     }),
     PaymentModule,
   ],

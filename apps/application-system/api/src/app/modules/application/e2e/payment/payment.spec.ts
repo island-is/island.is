@@ -5,11 +5,11 @@ import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
-import { setup } from '../../../../../test/setup'
+import { setup } from '../../../../../../test/setup'
 import { PaymentAPI } from '@island.is/clients/payment'
-import { CreateChargeInput } from '../dto/createChargeInput.dto'
-import { PaymentService } from '../payment.service'
-import { AppModule } from '../../../app.module'
+import { CreateChargeInput } from '@island.is/application/api/payment'
+import { PaymentService } from '@island.is/application/api/payment'
+import { AppModule } from '../../../../app.module'
 import { ApplicationService } from '@island.is/application/api/core'
 
 let app: INestApplication
@@ -156,15 +156,5 @@ describe('Application system payments API', () => {
       .expect(400)
 
     expect(response.body.fulfilled).toBeFalsy
-  })
-
-  // Getting the payment status
-  it(`GET /application/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status should get payment fulfilled status`, async () => {
-    await server
-      .get('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status')
-      .send({
-        applicationId: '96b5237b-6896-4154-898d-d8feb01d3dcd',
-      })
-      .expect(200)
   })
 })

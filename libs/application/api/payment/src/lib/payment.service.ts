@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
 import { PaymentAPI } from '@island.is/clients/payment'
-import type { Charge, Item as ChargeItem } from '@island.is/clients/payment'
+import type { Item as ChargeItem } from '@island.is/clients/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { getSlugFromType } from '@island.is/application/core'
 import { CreateChargeResult } from './payment.type'
@@ -23,6 +23,8 @@ import { formatCharge } from './models/Charge'
 import { PaymentType as BasePayment } from '@island.is/application/types'
 import { AuditService } from '@island.is/nest/audit'
 import { PaymentStatus } from './models/paymentStatus'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class PaymentService {
@@ -34,6 +36,7 @@ export class PaymentService {
     private paymentApi: PaymentAPI,
     private readonly auditService: AuditService,
     private readonly applicationService: ApplicationService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   async findPaymentByApplicationId(
@@ -44,6 +47,30 @@ export class PaymentService {
         application_id: applicationId,
       },
     })
+  }
+
+  async fulfillPayment(
+    paymentId: string,
+    receptionID: string,
+    applicationId: string,
+  ): Promise<void> {
+    try {
+      await this.paymentModel.update(
+        {
+          fulfilled: true,
+          reference_id: receptionID,
+        },
+        {
+          where: {
+            id: paymentId,
+            application_id: applicationId,
+          },
+        },
+      )
+    } catch (e) {
+      this.logger.error('Error fulfilling payment', e)
+      throw e
+    }
   }
 
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
@@ -128,48 +155,53 @@ export class PaymentService {
     chargeItemCodes: string[],
     applicationId: string,
   ): Promise<CreateChargeResult> {
-    //.1 Get charge items from FJS
-    const chargeItems = await this.findChargeItems(chargeItemCodes)
+    try {
+      //.1 Get charge items from FJS
+      const chargeItems = await this.findChargeItems(chargeItemCodes)
 
-    //2. Create and insert payment db entry
-    const paymentModel = await this.createPaymentModel(
-      chargeItems,
-      applicationId,
-    )
+      //2. Create and insert payment db entry
+      const paymentModel = await this.createPaymentModel(
+        chargeItems,
+        applicationId,
+      )
 
-    //3. Send charge to FJS
-    const chargeResult = await this.paymentApi.createCharge(
-      formatCharge(
-        paymentModel,
-        this.config.callbackBaseUrl,
-        this.config.callbackAdditionUrl,
-        user,
-      ),
-    )
+      //3. Send charge to FJS
+      const chargeResult = await this.paymentApi.createCharge(
+        formatCharge(
+          paymentModel,
+          this.config.callbackBaseUrl,
+          this.config.callbackAdditionUrl,
+          user,
+        ),
+      )
 
-    //4. update payment with user4 from charge result
-    await this.paymentModel.update(
-      {
-        user4: chargeResult.user4,
-      },
-      {
-        where: {
-          id: paymentModel.id,
-          application_id: applicationId,
+      //4. update payment with user4 from charge result
+      await this.paymentModel.update(
+        {
+          user4: chargeResult.user4,
         },
-      },
-    )
+        {
+          where: {
+            id: paymentModel.id,
+            application_id: applicationId,
+          },
+        },
+      )
 
-    this.auditService.audit({
-      auth: user,
-      action: 'createCharge',
-      resources: applicationId as string,
-      meta: { applicationId, id: paymentModel.id },
-    })
+      this.auditService.audit({
+        auth: user,
+        action: 'createCharge',
+        resources: applicationId as string,
+        meta: { applicationId, id: paymentModel.id },
+      })
 
-    return {
-      id: paymentModel.id,
-      paymentUrl: this.makePaymentUrl(chargeResult.user4),
+      return {
+        id: paymentModel.id,
+        paymentUrl: this.makePaymentUrl(chargeResult.user4),
+      }
+    } catch (e) {
+      this.logger.error('Error creating charge', e)
+      throw new InternalServerErrorException('Error creating charge')
     }
   }
 
