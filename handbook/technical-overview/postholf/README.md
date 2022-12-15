@@ -9,7 +9,7 @@
   - Audience
   - Scope
 
-- <br/>The applicant needs to implement an executable that delivers document references to the mailbox by calling [Skjalatilkynning API](./postholf-03-interface-skjalatilkynning.md). An example can be seen in the Keyrsla section in the following link: https://github.com/digitaliceland/postholf-demo
+- The applicant needs to implement an executable that delivers document references to the mailbox by calling [Skjalatilkynning API](./postholf-03-interface-skjalatilkynning.md). An example can be seen in the Keyrsla section in the following link: https://github.com/digitaliceland/postholf-demo
 - The applicant has to implement a callback service that returns a document when it's requested by the user. The service has to implemented according to the according to predefined terms (see: [Skjalaveita API](./postholf-03-interface-skjalaveita.md)). Example: https://github.com/digitaliceland/postholf-demo
 - Information must be sent to Stafrænt Ísland regarding where (url) to call the aforementioned service.
 
