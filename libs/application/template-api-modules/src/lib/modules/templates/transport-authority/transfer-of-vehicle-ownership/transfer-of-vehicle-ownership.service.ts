@@ -23,13 +23,60 @@ import {
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { externalData } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class TransferOfVehicleOwnershipService {
+export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
-  ) {}
+    private readonly vehicleCodetablesClient: VehicleCodetablesClient,
+    private vehiclesApi: VehicleSearchApi,
+  ) {
+    super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
+  }
+
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getCurrentVehicleList({ auth }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    // // Validate that user has at least 1 vehicle he can transfer
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: externalData.currentVehicles.empty,
+          summary: '',
+        },
+        400,
+      )
+    }
+
+    return result?.map((vehicle) => ({
+      permno: vehicle.permno,
+      make: vehicle.make,
+      color: vehicle.color,
+      role: vehicle.role,
+      isStolen: vehicle.stolen,
+    }))
+  }
+
+  async getInsuranceCompanyList({ auth }: TemplateApiModuleActionProps) {
+    return await this.vehicleCodetablesClient.getInsuranceCompanies()
+  }
 
   async createCharge({
     application,
