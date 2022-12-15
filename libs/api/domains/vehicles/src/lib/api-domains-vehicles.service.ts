@@ -125,8 +125,7 @@ export class VehiclesService {
     }
   }
 
-  //TODOx private?
-  async getCurrentVehicles(
+  private async getCurrentVehicles(
     auth: User,
     showOwned: boolean,
     showCoowned: boolean,

@@ -7,12 +7,4 @@ import { TransportAuthorityApi } from '../transportAuthority.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
-export class MainResolver {
-  constructor(private readonly transportAuthorityApi: TransportAuthorityApi) {}
-
-  //TODOx remove?
-  @Query(() => [InsuranceCompany])
-  transportAuthorityInsuranceCompanies() {
-    return this.transportAuthorityApi.getInsuranceCompanies()
-  }
-}
+export class MainResolver {}

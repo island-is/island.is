@@ -97,25 +97,6 @@ export class VehiclesResolver {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
   }
 
-  //TODOx remove?
-  @Scopes(ApiScope.internal)
-  @Query(() => [VehiclesCurrentVehicle], {
-    name: 'currentVehicles',
-    nullable: true,
-  })
-  @Audit()
-  async getCurrentVehicles(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.getCurrentVehicles(
-      user,
-      input.showOwned,
-      input.showCoowned,
-      input.showOperated,
-    )
-  }
-
   @Scopes(ApiScope.internal)
   @Query(() => [VehiclesCurrentVehicleWithDebtStatus], {
     name: 'currentVehiclesWithDebtStatus',
