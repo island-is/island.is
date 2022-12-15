@@ -34,7 +34,7 @@ interface Props {
 }
 
 const GET_DOCUMENT_BY_ID = gql`
-  query getAnnualStatusDocumentQuery($input: GetDocumentInput!) {
+  query getDocumentInboxLineQuery($input: GetDocumentInput!) {
     getDocument(input: $input) {
       html
     }
