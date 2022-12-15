@@ -16,7 +16,6 @@ import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
   VehicleDebtStatusByPermno,
-  VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithDebtStatus,
 } from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'

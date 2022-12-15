@@ -17,7 +17,6 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import {
   VehicleDebtStatusByPermno,
-  VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithDebtStatus,
 } from '../models/getCurrentVehicles.model'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
@@ -122,34 +121,6 @@ export class VehiclesService {
       return basicVehicleInformationMapper(res, auth.nationalId)
     } catch (e) {
       return this.handle4xx(e, 'Failed to get vehicle details')
-    }
-  }
-
-  private async getCurrentVehicles(
-    auth: User,
-    showOwned: boolean,
-    showCoowned: boolean,
-    showOperated: boolean,
-  ): Promise<VehiclesCurrentVehicle[] | null | ApolloError> {
-    try {
-      const res = await this.getVehiclesWithAuth(auth).currentVehiclesGet({
-        persidNo: auth.nationalId,
-        showOwned: showOwned,
-        showCoowned: showCoowned,
-        showOperated: showOperated,
-      })
-
-      if (!res) return []
-
-      return res.map((vehicle: VehicleMiniDto) => ({
-        permno: vehicle.permno || undefined,
-        make: vehicle.make || undefined,
-        color: vehicle.color || undefined,
-        role: vehicle.role || undefined,
-        isStolen: vehicle.stolen,
-      }))
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get current vehicles')
     }
   }
 
