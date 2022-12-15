@@ -9,7 +9,7 @@ interface AccessListItemProps {
   name: string
   description?: string | null
   validTo?: string
-  validityPeriod?: Date | null
+  validityPeriod?: Date | string | null
   indent?: boolean
   titleBold?: boolean
 }

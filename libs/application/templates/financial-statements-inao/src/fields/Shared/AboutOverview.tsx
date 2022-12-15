@@ -5,6 +5,7 @@ import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
+import { sectionColumn } from './styles/overviewStyles.css'
 
 export const AboutOverview = ({
   answers,
@@ -14,10 +15,10 @@ export const AboutOverview = ({
   return (
     <Fragment>
       <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
+        <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine label={m.fullName} value={answers.about.fullName} />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
+        <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine
             label={m.nationalId}
             value={
@@ -30,7 +31,7 @@ export const AboutOverview = ({
       </GridRow>
       <GridRow>
         {answers.about.powerOfAttorneyName ? (
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <ValueLine
               label={m.powerOfAttorneyName}
               value={answers.about.powerOfAttorneyName}
@@ -38,7 +39,7 @@ export const AboutOverview = ({
           </GridColumn>
         ) : null}
         {answers.about.powerOfAttorneyNationalId ? (
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <ValueLine
               label={m.powerOfAttorneyNationalId}
               value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
@@ -47,10 +48,10 @@ export const AboutOverview = ({
         ) : null}
       </GridRow>
       <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
+        <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine label={m.email} value={answers.about.email} />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
+        <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine
             label={m.phoneNumber}
             value={formatPhoneNumber(answers.about.phoneNumber)}

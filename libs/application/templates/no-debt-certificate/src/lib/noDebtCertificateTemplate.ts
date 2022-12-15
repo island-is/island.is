@@ -15,7 +15,12 @@ import {
 import { Events, States, Roles } from './constants'
 import { z } from 'zod'
 import { m } from './messages'
-import { AuthDelegationType } from '../types/schema'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  NoDebtCertificateApi,
+} from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 
 const NoDebtCertificateSchema = z.object({
@@ -71,6 +76,11 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                NoDebtCertificateApi,
+              ],
             },
           ],
         },
