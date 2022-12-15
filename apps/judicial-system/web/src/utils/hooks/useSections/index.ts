@@ -28,11 +28,12 @@ const validateFormStepper = (
     return false
   }
 
-  const validationForStep = stepValidations(workingCase)
+  const validationForStep = stepValidations()
 
   return steps.some(
     (step) =>
-      validationForStep[step as keyof typeof validationForStep] === false,
+      validationForStep[step as keyof typeof validationForStep](workingCase) ===
+      false,
   )
     ? false
     : true
