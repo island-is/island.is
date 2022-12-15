@@ -27,7 +27,10 @@ import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import BottomBar from '../../components/BottomBar'
 import { GREATER } from '../../lib/constants'
 import { CapitalNumberOverview } from '../Shared/CapitalNumberOverview'
-import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
+import {
+  starterColumnStyle,
+  sectionColumn,
+} from '../Shared/styles/overviewStyles.css'
 
 export const Overview = ({
   application,
@@ -87,8 +90,8 @@ export const Overview = ({
             {formatMessage(m.expensesIncome)}
           </Text>
         </Box>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
+        <GridRow direction="row">
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.income)}
@@ -123,7 +126,7 @@ export const Overview = ({
               isTotal
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.expenses)}

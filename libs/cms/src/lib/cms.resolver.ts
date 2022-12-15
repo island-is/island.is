@@ -90,6 +90,8 @@ import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Locale } from '@island.is/shared/types'
 import { FeaturedArticles } from './models/featuredArticles.model'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
+import { GetTabSectionInput } from './dto/getTabSection.input'
+import { TabSection } from './models/tabSection.model'
 
 const { cacheTime } = environment
 
@@ -513,6 +515,14 @@ export class CmsResolver {
       getElasticsearchIndex(input.lang),
       input,
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => TabSection, { nullable: true })
+  getTabSection(
+    @Args('input') input: GetTabSectionInput,
+  ): Promise<TabSection | null> {
+    return this.cmsContentfulService.getTabSection(input)
   }
 }
 

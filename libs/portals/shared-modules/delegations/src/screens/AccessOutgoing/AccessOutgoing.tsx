@@ -9,20 +9,20 @@ import {
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
-import { NotFound } from '@island.is/service-portal/core'
-import { AuthDomainDirection } from '@island.is/service-portal/graphql'
+import { m, NotFound } from '@island.is/portals/core'
+import { AuthDomainDirection } from '@island.is/api/schema'
+
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { AccessForm } from '../components/access/AccessForm'
-import { useDelegation } from '../hooks/useDelegation'
-import { AccessHeader } from '../components/access/AccessHeader/AccessHeader'
+import { AccessForm } from '../../components/access/AccessForm/AccessForm'
+import { useDelegation } from '../../hooks/useDelegation'
+import { AccessHeader } from '../../components/access/AccessHeader/AccessHeader'
 
 const AccessOutgoing = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { md } = useBreakpoint()
   const { formatMessage, lang } = useLocale()
   const { delegation, scopeTree, delegationLoading } = useDelegation(
-    AuthDomainDirection.Outgoing,
+    AuthDomainDirection.outgoing,
   )
 
   /**

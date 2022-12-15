@@ -24,7 +24,10 @@ import {
 } from '../Shared'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import BottomBar from '../../components/BottomBar'
-import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
+import {
+  starterColumnStyle,
+  sectionColumn,
+} from '../Shared/styles/overviewStyles.css'
 import { CapitalNumberOverview } from '../Shared/CapitalNumberOverview'
 
 export const PartyOverview = ({
@@ -78,7 +81,7 @@ export const PartyOverview = ({
           </Text>
         </Box>
         <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.income)}
@@ -129,7 +132,7 @@ export const PartyOverview = ({
             />
           </GridColumn>
 
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.expenses)}

@@ -2,33 +2,35 @@ import { delegationScopes } from '@island.is/auth/scopes'
 import { lazy } from 'react'
 import { Features } from '@island.is/feature-flags'
 
-import { m } from '@island.is/service-portal/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
+import { m } from './lib/messages'
 
 export const delegationsModule: PortalModule = {
-  name: 'Aðgangsstýring',
+  name: m.accessControl,
   featureFlag: Features.outgoingDelegationsV2,
   widgets: () => [],
+  enabled({ userInfo }) {
+    return delegationScopes.some((scope) => userInfo.scopes.includes(scope))
+  },
   routes({ userInfo }) {
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
-    const accessControlCommonFields = {
+    const commonProps = {
       name: m.accessControlDelegations,
       path: DelegationPaths.Delegations,
       navHide: !hasAccess,
-      enabled: hasAccess,
       render: () => lazy(() => import('./screens/AccessControl')),
     }
 
     const routes: PortalRoute[] = [
       {
-        ...accessControlCommonFields,
+        ...commonProps,
         path: DelegationPaths.Delegations,
       },
       {
-        ...accessControlCommonFields,
+        ...commonProps,
         path: DelegationPaths.DelegationsIncoming,
       },
       {
@@ -39,7 +41,8 @@ export const delegationsModule: PortalModule = {
       {
         name: m.accessControlAccess,
         path: DelegationPaths.DelegationAccess,
-        render: () => lazy(() => import('./screens/AccessOutgoing')),
+        render: () =>
+          lazy(() => import('./screens/AccessOutgoing/AccessOutgoing')),
       },
     ]
 
