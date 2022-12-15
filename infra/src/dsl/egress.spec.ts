@@ -28,7 +28,7 @@ describe('Egress', () => {
   const sut = service('api').env({
     A: ref((h) => h.svc('http://visir.is')),
   })
-  const runtime = new Kubernetes(Staging, "with-mocks")
+  const runtime = new Kubernetes(Staging, 'with-mocks')
   let serviceDef: SerializeSuccess<HelmService>
   let render: HelmValueFile
   beforeEach(async () => {

@@ -30,7 +30,7 @@ const renderUrlsForChart = async (
       Envs[Deployments[chartName][environment]],
       Charts[chartName][environment],
       Charts[chartName][environment],
-      "no-mocks",
+      'no-mocks',
     )
   ).services
 

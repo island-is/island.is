@@ -117,7 +117,12 @@ yargs(process.argv.slice(2))
         env,
       )
       await writeToOutput(
-        await renderHelmValueFileContent(env, habitat, featureYaml, argv.withMocks ?? false ? 'with-mocks' : 'no-mocks'),
+        await renderHelmValueFileContent(
+          env,
+          habitat,
+          featureYaml,
+          argv.withMocks ?? false ? 'with-mocks' : 'no-mocks',
+        ),
         argv.output,
       )
     },

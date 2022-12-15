@@ -1,5 +1,5 @@
 // global.d.ts
-export {};
+export {}
 
 declare global {
   namespace PlaywrightTest {

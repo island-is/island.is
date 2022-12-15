@@ -1,7 +1,7 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
 import { ReferenceResolver, EnvironmentConfig } from './types/charts'
 import { getMockName, hostPortNumber } from './mocks/mocks-support'
-import {Mocks} from "./value-files-generators/helm-value-file";
+import { Mocks } from './value-files-generators/helm-value-file'
 
 export class Kubernetes implements ReferenceResolver {
   releaseName: string
