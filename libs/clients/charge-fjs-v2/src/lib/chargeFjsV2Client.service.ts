@@ -53,7 +53,12 @@ export class ChargeFjsV2ClientService {
               payableAmount: upcomingPayment.payInfo.payableAmount,
             }
           : undefined,
-        extraData: upcomingPayment.extraData,
+        extraData: upcomingPayment.extraData
+          ? upcomingPayment.extraData.map((x) => ({
+              name: x.name,
+              value: x.value,
+            }))
+          : undefined,
       },
     })
 

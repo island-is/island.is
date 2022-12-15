@@ -1,16 +1,3 @@
-// export interface PaymentServiceOptions {
-//   xRoadBaseUrl: string
-//   xRoadProviderId: string
-//   xRoadClientId: string
-//   username: string
-//   password: string
-//   callbackBaseUrl: string
-//   callbackAdditionUrl: string
-//   arkBaseUrl: string
-// }
-
-// export const PAYMENT_OPTIONS = 'PAYMENT_OPTIONS'
-
 export interface Charge {
   systemID: string
   performingOrgID: string

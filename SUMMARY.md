@@ -167,7 +167,7 @@
   - [Auth](libs/clients/auth/README.md)
     - [Delegation API](libs/clients/auth/delegation-api/README.md)
     - [Public API](libs/clients/auth/public-api/README.md)
-  - [Charge Fjs V2](libs/clients/charge-fjs-v2/README.md)
+  - [Ark](libs/clients/charge-fjs-v2/README.md)
   - [Criminal Record](libs/clients/criminal-record/README.md)
   - [Data Protection Complaint](libs/clients/data-protection-complaint/README.md)
   - [Disability License](libs/clients/disability-license/README.md)

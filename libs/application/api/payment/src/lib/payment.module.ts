@@ -21,7 +21,6 @@ import { XRoadConfig } from '@island.is/nest/config'
       useClass: SequelizeConfigService,
     }),
     SequelizeModule.forFeature([Payment]),
-    // PaymentClientModule,
     ApplicationApiCoreModule,
     ChargeFjsV2ClientModule,
     ConfigModule.forRoot({
