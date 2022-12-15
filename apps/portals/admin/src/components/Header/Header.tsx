@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+
 import {
   Box,
   Hidden,
@@ -7,9 +9,12 @@ import {
   Inline,
   Text,
   GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { UserMenu } from '@island.is/shared/components'
-import { Link } from 'react-router-dom'
+
+import { ModuleSwitcher } from '../ModuleSwitcher/ModuleSwitcher'
 
 import * as styles from './Header.css'
 
@@ -18,13 +23,8 @@ export const Header = () => {
     <div className={styles.placeholder}>
       <header className={styles.header}>
         <GridContainer>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-            width="full"
-          >
-            <Inline alignY="center">
+          <GridRow>
+            <GridColumn span="2/12">
               <Link to={'/'}>
                 <FocusableBox component="div">
                   <Hidden above="md">
@@ -35,31 +35,30 @@ export const Header = () => {
                   </Hidden>
                 </FocusableBox>
               </Link>
+            </GridColumn>
+            <GridColumn span={['6/12', '6/12', '3/12']}>
+              <ModuleSwitcher />
+            </GridColumn>
+            <GridColumn span={['4/12', '4/12', '7/12']}>
               <Box
                 display="flex"
-                className={styles.infoContainer}
-                alignItems="center"
-                height="full"
-                marginLeft={[1, 1, 2, 4]}
-                marginRight="auto"
+                alignItems="flexEnd"
+                flexDirection="column"
+                width="full"
               >
-                <Box marginLeft={[1, 1, 2, 4]}>
-                  <Text variant="eyebrow">Stjórnborð</Text>
-                  <Text>Yfirlit</Text>
-                </Box>
+                <Hidden print>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    flexWrap="nowrap"
+                    marginLeft={1}
+                  >
+                    <UserMenu fullscreen />
+                  </Box>
+                </Hidden>
               </Box>
-            </Inline>
-            <Hidden print>
-              <Box
-                display="flex"
-                alignItems="center"
-                flexWrap="nowrap"
-                marginLeft={1}
-              >
-                <UserMenu fullscreen />
-              </Box>
-            </Hidden>
-          </Box>
+            </GridColumn>
+          </GridRow>
         </GridContainer>
       </header>
     </div>
