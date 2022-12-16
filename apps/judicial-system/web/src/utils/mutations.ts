@@ -43,6 +43,18 @@ export const CasesQuery = gql`
         id
       }
       initialRulingDate
+      judge {
+        id
+      }
+      prosecutor {
+        id
+      }
+      creatingProsecutor {
+        id
+      }
+      registrar {
+        id
+      }
     }
   }
 `
