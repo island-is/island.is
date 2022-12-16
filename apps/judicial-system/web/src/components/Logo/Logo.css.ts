@@ -8,14 +8,3 @@ export const logoText = style({
   flexDirection: 'column',
   alignSelf: 'center',
 })
-
-export const logoContainer = style({
-  display: 'flex',
-  flexDirection: 'row',
-
-  '@media': {
-    [`(min-width: ${theme.breakpoints.md}px) and (max-width: ${theme.breakpoints.lg}px)`]: {
-      flexDirection: 'column',
-    },
-  },
-})
