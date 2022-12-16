@@ -129,7 +129,7 @@ export class DefendantService {
     if (
       defendant.noNationalId ||
       !defendant.nationalId ||
-      defendant.nationalId.length !== 10
+      defendant.nationalId.replace('-', '').length !== 10
     ) {
       await this.messageService.sendMessageToQueue({
         type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
@@ -145,7 +145,7 @@ export class DefendantService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        defendant.nationalId ?? '',
+        defendant.nationalId.replace('-', ''),
         theCase.defenderEmail,
       )
       .then(() => {
