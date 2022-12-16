@@ -21,8 +21,8 @@ describe('InternalCaseController - Deliver prosecutor to court guards', () => {
     )
   })
 
-  it('should have three guards', () => {
-    expect(guards).toHaveLength(3)
+  it('should have two guards', () => {
+    expect(guards).toHaveLength(2)
   })
 
   describe('CaseExistsGuard', () => {
@@ -37,29 +37,14 @@ describe('InternalCaseController - Deliver prosecutor to court guards', () => {
     })
   })
 
-  describe('CaseTypeGuerd', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[1]
-    })
-
-    it('should have CaseTypeGuard as quard 2', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
-      })
-    })
-  })
-
   describe('UserExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[2]()
+      guard = new guards[1]()
     })
 
-    it('should have UserExistsGuard as quard 3', () => {
+    it('should have UserExistsGuard as quard 2', () => {
       expect(guard).toBeInstanceOf(UserExistsGuard)
     })
   })

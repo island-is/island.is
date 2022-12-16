@@ -80,11 +80,7 @@ export class InternalCaseController {
     return this.internalCaseService.deliver(theCase)
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    UserExistsGuard,
-  )
+  @UseGuards(CaseExistsGuard, UserExistsGuard)
   @Post('case/:caseId/deliverProsecutorToCourt')
   @ApiOkResponse({
     type: DeliverResponse,
