@@ -105,12 +105,6 @@ module.exports = {
                   // eslint-disable-next-line local-rules/disallow-kennitalas
                   national_id: '6708140330',
                 },
-              ],
-              { transaction },
-            ),
-            queryInterface.bulkInsert(
-              'institution',
-              [
                 {
                   id: 'affee2cd-5519-450e-b11c-bdd61229e1ad',
                   name: 'Lögreglustjórinn á Vestfjörðum',
@@ -130,9 +124,21 @@ module.exports = {
 
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((transaction) =>
-      queryInterface.removeColumn('institution', 'national_id', {
-        transaction,
-      }),
+      Promise.all([
+        queryInterface.removeColumn('institution', 'national_id', {
+          transaction,
+        }),
+        queryInterface.bulkDelete(
+          'institution',
+          {
+            id: [
+              '0be621ec-c063-4df3-ab15-61f6e421ed7c',
+              'affee2cd-5519-450e-b11c-bdd61229e1ad',
+            ],
+          },
+          { transaction },
+        ),
+      ]),
     )
   },
 }
