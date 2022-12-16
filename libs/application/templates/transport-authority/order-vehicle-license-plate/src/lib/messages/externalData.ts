@@ -66,4 +66,22 @@ export const externalData = {
         'In order to apply for this application we need your email and phone number',
     },
   }),
+  currentVehicles: defineMessages({
+    title: {
+      id: 'ta.ovlp.application:externalData.currentVehicles.title',
+      defaultMessage: 'Upplýsingar um bifreiðar í þinni eigu og stöðu þeirra',
+      description: 'Your vehicles from the vehicle registry',
+    },
+    subTitle: {
+      id: 'ta.ovlp.application:externalData.currentVehicles.subTitle',
+      defaultMessage:
+        'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar bifreiðar og stöðu þeirra.',
+      description: 'To make stuff easier',
+    },
+    empty: {
+      id: 'ta.ovlp.application:externalData.currentVehicles.empty',
+      defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
+      description: 'You do not have any vehicles where you are the main owner',
+    },
+  }),
 }

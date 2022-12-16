@@ -1,4 +1,23 @@
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { PaymentChargeInfoProvider } from './PaymentChargeInfoProvider'
-export { CurrentVehiclesProvider } from './CurrentVehiclesProvider'
+import {
+  defineTemplateApi,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+
+export {
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
+
+const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
+export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    orginizationId: SAMGONGUSTOFA_NATIONAL_ID,
+  },
+  externalDataId: 'payment',
+})
+
+export const CurrentVehiclesApi = defineTemplateApi({
+  action: 'getCurrentVehicleList',
+  externalDataId: 'currentVehicleList',
+})

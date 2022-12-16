@@ -117,11 +117,4 @@ export const externalData = {
       description: 'For drivers cards published in Iceland',
     },
   }),
-  nationalRegistryCustom: defineMessages({
-    missing: {
-      id: 'ta.dtdc.application:externalData.nationalRegistryCustom.missing',
-      defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
-      description: 'You do not have a domicile in Iceland',
-    },
-  }),
 }

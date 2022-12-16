@@ -7,7 +7,6 @@ import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
-  messages,
 } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
   generateRequestReviewEmail,
@@ -33,7 +32,10 @@ import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { externalData } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+import {
+  applicationCheck,
+  externalData,
+} from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
@@ -138,9 +140,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // We will fetch these error messages again through graphql in the template, to be able
     // to translate the error message
     if (result.hasError && result.errorMessages?.length) {
-      throw Error(
-        messages.applicationCheck.validation.alertTitle.defaultMessage,
-      )
+      throw Error(applicationCheck.validation.alertTitle.defaultMessage)
     }
   }
 

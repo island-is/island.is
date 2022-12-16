@@ -84,4 +84,16 @@ export const externalData = {
       description: 'You do not have any vehicles where you are the main owner',
     },
   }),
+  payment: defineMessages({
+    title: {
+      id: 'ta.ccov.application:externalData.payment.title',
+      defaultMessage: 'Upplýsingar frá Fjársýslunni',
+      description: 'Your vehicles from the vehicle registry',
+    },
+    subTitle: {
+      id: 'ta.ccov.application:externalData.payment.subTitle',
+      defaultMessage: 'Um stöðu bifreiðagjalda',
+      description: 'To make stuff easier',
+    },
+  }),
 }

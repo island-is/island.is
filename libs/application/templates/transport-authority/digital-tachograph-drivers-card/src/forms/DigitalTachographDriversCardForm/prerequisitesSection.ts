@@ -3,11 +3,16 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
+import { externalData } from '../../lib/messages'
 import {
   NationalRegistryUserApi,
   UserProfileApi,
-} from '@island.is/application/types'
-import { externalData } from '../../lib/messages'
+  SamgongustofaPaymentCatalogApi,
+  DrivingLicenseApi,
+  QualityPhotoAndSignatureApi,
+  NewestDriversCardApi,
+  NationalRegistryBirthplaceApi,
+} from '../../dataProviders'
 
 export const prerequisitesSection = buildSection({
   id: 'externalData',
@@ -25,24 +30,25 @@ export const prerequisitesSection = buildSection({
           subTitle: externalData.nationalRegistry.subTitle,
         }),
         buildDataProviderItem({
+          provider: NationalRegistryBirthplaceApi,
+          title: '',
+        }),
+        buildDataProviderItem({
           provider: UserProfileApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.subTitle,
         }),
         buildDataProviderItem({
-          id: 'drivingLicense',
-          type: 'DrivingLicenseProvider',
+          provider: DrivingLicenseApi,
           title: externalData.drivingLicense.title,
           subTitle: externalData.drivingLicense.subTitle,
         }),
         buildDataProviderItem({
-          id: 'qualityPhotoAndSignature',
-          type: 'QualityPhotoAndSignatureProvider',
+          provider: QualityPhotoAndSignatureApi,
           title: '',
         }),
         buildDataProviderItem({
-          id: 'newestDriversCard',
-          type: 'NewestDriversCardProvider',
+          provider: NewestDriversCardApi,
           title: externalData.newestDriversCard.title,
           subTitle: externalData.newestDriversCard.subTitle,
         }),
@@ -53,13 +59,7 @@ export const prerequisitesSection = buildSection({
           subTitle: externalData.tachonetDriversCard.subTitle,
         }),
         buildDataProviderItem({
-          id: 'nationalRegistryCustom',
-          type: 'NationalRegistryCustomProvider',
-          title: '',
-        }),
-        buildDataProviderItem({
-          id: 'payment',
-          type: 'PaymentChargeInfoProvider',
+          provider: SamgongustofaPaymentCatalogApi,
           title: '',
         }),
       ],

@@ -3,11 +3,13 @@ import {
   buildExternalDataProvider,
   buildSection,
 } from '@island.is/application/core'
+import { externalData } from '../../lib/messages'
 import {
   NationalRegistryUserApi,
   UserProfileApi,
-} from '@island.is/application/types'
-import { externalData } from '../../lib/messages'
+  SamgongustofaPaymentCatalogApi,
+  CurrentVehiclesApi,
+} from '../../dataProviders'
 
 export const externalDataSection = buildSection({
   id: 'externalData',
@@ -21,8 +23,8 @@ export const externalDataSection = buildSection({
       dataProviders: [
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
-          title: externalData.userProfile.title,
-          subTitle: externalData.userProfile.subTitle,
+          title: externalData.nationalRegistry.title,
+          subTitle: externalData.nationalRegistry.subTitle,
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
@@ -30,15 +32,13 @@ export const externalDataSection = buildSection({
           subTitle: externalData.userProfile.subTitle,
         }),
         buildDataProviderItem({
-          id: 'payment',
-          type: 'PaymentChargeInfoProvider',
-          title: '',
-        }),
-        buildDataProviderItem({
-          id: 'currentVehicleList',
-          type: 'CurrentVehiclesProvider',
+          provider: CurrentVehiclesApi,
           title: externalData.currentVehicles.title,
           subTitle: externalData.currentVehicles.subTitle,
+        }),
+        buildDataProviderItem({
+          provider: SamgongustofaPaymentCatalogApi,
+          title: '',
         }),
       ],
     }),

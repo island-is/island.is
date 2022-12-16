@@ -7,8 +7,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  NationalRegistryUserApi,
-  UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import {
@@ -20,6 +18,11 @@ import { application } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { DigitalTachographCompanyCardSchema } from './dataSchema'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+} from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -67,7 +70,11 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SamgongustofaPaymentCatalogApi,
+              ],
             },
           ],
         },

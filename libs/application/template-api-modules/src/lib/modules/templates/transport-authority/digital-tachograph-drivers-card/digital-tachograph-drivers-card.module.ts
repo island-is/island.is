@@ -7,6 +7,7 @@ import {
   DigitalTachographDriversCardClientModule,
   DigitalTachographDriversCardClientConfig,
 } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 
 export class DigitalTachographDriversCardModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -15,6 +16,7 @@ export class DigitalTachographDriversCardModule {
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         DigitalTachographDriversCardClientModule,
+        DrivingLicenseApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [DigitalTachographDriversCardClientConfig],

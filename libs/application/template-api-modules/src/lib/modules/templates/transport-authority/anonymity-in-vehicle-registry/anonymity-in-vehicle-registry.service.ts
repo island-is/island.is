@@ -12,6 +12,11 @@ export class AnonymityInVehicleRegistryService extends BaseTemplateApiService {
     super(ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY)
   }
 
+  async getAnonymityStatus({ auth }: TemplateApiModuleActionProps) {
+    const result = await this.vehicleInfolocksClient.getAnonymityStatus(auth)
+    return { isChecked: result?.isChecked || false }
+  }
+
   async submitApplication({
     application,
     auth,

@@ -7,5 +7,6 @@ export const getDataProviders = () => import('./dataProviders/')
 export type DigitalTachographDriversCardAnswers = DigitalTachographDriversCard
 
 export * from './utils'
+export * from './lib/messages/externalData'
 
 export default template

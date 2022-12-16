@@ -72,7 +72,8 @@ export const userInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistryCustom?.data?.birthPlace,
+            application.externalData?.nationalRegistryBirthplace?.data
+              ?.location,
         }),
         buildTextField({
           id: 'applicant.birthCountry',

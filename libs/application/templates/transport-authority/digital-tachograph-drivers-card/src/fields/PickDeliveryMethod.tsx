@@ -82,7 +82,7 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
     const { birthday } = info(application.applicant)
     const birthPlace = getValueViaPath(
       application.externalData,
-      'nationalRegistryCustom.data.birthPlace',
+      'nationalRegistryBirthplace.data.location',
       '',
     ) as string
     const drivingLicenceNumber = getValueViaPath(

@@ -10,8 +10,8 @@ export interface NationalRegistry {
   address: Address
 }
 
-export interface NationalRegistryCustom {
-  birthPlace: string
+export interface NationalRegistryBirthplace {
+  location: string
 }
 
 export interface DrivingLicense {

@@ -6,10 +6,14 @@ import {
   ApplicantChildCustodyInformation,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
+  NationalRegistryParameters,
+  NationalRegistryBirthplace,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { AssetsXRoadService } from '@island.is/api/domains/assets'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class NationalRegistryService extends BaseTemplateApiService {
@@ -22,8 +26,26 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async nationalRegistry({
     auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistryIndividual | null> {
-    return this.getIndividual(auth.nationalId)
+    params,
+  }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
+    const result = await this.getIndividual(auth.nationalId)
+
+    //TODOx temporary since NationalRegistry does not work for us
+    // // Make sure user has domicile country as Iceland
+    // if (params?.legalDomicileIceland) {
+    //   const domicileCode = result?.address?.municipalityCode
+    //   if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+    //     throw new TemplateApiError(
+    //       {
+    //         title: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
+    //         summary: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
+    //       },
+    //       400,
+    //     )
+    //   }
+    // }
+
+    return result
   }
 
   private async getIndividual(
@@ -135,5 +157,38 @@ export class NationalRegistryService extends BaseTemplateApiService {
         maritalStatus: spouse.cohabitationCode,
       }
     )
+  }
+
+  async getBirthplace({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryBirthplace | null> {
+    const birthplace = await this.nationalRegistryApi.getBirthplace(
+      auth.nationalId,
+    )
+
+    //TODOx temporary since NationalRegistry does not work for us
+    return {
+      location: 'Reykjavík',
+      dateOfBirth: new Date(),
+      municipalityCode: null,
+    }
+
+    // if (!birthplace?.locality) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: coreErrorMessages.nationalRegistryBirthplaceMissing,
+    //       summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
+    //     },
+    //     404,
+    //   )
+    // }
+
+    // return (
+    //   birthplace && {
+    //     dateOfBirth: birthplace.birthdate,
+    //     location: birthplace.locality,
+    //     municipalityCode: birthplace.municipalityNumber,
+    //   }
+    // )
   }
 }

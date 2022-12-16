@@ -1,14 +1,3 @@
-export const GET_CURRENT_VEHICLES = `
-  query GetCurrentVehicles($input: GetCurrentVehiclesInput!) {
-    currentVehicles(input: $input) {
-      permno
-      make
-      color
-      role
-    }
-  } 
-`
-
 export const GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS = `
   query GetCurrentVehiclesWithOwnerchangeChecks($input: GetCurrentVehiclesInput!) {
     currentVehiclesWithOwnerchangeChecks(input: $input) {
@@ -56,15 +45,6 @@ export const GET_VEHICLE_INFORMATION = `
       }
     }
   }
-`
-
-export const GET_INSURANCE_COMPANIES = `
-  query GetInsuranceCompanies {
-    transportAuthorityInsuranceCompanies {
-      code
-      name
-    }
-  } 
 `
 
 export const IDENTITY_QUERY = `

@@ -7,8 +7,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  NationalRegistryUserApi,
-  UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import {
@@ -20,6 +18,7 @@ import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { AnonymityInVehicleRegistrySchema } from './dataSchema'
 import { application } from './messages'
+import { AnonymityStatusApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -70,7 +69,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [AnonymityStatusApi],
             },
           ],
         },
