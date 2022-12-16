@@ -23,7 +23,7 @@ import { Audit } from '@island.is/nest/audit'
 export class FlightLegResolver {
   constructor(private readonly flightLegService: FlightLegService) {}
 
-  @Query(() => [FlightLeg], { name: 'airDiscountSchemeFlightLegs' })
+  @Query(() => [FlightLeg], { name: 'airDiscountSchemeUserFlightLegs' })
   flightLegs(
     @CurrentUser() user: User,
     @Args('input', { type: () => FlightLegsInput }) input: FlightLegsInput,
