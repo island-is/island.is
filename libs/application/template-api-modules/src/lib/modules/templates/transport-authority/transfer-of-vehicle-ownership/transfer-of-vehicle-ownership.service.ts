@@ -30,7 +30,6 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
-import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   applicationCheck,
@@ -44,41 +43,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
-    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
-  }
-
-  private vehiclesApiWithAuth(auth: Auth) {
-    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async getCurrentVehicleList({ auth }: TemplateApiModuleActionProps) {
-    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-      persidNo: auth.nationalId,
-      showOwned: true,
-      showCoowned: false,
-      showOperated: false,
-    })
-
-    // // Validate that user has at least 1 vehicle he can transfer
-    if (!result || !result.length) {
-      throw new TemplateApiError(
-        {
-          title: externalData.currentVehicles.empty,
-          summary: '',
-        },
-        400,
-      )
-    }
-
-    return result?.map((vehicle) => ({
-      permno: vehicle.permno,
-      make: vehicle.make,
-      color: vehicle.color,
-      role: vehicle.role,
-      isStolen: vehicle.stolen,
-    }))
   }
 
   async getInsuranceCompanyList({ auth }: TemplateApiModuleActionProps) {

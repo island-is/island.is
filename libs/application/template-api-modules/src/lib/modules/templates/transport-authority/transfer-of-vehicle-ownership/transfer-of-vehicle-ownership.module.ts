@@ -15,11 +15,6 @@ import {
   VehicleCodetablesClientModule,
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
-import {
-  VehiclesClientModule,
-  VehiclesClientConfig,
-} from '@island.is/clients/vehicles'
-import { AuthModule } from '@island.is/auth-nest-tools'
 
 export class TransferOfVehicleOwnershipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -30,15 +25,12 @@ export class TransferOfVehicleOwnershipModule {
         ChargeFjsV2ClientModule,
         VehicleOwnerChangeClientModule,
         VehicleCodetablesClientModule,
-        VehiclesClientModule,
-        AuthModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
             ChargeFjsV2ClientConfig,
             VehicleOwnerChangeClientConfig,
             VehicleCodetablesClientConfig,
-            VehiclesClientConfig,
           ],
         }),
       ],
