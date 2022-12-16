@@ -244,7 +244,7 @@ describe('CaseController - Update', () => {
     },
   )
 
-  describe('prosecutor updated for %s case', () => {
+  describe('prosecutor updated for case', () => {
     const prosecutorId = uuid()
     const caseToUpdate = { prosecutorId }
     const updatedCase = { ...theCase, prosecutorId }
@@ -262,11 +262,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
-        caseId,
-        userId: user.id,
-      })
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+          caseId,
+          userId: user.id,
+        },
+      ])
     })
   })
 
@@ -303,6 +305,11 @@ describe('CaseController - Update', () => {
 
       it('should post to queue', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            caseId,
+            userId: user.id,
+          },
           {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
             caseId,

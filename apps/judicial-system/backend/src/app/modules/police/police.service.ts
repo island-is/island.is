@@ -128,7 +128,7 @@ export class PoliceService {
           reason,
         )
 
-        if (!(reason instanceof ServiceUnavailableException)) {
+        if (reason instanceof ServiceUnavailableException) {
           // Act as if the file was not found
           throw new NotFoundException({
             ...reason,
@@ -177,7 +177,7 @@ export class PoliceService {
         // The police system does not provide a structured error response.
         // When police case does not exist, a stack trace is returned.
         throw new NotFoundException({
-          message: `Police case not found for case ${caseId}`,
+          message: `Police case for case ${caseId} does not exist`,
           detail: reason,
         })
       })
@@ -196,7 +196,7 @@ export class PoliceService {
           reason,
         )
 
-        if (!(reason instanceof ServiceUnavailableException)) {
+        if (reason instanceof ServiceUnavailableException) {
           // Act as if the case has no files
           return []
         }

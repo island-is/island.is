@@ -445,9 +445,9 @@ export class CaseService {
           updatedCase.courtCaseNumber &&
           updatedCase.courtCaseNumber !== theCase.courtCaseNumber
         ) {
-          isIndictmentCase(theCase.type)
+          isIndictmentCase(updatedCase.type)
             ? await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
-                theCase,
+                updatedCase,
                 user,
               )
             : await this.addMessagesForCourtCaseConnectionToQueue(

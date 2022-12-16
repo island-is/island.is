@@ -109,7 +109,7 @@ module.exports = {
                   id: 'affee2cd-5519-450e-b11c-bdd61229e1ad',
                   name: 'Lögreglustjórinn á Vestfjörðum',
                   type: 'PROSECUTORS_OFFICE',
-                  active: true,
+                  active: false,
                   default_court_id: 'e997eb13-9963-46ef-b1d8-6b806a1965eb',
                   // eslint-disable-next-line local-rules/disallow-kennitalas
                   national_id: '4812140760',
