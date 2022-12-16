@@ -26,7 +26,7 @@ if (userMocked) {
       'openid',
       'profile',
       UserProfileScope.read,
-      AuthScope.delegations,
+      AdminPortalScope.delegations,
       AdminPortalScope.airDiscountScheme,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
