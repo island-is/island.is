@@ -8,7 +8,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { option } from 'yargs'
 
 import { useFilter as m } from './useFilter.strings'
 
