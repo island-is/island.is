@@ -56,7 +56,14 @@ export interface RouteSection {
   }[]
 }
 
-const RenderSubsectionChild: React.FC<{
+interface SectionProps {
+  section: RouteSection
+  index: number
+  activeSection?: number
+  activeSubSection?: number
+}
+
+const SubsectionChild: React.FC<{
   isActive: boolean
 }> = ({ isActive, children }) => (
   <Box className={styles.name}>
@@ -65,6 +72,45 @@ const RenderSubsectionChild: React.FC<{
     </Text>
   </Box>
 )
+
+const DisplaySection: React.FC<SectionProps> = (props) => {
+  const { section, index, activeSection, activeSubSection } = props
+
+  return (
+    <Section
+      section={section.name}
+      sectionIndex={index}
+      isActive={index === activeSection}
+      isComplete={activeSection ? index < activeSection : false}
+      subSections={section.children.map((subSection, index) =>
+        subSection.href && activeSubSection && activeSubSection > index ? (
+          <Link href={subSection.href} underline="small">
+            <SubsectionChild isActive={index === activeSubSection}>
+              {subSection.name}
+            </SubsectionChild>
+          </Link>
+        ) : subSection.onClick ? (
+          <Box
+            component="button"
+            onClick={subSection.onClick}
+            className={cn(
+              linkStyles.underlineVisibilities['hover'],
+              linkStyles.underlines['small'],
+            )}
+          >
+            <SubsectionChild isActive={index === activeSubSection}>
+              {subSection.name}
+            </SubsectionChild>
+          </Box>
+        ) : (
+          <SubsectionChild isActive={index === activeSubSection}>
+            {subSection.name}
+          </SubsectionChild>
+        ),
+      )}
+    />
+  )
+}
 
 const PageLayout: React.FC<PageProps> = ({
   workingCase,
@@ -90,42 +136,6 @@ const PageLayout: React.FC<PageProps> = ({
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-
-  const renderSections = (sections: RouteSection[]) =>
-    sections.map((section, index) => (
-      <Section
-        section={section.name}
-        sectionIndex={index}
-        isActive={index === activeSection}
-        isComplete={activeSection ? index < activeSection : false}
-        subSections={section.children.map((subSection, index) =>
-          subSection.href && activeSubSection && activeSubSection > index ? (
-            <Link href={subSection.href} underline="small">
-              <RenderSubsectionChild isActive={index === activeSubSection}>
-                {subSection.name}
-              </RenderSubsectionChild>
-            </Link>
-          ) : subSection.onClick ? (
-            <Box
-              component="button"
-              onClick={subSection.onClick}
-              className={cn(
-                linkStyles.underlineVisibilities['hover'],
-                linkStyles.underlines['small'],
-              )}
-            >
-              <RenderSubsectionChild isActive={index === activeSubSection}>
-                {subSection.name}
-              </RenderSubsectionChild>
-            </Box>
-          ) : (
-            <RenderSubsectionChild isActive={index === activeSubSection}>
-              {subSection.name}
-            </RenderSubsectionChild>
-          ),
-        )}
-      />
-    ))
 
   return isLoading ? (
     <Skeleton />
@@ -194,7 +204,16 @@ const PageLayout: React.FC<PageProps> = ({
                       )}
                     </Text>
                   </Box>
-                  <FormStepperV2 sections={renderSections(sections)} />
+                  <FormStepperV2
+                    sections={sections.map((section, index) => (
+                      <DisplaySection
+                        section={section}
+                        index={index}
+                        activeSection={activeSection}
+                        activeSubSection={activeSubSection}
+                      />
+                    ))}
+                  />
                 </Box>
               </div>
             </GridColumn>

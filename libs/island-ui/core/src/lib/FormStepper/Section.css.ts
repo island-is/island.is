@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
@@ -14,6 +14,12 @@ export const container = style({
       transition: 'none',
     },
   },
+})
+
+globalStyle(`${container}:last-child .pl`, {
+  // This is to overwrite a style that is set by JS and ensures there is no
+  // line under the last step in the form stepper.
+  height: '0!important',
 })
 
 export const name = style({

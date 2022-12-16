@@ -27,13 +27,13 @@ import { FormStepperThemes } from './types'
 <Canvas>
   <Story name="Default">
     <FormStepperV2
-      theme={FormStepperThemes.PURPLE}
+      
       sections={[
-        <Section isComplete section="Section #1" />,
-        <Section isActive section="Section #2" />,
-        <Section section="Section #3" />,
+        <Section isComplete section="Section #1" theme={FormStepperThemes.PURPLE} />,
+        <Section isActive section="Section #2" theme={FormStepperThemes.PURPLE}/>,
+        <Section section="Section #3" theme={FormStepperThemes.BLUE} />,
         <Section section="Section #4" />,
-        <Section section="Section #5" />,
+        <Section section="Section #5" theme={FormStepperThemes.PURPLE}/>,
       ]}
     />
   </Story>
@@ -47,7 +47,6 @@ import { FormStepperThemes } from './types'
 <Canvas>
   <Story name="With sub sections">
     <FormStepperV2
-      theme={FormStepperThemes.BLUE}
       sections={[
         <Section isComplete section={'Section #1'} />,
         <Section
