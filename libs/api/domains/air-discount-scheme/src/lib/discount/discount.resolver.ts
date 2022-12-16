@@ -15,7 +15,7 @@ import { Discount } from '../models/discount.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
-@Resolver(() => Discount)
+@Resolver()
 export class DiscountResolver {
   constructor(private discountService: DiscountService) {}
 
