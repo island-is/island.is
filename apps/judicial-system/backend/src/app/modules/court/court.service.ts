@@ -1,6 +1,6 @@
 import formatISO from 'date-fns/formatISO'
 
-import { Injectable } from '@nestjs/common'
+import { Injectable, ServiceUnavailableException } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
@@ -200,6 +200,11 @@ export class CourtService {
           reason,
         )
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document was created successfully
+          return ''
+        }
+
         throw reason
       })
   }
@@ -247,6 +252,11 @@ export class CourtService {
         reason,
       )
 
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the court case was created successfully
+        return 'R-9999/9999'
+      }
+
       throw reason
     }
   }
@@ -288,6 +298,11 @@ export class CourtService {
           reason,
         )
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the email was created successfully
+          return ''
+        }
+
         throw reason
       })
   }
@@ -324,6 +339,11 @@ export class CourtService {
           reason,
         )
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case was updated successfully
+          return ''
+        }
+
         throw reason
       })
   }
@@ -358,6 +378,11 @@ export class CourtService {
           },
           reason,
         )
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case was updated successfully
+          return ''
+        }
 
         throw reason
       })
