@@ -77,13 +77,6 @@ export const externalData = {
       defaultMessage: 'Mynd, undirskrift og réttindi',
       description: 'General information about current licenses.',
     },
-    missing: {
-      id: 'ta.dtdc.application:externalData.drivingLicense.missing',
-      defaultMessage:
-        'Þú ert ekki með nauðsynleg ökuréttindi til að sækja um ökuritakort',
-      description:
-        'You do not have enough driving permission to apply for a drivers card',
-    },
   }),
   qualityPhotoAndSignature: defineMessages({
     missing: {

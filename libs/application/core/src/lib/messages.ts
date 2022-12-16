@@ -387,6 +387,13 @@ export const coreErrorMessages = defineMessages({
       'Vinsamlega hafðu samband við Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
     description: 'Driving License provider no teaching rights error',
   },
+  drivingLicenseMissingValidCategory: {
+    id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
+    defaultMessage:
+      'Þú ert ekki með nauðsynleg ökuréttindi til að sækja um þessa umsókn',
+    description:
+      'You do not have enough driving permission to apply for this application',
+  },
   nationalRegistryLegalDomicileNotIceland: {
     id:
       'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',

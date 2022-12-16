@@ -27,9 +27,16 @@ export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   externalDataId: 'payment',
 })
 
-export const DrivingLicenseApi = defineTemplateApi({
-  action: 'getDrivingLicense',
-  externalDataId: 'drivingLicense',
+// Note: this data provider also confirms if the driving license issuing country is "Ísland"
+export interface CurrentLicenseParameters {
+  validCategories?: string[]
+}
+export const DrivingLicenseApi = defineTemplateApi<CurrentLicenseParameters>({
+  action: 'currentLicense',
+  namespace: 'DrivingLicenseShared',
+  params: {
+    validCategories: ['C', 'C1', 'D', 'D1'],
+  },
 })
 
 export const QualityPhotoAndSignatureApi = defineTemplateApi({

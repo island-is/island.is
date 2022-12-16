@@ -18,9 +18,18 @@ export interface DrivingLicenseFakeData {
   healthRemarks?: YesOrNo
 }
 
+export type DrivingLicenseCategory = {
+  id: number
+  name: string
+  issued: Date | null
+  expires: Date | null
+  comments: string | null
+}
+
 export type DrivingLicense = {
   currentLicense: string | null
   healthRemarks?: string[]
+  categories?: DrivingLicenseCategory[]
 }
 
 export interface StudentAssessment {

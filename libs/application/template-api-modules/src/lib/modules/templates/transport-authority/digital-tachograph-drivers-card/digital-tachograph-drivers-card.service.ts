@@ -30,28 +30,6 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
     super(ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD)
   }
 
-  async getDrivingLicense({ auth }: TemplateApiModuleActionProps) {
-    const result = await this.drivingLicenseApi.getCurrentLicense({
-      nationalId: auth.nationalId,
-    })
-
-    // Validate that user has the necessary categories
-    // Note: This also validates that the user has an Icelandic drivers license
-    // (we will use "Ísland" as drivingLicenceIssuingCountry when checking in TachoNet)
-    const licenseCategories = result?.categories?.map((x) => x.name)
-    const validCategories = ['C', 'C1', 'D', 'D1']
-    if (
-      !licenseCategories ||
-      !licenseCategories.some((x) => validCategories.includes(x))
-    ) {
-      return Promise.reject({
-        reason: externalData.drivingLicense.missing.defaultMessage,
-      })
-    }
-
-    return result
-  }
-
   async getQualityPhotoAndSignature({ auth }: TemplateApiModuleActionProps) {
     let result: {
       hasPhoto: boolean

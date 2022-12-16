@@ -90,7 +90,11 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
       'drivingLicense.data.id',
       '',
     ) as string
-    const drivingLicenceIssuingCountry = 'Ísland' // Note: For now we are only looking at Icelandic drivers license
+    // Note: We are not exactly fetching the driving license issuing country, but since we
+    //       can only continue if user has the necessary license categories through the Icelandic
+    //       license registry, we can assume that the user has the issuing country "Ísland"
+    // Note2: For now we are only looking at Icelandic drivers license
+    const drivingLicenceIssuingCountry = 'Ísland'
 
     checkTachoNet({
       variables: {
