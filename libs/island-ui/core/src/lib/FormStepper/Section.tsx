@@ -1,48 +1,32 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
 import cn from 'classnames'
+import { useWindowSize } from 'react-use'
+
+import { theme as islandUITheme } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { SectionNumber } from './SectionNumber/SectionNumber'
-import { SubSections } from './SubSections/SubSections'
-import { theme as islandUITheme } from '@island.is/island-ui/theme'
-import * as styles from './FormStepperSection.css'
+import * as styles from './Section.css'
 import * as types from './types'
-import { useWindowSize } from 'react-use'
-import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+import SubSections from './SubSectionsV2/SubSectionsV2'
 
-function getSubSectionsInSection(
-  section: types.FormStepperSection,
-  subSection: string,
-): types.FormStepperSection[] {
-  return (section.children ?? []).filter((child) => child.type === subSection)
-}
-
-export const FormStepperSection: FC<{
+export const Section: FC<{
   theme?: types.FormStepperThemes
-  section: types.FormStepperSection
-  subSection: string
+  section: string
+  subSections?: Array<React.ReactNode>
   sectionIndex: number
-  isActive: boolean
-  isComplete: boolean
-  isLastSection: boolean
-  activeSubSection: number
-  showSubSectionIcon?: boolean
+  isActive?: boolean
+  isComplete?: boolean
 }> = ({
   theme = types.FormStepperThemes.PURPLE,
   section,
-  subSection,
+  subSections,
   sectionIndex,
-  isActive,
-  isComplete,
-  isLastSection,
-  activeSubSection,
-  showSubSectionIcon = false,
+  isActive = false,
+  isComplete = false,
 }) => {
-  useDeprecatedComponent('FormStepperSection', 'FormStepperSectionV2')
-  const subSections = getSubSectionsInSection(section, subSection)
-  const hasSubSections = subSections.length > 0
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight, width: activeWidth } = useComponentSize(
     containerRef,
@@ -67,7 +51,7 @@ export const FormStepperSection: FC<{
     if (containerRef.current) {
       setContainerWidth(activeWidth)
     }
-  }, [isComplete, isActive, activeWidth])
+  }, [isComplete, isActive, activeWidth, isClient])
 
   return (
     <Box
@@ -81,36 +65,31 @@ export const FormStepperSection: FC<{
         <Box paddingTop={[0, 0, 2]}>
           <SectionNumber
             theme={theme}
-            lineHeight={isLastSection ? 0 : containerHeight}
+            lineHeight={containerHeight}
             currentState={
               isActive ? 'active' : isComplete ? 'previous' : 'next'
             }
             number={sectionIndex + 1}
           />
         </Box>
-
         <Box
           paddingTop={[0, 0, 2]}
           paddingRight={[2, 2, 0]}
           width="full"
           className={cn(styles.name, {
-            [styles.nameWithActiveSubSections]: hasSubSections && isActive,
+            [styles.nameWithActiveSubSections]: subSections && isActive,
           })}
         >
           <Text lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
-            {section.name}
+            {section}
           </Text>
         </Box>
       </Box>
-
-      {hasSubSections && !isSmallScreen && (
-        <SubSections
-          subSections={subSections}
-          activeSubSection={activeSubSection}
-          showSubSectionIcon={showSubSectionIcon}
-          isActive={isActive}
-        />
+      {isSmallScreen || !subSections ? null : (
+        <SubSections isActive={isActive} subSections={subSections} />
       )}
     </Box>
   )
 }
+
+export default Section

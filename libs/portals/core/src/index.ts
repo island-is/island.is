@@ -24,6 +24,5 @@ export * from './screens/NotFound'
 // components
 export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'
 export * from './components/LoadingScreen/LoadingScreen'
-export * from './components/ModulesProvider'
-export * from './components/PortalMetaProvider'
+export * from './components/PortalProvider'
 export * from './components/IntroHeader'
