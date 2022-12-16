@@ -86,6 +86,28 @@ paths:
         - Users
       security:
         - bearer: []
+  /api/private/users/createExplicitDiscountCode:
+    post:
+      operationId: PrivateDiscountAdminController_createExplicitDiscountCode
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExplicitDiscountCodeParams'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+      tags:
+        - Admin
+        - Admin
+      security:
+        - bearer: []
   /api/public/discounts/{discountCode}/isValidConnectionFlight:
     post:
       operationId: PublicFlightController_checkFlightStatus
@@ -417,9 +439,10 @@ components:
         gender:
           type: string
           enum:
-            - kvk
             - kk
-            - hvk
+            - kvk
+            - x
+            - manneskja
         nationalId:
           type: string
         fund:
@@ -443,9 +466,10 @@ components:
         gender:
           type: string
           enum:
-            - kvk
             - kk
-            - hvk
+            - kvk
+            - x
+            - manneskja
         nationalId:
           type: string
         fund:
@@ -503,6 +527,9 @@ components:
         - connectionDiscountCodes
         - nationalId
         - expiresIn
+    CreateExplicitDiscountCodeParams:
+      type: object
+      properties: {}
     CheckFlightLegBody:
       type: object
       properties:
@@ -743,7 +770,8 @@ components:
       enum:
         - kk
         - kvk
-        - hvk
+        - x
+        - manneskja
     GetFlightLegsBody:
       type: object
       properties:

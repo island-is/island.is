@@ -17,7 +17,7 @@ function Panel({ flightLegs }: PropTypes) {
       return 'karlmaður'
     } else if (gender === 'kvk') {
       return 'kvenmaður'
-    } else if (gender === 'hvk') {
+    } else if (gender === 'x') {
       return 'kynsegin/annað'
     }
     return 'manneskja'
@@ -55,7 +55,7 @@ function Panel({ flightLegs }: PropTypes) {
                   <Text color="dark300" variant="small">
                     {format(
                       new Date(flightLeg.flight.bookingDate),
-                      'dd. MMMM - k:mm',
+                      'dd. MMM yyyy - k:mm',
                       {
                         locale: is,
                       },

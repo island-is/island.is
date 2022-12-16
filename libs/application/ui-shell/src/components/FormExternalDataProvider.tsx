@@ -34,7 +34,7 @@ import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql
 import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'
-import { verifyExternalData, hideSubmitErrorExternalData } from '../utils'
+import { verifyExternalData } from '../utils'
 
 const ItemHeader: React.FC<{
   title: FormText
@@ -73,9 +73,8 @@ const ProviderItem: FC<{
 }) => {
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
-
   const showError =
-    provider.type &&
+    provider.id &&
     dataProviderResult?.status === 'failure' &&
     !suppressProviderError
 
@@ -167,7 +166,7 @@ const FormExternalDataProvider: FC<{
     description,
     checkboxLabel,
   } = externalDataProvider
-  const relevantDataProviders = dataProviders.filter((p) => p.type)
+  const relevantDataProviders = dataProviders.filter((p) => p.action)
 
   const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
 
@@ -183,9 +182,9 @@ const FormExternalDataProvider: FC<{
           variables: {
             input: {
               id: applicationId,
-              dataProviders: relevantDataProviders.map(({ id, type }) => ({
-                id,
-                type,
+              dataProviders: relevantDataProviders.map(({ action, order }) => ({
+                actionId: action,
+                order,
               })),
             },
             locale,
@@ -203,19 +202,7 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
-        const showSubmitError =
-          response.data &&
-          !hideSubmitErrorExternalData(
-            getExternalDataFromResponse(response.data),
-            relevantDataProviders,
-          )
-
-        return [
-          false,
-          showSubmitError
-            ? formatMessage(coreErrorMessages.failedDataProviderSubmit)
-            : '',
-        ]
+        return [false, '']
       })
     } else {
       setBeforeSubmitCallback(null)
@@ -267,33 +254,29 @@ const FormExternalDataProvider: FC<{
         rules={{ required: true }}
         render={({ value, onChange }) => {
           return (
-            <>
-              <Checkbox
-                large={true}
-                onChange={(e) => {
-                  const isChecked = e.target.checked
-                  clearErrors(id)
-                  setValue(id as string, isChecked)
-                  onChange(isChecked)
-                  activateBeforeSubmitCallback(isChecked)
-                }}
-                checked={value}
-                hasError={error !== undefined}
-                backgroundColor="blue"
-                dataTestId="agree-to-data-providers"
-                name={`${id}`}
-                label={
-                  <Markdown>
-                    {checkboxLabel
-                      ? formatMessage(checkboxLabel)
-                      : formatMessage(coreMessages.externalDataAgreement)}
-                  </Markdown>
-                }
-                value={id}
-              />
-
-              {error !== undefined && <InputError errorMessage={error} />}
-            </>
+            <Checkbox
+              large={true}
+              onChange={(e) => {
+                const isChecked = e.target.checked
+                clearErrors(id)
+                setValue(id as string, isChecked)
+                onChange(isChecked)
+                activateBeforeSubmitCallback(isChecked)
+              }}
+              checked={value}
+              hasError={error !== undefined}
+              backgroundColor="blue"
+              dataTestId="agree-to-data-providers"
+              name={`${id}`}
+              label={
+                <Markdown>
+                  {checkboxLabel
+                    ? formatMessage(checkboxLabel)
+                    : formatMessage(coreMessages.externalDataAgreement)}
+                </Markdown>
+              }
+              value={id}
+            />
           )
         }}
       />

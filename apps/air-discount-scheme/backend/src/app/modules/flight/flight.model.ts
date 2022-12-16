@@ -239,7 +239,7 @@ class UserInfo implements TUserInfo {
   age!: number
 
   @ApiProperty()
-  gender!: 'kk' | 'kvk' | 'hvk' | 'óvíst'
+  gender!: 'kk' | 'kvk' | 'x' | 'manneskja'
 
   @ApiProperty()
   postalCode!: number

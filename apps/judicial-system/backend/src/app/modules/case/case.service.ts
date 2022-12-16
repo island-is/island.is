@@ -29,6 +29,7 @@ import {
   CaseOrigin,
   CaseState,
   isIndictmentCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -330,17 +331,18 @@ export class CaseService {
     })
   }
 
-  async create(caseToCreate: CreateCaseDto, prosecutor: TUser): Promise<Case> {
-    this.logger.debug('Creating case', { caseToCreate })
+  async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
+    this.logger.debug('Creating case', { caseToCreate, user })
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
           {
             ...caseToCreate,
             origin: CaseOrigin.RVG,
-            creatingProsecutorId: prosecutor.id,
-            prosecutorId: prosecutor.id,
-            courtId: prosecutor.institution?.defaultCourtId,
+            creatingProsecutorId: user.id,
+            prosecutorId:
+              user.role === UserRole.PROSECUTOR ? user.id : undefined,
+            courtId: user.institution?.defaultCourtId,
           } as CreateCaseDto,
           transaction,
         )

@@ -178,7 +178,7 @@ export class FileService {
         const isParentA = state === 'draft'
         const applicant = nationalRegistry?.data
         const parentB = getOtherParentInformation(
-          applicant.children,
+          externalData.childrenCustodyInformation.data,
           answers.selectedChildren,
         )
         const { name, phoneNumber } = isParentA

@@ -186,6 +186,8 @@ export class DiscountService {
     if (!user) {
       return null
     }
+    // overwrite credit since validation may return 0 depending on what the problem is
+    user.fund.credit = user.fund.total - user.fund.used
 
     const discount = await this.createDiscountCode(
       {

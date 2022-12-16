@@ -6,33 +6,33 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import sortBy from 'lodash/sortBy'
-import { AuthCustomDelegation } from '@island.is/api/schema'
-import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
 import {
   AuthDelegationDirection,
   AuthDelegationType,
-  useAuthDelegationsIncomingQuery,
-} from '@island.is/service-portal/graphql'
-import { AccessDeleteModal } from '../../access/AccessDeleteModal'
+} from '@island.is/api/schema'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/portals/core'
+import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
-import { DelegationIncomingModal } from './DelegationIncomingModal'
+import { DelegationIncomingModal } from './DelegationIncomingModal/DelegationIncomingModal'
+import { useAuthDelegationsIncomingQuery } from './DelegationIncomingModal/DelegationIncomingModal.generated'
+import { AuthCustomDelegationIncoming } from '../../../types/customDelegation'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [
     delegationView,
     setDelegationView,
-  ] = useState<AuthCustomDelegation | null>(null)
+  ] = useState<AuthCustomDelegationIncoming | null>(null)
   const [
     delegationDelete,
     setDelegationDelete,
-  ] = useState<AuthCustomDelegation | null>(null)
+  ] = useState<AuthCustomDelegationIncoming | null>(null)
   const { data, loading, refetch, error } = useAuthDelegationsIncomingQuery({
     variables: {
       input: {
-        direction: AuthDelegationDirection.Incoming,
+        direction: AuthDelegationDirection.incoming,
       },
       lang,
     },
@@ -45,7 +45,7 @@ export const DelegationsIncoming = () => {
   const delegations = useMemo(
     () =>
       sortBy(
-        data?.authDelegations as AuthCustomDelegation[],
+        data?.authDelegations as AuthCustomDelegationIncoming[],
         (d) => d.from?.name,
       ) ?? [],
     [data?.authDelegations],
@@ -75,10 +75,14 @@ export const DelegationsIncoming = () => {
                   }
                   delegation={delegation}
                   onDelete={(delegation) => {
-                    setDelegationDelete(delegation)
+                    setDelegationDelete(
+                      delegation as AuthCustomDelegationIncoming,
+                    )
                   }}
                   onView={(delegation) => {
-                    setDelegationView(delegation)
+                    setDelegationView(
+                      delegation as AuthCustomDelegationIncoming,
+                    )
                   }}
                   variant="incoming"
                 />
@@ -94,17 +98,17 @@ export const DelegationsIncoming = () => {
           setDelegationDelete(null)
           refetch({
             input: {
-              direction: AuthDelegationDirection.Incoming,
+              direction: AuthDelegationDirection.incoming,
             },
           })
         }}
         isVisible={!!delegationDelete}
-        delegation={delegationDelete as AuthCustomDelegation}
+        delegation={delegationDelete as AuthCustomDelegationIncoming}
       />
       <DelegationIncomingModal
         onClose={() => setDelegationView(null)}
         isVisible={!!delegationView}
-        delegation={delegationView as AuthCustomDelegation}
+        delegation={delegationView as AuthCustomDelegationIncoming}
       />
     </Box>
   )
