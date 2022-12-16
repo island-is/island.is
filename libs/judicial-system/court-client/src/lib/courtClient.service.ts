@@ -328,6 +328,14 @@ export class CourtClientServiceImplementation implements CourtClientService {
     }
   }
 
+  private throwOn200Error(result: string): string {
+    if (result === 'The userIdNumber is not correct') {
+      throw new BadRequestException(result)
+    }
+
+    return result
+  }
+
   createCase(courtId: string, args: CreateCaseArgs): Promise<string> {
     return this.authenticatedRequest(
       this.getConnectionState(courtId),
@@ -366,7 +374,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     )
   }
 
-  updateCaseWithProsecutor(
+  async updateCaseWithProsecutor(
     courtId: string,
     args: UpdateCaseWithProsecutorArgs,
   ): Promise<string> {
@@ -376,16 +384,18 @@ export class CourtClientServiceImplementation implements CourtClientService {
       )
     }
 
-    return this.authenticatedRequest(
+    const result = await this.authenticatedRequest(
       this.getConnectionState(courtId),
       (authenticationToken) =>
         this.updateCaseWithProsecutorApi.updateCaseWithProsecutor({
           updateCaseWithProsecutorData: { ...args, authenticationToken },
         }),
     )
+
+    return this.throwOn200Error(result)
   }
 
-  updateCaseWithDefendant(
+  async updateCaseWithDefendant(
     courtId: string,
     args: UpdateCaseWithDefendantArgs,
   ): Promise<string> {
@@ -395,13 +405,15 @@ export class CourtClientServiceImplementation implements CourtClientService {
       )
     }
 
-    return this.authenticatedRequest(
+    const result = await this.authenticatedRequest(
       this.getConnectionState(courtId),
       (authenticationToken) =>
         this.updateCaseWithDefendantApi.updateCaseWithDefendant({
           updateCaseWithDefendantData: { ...args, authenticationToken },
         }),
     )
+
+    return this.throwOn200Error(result)
   }
 
   uploadStream(courtId: string, args: UploadStreamArgs): Promise<string> {
