@@ -7,10 +7,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
-import {
-  ApplicationErrorBoundary,
-  PortalMetaProvider,
-} from '@island.is/portals/core'
+import { ApplicationErrorBoundary } from '@island.is/portals/core'
 
 import { environment } from '../environments'
 import { StateProvider } from '../store/stateProvider'
@@ -26,35 +23,33 @@ export const App = () => {
   return (
     <div className={styles.page}>
       <ApolloProvider client={client}>
-        <PortalMetaProvider basePath={ServicePortalPath.MinarSidurPath}>
-          <StateProvider
-            initialState={store.initialState}
-            reducer={store.reducer}
-          >
-            <LocaleProvider locale={defaultLanguage} messages={{}}>
-              <ApplicationErrorBoundary>
-                <Router basename={ServicePortalPath.MinarSidurPath}>
-                  <Authenticator>
-                    <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                      <UserProfileLocale />
-                      <Layout>
-                        <Switch>
-                          <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                            <Dashboard />
-                          </Route>
-                          <Route>
-                            <Modules />
-                          </Route>
-                        </Switch>
-                        <GlobalModules />
-                      </Layout>
-                    </FeatureFlagProvider>
-                  </Authenticator>
-                </Router>
-              </ApplicationErrorBoundary>
-            </LocaleProvider>
-          </StateProvider>
-        </PortalMetaProvider>
+        <StateProvider
+          initialState={store.initialState}
+          reducer={store.reducer}
+        >
+          <LocaleProvider locale={defaultLanguage} messages={{}}>
+            <ApplicationErrorBoundary>
+              <Router basename={ServicePortalPath.MinarSidurPath}>
+                <Authenticator>
+                  <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                    <UserProfileLocale />
+                    <Layout>
+                      <Switch>
+                        <Route exact path={ServicePortalPath.MinarSidurRoot}>
+                          <Dashboard />
+                        </Route>
+                        <Route>
+                          <Modules />
+                        </Route>
+                      </Switch>
+                      <GlobalModules />
+                    </Layout>
+                  </FeatureFlagProvider>
+                </Authenticator>
+              </Router>
+            </ApplicationErrorBoundary>
+          </LocaleProvider>
+        </StateProvider>
       </ApolloProvider>
     </div>
   )

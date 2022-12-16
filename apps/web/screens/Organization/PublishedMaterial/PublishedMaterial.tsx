@@ -27,6 +27,7 @@ import {
   GetNamespaceQuery,
   Query,
   QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
@@ -45,7 +46,11 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_QUERY,
+} from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
 import FilterTag from './components/FilterTag/FilterTag'
 import { PublishedMaterialItem } from './components/PublishedMaterialItem'
@@ -452,10 +457,22 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
+  const {
+    data: { getOrganization },
+  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+    query: GET_ORGANIZATION_QUERY,
+    variables: {
+      input: {
+        slug: getOrganizationPage.organization?.slug ?? (query.slug as string),
+        lang: locale as ContentLanguage,
+      },
+    },
+  })
+
   return {
     organizationPage: getOrganizationPage,
     genericTagFilters:
-      getOrganizationPage?.organization
+      (getOrganization ?? getOrganizationPage?.organization)
         ?.publishedMaterialSearchFilterGenericTags ?? [],
     namespace,
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),

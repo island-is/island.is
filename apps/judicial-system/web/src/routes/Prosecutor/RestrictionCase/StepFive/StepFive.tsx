@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   ProsecutorCaseInfo,
@@ -44,8 +45,8 @@ export const StepFive: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const router = useRouter()
   const { formatMessage } = useIntl()
-
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
@@ -63,6 +64,10 @@ export const StepFive: React.FC = () => {
 
   useDeb(workingCase, 'caseFilesComments')
 
+  const stepIsValid = allFilesUploaded && !isUploading
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}/${workingCase.id}`)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -72,6 +77,8 @@ export const StepFive: React.FC = () => {
       activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.restrictionCases.caseFiles)}
@@ -172,8 +179,10 @@ export const StepFive: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!allFilesUploaded || isUploading}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.RESTRICTION_CASE_OVERVIEW_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
     </PageLayout>
