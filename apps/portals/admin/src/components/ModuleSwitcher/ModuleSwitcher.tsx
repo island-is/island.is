@@ -1,5 +1,5 @@
 import React, { FC, useReducer } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import {
   useMenuState,
   Menu,
@@ -42,6 +42,8 @@ interface MobileItemProps {
   path: string
   icon?: IconMapIcon
   active?: boolean
+  key?: string | number
+  onNavigation?: () => void
 }
 
 const MobileItem: FC<MobileItemProps> = ({
@@ -49,31 +51,39 @@ const MobileItem: FC<MobileItemProps> = ({
   path,
   icon = 'settings',
   active = false,
+  key,
+  onNavigation,
 }) => {
+  const history = useHistory()
+  const handleClick = () => {
+    history.push(path)
+    onNavigation?.()
+  }
   const color = active ? 'blue400' : 'blue600'
+
   return (
-    <Link to={path}>
-      <Box
-        paddingX={3}
-        paddingY={2}
-        display="flex"
-        alignItems="center"
-        background={active ? 'white' : undefined}
-        borderRadius="large"
-      >
-        <Icon
-          icon={icon}
-          type={active ? 'filled' : 'outline'}
-          color={color}
-          size="small"
-        />
-        <Box marginLeft={3}>
-          <Text color={color} variant="h3">
-            {label}
-          </Text>
-        </Box>
+    <Box
+      key={key}
+      paddingX={3}
+      paddingY={2}
+      display="flex"
+      alignItems="center"
+      background={active ? 'white' : undefined}
+      borderRadius="large"
+      onClick={handleClick}
+    >
+      <Icon
+        icon={icon}
+        type={active ? 'filled' : 'outline'}
+        color={color}
+        size="small"
+      />
+      <Box marginLeft={3}>
+        <Text color={color} variant="h3">
+          {label}
+        </Text>
       </Box>
-    </Link>
+    </Box>
   )
 }
 
@@ -86,6 +96,7 @@ const ModuleSwitcherMobile: FC = () => {
   return (
     <Box display="flex">
       <DialogDisclosure
+        as="div"
         {...dialog}
         className={styles.dialogDisclosure}
         aria-label="Module switcher"
@@ -146,16 +157,19 @@ const ModuleSwitcherMobile: FC = () => {
             label={formatMessage(m.overview)}
             icon="home"
             active={!activeModule}
+            onNavigation={dialog.hide}
           />
 
           <Stack space={0} dividers={false}>
-            {navigation?.children?.map((item) =>
+            {navigation?.children?.map((item, index) =>
               item.path ? (
                 <MobileItem
+                  key={index}
                   label={formatMessage(item.name)}
                   path={item.path}
                   icon={item.icon?.icon}
                   active={activeModule?.name === item.name}
+                  onNavigation={dialog.hide}
                 />
               ) : (
                 <></>
@@ -176,8 +190,6 @@ export const ModuleSwitcher: FC = () => {
 
   const { activeModule } = useModules()
   const nav = useNavigation()
-
-  console.log(activeModule)
 
   return (
     <>
