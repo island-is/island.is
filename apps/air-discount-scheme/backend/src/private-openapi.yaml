@@ -302,8 +302,6 @@ paths:
                   $ref: '#/components/schemas/Flight'
       tags:
         - Admin
-        - Admin
-        - Users
       security:
         - bearer: []
   /api/private/users/{nationalId}/relations:

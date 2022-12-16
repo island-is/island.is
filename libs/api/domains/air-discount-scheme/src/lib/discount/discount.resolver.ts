@@ -16,7 +16,7 @@ import { FlightLeg } from '../models/flightLeg.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
-@Resolver()
+@Resolver(() => Discount)
 export class DiscountResolver {
   constructor(private discountService: DiscountService) {}
 

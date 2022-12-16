@@ -3,7 +3,8 @@ import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
   FlightLeg,
-  UsersApi as AirDiscountSchemeApi,
+  UsersApi,
+  AdminApi,
 } from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
@@ -20,7 +21,8 @@ export class DiscountService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private airDiscountSchemeApi: AirDiscountSchemeApi,
+    private usersApi: UsersApi,
+    private adminApi: AdminApi,
   ) {}
 
   handleError(error: any): any {
@@ -58,7 +60,13 @@ export class DiscountService {
   }
 
   private getADSWithAuth(auth: Auth) {
-    return this.airDiscountSchemeApi.withMiddleware(
+    return this.usersApi.withMiddleware(
+      new AuthMiddleware(auth, { forwardUserInfo: true }),
+    )
+  }
+
+  private getAdminADSWithAuth(auth: Auth) {
+    return this.adminApi.withMiddleware(
       new AuthMiddleware(auth, { forwardUserInfo: true }),
     )
   }
@@ -102,7 +110,7 @@ export class DiscountService {
   }
 
   async getFlightLegsByUser(auth: User): Promise<FlightLeg[]> {
-    const getFlightsResponse = await this.getADSWithAuth(auth)
+    const getFlightsResponse = await this.getAdminADSWithAuth(auth)
       .privateFlightControllerGetUserFlights({ nationalId: auth.nationalId })
       .catch((e) => {
         this.handle4xx(e)

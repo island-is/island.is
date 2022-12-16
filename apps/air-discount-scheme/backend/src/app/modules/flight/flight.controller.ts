@@ -373,7 +373,6 @@ export class PrivateFlightController {
   }
 
   @Get('users/:nationalId/flights')
-  @ApiTags('Admin', 'Users')
   @Scopes(AirDiscountSchemeScope.admin, AirDiscountSchemeScope.default)
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   @ApiOkResponse({ type: [Flight] })
