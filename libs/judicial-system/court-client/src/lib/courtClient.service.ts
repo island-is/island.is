@@ -133,7 +133,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
   constructor(
     @Inject(courtClientModuleConfig.KEY)
-    config: ConfigType<typeof courtClientModuleConfig>,
+    private readonly config: ConfigType<typeof courtClientModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {
@@ -370,6 +370,12 @@ export class CourtClientServiceImplementation implements CourtClientService {
     courtId: string,
     args: UpdateCaseWithProsecutorArgs,
   ): Promise<string> {
+    if (!this.config.courtLitigantApiAvailable) {
+      throw new ServiceUnavailableException(
+        'Court litigant API is not available',
+      )
+    }
+
     return this.authenticatedRequest(
       this.getConnectionState(courtId),
       (authenticationToken) =>
@@ -383,6 +389,12 @@ export class CourtClientServiceImplementation implements CourtClientService {
     courtId: string,
     args: UpdateCaseWithDefendantArgs,
   ): Promise<string> {
+    if (!this.config.courtLitigantApiAvailable) {
+      throw new ServiceUnavailableException(
+        'Court litigant API is not available',
+      )
+    }
+
     return this.authenticatedRequest(
       this.getConnectionState(courtId),
       (authenticationToken) =>
