@@ -863,7 +863,7 @@ export const requiresOtherParentApproval = (
   const applicationAnswers = getApplicationAnswers(answers)
   
   const { otherParent } = applicationAnswers
-  if (otherParent === NO) {
+  if (otherParent === NO || otherParent === SINGLE) {
     return false
   }
 
