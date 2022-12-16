@@ -40,7 +40,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,COURT_LITIGANTS,POLICE_DOCUMENT,POLICE_CASE',
+        staging: 'COURT,COURT_LITIGANT,POLICE_DOCUMENT,POLICE_CASE',
         prod: 'COURT_LITIGANT,POLICE_CASE',
       },
       NO_UPDATE_NOTIFIER: 'true',
