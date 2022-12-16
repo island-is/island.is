@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   removeTabsValidateAndSet,
+  stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -66,17 +67,11 @@ const HearingArrangements = () => {
     updateCase,
     setAndSendCaseToServer,
   } = useCase()
-  const [nextRoute, setNextRoute] = useState<string>(
-    constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
-  )
 
-  const [
-    isNotificationModalVisible,
-    setIsNotificationModalVisible,
-  ] = useState<boolean>(false)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const handleNavigationTo = useCallback(
-    async (destination: string) => {
+    async (destination: keyof stepValidationsType) => {
       if (!workingCase) {
         return
       }
@@ -101,8 +96,7 @@ const HearingArrangements = () => {
         ) {
           router.push(`${destination}/${workingCase.id}`)
         } else {
-          setNextRoute(`${destination}/${workingCase.id}`)
-          setIsNotificationModalVisible(true)
+          setNavigateTo(destination)
         }
       } else {
         toast.error(formatMessage(errors.transitionCase))
@@ -232,14 +226,16 @@ const HearingArrangements = () => {
               nextIsLoading={isLoadingWorkingCase || isTransitioningCase}
             />
           </FormContentContainer>
-          {isNotificationModalVisible && (
+          {navigateTo !== undefined && (
             <Modal
               title={formatMessage(m.modal.heading)}
               text={formatMessage(m.modal.text)}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
-              onClose={() => setIsNotificationModalVisible(false)}
-              onSecondaryButtonClick={() => router.push(nextRoute)}
+              onClose={() => setNavigateTo(undefined)}
+              onSecondaryButtonClick={() =>
+                router.push(`${navigateTo}/${workingCase.id}`)
+              }
               onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
@@ -247,7 +243,7 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(nextRoute)
+                  router.push(`${navigateTo}/${workingCase.id}`)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}

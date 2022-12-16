@@ -172,7 +172,7 @@ export const hasDateChanged = (
   return false
 }
 
-type stepValidationsType = {
+export type stepValidationsType = {
   [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean

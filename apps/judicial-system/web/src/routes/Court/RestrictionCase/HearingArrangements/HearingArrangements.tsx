@@ -31,6 +31,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 export const HearingArrangements: React.FC = () => {
@@ -42,10 +43,7 @@ export const HearingArrangements: React.FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [modalVisible, setModalVisible] = useState(false)
-  const [nextRoute, setNextRoute] = useState<string>(
-    constants.RESTRICTION_CASE_RULING_ROUTE,
-  )
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const {
@@ -106,7 +104,7 @@ export const HearingArrangements: React.FC = () => {
   ])
 
   const handleNavigationTo = useCallback(
-    async (destination: string) => {
+    async (destination: keyof stepValidationsType) => {
       const hasSentNotification = workingCase?.notifications?.find(
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
@@ -127,8 +125,7 @@ export const HearingArrangements: React.FC = () => {
       if (hasSentNotification && !courtDateHasChanged) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
-        setNextRoute(`${destination}/${workingCase.id}`)
-        setModalVisible(true)
+        setNavigateTo(constants.RESTRICTION_CASE_RULING_ROUTE)
       }
     },
     [
@@ -208,7 +205,7 @@ export const HearingArrangements: React.FC = () => {
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
-      {modalVisible && (
+      {navigateTo !== undefined && (
         <Modal
           title={formatMessage(
             workingCase.type === CaseType.CUSTODY ||
@@ -229,7 +226,7 @@ export const HearingArrangements: React.FC = () => {
           onSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(nextRoute)
+            router.push(`${navigateTo}/${workingCase.id}`)
           }}
           onPrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -238,7 +235,7 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(nextRoute)
+              router.push(`${navigateTo}/${workingCase.id}`)
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

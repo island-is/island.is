@@ -22,6 +22,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
+  stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
@@ -55,10 +56,7 @@ export const HearingArrangements: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [nextRoute, setNextRoute] = useState<string>(
-    constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
-  )
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const {
     sendNotification,
@@ -92,12 +90,10 @@ export const HearingArrangements: React.FC = () => {
   }
 
   const handleNavigationTo = useCallback(
-    async (destination: string) => {
+    async (destination: keyof stepValidationsType) => {
       if (!workingCase) {
         return
       }
-
-      setNextRoute(`${destination}/${workingCase.id}`)
 
       const caseOpened =
         workingCase.state === CaseState.NEW
@@ -119,7 +115,7 @@ export const HearingArrangements: React.FC = () => {
         ) {
           router.push(`${destination}/${workingCase.id}`)
         } else {
-          setModalVisible(true)
+          setNavigateTo(destination)
         }
       } else {
         toast.error(formatMessage(errors.transitionCase))
@@ -246,7 +242,7 @@ export const HearingArrangements: React.FC = () => {
               nextIsLoading={isTransitioningCase}
             />
           </FormContentContainer>
-          {modalVisible && (
+          {navigateTo !== undefined && (
             <Modal
               title={formatMessage(
                 rcRequestedHearingArrangements.modal.heading,
@@ -256,8 +252,10 @@ export const HearingArrangements: React.FC = () => {
               })}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
-              onClose={() => setModalVisible(false)}
-              onSecondaryButtonClick={() => router.push(nextRoute)}
+              onClose={() => setNavigateTo(undefined)}
+              onSecondaryButtonClick={() =>
+                router.push(`${navigateTo}/${workingCase.id}`)
+              }
               errorMessage={
                 sendNotificationError
                   ? formatMessage(errors.sendNotification)
@@ -270,7 +268,7 @@ export const HearingArrangements: React.FC = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(nextRoute)
+                  router.push(`${navigateTo}/${workingCase.id}`)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}
