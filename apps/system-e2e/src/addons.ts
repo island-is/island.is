@@ -1,5 +1,4 @@
-import { expect, Locator } from '@playwright/test'
-import { urls } from './support/utils'
+import { expect, Locator, Page } from '@playwright/test'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
@@ -26,13 +25,16 @@ expect.extend({
       pass: count > value,
     }
   },
-
-  async toBeApplication(received: string, baseUrl = urls.islandisBaseUrl) {
+  async toBeApplication(received: string | Page, ofType = '\\w+') {
+    const url: string = typeof received == 'string' ? received : received.url()
     const applicationRegExp = new RegExp(
-      `^${baseUrl}/umsoknir/okuskoli(/(\\w|-)*)$`,
+      `^https?://[^/]+/umsoknir/${ofType}(/(\\w|-)*)?$`,
     )
-    const pass = applicationRegExp.test(received)
-    const message = () => `Current page is ${pass ? 'not ' : ''} an application`
+    const pass = !!applicationRegExp.test(url)
+    const message = () =>
+      `Current page is ${pass ? '' : '*not* '}an application
+       Pattern ${applicationRegExp}
+       URL is  ${url}`
     return { message, pass }
   },
 })
