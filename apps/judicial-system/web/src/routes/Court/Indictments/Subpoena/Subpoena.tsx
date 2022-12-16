@@ -32,6 +32,7 @@ import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/va
 import * as constants from '@island.is/judicial-system/consts'
 
 import { subpoena as strings } from './Subpoena.strings'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 const Subpoena: React.FC = () => {
   const {
@@ -40,10 +41,7 @@ const Subpoena: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [nextRoute, setNextRoute] = useState<string>(
-    constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
-  )
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -61,10 +59,11 @@ const Subpoena: React.FC = () => {
   }
 
   const handleNavigationTo = useCallback(
-    async (destination: string) => {
+    async (destination: keyof stepValidationsType) => {
       const hasSentNotification = workingCase?.notifications?.find(
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
+      const nextRoute = `${destination}/${workingCase.id}`
 
       setAndSendCaseToServer(
         [
@@ -80,10 +79,9 @@ const Subpoena: React.FC = () => {
       )
 
       if (hasSentNotification && !courtDateHasChanged) {
-        router.push(`${destination}/${workingCase.id}`)
+        router.push(nextRoute)
       } else {
-        setNextRoute(`${destination}/${workingCase.id}`)
-        setModalVisible(true)
+        setNavigateTo(destination)
       }
     },
     [
@@ -137,22 +135,26 @@ const Subpoena: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() => handleNavigationTo(nextRoute)}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+            )
+          }
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
-      {modalVisible && (
+      {navigateTo !== undefined && (
         <Modal
           title={formatMessage(strings.modalTitle, {
             courtDateHasChanged,
           })}
           onPrimaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE)
-            router.push(nextRoute)
+            router.push(`${navigateTo}/${workingCase.id}`)
           }}
           onSecondaryButtonClick={() => {
-            router.push(nextRoute)
+            router.push(`${navigateTo}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
           secondaryButtonText={formatMessage(core.continue)}

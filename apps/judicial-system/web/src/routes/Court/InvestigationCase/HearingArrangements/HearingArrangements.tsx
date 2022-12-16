@@ -38,6 +38,7 @@ import {
 } from '@island.is/island-ui/core'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 const HearingArrangements = () => {
@@ -63,8 +64,7 @@ const HearingArrangements = () => {
   } = useCourtArrangements(workingCase)
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [nextRoute, setNextRoute] = useState<string>()
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -98,7 +98,7 @@ const HearingArrangements = () => {
   ])
 
   const handleNavigationTo = useCallback(
-    async (destination: string) => {
+    async (destination: keyof stepValidationsType) => {
       const hasSentNotification = workingCase?.notifications?.find(
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
@@ -119,8 +119,7 @@ const HearingArrangements = () => {
       if (hasSentNotification && !courtDateHasChanged) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
-        setNextRoute(`${destination}/${workingCase.id}`)
-        setModalVisible(true)
+        setNavigateTo(destination)
       }
     },
     [
@@ -317,7 +316,7 @@ const HearingArrangements = () => {
               nextButtonText={formatMessage(m.continueButton.label)}
             />
           </FormContentContainer>
-          {modalVisible && (
+          {navigateTo !== undefined && (
             <Modal
               title={formatMessage(m.modal.heading)}
               text={formatMessage(
@@ -336,14 +335,12 @@ const HearingArrangements = () => {
                   NotificationType.COURT_DATE,
                 )
 
-                if (notificationSent && nextRoute) {
-                  router.push(nextRoute)
+                if (notificationSent) {
+                  router.push(`${navigateTo}/${workingCase.id}`)
                 }
               }}
-              onSecondaryButtonClick={async () => {
-                if (nextRoute) {
-                  router.push(nextRoute)
-                }
+              onSecondaryButtonClick={() => {
+                router.push(`${navigateTo}/${workingCase.id}`)
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

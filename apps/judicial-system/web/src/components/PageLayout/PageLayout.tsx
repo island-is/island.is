@@ -31,6 +31,7 @@ import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
+import { stepValidationsType } from '../../utils/formHelper'
 
 interface PageProps {
   children: ReactNode
@@ -42,7 +43,7 @@ interface PageProps {
   showSidepanel?: boolean
   // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
   activeSubSection?: number
-  onNavigationTo?: (destination: string) => Promise<unknown>
+  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
   isValid?: boolean
 }
 

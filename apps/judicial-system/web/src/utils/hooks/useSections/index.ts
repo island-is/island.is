@@ -16,7 +16,7 @@ import { caseResult } from '@island.is/judicial-system-web/src/components/PageLa
 import { capitalize } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { stepValidations } from '../../formHelper'
+import { stepValidations, stepValidationsType } from '../../formHelper'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 
 const validateFormStepper = (
@@ -40,7 +40,7 @@ const validateFormStepper = (
 
 const useSections = (
   isValid = true,
-  onNavigationTo?: (destination: string) => Promise<unknown>,
+  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
