@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
@@ -125,10 +125,10 @@ const ReceptionAndAssignment = () => {
 
   const getNextRoute = () => {
     return isRestrictionCase(workingCase.type)
-      ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
+      ? constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE
       : isInvestigationCase(workingCase.type)
-      ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
-      : `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`
+      ? constants.INVESTIGATION_CASE_OVERVIEW_ROUTE
+      : constants.INDICTMENTS_SUBPOENA_ROUTE
   }
 
   const getActiveSubSection = () => {
@@ -138,6 +138,12 @@ const ReceptionAndAssignment = () => {
         RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
   }
 
+  const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -145,6 +151,8 @@ const ReceptionAndAssignment = () => {
       activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.shared.receptionAndAssignment)}
@@ -191,8 +199,8 @@ const ReceptionAndAssignment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
-          nextUrl={getNextRoute()}
-          nextIsDisabled={!isReceptionAndAssignmentStepValid(workingCase)}
+          onNextButtonClick={() => handleNavigationTo(getNextRoute())}
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
     </PageLayout>
