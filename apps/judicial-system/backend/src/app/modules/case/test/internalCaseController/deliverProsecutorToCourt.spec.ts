@@ -1,7 +1,5 @@
 import { uuid } from 'uuidv4'
 
-import { MessageService } from '@island.is/judicial-system/message'
-
 import { User } from '../../../user'
 import { CourtService } from '../../../court'
 import { Case } from '../../../case'
@@ -36,18 +34,15 @@ describe('InternalCaseController - Deliver prosecutor to court', () => {
     prosecutor: { id: prosecutorId, nationalId: prosecutorNationalId },
   } as Case
 
-  let mockMessageService: MessageService
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      messageService,
       courtService,
       internalCaseController,
     } = await createTestingCaseModule()
 
-    mockMessageService = messageService
     mockCourtService = courtService
     const mockUpdateCaseWithProsecutor = mockCourtService.updateCaseWithProsecutor as jest.Mock
     mockUpdateCaseWithProsecutor.mockRejectedValue(new Error('Some error'))

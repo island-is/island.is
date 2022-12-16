@@ -117,17 +117,11 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   })
 
   describe('no national id', () => {
-    let then: Then
-
     beforeEach(async () => {
-      then = await givenWhenThen(
-        caseId,
-        defendantId,
-        { userId },
-        user,
-        theCase,
-        { ...defendant, noNationalId: true } as Defendant,
-      )
+      await givenWhenThen(caseId, defendantId, { userId }, user, theCase, {
+        ...defendant,
+        noNationalId: true,
+      } as Defendant)
     })
 
     it('should send email to court', () => {
