@@ -9,6 +9,7 @@ import {
 } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
+import { delegationsNavigation } from './lib/navgation'
 
 export const delegationsModule: PortalModule = {
   name: m.accessControl,
@@ -21,7 +22,9 @@ export const delegationsModule: PortalModule = {
   moduleLayoutWrapper({ children, portalType }) {
     return (
       <div style={{ display: 'flex' }}>
-        {portalType === 'admin' && <SubNavigation />}
+        {portalType === 'admin' && (
+          <SubNavigation navigation={delegationsNavigation} />
+        )}
         {children}
       </div>
     )

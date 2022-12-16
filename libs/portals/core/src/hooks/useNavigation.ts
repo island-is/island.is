@@ -60,16 +60,18 @@ const filterNavigation = ({
   return true
 }
 
-export const useNavigation = () => {
+export const useNavigation = (navigation?: PortalNavigationItem) => {
   const { userInfo } = useAuth()
   const { masterNav } = usePortalMeta()
   const { modules, routes } = useModules()
 
-  const navigation = useMemo(() => {
+  const filteredNavigation = useMemo(() => {
     if (userInfo) {
+      const nav = navigation || masterNav
+
       return {
-        ...masterNav,
-        children: masterNav?.children?.filter((navItem) =>
+        ...nav,
+        children: nav?.children?.filter((navItem) =>
           filterNavigation({
             modules,
             routes,
@@ -82,7 +84,7 @@ export const useNavigation = () => {
     }
 
     return undefined
-  }, [masterNav, modules, routes, userInfo])
+  }, [masterNav, modules, routes, userInfo, navigation])
 
-  return navigation
+  return filteredNavigation
 }
