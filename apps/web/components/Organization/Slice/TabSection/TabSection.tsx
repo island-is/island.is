@@ -1,17 +1,23 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 import slugify from '@sindresorhus/slugify'
-import { TabSection } from '@island.is/web/graphql/schema'
+
+import { useI18n } from '@island.is/web/i18n'
+import {
+  GetTabSectionQuery,
+  QueryGetTabSectionArgs,
+  TabSection,
+} from '@island.is/web/graphql/schema'
 import {
   Box,
-  GridColumn,
   GridColumnProps,
-  GridRow,
   ResponsiveSpace,
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
 import { webRichText } from '@island.is/web/utils/richText'
+import { GET_TAB_SECTION_QUERY } from '@island.is/web/screens/queries/TabSection'
 
 import * as styles from '@island.is/web/screens/Organization/Organization.css'
 
@@ -23,37 +29,49 @@ interface SliceProps {
 
 export const TabSectionSlice: React.FC<SliceProps> = ({
   slice,
-  contentColumnProps = {
-    span: ['9/9', '9/9', '9/9', '7/9'],
-    offset: [null, null, null, '1/9'],
-  },
   contentPaddingTop = [0, 4, 6],
 }) => {
+  const [tabSection, setTabSection] = useState(slice)
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const selected = useMemo(() => {
-    const index = slice.tabs?.findIndex(
+    const index = tabSection?.tabs?.findIndex(
       (tab) =>
-        tab?.tabTitle && slugify(tab.tabTitle) === router?.query?.selectedTab,
+        tab?.tabTitle && slugify(tab.tabTitle) === router.query?.selectedTab,
     )
     if (index >= 0) {
       return String(index)
     }
     return undefined
-  }, [router.query?.selectedTab, slice.tabs])
+  }, [router.query?.selectedTab, tabSection?.tabs])
+
+  useQuery<GetTabSectionQuery, QueryGetTabSectionArgs>(GET_TAB_SECTION_QUERY, {
+    variables: {
+      input: {
+        id: tabSection?.id,
+        lang: activeLocale,
+      },
+    },
+    onCompleted(data) {
+      if (data?.getTabSection?.tabs?.length) {
+        setTabSection(data.getTabSection as TabSection)
+      }
+    },
+  })
 
   return (
     <section
-      key={slice.id}
-      id={slice.id}
-      aria-labelledby={'sliceTitle-' + slice.id}
+      key={tabSection.id}
+      id={tabSection.id}
+      aria-labelledby={'sliceTitle-' + tabSection.id}
     >
       <Box paddingTop={2} paddingBottom={[0, 4, 4]}>
         <Tabs
           selected={selected}
           onChange={(id) => {
             const index = Number(id)
-            const tab = slice.tabs[index]
+            const tab = tabSection.tabs[index]
             if (!tab?.tabTitle) return
 
             router.push(
@@ -65,27 +83,23 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
               { shallow: true },
             )
           }}
-          label={slice?.title}
-          tabs={slice?.tabs.map((tab) => ({
-            label: tab.tabTitle,
+          label={tabSection.title}
+          tabs={tabSection.tabs?.map((tab) => ({
+            label: tab?.tabTitle,
             content: (
-              <GridRow>
-                <GridColumn {...contentColumnProps}>
-                  <Box paddingTop={contentPaddingTop} paddingBottom={[8, 0, 6]}>
-                    {tab.image?.url && (
-                      <img
-                        src={tab.image.url}
-                        className={styles.tabSectionImg}
-                        alt=""
-                      />
-                    )}
-                    <Text variant="h2" as="h2" marginBottom={3}>
-                      {tab.contentTitle}
-                    </Text>
-                    {tab.body && webRichText(tab.body)}
-                  </Box>
-                </GridColumn>
-              </GridRow>
+              <Box paddingTop={contentPaddingTop} paddingBottom={[8, 0, 6]}>
+                {tab?.image?.url && (
+                  <img
+                    src={tab.image.url}
+                    className={styles.tabSectionImg}
+                    alt=""
+                  />
+                )}
+                <Text variant="h2" as="h2" marginBottom={3}>
+                  {tab?.contentTitle}
+                </Text>
+                {tab?.body && webRichText(tab.body)}
+              </Box>
             ),
           }))}
           contentBackground="white"

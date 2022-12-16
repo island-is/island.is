@@ -66,4 +66,7 @@ export class FlightLegsInput implements TFlightLegsInput {
 
   @Field((_) => String, { nullable: true })
   nationalId?: string
+
+  @Field((_) => Boolean, { nullable: true })
+  isExplicit?: string
 }
