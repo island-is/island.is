@@ -11,9 +11,6 @@ import {
   VehicleCodetablesClientModule,
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
-import { VehiclesClientModule } from '@island.is/clients/vehicles'
-import { VehiclesClientConfig } from '@island.is/clients/vehicles'
-import { AuthModule } from '@island.is/auth-nest-tools'
 
 export class TransferOfVehicleOwnershipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -23,15 +20,9 @@ export class TransferOfVehicleOwnershipModule {
         SharedTemplateAPIModule.register(baseConfig),
         VehicleOwnerChangeClientModule,
         VehicleCodetablesClientModule,
-        VehiclesClientModule,
-        AuthModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [
-            VehicleOwnerChangeClientConfig,
-            VehicleCodetablesClientConfig,
-            VehiclesClientConfig,
-          ],
+          load: [VehicleOwnerChangeClientConfig, VehicleCodetablesClientConfig],
         }),
       ],
       providers: [TransferOfVehicleOwnershipService],
