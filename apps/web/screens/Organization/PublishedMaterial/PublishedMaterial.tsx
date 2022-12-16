@@ -45,11 +45,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
 import FilterTag from './components/FilterTag/FilterTag'
 import { PublishedMaterialItem } from './components/PublishedMaterialItem'
@@ -138,6 +134,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     }),
   )
 
+  const organizationSlug =
+    organizationPage.organization?.slug ?? (router.query.slug as string) ?? ''
+
   // The page number is 1-based meaning that page 1 is the first page
   const [page, setPage] = useState(1)
   const [isTyping, setIsTyping] = useState(false)
@@ -146,7 +145,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     variables: {
       input: {
         lang: activeLocale,
-        organizationSlug: (router.query.slug as string) ?? '',
+        organizationSlug,
         tags: [],
         page: page,
         searchString: searchValue,
@@ -198,7 +197,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       variables: {
         input: {
           lang: activeLocale,
-          organizationSlug: (router.query.slug as string) ?? '',
+          organizationSlug,
           tags: selectedCategories,
           page: nextPage,
           searchString: searchValue,
@@ -230,7 +229,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         variables: {
           input: {
             lang: activeLocale,
-            organizationSlug: (router.query.slug as string) ?? '',
+            organizationSlug,
             tags: selectedCategories,
             page: 1,
             searchString: searchValue,
@@ -422,22 +421,10 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { getOrganization },
-    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: query.slug as string,
@@ -461,14 +448,15 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  if (!getOrganizationPage || !getOrganization) {
+  if (!getOrganizationPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
   return {
     organizationPage: getOrganizationPage,
     genericTagFilters:
-      getOrganization.publishedMaterialSearchFilterGenericTags ?? [],
+      getOrganizationPage?.organization
+        ?.publishedMaterialSearchFilterGenericTags ?? [],
     namespace,
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }

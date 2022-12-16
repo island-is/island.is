@@ -6,13 +6,17 @@ import {
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class ChangeOperatorOfVehicleService {
+export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
-  ) {}
+  ) {
+    super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {

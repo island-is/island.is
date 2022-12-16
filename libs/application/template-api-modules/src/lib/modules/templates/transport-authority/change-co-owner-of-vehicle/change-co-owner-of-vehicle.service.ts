@@ -7,14 +7,18 @@ import {
 } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class ChangeCoOwnerOfVehicleService {
+export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
-  ) {}
+  ) {
+    super(ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {

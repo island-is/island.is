@@ -7,6 +7,9 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -64,12 +67,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
-          // [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
       [States.PAYMENT]: {
@@ -84,12 +87,12 @@ const template: ApplicationTemplate<
           },
           progress: 0.8,
           lifecycle: pruneAfterDays(1 / 24),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -114,9 +117,9 @@ const template: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          /* onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          }, */
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           actionCard: {
             tag: {
               label: m.actionCardDone,

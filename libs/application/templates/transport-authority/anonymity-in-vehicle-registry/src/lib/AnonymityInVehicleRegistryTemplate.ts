@@ -7,6 +7,9 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -46,9 +49,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -67,6 +70,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },

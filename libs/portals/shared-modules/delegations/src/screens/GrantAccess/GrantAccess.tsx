@@ -18,26 +18,27 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
+import { IntroHeader } from '@island.is/portals/core'
 import {
-  IntroHeader,
-  ServicePortalModuleComponent,
   formatNationalId,
-  m,
-} from '@island.is/service-portal/core'
+  m as coreMessages,
+  PortalModuleComponent,
+} from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
 import { IdentityCard } from '../../components/IdentityCard/IdentityCard'
-import * as styles from './GrantAccess.css'
+import { DomainOption, useDomains } from '../../hooks/useDomains/useDomains'
+import { ALL_DOMAINS } from '../../constants/domain'
+import { DelegationPaths } from '../../lib/paths'
+import { m } from '../../lib/messages'
 import {
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,
-} from '@island.is/service-portal/graphql'
-import { DomainOption, useDomains } from '../../hooks/useDomains'
-import { ALL_DOMAINS } from '../../constants/domain'
-import { DelegationPaths } from '../../lib/paths'
+} from './GrantAccess.generated'
+import * as styles from './GrantAccess.css'
 
-const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
+const GrantAccess: PortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const [name, setName] = useState('')
@@ -251,7 +252,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     disabled={loading}
                     onClick={clearPersonState}
                     className={styles.icon}
-                    aria-label={formatMessage(m.clearSelected)}
+                    aria-label={formatMessage(coreMessages.clearSelected)}
                   >
                     <Icon icon="close" size="large" color="blue400" />
                   </button>

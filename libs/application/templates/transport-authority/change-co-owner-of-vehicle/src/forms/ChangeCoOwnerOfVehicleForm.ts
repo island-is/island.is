@@ -8,7 +8,13 @@ import {
   buildSubSection,
   buildMultiField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { m } from '../lib/messagesx'
 import { payment, externalData } from '../lib/messages'
 
@@ -28,14 +34,12 @@ export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
             }),

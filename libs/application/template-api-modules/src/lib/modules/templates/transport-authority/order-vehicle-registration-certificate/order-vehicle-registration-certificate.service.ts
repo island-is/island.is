@@ -6,13 +6,17 @@ import {
   OrderVehicleRegistrationCertificateAnswers,
 } from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
 import { VehiclePrintingClient } from '@island.is/clients/transport-authority/vehicle-printing'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class OrderVehicleRegistrationCertificateService {
+export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehiclePrintingClient: VehiclePrintingClient,
-  ) {}
+  ) {
+    super(ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {

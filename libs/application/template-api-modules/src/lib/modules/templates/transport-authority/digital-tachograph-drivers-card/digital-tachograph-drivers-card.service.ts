@@ -14,13 +14,17 @@ import {
 } from './types'
 import { YES } from '@island.is/application/core'
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class DigitalTachographDriversCardService {
+export class DigitalTachographDriversCardService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly digitalTachographDriversCardClient: DigitalTachographDriversCardClient,
-  ) {}
+  ) {
+    super(ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {

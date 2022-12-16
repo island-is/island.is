@@ -27,14 +27,18 @@ import {
   ChargeFjsV2ClientService,
   getChargeId,
 } from '@island.is/clients/charge-fjs-v2'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class TransferOfVehicleOwnershipService {
+export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
-  ) {}
+  ) {
+    super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
+  }
 
   async validateApplication({
     application,

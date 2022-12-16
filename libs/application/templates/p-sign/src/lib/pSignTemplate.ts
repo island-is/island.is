@@ -7,12 +7,18 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
+  QualityPhotoApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
-import { AuthDelegationType } from '../types/schema'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { DoctorsNoteApi } from '../dataProviders'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -40,11 +46,11 @@ const PSignTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -60,6 +66,13 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                DistrictsApi,
+                QualityPhotoApi,
+                DoctorsNoteApi,
+              ],
               delete: true,
             },
             {
@@ -76,6 +89,13 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                DistrictsApi,
+                QualityPhotoApi,
+                DoctorsNoteApi,
+              ],
               delete: true,
             },
           ],
