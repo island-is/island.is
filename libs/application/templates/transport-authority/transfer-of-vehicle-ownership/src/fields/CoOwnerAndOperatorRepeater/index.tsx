@@ -4,18 +4,14 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { information } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorField } from '../../types'
+import { ReviewCoOwnerAndOperatorFormField } from '../../types'
 import { repeaterButtons } from './CoOwnerAndOperatorRepeater.css'
 import { CoOwnerAndOperatorRepeaterItem } from './CoOwnerAndOperatorRepeaterItem'
 
 export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
 
-  const {
-    fields,
-    append,
-    remove,
-  } = useFieldArray<ReviewCoOwnerAndOperatorField>({
+  const { fields, append, remove } = useFieldArray({
     name: 'buyerCoOwnerAndOperator',
   })
 
@@ -30,11 +26,15 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
 
   const handleRemove = (index: number) => remove(index)
 
-  const allOperators = fields.filter((field) => field.type === 'operator')
-  const allCoOwners = fields.filter((field) => field.type === 'coOwner')
+  const allOperators = fields.filter(
+    (field: ReviewCoOwnerAndOperatorFormField) => field.type === 'operator',
+  )
+  const allCoOwners = fields.filter(
+    (field: ReviewCoOwnerAndOperatorFormField) => field.type === 'coOwner',
+  )
   return (
     <Box>
-      {fields.map((field, index) => {
+      {fields.map((field: any, index) => {
         const rowLocation =
           field.type === 'operator'
             ? allOperators.indexOf(field)

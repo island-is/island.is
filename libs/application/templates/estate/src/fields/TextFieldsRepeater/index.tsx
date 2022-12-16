@@ -51,7 +51,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
 
   return (
     <Box>
-      {fields.map((repeaterField, index) => {
+      {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
 
         return (

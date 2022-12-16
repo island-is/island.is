@@ -3,12 +3,14 @@ import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
-import { ArrayField } from 'react-hook-form'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import debounce from 'lodash/debounce'
-import { ReviewCoOwnerAndOperatorField } from '../../types'
+import {
+  ReviewCoOwnerAndOperatorField,
+  ReviewCoOwnerAndOperatorFormField,
+} from '../../types'
 
 const DEBOUNCE_INTERVAL = 300
 
@@ -16,7 +18,7 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<ReviewCoOwnerAndOperatorField, 'id'>>
+  repeaterField: ReviewCoOwnerAndOperatorFormField
   handleRemove: (index: number) => void
   setCoOwnersAndOperators?: (s: ReviewCoOwnerAndOperatorField[]) => void
   coOwnersAndOperators?: ReviewCoOwnerAndOperatorField[]

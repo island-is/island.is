@@ -16,6 +16,14 @@ export type ReviewCoOwnerAndOperatorField = {
   approved?: boolean
 }
 
+export type ReviewCoOwnerAndOperatorFormField = Partial<
+  ReviewCoOwnerAndOperatorField & {
+    id: string
+    initial: boolean
+    dummy?: boolean
+  }
+>
+
 export interface ReviewScreenProps {
   setStep?: (s: ReviewState) => void
   setInsurance?: (s: string) => void

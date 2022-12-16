@@ -4,17 +4,17 @@ import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
-import { ArrayField } from 'react-hook-form'
+import { FieldArray } from 'react-hook-form'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorField } from '../../types'
+import { ReviewCoOwnerAndOperatorFormField } from '../../types'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<ReviewCoOwnerAndOperatorField, 'id'>>
+  repeaterField: ReviewCoOwnerAndOperatorFormField
   handleRemove: (index: number) => void
 }
 
