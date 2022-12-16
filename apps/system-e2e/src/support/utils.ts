@@ -7,8 +7,7 @@ export enum BaseAuthority {
   staging = 'beta.staging01.devland.is',
   ads = 'loftbru.dev01.devland.is',
   prod = 'island.is',
-  local = 'localhost:4200',
-  localAs = 'localhost:4242',
+  local = 'localhost',
 }
 
 export enum AuthUrl {
@@ -26,42 +25,38 @@ export const getEnvironmentBaseUrl = (authority: string) => {
       : ''
   return `https://${prefix}${authority}`
 }
-export const getEnvironmentUrls = (env: TestEnvironment) => {
-  const envs: {
-    [envName in TestEnvironment]: {
-      authUrl: string
-      islandisBaseUrl: string
-      adsBaseUrl: string
-      asBaseUrl: string
-    }
-  } = {
-    dev: {
-      authUrl: AuthUrl.dev,
-      islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
-      adsBaseUrl: getEnvironmentBaseUrl(BaseAuthority.ads),
-      asBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
-    },
-    staging: {
-      authUrl: AuthUrl.staging,
-      islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
-      adsBaseUrl: getEnvironmentBaseUrl('loftbru.staging01.devland.is'),
-      asBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
-    },
-    prod: {
-      authUrl: AuthUrl.prod,
-      islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
-      adsBaseUrl: getEnvironmentBaseUrl('loftbru.island.is'),
-      asBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
-    },
-    local: {
-      authUrl: AuthUrl.local,
-      islandisBaseUrl: `http://${BaseAuthority.local}`,
-      adsBaseUrl: `http://${BaseAuthority.local}`,
-      asBaseUrl: `http://${BaseAuthority.localAs}`,
-    },
+const localUrl = `http://${BaseAuthority.local}:${process.env.PORT ?? 4200}`
+const envs: {
+  [envName in TestEnvironment]: {
+    authUrl: string
+    islandisBaseUrl: string
+    adsBaseUrl: string
   }
-  return envs[env]
+} = {
+  dev: {
+    authUrl: AuthUrl.dev,
+    islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
+    adsBaseUrl: getEnvironmentBaseUrl(BaseAuthority.ads),
+  },
+  staging: {
+    authUrl: AuthUrl.staging,
+    islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
+    adsBaseUrl: getEnvironmentBaseUrl('loftbru.staging01.devland.is'),
+  },
+  prod: {
+    authUrl: AuthUrl.prod,
+    islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
+    adsBaseUrl: getEnvironmentBaseUrl('loftbru.island.is'),
+  },
+  local: {
+    authUrl: AuthUrl.local,
+    islandisBaseUrl: localUrl,
+    adsBaseUrl: localUrl,
+  },
 }
+export const env = (process.env.TEST_ENVIRONMENT ?? 'local') as TestEnvironment
+export const urls = envs[env]
+
 export type CognitoCreds = {
   username: string
   password: string
@@ -75,8 +70,6 @@ export const getCognitoCredentials = (): CognitoCreds => {
     password,
   }
 }
-export const env = (process.env.TEST_ENVIRONMENT ?? 'local') as TestEnvironment
-export const urls = getEnvironmentUrls(env)
 export const cognitoLogin = async (
   page: Page,
   { username, password }: CognitoCreds,

@@ -23,6 +23,8 @@
     "dev-init": "nx dev-init",
     "analyze": "cross-env ANALYZE=true nx build",
     "e2e": "nx e2e",
+    "e2e:smoke": "nx e2e:smoke",
+    "e2e:acceptance": "nx e2e:acceptance",
     "e2e-ci": "node ./scripts/e2e-ci.js",
     "codegen": "nx codegen",
     "translations": "nx translations",

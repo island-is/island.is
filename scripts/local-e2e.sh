@@ -88,7 +88,7 @@ function _get_source_path() {
 }
 
 function _build_app() {
-  nx run ${APP}:build
+  yarn nx run ${APP}:build
 }
 
 function open_menu() {
@@ -107,8 +107,8 @@ function run_container() {
   # transform .env secrets file to actual .env file
   grep -v '^#' "${SECRETS_FILE}" | cut -d ' ' -f 2- > "${SECRETS_ENV_FILE}"
 
-  _build_app
-  _image_exists
+  #_build_app
+  build_image
   runner \
     -v "${TMP_DIR}":/out:Z \
     -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":Z \

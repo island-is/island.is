@@ -25,16 +25,24 @@
         "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     },
-    "smoke": {
+    "e2e": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn playwright test apps/system-e2e/src/tests/*/smoke -c apps/system-e2e/src"
+        "commands": ["echo __ $@", "echo __ $NX_OPTIONS", "echo __ $NX_ARGS", "yarn playwright test -c apps/system-e2e/src"],
+        "parallel": false
+
       }
     },
-    "acceptance": {
+    "e2e:smoke": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
+        "command": "yarn playwright test -c apps/system-e2e/src smoke $NX_OPTIONS"
+      }
+    },
+    "e2e:acceptance": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn playwright test -c apps/system-e2e/src acceptance $NX_OPTIONS"
       }
     },
     "docker-playwright": {}

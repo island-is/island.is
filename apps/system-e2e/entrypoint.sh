@@ -2,13 +2,22 @@
 
 set -uo pipefail
 
+: ${TEST_ENVIRONMENT:=local}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+export PATH=./node_modules/.bin:$PATH
 
 echo "Current test environment: ${TEST_ENVIRONMENT}"
 echo "Playwright args: $*"
-export PATH=./node_modules/.bin:$PATH
-playwright test -c src "$@"
+echo "DIR: $DIR"
+echo "PATH: $PATH"
+
+echo "Various tool locations:"
+which yarn node npm npx nx playwright
+find / -name playwright 2>/dev/null || echo "No playwright found"
+
+yarn playwright test -c src "$@"
 TEST_EXIT_CODE=$?
+
 set -e
 zip -r -0 test-results playwright-report src/test-results
 aws s3 cp test-results.zip $TEST_RESULTS_S3
