@@ -173,62 +173,68 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): CaseMessage[] {
-    return (
+    const messages =
       theCase.defendants?.map((defendant) => ({
         type: MessageType.DELIVER_DEFENDANT_TO_COURT,
         caseId: theCase.id,
         defendantId: defendant.id,
         userId: user.id,
       })) ?? []
-    )
+
+    return messages
   }
 
   private getDeliverProsecutorToCourtMessages(
     theCase: Case,
     user: TUser,
   ): CaseMessage[] {
-    return [
+    const messages = [
       {
         type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
         caseId: theCase.id,
         userId: user.id,
-      } as CaseMessage,
+      },
     ]
+
+    return messages
   }
 
   private addMessagesForIndictmentCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
+    const deliverCaseFilesRecordToCourtMessages = theCase.policeCaseNumbers.map<CaseMessage>(
+      (policeCaseNumber) => ({
+        type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+        caseId: theCase.id,
+        policeCaseNumber,
+      }),
+    )
+
+    const deliverCaseFileToCourtMessages =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            (caseFile.category &&
+              [
+                CaseFileCategory.COVER_LETTER,
+                CaseFileCategory.INDICTMENT,
+                CaseFileCategory.CRIMINAL_RECORD,
+                CaseFileCategory.COST_BREAKDOWN,
+              ].includes(caseFile.category)) ||
+            (caseFile.category === CaseFileCategory.CASE_FILE &&
+              !caseFile.policeCaseNumber),
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          caseId: theCase.id,
+          caseFileId: caseFile.id,
+        })) ?? []
+
     return this.messageService.sendMessagesToQueue(
-      this.getDeliverProsecutorToCourtMessages(theCase, user).concat(
-        theCase.policeCaseNumbers
-          .map<CaseMessage>((policeCaseNumber) => ({
-            type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
-            caseId: theCase.id,
-            policeCaseNumber,
-          }))
-          .concat(
-            theCase.caseFiles
-              ?.filter(
-                (caseFile) =>
-                  (caseFile.category &&
-                    [
-                      CaseFileCategory.COVER_LETTER,
-                      CaseFileCategory.INDICTMENT,
-                      CaseFileCategory.CRIMINAL_RECORD,
-                      CaseFileCategory.COST_BREAKDOWN,
-                    ].includes(caseFile.category)) ||
-                  (caseFile.category === CaseFileCategory.CASE_FILE &&
-                    !caseFile.policeCaseNumber),
-              )
-              .map((caseFile) => ({
-                type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-                caseId: theCase.id,
-                caseFileId: caseFile.id,
-              })) ?? [],
-          ),
-      ),
+      this.getDeliverProsecutorToCourtMessages(theCase, user)
+        .concat(deliverCaseFilesRecordToCourtMessages)
+        .concat(deliverCaseFileToCourtMessages),
     )
   }
 
@@ -236,18 +242,16 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return isIndictmentCase(theCase.type)
-      ? this.addMessagesForIndictmentCourtCaseConnectionToQueue(theCase, user)
-      : this.messageService.sendMessagesToQueue(
-          [
-            {
-              type: MessageType.DELIVER_REQUEST_TO_COURT,
-              caseId: theCase.id,
-            },
-          ]
-            .concat(this.getDeliverProsecutorToCourtMessages(theCase, user))
-            .concat(this.getDeliverDefendantToCourtMessages(theCase, user)),
-        )
+    return this.messageService.sendMessagesToQueue(
+      [
+        {
+          type: MessageType.DELIVER_REQUEST_TO_COURT,
+          caseId: theCase.id,
+        },
+      ]
+        .concat(this.getDeliverProsecutorToCourtMessages(theCase, user))
+        .concat(this.getDeliverDefendantToCourtMessages(theCase, user)),
+    )
   }
 
   private addMessagesForDefenderEmailChangeToQueue(
@@ -441,7 +445,15 @@ export class CaseService {
           updatedCase.courtCaseNumber &&
           updatedCase.courtCaseNumber !== theCase.courtCaseNumber
         ) {
-          await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
+          isIndictmentCase(theCase.type)
+            ? await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
+                theCase,
+                user,
+              )
+            : await this.addMessagesForCourtCaseConnectionToQueue(
+                updatedCase,
+                user,
+              )
         } else if (theCase.courtCaseNumber) {
           if (updatedCase.prosecutorId !== theCase.prosecutorId) {
             await this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
