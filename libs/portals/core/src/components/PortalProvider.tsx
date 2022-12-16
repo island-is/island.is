@@ -132,10 +132,7 @@ const useDynamicHook = <T extends keyof PortalContextProps>(
 }
 
 export const useModules = () => useDynamicHook(useModules.name, 'modules')
-
 export const useRoutes = () => useDynamicHook(useRoutes.name, 'routes')
-
 export const useActiveModule = () =>
   useDynamicHook(useActiveModule.name, 'activeModule')
-
 export const usePortalMeta = () => useDynamicHook(usePortalMeta.name, 'meta')

@@ -4,7 +4,7 @@ import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
 import {
-  servicePortalMasterNavigation,
+  servicePortalMasterNavigation as masterNav,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { LocaleProvider } from '@island.is/localization'
@@ -43,7 +43,7 @@ export const App = () => {
                       modules={Object.values(modules)}
                       meta={{
                         basePath: ServicePortalPath.MinarSidurPath,
-                        masterNav: servicePortalMasterNavigation[0],
+                        masterNav: masterNav[0],
                         portalType: 'my-pages',
                       }}
                     >
