@@ -12,10 +12,10 @@ import { useNamespaces } from '@island.is/localization'
 import Header from '../Header/Header'
 import * as styles from './Layout.css'
 import {
-  useModules,
   useModuleProps,
   PortalModule,
   usePortalMeta,
+  useActiveModule,
 } from '@island.is/portals/core'
 
 const boxProps = {
@@ -81,7 +81,7 @@ const LayoutOuterContainer: FC = ({ children }) => (
 export const Layout: FC = ({ children }) => {
   useNamespaces(['admin.portal', 'global'])
   const { portalType } = usePortalMeta()
-  const { activeModule } = useModules()
+  const activeModule = useActiveModule()
   const moduleProps = useModuleProps()
   const { layout = 'default', moduleLayoutWrapper: ModuleLayoutWrapper } =
     activeModule || {}

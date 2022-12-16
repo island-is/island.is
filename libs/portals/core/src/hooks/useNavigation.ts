@@ -1,69 +1,60 @@
-import * as kennitala from 'kennitala'
 import { useAuth } from '@island.is/auth/react'
 import { User } from '@island.is/shared/types'
 import { useMemo } from 'react'
-import { useModules } from '../components/ModulesProvider'
-import { usePortalMeta } from '../components/PortalMetaProvider'
-import {
-  PortalModule,
-  PortalNavigationItem,
-  PortalRoute,
-} from '../types/portalCore'
+import { usePortalMeta, useRoutes } from '../components/PortalProvider'
+import { PortalNavigationItem, PortalRoute } from '../types/portalCore'
 
-interface FilterNavigation {
-  modules: PortalModule[]
-  routes: PortalRoute[]
-  navItem: PortalNavigationItem
-  isModuleChild: boolean
-  userInfo: User
-}
+const filterNavigationTree = (
+  item: PortalNavigationItem,
+  routes: PortalRoute[],
+  userInfo: User,
+  dymamicRouteArray: string[],
+): boolean => {
+  const routeItem = routes.find(
+    (route) =>
+      route.path === item.path ||
+      (Array.isArray(route.path) &&
+        item.path &&
+        route.path.includes(item.path)),
+  )
 
-const filterNavigation = ({
-  modules,
-  navItem,
-  isModuleChild = false,
-  userInfo,
-  routes,
-}: FilterNavigation) => {
-  if (navItem.navHide) {
-    return false
+  const included = routeItem !== undefined || item.systemRoute === true
+
+  // Filters out any children that do not have a module route defined
+  item.children = item.children?.filter((child) => {
+    return filterNavigationTree(child, routes, userInfo, dymamicRouteArray)
+  })
+
+  // If the item is not included but one or more of it's descendants are
+  // We remove the item's path but include it in the tree
+  const onlyDescendantsIncluded =
+    !included && Array.isArray(item.children) && item.children.length > 0
+  if (onlyDescendantsIncluded) item.path = undefined
+
+  // Maps the enabled status to the nav item if provided
+  item.enabled = routeItem?.enabled
+  // Makes dynamic item visible in navigation after dynamicArray hook is run
+  const solidPath = Array.isArray(routeItem?.path)
+    ? routeItem?.path[0]
+    : routeItem?.path
+  const hideDynamicPath =
+    routeItem?.dynamic && solidPath && !dymamicRouteArray?.includes(solidPath)
+
+  // Hides item from navigation
+
+  if (routeItem?.navHide) {
+    item.navHide = routeItem.navHide
   }
 
-  if (!isModuleChild) {
-    const module = modules.find((m) => m.name === navItem.name)
+  item.navHide = item.navHide || !!hideDynamicPath
 
-    navItem.enabled =
-      module?.enabled?.({
-        userInfo: userInfo,
-        isCompany: kennitala.isCompany(userInfo.profile.nationalId),
-      }) || true
-  } else {
-    const route = routes.find((route) => route.path === navItem.path)
-
-    navItem.enabled = route?.enabled || true
-  }
-
-  // Check if navItem has children
-  if (navItem.children?.[0]) {
-    // Check if navItem children exists in modules children
-    navItem.children = navItem.children?.filter((child) =>
-      filterNavigation({
-        modules,
-        navItem: child,
-        isModuleChild: true,
-        userInfo,
-        routes,
-      }),
-    )
-  }
-
-  return true
+  return included || onlyDescendantsIncluded
 }
 
 export const useNavigation = (navigation?: PortalNavigationItem) => {
   const { userInfo } = useAuth()
   const { masterNav } = usePortalMeta()
-  const { modules, routes } = useModules()
+  const routes = useRoutes()
 
   const filteredNavigation = useMemo(() => {
     if (userInfo) {
@@ -72,19 +63,13 @@ export const useNavigation = (navigation?: PortalNavigationItem) => {
       return {
         ...nav,
         children: nav?.children?.filter((navItem) =>
-          filterNavigation({
-            modules,
-            routes,
-            userInfo,
-            navItem,
-            isModuleChild: false,
-          }),
+          filterNavigationTree(navItem, routes, userInfo, []),
         ),
       }
     }
 
     return undefined
-  }, [masterNav, modules, routes, userInfo, navigation])
+  }, [masterNav, routes, userInfo, navigation])
 
   return filteredNavigation
 }
