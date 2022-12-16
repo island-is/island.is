@@ -28,7 +28,7 @@ test.describe('Service portal, in access control', () => {
 
     await test.step('Remove delegations', async () => {
       // Arrange
-      await page.goto('/minarsidur/adgangsstyring/umbod')
+      await page.goto('/minarsidur/adgangsstyring/umbod?locale=is')
       await expect(
         page.locator(
           '[data-testid="access-card"], [data-testid="delegations-empty-state"]',
@@ -58,7 +58,7 @@ test.describe('Service portal, in access control', () => {
     await test.step('Create delegation', async () => {
       // Arrange
       const page = await context.newPage()
-      await page.goto('/minarsidur/adgangsstyring/umbod')
+      await page.goto('/minarsidur/adgangsstyring/umbod?locale=is')
 
       // Act
       await page.locator('role=button[name="Nýtt umboð"]').click()
@@ -95,7 +95,7 @@ test.describe('Service portal, in access control', () => {
       })
       const page = await context2.newPage()
       const { findByRole } = helpers(page)
-      await page.goto('/minarsidur')
+      await page.goto('/minarsidur?locale=is')
 
       // Act
       await page.locator('data-testid=user-menu >> visible=true').click()
