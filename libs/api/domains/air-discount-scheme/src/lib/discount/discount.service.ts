@@ -1,11 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import {
-  FlightLeg,
-  UsersApi,
-  AdminApi,
-} from '@island.is/clients/air-discount-scheme'
+import { UsersApi } from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -22,7 +18,6 @@ export class DiscountService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private usersApi: UsersApi,
-    private adminApi: AdminApi,
   ) {}
 
   handleError(error: any): any {
@@ -65,12 +60,6 @@ export class DiscountService {
     )
   }
 
-  private getAdminADSWithAuth(auth: Auth) {
-    return this.adminApi.withMiddleware(
-      new AuthMiddleware(auth, { forwardUserInfo: true }),
-    )
-  }
-
   async getCurrentDiscounts(auth: User): Promise<DiscountModel[]> {
     const relations: TUser[] = await this.getUserRelations(auth)
 
@@ -107,27 +96,6 @@ export class DiscountService {
     }
 
     return discounts
-  }
-
-  async getFlightLegsByUser(auth: User): Promise<FlightLeg[]> {
-    const getFlightsResponse = await this.getAdminADSWithAuth(auth)
-      .privateFlightControllerGetUserFlights({ nationalId: auth.nationalId })
-      .catch((e) => {
-        this.handle4xx(e)
-      })
-
-    if (!getFlightsResponse) {
-      return []
-    }
-    const flightLegs: FlightLeg[] = []
-
-    getFlightsResponse.forEach((flight) => {
-      if (flight?.flightLegs) {
-        flightLegs.push(...flight.flightLegs)
-      }
-    })
-
-    return flightLegs
   }
 
   private async getDiscount(
