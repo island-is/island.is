@@ -1,5 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   ProsecutorCaseInfo,
@@ -63,6 +64,11 @@ export const CaseFiles: React.FC = () => {
 
   useDeb(workingCase, 'caseFilesComments')
 
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -72,6 +78,8 @@ export const CaseFiles: React.FC = () => {
       activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={allFilesUploaded && !isUploading}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.investigationCases.caseFiles)}
@@ -165,7 +173,11 @@ export const CaseFiles: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+            )
+          }
           nextIsDisabled={!allFilesUploaded || isUploading}
           nextIsLoading={isLoadingWorkingCase}
         />
