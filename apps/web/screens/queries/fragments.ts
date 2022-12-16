@@ -687,7 +687,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-export const nestedFields = `
+const nestedContainerFields = `
   ... on AccordionSlice {
     ...AccordionSliceFields
     accordionItems {
@@ -723,4 +723,15 @@ export const nestedFields = `
       }
     }
   }
+`
+
+export const nestedFields = `
+  ... on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+      ${nestedContainerFields}
+    }
+  }
+  ${nestedContainerFields}
 `
