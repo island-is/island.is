@@ -105,6 +105,7 @@ paths:
                 $ref: '#/components/schemas/Discount'
       tags:
         - Admin
+        - Admin
       security:
         - bearer: []
   /api/public/discounts/{discountCode}/isValidConnectionFlight:

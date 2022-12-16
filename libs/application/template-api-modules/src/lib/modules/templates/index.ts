@@ -54,8 +54,10 @@ import { NoDebtCertificateModule } from './no-debt-certificate/no-debt-certifica
 import { NoDebtCertificateService } from './no-debt-certificate/no-debt-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
-//TODO: ADD These templates.
 import { EstateTemplateModule } from './estate/estate.module'
+import { EstateTemplateService } from './estate/estate.service'
+
+//TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
 import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
@@ -97,6 +99,7 @@ export const modules = [
   FinancialStatementsInaoTemplateModule,
   NoDebtCertificateModule,
   TransferOfVehicleOwnershipModule,
+  EstateTemplateModule,
 ]
 
 export const services = [
@@ -130,4 +133,5 @@ export const services = [
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
   TransferOfVehicleOwnershipService,
+  EstateTemplateService,
 ]
