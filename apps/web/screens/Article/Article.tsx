@@ -19,6 +19,7 @@ import {
   TableOfContents,
   Button,
   Tag,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -254,25 +255,6 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 
   return (
     <Stack space={3}>
-      {!!article.category && (
-        <Box display={['none', 'none', 'block']} printHidden>
-          <Link
-            {...linkResolver('articlecategory', [article.category.slug])}
-            skipTab
-          >
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              truncate
-            >
-              {article.category.title}
-            </Button>
-          </Link>
-        </Box>
-      )}
       {article.organization.length > 0 && (
         <InstitutionPanel
           img={article.organization[0].logo?.url}
@@ -284,9 +266,6 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
-      )}
-      {article.subArticles.length > 0 && (
-        <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       )}
       <RelatedContent
         title={n('relatedMaterial')}
@@ -322,7 +301,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
     setMounted(true)
   }, [])
   const n = useNamespace(namespace)
-  const { query, asPath } = useRouter()
+  const { query, asPath, push } = useRouter()
   const { linkResolver } = useLinkResolver()
 
   const subArticle = article.subArticles.find((sub) => {
@@ -426,8 +405,30 @@ const ArticleScreen: Screen<ArticleProps> = ({
         imageWidth={article.featuredImage?.width.toString()}
         imageHeight={article.featuredImage?.height.toString()}
       />
+      {!!article.category && (
+        <GridContainer>
+          <Box display={['none', 'none', 'block']} printHidden>
+            <Link
+              {...linkResolver('articlecategory', [article.category.slug])}
+              skipTab
+            >
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                truncate
+              >
+                {article.category.title}
+              </Button>
+            </Link>
+          </Box>
+        </GridContainer>
+      )}
       <SidebarLayout
         isSticky={false}
+        flexDirection="rowReverse"
         sidebarContent={
           <Sticky>
             <ArticleSidebar
@@ -525,14 +526,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
             />
           )}
           {!inStepperView && <Webreader readId={null} readClass="rs_read" />}
-          <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
-            <ArticleNavigation
-              article={article}
-              n={n}
-              activeSlug={query.subSlug}
-              isMenuDialog
-            />
-          </Box>
           {processEntry?.processLink && (
             <Box
               marginTop={3}
@@ -543,6 +536,36 @@ const ArticleScreen: Screen<ArticleProps> = ({
               <ProcessEntry {...processEntry} />
             </Box>
           )}
+          <Box marginTop={3}>
+            <TableOfContents
+              headings={[
+                {
+                  headingId: article.slug,
+                  headingTitle: article.shortTitle || article.title,
+                },
+              ].concat(
+                article.subArticles.map((s) => ({
+                  headingId: s.slug,
+                  headingTitle: s.title,
+                })),
+              )}
+              selectedHeadingId={subArticle?.slug || article.slug}
+              tableOfContentsTitle={n('tableOfContentsTitle', 'Efnisyfirlit')}
+              onClick={(selectedSlug) => {
+                if (selectedSlug === article.slug) {
+                  push(linkResolver('article', [article.slug]).href)
+                  return
+                }
+                const selectedSubArticle = article.subArticles.find(
+                  (s) => s.slug === selectedSlug,
+                )
+                if (!selectedSubArticle) return
+                const variables = selectedSubArticle.slug.split('/')
+                push(linkResolver('subarticle', variables).href)
+              }}
+            />
+          </Box>
+
           {(subArticle
             ? subArticle.showTableOfContents
             : article.showTableOfContents) && (

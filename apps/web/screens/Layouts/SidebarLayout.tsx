@@ -18,6 +18,7 @@ interface SidebarLayoutProps {
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
   contentId?: string
+  flexDirection?: 'row' | 'rowReverse'
 }
 
 export const SidebarLayout: FC<SidebarLayoutProps> = ({
@@ -28,6 +29,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   paddingTop = [0, 0, 8],
   paddingBottom = 6,
   contentId,
+  flexDirection = 'row',
   children,
 }) => (
   <Box paddingTop={paddingTop}>
@@ -35,7 +37,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
       <Box
         {...(contentId && { id: contentId })}
         display="flex"
-        flexDirection="row"
+        flexDirection={flexDirection}
         height="full"
         paddingBottom={paddingBottom}
         position={isSticky ? 'relative' : undefined}
@@ -63,7 +65,18 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
                 fullWidthContent ? '9/9' : '7/9',
               ]}
             >
-              <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 6, 6, 0]}>
+              <Box
+                paddingLeft={
+                  flexDirection === 'row'
+                    ? [0, 0, hiddenOnTablet ? 0 : 6, 6, 0]
+                    : undefined
+                }
+                paddingRight={
+                  flexDirection === 'rowReverse'
+                    ? [0, 0, hiddenOnTablet ? 0 : 6, 6, 0]
+                    : undefined
+                }
+              >
                 {children}
               </Box>
             </GridColumn>
