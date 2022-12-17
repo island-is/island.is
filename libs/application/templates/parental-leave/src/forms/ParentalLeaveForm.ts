@@ -977,6 +977,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                   defaultValue: NO_ANSWER,
                   condition: (answers) => {
+                    console.log(answers);
                     const { periods, rawPeriods } = getApplicationAnswers(
                       answers,
                     )

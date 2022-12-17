@@ -3,22 +3,26 @@ import parseISO from 'date-fns/parseISO'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import isValid from 'date-fns/isValid'
-import { AnswerValidationError, NO_ANSWER } from '@island.is/application/core'
-import { Application, StaticTextObject } from '@island.is/application/types'
-import { StartDateOptions, YES, NO } from '../constants'
-import { getExpectedDateOfBirth } from './parentalLeaveUtils'
+import { AnswerValidationError, NO_ANSWER, buildValidationError } from '@island.is/application/core'
+import { Application, StaticText, StaticTextObject } from '@island.is/application/types'
+import { StartDateOptions, YES, NO } from '../../constants'
+import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
   minPeriodDays,
   usageMaxMonths,
   usageMinMonths,
-} from '../config'
-import { errorMessages } from './messages'
+} from '../../config'
+import { errorMessages } from '../messages'
 
-import { Period } from '../types'
+import { Period } from '../../types'
 
 const hasBeenAnswered = (answer: unknown) => answer !== undefined
+export const buildError = (message: StaticText, path: string, root?: string) => {
+  const pathString = root ? `${root}.${path}` : path;
+  return buildValidationError(pathString)(message);
+}
 
 export const dateIsWithinOtherPeriods = (
   date: Date,
@@ -197,7 +201,9 @@ export const validatePeriod = (
     }
   }
 
-  if (hasBeenAnswered(ratio) && ratio === NO_ANSWER) {
+  console.log(`Ratio value: ${ratio}`);
+
+  if (ratio === NO_ANSWER) {
     return buildError('ratio', errorMessages.periodsRatioMissing)
   } else if (hasBeenAnswered(ratio)) {
     if (!hasBeenAnswered(startDate)) {

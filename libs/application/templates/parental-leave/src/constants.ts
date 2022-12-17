@@ -78,4 +78,22 @@ export enum States {
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 }
 
+export enum AnswerValidationConstants {
+  EMPLOYER = 'employer',
+  FILEUPLOAD = 'fileUpload',
+  PAYMENTS = 'payments',
+  OTHER_PARENT = 'otherParentObj',
+  REQUEST_RIGHTS = 'requestRights',
+  GIVE_RIGHTS = 'giveRights',
+  // Check Multiple_Births
+  MULTIPLE_BIRTHS = 'multipleBirths',
+  // When attempting to continue from the periods repeater main screen
+  // this validator will get called to validate all of the periods
+  VALIDATE_PERIODS = 'validatedPeriods',
+  // When a new entry is added to the periods repeater
+  // the repeater sends all the periods saved in 'periods'
+  // to this validator, which will validate the latest one
+  VALIDATE_LATEST_PERIOD = 'periods',
+};
+
 export const DATE_FORMAT = 'yyyy-MM-dd'

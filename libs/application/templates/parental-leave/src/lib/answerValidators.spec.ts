@@ -10,9 +10,13 @@ import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { MANUAL, ParentalRelations, YES } from '../constants'
-import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
+import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
-import { NO, StartDateOptions } from '../constants'
+import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
+
+const {
+  VALIDATE_LATEST_PERIOD,
+} = AnswerValidationConstants
 
 const dateFormat = 'yyyy-MM-dd'
 const DEFAULT_DOB = '2021-01-15'

@@ -174,7 +174,6 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
           children: undefined,
           options,
           backgroundColor: 'blue',
-          defaultValue: null,
           onSelect,
         }}
       />
