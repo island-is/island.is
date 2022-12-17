@@ -20,7 +20,6 @@ import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
   NationalRegistryUserApi,
-  UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
@@ -73,7 +72,6 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryUserApi,
-                UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
               ],

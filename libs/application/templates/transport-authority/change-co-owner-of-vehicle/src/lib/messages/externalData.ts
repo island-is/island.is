@@ -78,11 +78,6 @@ export const externalData = {
       defaultMessage: 'Til þess að einfalda val á ökutæki',
       description: 'To make stuff easier',
     },
-    empty: {
-      id: 'ta.ccov.application:externalData.currentVehicles.empty',
-      defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
-      description: 'You do not have any vehicles where you are the main owner',
-    },
   }),
   payment: defineMessages({
     title: {

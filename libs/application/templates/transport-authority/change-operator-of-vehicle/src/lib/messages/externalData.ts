@@ -78,10 +78,5 @@ export const externalData = {
       defaultMessage: 'Skjal sem inniheldur þau ökuréttindi sem þú hefur',
       description: 'To make stuff easier',
     },
-    empty: {
-      id: 'ta.cov.application:externalData.currentVehicles.empty',
-      defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
-      description: 'You do not have any vehicles where you are the main owner',
-    },
   }),
 }

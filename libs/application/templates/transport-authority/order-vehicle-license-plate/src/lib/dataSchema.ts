@@ -10,11 +10,18 @@ export const OrderVehicleLicensePlateSchema = z.object({
     plate: z.string(),
     type: z.string(),
   }),
-  frontType: z.string(),
-  rearType: z.string(),
-  deliveryStationType: z.string(),
-  deliveryStationCode: z.string(),
-  includeRushFee: z.boolean(),
+  plateReason: z.object({
+    reason: z.enum(['new', 'lost']),
+  }),
+  plateSize: z.object({
+    frontPlateSize: z.enum(['sizeA', 'sizeB']),
+    rearPlateSize: z.enum(['sizeA', 'sizeB']),
+  }),
+  plateDelivery: z.object({
+    deliveryType: z.enum(['transportAuthority', 'deliveryStation']),
+    deliveryStationCode: z.string().optional(),
+    includeRushFee: z.boolean(),
+  }),
 })
 
 export type OrderVehicleLicensePlate = z.TypeOf<

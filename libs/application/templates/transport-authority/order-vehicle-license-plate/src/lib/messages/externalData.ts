@@ -52,36 +52,17 @@ export const externalData = {
         'Information from the National Registry will be used to prefill the data in the application',
     },
   }),
-  userProfile: defineMessages({
-    title: {
-      id: 'ta.ovlp.application:externalData.userProfile.title',
-      defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
-      description: 'Your user profile information',
-    },
-    subTitle: {
-      id: 'ta.ovlp.application:externalData.userProfile.subTitle',
-      defaultMessage:
-        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
-      description:
-        'In order to apply for this application we need your email and phone number',
-    },
-  }),
   currentVehicles: defineMessages({
     title: {
       id: 'ta.ovlp.application:externalData.currentVehicles.title',
-      defaultMessage: 'Upplýsingar um bifreiðar í þinni eigu og stöðu þeirra',
+      defaultMessage: 'Upplýsingar um bifreiðar í þinni eigu',
       description: 'Your vehicles from the vehicle registry',
     },
     subTitle: {
       id: 'ta.ovlp.application:externalData.currentVehicles.subTitle',
       defaultMessage:
-        'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar bifreiðar og stöðu þeirra.',
+        'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar.',
       description: 'To make stuff easier',
-    },
-    empty: {
-      id: 'ta.ovlp.application:externalData.currentVehicles.empty',
-      defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
-      description: 'You do not have any vehicles where you are the main owner',
     },
   }),
 }

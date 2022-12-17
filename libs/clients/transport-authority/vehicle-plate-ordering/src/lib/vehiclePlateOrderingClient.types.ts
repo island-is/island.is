@@ -8,7 +8,7 @@ export interface PlateOrder {
   permno: string
   frontType?: string | null
   rearType?: string | null
-  deliveryStationType: string
+  deliveryType: string
   deliveryStationCode: string
   expressOrder: boolean
 }

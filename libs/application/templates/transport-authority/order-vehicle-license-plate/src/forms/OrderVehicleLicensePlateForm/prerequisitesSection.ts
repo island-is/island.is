@@ -6,7 +6,6 @@ import {
 import { externalData } from '../../lib/messages'
 import {
   NationalRegistryUserApi,
-  UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
 } from '../../dataProviders'
@@ -25,11 +24,6 @@ export const prerequisitesSection = buildSection({
           provider: NationalRegistryUserApi,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.subTitle,
-        }),
-        buildDataProviderItem({
-          provider: UserProfileApi,
-          title: externalData.userProfile.title,
-          subTitle: externalData.userProfile.subTitle,
         }),
         buildDataProviderItem({
           provider: CurrentVehiclesApi,
