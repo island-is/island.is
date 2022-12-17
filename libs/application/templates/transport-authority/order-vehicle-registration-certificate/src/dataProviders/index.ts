@@ -17,7 +17,17 @@ export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   externalDataId: 'payment',
 })
 
-export const CurrentVehiclesApi = defineTemplateApi({
-  action: 'getCurrentVehicleList',
+interface CurrentVehiclesParameters {
+  showOwned?: boolean
+  showCoOwned?: boolean
+  showOperated?: boolean
+}
+export const CurrentVehiclesApi = defineTemplateApi<CurrentVehiclesParameters>({
+  action: 'currentVehicles',
   externalDataId: 'currentVehicleList',
+  namespace: 'VehiclesShared',
+  params: {
+    showOwned: true,
+    showCoOwned: true,
+  },
 })

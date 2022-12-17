@@ -3,7 +3,6 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
@@ -31,10 +30,7 @@ import {
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { TemplateApiError } from '@island.is/nest/problem'
-import {
-  applicationCheck,
-  externalData,
-} from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+import { applicationCheck } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
@@ -106,7 +102,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // We will fetch these error messages again through graphql in the template, to be able
     // to translate the error message
     if (result.hasError && result.errorMessages?.length) {
-      throw Error(applicationCheck.validation.alertTitle.defaultMessage)
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: applicationCheck.validation.alertTitle,
+        },
+        400,
+      )
     }
   }
 
@@ -383,8 +385,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.seller?.nationalId !== application.applicant) {
-      throw new Error(
-        'Aðeins sá sem skráði umsókn má vera skráður sem seljandi.',
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.submitApplication.sellerNotValid,
+          summary: applicationCheck.submitApplication.sellerNotValid,
+        },
+        400,
       )
     }
 

@@ -130,7 +130,7 @@ export class VehiclesService {
   async getCurrentVehiclesWithOwnerchangeChecks(
     auth: User,
     showOwned: boolean,
-    showCoowned: boolean,
+    showCoOwned: boolean,
     showOperated: boolean,
   ): Promise<
     VehiclesCurrentVehicleWithOwnerchangeChecks[] | null | ApolloError
@@ -147,7 +147,7 @@ export class VehiclesService {
         await this.getVehiclesWithAuth(auth).currentVehiclesGet({
           persidNo: auth.nationalId,
           showOwned: showOwned,
-          showCoowned: showCoowned,
+          showCoowned: showCoOwned,
           showOperated: showOperated,
         })
       )?.map(async (vehicle: VehicleMiniDto) => {

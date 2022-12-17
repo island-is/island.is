@@ -52,7 +52,7 @@ export const VehicleRadioField: FC<
       variables: {
         input: {
           showOwned: true,
-          showCoowned: false,
+          showCoOwned: false,
           showOperated: false,
         },
       },

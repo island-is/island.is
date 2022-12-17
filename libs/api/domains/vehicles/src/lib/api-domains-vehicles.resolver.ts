@@ -109,7 +109,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getCurrentVehiclesWithOwnerchangeChecks(
       user,
       input.showOwned,
-      input.showCoowned,
+      input.showCoOwned,
       input.showOperated,
     )
   }
