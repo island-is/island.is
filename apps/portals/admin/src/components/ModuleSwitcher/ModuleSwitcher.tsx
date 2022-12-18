@@ -1,5 +1,5 @@
 import React, { FC, useReducer } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import {
   useMenuState,
   Menu,
@@ -16,10 +16,7 @@ import {
   Hidden,
   Icon,
   IconMapIcon,
-  IconMapType,
-  Inline,
   Logo,
-  ModalBase,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -27,7 +24,7 @@ import {
 import * as styles from './ModuleSwitcher.css'
 
 import { useLocale } from '@island.is/localization'
-import { m, useModules, useNavigation } from '@island.is/portals/core'
+import { m, useActiveModule, useNavigation } from '@island.is/portals/core'
 import { masterNavigation } from '../../lib/masterNavigation'
 
 // import { ModuleSwitcherDesktop } from './desktop/ModuleSwitcherDesktop'
@@ -89,42 +86,35 @@ const MobileItem: FC<MobileItemProps> = ({
 
 const ModuleSwitcherMobile: FC = () => {
   const dialog = useDialogState()
-  const { activeModule } = useModules()
+  const activeModule = useActiveModule()
   const navigation = useNavigation()
   const { formatMessage } = useLocale()
 
   return (
     <Box display="flex">
-      <DialogDisclosure
-        as="div"
-        {...dialog}
-        className={styles.dialogDisclosure}
-        aria-label="Module switcher"
-      >
-        <FocusableBox>
-          <Box
-            width="full"
-            component="div"
-            display="flex"
-            justifyContent="spaceBetween"
-          >
-            <Box>
-              <Text variant="eyebrow">{formatMessage(m.dashboard)}</Text>
-              <Text>
-                {formatMessage(
-                  activeModule ? activeModule.name : masterNavigation.name,
-                )}
-              </Text>
-            </Box>
-            <Box display="flex" alignItems="center" marginLeft={2}>
-              <Button
-                colorScheme="negative"
-                circle={true}
-                size="small"
-                icon="chevronDown"
-                title={formatMessage(m.openModuleSwitcher)}
-              ></Button>
-            </Box>
+      <DialogDisclosure as="div" {...dialog} aria-label="Module switcher">
+        <FocusableBox
+          component="div"
+          width="full"
+          display="flex"
+          justifyContent="spaceBetween"
+        >
+          <Box>
+            <Text variant="eyebrow">{formatMessage(m.dashboard)}</Text>
+            <Text>
+              {formatMessage(
+                activeModule ? activeModule.name : masterNavigation.name,
+              )}
+            </Text>
+          </Box>
+          <Box display="flex" alignItems="center" marginLeft={2}>
+            <Button
+              colorScheme="negative"
+              circle={true}
+              size="small"
+              icon="chevronDown"
+              title={formatMessage(m.openModuleSwitcher)}
+            ></Button>
           </Box>
         </FocusableBox>
       </DialogDisclosure>
@@ -187,9 +177,6 @@ export const ModuleSwitcher: FC = () => {
     (prevState) => !prevState,
     false,
   )
-
-  const { activeModule } = useModules()
-  const nav = useNavigation()
 
   return (
     <>
