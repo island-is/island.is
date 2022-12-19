@@ -1,6 +1,6 @@
 {
-  "root": "libs/api/domains/disablitly-license",
-  "sourceRoot": "libs/api/domains/disablitly-license/src",
+  "root": "libs/api/domains/disability-license",
+  "sourceRoot": "libs/api/domains/disability-license/src",
   "projectType": "library",
   "targets": {
     "lint": {
@@ -12,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/disablitly-license"],
+      "outputs": ["coverage/libs/api/domains/disability-license"],
       "options": {
-        "jestConfig": "libs/api/domains/disablitly-license/jest.config.js",
+        "jestConfig": "libs/api/domains/disability-license/jest.config.js",
         "passWithNoTests": true
       }
     }

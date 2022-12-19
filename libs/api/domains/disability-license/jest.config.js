@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'api-domains-disablitly-license',
+  displayName: 'api-domains-disability-license',
   preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +11,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/api/domains/disablitly-license',
+  coverageDirectory: '../../../../coverage/libs/api/domains/disability-license',
 }
