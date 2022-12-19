@@ -91,6 +91,8 @@ export { BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
 export * from './lib/Breadcrumbs/Breadcrumbs'
 export * from './lib/Navigation/Navigation'
 export * from './lib/FormStepper/FormStepper'
+export * from './lib/FormStepper/FormStepperV2'
+export * from './lib/FormStepper/Section'
 export * from './lib/FormStepper/types'
 export * from './lib/Pagination/Pagination'
 export * from './lib/Tabs/Tabs'
@@ -110,6 +112,9 @@ export type {
 } from './lib/DatePicker/types'
 export type { ResponsiveProp } from './utils/responsiveProp'
 export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'
+
+// Styles
+export * as linkStyles from './lib/Link/Link.css'
 
 // Hooks
 export * from './hooks/useBreakpoint'

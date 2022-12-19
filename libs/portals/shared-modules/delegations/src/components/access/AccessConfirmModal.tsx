@@ -2,9 +2,9 @@ import { isDefined } from '@island.is/shared/utils'
 import { AuthDelegationScope } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import { AlertBanner, Box, useBreakpoint } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { m as coreMessages } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
-import { formatNationalId } from '@island.is/service-portal/core'
+import { formatNationalId } from '@island.is/portals/core'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
@@ -12,6 +12,7 @@ import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from './AccessList/AccessListContainer/AccessListContainer'
 import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
 import { AuthCustomDelegationOutgoing } from '../../types/customDelegation'
+import { m } from '../../lib/messages'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegationOutgoing
@@ -136,7 +137,7 @@ export const AccessConfirmModal = ({
           showShadow={md}
           onCancel={onClose}
           onConfirm={onConfirmHandler}
-          confirmLabel={formatMessage(m.codeConfirmation)}
+          confirmLabel={formatMessage(coreMessages.codeConfirmation)}
           confirmIcon="checkmark"
           containerPaddingBottom={[3, 3, 6]}
         />

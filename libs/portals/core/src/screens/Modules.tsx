@@ -4,14 +4,13 @@ import { Route, Switch, useLocation } from 'react-router-dom'
 
 import { Box } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
-import { useModules } from '../components/ModulesProvider'
 import { useModuleProps } from '../hooks/useModuleProps'
 import { ModuleErrorScreen, ModuleErrorBoundary } from './ModuleErrorScreen'
 import { AccessDenied } from './AccessDenied'
 import { NotFound } from './NotFound'
 import { PortalRoute } from '../types/portalCore'
-import { usePortalMeta } from '../components/PortalMetaProvider'
-import { plausiblePageviewDetail } from '../lib/plausiblePageviewDetail'
+import { usePortalMeta, useRoutes } from '../components/PortalProvider'
+import { plausiblePageviewDetail } from '../utils/plausible'
 
 type RouteComponentProps = {
   route: PortalRoute
@@ -92,7 +91,7 @@ const RouteLoader = React.memo(
 )
 
 export const Modules = () => {
-  const { routes } = useModules()
+  const routes = useRoutes()
   const { userInfo, client } = useModuleProps()
 
   return (

@@ -30,6 +30,7 @@ export type FlightLegsFilters = {
   gender?: { value: AirDiscountSchemeFlightLegGender | '' }
   postalCode?: number
   nationalId?: string
+  isExplicit?: string
 }
 
 export type FlightLeg = FlightLegsQuery['airDiscountSchemeFlightLegs'] extends Array<
