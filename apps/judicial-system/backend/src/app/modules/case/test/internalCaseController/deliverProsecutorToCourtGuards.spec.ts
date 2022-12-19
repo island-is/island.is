@@ -1,13 +1,7 @@
 import { CanActivate } from '@nestjs/common'
 
-import {
-  investigationCases,
-  restrictionCases,
-} from '@island.is/judicial-system/types'
-
 import { UserExistsGuard } from '../../../user'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { InternalCaseController } from '../../internalCase.controller'
 
 describe('InternalCaseController - Deliver prosecutor to court guards', () => {
