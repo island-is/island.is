@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { DefaultApi } from '../../gen/fetch'
 
 @Injectable()
-export class DisablitityLicenseService {
+export class DisabilityLicenseService {
   constructor(private disablilityLicenseApi: DefaultApi) {}
 
   async hasDisabilityLicense(user: User): Promise<boolean> {
