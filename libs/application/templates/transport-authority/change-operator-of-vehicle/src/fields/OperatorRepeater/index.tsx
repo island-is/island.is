@@ -13,7 +13,7 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
   console.log(application)
   const { setValue } = useFormContext()
   const { fields, append, remove } = useFieldArray<OperatorInformation>({
-    name: 'operator',
+    name: 'operators',
   })
 
   const handleAdd = (operator?: OperatorInformation) =>
@@ -22,12 +22,12 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
       nationalId: operator?.nationalId || '',
       email: operator?.email || '',
       phone: operator?.phone || '',
-      wasAdded: operator ? false : true,
+      wasAdded: operator ? 'false' : 'true',
     })
 
-  const handleRemove = (index: number, wasAdded?: boolean) => {
+  const handleRemove = (index: number, wasAdded?: string) => {
     remove(index)
-    if (!wasAdded) {
+    if (wasAdded === 'false') {
       setValue('removed.wasRemoved', true)
     }
   }
@@ -38,7 +38,7 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
         fields.map((field, index) => {
           return (
             <OperatorRepeaterItem
-              id="operator"
+              id="operators"
               repeaterField={field}
               index={index}
               rowLocation={index + 1}

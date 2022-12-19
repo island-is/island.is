@@ -20,7 +20,7 @@ interface Props {
   index: number
   rowLocation: number
   repeaterField: Partial<ArrayField<OperatorInformation, 'id'>>
-  handleRemove: (index: number, wasAdded?: boolean) => void
+  handleRemove: (index: number, wasAdded?: string) => void
 }
 
 export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({

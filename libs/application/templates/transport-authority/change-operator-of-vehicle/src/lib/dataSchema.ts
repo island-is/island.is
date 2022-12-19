@@ -14,7 +14,7 @@ export const OperatorInformationSchema = z.object({
   email: z.string(),
   phone: z.string(),
   approved: z.boolean().optional(),
-  wasAdded: z.boolean(),
+  wasAdded: z.string().optional(),
 })
 
 export const ChangeOperatorOfVehicleSchema = z.object({

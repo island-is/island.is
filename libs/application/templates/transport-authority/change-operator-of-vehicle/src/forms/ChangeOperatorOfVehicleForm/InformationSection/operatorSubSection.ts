@@ -15,7 +15,7 @@ export const operatorSubSection = buildSubSection({
       description: information.labels.operator.description,
       children: [
         buildCustomField({
-          id: 'operator',
+          id: 'operators',
           component: 'OperatorRepeater',
           title: '',
         }),

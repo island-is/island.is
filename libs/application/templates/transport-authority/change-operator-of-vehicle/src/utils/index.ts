@@ -23,6 +23,5 @@ export const getChargeItemCodes = (
       ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_REMOVE.toString(),
     )
   }
-
   return result
 }

@@ -18,7 +18,6 @@ interface VehicleSearchFieldProps {
 export const VehicleRadioField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application }) => {
-  console.log(application, 'hello, jo jo')
   const { register } = useFormContext()
 
   const [plate, setPlate] = useState<string>(

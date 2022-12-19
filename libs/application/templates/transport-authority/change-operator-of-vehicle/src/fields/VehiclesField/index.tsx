@@ -12,7 +12,6 @@ export const VehiclesField: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const { application, errors } = props
-  console.log(application)
   const currentVehicleList = application.externalData.currentVehicleList
     .data as VehiclesCurrentVehicle[]
   useEffect(() => {

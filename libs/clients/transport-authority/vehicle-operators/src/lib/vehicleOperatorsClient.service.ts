@@ -1,7 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { OperatorApi } from '../../gen/fetch/apis'
-import { ReturnTypeMessage } from '../../gen/fetch/models'
 import { Operator } from './vehicleOperatorsClient.types'
 
 @Injectable()
@@ -43,7 +42,7 @@ export class VehicleOperatorsClient {
         operators: operators.map((operator) => ({
           personIdNumber: operator.ssn || '',
           startDate: operator.startDate || new Date(),
-          endDate: operator.endDate || null,
+          endDate: operator.endDate || new Date(),
           mainOperator: operator.isMainOperator ? 1 : 0,
         })),
       },

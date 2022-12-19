@@ -30,7 +30,7 @@ interface PaymentStatus {
 }
 
 export const PaymentPending: FC<Props> = (props) => {
-  const { error, application, refetch, goToScreen } = props
+  const { error, application, refetch } = props
   const applicationId = application.id
   const { formatMessage } = useLocale()
   const [continuePolling, setContinuePolling] = useState(true)
@@ -86,7 +86,6 @@ export const PaymentPending: FC<Props> = (props) => {
     applicationId,
     application.answers,
     submitApplication,
-    goToScreen,
   ])
 
   if (conlusionScreen) {
