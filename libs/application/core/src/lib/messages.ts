@@ -400,8 +400,8 @@ export const coreErrorMessages = defineMessages({
   },
   vehiclesEmptyListDefault: {
     id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
-    defaultMessage: 'Þú átt engin ökutæki',
-    description: 'You do not have any vehicles',
+    defaultMessage: 'Ekki fannst nein ökutæki',
+    description: 'Did not find any vehicles',
   },
   drivingLicenseMissingValidCategory: {
     id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
