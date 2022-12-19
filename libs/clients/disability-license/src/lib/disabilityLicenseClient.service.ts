@@ -4,10 +4,10 @@ import { DefaultApi } from '../../gen/fetch'
 
 @Injectable()
 export class DisabilityLicenseService {
-  constructor(private disablilityLicenseApi: DefaultApi) {}
+  constructor(private disabilityLicenseApi: DefaultApi) {}
 
   async hasDisabilityLicense(user: User): Promise<boolean> {
-    const { erOryrki } = await this.disablilityLicenseApi
+    const { erOryrki } = await this.disabilityLicenseApi
       .withMiddleware(new AuthMiddleware(user as Auth))
       .erOryrkiGet()
     return erOryrki
