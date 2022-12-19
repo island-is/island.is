@@ -31,14 +31,16 @@ const {
     const theme = useTheme()
     const nextInspection = item?.nextInspection?.nextInspectionDate ? new Date(item?.nextInspection.nextInspectionDate) : null;
     const vehicleCode = item.vehGroup?.split('(')[1]?.split(')')[0] ?? 'AA' // type from vehgroup = "Vörubifreið II (N3)" = N3 otherwise AA is default
+
     return (
       <View style={{ paddingHorizontal: 16 }}>
         <TouchableHighlight
           underlayColor={theme.shade.shade100}
           style={{ marginBottom: 16, borderRadius: 16 }}
           onPress={() => {
-            navigateTo(`/vehicle/${item.vin}`, {
-              item,
+            navigateTo(`/vehicle/`, {
+              id: item.regno,
+              title: item.type,
             })
           }}
         >
