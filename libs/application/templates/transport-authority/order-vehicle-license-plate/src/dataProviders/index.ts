@@ -27,3 +27,8 @@ export const CurrentVehiclesApi = defineTemplateApi<CurrentVehiclesParameters>({
     showOwned: true,
   },
 })
+
+export const DeliveryStationsApi = defineTemplateApi({
+  action: 'getDeliveryStationList',
+  externalDataId: 'deliveryStationList',
+})

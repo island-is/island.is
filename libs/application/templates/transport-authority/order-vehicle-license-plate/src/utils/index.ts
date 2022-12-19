@@ -1,5 +1,6 @@
 import { OrderVehicleLicensePlate } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { YES } from '@island.is/application/core'
 
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
@@ -14,7 +15,9 @@ export const getChargeItemCodes = (
     ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
   ]
 
-  if (answers.plateDelivery?.includeRushFee) {
+  const includeRushFee =
+    answers.plateDelivery?.includeRushFee?.includes(YES) || false
+  if (includeRushFee) {
     result.push(
       ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_RUSH_FEE.toString(),
     )

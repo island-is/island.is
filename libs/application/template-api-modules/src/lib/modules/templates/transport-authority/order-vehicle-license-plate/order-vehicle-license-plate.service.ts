@@ -8,6 +8,7 @@ import {
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
 import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
+import { YES } from '@island.is/application/core'
 
 @Injectable()
 export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
@@ -16,6 +17,10 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
   ) {
     super(ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE)
+  }
+
+  async getDeliveryStationList({ auth }: TemplateApiModuleActionProps) {
+    return await this.vehiclePlateOrderingClient.getDeliveryStations(auth)
   }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -63,13 +68,16 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
     const answers = application.answers as OrderVehicleLicensePlateAnswers
 
+    const includeRushFee =
+      answers?.plateDelivery?.includeRushFee?.includes(YES) || false
+
     await this.vehiclePlateOrderingClient.orderPlates(auth, {
       permno: answers?.vehicle?.plate,
       frontType: answers?.plateSize?.frontPlateSize,
       rearType: answers?.plateSize?.rearPlateSize,
       deliveryType: answers?.plateDelivery?.deliveryType,
       deliveryStationCode: answers?.plateDelivery?.deliveryStationCode || '',
-      expressOrder: answers?.plateDelivery?.includeRushFee,
+      expressOrder: includeRushFee,
     })
   }
 }
