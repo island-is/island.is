@@ -1,22 +1,21 @@
 import { CanActivate } from '@nestjs/common'
 
-import { CaseExistsGuard, CaseWriteGuard } from '../../case'
-import { DefendantExistsGuard } from '../guards/defendantExists.guard'
-import { DefendantController } from '../defendant.controller'
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
+import { DefendantController } from '../../defendant.controller'
 
-describe('DefendantController - Delete guards', () => {
+describe('DefendantController - Create guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      DefendantController.prototype.delete,
+      DefendantController.prototype.create,
     )
   })
 
-  it('should have three guards', () => {
-    expect(guards).toHaveLength(3)
+  it('should have two guards', () => {
+    expect(guards).toHaveLength(2)
   })
 
   describe('CaseExistsGuard', () => {
@@ -40,18 +39,6 @@ describe('DefendantController - Delete guards', () => {
 
     it('should have CaseWriteGuard as quard 2', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
-    })
-  })
-
-  describe('DefendantExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have CaseWriteGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(DefendantExistsGuard)
     })
   })
 })

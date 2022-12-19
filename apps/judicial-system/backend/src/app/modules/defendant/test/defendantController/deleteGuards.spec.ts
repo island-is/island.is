@@ -1,17 +1,17 @@
 import { CanActivate } from '@nestjs/common'
 
-import { CaseExistsGuard, CaseWriteGuard } from '../../case'
-import { DefendantExistsGuard } from '../guards/defendantExists.guard'
-import { DefendantController } from '../defendant.controller'
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
+import { DefendantExistsGuard } from '../../guards/defendantExists.guard'
+import { DefendantController } from '../../defendant.controller'
 
-describe('DefendantController - Update guards', () => {
+describe('DefendantController - Delete guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      DefendantController.prototype.update,
+      DefendantController.prototype.delete,
     )
   })
 

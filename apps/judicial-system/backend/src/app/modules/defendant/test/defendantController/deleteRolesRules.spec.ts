@@ -1,14 +1,14 @@
-import { prosecutorRule, representativeRule } from '../../../guards'
-import { DefendantController } from '../defendant.controller'
+import { prosecutorRule, representativeRule } from '../../../../guards'
+import { DefendantController } from '../../defendant.controller'
 
-describe('DefendantController - Create rules', () => {
+describe('DefendantController - Delete rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 
   beforeEach(() => {
     rules = Reflect.getMetadata(
       'roles-rules',
-      DefendantController.prototype.create,
+      DefendantController.prototype.delete,
     )
   })
 
