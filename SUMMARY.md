@@ -148,6 +148,7 @@
     - [Estate](libs/application/templates/estate/README.md)
     - [Application Templates Example Payment](libs/application/templates/example-payment/README.md)
     - [Application Templates General Fishing License](libs/application/templates/general-fishing-license/README.md)
+    - [Inheritance Report](libs/application/templates/inheritance-report/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [Types](libs/application/types/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
