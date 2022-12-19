@@ -237,6 +237,9 @@
       "@island.is/application/templates/estate": [
         "libs/application/templates/estate/src/index.ts"
       ],
+      "@island.is/application/templates/estate/types": [
+        "libs/application/templates/estate/src/types.ts"
+      ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
