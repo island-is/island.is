@@ -8,32 +8,40 @@ import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { matchPath, useLocation } from 'react-router-dom'
 import { LoadingScreen } from '../components/LoadingScreen/LoadingScreen'
-import { PortalModule, PortalRoute } from '../types/portalCore'
+import {
+  PortalModule,
+  PortalNavigationItem,
+  PortalRoute,
+  PortalType,
+} from '../types/portalCore'
 import { arrangeRoutes, filterEnabledModules } from '../utils/modules'
 
-export type ModulesContextProps = {
+type PortalMeta = {
+  portalType: PortalType
+  basePath: string
+  masterNav?: PortalNavigationItem
+}
+
+export type PortalContextProps = {
+  meta: PortalMeta
   modules: PortalModule[]
   activeModule?: PortalModule
   routes: PortalRoute[]
-  loading: boolean
 }
 
-const ModulesContext = createContext<ModulesContextProps>({
-  modules: [],
-  activeModule: undefined,
-  loading: false,
-  routes: [],
-})
+const PortalContext = createContext<PortalContextProps | undefined>(undefined)
 
-interface ModuleProviderProps {
+interface PortalProviderProps {
   modules: PortalModule[]
+  meta: PortalMeta
   children: React.ReactNode
 }
 
-export const ModulesProvider = ({
+export const PortalProvider = ({
   modules: initialModules,
+  meta,
   children,
-}: ModuleProviderProps) => {
+}: PortalProviderProps) => {
   const { pathname } = useLocation()
   const { userInfo } = useAuth()
   const featureFlagClient = useFeatureFlagClient()
@@ -97,25 +105,34 @@ export const ModulesProvider = ({
   }
 
   return (
-    <ModulesContext.Provider
+    <PortalContext.Provider
       value={{
         modules,
+        meta,
         routes,
-        loading,
         activeModule,
       }}
     >
       {loading ? <LoadingScreen /> : children}
-    </ModulesContext.Provider>
+    </PortalContext.Provider>
   )
 }
 
-export const useModules = () => {
-  const context = useContext(ModulesContext)
+const useDynamicHook = <T extends keyof PortalContextProps>(
+  fnName: string,
+  key: T,
+): PortalContextProps[T] => {
+  const context = useContext(PortalContext)
 
   if (context === undefined) {
-    throw new Error('useModules must be used under ModulesProvider')
+    throw new Error(`${fnName} must be used under ModulesProvider`)
   }
 
-  return context
+  return context[key]
 }
+
+export const useModules = () => useDynamicHook(useModules.name, 'modules')
+export const useRoutes = () => useDynamicHook(useRoutes.name, 'routes')
+export const useActiveModule = () =>
+  useDynamicHook(useActiveModule.name, 'activeModule')
+export const usePortalMeta = () => useDynamicHook(usePortalMeta.name, 'meta')
