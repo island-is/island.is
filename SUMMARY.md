@@ -132,7 +132,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
-  - [API Domains Disablitly License](libs/api/domains/disablitly-license/README.md)
+    - [API Domains Disablitly License](libs/api/domains/disablitly-license/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
