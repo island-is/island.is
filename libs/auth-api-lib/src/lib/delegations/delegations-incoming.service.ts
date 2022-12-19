@@ -12,6 +12,9 @@ import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { DelegationType } from './types/delegationType'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { Op } from 'sequelize'
+import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -19,6 +22,7 @@ type ClientDelegationInfo = Pick<
   | 'supportsLegalGuardians'
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
+  | 'requireApiScopes'
 >
 /**
  * Service class for incoming delegations.
@@ -30,6 +34,10 @@ export class DelegationsIncomingService {
     private featureFlagService: FeatureFlagService,
     @InjectModel(Client)
     private clientModel: typeof Client,
+    @InjectModel(ClientAllowedScope)
+    private clientAllowedScopeModel: typeof ClientAllowedScope,
+    @InjectModel(ApiScope)
+    private apiScopeModel: typeof ApiScope,
     private incomingDelegationsCompanyService: IncomingDelegationsCompanyService,
     private delegationsIncomingCustomService: DelegationsIncomingCustomService,
     private delegationsIncomingRepresentativeService: DelegationsIncomingRepresentativeService,
@@ -94,6 +102,8 @@ export class DelegationsIncomingService {
   ): Promise<MergedDelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
 
+    const clientAllowedApiScopes = await this.getClientAllowedApiScopes(user)
+
     const delegationPromises = []
 
     if (
@@ -102,7 +112,11 @@ export class DelegationsIncomingService {
     ) {
       delegationPromises.push(
         this.delegationsIncomingWardService
-          .findAllIncoming(user)
+          .findAllIncoming(
+            user,
+            clientAllowedApiScopes,
+            client?.requireApiScopes,
+          )
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
           ),
@@ -115,7 +129,11 @@ export class DelegationsIncomingService {
     ) {
       delegationPromises.push(
         this.incomingDelegationsCompanyService
-          .findAllIncoming(user)
+          .findAllIncoming(
+            user,
+            clientAllowedApiScopes,
+            client?.requireApiScopes,
+          )
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
           ),
@@ -127,7 +145,11 @@ export class DelegationsIncomingService {
       (!client || client.supportsCustomDelegation)
     ) {
       delegationPromises.push(
-        this.delegationsIncomingCustomService.findAllAvailableIncoming(user),
+        this.delegationsIncomingCustomService.findAllAvailableIncoming(
+          user,
+          clientAllowedApiScopes,
+          client?.requireApiScopes,
+        ),
       )
     }
 
@@ -140,7 +162,11 @@ export class DelegationsIncomingService {
     ) {
       delegationPromises.push(
         this.delegationsIncomingRepresentativeService
-          .findAllIncoming(user)
+          .findAllIncoming(
+            user,
+            clientAllowedApiScopes,
+            client?.requireApiScopes,
+          )
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
           ),
@@ -193,7 +219,29 @@ export class DelegationsIncomingService {
         'supportsProcuringHolders',
         'supportsCustomDelegation',
         'supportsPersonalRepresentatives',
+        'requireApiScopes',
       ],
+    })
+  }
+
+  private async getClientAllowedApiScopes(user: User): Promise<ApiScope[]> {
+    if (!user) return []
+
+    const clientAllowedScopes = (
+      await this.clientAllowedScopeModel.findAll({
+        where: {
+          clientId: user.client,
+        },
+      })
+    ).map((s) => s.scopeName)
+
+    return await this.apiScopeModel.findAll({
+      where: {
+        [Op.and]: [
+          { name: { [Op.in]: clientAllowedScopes.map((s) => s) } },
+          { enabled: true },
+        ],
+      },
     })
   }
 }

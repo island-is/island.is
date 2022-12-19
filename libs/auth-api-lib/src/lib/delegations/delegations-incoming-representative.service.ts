@@ -13,6 +13,7 @@ import { PersonalRepresentativeService } from '../personal-representative/servic
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { DelegationType } from './types/delegationType'
+import { ApiScope } from '../resources/models/api-scope.model'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -26,7 +27,21 @@ export class DelegationsIncomingRepresentativeService {
     private auditService: AuditService,
   ) {}
 
-  async findAllIncoming(user: User): Promise<DelegationDTO[]> {
+  async findAllIncoming(
+    user: User,
+    clientAllowedApiScopes?: ApiScope[],
+    requireApiScopes?: boolean,
+  ): Promise<DelegationDTO[]> {
+    if (
+      requireApiScopes &&
+      clientAllowedApiScopes &&
+      !clientAllowedApiScopes.some(
+        (s) => s.grantToPersonalRepresentatives && !s.isAccessControlled,
+      )
+    ) {
+      return []
+    }
+
     try {
       const feature = await this.featureFlagService.getValue(
         Features.personalRepresentativeDelegations,
