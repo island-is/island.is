@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   ChangeCoOwnerOfVehicleAnswers,
   getChargeItemCodes,
@@ -9,12 +11,14 @@ import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 
 @Injectable()
-export class ChangeCoOwnerOfVehicleService {
+export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
-  ) {}
+  ) {
+    super(ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {

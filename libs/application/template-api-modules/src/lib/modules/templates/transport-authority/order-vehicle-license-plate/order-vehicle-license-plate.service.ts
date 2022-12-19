@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   OrderVehicleLicensePlateAnswers,
   getChargeItemCodes,
@@ -8,11 +10,13 @@ import {
 import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 
 @Injectable()
-export class OrderVehicleLicensePlateService {
+export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
-  ) {}
+  ) {
+    super(ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
@@ -61,11 +65,11 @@ export class OrderVehicleLicensePlateService {
 
     await this.vehiclePlateOrderingClient.orderPlates(auth, {
       permno: answers?.vehicle?.plate,
-      frontType: answers?.frontType,
-      rearType: answers?.rearType,
-      deliveryStationType: answers?.deliveryStationType,
-      deliveryStationCode: answers?.deliveryStationCode,
-      expressOrder: answers.includeRushFee,
+      frontType: answers?.plateSize?.frontPlateSize,
+      rearType: answers?.plateSize?.rearPlateSize,
+      deliveryType: answers?.plateDelivery?.deliveryType,
+      deliveryStationCode: answers?.plateDelivery?.deliveryStationCode || '',
+      expressOrder: answers?.plateDelivery?.includeRushFee,
     })
   }
 }

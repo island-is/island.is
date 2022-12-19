@@ -52,18 +52,17 @@ export const externalData = {
         'Information from the National Registry will be used to prefill the data in the application',
     },
   }),
-  userProfile: defineMessages({
+  currentVehicles: defineMessages({
     title: {
-      id: 'ta.ovlp.application:externalData.userProfile.title',
-      defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
-      description: 'Your user profile information',
+      id: 'ta.ovlp.application:externalData.currentVehicles.title',
+      defaultMessage: 'Upplýsingar um bifreiðar í þinni eigu',
+      description: 'Your vehicles from the vehicle registry',
     },
     subTitle: {
-      id: 'ta.ovlp.application:externalData.userProfile.subTitle',
+      id: 'ta.ovlp.application:externalData.currentVehicles.subTitle',
       defaultMessage:
-        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
-      description:
-        'In order to apply for this application we need your email and phone number',
+        'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar.',
+      description: 'To make stuff easier',
     },
   }),
 }

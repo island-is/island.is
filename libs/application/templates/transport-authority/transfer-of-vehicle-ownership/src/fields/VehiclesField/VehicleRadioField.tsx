@@ -9,10 +9,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import {
-  VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '@island.is/api/schema'
+import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
+import { VehiclesCurrentVehicle } from '../../types'
 import { information, applicationCheck } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
@@ -54,7 +52,7 @@ export const VehicleRadioField: FC<
       variables: {
         input: {
           showOwned: true,
-          showCoowned: false,
+          showCoOwned: false,
           showOperated: false,
         },
       },

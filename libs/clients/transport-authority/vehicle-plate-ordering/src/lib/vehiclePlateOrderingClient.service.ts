@@ -37,7 +37,7 @@ export class VehiclePlateOrderingClient {
         frontType: plateOrder.frontType,
         rearType: plateOrder.rearType,
         stationToDeliverTo: plateOrder.deliveryStationCode,
-        stationType: plateOrder.deliveryStationType,
+        stationType: plateOrder.deliveryType,
         expressOrder: plateOrder.expressOrder,
       },
     })

@@ -16,7 +16,6 @@ import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
   VehicleOwnerchangeChecksByPermno,
-  VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
@@ -98,24 +97,6 @@ export class VehiclesResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [VehiclesCurrentVehicle], {
-    name: 'currentVehicles',
-    nullable: true,
-  })
-  @Audit()
-  async getCurrentVehicles(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.getCurrentVehicles(
-      user,
-      input.showOwned,
-      input.showCoowned,
-      input.showOperated,
-    )
-  }
-
-  @Scopes(ApiScope.internal)
   @Query(() => [VehiclesCurrentVehicleWithOwnerchangeChecks], {
     name: 'currentVehiclesWithOwnerchangeChecks',
     nullable: true,
@@ -128,7 +109,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getCurrentVehiclesWithOwnerchangeChecks(
       user,
       input.showOwned,
-      input.showCoowned,
+      input.showCoOwned,
       input.showOperated,
     )
   }

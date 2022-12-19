@@ -32,16 +32,15 @@ export class VehicleOwnerChangeClient {
       // come with error code 400. If this function returns an array of ReturnTypeMessage, then
       // we will get an error with code 204, since the openapi generator tries to convert empty result
       // into an array of ReturnTypeMessage
-      //TODOx removed while not working correctly
-      // await this.ownerchangeApiWithAuth(auth).vehiclecheckPost({
-      //   apiVersion: '2.0',
-      //   apiVersion2: '2.0',
-      //   postVehicleOwnerChange: {
-      //     permno: permno,
-      //     dateOfPurchase: dateOfPurchase,
-      //     useGroup: useGroup,
-      //   },
-      // })
+      await this.ownerchangeApiWithAuth(auth).vehiclecheckPost({
+        apiVersion: '2.0',
+        apiVersion2: '2.0',
+        postVehicleOwnerChange: {
+          permno: permno,
+          dateOfPurchase: dateOfPurchase,
+          useGroup: useGroup,
+        },
+      })
     } catch (e) {
       // Note: We need to wrap in try-catch to get the error messages, becuase if ownerchange results in error,
       // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),

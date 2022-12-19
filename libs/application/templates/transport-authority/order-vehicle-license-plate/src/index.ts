@@ -7,5 +7,6 @@ export const getDataProviders = () => import('./dataProviders/')
 export type OrderVehicleLicensePlateAnswers = OrderVehicleLicensePlate
 
 export * from './utils'
+export * from './lib/messages/externalData'
 
 export default template

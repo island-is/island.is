@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
-  messages,
 } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
   generateRequestReviewEmail,
@@ -22,19 +23,29 @@ import {
   getRecipients,
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
-import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import {
   ChargeFjsV2ClientService,
   getChargeId,
 } from '@island.is/clients/charge-fjs-v2'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { applicationCheck } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 
 @Injectable()
-export class TransferOfVehicleOwnershipService {
+export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
-  ) {}
+    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
+    private readonly vehicleCodetablesClient: VehicleCodetablesClient,
+  ) {
+    super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
+  }
+
+  async getInsuranceCompanyList({ auth }: TemplateApiModuleActionProps) {
+    return await this.vehicleCodetablesClient.getInsuranceCompanies()
+  }
 
   async validateApplication({
     application,
@@ -91,8 +102,12 @@ export class TransferOfVehicleOwnershipService {
     // We will fetch these error messages again through graphql in the template, to be able
     // to translate the error message
     if (result.hasError && result.errorMessages?.length) {
-      throw Error(
-        messages.applicationCheck.validation.alertTitle.defaultMessage,
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: applicationCheck.validation.alertTitle,
+        },
+        400,
       )
     }
   }
@@ -370,8 +385,12 @@ export class TransferOfVehicleOwnershipService {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.seller?.nationalId !== application.applicant) {
-      throw new Error(
-        'Aðeins sá sem skráði umsókn má vera skráður sem seljandi.',
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.submitApplication.sellerNotValid,
+          summary: applicationCheck.submitApplication.sellerNotValid,
+        },
+        400,
       )
     }
 

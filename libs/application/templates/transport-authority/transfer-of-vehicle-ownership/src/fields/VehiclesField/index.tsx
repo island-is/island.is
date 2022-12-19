@@ -1,12 +1,12 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, InputError } from '@island.is/island-ui/core'
 import { FC, useEffect } from 'react'
-import { VehiclesCurrentVehicle } from '@island.is/api/schema'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useLocale } from '@island.is/localization'
 import { error } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
+import { VehiclesCurrentVehicle } from '../../types'
 
 export const VehiclesField: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()

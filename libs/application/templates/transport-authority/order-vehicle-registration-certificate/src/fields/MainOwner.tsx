@@ -1,8 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
-import {
-  VehiclesCurrentOwnerInfo,
-  VehiclesCurrentVehicle,
-} from '@island.is/api/schema'
+import { VehiclesCurrentOwnerInfo } from '@island.is/api/schema'
+import { VehiclesCurrentVehicle } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {

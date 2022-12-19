@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   getChargeItemCodes,
   OrderVehicleRegistrationCertificateAnswers,
@@ -8,11 +10,13 @@ import {
 import { VehiclePrintingClient } from '@island.is/clients/transport-authority/vehicle-printing'
 
 @Injectable()
-export class OrderVehicleRegistrationCertificateService {
+export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehiclePrintingClient: VehiclePrintingClient,
-  ) {}
+  ) {
+    super(ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {

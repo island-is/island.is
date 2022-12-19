@@ -11,6 +11,12 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messagesx'
 import { payment, externalData } from '../lib/messages'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+  CurrentVehiclesApi,
+} from '../dataProviders'
 
 export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
   id: 'ChangeCoOwnerOfVehicleFormDraft',
@@ -28,27 +34,24 @@ export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
+              provider: NationalRegistryUserApi,
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: m.userProfileInformationTitle,
-              subTitle: m.userProfileInformationSubTitle,
+              provider: UserProfileApi,
+              title: externalData.userProfile.title,
+              subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'PaymentChargeInfoProvider',
-              title: '',
-            }),
-            buildDataProviderItem({
-              id: 'currentVehicleList',
-              type: 'CurrentVehiclesProvider',
+              provider: CurrentVehiclesApi,
               title: externalData.currentVehicles.title,
               subTitle: externalData.currentVehicles.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: SamgongustofaPaymentCatalogApi,
+              title: externalData.payment.title,
+              subTitle: externalData.payment.subTitle,
             }),
           ],
         }),

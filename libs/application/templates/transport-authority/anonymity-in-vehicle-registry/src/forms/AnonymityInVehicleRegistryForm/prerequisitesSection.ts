@@ -4,6 +4,7 @@ import {
   buildDataProviderItem,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
+import { AnonymityStatusApi } from '../../dataProviders'
 
 export const prerequisitesSection = buildSection({
   id: 'externalData',
@@ -16,8 +17,7 @@ export const prerequisitesSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: 'anonymityStatus',
-          type: 'AnonymityStatusProvider',
+          provider: AnonymityStatusApi,
           title: externalData.anonymityStatus.title,
           subTitle: externalData.anonymityStatus.subTitle,
         }),

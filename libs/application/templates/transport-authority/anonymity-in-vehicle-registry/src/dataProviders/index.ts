@@ -1,3 +1,11 @@
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { AnonymityStatusProvider } from './AnonymityStatusProvider'
+import { defineTemplateApi } from '@island.is/application/types'
+
+export {
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
+
+export const AnonymityStatusApi = defineTemplateApi({
+  action: 'getAnonymityStatus',
+  externalDataId: 'anonymityStatus',
+})

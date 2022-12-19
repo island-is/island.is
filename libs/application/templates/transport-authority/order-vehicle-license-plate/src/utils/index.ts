@@ -4,6 +4,8 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
+export { getSelectedVehicle } from './getSelectedVehicle'
+
 export const getChargeItemCodes = (
   answers: OrderVehicleLicensePlate,
 ): Array<string> => {
@@ -12,7 +14,7 @@ export const getChargeItemCodes = (
     ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
   ]
 
-  if (answers.includeRushFee) {
+  if (answers.plateDelivery?.includeRushFee) {
     result.push(
       ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_RUSH_FEE.toString(),
     )

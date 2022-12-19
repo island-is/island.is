@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -17,6 +18,12 @@ import { m } from './messagesx'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { ChangeCoOwnerOfVehicleSchema } from './dataSchema'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+  CurrentVehiclesApi,
+} from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -62,6 +69,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SamgongustofaPaymentCatalogApi,
+                CurrentVehiclesApi,
+              ],
             },
           ],
         },
@@ -81,12 +94,12 @@ const template: ApplicationTemplate<
           },
           progress: 0.8,
           lifecycle: pruneAfterDays(1 / 24),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

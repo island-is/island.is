@@ -9,7 +9,6 @@ import {
   DocumentDetails,
 } from '@island.is/api/schema'
 import { User } from '@island.is/shared/types'
-import { getAccessToken } from '@island.is/auth/react'
 import {
   Box,
   GridColumn,
@@ -35,7 +34,7 @@ interface Props {
 }
 
 const GET_DOCUMENT_BY_ID = gql`
-  query getAnnualStatusDocumentQuery($input: GetDocumentInput!) {
+  query getDocumentInboxLineQuery($input: GetDocumentInput!) {
     getDocument(input: $input) {
       html
     }
@@ -84,10 +83,9 @@ const DocumentLine: FC<Props> = ({
       const documentIdInput = document.createElement('input')
       const tokenInput = document.createElement('input')
 
-      const token = await getAccessToken()
-      const accessToken = token ?? userInfo?.access_token
+      const token = userInfo?.access_token
 
-      if (!accessToken) return
+      if (!token) return
 
       form.appendChild(documentIdInput)
       form.appendChild(tokenInput)
@@ -106,7 +104,7 @@ const DocumentLine: FC<Props> = ({
       // National Id values
       tokenInput.type = 'hidden'
       tokenInput.name = '__accessToken'
-      tokenInput.value = accessToken
+      tokenInput.value = token
 
       document.body.appendChild(form)
       form.submit()

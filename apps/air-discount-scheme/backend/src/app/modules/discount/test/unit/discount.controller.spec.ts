@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing'
 import { DiscountService } from '../../discount.service'
 import { Discount } from '../../discount.model'
 import {
+  PrivateDiscountAdminController,
   PrivateDiscountController,
   PublicDiscountController,
 } from '../../discount.controller'
@@ -29,6 +30,7 @@ const auth: AuthUser = {
 
 describe('DiscountController', () => {
   let privateDiscountController: PrivateDiscountController
+  let privateDiscountAdminController: PrivateDiscountAdminController
   let publicDiscountController: PublicDiscountController
   let discountService: DiscountService
   let nationalRegistryService: NationalRegistryService
@@ -45,6 +47,7 @@ describe('DiscountController', () => {
       ],
       providers: [
         PrivateDiscountController,
+        PrivateDiscountAdminController,
         PublicDiscountController,
         UserService,
         {
@@ -79,17 +82,14 @@ describe('DiscountController', () => {
       ],
     }).compile()
 
-    publicDiscountController = moduleRef.get<PublicDiscountController>(
-      PublicDiscountController,
+    publicDiscountController = moduleRef.get(PublicDiscountController)
+    privateDiscountController = moduleRef.get(PrivateDiscountController)
+    privateDiscountAdminController = moduleRef.get(
+      PrivateDiscountAdminController,
     )
-    privateDiscountController = moduleRef.get<PrivateDiscountController>(
-      PrivateDiscountController,
-    )
-    discountService = moduleRef.get<DiscountService>(DiscountService)
-    nationalRegistryService = moduleRef.get<NationalRegistryService>(
-      NationalRegistryService,
-    )
-    userService = moduleRef.get<UserService>(UserService)
+    discountService = moduleRef.get(DiscountService)
+    nationalRegistryService = moduleRef.get(NationalRegistryService)
+    userService = moduleRef.get(UserService)
   })
 
   describe('getCurrentDiscountByNationalId', () => {
@@ -232,7 +232,7 @@ describe('DiscountController', () => {
         .spyOn(discountService, 'createExplicitDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
 
-      const result = await privateDiscountController.createExplicitDiscountCode(
+      const result = await privateDiscountAdminController.createExplicitDiscountCode(
         {
           comment,
           nationalId,

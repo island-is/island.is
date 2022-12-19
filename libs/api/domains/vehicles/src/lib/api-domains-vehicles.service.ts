@@ -17,7 +17,6 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import {
   VehicleOwnerchangeChecksByPermno,
-  VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '../models/getCurrentVehicles.model'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
@@ -128,37 +127,10 @@ export class VehiclesService {
     }
   }
 
-  async getCurrentVehicles(
-    auth: User,
-    showOwned: boolean,
-    showCoowned: boolean,
-    showOperated: boolean,
-  ): Promise<VehiclesCurrentVehicle[] | null | ApolloError> {
-    try {
-      const res = await this.getVehiclesWithAuth(auth).currentVehiclesGet({
-        persidNo: auth.nationalId,
-        showOwned: showOwned,
-        showCoowned: showCoowned,
-        showOperated: showOperated,
-      })
-
-      if (!res) return []
-
-      return res.map((vehicle: VehicleMiniDto) => ({
-        permno: vehicle.permno || undefined,
-        make: vehicle.make || undefined,
-        color: vehicle.color || undefined,
-        role: vehicle.role || undefined,
-      }))
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get current vehicles')
-    }
-  }
-
   async getCurrentVehiclesWithOwnerchangeChecks(
     auth: User,
     showOwned: boolean,
-    showCoowned: boolean,
+    showCoOwned: boolean,
     showOperated: boolean,
   ): Promise<
     VehiclesCurrentVehicleWithOwnerchangeChecks[] | null | ApolloError
@@ -172,25 +144,24 @@ export class VehiclesService {
 
     return await Promise.all(
       (
-        await this.getCurrentVehicles(
-          auth,
-          showOwned,
-          showCoowned,
-          showOperated,
-        )
-      )?.map(async (vehicle: VehiclesCurrentVehicleWithOwnerchangeChecks) => {
+        await this.getVehiclesWithAuth(auth).currentVehiclesGet({
+          persidNo: auth.nationalId,
+          showOwned: showOwned,
+          showCoowned: showCoOwned,
+          showOperated: showOperated,
+        })
+      )?.map(async (vehicle: VehicleMiniDto) => {
         // Get debt status
         const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
           auth,
           vehicle.permno || '',
         )
-        vehicle.isDebtLess = debtStatus.isDebtLess
 
         // Get updatelocks
         const vehicleDetails = await this.getVehicleDetail(auth, {
-          permno: vehicle.permno,
+          permno: vehicle.permno || '',
         })
-        vehicle.updatelocks = getVehicleOwnerchangeUpdatelocks(
+        const updatelocks = getVehicleOwnerchangeUpdatelocks(
           vehicleDetails?.updatelocks,
         )
 
@@ -202,11 +173,19 @@ export class VehiclesService {
           vehicle.permno || '',
           today,
         )
-        vehicle.ownerChangeErrorMessages = ownerChangeValidation?.hasError
-          ? ownerChangeValidation.errorMessages
-          : null
 
-        return vehicle
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          isStolen: vehicle.stolen,
+          isDebtLess: debtStatus.isDebtLess,
+          updatelocks: updatelocks,
+          ownerChangeErrorMessages: ownerChangeValidation?.hasError
+            ? ownerChangeValidation.errorMessages
+            : null,
+        }
       }),
     )
   }
@@ -216,10 +195,14 @@ export class VehiclesService {
     permno: string,
   ): Promise<VehicleOwnerchangeChecksByPermno | null | ApolloError> {
     // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
-    const myVehicles = await this.getCurrentVehicles(auth, true, true, false)
+    const myVehicles = await this.getVehiclesWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: true,
+      showOperated: false,
+    })
     const isOwnerOrCoOwner = !!myVehicles?.find(
-      (vehicle: VehiclesCurrentVehicleWithOwnerchangeChecks) =>
-        vehicle.permno === permno,
+      (vehicle: VehicleMiniDto) => vehicle.permno === permno,
     )
     if (!isOwnerOrCoOwner) {
       throw Error(

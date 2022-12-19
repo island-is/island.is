@@ -10,13 +10,7 @@ import {
 
 import { assign } from 'xstate'
 
-import {
-  Roles,
-  ApplicationStates,
-  ONE_DAY,
-  ONE_MONTH,
-  ApiActions,
-} from './constants'
+import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application, stateDescriptions } from './messages'
 import { dataSchema } from './dataSchema'
@@ -26,6 +20,16 @@ import {
   hasSpouseCheck,
 } from './utils'
 import { FAApplication } from '..'
+import {
+  CreateApplicationApi,
+  CurrentApplicationApi,
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  MunicipalityApi,
+  TaxDataApi,
+  TaxDataSpouseApi,
+  SendSpouseEmailApi,
+} from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -66,6 +70,13 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               write: 'all',
               delete: true,
+              api: [
+                CurrentApplicationApi,
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                MunicipalityApi,
+                TaxDataApi,
+              ],
             },
           ],
         },
@@ -125,6 +136,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.spouse,
           },
+          onEntry: SendSpouseEmailApi,
           roles: [
             {
               id: Roles.SPOUSE,
@@ -134,6 +146,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              api: [CurrentApplicationApi, TaxDataSpouseApi],
             },
             {
               id: Roles.APPLICANT,
@@ -197,11 +210,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.submitted,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.CREATEAPPLICATION,
-            shouldPersistToExternalData: true,
-            externalDataId: 'veita',
-          },
+          onEntry: CreateApplicationApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -243,9 +252,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/MuncipalityNotRegistered').then((module) =>
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
-              read: {
-                externalData: ['nationalRegistry'],
-              },
+              read: 'all',
             },
           ],
         },
@@ -259,9 +266,8 @@ const FinancialAidTemplate: ApplicationTemplate<
           externalData,
           answers,
         } = (context.application as unknown) as FAApplication
-        const { applicant } = externalData.nationalRegistry.data
         const spouse =
-          applicant.spouse?.nationalId ||
+          externalData.nationalRegistrySpouse.data?.nationalId ||
           answers.relationshipStatus.spouseNationalId
 
         if (spouse) {

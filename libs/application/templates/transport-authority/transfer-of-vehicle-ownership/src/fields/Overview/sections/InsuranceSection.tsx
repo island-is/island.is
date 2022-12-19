@@ -6,10 +6,9 @@ import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { error, overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
-import { ReviewScreenProps } from '../../../types'
+import { ReviewScreenProps, InsuranceCompany } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { hasReviewerApproved } from '../../../utils'
-import { InsuranceCompany } from '@island.is/api/schema'
 
 interface Props {
   noInsuranceError: boolean

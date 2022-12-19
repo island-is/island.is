@@ -7,8 +7,8 @@ export const formatIsk = (value: number): string =>
 export const getChargeItemCodes = (
   answers: ChangeCoOwnerOfVehicle,
 ): Array<string> => {
-  const coOwnerWasAdded = !!answers.coOwners.find((x) => x.wasAdded)
-  const coOwnerWasRemoved = !!answers.coOwners.find((x) => x.wasRemoved)
+  const coOwnerWasAdded = !!answers.coOwners?.find((x) => x.wasAdded)
+  const coOwnerWasRemoved = !!answers.coOwners?.find((x) => x.wasRemoved)
 
   const result = []
 
