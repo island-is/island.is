@@ -100,7 +100,9 @@ export const Layout: FC = ({ children }) => {
 
   return (
     <LayoutOuterContainer>
-      <LayoutModuleContainer layout={layout}>{children}</LayoutModuleContainer>
+      <LayoutModuleContainer layout={!activeModule ? 'none' : layout}>
+        {children}
+      </LayoutModuleContainer>
     </LayoutOuterContainer>
   )
 }

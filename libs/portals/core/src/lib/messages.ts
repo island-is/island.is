@@ -54,6 +54,19 @@ export const m = defineMessages({
     defaultMessage: 'Tókst ekki að sækja',
     id: 'portals:could-not-fetch',
   },
+  dashboardIntro: {
+    defaultMessage:
+      'Hér eru stjórnborð sem þú hefur aðgang að fyrir ýmsar þjónustur tengdar Ísland.is.',
+    id: 'portals:dashboard-title',
+  },
+  dashboardTitle: {
+    defaultMessage: 'Stjórnborð Ísland.is',
+    id: 'portals:dashboard-title',
+  },
+  dashboardImageAlt: {
+    defaultMessage: 'Mynd af byggingu sem táknar stjórnborð',
+    id: 'portals:dashboard-img-alt',
+  },
   date: {
     defaultMessage: 'Dagsetning',
     id: 'portals:date',
