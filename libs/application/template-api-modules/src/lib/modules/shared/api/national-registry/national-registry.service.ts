@@ -30,20 +30,19 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const result = await this.getIndividual(auth.nationalId)
 
-    //TODOx temporary since NationalRegistry does not work for us
-    // // Make sure user has domicile country as Iceland
-    // if (params?.legalDomicileIceland) {
-    //   const domicileCode = result?.address?.municipalityCode
-    //   if (!domicileCode || domicileCode.substring(0, 2) === '99') {
-    //     throw new TemplateApiError(
-    //       {
-    //         title: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
-    //         summary: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
-    //       },
-    //       400,
-    //     )
-    //   }
-    // }
+    // Make sure user has domicile country as Iceland
+    if (params?.legalDomicileIceland) {
+      const domicileCode = result?.address?.municipalityCode
+      if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
+            summary: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
+          },
+          400,
+        )
+      }
+    }
 
     return result
   }
@@ -166,29 +165,22 @@ export class NationalRegistryService extends BaseTemplateApiService {
       auth.nationalId,
     )
 
-    //TODOx temporary since NationalRegistry does not work for us
-    return {
-      location: 'Reykjavík',
-      dateOfBirth: new Date(),
-      municipalityCode: null,
+    if (!birthplace?.locality) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryBirthplaceMissing,
+          summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
+        },
+        404,
+      )
     }
 
-    // if (!birthplace?.locality) {
-    //   throw new TemplateApiError(
-    //     {
-    //       title: coreErrorMessages.nationalRegistryBirthplaceMissing,
-    //       summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
-    //     },
-    //     404,
-    //   )
-    // }
-
-    // return (
-    //   birthplace && {
-    //     dateOfBirth: birthplace.birthdate,
-    //     location: birthplace.locality,
-    //     municipalityCode: birthplace.municipalityNumber,
-    //   }
-    // )
+    return (
+      birthplace && {
+        dateOfBirth: birthplace.birthdate,
+        location: birthplace.locality,
+        municipalityCode: birthplace.municipalityNumber,
+      }
+    )
   }
 }
