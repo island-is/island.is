@@ -35,7 +35,7 @@ import {
 } from '../case'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './notification.service'
 import {
   judgeNotificationRule,

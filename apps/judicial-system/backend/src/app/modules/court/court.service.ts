@@ -1,6 +1,6 @@
 import formatISO from 'date-fns/formatISO'
 
-import { Injectable } from '@nestjs/common'
+import { Injectable, ServiceUnavailableException } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
@@ -9,10 +9,11 @@ import {
   IndictmentSubtypeMap,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
+import { User } from '../user'
 
 export enum CourtDocumentFolder {
   REQUEST_DOCUMENTS = 'Krafa og greinargerð',
@@ -166,7 +167,7 @@ export class CourtService {
     fileName: string,
     fileType: string,
     content: Buffer,
-    user?: User,
+    user?: TUser,
   ): Promise<string> {
     return this.courtClientService
       .uploadStream(courtId, {
@@ -199,12 +200,17 @@ export class CourtService {
           reason,
         )
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document was created successfully
+          return ''
+        }
+
         throw reason
       })
   }
 
   async createCourtCase(
-    user: User,
+    user: TUser,
     caseId: string,
     courtId = '',
     type: CaseType,
@@ -246,12 +252,17 @@ export class CourtService {
         reason,
       )
 
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the court case was created successfully
+        return 'R-9999/9999'
+      }
+
       throw reason
     }
   }
 
   async createEmail(
-    user: User,
+    user: TUser,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -286,6 +297,92 @@ export class CourtService {
           },
           reason,
         )
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the email was created successfully
+          return ''
+        }
+
+        throw reason
+      })
+  }
+
+  async updateCaseWithProsecutor(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    prosecutorNationalId: string,
+    prosecutorsOfficeNationalId: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .updateCaseWithProsecutor(courtId, {
+        userIdNumber: user.nationalId,
+        caseId: courtCaseNumber,
+        prosecutor: {
+          companyIdNumber: prosecutorsOfficeNationalId,
+          prosecutorIdNumber: prosecutorNationalId,
+        },
+      })
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to update case with prosecutor',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            prosecutorNationalId,
+            prosecutorsOfficeNationalId,
+          },
+          reason,
+        )
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case was updated successfully
+          return ''
+        }
+
+        throw reason
+      })
+  }
+
+  async updateCaseWithDefendant(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    defendantNationalId: string,
+    defenderEmail?: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .updateCaseWithDefendant(courtId, {
+        userIdNumber: user.nationalId,
+        caseId: courtCaseNumber,
+        defendant: {
+          idNumber: defendantNationalId,
+          lawyerEmail: defenderEmail,
+        },
+      })
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to update case with defendant',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            defenderEmail,
+          },
+          reason,
+        )
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case was updated successfully
+          return ''
+        }
 
         throw reason
       })

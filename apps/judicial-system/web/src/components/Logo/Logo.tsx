@@ -34,7 +34,7 @@ const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
     institutionName !== 'Ríkissaksóknari'
 
   return (
-    <div className={styles.logoContainer}>
+    <Box display="flex">
       <Box marginRight={2} marginBottom={[0, 0, 1, 0]}>
         {isPolice ? <PoliceStar /> : <LandWightsLogo />}
       </Box>
@@ -42,7 +42,7 @@ const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
         <span>{institutionNameFirstHalf.join(' ')}</span>
         <span>{institutionNameSecondHalf.join(' ')}</span>
       </p>
-    </div>
+    </Box>
   )
 }
 

@@ -72,11 +72,9 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  employerNationalRegistryId: z
-    .string()
-    .refine((n) => n && kennitala.isValid(n), {
-      params: errorMessages.employerNationalRegistryId,
-    }),
+  employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
+    params: errorMessages.employerNationalRegistryId,
+  }),
   employerPhoneNumber: z
     .string()
     .refine(
