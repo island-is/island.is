@@ -2,11 +2,9 @@ import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { SigningModule } from '@island.is/dokobit-signing'
-import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { environment } from '../../../environments'
 import {
   DefendantModule,
   UserModule,
@@ -28,7 +26,6 @@ import { LimitedAccessCaseService } from './limitedAccessCase.service'
 @Module({
   imports: [
     SigningModule,
-    EmailModule.register(environment.emailOptions),
     CmsTranslationsModule,
     MessageModule,
     forwardRef(() => DefendantModule),

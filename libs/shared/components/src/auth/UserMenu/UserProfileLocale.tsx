@@ -1,4 +1,5 @@
 import { useLocale, useNamespaces, isLocale } from '@island.is/localization'
+import { useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useAuth } from '@island.is/auth/react'
 import { useGetUserProfileLocaleLazyQuery } from '../../../gen/graphql'
@@ -16,6 +17,7 @@ export const UserProfileLocale = () => {
   const { lang } = useLocale()
   const { userInfo } = useAuth()
   const [getUserProfile, { data }] = useGetUserProfileLocaleLazyQuery()
+  const location = useLocation()
 
   const userProfile = data?.getUserProfile || null
 
@@ -24,13 +26,14 @@ export const UserProfileLocale = () => {
   }, [userInfo, getUserProfile])
 
   useEffect(() => {
+    const query = new URLSearchParams(location.search)
+    const requestedLocale = query.get('locale') ?? userProfile?.locale
     if (
-      userProfile &&
-      userProfile.locale &&
-      isLocale(userProfile.locale) &&
-      userProfile.locale !== lang
+      requestedLocale &&
+      isLocale(requestedLocale) &&
+      requestedLocale !== lang
     )
-      changeLanguage(userProfile.locale)
+      changeLanguage(requestedLocale)
   }, [userProfile])
 
   return null

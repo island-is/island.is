@@ -48,7 +48,6 @@
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "portals-admin:build",
-        "port": 4201,
         "hmr": true
       },
       "configurations": {

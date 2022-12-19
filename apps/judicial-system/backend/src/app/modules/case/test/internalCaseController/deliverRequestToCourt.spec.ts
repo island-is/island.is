@@ -10,8 +10,8 @@ import { caseTypes } from '@island.is/judicial-system/formatters'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
+import { Case } from '../../models/case.model'
 
 jest.mock('../../../../formatters/requestPdf')
 
@@ -52,7 +52,7 @@ describe('InternalCaseController - Deliver requst to court', () => {
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
-    'deliver request for %s case to court',
+    'request for %s case delivered',
     (type: CaseType) => {
       const caseId = uuid()
       const courtId = uuid()

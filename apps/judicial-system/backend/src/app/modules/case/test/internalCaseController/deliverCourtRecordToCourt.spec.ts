@@ -44,7 +44,7 @@ describe('InternalCaseController - Deliver court record to court', () => {
     }
   })
 
-  describe('deliver court record to court', () => {
+  describe('court record delivered', () => {
     const caseId = uuid()
     const courtId = uuid()
     const courtCaseNumber = uuid()
