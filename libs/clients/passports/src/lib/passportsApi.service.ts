@@ -161,10 +161,10 @@ export class PassportsService {
           xRoadClient: this.xroadConfig.xRoadClient,
           preregistration: input,
         })
-      return {success: !!res}
+      return { success: !!res }
     } catch (e) {
       this.handleError(e)
-      return {success: false}
+      return { success: false }
     }
   }
 
@@ -173,36 +173,35 @@ export class PassportsService {
     input: PreregistrationInput,
   ): Promise<PreregisterResponse> {
     try {
-       const { appliedForPersonId, approvalA, approvalB } = input
-    const pdfBuffer = await this.createDocumentBuffer({
-      appliedForPersonId,
-      approvalA,
-      approvalB,
-    })
-    const pdfDoc = Buffer.from(pdfBuffer).toString('base64')
-
-    const res =  await this.preregistrationApi
-      .withMiddleware(new AuthMiddleware(user))
-      .preregistrationPreregistration({
-        xRoadClient: this.xroadConfig.xRoadClient,
-        preregistration: {
-          ...input,
-          documents: [
-            {
-              name: 'samþykki',
-              documentType: 'pdf',
-              contentType: 'base64',
-              content: pdfDoc,
-            },
-          ],
-        },
+      const { appliedForPersonId, approvalA, approvalB } = input
+      const pdfBuffer = await this.createDocumentBuffer({
+        appliedForPersonId,
+        approvalA,
+        approvalB,
       })
-      return {success: !!res}
+      const pdfDoc = Buffer.from(pdfBuffer).toString('base64')
+
+      const res = await this.preregistrationApi
+        .withMiddleware(new AuthMiddleware(user))
+        .preregistrationPreregistration({
+          xRoadClient: this.xroadConfig.xRoadClient,
+          preregistration: {
+            ...input,
+            documents: [
+              {
+                name: 'samþykki',
+                documentType: 'pdf',
+                contentType: 'base64',
+                content: pdfDoc,
+              },
+            ],
+          },
+        })
+      return { success: !!res }
     } catch (e) {
       this.handleError(e)
-      return {success: false}
+      return { success: false }
     }
-   
   }
 
   async getCurrentPassport(user: User): Promise<Passport> {

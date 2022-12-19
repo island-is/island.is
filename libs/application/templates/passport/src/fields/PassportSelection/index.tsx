@@ -116,10 +116,11 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           },
         }}
       />
-      {identityDocumentData.childPassports ?? 
-      <Text variant="h3" marginTop={2}>
-        {formatMessage(m.children)}
-      </Text>}
+      {identityDocumentData.childPassports.length > 0 && (
+        <Text variant="h3" marginTop={2}>
+          {formatMessage(m.children)}
+        </Text>
+      )}
       <RadioFormField
         error={fieldErros}
         application={application}

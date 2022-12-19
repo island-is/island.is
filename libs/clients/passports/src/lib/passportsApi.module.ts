@@ -4,7 +4,7 @@ import { PassportsService } from './passportsApi.service'
 import { LoggingModule } from '@island.is/logging'
 
 @Module({
-  imports: [ LoggingModule],
+  imports: [LoggingModule],
   providers: [ApiConfiguration, PassportsService, ...PassportsApis],
   exports: [...PassportsApis, PassportsService],
 })

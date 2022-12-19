@@ -119,43 +119,40 @@ export class PassportService extends BaseTemplateApiService {
       }: PassportSchema = application.answers as PassportSchema
 
       const forUser = !!passport.userPassport
-      const result = forUser
-        ? await this.passportApi.preregisterIdentityDocument(auth, {
-            appliedForPersonId: auth.nationalId,
-            priority: service.type === 'regular' ? 0 : 1,
-            deliveryName: service.dropLocation,
-            contactInfo: {
-              phoneAtHome: personalInfo.phoneNumber,
-              phoneAtWork: personalInfo.phoneNumber,
-              phoneMobile: personalInfo.phoneNumber,
-              email: personalInfo.email,
-            },
-          })
-        : await this.passportApi.preregisterChildIdentityDocument(auth, {
-            appliedForPersonId: childsPersonalInfo.nationalId,
-            priority: service.type === 'regular' ? 0 : 1,
-            deliveryName: service.dropLocation,
-            approvalA: {
-              personId: childsPersonalInfo.guardian1.nationalId.replace(
-                '-',
-                '',
-              ),
-              approved: application.created,
-            },
-            approvalB: {
-              personId: childsPersonalInfo.guardian2.nationalId.replace(
-                '-',
-                '',
-              ),
-              approved: new Date(),
-            },
-            contactInfo: {
-              phoneAtHome: childsPersonalInfo.guardian1.phoneNumber,
-              phoneAtWork: childsPersonalInfo.guardian1.phoneNumber,
-              phoneMobile: childsPersonalInfo.guardian1.phoneNumber,
-              email: childsPersonalInfo.guardian1.email,
-            },
-          })
+      let result
+      if (forUser) {
+        result = await this.passportApi.preregisterIdentityDocument(auth, {
+          appliedForPersonId: auth.nationalId,
+          priority: service.type === 'regular' ? 0 : 1,
+          deliveryName: service.dropLocation,
+          contactInfo: {
+            phoneAtHome: personalInfo.phoneNumber,
+            phoneAtWork: personalInfo.phoneNumber,
+            phoneMobile: personalInfo.phoneNumber,
+            email: personalInfo.email,
+          },
+        })
+      } else {
+        result = await this.passportApi.preregisterChildIdentityDocument(auth, {
+          appliedForPersonId: childsPersonalInfo.nationalId,
+          priority: service.type === 'regular' ? 0 : 1,
+          deliveryName: service.dropLocation,
+          approvalA: {
+            personId: childsPersonalInfo.guardian1.nationalId.replace('-', ''),
+            approved: application.created,
+          },
+          approvalB: {
+            personId: childsPersonalInfo.guardian2.nationalId.replace('-', ''),
+            approved: new Date(),
+          },
+          contactInfo: {
+            phoneAtHome: childsPersonalInfo.guardian1.phoneNumber,
+            phoneAtWork: childsPersonalInfo.guardian1.phoneNumber,
+            phoneMobile: childsPersonalInfo.guardian1.phoneNumber,
+            email: childsPersonalInfo.guardian1.email,
+          },
+        })
+      }
 
       if (!result || !result.success) {
         throw new Error(`Application submission failed (${result})`)

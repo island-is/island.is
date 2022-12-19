@@ -1,4 +1,4 @@
-# api-domains-disablitly-license
+# API Domains Disablitly License
 
 This library was generated with [Nx](https://nx.dev).
 

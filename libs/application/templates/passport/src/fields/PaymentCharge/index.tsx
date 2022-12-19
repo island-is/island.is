@@ -90,6 +90,3 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
     </Box>
   )
 }
-function setValue(arg0: string, chargeCode: PASSPORT_CHARGE_CODES) {
-  throw new Error('Function not implemented.')
-}
