@@ -104,7 +104,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
           />
         </Box>
       ))}
-      <Box marginTop={1}>
+      <Box marginTop={3}>
         <Button
           variant="text"
           icon="add"

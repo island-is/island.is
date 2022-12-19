@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDataProviderItem,
   buildDescriptionField,
+  buildDividerField,
   buildExternalDataProvider,
   buildForm,
   buildKeyValueField,
@@ -280,6 +281,7 @@ export const form: Form = buildForm({
                     title: '',
                     id: 'inventory',
                     component: 'TextFieldsRepeater',
+                    doesNotRequireAnswer: true,
                   },
                   {
                     fields: [
@@ -327,6 +329,7 @@ export const form: Form = buildForm({
                     title: '',
                     id: 'bankAccounts',
                     component: 'TextFieldsRepeater',
+                    doesNotRequireAnswer: true,
                   },
                   {
                     fields: [
@@ -370,6 +373,7 @@ export const form: Form = buildForm({
                     title: '',
                     id: 'claims',
                     component: 'TextFieldsRepeater',
+                    doesNotRequireAnswer: true,
                   },
                   {
                     fields: [
@@ -411,6 +415,7 @@ export const form: Form = buildForm({
                     title: '',
                     id: 'stocks',
                     component: 'TextFieldsRepeater',
+                    doesNotRequireAnswer: true,
                   },
                   {
                     fields: [
@@ -468,6 +473,7 @@ export const form: Form = buildForm({
                     title: '',
                     id: 'money',
                     component: 'TextFieldsRepeater',
+                    doesNotRequireAnswer: true,
                   },
                   {
                     fields: [
@@ -505,6 +511,7 @@ export const form: Form = buildForm({
                     title: '',
                     id: 'otherAssets',
                     component: 'TextFieldsRepeater',
+                    doesNotRequireAnswer: true,
                   },
                   {
                     fields: [
@@ -538,9 +545,119 @@ export const form: Form = buildForm({
       children: [
         buildMultiField({
           id: 'assetOverview',
-          title: 'Yfirlit',
-          description: '',
-          children: [],
+          title: 'Yfirlit eigna',
+          description:
+            'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+          children: [
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewRealEstate',
+              title: m.realEstate,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Fasteignamat samtals á dánardegi',
+              value: ({ answers }) => '1.200.000 kr',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewVehicles',
+              title: m.vehicles,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Markaðsverð samtals á dánardegi',
+              value: ({ answers }) => '1.200.000 kr',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewInventory',
+              title: m.inventoryTitle,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Markaðsverð samtals á dánardegi',
+              value: ({ answers }) => '1.200.000 kr',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewBanks',
+              title: m.estateBankInfo,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Innistæða í bönkum með vöxtum á dánardegi',
+              value: ({ answers }) => '1.200.000 kr',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewClaims',
+              title: m.claimsTitle,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Verðmæti samtals  á dánardegi',
+              value: ({ answers }) => '1.200.000 kr',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewStocks',
+              title: m.stocksTitle,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Verðmæti samtals  á dánardegi',
+              value: ({ answers }) => '1.200.000 kr',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewMoney',
+              title: m.moneyTitle,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Fjárhæð samtals  á dánardegi',
+              value: ({ answers }) => '1.200.000 kr',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewOtherAssets',
+              title: m.otherAssetsTitle,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Matsverð annarra eigna samtals á dánardegi',
+              value: ({ answers }) => '1.200.000 kr',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewAllAssetsWorth',
+              title: 'Samtals virði eigna',
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: 'Samtals alls',
+              value: ({ answers }) => '123.230.000 kr',
+            }),
+          ],
         }),
       ],
     }),
