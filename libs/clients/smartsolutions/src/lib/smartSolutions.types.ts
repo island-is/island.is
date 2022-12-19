@@ -1,101 +1,68 @@
-import { Pass, PassTemplate } from '../../gen/schema'
-
-/** SERVICE RESPONSES */
-export interface VerifyPassResponse {
-  valid: boolean
-  data?: {
-    updateStatusOnPassWithDynamicBarcode: Pass
-  }
+export type ServiceResponse<ResponseType> = {
+  data?: ResponseType
   errors?: {
     message: string
     path: string
   }[]
 }
-export interface ListPassesResponse {
-  data?: {
-    passes?: {
-      data: Array<Pass>
+
+export type Result<ResultType, ErrorType = ServiceError> =
+  | {
+      ok: true
+      data: ResultType
+    }
+  | {
+      ok: false
+      error: ErrorType
+    }
+/*
+function ui(result: Result<Array<PassTemplate>>) {
+  if (result.ok && result.data.length > 0) {
+    // til skírteini
+  } else if (result.ok && result.data.length === 0) {
+    // á ekki skírteini
+  } else if (!result.ok) {
+    // ökusk á cut-off date fyrir mynd
+    if (result.error.canBeDisplayedToUser) {
+      return 'of gamalt ökusk'
+    } else {
+      return 'villa kom upp'
     }
   }
-  errors?: {
-    message: string
-    path: string
-  }[]
 }
-export interface UpsertPassResponse {
-  data: {
-    upsertPass?: Pass
-  }
-  errors?: {
-    message: string
-    path: string
-  }[]
-}
+*/
 
-export interface PassTemplatesResponse {
-  data: {
-    passTemplates?: {
-      data: Array<PassTemplate>
+export type FetchResponse<T> =
+  | {
+      data: T
+      error?: never
     }
-  }
-  errors?: {
-    message: string
-    path: string
-  }[]
-}
-
-/** RESULTS */
-
-export type GeneratePassResult = ListPassResult | UpsertPassResult
-export interface VerifyPassResult {
-  type: 'verify'
-  valid: boolean
-  error?: ServiceError
-}
-
-export interface ListPassResult {
-  type: 'list-passes'
-  data?: Array<Pass> | 'No passes found'
-  error?: ServiceError
-}
-
-export interface UpsertPassResult {
-  type: 'upsert'
-  data?: Pass
-  error?: ServiceError
-}
-
-export interface ListTemplatesResult {
-  type: 'list-templates'
-  data?: Array<PassTemplate> | 'No templates found'
-}
-
-/** SERVICE ERRORS */
-
-export interface ServiceErrorResponse {
-  message?: string
-  status?: VerifyPassServiceStatusCode
-  data?: unknown
-}
+  | {
+      data?: never
+      error: ServiceError
+    }
 
 export interface ServiceError {
-  /**
-   * HTTP status code from the service.
-   * Needed while `status` was always the same, use `serviceError.status` for
-   * error reported by API.
-   */
-  statusCode: number
-  serviceError?: ServiceErrorResponse
+  serviceCode: ErrorCode
+  message?: string
+  httpStatus?: {
+    status: number
+    statusText: string
+  }
 }
 
-export type VerifyPassServiceStatusCode =
-  /** License OK */
+export type ErrorCode =
+  /** Missing Pass Template id */
   | 1
-  /** License expired */
+  /** Fetch failed */
   | 2
-  /** No license info found */
+  /** JSON parse failed */
   | 3
-  /** Request contains some field errors */
+  /** External service error */
   | 4
-  /** Unknown error */
+  /** Incomplete service response */
+  | 5
+  /** Request contains some field errors */
+  | 6
+  /** Generic error code */
   | 99
