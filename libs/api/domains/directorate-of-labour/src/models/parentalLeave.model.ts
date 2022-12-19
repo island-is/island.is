@@ -59,4 +59,8 @@ export class ParentalLeave {
   @Field(() => String, { nullable: true })
   @IsOptional()
   testData?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  noOfChildren?: string
 }

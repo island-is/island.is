@@ -14,7 +14,7 @@ import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { SendNotificationDto } from './dto/sendNotification.dto'
-import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { DeliverResponse } from '../defendant/models/deliver.response'
 import { NotificationService } from './notification.service'
 
 @UseGuards(TokenGuard, CaseExistsGuard)
@@ -28,18 +28,25 @@ export class InternalNotificationController {
 
   @Post('notification')
   @ApiCreatedResponse({
-    type: SendNotificationResponse,
+    type: DeliverResponse,
     description: 'Sends a new notification for an existing case',
   })
   async sendCaseNotification(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() notification: SendNotificationDto,
-  ): Promise<SendNotificationResponse> {
+  ): Promise<DeliverResponse> {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${caseId}`,
     )
 
-    return this.notificationService.sendCaseNotification(notification, theCase)
+    const {
+      notificationSent,
+    } = await this.notificationService.sendCaseNotification(
+      notification,
+      theCase,
+    )
+
+    return { delivered: notificationSent }
   }
 }

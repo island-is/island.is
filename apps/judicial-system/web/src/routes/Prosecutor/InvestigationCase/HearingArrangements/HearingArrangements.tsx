@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -9,6 +9,7 @@ import {
   Modal,
   PageLayout,
   FormContext,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -20,13 +21,13 @@ import {
   Institution,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   removeTabsValidateAndSet,
+  stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -35,7 +36,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
@@ -67,40 +68,42 @@ const HearingArrangements = () => {
     setAndSendCaseToServer,
   } = useCase()
 
-  const [
-    isNotificationModalVisible,
-    setIsNotificationModalVisible,
-  ] = useState<boolean>(false)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  const handleNextButtonClick = async () => {
-    if (!workingCase) {
-      return
-    }
-
-    const caseOpened =
-      workingCase.state === CaseState.NEW
-        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
-        : true
-
-    if (caseOpened) {
-      if (
-        (workingCase.state !== CaseState.NEW &&
-          workingCase.state !== CaseState.DRAFT) ||
-        // TODO: Ignore failed notifications
-        workingCase.notifications?.find(
-          (notification) => notification.type === NotificationType.HEADS_UP,
-        )
-      ) {
-        router.push(
-          `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-        )
-      } else {
-        setIsNotificationModalVisible(true)
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      if (!workingCase) {
+        return
       }
-    } else {
-      // TODO: Handle error
-    }
-  }
+
+      const caseOpened =
+        workingCase.state === CaseState.NEW
+          ? await transitionCase(
+              workingCase,
+              CaseTransition.OPEN,
+              setWorkingCase,
+            )
+          : true
+
+      if (caseOpened) {
+        if (
+          (workingCase.state !== CaseState.NEW &&
+            workingCase.state !== CaseState.DRAFT) ||
+          // TODO: Ignore failed notifications
+          workingCase.notifications?.find(
+            (notification) => notification.type === NotificationType.HEADS_UP,
+          )
+        ) {
+          router.push(`${destination}/${workingCase.id}`)
+        } else {
+          setNavigateTo(destination)
+        }
+      } else {
+        toast.error(formatMessage(errors.transitionCase))
+      }
+    },
+    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
+  )
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -121,6 +124,8 @@ const HearingArrangements = () => {
     return false
   }
 
+  const stepIsValid = isHearingArrangementsStepValidIC(workingCase)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -131,6 +136,8 @@ const HearingArrangements = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(
@@ -210,22 +217,24 @@ const HearingArrangements = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={async () => await handleNextButtonClick()}
-              nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
+              onNextButtonClick={async () =>
+                await handleNavigationTo(
+                  constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+                )
+              }
+              nextIsDisabled={!stepIsValid}
               nextIsLoading={isLoadingWorkingCase || isTransitioningCase}
             />
           </FormContentContainer>
-          {isNotificationModalVisible && (
+          {navigateTo !== undefined && (
             <Modal
               title={formatMessage(m.modal.heading)}
               text={formatMessage(m.modal.text)}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
-              onClose={() => setIsNotificationModalVisible(false)}
+              onClose={() => setNavigateTo(undefined)}
               onSecondaryButtonClick={() =>
-                router.push(
-                  `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-                )
+                router.push(`${navigateTo}/${workingCase.id}`)
               }
               onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
@@ -234,9 +243,7 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(
-                    `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-                  )
+                  router.push(`${navigateTo}/${workingCase.id}`)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}

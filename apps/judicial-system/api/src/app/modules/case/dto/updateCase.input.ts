@@ -12,8 +12,9 @@ import type {
   SessionArrangements,
   CourtDocument,
   SubpoenaType,
-  IndictmentSubType,
   CaseType,
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -27,8 +28,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly type?: CaseType
 
   @Allow()
-  @Field(() => String, { nullable: true })
-  readonly indictmentSubType?: IndictmentSubType
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @Allow()
   @Field({ nullable: true })
@@ -285,4 +286,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
+
+  @Allow()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly crimeScenes?: CrimeSceneMap
 }

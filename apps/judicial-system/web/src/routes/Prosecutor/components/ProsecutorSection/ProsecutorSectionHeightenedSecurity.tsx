@@ -4,12 +4,12 @@ import { useRouter } from 'next/router'
 
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   BlueBox,
   FormContext,
   Modal,
   ProsecutorSelection,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 

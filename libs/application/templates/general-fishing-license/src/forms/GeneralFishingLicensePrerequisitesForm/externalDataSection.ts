@@ -6,8 +6,12 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
+import {
+  DepartmentOfFisheriesPaymentCatalogApi,
+  ShipRegistryApi,
+  IdentityApi,
+} from '../../dataProviders'
 import { externalData } from '../../lib/messages'
-import { DataProviderTypes } from '../../types'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
@@ -21,20 +25,17 @@ export const externalDataSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: 'identityRegistry',
-          type: DataProviderTypes.IdentityRegistry,
+          provider: IdentityApi,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),
         buildDataProviderItem({
-          id: 'directoryOfFisheries',
-          type: 'GeneralFishingLicenseProvider',
+          provider: ShipRegistryApi,
           title: externalData.directoryOfFisheries.title,
           subTitle: externalData.directoryOfFisheries.description,
         }),
         buildDataProviderItem({
-          id: 'feeInfoProvider',
-          type: 'FeeInfoProvider',
+          provider: DepartmentOfFisheriesPaymentCatalogApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.description,
         }),

@@ -64,7 +64,7 @@ describe('PoliceController - Upload police case file', () => {
     it('should get the police file', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringMatching(
-          new RegExp(`.*/api/Documents/GetPDFDocumentByID/${policeFileId}`),
+          new RegExp(`.*/GetPDFDocumentByID/${policeFileId}`),
         ),
         expect.anything(),
       )

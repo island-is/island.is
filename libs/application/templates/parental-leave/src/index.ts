@@ -7,7 +7,10 @@ export const getFields = () => import('./fields/')
 export default ParentalLeaveTemplate
 
 export * from './lib/parentalLeaveUtils'
-export { calculatePeriodLength } from './lib/directorateOfLabour.utils'
+export {
+  calculatePeriodLength,
+  calculateRemainingNumberOfDays,
+} from './lib/directorateOfLabour.utils'
 export * from './constants'
 export * from './types'
 export * from './lib/messages'

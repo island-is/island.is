@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
@@ -34,11 +35,17 @@ import {
   toast,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseFile,
+  CaseFileCategory,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
+import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
 
 const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
   name: file.name,
@@ -194,34 +201,53 @@ type allUploadedState = {
 const PoliceUploadListMemo: React.FC<{
   caseId: string
   policeCaseNumbers: string[]
+  subtypes?: IndictmentSubtypeMap
+  crimeScenes?: CrimeSceneMap
   caseFiles?: CaseFile[]
   setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-}> = memo(({ caseId, policeCaseNumbers, caseFiles, setAllUploaded }) => {
-  const { formatMessage } = useIntl()
-  return (
-    <Box paddingBottom={4}>
-      {policeCaseNumbers.map((policeCaseNumber, index) => (
-        <Box key={index} marginBottom={6}>
-          <SectionHeading
-            title={formatMessage(m.policeCaseNumberSectionHeading, {
-              policeCaseNumber,
-            })}
-          />
-          <UploadFilesToPoliceCase
-            caseId={caseId}
-            caseFiles={
-              caseFiles?.filter(
-                (file) => file.policeCaseNumber === policeCaseNumber,
-              ) ?? []
-            }
-            policeCaseNumber={policeCaseNumber}
-            setAllUploaded={setAllUploaded(policeCaseNumber)}
-          />
-        </Box>
-      ))}
-    </Box>
-  )
-})
+}> = memo(
+  ({
+    caseId,
+    policeCaseNumbers,
+    subtypes,
+    crimeScenes,
+    caseFiles,
+    setAllUploaded,
+  }) => {
+    const { formatMessage } = useIntl()
+    return (
+      <Box paddingBottom={4}>
+        {policeCaseNumbers.map((policeCaseNumber, index) => (
+          <Box key={index} marginBottom={6}>
+            <SectionHeading
+              title={formatMessage(m.policeCaseNumberSectionHeading, {
+                policeCaseNumber,
+              })}
+              marginBottom={2}
+            />
+            <Box marginBottom={3}>
+              <IndictmentInfo
+                policeCaseNumber={policeCaseNumber}
+                subtypes={subtypes}
+                crimeScenes={crimeScenes}
+              />
+            </Box>
+            <UploadFilesToPoliceCase
+              caseId={caseId}
+              caseFiles={
+                caseFiles?.filter(
+                  (file) => file.policeCaseNumber === policeCaseNumber,
+                ) ?? []
+              }
+              policeCaseNumber={policeCaseNumber}
+              setAllUploaded={setAllUploaded(policeCaseNumber)}
+            />
+          </Box>
+        ))}
+      </Box>
+    )
+  },
+)
 
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
@@ -243,6 +269,12 @@ const PoliceCaseFilesRoute = () => {
     [setAllUploaded],
   )
 
+  const stepIsValid = !Object.values(allUploaded).some((v) => v)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -250,6 +282,8 @@ const PoliceCaseFilesRoute = () => {
       activeSubSection={IndictmentsProsecutorSubsections.POLICE_CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
@@ -263,6 +297,8 @@ const PoliceCaseFilesRoute = () => {
         <PoliceUploadListMemo
           caseId={workingCase.id}
           caseFiles={workingCase.caseFiles}
+          subtypes={workingCase.indictmentSubtypes}
+          crimeScenes={workingCase.crimeScenes}
           setAllUploaded={setAllUploadedForPoliceCaseNumber}
           policeCaseNumbers={workingCase.policeCaseNumbers}
         />
@@ -270,8 +306,10 @@ const PoliceCaseFilesRoute = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={Object.values(allUploaded).some((v) => v)}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILE_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

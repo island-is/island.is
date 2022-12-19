@@ -28,6 +28,7 @@ import {
   PdfButton,
   CaseResubmitModal,
   FormContext,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -47,7 +48,6 @@ import {
   caseTypes,
   capitalize,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -397,7 +397,7 @@ export const Overview: React.FC = () => {
             onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
-            secondaryButtonText="Loka glugga"
+            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

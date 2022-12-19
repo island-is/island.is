@@ -14,7 +14,7 @@ import { deceasedInfoFields } from './sharedSections/deceasedInfoFields'
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({

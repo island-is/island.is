@@ -1,5 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   ProsecutorCaseInfo,
@@ -35,6 +36,12 @@ const CaseFiles: React.FC = () => {
     allFilesUploaded,
   } = useS3Upload(workingCase)
 
+  const stepIsValid = allFilesUploaded
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -42,6 +49,8 @@ const CaseFiles: React.FC = () => {
       activeSubSection={IndictmentsProsecutorSubsections.CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.caseFiles)}
@@ -129,7 +138,9 @@ const CaseFiles: React.FC = () => {
           />
           <InputFileUpload
             fileList={files.filter(
-              (file) => file.category === CaseFileCategory.CASE_FILE,
+              (file) =>
+                file.category === CaseFileCategory.CASE_FILE &&
+                !file.policeCaseNumber,
             )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
@@ -144,8 +155,10 @@ const CaseFiles: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!allFilesUploaded}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

@@ -13,8 +13,12 @@ import {
 
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
+  CaseState,
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   directionType,
   sortableTableColumn,
@@ -39,19 +43,14 @@ interface Props {
   onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
-  setActiveCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>
 }
 
 const ActiveCases: React.FC<Props> = (props) => {
-  const {
-    cases,
-    onRowClick,
-    isDeletingCase,
-    onDeleteCase,
-    setActiveCases,
-  } = props
+  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
+
+  const [showDeleteButton, setShowDeleteButton] = useState(false)
 
   const variants = {
     isDeleting: (custom: number) =>
@@ -62,9 +61,8 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isCourtRole =
-    user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
+  const isProsecution = user?.role && isProsecutionRole(user.role)
+  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -136,7 +134,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
             theCase={theCase}
-            isCourtRole={isCourtRole}
+            isCourtRole={isCourt}
           >
             {theCase.courtDate ? (
               <Text fontWeight={'medium'} variant="small">
@@ -323,7 +321,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                       mapCaseStateToTagVariant(
                         formatMessage,
                         c.state,
-                        isCourtRole,
+                        isCourt,
                         c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
@@ -336,7 +334,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                       mapCaseStateToTagVariant(
                         formatMessage,
                         c.state,
-                        isCourtRole,
+                        isCourt,
                         c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
@@ -369,7 +367,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   )}
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecutor &&
+                  {isProsecution &&
                     (c.state === CaseState.NEW ||
                       c.state === CaseState.DRAFT ||
                       c.state === CaseState.SUBMITTED ||
@@ -382,6 +380,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                         onClick={async (evt) => {
                           evt.stopPropagation()
 
+                          setShowDeleteButton((show) => !show)
                           await new Promise((resolve) => {
                             setRequestToRemoveIndex(
                               requestToRemoveIndex === i ? undefined : i,
@@ -398,33 +397,29 @@ const ActiveCases: React.FC<Props> = (props) => {
                     )}
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
-                  <Button
-                    colorScheme="destructive"
-                    size="small"
-                    loading={isDeletingCase}
-                    onClick={async (evt) => {
-                      if (onDeleteCase && setActiveCases) {
-                        evt.stopPropagation()
+                  {showDeleteButton ? (
+                    <Button
+                      colorScheme="destructive"
+                      size="small"
+                      loading={isDeletingCase}
+                      onClick={async (evt) => {
+                        if (onDeleteCase) {
+                          evt.stopPropagation()
 
-                        await onDeleteCase(cases[i])
+                          await onDeleteCase(cases[i])
 
-                        controls
-                          .start('isNotDeleting')
-                          .then(() => {
+                          controls.start('isNotDeleting').then(() => {
                             setRequestToRemoveIndex(undefined)
+                            setShowDeleteButton(false)
                           })
-                          .then(() => {
-                            setActiveCases(
-                              cases.filter((c: Case) => c !== cases[i]),
-                            )
-                          })
-                      }
-                    }}
-                  >
-                    <Box as="span" className={styles.deleteButtonText}>
-                      Afturkalla
-                    </Box>
-                  </Button>
+                        }
+                      }}
+                    >
+                      <Box as="span" className={styles.deleteButtonText}>
+                        Afturkalla
+                      </Box>
+                    </Button>
+                  ) : null}
                 </td>
               </motion.tr>
             ))}

@@ -45,6 +45,7 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
+import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -267,7 +268,11 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                   </Button>
                 </Box>
                 <Box paddingRight={2}>
-                  <a href="" target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={SAMGONGUSTOFA_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Button
                       colorScheme="default"
                       icon="open"
@@ -285,19 +290,19 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                     dropdownItems={[
                       {
                         title: formatMessage(messages.orderRegistrationNumber),
-                        href: '/pontun-skraningarmerkja',
+                        href: SAMGONGUSTOFA_LINK,
                       },
                       {
                         title: formatMessage(messages.orderRegistrationLicense),
-                        href: '',
+                        href: SAMGONGUSTOFA_LINK,
                       },
                       {
                         title: formatMessage(messages.addCoOwner),
-                        href: '/skraning-medeiganda-okutaekis',
+                        href: SAMGONGUSTOFA_LINK,
                       },
                       {
                         title: formatMessage(messages.addOperator),
-                        href: '/skraning-a-umradamanni-okutaekis',
+                        href: SAMGONGUSTOFA_LINK,
                       },
                     ]}
                   />
@@ -313,7 +318,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           content={mainInfo?.regno ?? ''}
           editLink={{
             title: messages.orderRegistrationNumber,
-            url: '',
+            url: SAMGONGUSTOFA_LINK,
             external: true,
           }}
           loading={loading}

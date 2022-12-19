@@ -19,7 +19,7 @@ export const CasesQuery = gql`
       created
       modified
       type
-      indictmentSubType
+      indictmentSubtypes
       state
       policeCaseNumbers
       defendants {
@@ -43,6 +43,18 @@ export const CasesQuery = gql`
         id
       }
       initialRulingDate
+      judge {
+        id
+      }
+      prosecutor {
+        id
+      }
+      creatingProsecutor {
+        id
+      }
+      registrar {
+        id
+      }
     }
   }
 `

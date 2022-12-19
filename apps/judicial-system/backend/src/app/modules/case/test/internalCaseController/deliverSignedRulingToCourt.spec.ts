@@ -3,8 +3,8 @@ import { uuid } from 'uuidv4'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
+import { Case } from '../../models/case.model'
 
 interface Then {
   result: DeliverResponse
@@ -45,7 +45,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     }
   })
 
-  describe('deliver signed ruling to court', () => {
+  describe('signed ruling delivered', () => {
     const caseId = uuid()
     const courtId = uuid()
     const courtCaseNumber = uuid()

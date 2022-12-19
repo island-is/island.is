@@ -1,6 +1,6 @@
 import {
   CREATE_INDICTMENT_ROUTE,
-  INDICTMENTS_PROCESSING_ROUTE,
+  INDICTMENTS_POLICE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { CaseTransition } from '@island.is/judicial-system/types'
 
@@ -29,8 +29,10 @@ describe('Create indictment', () => {
     cy.get(`a[href="${CREATE_INDICTMENT_ROUTE}"]`).click()
     cy.url().should('contain', CREATE_INDICTMENT_ROUTE)
 
-    cy.get('#policeCaseNumbers').type('0').type('{enter}')
-    cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 0)
+    cy.get('#policeCaseNumbers').type('0')
+    cy.getByTestid('multipleValueListContainer').within(() =>
+      cy.get('button').should('be.disabled'),
+    )
     cy.get('#policeCaseNumbers').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.get('#policeCaseNumbers').type('007202201').type('{enter}')
@@ -54,7 +56,7 @@ describe('Create indictment', () => {
     cy.getByTestid('continueButton').should('not.be.disabled')
 
     cy.getByTestid('continueButton').click()
-    cy.url().should('contain', INDICTMENTS_PROCESSING_ROUTE)
+    cy.url().should('contain', INDICTMENTS_POLICE_CASE_FILES_ROUTE)
 
     cy.window().then((win) => {
       caseId = win.location.pathname.split('/')[4]

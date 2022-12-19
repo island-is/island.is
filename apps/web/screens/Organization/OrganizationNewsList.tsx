@@ -91,7 +91,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
 
   const currentNavItem =
     organizationPage.menuLinks.find(
-      ({ primaryLink }) => primaryLink.url === baseRouterPath,
+      ({ primaryLink }) => primaryLink?.url === baseRouterPath,
     )?.primaryLink ??
     organizationPage.secondaryMenu?.childrenLinks.find(
       ({ url }) => url === baseRouterPath,
@@ -131,10 +131,10 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === baseRouterPath ||
+        primaryLink?.url === baseRouterPath ||
         childrenLinks.some((link) => link.url === baseRouterPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -148,6 +148,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     <OrganizationWrapper
       pageTitle={newsTitle}
       organizationPage={organizationPage}
+      showReadSpeaker={false}
       breadcrumbItems={breadCrumbs}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),

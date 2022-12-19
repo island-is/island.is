@@ -3,7 +3,7 @@ import {
   CaseFileCategory,
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
@@ -21,7 +21,7 @@ import {
 describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const caseData = mockCase(
     CaseType.INDICTMENT,
-    IndictmentSubType.TAX_VIOLATION,
+    IndictmentSubtype.TAX_VIOLATION,
   )
   const prosecutor = makeProsecutor('Assigned Prosecutor')
   const creatingProsecutor = makeProsecutor('Creating Prosecutor')
@@ -37,6 +37,9 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
         makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
         makeCaseFile({ category: CaseFileCategory.RULING }),
       ],
+      indictmentSubtypes: {
+        '007-2022-01': [IndictmentSubtype.TAX_VIOLATION],
+      },
       policeCaseNumbers: ['007-2022-01', '007-2022-02'],
     }
 
@@ -69,9 +72,6 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should navigate to the next page when the next button is clicked', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should(
-      'include',
-      `${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/test_id_stadfest`,
-    )
+    cy.url().should('include', `${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}`)
   })
 })

@@ -1,6 +1,6 @@
 import each from 'jest-each'
 import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import {
   CaseState,
@@ -10,13 +10,14 @@ import {
   investigationCases,
   isIndictmentCase,
   restrictionCases,
+  User,
 } from '@island.is/judicial-system/types'
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { defendantsOrder, includes } from '../../case.service'
+import { order, include } from '../../case.service'
 
 interface Then {
   result: Case
@@ -31,18 +32,29 @@ type GivenWhenThen = (
 
 describe('CaseController - Transition', () => {
   let mockMessageService: MessageService
+  let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       messageService,
+      sequelize,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
 
     mockMessageService = messageService
     mockCaseModel = caseModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
+
+    const mockUpdate = mockCaseModel.update as jest.Mock
+    mockUpdate.mockResolvedValue([1])
 
     givenWhenThen = async (
       caseId: string,
@@ -54,6 +66,7 @@ describe('CaseController - Transition', () => {
       try {
         then.result = await caseController.transition(
           caseId,
+          { id: uuid() } as User,
           theCase,
           transition,
         )
@@ -84,19 +97,15 @@ describe('CaseController - Transition', () => {
         ...restrictionCases,
         ...investigationCases,
         ...indictmentCases,
-      ]).describe('restriction case', (type) => {
+      ]).describe('%s case', (type) => {
         const caseId = uuid()
         const theCase = { id: caseId, type, state: oldState } as Case
         const updatedCase = { id: caseId, type, state: newState } as Case
         let then: Then
 
         beforeEach(async () => {
-          const mockUpdate = mockCaseModel.update as jest.Mock
-          mockUpdate.mockResolvedValueOnce([1])
-          transition !== CaseTransition.DELETE &&
-            (mockCaseModel.findOne as jest.Mock).mockResolvedValueOnce(
-              updatedCase,
-            )
+          const mockFindOne = mockCaseModel.findOne as jest.Mock
+          mockFindOne.mockResolvedValueOnce(updatedCase)
 
           then = await givenWhenThen(caseId, theCase, {
             transition,
@@ -110,7 +119,7 @@ describe('CaseController - Transition', () => {
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
             },
-            { where: { id: caseId } },
+            { where: { id: caseId }, transaction },
           )
 
           if (
@@ -128,8 +137,8 @@ describe('CaseController - Transition', () => {
             expect(then.result).toBe(theCase)
           } else {
             expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-              include: includes,
-              order: [defendantsOrder],
+              include,
+              order,
               where: {
                 id: caseId,
                 state: { [Op.not]: CaseState.DELETED },

@@ -5,7 +5,7 @@ import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
-  // normalising all types before boosting
+  // normalizing all types before boosting
   return defaultBoost
 }
 
@@ -21,6 +21,7 @@ export const searchQuery = (
     countTag = [],
     countTypes = false,
     countProcessEntry = false,
+    useQuery,
   }: SearchInput,
   aggregate = true,
   highlightSection = false,
@@ -36,7 +37,10 @@ export const searchQuery = (
     'content',
     'content.stemmed',
   ]
-  // * wildcard support for internal clients
+  const words = queryString.split(' ')
+  const lastWord = words.pop()
+
+  // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
       simple_query_string: {
@@ -47,15 +51,31 @@ export const searchQuery = (
       },
     })
   } else {
-    should.push({
-      multi_match: {
-        fields: fieldsWeights,
-        query: queryString,
-        fuzziness: 'AUTO',
-        operator: 'and',
-        type: 'best_fields',
-      },
-    })
+    switch (useQuery) {
+      // the search logic used for search drop down suggestions
+      // term and prefix queries on content title
+      case 'suggestions':
+        should.push({ prefix: { title: lastWord } })
+        words.forEach((word) => {
+          should.push({ term: { title: word } })
+        })
+        break
+
+      // the search logic used for general site search
+      // uses all analyzed fields
+      case 'default':
+      default:
+        should.push({
+          multi_match: {
+            fields: fieldsWeights,
+            query: queryString,
+            fuzziness: 'AUTO',
+            operator: 'and',
+            type: 'best_fields',
+          },
+        })
+        break
+    }
   }
 
   // if we have types restrict the query to those types

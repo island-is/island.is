@@ -35,13 +35,21 @@ export type {
   CreateFile,
 } from './lib/file'
 
-export { UserRole, courtRoles, isCourtRole } from './lib/user'
+export {
+  UserRole,
+  prosecutionRoles,
+  isProsecutionRole,
+  courtRoles,
+  isCourtRole,
+  extendedCourtRoles,
+  isExtendedCourtRole,
+} from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {
   CaseOrigin,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,
@@ -62,6 +70,9 @@ export {
 } from './lib/case'
 export type {
   Case,
+  CrimeScene,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
   CreateCase,
   UpdateCase,
   TransitionCase,

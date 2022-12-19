@@ -1,7 +1,13 @@
 import { CanActivate } from '@nestjs/common'
 
+import {
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
+
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
+import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { InternalCaseController } from '../../internalCase.controller'
 
 describe('InternalCaseController - Deliver signed ruling to court guards', () => {
@@ -15,8 +21,8 @@ describe('InternalCaseController - Deliver signed ruling to court guards', () =>
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('CaseExistsGuard', () => {
@@ -31,14 +37,29 @@ describe('InternalCaseController - Deliver signed ruling to court guards', () =>
     })
   })
 
+  describe('CaseTypeGuerd', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = guards[1]
+    })
+
+    it('should have CaseTypeGuard as quard 2', () => {
+      expect(guard).toBeInstanceOf(CaseTypeGuard)
+      expect(guard).toEqual({
+        allowedCaseTypes: [...restrictionCases, ...investigationCases],
+      })
+    })
+  })
+
   describe('CaseCompletedGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[1]()
+      guard = new guards[2]()
     })
 
-    it('should have CaseCompletedGuard as quard 2', () => {
+    it('should have CaseCompletedGuard as quard 3', () => {
       expect(guard).toBeInstanceOf(CaseCompletedGuard)
     })
   })

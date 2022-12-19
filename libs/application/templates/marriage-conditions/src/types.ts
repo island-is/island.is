@@ -29,15 +29,15 @@ export type PersonalInfo = {
 
 export type Ceremony = {
   hasDate: string
-  withDate: {
-    date: string
+  date: string
+  period: {
+    dateFrom: string
+    dateTo: string
+  }
+  place: {
     ceremonyPlace: string
     office: string
     society: string
-  }
-  withPeriod: {
-    dateFrom: string
-    dateTil: string
   }
 }
 

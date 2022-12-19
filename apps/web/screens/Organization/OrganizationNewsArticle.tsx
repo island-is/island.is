@@ -61,11 +61,11 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   )
 
   const currentNavItem = organizationPage.menuLinks.find(
-    ({ primaryLink }) => primaryLink.url === overviewPath,
+    ({ primaryLink }) => primaryLink?.url === overviewPath,
   )
 
   const newsOverviewTitle: string = currentNavItem
-    ? currentNavItem.primaryLink.text
+    ? currentNavItem.primaryLink?.text
     : n('newsTitle', 'Fréttir og tilkynningar')
 
   const isNewsletter = newsItem?.genericTags?.some(
@@ -116,11 +116,11 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
         newsHavePrimaryNewsTagOfOrganization &&
-        primaryLink.url === overviewPath,
+        primaryLink?.url === overviewPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -134,6 +134,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
         pageTitle={organizationPage.title}
         organizationPage={organizationPage}
         breadcrumbItems={breadCrumbs}
+        showReadSpeaker={false}
         navigationData={{
           title: n('navigationTitle', 'Efnisyfirlit'),
           items: navList,

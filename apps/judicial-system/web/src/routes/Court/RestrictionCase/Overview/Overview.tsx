@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -13,6 +13,7 @@ import {
   InfoCard,
   FormContext,
   MarkdownWrapper,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
@@ -47,7 +48,6 @@ import {
 } from '@island.is/island-ui/core'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
@@ -96,6 +96,11 @@ export const JudgeOverview: React.FC = () => {
     workingCase,
   ])
 
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -105,6 +110,8 @@ export const JudgeOverview: React.FC = () => {
       activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={true}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.restrictionCases.overview)}
@@ -340,7 +347,11 @@ export const JudgeOverview: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
-          nextUrl={`${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+            )
+          }
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(rcCourtOverview.continueButton.label)}
         />

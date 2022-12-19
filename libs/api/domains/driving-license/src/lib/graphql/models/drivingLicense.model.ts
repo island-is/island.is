@@ -21,4 +21,7 @@ export class DrivingLicense {
 
   @Field(() => [String])
   healthRemarks?: string[]
+
+  @Field({ nullable: true })
+  birthCountry?: string
 }

@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices, nestedAccordionAndFaqListFields } from './fragments'
+import { slices, nestedFields } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -10,6 +10,7 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         title
         description
         showsUpOnTheOrganizationsPage
+        hasALandingPage
         logo {
           title
           url
@@ -32,6 +33,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       email
       phone
       title
+      hasALandingPage
       logo {
         title
         url
@@ -108,6 +110,16 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         slug
         email
         phone
+        publishedMaterialSearchFilterGenericTags {
+          id
+          title
+          slug
+          genericTagGroup {
+            id
+            title
+            slug
+          }
+        }
         logo {
           url
         }
@@ -173,7 +185,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slug
       description {
         ...AllSlices
-        ${nestedAccordionAndFaqListFields}
+        ${nestedFields}
       }
       links {
         text
@@ -181,7 +193,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       slices {
         ...AllSlices
-        ${nestedAccordionAndFaqListFields}
+        ${nestedFields}
       }
       showTableOfContents
       sliceCustomRenderer

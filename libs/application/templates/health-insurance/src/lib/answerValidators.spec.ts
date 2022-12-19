@@ -106,24 +106,6 @@ describe('answerValidators', () => {
     })
   })
 
-  it('should return error when former insurance country is empty', () => {
-    const newFormerInsuranceAnswers = {
-      registration: 'yes',
-      country: '',
-    }
-
-    expect(
-      answerValidators['formerInsurance'](
-        newFormerInsuranceAnswers,
-        baseApplication,
-      ),
-    ).toStrictEqual({
-      message: 'Please select a country',
-      path: 'formerInsurance.country',
-      values: undefined,
-    })
-  })
-
   it('should return error if waiting period is required due to moving form country outside of EU', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
