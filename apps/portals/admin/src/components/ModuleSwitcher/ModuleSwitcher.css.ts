@@ -30,3 +30,23 @@ export const dialogHeader = style({
   width: '100%',
   height: theme.headerHeight.small,
 })
+
+export const button = style({
+  width: '100%',
+})
+
+export const backdrop = style({
+  background: 'rgba(242, 247, 255, 0.7)',
+  zIndex: theme.zIndex.belowModal,
+  position: 'fixed',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+})
+
+export const dropdown = style({
+  zIndex: theme.zIndex.modal,
+  marginTop: -theme.spacing[1],
+  width: '100%',
+})

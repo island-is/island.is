@@ -31,10 +31,73 @@ import { masterNavigation } from '../../lib/masterNavigation'
 // import { ModuleSwitcherMobile } from './mobile/ModuleSwitcherMobile'
 
 const ModuleSwitcherDesktop: FC = () => {
-  return <></>
+  const menu = useMenuState({
+    //animated: true,
+    //modal: true,
+  })
+  const { formatMessage } = useLocale()
+  const activeModule = useActiveModule()
+  const navigation = useNavigation()
+
+  return (
+    <>
+      <MenuButton className={styles.button} {...menu}>
+        <Box
+          width="full"
+          component="div"
+          display="flex"
+          justifyContent="spaceBetween"
+          paddingX={3}
+        >
+          <Box>
+            <Text variant="eyebrow">{formatMessage(m.dashboard)}</Text>
+            <Text>
+              {formatMessage(
+                activeModule ? activeModule.name : masterNavigation.name,
+              )}
+            </Text>
+          </Box>
+          <Box display="flex" alignItems="center">
+            <Button
+              colorScheme="light"
+              circle={true}
+              size="small"
+              icon="chevronDown"
+            ></Button>
+          </Box>
+        </Box>
+      </MenuButton>
+
+      <Menu {...menu} className={styles.dropdown} aria-label="Preferences">
+        <Box background="white" padding={3} borderRadius="large">
+          <Box
+            marginBottom={3}
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+          >
+            <Text variant="eyebrow">{formatMessage(m.dashboard)}</Text>
+            <Button
+              circle
+              size="small"
+              colorScheme="light"
+              icon="close"
+              onClick={menu.hide}
+            ></Button>
+          </Box>
+
+          <ModuleItems onNavigation={menu.hide} />
+        </Box>
+      </Menu>
+      <Box
+        display={menu.visible ? 'block' : 'none'}
+        className={styles.backdrop}
+      />
+    </>
+  )
 }
 
-interface MobileItemProps {
+interface ModuleItemProps {
   label: string
   path: string
   icon?: IconMapIcon
@@ -43,7 +106,46 @@ interface MobileItemProps {
   onNavigation?: () => void
 }
 
-const MobileItem: FC<MobileItemProps> = ({
+interface ModuleItemsProps {
+  onNavigation: () => void
+}
+
+const ModuleItems: FC<ModuleItemsProps> = ({ onNavigation }) => {
+  const activeModule = useActiveModule()
+  const navigation = useNavigation()
+  const { formatMessage } = useLocale()
+
+  return (
+    <>
+      <ModuleItem
+        path={navigation?.path ?? '/'}
+        label={formatMessage(m.overview)}
+        icon="home"
+        active={!activeModule}
+        onNavigation={onNavigation}
+      />
+
+      <Stack space={0} dividers={false}>
+        {navigation?.children?.map((item, index) =>
+          item.path ? (
+            <ModuleItem
+              key={index}
+              label={formatMessage(item.name)}
+              path={item.path}
+              icon={item.icon?.icon}
+              active={activeModule?.name === item.name}
+              onNavigation={onNavigation}
+            />
+          ) : (
+            <></>
+          ),
+        )}
+      </Stack>
+    </>
+  )
+}
+
+const ModuleItem: FC<ModuleItemProps> = ({
   label,
   path,
   icon = 'settings',
@@ -142,7 +244,7 @@ const ModuleSwitcherMobile: FC = () => {
             />
           </Box>
 
-          <MobileItem
+          <ModuleItem
             path={navigation?.path ?? '/'}
             label={formatMessage(m.overview)}
             icon="home"
@@ -153,7 +255,7 @@ const ModuleSwitcherMobile: FC = () => {
           <Stack space={0} dividers={false}>
             {navigation?.children?.map((item, index) =>
               item.path ? (
-                <MobileItem
+                <ModuleItem
                   key={index}
                   label={formatMessage(item.name)}
                   path={item.path}
