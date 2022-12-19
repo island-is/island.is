@@ -4,8 +4,8 @@ import {
   prosecutorRule,
   registrarRule,
   representativeRule,
-} from '../../../guards'
-import { DefendantController } from '../defendant.controller'
+} from '../../../../guards'
+import { DefendantController } from '../../defendant.controller'
 
 describe('DefendantController - Update rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

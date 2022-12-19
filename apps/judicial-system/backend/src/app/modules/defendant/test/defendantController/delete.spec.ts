@@ -1,8 +1,8 @@
 import { uuid } from 'uuidv4'
 
-import { Defendant } from '../models/defendant.model'
-import { DeleteDefendantResponse } from '../models/delete.response'
-import { createTestingDefendantModule } from './createTestingDefendantModule'
+import { Defendant } from '../../models/defendant.model'
+import { DeleteDefendantResponse } from '../../models/delete.response'
+import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
 interface Then {
   result: DeleteDefendantResponse
