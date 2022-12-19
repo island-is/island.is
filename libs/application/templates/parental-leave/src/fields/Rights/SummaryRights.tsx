@@ -24,6 +24,7 @@ const round = (value: number) => Math.round(value * 100) / 100
 
 export const SummaryRights = ({ application }: SummaryRightsProps) => {
   const { formatMessage } = useLocale()
+  console.log('APP ANS', useApplicationAnswers(application))
   const {
     isRequestingRights,
     isRequestingRightsSecondary,
@@ -60,7 +61,21 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               )}
             </Text>
 
-            {common > 0 && (
+            {common > 0 && otherParent === SINGLE && (
+              <>
+                {', '}
+                <Text as="span">
+                  {formatMessage(
+                    parentalLeaveFormMessages.reviewScreen.rightsSingleParentMultipleBirths,
+                    {
+                      common: round(common),
+                    },
+                  )}
+                </Text>
+              </>
+            )}
+
+            {common > 0 && otherParent !== SINGLE && (
               <>
                 {', '}
                 <Text as="span">
