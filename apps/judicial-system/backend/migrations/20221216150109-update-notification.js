@@ -17,7 +17,7 @@ module.exports = {
         'MODIFIED',
         'REVOKED',
         'DEFENDER_ASSIGNED',
-        'DEFENDANTS_NOT_UPDATED_AT_COURT' // new value
+        'DEFENDANTS_NOT_UPDATED_AT_COURT', // new value
       ],
       enumName: 'enum_notification_type',
     })
