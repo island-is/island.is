@@ -117,12 +117,7 @@ export class ApplicationResolver {
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
-    const res = await this.applicationService.updateExternalData(
-      input,
-      user,
-      locale,
-    )
-    return res
+    return await this.applicationService.updateExternalData(input, user, locale)
   }
 
   @Mutation(() => Application, { nullable: true })
