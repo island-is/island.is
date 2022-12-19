@@ -50,10 +50,12 @@ describe('CaseController - Get ruling signature confirmation', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    const mockPostMessageToQueue = mockMessageService.sendMessagesToQueue as jest.Mock
-    mockPostMessageToQueue.mockResolvedValue(undefined)
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockResolvedValue(uuid())
+    const mockUpdate = mockCaseModel.update as jest.Mock
+    mockUpdate.mockResolvedValue([1])
+    const mockPostMessageToQueue = mockMessageService.sendMessagesToQueue as jest.Mock
+    mockPostMessageToQueue.mockResolvedValue(undefined)
 
     givenWhenThen = async (
       caseId: string,
@@ -78,25 +80,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
     }
   })
 
-  describe('database update', () => {
-    const userId = uuid()
-    const user = { id: userId } as User
-    const caseId = uuid()
-    const theCase = { id: caseId, judgeId: userId } as Case
-    const documentToken = uuid()
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, documentToken)
-    })
-
-    it('should set the ruling date', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
-        { rulingDate: expect.any(Date) },
-        { where: { id: caseId }, transaction },
-      )
-    })
-  })
-
   describe('successful completion', () => {
     const userId = uuid()
     const user = { id: userId } as User
@@ -106,14 +89,20 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [theCase]])
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
+    it('should set the ruling date', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        { rulingDate: expect.any(Date) },
+        { where: { id: caseId }, transaction },
+      )
+    })
+
     it('should return success', () => {
-      expect(then.result).toEqual({ documentSigned: true })
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.CASE_COMPLETED, caseId },
@@ -121,6 +110,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
         { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
       ])
+      expect(then.result).toEqual({ documentSigned: true })
     })
   })
 

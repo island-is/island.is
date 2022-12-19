@@ -3,21 +3,23 @@ import {
   CanActivate,
   ExecutionContext,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common'
 
+import { Case } from '../../case'
 import { DefendantService } from '../defendant.service'
 
 @Injectable()
 export class DefendantExistsGuard implements CanActivate {
   constructor(private defendantService: DefendantService) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const caseId = request.params.caseId
+    const theCase: Case = request.case
 
-    if (!caseId) {
-      throw new BadRequestException('Missing case id')
+    if (!theCase) {
+      throw new BadRequestException('Missing case')
     }
 
     const defendantId = request.params.defendantId
@@ -26,10 +28,17 @@ export class DefendantExistsGuard implements CanActivate {
       throw new BadRequestException('Missing defendant id')
     }
 
-    request.defendant = await this.defendantService.findById(
-      defendantId,
-      caseId,
+    const defendant = theCase.defendants?.find(
+      (defendant) => defendant.id === defendantId,
     )
+
+    if (!defendant) {
+      throw new NotFoundException(
+        `Defendant ${defendantId} of case ${theCase.id} does not exist`,
+      )
+    }
+
+    request.defendant = defendant
 
     return true
   }

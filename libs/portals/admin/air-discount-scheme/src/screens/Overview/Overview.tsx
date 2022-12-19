@@ -14,13 +14,14 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
-import { Filters, Panel, Summary, Modal } from './components'
+import { Filters, Panel, Summary } from './components'
 import { isCSVAvailable, downloadCSV } from './utils'
 import {
   useConfirmInvoiceMutation,
   useFlightLegsQuery,
 } from './Overview.generated'
 import { FlightLegsFilters } from './types'
+import Modal from '../../components/Modal/Modal'
 
 const TODAY = new Date()
 

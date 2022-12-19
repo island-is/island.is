@@ -4,39 +4,30 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
+import { User } from '../user'
+import { CourtService } from '../court'
+import { Case } from '../case/models/case.model'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { DeliverResponse } from './models/deliver.response'
 import { Defendant } from './models/defendant.model'
-import { Case } from '../case/models/case.model'
 
 @Injectable()
 export class DefendantService {
   constructor(
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    private readonly courtService: CourtService,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  async findById(defendantId: string, caseId: string): Promise<Defendant> {
-    const defendant = await this.defendantModel.findOne({
-      where: { id: defendantId, caseId },
-    })
-
-    if (!defendant) {
-      throw new NotFoundException(
-        `Defendant ${defendantId} of case ${caseId} does not exist`,
-      )
-    }
-
-    return defendant
-  }
 
   async create(
     caseId: string,
@@ -128,5 +119,42 @@ export class DefendantService {
     })
 
     return defendantsInCustody.some((d) => d.case)
+  }
+
+  async deliverDefendantToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    user: User,
+  ): Promise<DeliverResponse> {
+    if (
+      defendant.noNationalId ||
+      !defendant.nationalId ||
+      defendant.nationalId.replace('-', '').length !== 10
+    ) {
+      await this.messageService.sendMessageToQueue({
+        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+        caseId: theCase.id,
+      })
+
+      return { delivered: true }
+    }
+
+    return this.courtService
+      .updateCaseWithDefendant(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        defendant.nationalId.replace('-', ''),
+        theCase.defenderEmail,
+      )
+      .then(() => {
+        return { delivered: true }
+      })
+      .catch((reason) => {
+        this.logger.error('failed to update case with defendant', { reason })
+
+        return { delivered: false }
+      })
   }
 }

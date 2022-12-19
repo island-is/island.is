@@ -54,7 +54,7 @@ export const announcerInfo = buildSection({
           readOnly: true,
           width: 'half',
           defaultValue: ({ externalData }: Application) => {
-            return externalData.nationalRegistry?.data.address.streetName
+            return externalData.nationalRegistry?.data.address.streetAddress
           },
         }),
         buildTextField({
