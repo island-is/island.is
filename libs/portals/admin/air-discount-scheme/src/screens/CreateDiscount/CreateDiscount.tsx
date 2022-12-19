@@ -8,8 +8,8 @@ import {
   Input,
   Stack,
 } from '@island.is/island-ui/core'
-import Modal from './components/Modal/Modal'
 import { useCreateExplicitDiscountCodeMutation } from './CreateDiscount.generated'
+import Modal from '../../components/Modal/Modal'
 
 const AdminCreateDiscount = () => {
   const [createExplicitDiscountCode] = useCreateExplicitDiscountCodeMutation()

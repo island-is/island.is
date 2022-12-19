@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   BlueBox,
@@ -209,6 +210,12 @@ const CourtRecord = () => {
     workingCase,
   ])
 
+  const stepIsValid = isCourtRecordStepValidIC(workingCase)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -218,6 +225,8 @@ const CourtRecord = () => {
       activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.courtRecord)}
@@ -503,8 +512,10 @@ const CourtRecord = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           hideNextButton={
             !workingCase.decision ||
             !workingCase.conclusion ||
