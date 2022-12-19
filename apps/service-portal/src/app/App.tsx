@@ -3,13 +3,16 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import {
+  servicePortalMasterNavigation,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import {
   ApplicationErrorBoundary,
-  PortalMetaProvider,
+  PortalProvider,
 } from '@island.is/portals/core'
 
 import { environment } from '../environments'
@@ -21,21 +24,29 @@ import Modules from '../screens/Modules/Modules'
 import { GlobalModules } from '../components/GlobalModules/GlobalModules'
 import { UserProfileLocale } from '@island.is/shared/components'
 import * as styles from './App.css'
+import { modules } from '../store/modules'
 
 export const App = () => {
   return (
     <div className={styles.page}>
       <ApolloProvider client={client}>
-        <PortalMetaProvider basePath={ServicePortalPath.MinarSidurPath}>
-          <StateProvider
-            initialState={store.initialState}
-            reducer={store.reducer}
-          >
-            <LocaleProvider locale={defaultLanguage} messages={{}}>
-              <ApplicationErrorBoundary>
-                <Router basename={ServicePortalPath.MinarSidurPath}>
-                  <Authenticator>
-                    <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+        <StateProvider
+          initialState={store.initialState}
+          reducer={store.reducer}
+        >
+          <LocaleProvider locale={defaultLanguage} messages={{}}>
+            <ApplicationErrorBoundary>
+              <Router basename={ServicePortalPath.MinarSidurPath}>
+                <Authenticator>
+                  <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                    <PortalProvider
+                      modules={Object.values(modules)}
+                      meta={{
+                        basePath: ServicePortalPath.MinarSidurPath,
+                        masterNav: servicePortalMasterNavigation[0],
+                        portalType: 'my-pages',
+                      }}
+                    >
                       <UserProfileLocale />
                       <Layout>
                         <Switch>
@@ -48,13 +59,13 @@ export const App = () => {
                         </Switch>
                         <GlobalModules />
                       </Layout>
-                    </FeatureFlagProvider>
-                  </Authenticator>
-                </Router>
-              </ApplicationErrorBoundary>
-            </LocaleProvider>
-          </StateProvider>
-        </PortalMetaProvider>
+                    </PortalProvider>
+                  </FeatureFlagProvider>
+                </Authenticator>
+              </Router>
+            </ApplicationErrorBoundary>
+          </LocaleProvider>
+        </StateProvider>
       </ApolloProvider>
     </div>
   )
