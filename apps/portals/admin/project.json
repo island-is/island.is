@@ -81,18 +81,14 @@
     "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": [
-          "yarn get-secrets portals-admin"
-        ],
+        "commands": ["yarn get-secrets portals-admin"],
         "parallel": false
       }
     },
     "dev": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": [
-          "yarn start portals-admin"
-        ],
+        "commands": ["yarn start portals-admin"],
         "parallel": true
       }
     },

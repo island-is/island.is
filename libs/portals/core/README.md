@@ -147,9 +147,7 @@ Global components should be used very sparingly to reduce harrassment on the use
 
 ```typescript
 interface PortalModule {
-  global?: (
-    props: PortalModuleProps,
-  ) => Promise<PortalGlobalComponent[]>
+  global?: (props: PortalModuleProps) => Promise<PortalGlobalComponent[]>
 }
 ```
 
@@ -157,12 +155,16 @@ An example of how a global component might be implemented
 
 ```typescript
 global: async ({ client }) => {
-  if (client.userDoesNotHaveAUserProfile()) return [{
-    render: () =>
-      lazy(() =>
-        import('./components/UserOnboardingModal/UserOnboardingModal'),
-      ),
-  }]
+  if (client.userDoesNotHaveAUserProfile())
+    return [
+      {
+        render: () =>
+          lazy(
+            () =>
+              import('./components/UserOnboardingModal/UserOnboardingModal'),
+          ),
+      },
+    ]
 
   return []
 }
