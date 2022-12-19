@@ -10,6 +10,7 @@ import { User } from '@island.is/shared/types'
  * A navigational item used by the service portal
  */
 export interface PortalNavigationItem {
+  id?: string
   name: MessageDescriptor | string
   path?: string
   external?: boolean
@@ -147,6 +148,10 @@ export interface PortalGlobalComponent {
 }
 
 export interface PortalModule {
+  /**
+   * Unique identifier for this module
+   */
+  id?: string
   /**
    * The title of this module
    */

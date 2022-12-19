@@ -1,6 +1,7 @@
 // libs
 export * from './lib/paths'
 export * from './lib/messages'
+export * from './lib/moduleIdentifiers'
 
 // types
 export * from './types/portalCore'
