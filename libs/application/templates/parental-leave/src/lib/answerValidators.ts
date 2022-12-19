@@ -182,10 +182,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [OTHER_PARENT_EMAIL]: (newAnswer: unknown, application: Application) => {
     const email = newAnswer as string
     const { otherParent } = getApplicationAnswers(application.answers)
-    if (otherParent !== NO && otherParent !== SINGLE && !isValidEmail(email)) {
+    const hasOtherParent = otherParent !== NO && otherParent !== SINGLE
+    if (hasOtherParent && !isValidEmail(email)) {
       return buildValidationError(OTHER_PARENT_EMAIL)(errorMessages.email)
     }
-    return undefined
   },
   [OTHER_PARENT]: (newAnswer: unknown) => {
     const otherParentObj = newAnswer as OtherParentObj
