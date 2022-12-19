@@ -1,4 +1,4 @@
-# portals-admin-core
+# Portals Admin Core
 
 This library was generated with [Nx](https://nx.dev).
 
