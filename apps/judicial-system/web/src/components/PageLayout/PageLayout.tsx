@@ -12,7 +12,7 @@ import {
   Section,
   linkStyles,
   Text,
-  Link,
+  LinkV2,
 } from '@island.is/island-ui/core'
 import {
   UserRole,
@@ -84,11 +84,11 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
       isComplete={activeSection ? index < activeSection : false}
       subSections={section.children.map((subSection, index) =>
         subSection.href && activeSubSection && activeSubSection > index ? (
-          <Link href={subSection.href} underline="small">
+          <LinkV2 href={subSection.href} underline="small">
             <SubsectionChild isActive={index === activeSubSection}>
               {subSection.name}
             </SubsectionChild>
-          </Link>
+          </LinkV2>
         ) : subSection.onClick ? (
           <Box
             component="button"
