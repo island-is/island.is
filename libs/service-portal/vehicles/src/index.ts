@@ -6,10 +6,8 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
-import { ModuleIdentifiers } from '@island.is/portals/core'
 
 export const vehiclesModule: ServicePortalModule = {
-  id: ModuleIdentifiers.VEHICLES,
   name: 'Ökutæki',
   widgets: () => [],
   routes: ({ userInfo }) => [

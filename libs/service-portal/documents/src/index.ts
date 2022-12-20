@@ -6,7 +6,6 @@ import {
   ServicePortalModule,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { ModuleIdentifiers } from '@island.is/portals/core'
 
 const rootName = defineMessage({
   id: 'sp.documents:title',
@@ -14,7 +13,6 @@ const rootName = defineMessage({
 })
 
 export const documentsModule: ServicePortalModule = {
-  id: ModuleIdentifiers.DOCUMENTS,
   name: rootName,
   widgets: () => [],
   routes: ({ userInfo }) => [

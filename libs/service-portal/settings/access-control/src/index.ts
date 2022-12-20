@@ -8,10 +8,8 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { Features } from '@island.is/feature-flags'
-import { ModuleIdentifiers } from '@island.is/portals/core'
 
 export const accessControlModule: ServicePortalModule = {
-  id: ModuleIdentifiers.ACCESS_CONTROL,
   name: 'Aðgangsstýring',
   featureFlag: Features.outgoingDelegationsV1,
   widgets: () => [],

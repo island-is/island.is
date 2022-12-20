@@ -1,12 +1,8 @@
-import {
-  ModuleIdentifiers,
-  PortalNavigationItem,
-} from '@island.is/portals/core'
+import { PortalNavigationItem } from '@island.is/portals/core'
 import { DelegationPaths } from './paths'
 import { m } from './messages'
 
 export const delegationsNavigation: PortalNavigationItem = {
-  id: ModuleIdentifiers.DELEGATIONS,
   name: m.accessControl,
   path: DelegationPaths.Delegations,
   icon: {

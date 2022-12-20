@@ -1,5 +1,5 @@
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { ModuleIdentifiers, PortalModule } from '@island.is/portals/core'
+import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 import { m } from './lib/messages'
 import { AirDiscountSchemePaths } from './lib/paths'
@@ -10,7 +10,6 @@ const CreateDiscount = lazy(() =>
 )
 
 export const airDiscountSchemeAdminModule: PortalModule = {
-  id: ModuleIdentifiers.EDUCATION_CAREER,
   name: m.airDiscountScheme,
   widgets: () => [],
   layout: 'full',

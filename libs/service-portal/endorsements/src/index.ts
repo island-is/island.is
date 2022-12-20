@@ -7,10 +7,8 @@ import {
 } from '@island.is/service-portal/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
-import { ModuleIdentifiers } from '@island.is/portals/core'
 
 export const petitionsModule: ServicePortalModule = {
-  id: ModuleIdentifiers.PETITIONS,
   name: 'Almennir undirskriftalistar',
   featureFlag: Features.servicePortalPetitionsModule,
   widgets: () => [],

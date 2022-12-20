@@ -11,10 +11,8 @@ import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { showModal } from '../src/utils/showModal'
 
 import { lazy } from 'react'
-import { ModuleIdentifiers } from '@island.is/portals/core'
 
 export const personalInformationModule: ServicePortalModule = {
-  id: ModuleIdentifiers.PERSONAL_INFORMATION,
   name: 'Persónuupplýsingar',
   widgets: () => [],
   routes: ({ userInfo }) => {

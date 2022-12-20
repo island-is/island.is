@@ -5,7 +5,6 @@ import { MessageDescriptor } from 'react-intl'
 import type { Features } from '@island.is/react/feature-flags'
 import { IconProps } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
-import { ModuleIdentifiers } from '../lib/moduleIdentifiers'
 
 /**
  * A navigational item used by the service portal
@@ -48,7 +47,7 @@ export interface PortalNavigationItem {
    */
   description?: MessageDescriptor
   /**
-   * Active state for navigation item (used for active state in navigation)
+   * Active state for navigation item
    */
   active?: boolean
 }
@@ -152,10 +151,6 @@ export interface PortalGlobalComponent {
 }
 
 export interface PortalModule {
-  /**
-   * Unique identifier for this module
-   */
-  id: ModuleIdentifiers
   /**
    * The title of this module
    */
