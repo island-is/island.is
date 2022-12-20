@@ -48,7 +48,8 @@
       "options": {
         "lintFilePatterns": ["apps/samradsgatt/**/*.{ts,tsx,js,jsx}"]
       }
-    }
+    },
+    "docker-next": {}
   },
   "tags": []
 }

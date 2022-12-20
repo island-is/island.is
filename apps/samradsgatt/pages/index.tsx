@@ -1,14 +1,7 @@
 import {
   Box,
   Filter,
-  FilterInput,
   FilterMultiChoice,
-  FilterProps,
-  Checkbox,
-  Stack,
-  Text,
-  Divider,
-  Button,
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
@@ -16,11 +9,6 @@ import { ReactNode } from 'react'
 import Card from '../components/Card/Card'
 import { filterProps } from '../components/Filter/Utils/FilterOptions'
 export function Index() {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.scss file.
-   */
   const clearFilter = () => {
     console.log('clear')
   }
@@ -28,7 +16,7 @@ export function Index() {
     value: string
     label: string | ReactNode
   }
-  const filterItems: Array<FilterItem> = [{ value: 'hi', label: 'jo' }]
+  const filterItems: Array<FilterItem> = [{ value: 'item', label: 'item 1' }]
 
   return (
     <div>
