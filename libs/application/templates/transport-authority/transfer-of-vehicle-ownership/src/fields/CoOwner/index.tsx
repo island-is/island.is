@@ -1,8 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import {
-  VehiclesCurrentOwnerInfo,
-  VehiclesCurrentVehicle,
-} from '@island.is/api/schema'
+import { VehiclesCurrentOwnerInfo } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -12,6 +9,7 @@ import { FC, useEffect } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
+import { VehiclesCurrentVehicle } from '../../types'
 
 export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
   const { formatMessage } = useLocale()
