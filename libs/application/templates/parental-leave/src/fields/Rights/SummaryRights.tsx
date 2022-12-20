@@ -13,7 +13,7 @@ import {
   getMultipleBirthsDays,
 } from '../../lib/parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
-import { SINGLE, YES } from '../../constants'
+import { SINGLE, YES, NO } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface SummaryRightsProps {
@@ -32,6 +32,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
     giveDays,
     otherParent,
   } = useApplicationAnswers(application)
+  const hasSelectedOtherParent = otherParent !== NO && otherParent !== SINGLE
   const personalMonths =
     otherParent !== SINGLE
       ? getAvailablePersonalRightsInMonths(application)
@@ -89,7 +90,8 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               </>
             )}
 
-            {(isRequestingRights === YES || isRequestingRightsSecondary) &&
+            {hasSelectedOtherParent &&
+              (isRequestingRights === YES || isRequestingRightsSecondary) &&
               requestDays > 0 && (
                 <>
                   {', '}
@@ -105,19 +107,22 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
                 </>
               )}
 
-            {isGivingRights === YES && giveDays !== 0 && (
-              <>
-                {', '}
-                <Text as="span">
-                  {formatMessage(
-                    parentalLeaveFormMessages.reviewScreen.rightsAllowanceGiven,
-                    {
-                      given: round(given),
-                    },
-                  )}
-                </Text>
-              </>
-            )}
+            {hasSelectedOtherParent &&
+              isGivingRights === YES &&
+              giveDays !== 0 && (
+                <>
+                  {', '}
+                  <Text as="span">
+                    {formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .rightsAllowanceGiven,
+                      {
+                        given: round(given),
+                      },
+                    )}
+                  </Text>
+                </>
+              )}
           </Box>
         </Box>
       }
