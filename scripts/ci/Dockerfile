@@ -9,15 +9,14 @@ WORKDIR /build
 # Adding and installing packages
 ADD package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/ ./.yarn
-RUN apk add --update --no-cache python3 build-base gcc \
-  && ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
 FROM deps as src
 
-RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 \
-  && chmod a+x /tmp/jq-linux64 \
-  && mv /tmp/jq-linux64 /usr/bin/jq
+RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+  chmod a+x /tmp/jq-linux64 && \
+  mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
 ADD . .
@@ -48,8 +47,7 @@ ENV NODE_ENV=production
 WORKDIR /webapp
 
 # Adding user for running the app
-RUN addgroup runners \
-  && adduser -D runner -G runners
+RUN addgroup runners && adduser -D runner -G runners
 
 FROM output-base as output-base-with-pg
 
@@ -91,9 +89,9 @@ ENV APP=${APP}
 ENV BASEPATH=/
 
 RUN mkdir -p /etc/nginx/templates
-RUN apk update \
-  && apk upgrade \
-  && apk add bash nodejs
+RUN apk update && \
+  apk upgrade && \
+  apk add bash nodejs
 
 ADD scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
@@ -115,59 +113,40 @@ CMD [ "jest", "main.spec.js" ]
 FROM mcr.microsoft.com/playwright:v1.25.2-focal as playwright-base
 
 
-FROM playwright-base as playwright-deps
-RUN apt-get update \
-  && apt-get install -y \
-    vim \
-    libnss3 \
-    libatk-bridge2.0-0 \
-    libdrm-dev \
-    libxkbcommon-dev \
-    libgbm-dev \
-    libasound-dev \
-    libatspi2.0-0 \
-    libxshmfence-dev \
-    awscli \
-    zip \
-  \
-  && apt-get purge
 
+FROM playwright-base as output-playwright
 
-
-FROM playwright-deps as playwright-common
 ARG APP_HOME
 ARG APP_DIST_HOME
+
 WORKDIR ${APP_DIST_HOME}
+ENV APP_DIST_HOME=${APP_DIST_HOME}
+
 RUN mkdir -p /${APP_DIST_HOME} \
-  && chown pwuser:pwuser /${APP_DIST_HOME} \
-  && chown -R pwuser:pwuser /tmp
-#COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
-#RUN yarn install
+  && chown pwuser:pwuser /${APP_DIST_HOME}
+
+RUN chown -R pwuser:pwuser /tmp
+RUN apt-get update && apt-get install -y vim
+RUN apt-get -y install libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libatspi2.0-0 libxshmfence-dev
+RUN apt-get -y install awscli zip
+
+COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
+RUN yarn install
 COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
-
-
-
-
-FROM playwright-common as output-playwright
-ARG APP_HOME
-ARG APP_DIST_HOME
-WORKDIR ${APP_DIST_HOME}
-COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
-#USER pwuser
-RUN yarn install
+USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
 
-
-
-FROM playwright-common as output-local
+FROM playwright-base as output-local
 ARG APP_HOME
-ARG APP_DIST_HOME
-WORKDIR ${APP_DIST_HOME}
-RUN useradd node \
-  && mkdir -p /out \
+
+
+# node user exists in the base image
+RUN mkdir -p /out \
   && chown node:node /out
+
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
-#USER pwuser
-ENTRYPOINT ["ls"]
+
+USER pwuser
+
+ENTRYPOINT ["./entrypoint.sh"]
