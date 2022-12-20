@@ -2,9 +2,9 @@ import { uuid } from 'uuidv4'
 
 import { Gender } from '@island.is/judicial-system/types'
 
-import { CreateDefendantDto } from '../dto/createDefendant.dto'
-import { Defendant } from '../models/defendant.model'
-import { createTestingDefendantModule } from './createTestingDefendantModule'
+import { CreateDefendantDto } from '../../dto/createDefendant.dto'
+import { Defendant } from '../../models/defendant.model'
+import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
 interface Then {
   result: Defendant | null
