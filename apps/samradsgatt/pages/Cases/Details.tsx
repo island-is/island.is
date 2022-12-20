@@ -9,15 +9,11 @@ import {
   FormStepper,
   Breadcrumbs,
   Divider,
-  Stack,
 } from '@island.is/island-ui/core'
 // import { withMainLayout } from '@island.is/web/layouts/main'
 import { FormStepperThemes } from '@island.is/island-ui/core'
-import { Screen } from '../../../../apps/web/types'
 
-interface DetailsProps {}
-
-const Details: Screen<DetailsProps> = () => {
+const Details = () => {
   return (
     <GridContainer>
       <GridRow>
