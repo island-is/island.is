@@ -14,29 +14,27 @@ import {
 // import { withMainLayout } from '@island.is/web/layouts/main'
 import { FormStepperThemes } from '@island.is/island-ui/core'
 import { Screen } from '../../../../apps/web/types'
-import { Case } from '../Cases/schema'
 
-interface DetailsProps {
-  case: Case
-}
+interface DetailsProps {}
 
-const Details: Screen<DetailsProps> = ({ case: Case }) => {
+const Details: Screen<DetailsProps> = () => {
   return (
     <GridContainer>
       <GridRow>
         <GridColumn span={'3/12'} paddingBottom={3}>
           <Box>
-            <Breadcrumbs
-              items={[
-                { title: 'link', href: '/' },
-                { title: 'text' },
-                { isTag: true, title: 'link tag', href: '/' },
-                { isTag: true, title: 'text tag' },
-              ]}
-            />
+            <Box paddingY={3}>
+              <Breadcrumbs
+                items={[
+                  { title: 'Breadcrumb', href: '/' },
+                  { title: 'Breadcrumb', href: '/' },
+                  { title: 'Breadcrumb', href: '/' },
+                ]}
+              />
+            </Box>
             <Divider></Divider>
-            <Box padding={3}>
-              <Text variant="h2" color="blue400">
+            <Box paddingY={3}>
+              <Text variant="h3" color="blue400">
                 {'Tímalína máls'}
               </Text>
               <FormStepper
@@ -76,16 +74,13 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
             borderBottomWidth={'standard'}
             borderTopWidth={'standard'}
             borderColor={'blue200'}
-            paddingY={'p1'}
+            paddingY={2}
+            paddingLeft={1}
           >
-            {/* <Divider /> */}
             <Text variant="h3" color="purple400">
-              {'Fjöldi umsagna:'}
+              {'Fjöldi umsagna: X'}
             </Text>
           </Box>
-          {/* <Box marginBottom={8}>
-            <Divider />
-          </Box> */}
           <Box
             marginBottom={6}
             borderColor="blue300"
@@ -96,29 +91,31 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
           >
             <Text variant="h3">{'Skrá áskrift'}</Text>
             <Text variant="default">
-              {''} Skráðu þig í áskrift af þessu máli. Þú færð e-mail til
-              staðfestingar.
+              {''} Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Delectus exercitationem placeat necessitatibus.....
             </Text>
             <form>{/* <InputController></InputController> */}</form>
           </Box>
         </GridColumn>
-        <GridColumn span={'6/12'} paddingBottom={3} paddingTop={3}>
-          <Box paddingX={4}>
+        <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
+          <Box paddingLeft={4}>
             <GridRow>
               <Box
                 marginRight={1}
                 borderRightWidth={'standard'}
                 borderColor={'purple300'}
                 paddingRight={1}
+                paddingLeft={2}
               >
                 <Text variant="eyebrow" color="purple400">
-                  {'#Malanumer'}
+                  {'Malanumer#'}
                 </Text>
               </Box>
-
-              <Text variant="eyebrow" color="purple400">
-                {'#Dagsetning'}
-              </Text>
+              <Box>
+                <Text variant="eyebrow" color="purple400">
+                  {'Dagsetning#'}
+                </Text>
+              </Box>
             </GridRow>
             <GridRow marginTop={3}>
               <Box
@@ -126,6 +123,7 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
                 borderRightWidth={'standard'}
                 borderColor={'blue200'}
                 paddingRight={1}
+                paddingLeft={2}
               >
                 {' '}
                 <Text variant="eyebrow" color="blue400">
@@ -133,7 +131,7 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
                 </Text>
               </Box>
               <Box
-                marginRight={1}
+                marginRight={2}
                 borderRightWidth={'standard'}
                 borderColor={'blue200'}
                 paddingRight={1}
@@ -149,8 +147,17 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
             </GridRow>
             <Box marginBottom={4} paddingTop={2}>
               <Text variant="h1" color="blue400">
-                {'#Titill máls'}
+                {'Titill máls'}
               </Text>
+              <Box paddingTop={4}>
+                <CategoryCard
+                  heading="Niðurstöður í vinnslu"
+                  text=" Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Repellat dolorem perspiciatis aperiam. Itaque, ipsa ea.
+                  Nesciunt labore eveniet, ducimus ullam illo saepe animi. Nemo,
+                  fugiat? Corrupti rem expedita magni totam."
+                />
+              </Box>
               <Box marginBottom={6} marginTop={4}>
                 <Text variant="h4">{'Málsefni'}</Text>
                 <Text variant="default">
@@ -171,7 +178,7 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
               </Box>
             </Box>
             <Box marginBottom={6}>
-              <Text variant="h1" color="blue400">
+              <Text variant="h1" color="blue400" paddingY={2}>
                 {'Innsendar umsagnir'}
               </Text>
               <Box
@@ -185,7 +192,7 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
                 <Text variant="eyebrow" color="purple400">
                   {'#Dagsetning'}
                 </Text>
-                <Text variant="h3">{'Umsagnaradili'}</Text>
+                <Text variant="h3">{'Umsagnaradili#'}</Text>
                 <Text variant="default">
                   {' '}
                   Lorem ipsum dolor, sit amet consectetur adipisicing elit.
@@ -198,32 +205,29 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
             <ActionCard
               headingVariant="h4"
               heading="Skrifa umsögn"
-              text="This is the text"
+              text="Lorem ipsum dolar, ............"
               cta={{ label: 'Skrá mig inn' }}
             ></ActionCard>
           </Box>
         </GridColumn>
         <GridColumn span={'3/12'}>
-          <Box>
+          <Box paddingY={8}>
             <Box padding={3}>
               <CategoryCard
-                heading="Niðurstöður í vinnslu"
-                text=" Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                  Repellat dolorem perspiciatis aperiam. Itaque, ipsa ea.
-                  Nesciunt labore eveniet, ducimus ullam illo saepe animi. Nemo,
-                  fugiat? Corrupti rem expedita magni totam."
+                heading="Skjöl til samráðs"
+                text="Lorem ipsum......."
               />
-            </Box>
-            <Box padding={3}>
-              <CategoryCard heading="Ábyrgðaraðilli" text="fleh" />
-            </Box>
-            <Box padding={3}>
-              <CategoryCard heading="Skjöl til samráðs" text="fleh" />
             </Box>
             <Box padding={3}>
               <CategoryCard
                 heading="Aðillar sem hafa fengið boð um samráð á máli."
-                text="fleh"
+                text="Lorem ipsum......."
+              />
+            </Box>
+            <Box padding={3}>
+              <CategoryCard
+                heading="Ábyrgðaraðilli"
+                text="Lorem ipsum......."
               />
             </Box>
           </Box>
@@ -232,127 +236,5 @@ const Details: Screen<DetailsProps> = ({ case: Case }) => {
     </GridContainer>
   )
 }
-
-// const Details = () => {
-//   return (
-//     <GridContainer>
-//       <GridRow>
-//         <GridColumn span={'3/12'} paddingBottom={3}>
-//           <Box>
-//             <Breadcrumbs
-//               items={[
-//                 { title: 'link', href: '/' },
-//                 { title: 'text' },
-//                 { isTag: true, title: 'link tag', href: '/' },
-//                 { isTag: true, title: 'text tag' },
-//               ]}
-//             />
-//             <Box padding={3}>
-//               <Text variant="h2" color="blue400">
-//                 {'Tímalína máls'}
-//               </Text>
-//               <FormStepper
-//                 theme={FormStepperThemes.PURPLE}
-//                 sections={[
-//                   {
-//                     name: 'Section #1',
-//                   },
-//                   {
-//                     name: 'Section #2',
-//                     children: [
-//                       {
-//                         type: 'SUB_SECTION',
-//                         name: 'Sub section #1',
-//                       },
-//                       {
-//                         type: 'SUB_SECTION',
-//                         name: 'Sub section #2',
-//                       },
-//                     ],
-//                   },
-//                   {
-//                     name: 'Section #3',
-//                   },
-//                 ]}
-//                 activeSection={1}
-//               />
-//             </Box>
-//           </Box>
-//           <Box
-//             marginBottom={6}
-//             borderBottomWidth={'standard'}
-//             borderTopWidth={'standard'}
-//             borderColor={'blue200'}
-//             paddingY={'p1'}
-//           >
-//             {/* <Divider /> */}
-//             <Text variant="h3" color="purple400">
-//               {'Fjöldi umsagna:'}
-//             </Text>
-//           </Box>
-//           {/* <Box marginBottom={8}>
-//             <Divider />
-//           </Box> */}
-//           <Box
-//             marginBottom={6}
-//             borderColor="blue300"
-//             borderWidth="standard"
-//             padding={3}
-//             borderStyle="solid"
-//             borderRadius="standard"
-//           ></Box>
-//         </GridColumn>
-//         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={3}>
-//           <Box
-//             marginBottom={6}
-//             borderColor="blue300"
-//             borderWidth="standard"
-//             padding={3}
-//             borderStyle="solid"
-//             borderRadius="standard"
-//           ></Box>
-//           <Text variant="h1" color="blue400">
-//             {'Innsendar umsagnir'}
-//           </Text>
-//           <Box
-//             marginBottom={6}
-//             borderColor="blue300"
-//             borderWidth="standard"
-//             padding={3}
-//             borderStyle="solid"
-//             borderRadius="standard"
-//           ></Box>
-//           <ActionCard
-//             headingVariant="h4"
-//             heading="Skrifa umsögn"
-//             text="This is the text"
-//             cta={{ label: 'Skrá mig inn' }}
-//           ></ActionCard>
-//         </GridColumn>
-//         <GridColumn span={'3/12'}>
-//           <Box>
-//             <Box padding={3}>
-//               <CategoryCard heading="Niðurstöður í vinnslu" text="fleh" />
-//             </Box>
-//             <Box padding={3}>
-//               <CategoryCard heading="Ábyrgðaraðilli" text="fleh" />
-//             </Box>
-//             <Box padding={3}>
-//               <CategoryCard heading="Skjöl til samráðs" text="fleh" />
-//             </Box>
-//             <Box padding={3}>
-//               <CategoryCard
-//                 heading="Aðillar sem hafa fengið boð um samráð á máli."
-//                 text="fleh"
-//               />
-//             </Box>
-//           </Box>
-//         </GridColumn>
-//       </GridRow>
-//     </GridContainer>
-//   )
-// }
-
-// export default withMainLayout(Details)
 
 export default Details
