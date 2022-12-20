@@ -7,6 +7,8 @@ const schema = z.object({
     timeout: z.number().int(),
     scope: z.array(z.string()),
   }),
+  username: z.string(),
+  password: z.string(),
 })
 
 export const CourtBankruptcyCertClientConfig = defineConfig<
@@ -23,5 +25,7 @@ export const CourtBankruptcyCertClientConfig = defineConfig<
       timeout: 30000,
       scope: ['@island.is/internal'],
     },
+    username: env.required('DOMSYSLA_USERNAME'),
+    password: env.required('DOMSYSLA_PASSWORD'),
   }),
 })
