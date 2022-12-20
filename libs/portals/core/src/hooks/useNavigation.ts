@@ -70,10 +70,18 @@ const filterNavigationTree = ({
 
   item.navHide = item.navHide || !!hideDynamicPath
 
-  if (currentLocationPath && item.path) {
-    item.active = item.activeIfExact
-      ? currentLocationPath === item.path
-      : currentLocationPath.startsWith(item.path)
+  if (currentLocationPath) {
+    if (item.path) {
+      // Set item active if
+      // - the item path is an exact match
+      // - the item path is a prefix of the current location path
+      item.active = item.activeIfExact
+        ? currentLocationPath === item.path
+        : currentLocationPath.startsWith(item.path)
+    } else if (!item.path && item?.children) {
+      // Set item active if one of it's children is active and the item has no path.
+      item.active = item.children.some(({ active }) => active)
+    }
   }
 
   return included || onlyDescendantsIncluded
