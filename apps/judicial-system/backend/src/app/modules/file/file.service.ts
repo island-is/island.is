@@ -374,7 +374,11 @@ export class FileService {
   }
 
   async archive(file: CaseFile): Promise<boolean> {
-    if (!file.key || file.key.startsWith('indictments/completed/')) {
+    if (
+      !file.key ||
+      !file.key.startsWith('indictments/') ||
+      file.key.startsWith('indictments/completed/')
+    ) {
       return true
     }
 
