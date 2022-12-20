@@ -319,7 +319,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
                   <PoliceCaseFilesMessageBox
                     icon="checkmark"
                     iconColor="blue400"
-                    message={formatMessage(errors.general)}
+                    message={formatMessage(m.allFilesUploadedMessage)}
                   />
                 )}
               </motion.ul>
@@ -328,7 +328,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
               <Button
                 onClick={uploadToRVG}
                 loading={isUploading}
-                disabled={policeCaseFileList.length === 0}
+                disabled={policeCaseFileList.every((p) => !p.checked)}
               >
                 {formatMessage(m.uploadButtonLabel)}
               </Button>
