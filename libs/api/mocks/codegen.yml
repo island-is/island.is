@@ -7,7 +7,6 @@ generates:
       - typescript-resolvers
     config:
       noSchemaStitching: true
-      contextType: ../graphql/mswHandler#Context
       enumsAsTypes: true
 hooks:
   afterAllFileWrite:
