@@ -24,7 +24,6 @@ const round = (value: number) => Math.round(value * 100) / 100
 
 export const SummaryRights = ({ application }: SummaryRightsProps) => {
   const { formatMessage } = useLocale()
-  console.log('APP ANS', useApplicationAnswers(application))
   const {
     isRequestingRights,
     isRequestingRightsSecondary,
