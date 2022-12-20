@@ -4,6 +4,7 @@ import { Message } from './dto/createNotification.dto'
 import { Notification, MessageTypes } from './types'
 import messages from '../../../messages'
 import { UserProfile } from '@island.is/clients/user-profile'
+import { NotificationDispatchService } from './notificationDispatch.service'
 
 export const APP_PROTOCOL = Symbol('APP_PROTOCOL')
 export interface MessageProcessorServiceConfig {
@@ -47,6 +48,16 @@ export class MessageProcessorService {
           body: t.formatMessage(body, formatArgs),
           category: 'NEW_DOCUMENT',
           appURI: `${this.appProtocol}://inbox/${message.documentId}`,
+        }
+      }
+      
+      default:{
+        return {
+          messageType: message.type,
+          title: "yo",
+          body: "MTV raps",
+          category: 'DATA_DOCUMENT',
+          // appURI: `${this.appProtocol}://NOTHING`,
         }
       }
     }
