@@ -23,8 +23,13 @@ export const Header = () => {
     <div className={styles.placeholder}>
       <header className={styles.header}>
         <GridContainer>
-          <GridRow>
-            <GridColumn span="2/12">
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            width="full"
+          >
+            <Inline alignY="center">
               <Link to={'/'}>
                 <FocusableBox component="div">
                   <Hidden above="md">
@@ -35,30 +40,19 @@ export const Header = () => {
                   </Hidden>
                 </FocusableBox>
               </Link>
-            </GridColumn>
-            <GridColumn span={['6/12', '6/12', '3/12']}>
               <ModuleSwitcher />
-            </GridColumn>
-            <GridColumn span={['4/12', '4/12', '7/12']}>
+            </Inline>
+            <Hidden print>
               <Box
                 display="flex"
-                alignItems="flexEnd"
-                flexDirection="column"
-                width="full"
+                alignItems="center"
+                flexWrap="nowrap"
+                marginLeft={1}
               >
-                <Hidden print>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    flexWrap="nowrap"
-                    marginLeft={1}
-                  >
-                    <UserMenu fullscreen />
-                  </Box>
-                </Hidden>
+                <UserMenu fullscreen />
               </Box>
-            </GridColumn>
-          </GridRow>
+            </Hidden>
+          </Box>
         </GridContainer>
       </header>
     </div>
