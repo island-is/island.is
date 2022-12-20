@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Core" -->
+
 # Portals Admin Core
 
 This library was generated with [Nx](https://nx.dev).
