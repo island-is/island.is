@@ -11,15 +11,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Link } from 'react-router-dom'
-import { PortalNavigationItem } from '@island.is/portals/core'
+import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { m as adminMessages } from '@island.is/portals/admin/core'
+import { BOTTOM_NAVIGATION, TOP_NAVIGATION } from '../../lib/masterNavigation'
 import * as styles from './Dashboard.css'
-import { useAdminNavigation } from '../../hooks/useAdminNavigation'
 
 export const Dashboard = () => {
   const { formatMessage } = useLocale()
-  const { topNavigation, bottomNavigation } = useAdminNavigation()
   const { md } = useBreakpoint()
+  const topNavigation = useNavigation(TOP_NAVIGATION)
+  const bottomNavigation = useNavigation(BOTTOM_NAVIGATION)
 
   const renderNavItem = (item: PortalNavigationItem, index: number) => (
     <GridColumn
@@ -72,15 +73,18 @@ export const Dashboard = () => {
             )}
           </Box>
           <Box display="flex" flexDirection="column" rowGap={6} marginTop={5}>
-            <GridRow rowGap={3}>{topNavigation.map(renderNavItem)}</GridRow>
-            {bottomNavigation.length > 0 && (
-              <>
-                <Divider />
-                <GridRow rowGap={3}>
-                  {bottomNavigation.map(renderNavItem)}
-                </GridRow>
-              </>
-            )}
+            <GridRow rowGap={3}>
+              {topNavigation?.children?.map(renderNavItem)}
+            </GridRow>
+            {bottomNavigation?.children &&
+              bottomNavigation.children.length > 0 && (
+                <>
+                  <Divider />
+                  <GridRow rowGap={3}>
+                    {bottomNavigation.children.map(renderNavItem)}
+                  </GridRow>
+                </>
+              )}
           </Box>
         </GridColumn>
       </GridRow>

@@ -11,7 +11,6 @@ import { ModuleIdentifiers } from '../lib/moduleIdentifiers'
  * A navigational item used by the service portal
  */
 export interface PortalNavigationItem {
-  id?: ModuleIdentifiers
   name: MessageDescriptor | string
   path?: string
   external?: boolean
@@ -48,6 +47,10 @@ export interface PortalNavigationItem {
    * Description for module
    */
   description?: MessageDescriptor
+  /**
+   * Active state for navigation item (used for active state in navigation)
+   */
+  active?: boolean
 }
 
 /**

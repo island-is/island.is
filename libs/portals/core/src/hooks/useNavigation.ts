@@ -1,15 +1,28 @@
+import { useMemo } from 'react'
+import { matchPath, useLocation } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import { User } from '@island.is/shared/types'
-import { useMemo } from 'react'
-import { usePortalMeta, useRoutes } from '../components/PortalProvider'
+import { useRoutes } from '../components/PortalProvider'
 import { PortalNavigationItem, PortalRoute } from '../types/portalCore'
 
-const filterNavigationTree = (
-  item: PortalNavigationItem,
-  routes: PortalRoute[],
-  userInfo: User,
-  dymamicRouteArray: string[],
-): boolean => {
+type FilterNavigationTree = {
+  item: PortalNavigationItem
+  routes: PortalRoute[]
+  userInfo: User
+  dymamicRouteArray: string[]
+  /**
+   * The current location path
+   */
+  currentLocationPath: string
+}
+
+const filterNavigationTree = ({
+  item,
+  routes,
+  userInfo,
+  dymamicRouteArray,
+  currentLocationPath,
+}: FilterNavigationTree): boolean => {
   const routeItem = routes.find(
     (route) =>
       route.path === item.path ||
@@ -22,14 +35,23 @@ const filterNavigationTree = (
 
   // Filters out any children that do not have a module route defined
   item.children = item.children?.filter((child) => {
-    return filterNavigationTree(child, routes, userInfo, dymamicRouteArray)
+    return filterNavigationTree({
+      item: child,
+      routes,
+      userInfo,
+      dymamicRouteArray,
+      currentLocationPath,
+    })
   })
 
   // If the item is not included but one or more of it's descendants are
   // We remove the item's path but include it in the tree
   const onlyDescendantsIncluded =
     !included && Array.isArray(item.children) && item.children.length > 0
-  if (onlyDescendantsIncluded) item.path = undefined
+
+  if (onlyDescendantsIncluded) {
+    item.path = undefined
+  }
 
   // Maps the enabled status to the nav item if provided
   item.enabled = routeItem?.enabled
@@ -48,28 +70,36 @@ const filterNavigationTree = (
 
   item.navHide = item.navHide || !!hideDynamicPath
 
+  if (currentLocationPath) {
+    item.active = !!matchPath(currentLocationPath, { path: item.path })
+  }
+
   return included || onlyDescendantsIncluded
 }
 
-export const useNavigation = (navigation?: PortalNavigationItem) => {
+export const useNavigation = (navigation: PortalNavigationItem) => {
   const { userInfo } = useAuth()
-  const { masterNav } = usePortalMeta()
   const routes = useRoutes()
+  const { pathname } = useLocation()
 
   const filteredNavigation = useMemo(() => {
     if (userInfo) {
-      const nav = navigation || masterNav
-
       return {
-        ...nav,
-        children: nav?.children?.filter((navItem) =>
-          filterNavigationTree(navItem, routes, userInfo, []),
+        ...navigation,
+        children: navigation?.children?.filter((navItem) =>
+          filterNavigationTree({
+            item: navItem,
+            routes,
+            userInfo,
+            dymamicRouteArray: [],
+            currentLocationPath: pathname,
+          }),
         ),
       }
     }
 
     return undefined
-  }, [masterNav, routes, userInfo, navigation])
+  }, [userInfo, navigation, routes, pathname])
 
   return filteredNavigation
 }

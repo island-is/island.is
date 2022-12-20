@@ -14,7 +14,6 @@ import { Layout } from '../components/Layout/Layout'
 import { ApplicationErrorBoundary } from '@island.is/portals/core'
 import { AdminPortalPaths } from '../lib/paths'
 import { Dashboard } from '../screens/Dashboard/Dashboard'
-import { masterNavigation } from '../lib/masterNavigation'
 
 export const App = () => {
   return (
@@ -28,7 +27,6 @@ export const App = () => {
                   modules={modules}
                   meta={{
                     basePath: AdminPortalPaths.Base,
-                    masterNav: masterNavigation,
                     portalType: 'admin',
                   }}
                 >
