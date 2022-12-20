@@ -7,8 +7,10 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
+import { ModuleIdentifiers } from '@island.is/portals/core'
 
 export const licensesModule: ServicePortalModule = {
+  id: ModuleIdentifiers.LICENSES,
   name: m.licenseNavTitle,
   widgets: () => [],
   routes: ({ userInfo }) => [

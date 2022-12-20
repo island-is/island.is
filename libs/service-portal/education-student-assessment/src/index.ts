@@ -6,8 +6,10 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
+import { ModuleIdentifiers } from '@island.is/portals/core'
 
 export const educationStudentAssessmentModule: ServicePortalModule = {
+  id: ModuleIdentifiers.EDUCATION_STUDENT_ASSESSMENT,
   name: 'Samræmd könnunarpróf',
   widgets: () => [],
   routes: ({ userInfo }) => [

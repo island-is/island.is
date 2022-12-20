@@ -12,7 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Link } from 'react-router-dom'
 import {
-  moduleIdentifiers,
+  ModuleIdentifiers,
   PortalNavigationItem,
   useModules,
   useNavigation,
@@ -20,8 +20,6 @@ import {
 import { m as adminMessages } from '@island.is/portals/admin/core'
 import partition from 'lodash/partition'
 import * as styles from './Dashboard.css'
-
-const bottomNavigationIds = Object.values(moduleIdentifiers)
 
 export const Dashboard = () => {
   const { formatMessage } = useLocale()
@@ -31,15 +29,19 @@ export const Dashboard = () => {
 
   const [bottomNavigation, topNavigation] = partition(
     navigation?.children || [],
-    (navItem) => navItem.id && bottomNavigationIds.includes(navItem.id),
+    (navItem) =>
+      navItem.id &&
+      Object.values(ModuleIdentifiers).includes(
+        navItem.id as ModuleIdentifiers,
+      ),
   )
 
   const filteredBottomNavigation = bottomNavigation.filter((item) => {
-    if (item.id === moduleIdentifiers.delegations) {
+    if (item.id === ModuleIdentifiers.DELEGATIONS) {
       // If modules do not contain delegations module, i.e. user does not have access to it,
       // then we filter it out bottom navigation.
       return modules.some(
-        ({ id }) => id && id === moduleIdentifiers.delegations,
+        ({ id }) => id && id === ModuleIdentifiers.DELEGATIONS,
       )
     }
 

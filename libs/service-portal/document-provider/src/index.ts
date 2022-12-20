@@ -1,5 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
+import { ModuleIdentifiers } from '@island.is/portals/core'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -8,6 +9,7 @@ import { lazy } from 'react'
 import { m } from './lib/messages'
 
 export const documentProviderModule: ServicePortalModule = {
+  id: ModuleIdentifiers.DOCUMENT_PROVIDER,
   name: m.rootName,
   featureFlag: Features.servicePortalDocumentProviderModule,
   widgets: () => [],

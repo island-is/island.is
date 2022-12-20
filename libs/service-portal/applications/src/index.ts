@@ -6,10 +6,12 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
+import { ModuleIdentifiers } from '@island.is/portals/core'
 
 const OverviewScreen = lazy(() => import('./screens/Overview'))
 
 export const applicationsModule: ServicePortalModule = {
+  id: ModuleIdentifiers.APPLICATIONS,
   name: m.applications,
   widgets: () => [],
   routes: ({ userInfo }) => [

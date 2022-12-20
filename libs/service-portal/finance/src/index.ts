@@ -1,4 +1,5 @@
 import { ApiScope } from '@island.is/auth/scopes'
+import { ModuleIdentifiers } from '@island.is/portals/core'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -8,6 +9,7 @@ import {
 import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
+  id: ModuleIdentifiers.FINANCE,
   name: 'Fjármál',
   widgets: () => [],
   routes: ({ userInfo }) => {

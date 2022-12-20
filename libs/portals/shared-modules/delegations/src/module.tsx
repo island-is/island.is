@@ -4,14 +4,14 @@ import { Features } from '@island.is/feature-flags'
 
 import {
   PortalModule,
-  moduleIdentifiers,
+  ModuleIdentifiers,
   PortalRoute,
 } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 
 export const delegationsModule: PortalModule = {
-  id: moduleIdentifiers.delegations,
+  id: ModuleIdentifiers.DELEGATIONS,
   name: m.accessControl,
   featureFlag: Features.outgoingDelegationsV2,
   widgets: () => [],

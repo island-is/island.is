@@ -5,12 +5,13 @@ import { MessageDescriptor } from 'react-intl'
 import type { Features } from '@island.is/react/feature-flags'
 import { IconProps } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
+import { ModuleIdentifiers } from '../lib/moduleIdentifiers'
 
 /**
  * A navigational item used by the service portal
  */
 export interface PortalNavigationItem {
-  id?: string
+  id?: ModuleIdentifiers
   name: MessageDescriptor | string
   path?: string
   external?: boolean
@@ -151,7 +152,7 @@ export interface PortalModule {
   /**
    * Unique identifier for this module
    */
-  id?: string
+  id: ModuleIdentifiers
   /**
    * The title of this module
    */

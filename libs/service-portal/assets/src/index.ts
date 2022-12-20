@@ -6,8 +6,10 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
+import { ModuleIdentifiers } from '@island.is/portals/core'
 
 const assetsModule: ServicePortalModule = {
+  id: ModuleIdentifiers.ASSETS,
   name: 'Eignir',
   widgets: () => [],
   routes: ({ userInfo }) => {

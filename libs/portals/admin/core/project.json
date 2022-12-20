@@ -2,17 +2,23 @@
   "root": "libs/portals/admin/core",
   "sourceRoot": "libs/portals/admin/core/src",
   "projectType": "library",
-  "tags": [],
+  "tags": [
+    "lib:portals-admin"
+  ],
   "targets": {
     "build": {
       "executor": "@nrwl/web:rollup",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/libs/portals/admin/core",
         "tsConfig": "libs/portals/admin/core/tsconfig.lib.json",
         "project": "libs/portals/admin/core/package.json",
         "entryFile": "libs/portals/admin/core/src/index.ts",
-        "external": ["react/jsx-runtime"],
+        "external": [
+          "react/jsx-runtime"
+        ],
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "compiler": "babel",
         "assets": [
@@ -26,14 +32,20 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["libs/portals/admin/core/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "libs/portals/admin/core/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/portals/admin/core"],
+      "outputs": [
+        "coverage/libs/portals/admin/core"
+      ],
       "options": {
         "jestConfig": "libs/portals/admin/core/jest.config.js",
         "passWithNoTests": true

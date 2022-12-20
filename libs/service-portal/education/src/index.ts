@@ -5,8 +5,10 @@ import {
   ServicePortalModule,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
+import { ModuleIdentifiers } from '@island.is/portals/core'
 
 export const educationModule: ServicePortalModule = {
+  id: ModuleIdentifiers.EDUCATION,
   name: 'Menntun',
   widgets: () => [],
   routes: ({ userInfo }) => [

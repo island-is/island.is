@@ -2,6 +2,23 @@
  * ModuleIdentifiers can be used as an unique identifier, .i.e. id, in PortalModule or PortalNavigationItem.
  * This is useful when you want to match a module to a navigation item or just want to extract a item from a list.
  */
-export const moduleIdentifiers = {
-  delegations: 'delegations',
+export enum ModuleIdentifiers {
+  ACCESS_CONTROL = 'ACCESS_CONTROL',
+  AIR_DISCOUNT_SCHEME_ADMIN_MODULE = 'AIR_DISCOUNT_SCHEME_ADMIN_MODULE',
+  APPLICATIONS = 'APPLICATIONS',
+  ASSETS = 'ASSETS',
+  DELEGATIONS = 'DELEGATIONS',
+  DOCUMENT_PROVIDER = 'DOCUMENT_PROVIDER',
+  DOCUMENTS = 'DOCUMENTS',
+  EDUCATION = 'EDUCATION',
+  EDUCATION_CAREER = 'EDUCATION_CAREER',
+  EDUCATION_LICENSE = 'EDUCATION_LICENSE',
+  EDUCATION_STUDENT_ASSESSMENT = 'EDUCATION_STUDENT_ASSESSMENT',
+  FINANCE = 'FINANCE',
+  ICELANDIC_NAMES_REGISTRY = 'ICELANDIC_NAMES_REGISTRY',
+  INFORMATION = 'INFORMATION',
+  LICENSES = 'LICENSES',
+  PERSONAL_INFORMATION = 'PERSONAL_INFORMATION',
+  PETITIONS = 'PETITIONS',
+  VEHICLES = 'VEHICLES',
 }
