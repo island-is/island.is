@@ -18,7 +18,6 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
-  CaseFileState,
   CaseOrigin,
   CaseState,
   isIndictmentCase,
