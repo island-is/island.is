@@ -28,9 +28,8 @@
     "e2e": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": ["echo __ $@", "echo __ $NX_OPTIONS", "echo __ $NX_ARGS", "yarn playwright test -c apps/system-e2e/src"],
+        "command": [ "yarn playwright test -c apps/system-e2e/src" ],
         "parallel": false
-
       }
     },
     "e2e:smoke": {
