@@ -65,7 +65,8 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
                 {', '}
                 <Text as="span">
                   {formatMessage(
-                    parentalLeaveFormMessages.reviewScreen.rightsSingleParentMultipleBirths,
+                    parentalLeaveFormMessages.reviewScreen
+                      .rightsSingleParentMultipleBirths,
                     {
                       common: round(common),
                     },
