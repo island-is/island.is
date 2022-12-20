@@ -25,6 +25,7 @@ export class FormField {
     | 'acceptTerms'
     | 'email'
     | 'checkboxes'
+    | 'file'
 
   @Field()
   required!: boolean

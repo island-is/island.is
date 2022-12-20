@@ -879,6 +879,7 @@ export interface IFormFieldFields {
     | 'acceptTerms'
     | 'email'
     | 'checkboxes'
+    | 'file'
 
   /** Required */
   required?: boolean | undefined
@@ -1891,6 +1892,9 @@ export interface INewsFields {
   /** Featured image */
   image: Asset
 
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
+
   /** Content */
   content?: Document | undefined
 
@@ -1899,9 +1903,6 @@ export interface INewsFields {
 
   /** Generic tags */
   genericTags?: IGenericTag[] | undefined
-
-  /** Full Width Image In Content */
-  fullWidthImageInContent?: boolean | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2262,7 +2263,7 @@ export interface IOrganizationPageFields {
   organization: IOrganization
 
   /** Featured Image */
-  featuredImage?: Asset | undefined
+  featuredImage: Asset
 
   /** Sidebar Cards */
   sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined

@@ -12,6 +12,8 @@ import {
   Checkbox,
   Button,
   Option,
+  InputFileUpload,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   Form as FormType,
@@ -186,7 +188,27 @@ export const FormField = ({
           })}
         </Stack>
       )
+    case 'file':
+      return <FileUploadField />
   }
+}
+
+const FileUploadField = () => {
+  const [fileList, setFileList] = useState<UploadFile[]>([])
+
+  return (
+    <InputFileUpload
+      fileList={fileList}
+      onRemove={(fileToRemove) => {
+        setFileList((list) =>
+          list.filter((file) => file.id !== fileToRemove.id),
+        )
+      }}
+      onChange={(files) => {
+        setFileList(files)
+      }}
+    />
+  )
 }
 
 type ErrorData = {
@@ -277,6 +299,8 @@ export const Form = ({ form, namespace }: FormProps) => {
             error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
           }
         }
+
+        // TODO: handle file
 
         return null
       })
