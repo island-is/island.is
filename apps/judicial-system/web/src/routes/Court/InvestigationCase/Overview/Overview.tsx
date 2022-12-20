@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   AccordionListItem,
@@ -89,6 +90,11 @@ const Overview = () => {
     workingCase,
   ])
 
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -98,6 +104,8 @@ const Overview = () => {
       activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={true}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.overview)}
@@ -295,7 +303,11 @@ const Overview = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+            )
+          }
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(icCourtOverview.continueButton.label)}
         />

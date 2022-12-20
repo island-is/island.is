@@ -59,17 +59,14 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
               }
             >
               <Hidden above="sm">
-                <Text
-                  variant="h1"
-                  as="h1"
-                  color={width < theme.breakpoints.md ? 'white' : 'blue600'}
-                >
+                <Text variant="h1" as="h1" color="white">
                   {organizationPage.title}
                 </Text>
               </Hidden>
               <Hidden below="md">
                 <img
-                  src="https://images.ctfassets.net/8k0h54kbe6bj/5aRF31iP8lJr66f9QLwpno/e318d034263a0454d37750e5273d69b8/Group_1169.svg"
+                  width="253px"
+                  src="https://images.ctfassets.net/8k0h54kbe6bj/TqkgXfX1Zv8DGPDpNFA6U/e4fd87176da12c972df40512ee323d84/fjs-header-texti.svg"
                   alt="Fjársýsla ríkisins"
                 />
               </Hidden>

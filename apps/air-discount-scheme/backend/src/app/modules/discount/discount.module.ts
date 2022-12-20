@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common'
 
 import {
+  PrivateDiscountAdminController,
   PrivateDiscountController,
   PublicDiscountController,
 } from './discount.controller'
@@ -20,7 +21,11 @@ import { SequelizeModule } from '@nestjs/sequelize'
     forwardRef(() => FlightModule),
     UserModule,
   ],
-  controllers: [PublicDiscountController, PrivateDiscountController],
+  controllers: [
+    PublicDiscountController,
+    PrivateDiscountController,
+    PrivateDiscountAdminController,
+  ],
   providers: [DiscountService],
   exports: [DiscountService],
 })
