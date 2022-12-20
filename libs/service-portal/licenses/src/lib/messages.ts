@@ -223,7 +223,7 @@ export const m = defineMessages({
   passportExpiringText: {
     id: 'sp.license:passport-expiring-text',
     defaultMessage:
-      'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða. ',
+      'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða. Þeir sem hyggast ferðast utan EES verða að hafa vegabréf sem gilda í amk 6 mánuði frá áætluðum ferðalokum.',
   },
   passportDescription: {
     id: 'sp.license:passport-description',
