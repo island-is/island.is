@@ -1,4 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import format from 'date-fns/format'
 import { urls } from '../../../support/utils'
 import { session } from '../../../support/session'
 
@@ -20,72 +21,98 @@ test.describe('Driving licence', () => {
     await context.close()
   })
 
-  test('test', async () => {
+  test('Student registration should complete', async () => {
     const page = await context.newPage()
+    const nameField = page.locator('input[name="student.name"]')
+    const datePicker = page.locator('[data-testid="datepicker"]')
+    const errorMessage = page.locator('[data-testid="alertMessage"]')
+    const forwardsButton = page.locator('button[data-testid="proceed"]')
+    const backwardsButton = page.locator(
+      'button[data-testid="step-back"]:visible',
+    )
+    const dataProviders = page.locator(
+      'input[data-testid="agree-to-data-providers"]',
+    )
+    const nationalIdField = page.locator('input[name="student.nationalId"]')
+    const schoolSelector = (n: number) =>
+      page.locator(`input[name="confirmation.school"][value="${n}"]`)
+    const submitButton = page.locator('button[type="submit"]')
+    const newButton = page.locator('button>[data-testid="icon-arrowForward"]')
+    const dateField = page.locator('label[for="confirmation.date"]')
+    const monthAgo = new Date(new Date().setMonth(new Date().getMonth() - 1))
 
-    // Go to http://localhost:4242/umsoknir/okuskoli
+    // Start application
     await page.goto('/umsoknir/okuskoli')
     await expect(page).toBeApplication()
+    await dataProviders.click()
+    await forwardsButton.click()
 
-    // Click label:has-text("Ég hef kynnt mér ofangreintÉg hef kynnt mér ofangreint")
-    await page.locator('role=checkbox[include-hidden]').click()
-
-    // Click [data-testid="proceed"]
-    await page.locator('[data-testid="proceed"]').click()
-    await expect(page).toBeApplication()
-
-    // Click input[name="student\.nationalId"]
-    await page.locator('input[name="student\\.nationalId"]').click()
-
-    // Fill input[name="student\.nationalId"]
-    await page.locator('input[name="student\\.nationalId"]').fill('010130-5069')
-
-    // Press Tab
-    await page.locator('input[name="student\\.nationalId"]').press('Tab')
-
+    // Enter student info
+    await nationalIdField.click()
+    await nationalIdField.fill('010130-5069')
+    await nationalIdField.press('Tab')
     // Wait for non-empty name
-    await expect(page.locator('role=entry[name="Nafn"]')).toHaveValue(
-      'Gervimaður Bandaríkin',
+    await expect(nameField).not.toBeEmpty()
+    await expect(nameField).toHaveValue('Gervimaður Bandaríkin')
+    await forwardsButton.click()
+
+    // Change date, school, and submit
+    await schoolSelector(1).click()
+    await dateField.fill(format(monthAgo, 'dd.MM.yyyy'))
+    await submitButton.click()
+
+    // Start anew
+    const oldURL = page.url()
+    await newButton.click()
+    const newURL = page.url()
+    await expect(newURL).not.toBe(oldURL)
+    await page.close()
+  })
+
+  test('Student without a Driving Licence Book should only get error', async () => {
+    const page = await context.newPage()
+    const nameField = page.locator('input[name="student.name"]')
+    const datePicker = page.locator('[data-testid="datepicker"]')
+    const errorMessage = page.locator('[data-testid="alertMessage"]')
+    const forwardsButton = page.locator('button[data-testid="proceed"]')
+    const backwardsButton = page.locator(
+      'button[data-testid="step-back"]:visible',
     )
+    const dataProviders = page.locator(
+      'input[data-testid="agree-to-data-providers"]',
+    )
+    const nationalIdField = page.locator('input[name="student.nationalId"]')
 
-    // Click [data-testid="proceed"]
-    await page.locator('[data-testid="proceed"]').click()
+    // Start application
+    await page.goto('/umsoknir/okuskoli')
     await expect(page).toBeApplication()
+    await dataProviders.click()
+    await forwardsButton.click()
 
-    // Click text=Til baka
-    await page.locator('text=Til baka').click()
-    await expect(page).toBeApplication()
+    // Enter authorized student
+    await nationalIdField.click()
+    await nationalIdField.fill('010130-5069')
+    await nationalIdField.press('Tab')
+    // Wait for non-empty name
+    await expect(nameField).not.toBeEmpty()
+    await expect(nameField).toHaveValue('Gervimaður Bandaríkin')
+    await forwardsButton.click()
 
-    // Click input[name="student\.nationalId"]
-    await page.locator('input[name="student\\.nationalId"]').click()
+    // Verify page is OK, then go back
+    await expect(datePicker).toBeVisible()
+    await expect(errorMessage).not.toBeVisible()
+    await backwardsButton.click()
 
-    // Press a with modifiers
-    await page.locator('input[name="student\\.nationalId"]').press('Control+a')
+    // Enter details for unauthorized student
+    await nationalIdField.click()
+    await nationalIdField.press('Control+a')
+    await nationalIdField.fill('010130-2989')
+    await nationalIdField.press('Tab')
+    await expect(nameField).toHaveValue('Gervimaður Ameríku ') // Trailing space 😭
+    await forwardsButton.click()
 
-    // Fill input[name="student\.nationalId"]
-    await page
-      .locator('input[name="student\\.nationalId"]')
-      .fill('010130-2989 ')
-
-    // Press Tab
-    await page.locator('input[name="student\\.nationalId"]').press('Tab')
-
-    // Press Enter
-    await page.locator('input[name="student\\.name"]').press('Enter')
-    await expect(page).toBeApplication()
-
-    // Click [data-testid="alertMessage"] div:has-text("ERRRRRR: Tókst ekki að sækja upplýsingar um ökunema. Vinsamlegast reynið aftur s") >> nth=3
-    await page
-      .locator(
-        '[data-testid="alertMessage"] div:has-text("ERRRRRR: Tókst ekki að sækja upplýsingar um ökunema. Vinsamlegast reynið aftur s")',
-      )
-      .nth(3)
-      .click()
-
-    // Click div:nth-child(4) > div > div > div
-    await page.locator('div:nth-child(4) > div > div > div').click()
-
-    // Double click div:nth-child(4) > div > div > div
-    await page.locator('div:nth-child(4) > div > div > div').dblclick()
+    // Make sure only error message
+    await expect(errorMessage).toBeVisible()
+    await expect(datePicker).not.toBeVisible()
   })
 })
