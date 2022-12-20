@@ -86,11 +86,13 @@ export const Layout: FC = ({ children }) => {
   const { layout = 'default', moduleLayoutWrapper: ModuleLayoutWrapper } =
     activeModule || {}
 
+  const moduleLayout = !activeModule ? 'none' : layout
+
   if (ModuleLayoutWrapper) {
     return (
       <LayoutOuterContainer>
         <ModuleLayoutWrapper {...moduleProps} portalType={portalType}>
-          <LayoutModuleContainer layout={layout}>
+          <LayoutModuleContainer layout={moduleLayout}>
             {children}
           </LayoutModuleContainer>
         </ModuleLayoutWrapper>
@@ -100,7 +102,9 @@ export const Layout: FC = ({ children }) => {
 
   return (
     <LayoutOuterContainer>
-      <LayoutModuleContainer layout={layout}>{children}</LayoutModuleContainer>
+      <LayoutModuleContainer layout={moduleLayout}>
+        {children}
+      </LayoutModuleContainer>
     </LayoutOuterContainer>
   )
 }
