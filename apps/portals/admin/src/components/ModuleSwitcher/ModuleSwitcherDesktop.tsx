@@ -1,11 +1,13 @@
+import React from 'react'
 import { Menu, MenuButton, useMenuState } from 'reakit/Menu'
-import { useLocale } from '@island.is/localization'
-import { m, useActiveModule } from '@island.is/portals/core'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/portals/admin/core'
+import { useActiveModule } from '@island.is/portals/core'
+
 import { masterNavigation } from '../../lib/masterNavigation'
 import { ModuleSwitcherItems } from './ModuleSwitcherItems'
-import React from 'react'
 
 import * as styles from './ModuleSwitcherDesktop.css'
 

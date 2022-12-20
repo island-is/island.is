@@ -7,10 +7,7 @@ import {
   Logo,
   FocusableBox,
   Inline,
-  Text,
   GridContainer,
-  GridRow,
-  GridColumn,
 } from '@island.is/island-ui/core'
 import { UserMenu } from '@island.is/shared/components'
 

@@ -1,8 +1,6 @@
 import React from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 
-import { m, useActiveModule } from '@island.is/portals/core'
-import { useLocale } from '@island.is/localization'
 import {
   Box,
   Button,
@@ -10,8 +8,11 @@ import {
   Logo,
   Text,
 } from '@island.is/island-ui/core'
-import { masterNavigation } from '../../lib/masterNavigation'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/portals/admin/core'
+import { useActiveModule } from '@island.is/portals/core'
 
+import { masterNavigation } from '../../lib/masterNavigation'
 import { ModuleSwitcherItems } from './ModuleSwitcherItems'
 
 import * as styles from './ModuleSwitcherMobile.css'

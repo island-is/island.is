@@ -85,9 +85,7 @@ export const ModuleSwitcherItems = ({
               // TODO: Update comparison to use id instead of name
               active={activeModule?.name === item.name}
             />
-          ) : (
-            <></>
-          ),
+          ) : null,
         )}
       </Stack>
     </>
