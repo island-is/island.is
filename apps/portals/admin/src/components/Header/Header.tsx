@@ -46,7 +46,7 @@ export const Header = () => {
                 flexWrap="nowrap"
                 marginLeft={1}
               >
-                <UserMenu fullscreen />
+                <UserMenu />
               </Box>
             </Hidden>
           </Box>
