@@ -12,7 +12,10 @@ import { ModuleSwitcherItems } from './ModuleSwitcherItems'
 import * as styles from './ModuleSwitcherDesktop.css'
 
 export const ModuleSwitcherDesktop = () => {
-  const menu = useMenuState()
+  const menu = useMenuState({
+    placement: 'top-start',
+    unstable_offset: [0, -60],
+  })
   const { formatMessage } = useLocale()
   const activeModule = useActiveModule()
 

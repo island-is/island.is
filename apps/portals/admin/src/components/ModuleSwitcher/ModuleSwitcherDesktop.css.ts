@@ -28,6 +28,5 @@ export const backdrop = style({
 
 export const menuDropdown = style({
   zIndex: theme.zIndex.modal,
-  marginTop: '-60px',
   width: '290px',
 })
