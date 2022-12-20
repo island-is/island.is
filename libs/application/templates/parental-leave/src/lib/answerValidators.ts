@@ -57,6 +57,7 @@ const REQUEST_RIGHTS = 'requestRights'
 const GIVE_RIGHTS = 'giveRights'
 // Check Multiple_Births
 const MULTIPLE_BIRTHS = 'multipleBirths'
+const OTHER_PARENT_EMAIL = 'otherParentEmail'
 // When attempting to continue from the periods repeater main screen
 // this validator will get called to validate all of the periods
 export const VALIDATE_PERIODS = 'validatedPeriods'
@@ -178,7 +179,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
     return undefined
   },
-  // TODO: should we add validation for otherParent's email?
+  [OTHER_PARENT_EMAIL]: (newAnswer: unknown, application: Application) => {
+    const email = newAnswer as string
+    const { otherParent } = getApplicationAnswers(application.answers)
+    const hasOtherParent = otherParent !== NO && otherParent !== SINGLE
+    if (hasOtherParent && !isValidEmail(email)) {
+      return buildValidationError(OTHER_PARENT_EMAIL)(errorMessages.email)
+    }
+  },
   [OTHER_PARENT]: (newAnswer: unknown) => {
     const otherParentObj = newAnswer as OtherParentObj
 
