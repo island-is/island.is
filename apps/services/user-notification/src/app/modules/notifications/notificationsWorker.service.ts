@@ -63,8 +63,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
             messageId,
           })
         }
-        
-        
+
         const notification = await this.messageProcessor.convertToNotification(
           message,
           profile,

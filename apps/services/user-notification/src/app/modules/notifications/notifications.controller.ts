@@ -27,7 +27,6 @@ import { CreateNotificationResponse } from './dto/createNotification.response'
 import { CreateDataMessageDto } from './dto/createDataMessage'
 import { Documentation } from '@island.is/nest/swagger'
 
-
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
     throw new BadRequestException(
@@ -82,14 +81,17 @@ export class NotificationsController {
     return { id }
   }
 
-  @Post("/data-message")
+  @Post('/data-message')
   @ApiOkResponse({ type: CreateNotificationResponse })
   @HttpCode(201)
   async create(
-    @Body() createDataMessageDto: CreateDataMessageDto
+    @Body() createDataMessageDto: CreateDataMessageDto,
   ): Promise<CreateNotificationResponse> {
     const id = await this.queue.add(createDataMessageDto)
-    this.logger.info('Message queued', { messageId: id, ...createDataMessageDto })
+    this.logger.info('Message queued', {
+      messageId: id,
+      ...createDataMessageDto,
+    })
     return { id }
   }
 }

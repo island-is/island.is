@@ -50,12 +50,12 @@ export class MessageProcessorService {
           appURI: `${this.appProtocol}://inbox/${message.documentId}`,
         }
       }
-      
-      default:{
+
+      default: {
         return {
           messageType: message.type,
-          title: "yo",
-          body: "MTV raps",
+          title: 'yo',
+          body: 'MTV raps',
           category: 'DATA_DOCUMENT',
           // appURI: `${this.appProtocol}://NOTHING`,
         }
