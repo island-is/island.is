@@ -95,7 +95,7 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
       ) : error ? (
         <AlertMessage
           type="error"
-          message={`ERRRRRR: ${formatMessage(m.noStudentInfoFoundMessage)}`}
+          message={formatMessage(m.noStudentInfoFoundMessage)}
         />
       ) : (
         <Skeleton />
