@@ -13,11 +13,11 @@ import { DisabilityLicenseService } from '@island.is/clients/disability-license'
 import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class DisabilityLicenseResolver {
   constructor(private disabilityLicenseApi: DisabilityLicenseService) {}
-
-  @Scopes(ApiScope.internal)
+  
   @Query(() => Boolean)
   hasDisabilityLicense(@CurrentUser() user: User): Promise<Boolean> {
     return this.disabilityLicenseApi.hasDisabilityLicense(user)
