@@ -101,7 +101,7 @@ export const lightThemes = [
   'landlaeknir',
   'fiskistofa',
   'landing_page',
-  'fjarsysla-rikisins',
+  'fjarsyslan',
 ]
 export const footerEnabled = [
   'syslumenn',
