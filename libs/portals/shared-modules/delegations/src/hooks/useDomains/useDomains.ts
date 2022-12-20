@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AuthDomainDirection } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import { ALL_DOMAINS, ISLAND_DOMAIN } from '../../constants/domain'
-import { useQueryParam } from '@island.is/portals/core'
+import {
+  ADMIN_ISLAND_DOMAIN,
+  ALL_DOMAINS,
+  ISLAND_DOMAIN,
+} from '../../constants/domain'
+import { usePortalMeta, useQueryParam } from '@island.is/portals/core'
 import { useLocation, useHistory } from 'react-router-dom'
 import { isDefined, storageFactory } from '@island.is/shared/utils'
 import { useAuthDomainsQuery } from './useDomains.generated'
@@ -22,7 +26,7 @@ export type DomainOption = {
  * 1. If there is a domain in query string and no session storage, use the query string
  * 2. If there is a domain in query string and session storage, use the query string.
  * 3  If there is no domain in query string and session storage, use session storage.
- * 4. If there is no domain in query string and no session storage, use the default domain, i.e. ISLAND_DOMAIN.
+ * 4. If there is no domain in query string and no session storage, use the default domain, i.e. (ISLAND_DOMAIN or ADMIN_ISLAND_DOMAIN).
  *
  * @param includeDefaultOption If true, the default option will be added to the list of domains.
  */
@@ -30,6 +34,9 @@ export const useDomains = (includeDefaultOption = true) => {
   const { formatMessage, lang } = useLocale()
   const location = useLocation()
   const history = useHistory()
+  const { portalType } = usePortalMeta()
+  const defaultPortalDomain =
+    portalType === 'admin' ? ADMIN_ISLAND_DOMAIN : ISLAND_DOMAIN
   const displayNameQueryParam = useQueryParam('domain')
   const [domainName, setDomainName] = useState<string | null>(null)
 
@@ -91,14 +98,14 @@ export const useDomains = (includeDefaultOption = true) => {
 
     // Priority
     // 1. Option is found by name
-    // 2. Option is not found by name, try to find ISLAND_DOMAIN
-    // 3. ISLAND_DOMAIN option is not found, select the first option in the list
+    // 2. Option is not found by name, try to find default domain
+    // 3. Default domain option is not found, select the first option in the list
     if (option) {
       updateDomain(option)
     } else {
-      const islandDomainOption = getOptionByName(ISLAND_DOMAIN)
+      const islandDomainOption = getOptionByName(defaultPortalDomain)
 
-      // Default to ISLAND_DOMAIN if the domain is not found
+      // Default to default domain if the domain is not found
       if (islandDomainOption) {
         updateDomain(islandDomainOption)
       } else {
@@ -121,7 +128,7 @@ export const useDomains = (includeDefaultOption = true) => {
       } else if (sessionDomainName) {
         updateDomainByName(sessionDomainName)
       } else {
-        updateDomainByName(ISLAND_DOMAIN)
+        updateDomainByName(defaultPortalDomain)
       }
     }
 
