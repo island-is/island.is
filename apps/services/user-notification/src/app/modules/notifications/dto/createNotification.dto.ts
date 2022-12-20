@@ -24,7 +24,7 @@ export class NewDocumentMessage {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  documentId!: string
+  documentId?: string
 }
 
 export type Message = NewDocumentMessage

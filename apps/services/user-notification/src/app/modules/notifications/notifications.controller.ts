@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common'
+import { Body, Inject } from '@nestjs/common'
 import {
   Controller,
   Post,
@@ -24,6 +24,7 @@ import {
 } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
+import { CreateDataMessageDto } from './dto/createDataMessage.dto'
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -76,6 +77,20 @@ export class NotificationsController {
     const message = await validateMessage(req.body)
     const id = await this.queue.add(message)
     this.logger.info('Message queued', { messageId: id, ...message })
+    return { id }
+  }
+
+  @Post('/data-message')
+  @ApiOkResponse({ type: CreateNotificationResponse })
+  @HttpCode(201)
+  async create(
+    @Body() createDataMessageDto: CreateDataMessageDto,
+  ): Promise<CreateNotificationResponse> {
+    const id = await this.queue.add(createDataMessageDto)
+    this.logger.info('Message queued NEW', {
+      messageId: id,
+      ...createDataMessageDto,
+    })
     return { id }
   }
 }
