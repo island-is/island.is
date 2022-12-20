@@ -1,7 +1,9 @@
 import * as React from 'react'
 import cn from 'classnames'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
+
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 import * as styles from './Link.css'
 
@@ -41,6 +43,7 @@ export const Link: React.FC<LinkProps> = ({
   onClick,
   ...linkProps
 }) => {
+  useDeprecatedComponent('Link', 'LinkV2')
   const isInternal = !shouldLinkOpenInNewWindow(href as string)
   const classNames = cn(
     styles.link,
