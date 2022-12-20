@@ -12,7 +12,7 @@ const skipCache = process.argv && process.argv[2] === '--skip-cache'
  * We need to create this file manually with a dummy content because
  * the api needs it to build and generate the first schema file
  */
-const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
+const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.ts'
 
 /**
  * See SCHEMAS.md to setup your project with auto-generated schemas files
