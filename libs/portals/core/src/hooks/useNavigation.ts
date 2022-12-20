@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { matchPath, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import { User } from '@island.is/shared/types'
 import { useRoutes } from '../components/PortalProvider'
@@ -70,8 +70,10 @@ const filterNavigationTree = ({
 
   item.navHide = item.navHide || !!hideDynamicPath
 
-  if (currentLocationPath) {
-    item.active = !!matchPath(currentLocationPath, { path: item.path })
+  if (currentLocationPath && item.path) {
+    item.active = item.activeIfExact
+      ? currentLocationPath === item.path
+      : currentLocationPath.startsWith(item.path)
   }
 
   return included || onlyDescendantsIncluded
