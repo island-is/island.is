@@ -336,7 +336,7 @@ export class CaseService {
       order,
       where: {
         id: caseId,
-        state: allowDeleted ? undefined : { [Op.not]: CaseState.DELETED },
+        ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
         isArchived: false,
       },
     })
