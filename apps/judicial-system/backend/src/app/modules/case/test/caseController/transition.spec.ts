@@ -14,10 +14,14 @@ import {
 } from '@island.is/judicial-system/types'
 import { MessageService } from '@island.is/judicial-system/message'
 
+import { nowFactory } from '../../../../factories'
+import { randomDate } from '../../../../test'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { order, include } from '../../case.service'
+
+jest.mock('../../../factories')
 
 interface Then {
   result: Case
@@ -31,6 +35,7 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Transition', () => {
+  const date = randomDate()
   let mockMessageService: MessageService
   let transaction: Transaction
   let mockCaseModel: typeof Case
@@ -53,6 +58,8 @@ describe('CaseController - Transition', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
+    const mockToday = nowFactory as jest.Mock
+    mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
 
@@ -118,6 +125,10 @@ describe('CaseController - Transition', () => {
               state: newState,
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
+              rulingDate:
+                isIndictmentCase(type) && completedCaseStates.includes(newState)
+                  ? date
+                  : undefined,
             },
             { where: { id: caseId }, transaction },
           )
