@@ -223,7 +223,10 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         'conditionalAbout.operatingYear',
       ) as string
 
-      const actorsName = getValueViaPath(answers, 'about.fullName') as string
+      const actorsName = getValueViaPath(
+        answers,
+        'about.powerOfAttorneyName',
+      ) as string
       const clientPhone = getValueViaPath(
         answers,
         'about.phoneNumber',
@@ -289,7 +292,10 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         'conditionalAbout.operatingYear',
       ) as string
 
-      const actorsName = getValueViaPath(answers, 'about.fullName') as string
+      const actorsName = getValueViaPath(
+        answers,
+        'about.powerOfAttorneyName',
+      ) as string
       const contactsAnswer = getValueViaPath(
         answers,
         'cemetryCaretaker',
