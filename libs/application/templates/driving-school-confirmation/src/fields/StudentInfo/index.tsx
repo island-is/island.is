@@ -30,10 +30,8 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
   })
 
   useEffect(() => {
-    if (data) {
-      setValue('studentBookTypes', student.book?.drivingSchoolExams)
-      setValue('studentBookId', student.book?.id)
-    }
+    setValue('studentBookTypes', student?.book?.drivingSchoolExams)
+    setValue('studentBookId', student?.book?.id)
   }, [data])
 
   const student = data?.drivingLicenseBookStudent
@@ -48,30 +46,24 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
     ).values(),
   ]
 
-  const errorBox = () => (
-    <AlertMessage
-      type="error"
-      message={`ERRRRRR: ${formatMessage(m.noStudentInfoFoundMessage)}`}
-    />
-  )
-  const selectionBoxes = () => (
+  const studentInfo = (s: typeof student) => (
     <>
       <GridRow marginBottom={3}>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">{formatMessage(m.confirmationSectionName)}</Text>
-          <Text variant="default">{student.name}</Text>
+          <Text variant="default">{s.name}</Text>
         </GridColumn>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">
             {formatMessage(m.confirmationSectionNationalId)}
           </Text>
-          <Text variant="default">{kennitala.format(student.nationalId)}</Text>
+          <Text variant="default">{kennitala.format(s.nationalId)}</Text>
         </GridColumn>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">
             {formatMessage(m.confirmationSectionCompleteHours)}
           </Text>
-          <Text variant="default">{student.book?.totalLessonCount ?? 0}</Text>
+          <Text variant="default">{s.book?.totalLessonCount ?? 0}</Text>
         </GridColumn>
       </GridRow>
 
@@ -98,54 +90,13 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <GridContainer>
-      {!loading && !error && Object.entries(student).length > 0 ? (
-        <>
-          <GridRow marginBottom={3}>
-            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
-              <Text variant="h4">
-                {formatMessage(m.confirmationSectionName)}
-              </Text>
-              <Text variant="default">{student.name}</Text>
-            </GridColumn>
-            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
-              <Text variant="h4">
-                {formatMessage(m.confirmationSectionNationalId)}
-              </Text>
-              <Text variant="default">
-                {kennitala.format(student.nationalId)}
-              </Text>
-            </GridColumn>
-            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
-              <Text variant="h4">
-                {formatMessage(m.confirmationSectionCompleteHours)}
-              </Text>
-              <Text variant="default">
-                {student.book?.totalLessonCount ?? 0}
-              </Text>
-            </GridColumn>
-          </GridRow>
-
-          <GridRow marginBottom={5}>
-            <GridColumn span={['12/12', '6/12']}>
-              <Text variant="h4">
-                {formatMessage(m.confirmationSectionCompleteSchools)}
-              </Text>
-              {completeSchools.length ? (
-                completeSchools.map((school: any, key: any) => {
-                  return (
-                    <Text key={key} variant="default">
-                      {school.schoolTypeName}
-                    </Text>
-                  )
-                })
-              ) : (
-                <Text variant="default">{'-'}</Text>
-              )}
-            </GridColumn>
-          </GridRow>
-        </>
+      {!loading && !error && student && Object.entries(student).length > 0 ? (
+        studentInfo
       ) : error ? (
-        errorBox()
+        <AlertMessage
+          type="error"
+          message={`ERRRRRR: ${formatMessage(m.noStudentInfoFoundMessage)}`}
+        />
       ) : (
         <Skeleton />
       )}
