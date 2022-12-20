@@ -93,8 +93,8 @@ export class PassportsService {
         ...passport,
         numberWithType,
         sex: passport.sex as Gender,
-        expiryStatus: expiryStatus,
-        expiresWithinNoticeTime: expiresWithinNoticeTime,
+        expiryStatus,
+        expiresWithinNoticeTime,
       }
     })
 

@@ -1,10 +1,8 @@
-import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 
-import { Scope, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 
 import {
-  AuthMiddleware,
-  BypassAuth,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -12,12 +10,14 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { DisabilityLicenseService } from '@island.is/clients/disability-license'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DisabilityLicenseResolver {
   constructor(private disabilityLicenseApi: DisabilityLicenseService) {}
 
+  @Scopes(ApiScope.internal)
   @Query(() => Boolean)
   hasDisabilityLicense(@CurrentUser() user: User): Promise<Boolean> {
     return this.disabilityLicenseApi.hasDisabilityLicense(user)
