@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -73,8 +73,6 @@ export const CourtRecord: React.FC = () => {
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-
-  const id = router.query.id
 
   useDeb(workingCase, 'courtAttendees')
   useDeb(workingCase, 'sessionBookings')
@@ -245,6 +243,12 @@ export const CourtRecord: React.FC = () => {
     workingCase,
   ])
 
+  const stepIsValid = isCourtRecordStepValidRC(workingCase)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -254,6 +258,8 @@ export const CourtRecord: React.FC = () => {
       activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.restrictionCases.courtRecord)}
@@ -538,8 +544,10 @@ export const CourtRecord: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`}
-          nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.RESTRICTION_CASE_CONFIRMATION_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           hideNextButton={
             !workingCase.decision ||
             !workingCase.conclusion ||

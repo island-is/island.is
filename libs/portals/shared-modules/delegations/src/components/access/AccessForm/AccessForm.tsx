@@ -10,10 +10,6 @@ import {
   Divider,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import {
-  formatPlausiblePathToParams,
-  m as coreMessages,
-} from '@island.is/service-portal/core'
 import { isDefined } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
@@ -29,6 +25,12 @@ import * as commonAccessStyles from '../access.css'
 import { AuthScopeTreeQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
 import { useUpdateAuthDelegationMutation } from './AccessForm.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
+import {
+  m,
+  formatPlausiblePathToParams,
+  usePortalMeta,
+  useRoutes,
+} from '@island.is/portals/core'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegationOutgoing
@@ -42,6 +44,8 @@ export const AccessForm = ({
   validityPeriod,
 }: AccessFormProps) => {
   const { formatMessage } = useLocale()
+  const { basePath } = usePortalMeta()
+  const routes = useRoutes()
   const { delegationId } = useParams<{
     delegationId: string
   }>()
@@ -53,7 +57,7 @@ export const AccessForm = ({
   const [updateError, setUpdateError] = useState(false)
 
   const onError = () => {
-    toast.error(formatMessage(coreMessages.somethingWrong))
+    toast.error(formatMessage(m.somethingWrong))
   }
 
   const [
@@ -103,7 +107,11 @@ export const AccessForm = ({
       if (data && !errors && !err) {
         history.push(DelegationPaths.Delegations)
         servicePortalSaveAccessControl(
-          formatPlausiblePathToParams(DelegationPaths.DelegationsGrant),
+          formatPlausiblePathToParams({
+            path: DelegationPaths.DelegationsGrant,
+            routes: routes.map(({ path }) => path).flat(),
+            basePath,
+          }),
         )
       }
     } catch (error) {

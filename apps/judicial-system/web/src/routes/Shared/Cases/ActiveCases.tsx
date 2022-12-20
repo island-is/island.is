@@ -43,19 +43,14 @@ interface Props {
   onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
-  setActiveCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>
 }
 
 const ActiveCases: React.FC<Props> = (props) => {
-  const {
-    cases,
-    onRowClick,
-    isDeletingCase,
-    onDeleteCase,
-    setActiveCases,
-  } = props
+  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
+
+  const [showDeleteButton, setShowDeleteButton] = useState(false)
 
   const variants = {
     isDeleting: (custom: number) =>
@@ -385,6 +380,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                         onClick={async (evt) => {
                           evt.stopPropagation()
 
+                          setShowDeleteButton((show) => !show)
                           await new Promise((resolve) => {
                             setRequestToRemoveIndex(
                               requestToRemoveIndex === i ? undefined : i,
@@ -401,33 +397,29 @@ const ActiveCases: React.FC<Props> = (props) => {
                     )}
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
-                  <Button
-                    colorScheme="destructive"
-                    size="small"
-                    loading={isDeletingCase}
-                    onClick={async (evt) => {
-                      if (onDeleteCase && setActiveCases) {
-                        evt.stopPropagation()
+                  {showDeleteButton ? (
+                    <Button
+                      colorScheme="destructive"
+                      size="small"
+                      loading={isDeletingCase}
+                      onClick={async (evt) => {
+                        if (onDeleteCase) {
+                          evt.stopPropagation()
 
-                        await onDeleteCase(cases[i])
+                          await onDeleteCase(cases[i])
 
-                        controls
-                          .start('isNotDeleting')
-                          .then(() => {
+                          controls.start('isNotDeleting').then(() => {
                             setRequestToRemoveIndex(undefined)
+                            setShowDeleteButton(false)
                           })
-                          .then(() => {
-                            setActiveCases(
-                              cases.filter((c: Case) => c !== cases[i]),
-                            )
-                          })
-                      }
-                    }}
-                  >
-                    <Box as="span" className={styles.deleteButtonText}>
-                      Afturkalla
-                    </Box>
-                  </Button>
+                        }
+                      }}
+                    >
+                      <Box as="span" className={styles.deleteButtonText}>
+                        Afturkalla
+                      </Box>
+                    </Button>
+                  ) : null}
                 </td>
               </motion.tr>
             ))}

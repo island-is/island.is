@@ -16,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMemo } from 'react'
-import { m as coreMessages } from '@island.is/service-portal/core'
+import { m as coreMessages } from '@island.is/portals/core'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'

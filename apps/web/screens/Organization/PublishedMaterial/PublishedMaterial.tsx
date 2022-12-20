@@ -27,6 +27,7 @@ import {
   GetNamespaceQuery,
   Query,
   QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
@@ -138,6 +139,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     }),
   )
 
+  const organizationSlug =
+    organizationPage.organization?.slug ?? (router.query.slug as string) ?? ''
+
   // The page number is 1-based meaning that page 1 is the first page
   const [page, setPage] = useState(1)
   const [isTyping, setIsTyping] = useState(false)
@@ -146,7 +150,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     variables: {
       input: {
         lang: activeLocale,
-        organizationSlug: (router.query.slug as string) ?? '',
+        organizationSlug,
         tags: [],
         page: page,
         searchString: searchValue,
@@ -198,7 +202,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       variables: {
         input: {
           lang: activeLocale,
-          organizationSlug: (router.query.slug as string) ?? '',
+          organizationSlug,
           tags: selectedCategories,
           page: nextPage,
           searchString: searchValue,
@@ -230,7 +234,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         variables: {
           input: {
             lang: activeLocale,
-            organizationSlug: (router.query.slug as string) ?? '',
+            organizationSlug,
             tags: selectedCategories,
             page: 1,
             searchString: searchValue,
@@ -422,22 +426,10 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { getOrganization },
-    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: query.slug as string,
@@ -461,14 +453,27 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  if (!getOrganizationPage || !getOrganization) {
+  if (!getOrganizationPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
+
+  const {
+    data: { getOrganization },
+  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+    query: GET_ORGANIZATION_QUERY,
+    variables: {
+      input: {
+        slug: getOrganizationPage.organization?.slug ?? (query.slug as string),
+        lang: locale as ContentLanguage,
+      },
+    },
+  })
 
   return {
     organizationPage: getOrganizationPage,
     genericTagFilters:
-      getOrganization.publishedMaterialSearchFilterGenericTags ?? [],
+      (getOrganization ?? getOrganizationPage?.organization)
+        ?.publishedMaterialSearchFilterGenericTags ?? [],
     namespace,
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
