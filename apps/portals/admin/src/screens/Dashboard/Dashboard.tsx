@@ -11,42 +11,15 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Link } from 'react-router-dom'
-import {
-  ModuleIdentifiers,
-  PortalNavigationItem,
-  useModules,
-  useNavigation,
-} from '@island.is/portals/core'
+import { PortalNavigationItem } from '@island.is/portals/core'
 import { m as adminMessages } from '@island.is/portals/admin/core'
-import partition from 'lodash/partition'
 import * as styles from './Dashboard.css'
+import { useAdminNavigation } from '../../hooks/useAdminNavigation'
 
 export const Dashboard = () => {
   const { formatMessage } = useLocale()
-  const navigation = useNavigation()
-  const modules = useModules()
+  const { topNavigation, bottomNavigation } = useAdminNavigation()
   const { md } = useBreakpoint()
-
-  const [bottomNavigation, topNavigation] = partition(
-    navigation?.children || [],
-    (navItem) =>
-      navItem.id &&
-      Object.values(ModuleIdentifiers).includes(
-        navItem.id as ModuleIdentifiers,
-      ),
-  )
-
-  const filteredBottomNavigation = bottomNavigation.filter((item) => {
-    if (item.id === ModuleIdentifiers.DELEGATIONS) {
-      // If modules do not contain delegations module, i.e. user does not have access to it,
-      // then we filter it out bottom navigation.
-      return modules.some(
-        ({ id }) => id && id === ModuleIdentifiers.DELEGATIONS,
-      )
-    }
-
-    return true
-  })
 
   const renderNavItem = (item: PortalNavigationItem, index: number) => (
     <GridColumn
@@ -100,11 +73,11 @@ export const Dashboard = () => {
           </Box>
           <Box display="flex" flexDirection="column" rowGap={6} marginTop={5}>
             <GridRow rowGap={3}>{topNavigation.map(renderNavItem)}</GridRow>
-            {filteredBottomNavigation.length > 0 && (
+            {bottomNavigation.length > 0 && (
               <>
                 <Divider />
                 <GridRow rowGap={3}>
-                  {filteredBottomNavigation.map(renderNavItem)}
+                  {bottomNavigation.map(renderNavItem)}
                 </GridRow>
               </>
             )}
