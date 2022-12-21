@@ -32,6 +32,7 @@ import {
   InputFileUpload,
   Text,
   Tooltip,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CaseFile } from '@island.is/judicial-system/types'
@@ -52,7 +53,7 @@ export const StepFive: React.FC = () => {
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
-  const [filesInRVG, setFilesInRVG] = useState<CaseFile[]>()
+  const [filesInRVG, setFilesInRVG] = useState<UploadFile[]>()
 
   const {
     uploadErrorMessage,
@@ -112,6 +113,7 @@ export const StepFive: React.FC = () => {
           setIsUploading={setIsUploading}
           policeCaseFileList={policeCaseFileList}
           setPoliceCaseFileList={setPoliceCaseFileList}
+          setFilesInRVG={setFilesInRVG}
         />
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">

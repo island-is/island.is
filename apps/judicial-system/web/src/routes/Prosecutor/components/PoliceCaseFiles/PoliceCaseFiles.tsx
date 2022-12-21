@@ -104,6 +104,7 @@ interface Props {
     React.SetStateAction<PoliceCaseFileCheck[]>
   >
   policeCaseNumber?: string
+  setFilesInRVG: React.Dispatch<React.SetStateAction<UploadFile[] | undefined>>
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
@@ -112,6 +113,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
   setIsUploading,
   policeCaseFileList,
   setPoliceCaseFileList,
+  setFilesInRVG,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
@@ -239,6 +241,18 @@ const PoliceCaseFiles: React.FC<Props> = ({
         key,
         size,
       } as UploadFile)
+
+      setFilesInRVG([
+        {
+          id: policeCaseFile.id,
+          name: policeCaseFile.name,
+          type: 'application/pdf',
+          status: 'done',
+          state: CaseFileState.STORED_IN_RVG,
+          key,
+          size,
+        } as UploadFile,
+      ])
 
       newPoliceCaseFileList = newPoliceCaseFileList.filter(
         (p) => p.id !== policeCaseFile.id,
