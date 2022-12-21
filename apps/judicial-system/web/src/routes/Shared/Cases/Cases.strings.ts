@@ -64,6 +64,14 @@ export const cases = {
     description:
       'Notaður sem titill á takka sem notandi getur ýtt á til að stofna nýtt mál',
   }),
+  filter: defineMessages({
+    label: {
+      id: 'judicial.system.core:cases.filter.label',
+      defaultMessage: 'Málategund',
+      description:
+        'Notaður sem label á filter sem notandi getur notað til að sía mál',
+    },
+  }),
   activeRequests: {
     table: {
       headers: defineMessages({

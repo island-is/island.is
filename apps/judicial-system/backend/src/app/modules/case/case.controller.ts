@@ -139,6 +139,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case> {
@@ -177,21 +178,7 @@ export class CaseController {
       )
     }
 
-    const updatedCase = (await this.caseService.update(
-      theCase,
-      caseToUpdate,
-    )) as Case
-
-    if (
-      updatedCase.courtCaseNumber &&
-      updatedCase.courtCaseNumber !== theCase.courtCaseNumber
-    ) {
-      // The court case number has changed, so the request must be uploaded to the new court case
-      // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase)
-    }
-
-    return updatedCase
+    return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -209,6 +196,7 @@ export class CaseController {
   })
   async transition(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
@@ -226,13 +214,15 @@ export class CaseController {
     const updatedCase = await this.caseService.update(
       theCase,
       update as UpdateCaseDto,
+      user,
       state !== CaseState.DELETED,
     )
 
     // Indictment cases are not signed
     if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCompletedIndictmentCaseMessagesToQueue(theCase)
+      await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
+        theCase,
+      )
     }
 
     // No need to wait

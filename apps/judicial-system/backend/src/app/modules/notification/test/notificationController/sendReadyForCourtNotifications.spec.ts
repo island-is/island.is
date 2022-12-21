@@ -20,7 +20,7 @@ import { nowFactory } from '../../../../factories'
 import { CourtDocumentFolder, CourtService } from '../../../court'
 import { Case } from '../../../case/models/case.model'
 import { SendNotificationDto } from '../../dto/sendNotification.dto'
-import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
+import { SendNotificationResponse } from '../../models/sendNotification.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -232,7 +232,11 @@ describe('NotificationController - Send ready for court notifications', () => {
       mockFindOne.mockResolvedValueOnce({} as Notification)
       const mockFindAll = mockNotificationModel.findAll as jest.Mock
       mockFindAll.mockResolvedValueOnce([
-        { recipients: [{ name: 'Saul Goodman', address: '' }] },
+        {
+          recipients: [
+            { name: 'Saul Goodman', address: 'saul@dummy.is', success: true },
+          ],
+        },
       ])
 
       await givenWhenThen(caseId, user, theCase, notification)

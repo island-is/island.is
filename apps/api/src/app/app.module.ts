@@ -6,6 +6,8 @@ import { TerminusModule } from '@nestjs/terminus'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
+import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
+import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
@@ -210,6 +212,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
     PowerBiModule,
@@ -284,6 +287,7 @@ const autoSchemaFile = environment.production
         FiskistofaClientConfig,
         PowerBiConfig,
         PaymentClientModuleConfig,
+        DisabilityLicenseClientConfig,
         ZenterSignupConfig,
       ],
     }),

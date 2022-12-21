@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl, IntlShape } from 'react-intl'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
@@ -225,6 +225,18 @@ export const Ruling: React.FC = () => {
     workingCase,
   ])
 
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      if (isModifyingRuling) {
+        requestRulingSignature()
+      } else {
+        router.push(`${destination}/${workingCase.id}`)
+      }
+    },
+    [isModifyingRuling, requestRulingSignature, router, workingCase.id],
+  )
+  const stepIsValid = isRulingValidRC(workingCase)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -234,6 +246,8 @@ export const Ruling: React.FC = () => {
       activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
@@ -809,16 +823,10 @@ export const Ruling: React.FC = () => {
           nextIsLoading={
             isModifyingRuling ? isRequestingRulingSignature : false
           }
-          onNextButtonClick={() => {
-            if (isModifyingRuling) {
-              requestRulingSignature()
-            } else {
-              router.push(
-                `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
-              )
-            }
-          }}
-          nextIsDisabled={!isRulingValidRC(workingCase)}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.RESTRICTION_CASE_COURT_RECORD_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           nextButtonText={
             isModifyingRuling
               ? formatMessage(m.sections.formFooter.modifyRulingButtonLabel)
