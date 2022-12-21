@@ -14,6 +14,14 @@ export const prosecutorAndDefender = defineMessages({
     description:
       'Notaður sem texti fyrir val á ákæranda sem mætir fyrir dóm í dómaraflæði í ákærum.',
   },
+  alertBannerText: {
+    id:
+      'judicial.system.core:court_indictments.prosecutor_and_defender.alert_banner_text',
+    defaultMessage:
+      'Skipaðir verjendur í sakamálum fá tilkynningu um skipan í tölvupósti en fá ekki afhent málsgögn í gegnum Réttarvörslugátt eins og er.',
+    description:
+      'Nota[ur sem texti í alert banner á málflytjendurskjá í ákærum.',
+  },
   selectDefenderHeading: {
     id:
       'judicial.system.core:court_indictments.prosecutor_and_defender.select_defender_heading',
