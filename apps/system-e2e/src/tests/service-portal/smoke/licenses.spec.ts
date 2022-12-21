@@ -1,4 +1,41 @@
-import { test } from '@playwright/test'
+import { test, BrowserContext, expect } from '@playwright/test'
+import { urls } from '../../../support/utils'
+import { session } from '../../../support/session'
+import { helpers } from '../../../support/locator-helpers'
+
+const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+test.use({ baseURL: urls.islandisBaseUrl })
+
+test.describe('Licenses', () => {
+  let context: BrowserContext
+
+  test.beforeAll(async ({ browser }) => {
+    context = await session({
+      browser: browser,
+      storageState: 'service-portal-licenses.json',
+      homeUrl,
+      phoneNumber: '0105069',
+      idsLoginOn: true,
+    })
+  })
+
+  test.afterAll(async () => {
+    await context.close()
+  })
+
+  test('License overview', async () => {
+    const page = await context.newPage()
+
+    await test.step('Renders the page', async () => {
+      // Arrange
+      await page.goto('/minarsidur/skirteini')
+
+      // Assert
+      const headline = page.locator('h1')
+      await expect(headline).toContainText('Skírteinin þín')
+    })
+  })
+})
 
 test.describe.skip('Skírteini', () => {
   for (const { testCase, home } of [
