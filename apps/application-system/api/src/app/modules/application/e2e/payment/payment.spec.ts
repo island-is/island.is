@@ -6,7 +6,6 @@ import { ApplicationScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import { setup } from '../../../../../../test/setup'
-// import { PaymentAPI } from '@island.is/clients/payment'
 import {
   ChargeFjsV2ClientService,
   Charge,
