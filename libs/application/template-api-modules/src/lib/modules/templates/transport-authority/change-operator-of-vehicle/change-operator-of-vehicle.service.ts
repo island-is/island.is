@@ -3,6 +3,16 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { EmailRecipient, EmailRole } from './types'
+import {
+  getAllRoles,
+  getRecipients,
+  getRecipientBySsn,
+} from './change-operator-of-vehicle.utils'
+import {
+  ChargeFjsV2ClientService,
+  getChargeId,
+} from '@island.is/clients/charge-fjs-v2'
 import {
   ChangeOperatorOfVehicleAnswers,
   getChargeItemCodes,
@@ -13,6 +23,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
   ) {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
   }
@@ -36,6 +47,117 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     } catch (exeption) {
       return { id: '', paymentUrl: '' }
     }
+  }
+
+  // Notify everyone that has been added to the application that they need to review
+  async initReview({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
+    // 1. Validate payment
+
+    // 1a. Make sure a paymentUrl was created
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 1b. Make sure payment is fulfilled (has been paid)
+    const payment:
+      | { fulfilled: boolean }
+      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth.authorization,
+      application.id,
+    )
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 2. Notify users that need to review
+
+    // 2a. Get list of users that need to review
+    const answers = application.answers as ChangeOperatorOfVehicleAnswers
+    const recipientList = getRecipients(answers, [
+      EmailRole.ownerCoOwner,
+      EmailRole.operator,
+    ])
+
+    // 2b. Send email/sms individually to each recipient
+    /* for (let i = 0; i < recipientList.length; i++) {
+      if (recipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) => generateRequestReviewEmail(props, recipientList[i]),
+          application,
+        )
+      }
+
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateRequestReviewSms(application, recipientList[i]),
+          application,
+        )
+      }
+    } */
+
+    return recipientList
+  }
+
+  async rejectApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Delete charge so that the seller gets reimburshed
+    const chargeId = getChargeId(application)
+    if (chargeId) {
+      const status = await this.chargeFjsV2ClientService.getChargeStatus(
+        chargeId,
+      )
+
+      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
+      if (status !== 'cancelled') {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
+    }
+
+    // 2. Notify everyone in the process that the application has been withdrawn
+
+    // 2a. Get list of users that need to be notified
+    const answers = application.answers as ChangeOperatorOfVehicleAnswers
+    /* const recipientList = getRecipients(answers, getAllRoles())
+
+    // 2b. Send email/sms individually to each recipient about success of withdrawing application
+    const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
+    for (let i = 0; i < recipientList.length; i++) {
+      if (recipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) =>
+            generateApplicationRejectedEmail(
+              props,
+              recipientList[i],
+              rejectedByRecipient,
+            ),
+          application,
+        )
+      }
+
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () =>
+            generateApplicationRejectedSms(
+              application,
+              recipientList[i],
+              rejectedByRecipient,
+            ),
+          application,
+        )
+      }
+    } */
   }
 
   async submitApplication({

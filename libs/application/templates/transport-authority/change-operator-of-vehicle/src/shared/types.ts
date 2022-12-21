@@ -1,5 +1,8 @@
 import { z } from 'zod'
-import { OperatorInformationSchema } from '../lib/dataSchema'
+import {
+  OperatorInformationSchema,
+  UserInformationSchema,
+} from '../lib/dataSchema'
 
 export type OperatorField = {
   nationalId: string
@@ -9,4 +12,5 @@ export type OperatorField = {
   approved?: boolean
 }
 
+export type UserInformation = z.TypeOf<typeof UserInformationSchema>
 export type OperatorInformation = z.TypeOf<typeof OperatorInformationSchema>
