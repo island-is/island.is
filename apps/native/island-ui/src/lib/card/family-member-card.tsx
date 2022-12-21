@@ -66,14 +66,14 @@ export function FamilyMemberCard({ name, nationalId }: FamilyMemberCardProps) {
   return null;
   return (
     <Host>
-      {/* <ImageWrap>
+      <ImageWrap>
         <Avatar name={name} isSmall />
       </ImageWrap>
       <Content>
         <Title>{name}</Title>
         <Text>{nationalId}</Text>
       </Content>
-      <Icon><Image source={chevronForward} height={24} width={24} /></Icon> */}
+      <Icon><Image source={chevronForward} height={24} width={24} /></Icon>
     </Host>
   )
 }

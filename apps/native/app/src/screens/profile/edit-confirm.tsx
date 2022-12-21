@@ -1,8 +1,8 @@
 
 
-import { Button, NavigationBarSheet, TextField, Typography } from '@island.is/island-ui-native'
+import { CancelButton, NavigationBarSheet, TextField, Typography } from '@island.is/island-ui-native'
 import React from 'react'
-import { View, Text, ScrollView } from 'react-native'
+import { View, ScrollView } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -40,7 +40,13 @@ export const EditConfirmScreen: NavigationFunctionComponent = ({ componentId }) 
           <View style={{ marginBottom: 24 }}>
             <TextField label={intl.formatMessage({ id: 'edit.confirm.inputlabel' })} value={text} onChange={onChangeText} />
           </View>
-          <Button title={intl.formatMessage({ id: 'edit.confirm.button' })} onPress={() => Navigation.dismissModal(componentId)} />
+          <View style={{ alignItems: 'center'}}>
+            <CancelButton
+              title={intl.formatMessage({ id: 'edit.confirm.button' })}
+              onPress={() => Navigation.dismissModal(componentId)}
+              isSmall
+            />
+          </View>
         </View>
       </ScrollView>
     </View>

@@ -6,6 +6,7 @@ import { dynamicColor, font } from '../../utils'
 
 interface CancelProps extends TouchableOpacityProps {
   title: React.ReactNode
+  isSmall?: boolean
 }
 
 const Host = styled.TouchableOpacity`
@@ -22,21 +23,22 @@ const Wrapper = styled.View`
   align-items: center;
 `
 
-const Title = styled.Text`
+const Title = styled.Text<{ isSmall?: boolean}>`
   margin-right: 7px;
   padding: 4px 0;
   ${font({
     fontWeight: '600',
-    fontSize: 16,
+    fontSize: ({ isSmall }) => isSmall ? 12 : 16,
+    lineHeight: ({ isSmall }) => isSmall ? 16 : 24,
     color: (props) => props.theme.color.blue400,
   })}
 `
 
-export function CancelButton({ title, ...rest }: CancelProps) {
+export function CancelButton({ title, isSmall, ...rest }: CancelProps) {
   return (
     <Host {...(rest as any)}>
       <Wrapper>
-        <Title>{title}</Title>
+        <Title isSmall={isSmall}>{title}</Title>
         <Image source={arrow} style={{ width: 10, height: 10 }} />
       </Wrapper>
     </Host>
