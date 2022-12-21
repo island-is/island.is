@@ -70,8 +70,10 @@ import { OrderVehicleRegistrationCertificateModule } from './transport-authority
 import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
-//TODO: ADD These templates.
 import { EstateTemplateModule } from './estate/estate.module'
+import { EstateTemplateService } from './estate/estate.service'
+
+//TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 
 export const modules = [
@@ -113,6 +115,7 @@ export const modules = [
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
+  EstateTemplateModule,
 ]
 
 export const services = [
@@ -154,4 +157,5 @@ export const services = [
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
+  EstateTemplateService,
 ]

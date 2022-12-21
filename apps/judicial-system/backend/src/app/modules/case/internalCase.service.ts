@@ -15,7 +15,6 @@ import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
-import { EmailService } from '@island.is/email-service'
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
@@ -122,8 +121,6 @@ export class InternalCaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
-    @Inject(forwardRef(() => EmailService))
-    private readonly emailService: EmailService,
     @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
@@ -637,6 +634,27 @@ export class InternalCaseService {
       caseFilesDeliveredToCourt,
       caseDeliveredToPolice,
     }
+  }
+
+  async deliverProsecutorToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateCaseWithProsecutor(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        theCase.prosecutor?.nationalId ?? '',
+        theCase.creatingProsecutor?.institution?.nationalId ?? '',
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error('failed to update case with defendant', { reason })
+
+        return { delivered: false }
+      })
   }
 
   async deliverCaseFilesRecordToCourt(

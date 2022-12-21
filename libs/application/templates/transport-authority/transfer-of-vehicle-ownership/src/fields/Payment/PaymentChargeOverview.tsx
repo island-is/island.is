@@ -2,6 +2,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
+import { TransferOfVehicleOwnership } from '../../lib/dataSchema'
 import { payment } from '../../lib/messages'
 import { formatIsk, getChargeItemCodes } from '../../utils'
 

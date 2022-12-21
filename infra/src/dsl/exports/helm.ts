@@ -36,6 +36,7 @@ export const renderHelmServiceFile = async (
     env,
     habitat,
     services,
+    withMocks,
   )
   return getHelmValueFile(runtime, renderedServices, withMocks, env)
 }
@@ -43,8 +44,9 @@ export const renderHelmServices = async (
   env: EnvironmentConfig,
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
+  withMocks: Mocks,
 ) => {
-  let runtime = new Kubernetes(env)
+  let runtime = new Kubernetes(env, withMocks)
   hacks(services, habitat)
   return {
     services: await generateOutput({

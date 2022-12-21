@@ -57,9 +57,7 @@ const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
+      activeSection={Sections.PROSECUTOR}
       activeSubSection={
         caseHasBeenSentToCourt
           ? undefined
