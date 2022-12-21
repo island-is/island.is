@@ -1,14 +1,16 @@
-import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
-  buildTextField,
   buildSubSection,
   buildDescriptionField,
-  buildCustomField,
   buildRadioField,
+  buildCheckboxField,
+  YES,
+  getValueViaPath,
+  buildSelectField,
 } from '@island.is/application/core'
+import { ChargeItemCode } from '@island.is/shared/constants'
 import { information } from '../../../lib/messages'
-import { getSelectedVehicle } from '../../../utils'
+import { DeliveryStation } from '../../../types'
 
 export const plateDeliverySubSection = buildSubSection({
   id: 'plateDelivery',
@@ -43,8 +45,70 @@ export const plateDeliverySubSection = buildSubSection({
           width: 'half',
           largeButtons: true,
         }),
-        //TODOx deliverystation list
-        //TODOx checkbox rush fee
+        buildSelectField({
+          id: 'plateDelivery.deliveryStationCode',
+          title: information.labels.plateDelivery.deliveryStationTitle,
+          placeholder:
+            information.labels.plateDelivery.deliveryStationPlaceholder,
+          required: true,
+          condition: (formValue) => {
+            const deliveryType = getValueViaPath(
+              formValue,
+              'plateDelivery.deliveryType',
+              '',
+            ) as string
+            return deliveryType === 'deliveryStation'
+          },
+          options: (application) => {
+            const deliveryStationList = getValueViaPath(
+              application.externalData,
+              'deliveryStationList.data',
+              [],
+            ) as DeliveryStation[]
+
+            return deliveryStationList.map(({ name, code }) => ({
+              value: code || '',
+              label: name || '',
+            }))
+          },
+        }),
+        buildDescriptionField({
+          id: 'plateDelivery.deliveryType.includeRushFeeSubTitle',
+          title: information.labels.plateDelivery.includeRushFeeSubTitle,
+          titleVariant: 'h5',
+          space: 3,
+        }),
+        buildCheckboxField({
+          id: 'plateDelivery.includeRushFee',
+          title: '',
+          large: true,
+          backgroundColor: 'white',
+          defaultValue: [],
+          options: (application) => {
+            const paymentItems = application?.externalData?.payment?.data as
+              | [
+                  {
+                    priceAmount: number
+                    chargeItemCode: string
+                  },
+                ]
+              | undefined
+            const rushFeePaymentItem = paymentItems?.find(
+              ({ chargeItemCode }) =>
+                chargeItemCode ===
+                ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_RUSH_FEE.toString(),
+            )
+
+            return [
+              {
+                value: YES,
+                label:
+                  information.labels.plateDelivery.includeRushFeeCheckboxTitle,
+                subLabel: `${information.labels.plateDelivery.includeRushFeeCheckboxSubTitle.defaultMessage} ${rushFeePaymentItem?.priceAmount} kr.`,
+              },
+            ]
+          },
+        }),
       ],
     }),
   ],

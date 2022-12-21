@@ -175,6 +175,36 @@ export const information = {
         defaultMessage: 'Skoðunarstofa',
         description: 'Delivery station option title',
       },
+      deliveryStationTitle: {
+        id:
+          'ta.ovlp.application:information.labels.plateDelivery.deliveryStationTitle',
+        defaultMessage: 'Nafn skoðunarstofu',
+        description: 'Delivery station title',
+      },
+      deliveryStationPlaceholder: {
+        id:
+          'ta.ovlp.application:information.labels.plateDelivery.deliveryStationPlaceholder',
+        defaultMessage: 'Veldu skoðunarstofu',
+        description: 'Delivery station placeholder',
+      },
+      includeRushFeeSubTitle: {
+        id:
+          'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeSubTitle',
+        defaultMessage: 'Þarft þú flýtimeðferð?',
+        description: 'Include rush fee sub title',
+      },
+      includeRushFeeCheckboxTitle: {
+        id:
+          'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeCheckboxTitle',
+        defaultMessage: 'Flýtipöntun (afgreitt daginn eftir að greiðsla berst)',
+        description: 'Include rush fee checkbox title',
+      },
+      includeRushFeeCheckboxSubTitle: {
+        id:
+          'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeCheckboxSubTitle',
+        defaultMessage: 'Flýtigjald:',
+        description: 'Include rush fee checkbox sub title',
+      },
     }),
   },
 }

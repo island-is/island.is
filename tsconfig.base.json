@@ -571,6 +571,7 @@
       "@island.is/portals/admin/air-discount-scheme": [
         "libs/portals/admin/air-discount-scheme/src/index.ts"
       ],
+      "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"

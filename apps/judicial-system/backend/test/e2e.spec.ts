@@ -97,7 +97,7 @@ beforeAll(async () => {
             }),
         })
         .overrideProvider(MessageService)
-        .useValue({ sendMessageToQueue: () => undefined }),
+        .useValue({ sendMessagesToQueue: () => undefined }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)

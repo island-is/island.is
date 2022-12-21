@@ -46,6 +46,15 @@ export interface PortalNavigationItem {
    * Description for module
    */
   description?: MessageDescriptor
+  /**
+   * Active state for navigation item
+   */
+  active?: boolean
+
+  /**
+   * Active state if current path is exact match
+   */
+  activeIfExact?: boolean
 }
 
 /**
@@ -129,6 +138,8 @@ export type PortalWidget = {
   render: (props: PortalModuleProps) => PortalModuleRenderValue
 }
 
+export type PortalType = 'admin' | 'my-pages'
+
 /**
  * A global component provides functionality that
  * is applicable system wide and does not belong in one route
@@ -206,5 +217,5 @@ export interface PortalModule {
       )
     },
    */
-  moduleLayoutWrapper?: React.FC<PortalModuleProps>
+  moduleLayoutWrapper?: React.FC<PortalModuleProps & { portalType: PortalType }>
 }

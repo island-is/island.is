@@ -34,7 +34,8 @@ export class VehiclesService extends BaseTemplateApiService {
 
     // // Validate that user has at least 1 vehicle
     if (!result || !result.length) {
-      if (showOwned && showCoOwned && !showOperated) {
+      if (showOwned && !showCoOwned && !showOperated) {
+        // Throw error message that user is not the main owner of at least 1 vehicle
         throw new TemplateApiError(
           {
             title: coreErrorMessages.vehiclesEmptyListOwner,
@@ -43,6 +44,7 @@ export class VehiclesService extends BaseTemplateApiService {
           400,
         )
       } else if (showOwned && showCoOwned && !showOperated) {
+        // Throw error message that user is not the owner (either main owner or co-owner) of at least 1 vehicle
         throw new TemplateApiError(
           {
             title: coreErrorMessages.vehiclesEmptyListOwnerOrCoOwner,
@@ -51,6 +53,7 @@ export class VehiclesService extends BaseTemplateApiService {
           400,
         )
       } else {
+        // Throw generic error message that no vehicle was found
         throw new TemplateApiError(
           {
             title: coreErrorMessages.vehiclesEmptyListDefault,

@@ -1,13 +1,10 @@
 import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
-  buildTextField,
   buildSection,
-  buildSubSection,
   buildDescriptionField,
   buildCheckboxField,
   YES,
-  NO,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'

@@ -22,6 +22,7 @@ import {
   NationalRegistryUserApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
+  DeliveryStationsApi,
 } from '../dataProviders'
 
 const template: ApplicationTemplate<
@@ -74,6 +75,7 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
+                DeliveryStationsApi,
               ],
             },
           ],

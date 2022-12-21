@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { YES } from '@island.is/application/core'
 
 export const OrderVehicleLicensePlateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -20,7 +21,7 @@ export const OrderVehicleLicensePlateSchema = z.object({
   plateDelivery: z.object({
     deliveryType: z.enum(['transportAuthority', 'deliveryStation']),
     deliveryStationCode: z.string().optional(),
-    includeRushFee: z.boolean(),
+    includeRushFee: z.array(z.enum([YES])).optional(),
   }),
 })
 
