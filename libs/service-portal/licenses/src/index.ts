@@ -30,7 +30,7 @@ export const licensesModule: ServicePortalModule = {
     {
       name: m.passport,
       path: ServicePortalPath.LicensesPassportDetail,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
       key: 'Passport',
       render: () =>
         lazy(() => import('./screens/PassportDetail/PassportDetail')),

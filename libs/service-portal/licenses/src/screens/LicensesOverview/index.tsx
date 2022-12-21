@@ -207,7 +207,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       {hasChildren && passportEnabled ? (
         <Box>
           <Tabs
-            label="License tabs"
+            label={formatMessage(m.seeLicenses)}
             contentBackground="white"
             tabs={[
               {
