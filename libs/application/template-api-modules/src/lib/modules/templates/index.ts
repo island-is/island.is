@@ -52,6 +52,8 @@ import { FinancialStatementsInaoTemplateModule } from './financial-statements-in
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 import { NoDebtCertificateModule } from './no-debt-certificate/no-debt-certificate.module'
 import { NoDebtCertificateService } from './no-debt-certificate/no-debt-certificate.service'
+import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
+import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
 import { EstateTemplateModule } from './estate/estate.module'
 import { EstateTemplateService } from './estate/estate.service'
 
@@ -65,7 +67,6 @@ import { DigitalTachographDriversCardModule } from './transport-authority/digita
 import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
 import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
 import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
-import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -97,6 +98,7 @@ export const modules = [
   OperatingLicenseModule,
   FinancialStatementsInaoTemplateModule,
   NoDebtCertificateModule,
+  TransferOfVehicleOwnershipModule,
   EstateTemplateModule,
 ]
 
@@ -130,5 +132,6 @@ export const services = [
   FinancialStatementsInaoTemplateService,
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
+  TransferOfVehicleOwnershipService,
   EstateTemplateService,
 ]
