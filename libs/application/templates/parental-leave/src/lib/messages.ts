@@ -1588,6 +1588,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: '{common} sameiginlegir mánuðir',
       description: 'month from joint entitlement',
     },
+    rightsSingleParentMultipleBirths: {
+      id: 'pl.application:review.rights.single.multiple.births',
+      defaultMessage: '{common} auka mánuðir',
+      description: 'month from additional entitlement',
+    },
     rightsAllowanceRequested: {
       id: 'pl.application:review.rights.allowance.requested',
       defaultMessage: '{requested} mánuður veittur af öðru foreldri',

@@ -20,12 +20,14 @@ import {
   PaymentCatalogApi,
   UserProfileApi,
   DistrictsApi,
+  YES,
 } from '@island.is/application/types'
+import { IdentityDocumentApi } from '../dataProviders'
 import {
   DistrictCommissionerAgencies,
   Passport,
+  PersonalInfo,
   Services,
-  YES,
 } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
@@ -41,31 +43,12 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'introSection',
-      title: m.introTitle,
-      children: [
-        buildMultiField({
-          id: 'intro',
-          title: m.introSectionTitle,
-          description: m.introSectionDescription,
-          children: [
-            buildCustomField({
-              id: 'introInfo',
-              title: '',
-              component: 'IntroInfo',
-              doesNotRequireAnswer: true,
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
       id: 'externalDataSection',
       title: m.dataCollectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: m.formName,
+          title: m.dataCollectionTitle,
           subTitle: m.dataCollectionSubtitle,
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
@@ -80,7 +63,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: MockProviderApi,
+              provider: IdentityDocumentApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
@@ -143,7 +126,7 @@ export const Draft: Form = buildForm({
                   ((application.answers.passport as Passport)?.userPassport !==
                     '' &&
                     (application.answers
-                      .personalInfo as any)?.hasDisabilityDiscount.includes(
+                      .personalInfo as PersonalInfo)?.hasDisabilityDiscount.includes(
                       YES,
                     )) ||
                   (application.answers.passport as Passport)?.childPassport !==

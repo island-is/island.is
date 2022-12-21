@@ -2,20 +2,19 @@ import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  height: 255,
+  height: 385,
+  marginTop: -130,
   backgroundBlendMode: 'saturation',
   backgroundImage:
-    'url(https://images.ctfassets.net/8k0h54kbe6bj/1eP3xdWvklRJM37iBhWQ0Q/9f488d0828a2dfe162e97591e3e96050/Vector.svg)',
-  ...themeUtils.responsiveStyle({
-    md: {
-      backgroundPositionX: '-200px',
-    },
-    xl: {
-      backgroundSize: '50%',
-    },
-  }),
-
+    'url(https://images.ctfassets.net/8k0h54kbe6bj/GNOgfSn6O7XL9KC7Ma7P7/4f258a424ee5533913044e40255c8792/fjs-header-mynd.png)',
+  backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat !important',
+})
+
+export const headerContainer = style({
+  position: 'initial',
+  paddingTop: 130,
+  height: 385,
 })
 
 export const iconCircle = style({
