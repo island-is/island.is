@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import type { IconMapIcon as IconType } from '@island.is/island-ui/core'
 import * as styles from './DelegationsFormFooter.css'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/core'
 
 type DelegationsFormFooterProps = {
   loading?: boolean

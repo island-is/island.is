@@ -174,7 +174,6 @@ export class VehiclesService {
       showCoowned: true,
       showOperated: false,
     })
-
     const isOwnerOrCoOwner = !!myVehicles?.find(
       (vehicle: VehicleMiniDto) => vehicle.permno === permno,
     )

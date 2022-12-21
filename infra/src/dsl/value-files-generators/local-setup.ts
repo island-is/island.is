@@ -5,7 +5,7 @@ import {
 } from '../types/output-types'
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
-import { readFile } from 'fs/promises'
+import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
 
 const mapServiceToNXname = async (serviceName: string) => {
@@ -60,50 +60,57 @@ export const getLocalrunValueFile = async (
         .join(' ')} yarn start ${await mapServiceToNXname(name)}`,
     }
   }, Promise.resolve({}))
-  const mocks: Services<LocalrunService> = Object.entries(runtime.mocks).reduce(
+  const mocksConfigs = Object.entries(runtime.mocks).reduce(
     (acc, [name, target]) => {
-      if (name.startsWith('mock-')) {
-        return {
-          ...acc,
-          [name]: {
-            'proxy-port': runtime.ports[name],
-            'mountebank-imposter-config': JSON.stringify({
-              protocol: 'http',
-              name: name,
-              port: runtime.ports[name],
-              stubs: [
-                {
-                  predicates: [{ equals: {} }],
-                  responses: [
-                    {
-                      proxy: {
-                        to: target,
-                        mode: 'proxyAlways',
-                        predicateGenerators: [
-                          {
-                            matches: {
-                              method: true,
-                              path: true,
-                              query: true,
-                              body: true,
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                },
-              ],
-            }),
-          },
-        }
-      }
       return {
-        ...acc,
+        ports: [...acc.ports, runtime.ports[name]],
+        configs: [
+          ...acc.configs,
+          {
+            protocol: 'http',
+            name: name,
+            port: runtime.ports[name],
+            stubs: [
+              {
+                predicates: [{ equals: {} }],
+                responses: [
+                  {
+                    proxy: {
+                      to: target.replace('localhost', 'host.docker.internal'),
+                      mode: 'proxyAlways',
+                      predicateGenerators: [
+                        {
+                          matches: {
+                            method: true,
+                            path: true,
+                            query: true,
+                            body: true,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       }
     },
-    {},
+    { ports: [] as number[], configs: [] as any[] },
   )
+  const defaultMountebankConfig = 'mountebank-imposter-config.json'
+  await writeFile(
+    defaultMountebankConfig,
+    JSON.stringify({ imposters: mocksConfigs.configs }),
+    { encoding: 'utf-8' },
+  )
+
+  const mocks = `docker run -it --rm -p 2525:2525 ${mocksConfigs.ports
+    .map((port) => `-p ${port}:${port}`)
+    .join(
+      ' ',
+    )} -v ${process.cwd()}/${defaultMountebankConfig}:/app/default.json bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
 
   return {
     services: { ...dockerComposeServices },

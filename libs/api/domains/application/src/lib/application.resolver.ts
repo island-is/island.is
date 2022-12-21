@@ -51,14 +51,17 @@ export class ApplicationResolver {
     locale: Locale = 'is',
     @Args('applicationId') applicationId: string,
   ): Promise<ApplicationPayment | null> {
-    const status = await this.applicationService.getPaymentStatus(
+    const {
+      fulfilled,
+      paymentUrl,
+    } = await this.applicationService.getPaymentStatus(
       applicationId,
       user,
       locale,
     )
     return {
-      fulfilled: status.fulfilled,
-      paymentUrl: status.paymentUrl,
+      fulfilled,
+      paymentUrl,
     }
   }
 
@@ -99,12 +102,7 @@ export class ApplicationResolver {
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
-    const res = await this.applicationService.updateExternalData(
-      input,
-      user,
-      locale,
-    )
-    return res
+    return await this.applicationService.updateExternalData(input, user, locale)
   }
 
   @Mutation(() => Application, { nullable: true })

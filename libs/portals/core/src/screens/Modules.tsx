@@ -4,14 +4,17 @@ import { Route, Switch, useLocation } from 'react-router-dom'
 
 import { Box } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
-import { useModules } from '../components/ModulesProvider'
 import { useModuleProps } from '../hooks/useModuleProps'
 import { ModuleErrorScreen, ModuleErrorBoundary } from './ModuleErrorScreen'
 import { AccessDenied } from './AccessDenied'
 import { NotFound } from './NotFound'
 import { PortalRoute } from '../types/portalCore'
-import { usePortalMeta } from '../components/PortalMetaProvider'
-import { plausiblePageviewDetail } from '../lib/plausiblePageviewDetail'
+import {
+  useModules,
+  usePortalMeta,
+  useRoutes,
+} from '../components/PortalProvider'
+import { plausiblePageviewDetail } from '../utils/plausible'
 
 type RouteComponentProps = {
   route: PortalRoute
@@ -30,7 +33,7 @@ const RouteComponent = React.memo(
           path: route.path,
         })
       }
-    }, [location])
+    }, [basePath, location, route.path, route.render])
 
     if (route.render === undefined) {
       return null
@@ -92,13 +95,18 @@ const RouteLoader = React.memo(
 )
 
 export const Modules = () => {
-  const { routes } = useModules()
+  const routes = useRoutes()
   const { userInfo, client } = useModuleProps()
+  const modules = useModules()
+
+  if (!userInfo) return null
 
   return (
     <Box paddingY={1}>
-      {userInfo && (
+      {modules.length > 0 ? (
         <RouteLoader routes={routes} userInfo={userInfo} client={client} />
+      ) : (
+        <AccessDenied userInfo={userInfo} client={client} />
       )}
     </Box>
   )
