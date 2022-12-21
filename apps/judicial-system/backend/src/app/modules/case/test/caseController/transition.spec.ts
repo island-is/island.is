@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import { Op, Transaction } from 'sequelize'
 
 import {
+  CaseFileState,
   CaseState,
   CaseTransition,
   completedCaseStates,
@@ -12,7 +13,7 @@ import {
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageService } from '@island.is/judicial-system/message'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
@@ -106,7 +107,25 @@ describe('CaseController - Transition', () => {
         ...indictmentCases,
       ]).describe('%s case', (type) => {
         const caseId = uuid()
-        const theCase = { id: caseId, type, state: oldState } as Case
+        const caseFileId1 = uuid()
+        const caseFileId2 = uuid()
+        const theCase = {
+          id: caseId,
+          type,
+          state: oldState,
+          caseFiles: [
+            {
+              id: caseFileId1,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+            },
+            {
+              id: caseFileId2,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_COURT,
+            },
+          ],
+        } as Case
         const updatedCase = { id: caseId, type, state: newState } as Case
         let then: Then
 
@@ -137,7 +156,36 @@ describe('CaseController - Transition', () => {
             isIndictmentCase(type) &&
             completedCaseStates.includes(newState)
           ) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalled()
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  caseId,
+                  caseFileId: caseFileId1,
+                },
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  caseId,
+                  caseFileId: caseFileId2,
+                },
+                { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
+              ],
+            )
+          } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  caseId,
+                  caseFileId: caseFileId1,
+                },
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  caseId,
+                  caseFileId: caseFileId2,
+                },
+              ],
+            )
           } else {
             expect(
               mockMessageService.sendMessagesToQueue,
