@@ -97,7 +97,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
         period.firstPeriodStart === 'date_of_birth'
           ? 'actualDateOfBirth'
           : 'specificDate'
-      if (new Date(period.firstPeriodStart).getTime() < new Date().getTime()) {
+      if (new Date(period.from).getTime() < new Date().getTime()) {
         firstPeriodStart = 'specificDate'
       }
 

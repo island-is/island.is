@@ -7,7 +7,12 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Events, States, Roles, MCEvents } from './constants'
 import { z } from 'zod'
 import { ApiActions } from '../shared'
@@ -16,6 +21,12 @@ import {
   existsAndKMarking,
   exists,
 } from '../util/mortgageCertificateValidation'
+import {
+  NationalRegistryUserApi,
+  NationalRegistryRealEstateApi,
+  UserProfileApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -54,15 +65,10 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
-          },
+          lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -78,6 +84,12 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                NationalRegistryRealEstateApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+              ],
               delete: true,
             },
           ],
@@ -109,15 +121,10 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.submitRequestToSyslumenn,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitRequestToSyslumenn,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -149,15 +156,10 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -200,12 +202,7 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -234,18 +231,13 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.8,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 1 hour will be pruned automatically
-            whenToPrune: 1 * 3600 * 1000,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          lifecycle: pruneAfterDays(1 / 24),
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -269,21 +261,16 @@ const template: ApplicationTemplate<
           name: 'Completed',
           status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
               label: m.actionCardDone,
               variant: 'blueberry',
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.getMortgageCertificate,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.getMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

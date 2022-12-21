@@ -10,17 +10,26 @@ import {
   PersonType,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+} from '@island.is/application/types'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { info } from 'kennitala'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core/messages'
 
 @Injectable()
-export class CriminalRecordSubmissionService {
+export class CriminalRecordSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.CRIMINAL_RECORD)
+  }
 
   async createCharge({
     application: { id },
@@ -30,7 +39,7 @@ export class CriminalRecordSubmissionService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.CRIMINAL_RECORD,
+        [ChargeItemCode.CRIMINAL_RECORD],
       )
       return result
     } catch (exeption) {
@@ -137,5 +146,24 @@ export class CriminalRecordSubmissionService {
         )
         return undefined
       })
+  }
+
+  async validateCriminalRecord({ auth }: TemplateApiModuleActionProps) {
+    // Validate applicants age
+    const minAge = 15
+    const { age } = info(auth.nationalId)
+    if (age < minAge) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
+          summary: coreErrorMessages.couldNotAssignApplicationErrorDescription,
+        },
+        400,
+      )
+    }
+
+    return await this.criminalRecordService.validateCriminalRecord(
+      auth.nationalId,
+    )
   }
 }

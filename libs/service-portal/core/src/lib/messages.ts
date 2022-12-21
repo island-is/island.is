@@ -817,6 +817,10 @@ export const m = defineMessages({
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
   },
+  passport: {
+    id: 'service.portal:passport',
+    defaultMessage: 'Vegabréf',
+  },
   yes: {
     id: 'service.portal:yes',
     defaultMessage: 'Já',
@@ -828,25 +832,5 @@ export const m = defineMessages({
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
-  },
-  buttonCancel: {
-    id: 'service.portal:button.cancel',
-    defaultMessage: 'Hætta við',
-    description: 'Cancel',
-  },
-  buttonEdit: {
-    id: 'service.portal:button.edit',
-    defaultMessage: 'Breyta',
-    description: 'Edit',
-  },
-  buttonDestroy: {
-    id: 'service.portal:button.delete',
-    defaultMessage: 'Eyða',
-    description: 'Delete',
-  },
-  buttonRenew: {
-    id: 'service.portal:button.renew',
-    defaultMessage: 'Endurnýja',
-    description: 'Renew',
   },
 })

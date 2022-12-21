@@ -1280,6 +1280,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Ertu að þiggja bætur?',
       description: 'Are you receiving benefits?',
     },
+    isRecivingUnemploymentBenefitsDescription: {
+      id: 'pl.application:employer.isRecivingUnemploymentBenefitsDesc',
+      defaultMessage:
+        'Bótaþegar sem þiggja bætur frá stéttarfélagi eða sjúkradagpeninga þurfa að skila inn staðfestingu ef við á.',
+      description:
+        'Those receiving union benefits or sick pay are required to submit documentation confirming this where applicable',
+    },
     unemploymentBenefits: {
       id: 'pl.application:employer.unemploymentBenefits',
       defaultMessage: `Hvaðan ertu að þiggja bætur?`,
@@ -1587,6 +1594,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:review.rights.multiple.births',
       defaultMessage: '{common} sameiginlegir mánuðir',
       description: 'month from joint entitlement',
+    },
+    rightsSingleParentMultipleBirths: {
+      id: 'pl.application:review.rights.single.multiple.births',
+      defaultMessage: '{common} auka mánuðir',
+      description: 'month from additional entitlement',
     },
     rightsAllowanceRequested: {
       id: 'pl.application:review.rights.allowance.requested',
@@ -2250,12 +2262,14 @@ export const errorMessages = defineMessages({
   },
   notAllowedToGiveRights: {
     id: 'pl.application:errors.not.allowed.to.give.rights',
-    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga!"',
+    defaultMessage:
+      'Ekki er hægt að færa daga ef allur sameiginlegur réttur vegna fjölbura er nýttur. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
   },
   notAllowedToRequestRights: {
     id: 'pl.application:errors.not.allowed.to.request.rights',
-    defaultMessage: 'icel-trans: "Ekki hægt að biðja um daga!"',
+    defaultMessage:
+      'Ekki er hægt að óska eftir dögum ef ekki er nýttur allur sameiginlegur réttur vegna fjölbura. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to request days!',
   },
 })

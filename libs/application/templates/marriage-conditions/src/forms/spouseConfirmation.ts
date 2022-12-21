@@ -9,6 +9,7 @@ import {
   buildTextField,
   buildSubSection,
   buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import { YES } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -17,13 +18,15 @@ import {
   FormModes,
   DefaultEvents,
   Application,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
-import { dataCollection } from './sharedSections/dataCollection'
+import { MaritalStatusApi } from '../dataProviders'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { removeCountryCode } from '@island.is/application/ui-components'
@@ -80,7 +83,29 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             subTitle: m.dataCollectionSubtitle,
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: dataCollection,
+            dataProviders: [
+              buildDataProviderItem({
+                provider: NationalRegistryUserApi,
+                title: m.dataCollectionNationalRegistryTitle,
+                subTitle: m.dataCollectionNationalRegistrySubtitle,
+              }),
+              buildDataProviderItem({
+                provider: UserProfileApi,
+                title: m.dataCollectionUserProfileTitle,
+                subTitle: m.dataCollectionUserProfileSubtitle,
+              }),
+              buildDataProviderItem({
+                id: 'birthCertificate',
+                type: '',
+                title: m.dataCollectionBirthCertificateTitle,
+                subTitle: m.dataCollectionBirthCertificateDescription,
+              }),
+              buildDataProviderItem({
+                provider: MaritalStatusApi,
+                title: m.dataCollectionMaritalStatusTitle,
+                subTitle: m.dataCollectionMaritalStatusDescription,
+              }),
+            ],
           }),
         ],
       }),

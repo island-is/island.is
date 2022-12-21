@@ -80,4 +80,8 @@ export class SearcherInput {
   @IsBoolean()
   @IsOptional()
   highlightResults?: boolean = false
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  useQuery?: string = 'default'
 }

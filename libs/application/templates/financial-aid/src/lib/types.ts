@@ -1,4 +1,9 @@
-import { Application, FieldBaseProps } from '@island.is/application/types'
+import {
+  Application,
+  FieldBaseProps,
+  NationalRegistryIndividual,
+  NationalRegistrySpouse,
+} from '@island.is/application/types'
 import {
   DirectTaxPayment,
   Municipality,
@@ -6,12 +11,6 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
-
-export enum DataProviderTypes {
-  NationalRegistry = 'NationalRegistryProvider',
-  Veita = 'VeitaProvider',
-  TaxDataFetch = 'TaxDataFetchProvider',
-}
 
 export enum ApproveOptions {
   Yes = 'Yes',
@@ -24,25 +23,39 @@ export type ErrorSchema = NestedType<answersSchema>
 
 export interface ExternalData {
   nationalRegistry: {
+    data: NationalRegistryIndividual
+    date: string
+    status: StatusProvider
+  }
+  nationalRegistrySpouse: {
+    data?: NationalRegistrySpouse
+    date: string
+    status: StatusProvider
+  }
+  municipality: {
+    data?: Municipality
+    date: string
+    status: StatusProvider
+  }
+  currentApplication: {
+    data?: CurrentApplication
+    date: string
+    status: StatusProvider
+  }
+  taxData: {
+    data: TaxData
+    date: string
+    status: StatusProvider
+  }
+  taxDataSpouse?: {
+    data: TaxData
+    date: string
+    status: StatusProvider
+  }
+  sendSpouseEmail?: {
     data: {
-      applicant: Applicant
-      municipality: Municipality
+      success: boolean
     }
-    date: string
-    status: StatusProvider
-  }
-  veita: {
-    data: CurrentApplication
-    date: string
-    status: StatusProvider
-  }
-  taxDataFetch: {
-    data: TaxData
-    date: string
-    status: StatusProvider
-  }
-  taxDataFetchSpouse?: {
-    data: TaxData
     date: string
     status: StatusProvider
   }
@@ -59,7 +72,6 @@ export interface OverrideAnswerSchema extends answersSchema {
   taxReturnFiles: UploadFile[]
   spouseIncomeFiles: UploadFile[]
   spouseTaxReturnFiles: UploadFile[]
-  spouseEmailSuccess: boolean
 }
 
 export type FAApplication = Override<
@@ -75,13 +87,6 @@ export type FAFieldBaseProps = Override<
   { application: FAApplication; errors: ErrorSchema }
 >
 
-export interface Applicant {
-  nationalId: string
-  fullName: string
-  address: Address
-  spouse?: Spouse
-}
-
 export interface TaxData {
   municipalitiesPersonalTaxReturn: {
     personalTaxReturn: PersonalTaxReturn | null
@@ -94,19 +99,6 @@ export interface TaxData {
 
 export interface CurrentApplication {
   currentApplicationId: string
-}
-
-export interface Address {
-  streetName: string
-  postalCode: string
-  city: string
-  municipalityCode: string
-}
-
-export interface Spouse {
-  nationalId: string
-  maritalStatus: string
-  name: string
 }
 
 export interface InputTypes {

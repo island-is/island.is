@@ -9,7 +9,7 @@ import {
   Divider,
   Hidden,
 } from '@island.is/island-ui/core'
-import { User } from '@island.is/shared/types'
+import { AuthDelegationType, User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import * as styles from './UserMenu.css'
@@ -53,7 +53,7 @@ export const UserDropdown = ({
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
   const isProcurationHolder = user.profile.delegationType?.includes(
-    'ProcurationHolder',
+    AuthDelegationType.ProcurationHolder,
   )
 
   const [isMobile, setIsMobile] = useState(false)

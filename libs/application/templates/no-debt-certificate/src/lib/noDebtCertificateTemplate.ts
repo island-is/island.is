@@ -8,10 +8,19 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { z } from 'zod'
 import { m } from './messages'
-import { AuthDelegationType } from '../types/schema'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  NoDebtCertificateApi,
+} from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 
 const NoDebtCertificateSchema = z.object({
@@ -51,12 +60,7 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -72,6 +76,11 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                NoDebtCertificateApi,
+              ],
             },
           ],
         },
@@ -84,12 +93,7 @@ const template: ApplicationTemplate<
           name: 'Completed',
           status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
               label: m.actionCardDone,

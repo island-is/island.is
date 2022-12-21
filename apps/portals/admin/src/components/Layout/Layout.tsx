@@ -11,39 +11,100 @@ import { useNamespaces } from '@island.is/localization'
 
 import Header from '../Header/Header'
 import * as styles from './Layout.css'
+import {
+  useModuleProps,
+  PortalModule,
+  usePortalMeta,
+  useActiveModule,
+} from '@island.is/portals/core'
 
-const Layout: FC = ({ children }) => {
-  useNamespaces(['admin.portal', 'global'])
+const boxProps = {
+  className: styles.container,
+  background: 'white',
+} as const
+
+const getGridColumnSize = (layout: PortalModule['layout']) => {
+  switch (layout) {
+    case 'full':
+      return {
+        span: '12/12',
+        offset: '0',
+      } as const
+
+    case 'default':
+    default:
+      return {
+        span: '8/12',
+        offset: '2/12',
+      } as const
+  }
+}
+
+const LayoutModuleContainer: FC<{ layout: PortalModule['layout'] }> = ({
+  children,
+  layout,
+}) => {
+  const hasNoneLayout = layout === 'none'
+
+  if (hasNoneLayout) {
+    return <Box {...boxProps}>{children}</Box>
+  }
+
+  const { offset, span } = getGridColumnSize(layout)
 
   return (
-    <>
-      <ToastContainer useKeyframeStyles={false} />
-      <Header />
-      <Box
-        className={styles.container}
-        background={['white', 'white', 'white', 'blue100']}
-        paddingY={[0, 0, 0, 5]}
-      >
-        <GridContainer>
-          <Box
-            className={styles.contentBox}
-            height="full"
-            borderRadius="large"
-            background="white"
-            paddingY={[3, 3, 3, 10]}
-          >
-            <GridRow>
-              <GridColumn
-                offset={['0', '0', '0', '2/12']}
-                span={['12/12', '12/12', '12/12', '8/12']}
-              >
-                {children}
-              </GridColumn>
-            </GridRow>
-          </Box>
-        </GridContainer>
-      </Box>
-    </>
+    <Box {...boxProps} paddingY={[3, 3, 3, 5]}>
+      <GridContainer>
+        <Box className={styles.contentBox}>
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', offset]}
+              span={['12/12', '12/12', '12/12', span]}
+            >
+              {children}
+            </GridColumn>
+          </GridRow>
+        </Box>
+      </GridContainer>
+    </Box>
   )
 }
-export default Layout
+
+const LayoutOuterContainer: FC = ({ children }) => (
+  <>
+    <ToastContainer useKeyframeStyles={false} />
+    <Header />
+    {children}
+  </>
+)
+
+export const Layout: FC = ({ children }) => {
+  useNamespaces(['admin.portal', 'global'])
+  const { portalType } = usePortalMeta()
+  const activeModule = useActiveModule()
+  const moduleProps = useModuleProps()
+  const { layout = 'default', moduleLayoutWrapper: ModuleLayoutWrapper } =
+    activeModule || {}
+
+  const moduleLayout = !activeModule ? 'none' : layout
+
+  if (ModuleLayoutWrapper) {
+    return (
+      <LayoutOuterContainer>
+        <ModuleLayoutWrapper {...moduleProps} portalType={portalType}>
+          <LayoutModuleContainer layout={moduleLayout}>
+            {children}
+          </LayoutModuleContainer>
+        </ModuleLayoutWrapper>
+      </LayoutOuterContainer>
+    )
+  }
+
+  return (
+    <LayoutOuterContainer>
+      <LayoutModuleContainer layout={moduleLayout}>
+        {children}
+      </LayoutModuleContainer>
+    </LayoutOuterContainer>
+  )
+}
