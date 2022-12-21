@@ -1,20 +1,12 @@
 import {
   Controller,
   Param,
-  Post,
   UseGuards,
   Get,
   ParseUUIDPipe,
-  Body,
 } from '@nestjs/common'
 
-import {
-  ApiCreatedResponse,
-  ApiParam,
-  ApiTags,
-  ApiHeader,
-  ApiOkResponse,
-} from '@nestjs/swagger'
+import { ApiParam, ApiTags, ApiHeader, ApiOkResponse } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -23,7 +15,6 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
-import { AuditService } from '@island.is/nest/audit'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 
@@ -39,10 +30,7 @@ import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 })
 @Controller()
 export class PaymentController {
-  constructor(
-    private readonly auditService: AuditService,
-    private readonly paymentService: PaymentService,
-  ) {}
+  constructor(private readonly paymentService: PaymentService) {}
 
   @Scopes(ApplicationScope.read)
   @Get('applications/:applicationId/payment-status')

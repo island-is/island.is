@@ -12,7 +12,6 @@ import {
   ChargeResponse,
   Catalog,
 } from '@island.is/clients/charge-fjs-v2'
-import { CreateChargeInput } from '@island.is/application/api/payment'
 import { PaymentService } from '@island.is/application/api/payment'
 import { AppModule } from '../../../../app.module'
 import { ApplicationService } from '@island.is/application/api/core'
@@ -121,31 +120,6 @@ beforeAll(async () => {
 })
 
 describe('Application system payments API', () => {
-  // Creating a new application
-  it(`POST /application/96b5237b-6896-4154-898d-e8feb01d3dcd/payment should create a payment object`, async () => {
-    // Act
-    const response = await server
-      .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
-      .send({
-        chargeItemCodes: [TARGET_CHARGE_ITEM_CODE],
-      } as CreateChargeInput)
-      .expect(201)
-
-    // Assert
-    expect(response.body.paymentUrl).toBeTruthy()
-  })
-
-  // Should fail creating payment due to bad application ID.
-  it(`POST /application/96b5237b/payment should fail creating a payment object`, async () => {
-    // Act
-    const response = await server
-      .post('/applications/96b5237b/payment')
-      .expect(400)
-
-    // Assert
-    expect(response.body.paymentUrl).toBeFalsy()
-  })
-
   // Not finding the application - when trying to get application payment status.
   it(`GET /application/1234567890/payment-status should return not found - bad applicationID`, async () => {
     const response = await server
