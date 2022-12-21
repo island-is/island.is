@@ -387,6 +387,22 @@ export const coreErrorMessages = defineMessages({
       'Vinsamlega hafðu samband við Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
     description: 'Driving License provider no teaching rights error',
   },
+  vehiclesEmptyListOwner: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListOwner',
+    defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
+    description: 'You do not have any vehicles where you are the main owner',
+  },
+  vehiclesEmptyListOwnerOrCoOwner: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListOwnerOrCoOwner',
+    defaultMessage:
+      'Þú átt engin ökutæki þar sem þú ert aðaleigandi eða meðeigandi',
+    description: 'You do not have any vehicles where you are the main owner',
+  },
+  vehiclesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
+    defaultMessage: 'Ekki fannst nein ökutæki',
+    description: 'Did not find any vehicles',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({
