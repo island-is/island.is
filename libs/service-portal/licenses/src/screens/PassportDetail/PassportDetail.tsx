@@ -34,6 +34,7 @@ import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
 import { applyPassport, lostPassport } from '../../lib/constants'
 import { useLazyQuery } from '@apollo/client'
+import { capitalizeEveryWord } from '../../utils/capitalize'
 
 const getCurrentPassport = (
   id: string | undefined,
@@ -191,7 +192,9 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           )}
           <UserInfoLine
             label={defineMessage(m.passportName)}
-            content={data?.displayFirstName + ' ' + data?.displayLastName}
+            content={capitalizeEveryWord(
+              data?.displayFirstName + ' ' + data?.displayLastName,
+            )}
             loading={loading}
             titlePadding={3}
             paddingBottom={1}
