@@ -242,7 +242,13 @@ const PassportDetail: ServicePortalModuleComponent = () => {
                   >
                     <Icon
                       icon={isInvalid ? 'closeCircle' : 'checkmarkCircle'}
-                      color={isInvalid ? 'red600' : 'mint600'}
+                      color={
+                        isInvalid
+                          ? 'red600'
+                          : expireWarning
+                          ? 'yellow600'
+                          : 'mint600'
+                      }
                       type="filled"
                     />
                   </Box>
