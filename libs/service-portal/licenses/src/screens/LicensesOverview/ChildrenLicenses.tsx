@@ -20,7 +20,7 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
   useNamespaces('sp.license')
 
   return (
-    <Box marginTop={6}>
+    <Box marginTop={[2, 3, 6]}>
       {loading && (
         <Box marginBottom={1}>
           <CardLoader />
