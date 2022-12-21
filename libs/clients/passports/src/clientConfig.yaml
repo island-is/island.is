@@ -137,6 +137,9 @@ components:
         childrenSSN:
           type: string
           nullable: true
+        childrenName:
+          type: string
+          nullable: true
         secondParent:
           type: array
           nullable: true

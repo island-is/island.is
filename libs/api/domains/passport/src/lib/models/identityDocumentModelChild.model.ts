@@ -6,6 +6,9 @@ export class IdentityDocumentModelChild {
   @Field(() => String, { nullable: true })
   childNationalId?: string | null
 
+  @Field(() => String, { nullable: true })
+  childName?: string | null
+
   @Field(() => [IdentityDocumentModel], { nullable: true })
   passports?: IdentityDocumentModel[]
 }

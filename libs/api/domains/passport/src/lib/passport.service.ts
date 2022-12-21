@@ -123,6 +123,7 @@ export class PassportService {
       const childrenArray = passportResponse.map((child) => {
         return {
           childNationalId: child.childrenSSN,
+          childName: child.childrenName,
           passports: child.identityDocumentResponses
             ? this.resolvePassports(child.identityDocumentResponses)
             : undefined,
