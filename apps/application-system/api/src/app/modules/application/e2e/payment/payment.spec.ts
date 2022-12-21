@@ -6,7 +6,13 @@ import { ApplicationScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import { setup } from '../../../../../../test/setup'
-import { PaymentAPI } from '@island.is/clients/payment'
+// import { PaymentAPI } from '@island.is/clients/payment'
+import {
+  ChargeFjsV2ClientService,
+  Charge,
+  ChargeResponse,
+  Catalog,
+} from '@island.is/clients/charge-fjs-v2'
 import { CreateChargeInput } from '@island.is/application/api/payment'
 import { PaymentService } from '@island.is/application/api/payment'
 import { AppModule } from '../../../../app.module'
@@ -16,24 +22,26 @@ let app: INestApplication
 
 const TARGET_CHARGE_ITEM_CODE = 'asdf'
 
-class MockPaymentApi {
-  async createCharge() {
-    return {
-      user4: faker.datatype.number(),
-      receptionID: faker.datatype.number(),
-    }
+class MockChargeFjsV2ClientService {
+  async createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
+    upcomingPayment
+    return Promise.resolve({
+      user4: '1',
+      receptionID: upcomingPayment.requestID,
+    })
   }
-  async getCatalog() {
-    return {
-      item: [...Array.from({ length: 10 })].map((_, i) => ({
-        performingOrgID: faker.datatype.number(),
-        chargeType: faker.random.word(),
-        chargeItemCode:
-          i === 1 ? TARGET_CHARGE_ITEM_CODE : faker.random.words(),
-        chargeItemName: faker.random.word(),
-        priceAmount: faker.datatype.number(),
-      })),
-    }
+  getCatalogByPerformingOrg(performingOrganizationID: string) {
+    return Promise.resolve<Catalog>({
+      item: [
+        {
+          performingOrgID: performingOrganizationID,
+          chargeType: '1',
+          chargeItemCode: 'asdf',
+          chargeItemName: '1',
+          priceAmount: 1,
+        },
+      ],
+    })
   }
 }
 
@@ -97,8 +105,8 @@ beforeAll(async () => {
       builder
         .overrideProvider(ApplicationService)
         .useClass(MockApplicationService)
-        .overrideProvider(PaymentAPI)
-        .useClass(MockPaymentApi)
+        .overrideProvider(ChargeFjsV2ClientService)
+        .useClass(MockChargeFjsV2ClientService)
         .overrideGuard(IdsUserGuard)
         .useValue(
           new MockAuthGuard({

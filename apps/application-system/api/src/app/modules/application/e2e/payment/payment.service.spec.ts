@@ -1,15 +1,12 @@
 import { ApplicationService } from '@island.is/application/api/core'
 import {
-  Catalog,
+  ChargeFjsV2ClientService,
   Charge,
   ChargeResponse,
-  PaymentAPI,
-} from '@island.is/clients/payment'
+  Catalog,
+} from '@island.is/clients/charge-fjs-v2'
 
-import {
-  PaymentModule,
-  PaymentService,
-} from '@island.is/application/api/payment'
+import { PaymentService } from '@island.is/application/api/payment'
 
 import { AppModule } from '../../../../app.module'
 import { setup } from '../../../../../../test/setup'
@@ -23,7 +20,7 @@ let service: PaymentService
 const applicationId = faker.datatype.uuid()
 const user = createCurrentUser()
 
-class MockPaymentApi {
+class MockChargeFjsV2ClientService {
   async createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
     upcomingPayment
     return Promise.resolve({
@@ -31,11 +28,11 @@ class MockPaymentApi {
       receptionID: upcomingPayment.requestID,
     })
   }
-  getCatalog() {
+  getCatalogByPerformingOrg(performingOrganizationID: string) {
     return Promise.resolve<Catalog>({
       item: [
         {
-          performingOrgID: '1',
+          performingOrgID: performingOrganizationID,
           chargeType: '1',
           chargeItemCode: 'asdf',
           chargeItemName: '1',
@@ -71,8 +68,8 @@ describe('Payment Service', () => {
     app = await setup(AppModule, {
       override: (builder) =>
         builder
-          .overrideProvider(PaymentAPI)
-          .useClass(MockPaymentApi)
+          .overrideProvider(ChargeFjsV2ClientService)
+          .useClass(MockChargeFjsV2ClientService)
           .overrideProvider(ApplicationService)
           .useClass(MockApplicationService),
     })
@@ -81,52 +78,75 @@ describe('Payment Service', () => {
   })
 
   it('should create a charge', async () => {
+    const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf']
 
     const result = await service.createCharge(
       user,
+      performingOrganizationID,
       chargeItemCodes,
       applicationId,
+      undefined,
     )
 
     expect(result).toBeTruthy()
   })
 
   it('should create a charge with multiple charge items', async () => {
+    const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf', 'asdf']
 
     const result = await service.createCharge(
       user,
+      performingOrganizationID,
       chargeItemCodes,
       applicationId,
+      undefined,
     )
 
     expect(result).toBeTruthy()
   })
 
   it('should throw an error when charge item is not found', async () => {
+    const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['13']
 
     await expect(
-      service.createCharge(user, chargeItemCodes, applicationId),
+      service.createCharge(
+        user,
+        performingOrganizationID,
+        chargeItemCodes,
+        applicationId,
+        undefined,
+      ),
     ).rejects.toThrow()
   })
 
   it('should get a payment status', async () => {
+    const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf', 'asdf']
 
-    await service.createCharge(user, chargeItemCodes, applicationId)
+    await service.createCharge(
+      user,
+      performingOrganizationID,
+      chargeItemCodes,
+      applicationId,
+      undefined,
+    )
     const result = await service.getStatus(user, applicationId)
     expect(result.fulfilled).toBe(false)
   })
 
   it('should get a fulfilled payment status', async () => {
+    const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf', 'asdf']
 
     const { id } = await service.createCharge(
       user,
+      performingOrganizationID,
       chargeItemCodes,
       applicationId,
+      undefined,
     )
 
     await service.fulfillPayment(id, faker.datatype.uuid(), applicationId)
