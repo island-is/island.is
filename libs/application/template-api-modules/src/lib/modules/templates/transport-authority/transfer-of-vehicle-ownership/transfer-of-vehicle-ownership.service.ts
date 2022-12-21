@@ -23,13 +23,23 @@ import {
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class TransferOfVehicleOwnershipService {
+export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
-  ) {}
+    private readonly vehicleCodetablesClient: VehicleCodetablesClient,
+  ) {
+    super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
+  }
+
+  async getInsuranceCompanyList({ auth }: TemplateApiModuleActionProps) {
+    return await this.vehicleCodetablesClient.getInsuranceCompanies()
+  }
 
   async createCharge({
     application,
