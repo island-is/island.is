@@ -10,28 +10,34 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { PassportService } from './passport.service'
 import { IdentityDocumentModel } from './models/identityDocumentModel.model'
 import { IdentityDocumentModelChild } from './models/identityDocumentModelChild.model'
+import { Passport } from './models/passport.model'
+import { PassportsService } from '@island.is/clients/passports'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
 @Audit({ namespace: '@island.is/api/passport' })
 export class PassportResolver {
-  constructor(private passportService: PassportService) {}
+  constructor(private passportApi: PassportsService) {}
 
   @Query(() => [IdentityDocumentModel], { nullable: true })
   @Audit()
   async getIdentityDocument(@CurrentUser() user: User) {
-    const res = await this.passportService.getIdentityDocument(user)
+    const res = await this.passportApi.getIdentityDocument(user)
     return res
   }
 
   @Query(() => [IdentityDocumentModelChild], { nullable: true })
   @Audit()
   async getIdentityDocumentChildren(@CurrentUser() user: User) {
-    const res = await this.passportService.getIdentityDocumentChildren(user)
+    const res = await this.passportApi.getIdentityDocumentChildren(user)
     return res
+  }
+
+  @Query(() => Passport)
+  getPassport(@CurrentUser() user: User): Promise<Passport> {
+    return this.passportApi.getCurrentPassport(user)
   }
 }
