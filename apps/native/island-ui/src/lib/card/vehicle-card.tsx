@@ -96,14 +96,14 @@ interface VehicleCardProps {
   title: string
   color: string
   number: string
-  image: React.ReactNode
+  image?: React.ReactNode
   date: Date | null
  }
 
 export function VehicleCard({ title, color, number, image, date }: VehicleCardProps) {
   return (
     <Host>
-      <ImageWrap>{image}</ImageWrap>
+      {/* <ImageWrap>{image}</ImageWrap> */}
       <Content>
         <Title>{title}</Title>
         <Text>{color} - {number}</Text>

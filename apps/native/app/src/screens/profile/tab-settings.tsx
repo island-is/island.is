@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/client'
 import {
   Alert,
+  Button,
+  IconButton,
   TableViewAccessory,
   TableViewCell,
   TableViewGroup
@@ -18,7 +20,10 @@ import {
   Pressable,
   ScrollView,
   Switch,
-  View
+  TouchableOpacity,
+  View,
+  Text,
+  Image
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
@@ -40,6 +45,8 @@ import { config } from '../../utils/config'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+import { navigateTo } from '../../lib/deep-linking'
+import editIcon from '../assets/icons/edit.png'
 
 const PreferencesSwitch = React.memo(
   ({ name }: { name: keyof PreferencesStore }) => {
@@ -206,18 +213,21 @@ export function TabSettings() {
               id: 'settings.usersettings.telephone',
             })}
             subtitle={userProfile.data?.getUserProfile?.mobilePhoneNumber ?? '-'}
+            accessory={<TouchableOpacity onPress={() => navigateTo(`/editphone`)} style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10 }}><Image source={editIcon as any} style={{ width: 19, height: 19 }} /></TouchableOpacity>}
           />
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.usersettings.email',
             })}
             subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
+            accessory={<TouchableOpacity onPress={() => navigateTo(`/editemail`)}><Image source={editIcon as any} style={{ width: 19, height: 19 }} /></TouchableOpacity>}
           />
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.usersettings.bankinfo',
             })}
             subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
+            accessory={<TouchableOpacity onPress={() => navigateTo(`/editbankinfo`)}><Image source={editIcon as any} style={{ width: 19, height: 19 }} /></TouchableOpacity>}
           />
       </TableViewGroup>
       <TableViewGroup

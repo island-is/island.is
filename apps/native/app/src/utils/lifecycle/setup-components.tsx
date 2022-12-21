@@ -28,6 +28,12 @@ import { PersonalInfoScreen } from '../../screens/profile/personal-info'
 import { SettingsScreen } from '../../screens/profile/settings'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
+import { FamilyOverviewScreen } from '../../screens/family/family-overview'
+import { FamilyDetailScreen } from '../../screens/family/family-details'
+import { EditEmailScreen } from '../../screens/profile/edit-email'
+import { EditPhoneScreen } from '../../screens/profile/edit-phone'
+import { EditBankInfoScreen } from '../../screens/profile/edit-bank-info'
+import { EditConfirmScreen } from '../../screens/profile/edit-confirm'
 
 export function registerAllComponents() {
   // dev only
@@ -55,11 +61,17 @@ export function registerAllComponents() {
   registerComponent(CR.LicenseScanDetailScreen, LicenseScanDetailScreen);
   registerComponent(CR.VehiclesScreen, VehiclesScreen);
   registerComponent(CR.VehicleDetailScreen, VehicleDetailScreen);
+  registerComponent(CR.FamilyScreen, FamilyOverviewScreen);
+  registerComponent(CR.FamilyDetailScreen, FamilyDetailScreen);
   registerComponent(CR.ProfileScreen, ProfileScreen);
   registerComponent(CR.PersonalInfoScreen, PersonalInfoScreen);
   registerComponent(CR.AssetsOverviewScreen, AssetsOverviewScreen);
   registerComponent(CR.AssetsDetailScreen, AssetsDetailScreen)
   registerComponent(CR.SettingsScreen, SettingsScreen);
+  registerComponent(CR.EditEmailScreen, EditEmailScreen);
+  registerComponent(CR.EditPhoneScreen, EditPhoneScreen);
+  registerComponent(CR.EditBankInfoScreen, EditBankInfoScreen);
+  registerComponent(CR.EditConfirmScreen, EditConfirmScreen);
 
   // ui components
   // if (Platform.OS === 'android') {

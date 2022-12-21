@@ -74,6 +74,17 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/family', async (passProps: any) => {
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.ProfileStack)
+    await Navigation.push(ComponentRegistry.ProfileScreen, {
+      component: {
+        name: ComponentRegistry.FamilyScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps: any) => {
     Navigation.showModal({
       stack: {
@@ -104,6 +115,66 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/editemail', async (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.EditEmailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/editphone', async (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.EditPhoneScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/editbankinfo', async (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.EditBankInfoScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/editconfirm/:type', async (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.EditConfirmScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/vehicle/:id', (passProps: any) => {
     Navigation.showModal({
       stack: {
@@ -126,6 +197,21 @@ export function setupRoutes() {
           {
             component: {
               name: ComponentRegistry.AssetsDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/family/:type/:nationalId', (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.FamilyDetailScreen,
               passProps,
             },
           },

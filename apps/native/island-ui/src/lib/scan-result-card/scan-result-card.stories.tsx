@@ -29,7 +29,7 @@ storiesOf('Scan Result Card', module)
           name={name}
           nationalId={nationalId}
           licenseNumber={driverLicenseNumber}
-          photo={''}
+          type="DisabilityLicense"
         />
       </View>
     )

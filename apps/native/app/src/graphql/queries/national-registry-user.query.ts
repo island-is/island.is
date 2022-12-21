@@ -18,6 +18,11 @@ export const NATION_REGISTRY_USER_QUERY = gql`
       citizenship {
         name
       }
+      spouse {
+        cohabitant
+        name
+        nationalId
+      }
     }
   }
 `;

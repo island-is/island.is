@@ -19,6 +19,7 @@ import { StatusCard } from './status-card'
 import { WelcomeCard } from './welcome-card'
 import { VehicleCard } from './vehicle-card'
 import { UserCard } from './user-card'
+import { FamilyMemberCard } from './family-member-card'
 
 const CenterView = ({ children }: any) => (
   <View
@@ -77,7 +78,7 @@ storiesOf('Cards', module)
         title={title}
         status={status}
         date={new Date()}
-        type={type}
+        type="DriversLicense"
       />
     )
   })
@@ -106,8 +107,15 @@ storiesOf('Cards', module)
         title={title}
         color="Rauður"
         number="ph-676"
-        group="Fólksbíll"
         date={new Date()}
+      />
+    )
+  })
+  .add('Family Member Card', () => {
+    return (
+      <FamilyMemberCard
+        name="Jón Gunnar Jónsson"
+        nationalId="2501873219"
       />
     )
   })

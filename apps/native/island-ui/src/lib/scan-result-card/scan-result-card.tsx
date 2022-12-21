@@ -332,9 +332,9 @@ export function ScanResultCard(props: ScanResultCardProps) {
                 style={{ width: 79, height: 109, marginRight: 32 }}
               />
             ) : (
-              photo && (
+              photo ? (
                 <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
-              )
+              ) : null
             )}
             <Left>
               <LabelGroup>

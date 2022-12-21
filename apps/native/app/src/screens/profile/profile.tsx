@@ -8,7 +8,7 @@ import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-op
 import { navigateTo } from '../../lib/deep-linking'
 import { useAuthStore } from '../../stores/auth-store'
 import { testIDs } from '../../utils/test-ids'
-// import familyIcon from '../../assets/icons/family.png'
+import familyIcon from '../../assets/icons/family.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
 import assetsIcon from '../../assets/icons/assets.png'
 import { useIntl } from 'react-intl'
@@ -94,11 +94,12 @@ export const ProfileScreen: NavigationFunctionComponent = ({ componentId }) => {
         {intl.formatMessage({ id: 'profile.infoHeading' })}
       </Heading>
       <Row>
-        {/* <IconButton
+        <IconButton
           title={intl.formatMessage({ id: 'profile.family' })}
+          onPress={() => navigateTo(`/family`)}
           image={<Image source={familyIcon as any} style={{ width: 28, height: 20 }} /> }
           style={{ marginRight: 8}}
-        /> */}
+        />
         <IconButton
           title={intl.formatMessage({ id: 'profile.vehicles' })}
           onPress={() => navigateTo(`/vehicles`)}

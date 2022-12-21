@@ -208,6 +208,27 @@ export const is = {
   'assetsDetail.postNumber': 'Póstnúmer',
   'assetsDetail.buildYearDisplay': 'Byggingarár',
 
+  // family
+  'family.screenTitle': 'Fjölskylda',
+
+  // family details
+  'familyDetail.title': 'Upplýsingar',
+  'familyDetail.description': 'Hér fyrir neðan eru gögn um fjölskyldumeðlim.',
+  'familyDetail.natreg.displayName': 'Fullt nafn',
+  'familyDetail.natreg.familyRelation': 'Tengsl',
+  'familyDetail.natreg.familyRelationValue': `{
+    type,
+    select,
+    spouse {Maki}
+    child {Barn}
+    other {Óupplýst}
+  }`,
+  'familyDetail.natreg.nationalId': 'Kennitala',
+  'familyDetail.natreg.citizenship': 'Ríkisfang',
+  'familyDetail.natreg.birthPlace': 'Fæðingarstaður',
+  'familyDetail.natreg.legalResidence': 'Lögheimili',
+  'familyDetail.natreg.gender': 'Kyn',
+
   // wallet
   'wallet.screenTitle': 'Skírteini',
   'wallet.bottomTabText': 'Skírteini',
@@ -291,4 +312,30 @@ export const is = {
   }`,
   'applicationStatusCard.noActiveApplications':
     'Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér.',
+
+  // edit phone
+  'edit.phone.screenTitle': 'Breyta símanúmeri',
+  'edit.phone.description': 'Hér getur þú breytt símanúmeri',
+  'edit.phone.inputlabel': 'Símanúmer',
+  'edit.phone.button': 'Vista',
+
+  // edit email
+  'edit.email.screenTitle': 'Breyta Netfangi',
+  'edit.email.description': 'Hér getur þú breytt netfangi',
+  'edit.email.inputlabel': 'Netfang',
+  'edit.email.button': 'Vista',
+
+  // edit bank info
+  'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',
+  'edit.bankinfo.description': 'Hér getur þú gert breytingar á þeim bankareikningi sem þú vilt að Fjársýsla ríkisins noti til endurgreiðslu',
+  'edit.bankinfo.inputlabel.bank': 'Banki',
+  'edit.bankinfo.inputlabel.book': 'Hb.',
+  'edit.bankinfo.inputlabel.number': 'Reikningsnúmer',
+  'edit.bankinfo.button': 'Vista',
+
+  // edit confirm
+  'edit.confirm.screenTitle': 'Staðfesta aðgerð',
+  'edit.confirm.description': 'Sláðu inn öryggisnúmerið sem hefur verið sent á símanúmerið sem þú hefur skráð.',
+  'edit.confirm.inputlabel': 'Öryggisnúmer',
+  'edit.confirm.button': 'Hætta við',
 }

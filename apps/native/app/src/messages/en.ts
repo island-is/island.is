@@ -269,6 +269,27 @@ export const en: TranslatedMessages = {
   'assetsDetail.postNumber': 'Post number',
   'assetsDetail.buildYearDisplay': 'Build Year Display',
 
+  // family
+  'family.screenTitle': 'Family',
+
+  // family details
+  'familyDetail.title': 'Info',
+  'familyDetail.description': 'Here below are details about a family member',
+  'familyDetail.natreg.displayName': 'Full name',
+  'familyDetail.natreg.nationalId': 'Social ID',
+  'familyDetail.natreg.familyRelation': 'Family Relation',
+  'familyDetail.natreg.familyRelationValue' : `{
+    type,
+    select,
+    spouse {Spouse}
+    child {Child}
+    other {Óupplýst}
+  }`,
+  'familyDetail.natreg.citizenship': 'Citizenship',
+  'familyDetail.natreg.birthPlace': 'Birthplace',
+  'familyDetail.natreg.legalResidence': 'Legal domicile',
+  'familyDetail.natreg.gender': 'Gender',
+
   // applications screen
   'applications.title': 'Applications',
   'applications.bottomTabText': 'Applications',
@@ -293,4 +314,30 @@ export const en: TranslatedMessages = {
     other {Unknown status}
   }`,
   'applicationStatusCard.noActiveApplications': 'No active applications',
+
+  // edit phone
+  'edit.phone.screenTitle': 'Edit Phone',
+  'edit.phone.description': 'Here you can change your phone number',
+  'edit.phone.inputlabel': 'Phone number',
+  'edit.phone.button': 'Save',
+
+  // edit email
+  'edit.email.screenTitle': 'Edit Email',
+  'edit.email.description': 'Here you can change your email',
+  'edit.email.inputlabel': 'Email',
+  'edit.email.button': 'Save',
+
+  // edit bank info
+  'edit.bankinfo.screenTitle': 'Edit Bank Info',
+  'edit.bankinfo.description': 'Hér getur þú gert breytingar á þeim bankareikningi sem þú vilt að Fjársýsla ríkisins noti til endurgreiðslu',
+  'edit.bankinfo.inputlabel.bank': 'Bank',
+  'edit.bankinfo.inputlabel.book': 'Hb.',
+  'edit.bankinfo.inputlabel.number': 'Account number',
+  'edit.bankinfo.button': 'Save',
+
+  // edit confirm
+  'edit.confirm.screenTitle': 'Confirm edit',
+  'edit.confirm.description': 'Sláðu inn öryggisnúmerið sem hefur verið sent á símanúmerið sem þú hefur skráð.',
+  'edit.confirm.inputlabel': 'Security number',
+  'edit.confirm.button': 'Cancel',
 }
