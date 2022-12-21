@@ -1,0 +1,23 @@
+{
+  "root": "libs/api/domains/disability-license",
+  "sourceRoot": "libs/api/domains/disability-license/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/disability-license/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/disability-license"],
+      "options": {
+        "jestConfig": "libs/api/domains/disability-license/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
