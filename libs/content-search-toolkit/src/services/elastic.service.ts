@@ -287,6 +287,7 @@ export class ElasticService {
   }
 
   async search(index: string, query: SearchInput) {
+    // TEMPORARY testline to try to trigger affected apps in deploy-feature on github as recommended by devops
     const requestBody = searchQuery(query, true, true)
 
     return this.findByQuery<
