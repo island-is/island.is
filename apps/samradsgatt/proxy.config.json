@@ -1,0 +1,6 @@
+{
+  "/app/samradsgatt/api/graphql": {
+    "target": "http://localhost:3333",
+    "secure": false
+  }
+}
