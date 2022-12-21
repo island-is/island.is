@@ -181,7 +181,6 @@ export const useS3Upload = (workingCase: Case) => {
      * (source: https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559)
      */
     const newFiles = [...filesRef.current]
-
     if (newFiles.some((f) => f.key === file.key)) {
       const index = newFiles.findIndex((f) => f.key === file.key)
       newFiles[index] = file
@@ -227,6 +226,7 @@ export const useS3Upload = (workingCase: Case) => {
         })
         .catch(() => {
           // TODO: handle error
+          console.log('TODO!!!!')
         })
     }
   }

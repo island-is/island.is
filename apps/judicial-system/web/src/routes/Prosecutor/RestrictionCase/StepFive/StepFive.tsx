@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -33,8 +33,9 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { CaseFile } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 
@@ -51,6 +52,7 @@ export const StepFive: React.FC = () => {
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
+  const [filesInRVG, setFilesInRVG] = useState<CaseFile[]>()
 
   const {
     uploadErrorMessage,
@@ -58,7 +60,6 @@ export const StepFive: React.FC = () => {
     handleRemoveFromS3,
     handleRetry,
     handleS3Upload,
-    files,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
 
@@ -67,6 +68,10 @@ export const StepFive: React.FC = () => {
   const stepIsValid = allFilesUploaded && !isUploading
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
+
+  useEffect(() => {
+    setFilesInRVG(workingCase.caseFiles)
+  }, [workingCase.caseFiles])
 
   return (
     <PageLayout
@@ -120,7 +125,7 @@ export const StepFive: React.FC = () => {
           <ContentBlock>
             <InputFileUpload
               name="fileUpload"
-              fileList={files}
+              fileList={filesInRVG || []}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleS3Upload}
