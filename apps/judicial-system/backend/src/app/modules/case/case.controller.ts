@@ -218,11 +218,18 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
-    // Indictment cases are not signed
-    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
-        theCase,
-      )
+    if (isIndictmentCase(theCase.type)) {
+      if (completedCaseStates.includes(state)) {
+        // Indictment cases are not signed
+        await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
+          theCase,
+        )
+      } else if (state === CaseState.DELETED) {
+        // Indictment cases need some case file cleanup
+        await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
+          theCase,
+        )
+      }
     }
 
     // No need to wait
