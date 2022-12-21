@@ -78,4 +78,22 @@ export class NotificationsController {
     this.logger.info('Message queued', { messageId: id, ...message })
     return { id }
   }
+
+  @Post("/demo")
+  @ApiBody({
+    schema: {
+      type: 'object',
+      oneOf: [{ $ref: getSchemaPath(NewDocumentMessage) }],
+    },
+  })
+  @ApiOkResponse({ type: CreateNotificationResponse })
+  @HttpCode(201)
+  async create(
+    @Req() req: Request,
+  ): Promise<CreateNotificationResponse> {
+    const message = await validateMessage(req.body)
+    const id = await this.queue.add(message)
+    this.logger.info('Message queued 2', { messageId: id, ...message })
+    return { id }
+  } 
 }
