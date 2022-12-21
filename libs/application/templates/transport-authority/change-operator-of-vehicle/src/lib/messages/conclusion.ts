@@ -14,7 +14,7 @@ export const conclusion = {
     },
     approvedTitle: {
       id: 'ta.cov.application:conclusion.general.approvedTitle',
-      defaultMessage: 'Eigendaskipti samþykkt',
+      defaultMessage: 'Breyting meðeiganda á ökutæki samþykkt',
       description: 'Approved title of conclusion screen',
     },
     rejectedTitle: {
@@ -43,8 +43,8 @@ export const conclusion = {
     accordionText: {
       id: 'ta.cov.application:conclusion.default.accordionText',
       defaultMessage: `Nú þurfa umráðamenn og meðeigendur (ef við á) að samþykkja skráninguna. 
-        Það þarf að gerast innan 7 daga. Að því loknu verða eigendaskiptin skráð. 
-        Ef því verður ekki lokið fyrir þann tíma verður eigendaskiptunum hafnað og seljandi 
+        Það þarf að gerast innan 7 daga. Að því loknu verður breyting meðeiganda á ökutæki skráð. 
+        Ef því verður ekki lokið fyrir þann tíma verður breyting meðeiganda á ökutæki hafnað og seljandi 
         fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,
       description: 'Conclusion seller accordion text',
     },
@@ -67,31 +67,31 @@ export const conclusion = {
   review: defineMessages({
     accordionText: {
       id: 'ta.cov.application:conclusion.review.accordionText',
-      defaultMessage: `Eigendaskiptin verða skráð þegar allir hafa samþykkt. Ef því verður ekki lokið innan 7 daga frá gerð umsóknar verður eigendakiptunum hafnað og seljandi fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,
+      defaultMessage: `Breyting meðeiganda á ökutæki verður skráð þegar allir hafa samþykkt. Ef því verður ekki lokið innan 7 daga frá gerð umsóknar verður breyting meðeiganda á ökutæki hafnað og eigandi fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,
       description: 'Conclusion review accordion text',
     },
   }),
   approved: defineMessages({
     accordionText: {
       id: 'ta.cov.application:conclusion.approved.accordionText',
-      defaultMessage: `Nú hafa allir aðilar samþykkt og eigendaskiptin verið skráð hjá Samgöngustofu.`,
+      defaultMessage: `Nú hafa allir aðilar samþykkt og breyting meðeiganda á ökutæki verið skráð hjá Samgöngustofu.`,
       description: 'Conclusion approved accordion text',
     },
   }),
   rejected: defineMessages({
     alertMessage: {
       id: 'ta.cov.application:conclusion.rejected.alertMessage',
-      defaultMessage: 'Tilkynning um eigendaskipti - Umsókn afturkölluð!',
+      defaultMessage: 'Bæta við meðeiganda á ökutæki - Umsókn afturkölluð!',
       description: 'Conclusion rejected alert message',
     },
     firstText: {
       id: 'ta.cov.application:conclusion.rejected.firstText',
-      defaultMessage: `Beiðni um eigendaskipti á ökutækinu {plate} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
+      defaultMessage: `Beiðni um breytingu meðeiganda á ökutækinu {plate} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
       description: 'Conclusion rejected first text',
     },
     secondText: {
       id: 'ta.cov.application:conclusion.rejected.secondText',
-      defaultMessage: `Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.`,
+      defaultMessage: `Til þess að skrá breytingu meðeiganda á ökutæki rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.`,
       description: 'Conclusion rejected second text',
     },
     thirdText: {
@@ -101,22 +101,17 @@ export const conclusion = {
     },
     buyer: {
       id: 'ta.cov.application:conclusion.rejected.buyer',
-      defaultMessage: `kaupandi`,
+      defaultMessage: `eigandi`,
       description: 'Buyer label',
     },
     buyerCoOwner: {
       id: 'ta.cov.application:conclusion.rejected.buyerCoOwner',
-      defaultMessage: `meðeigandi kaupanda`,
+      defaultMessage: `meðeigandi eiganda`,
       description: 'Buyer coowner label',
-    },
-    sellerCoOwner: {
-      id: 'ta.cov.application:conclusion.rejected.sellerCoOwner',
-      defaultMessage: `meðeigandi seljanda`,
-      description: 'Seller coowner label',
     },
     operator: {
       id: 'ta.cov.application:conclusion.rejected.operator',
-      defaultMessage: `umboðsmaður kaupanda`,
+      defaultMessage: `umboðsmaður`,
       description: 'Operator label',
     },
     startNewApplication: {

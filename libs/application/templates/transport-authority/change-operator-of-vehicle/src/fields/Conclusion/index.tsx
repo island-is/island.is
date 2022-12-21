@@ -35,7 +35,7 @@ export const Conclusion: FC<FieldBaseProps> = ({ application }) => {
         <Box marginTop={2}>
           <CopyLink
             linkUrl={
-              `${document.location.origin}/umsoknir/eigendaskipti-okutaekis/` +
+              `${document.location.origin}/umsoknir/breyta-umradamadur-okutaekis/` +
               application.id
             }
             buttonTitle={formatMessage(conclusion.default.copyLink)}

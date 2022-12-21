@@ -112,7 +112,7 @@ const template: ApplicationTemplate<
             action: ApiActions.createCharge,
           }),
           onExit: defineTemplateApi({
-            action: ApiActions.submitApplication,
+            action: ApiActions.initReview,
           }),
           roles: [
             {
@@ -128,7 +128,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
           [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
@@ -151,10 +151,6 @@ const template: ApplicationTemplate<
               pruneInDaysAtTen(application, 8),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
-          /* onEntry: defineTemplateApi({
-            action: ApiActions.addReview,
-            shouldPersistToExternalData: true,
-          }), */
           /* onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
           }), */
@@ -212,6 +208,14 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.REVIEWER,
               formLoader: () =>
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),

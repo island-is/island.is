@@ -17,6 +17,12 @@ export const OperatorInformationSchema = z.object({
   wasAdded: z.string().optional(),
 })
 
+export const RejecterSchema = z.object({
+  plate: z.string(),
+  name: z.string(),
+  nationalId: z.string(),
+})
+
 export const ChangeOperatorOfVehicleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   pickVehicle: z.object({
@@ -36,6 +42,7 @@ export const ChangeOperatorOfVehicleSchema = z.object({
   removed: z.object({
     wasRemoved: z.boolean(),
   }),
+  rejecter: RejecterSchema,
 })
 export type ChangeOperatorOfVehicle = z.TypeOf<
   typeof ChangeOperatorOfVehicleSchema

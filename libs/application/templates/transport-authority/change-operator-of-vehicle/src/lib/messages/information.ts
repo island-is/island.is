@@ -45,12 +45,12 @@ export const information = {
     owner: defineMessages({
       sectionTitle: {
         id: 'ta.cov.application:information.labels.owner.sectionTitle',
-        defaultMessage: 'Seljandi',
+        defaultMessage: 'Eigandi',
         description: 'Pick vehicle section title',
       },
       title: {
         id: 'ta.cov.application:information.labels.owner.title',
-        defaultMessage: 'Seljandi',
+        defaultMessage: 'Eigandi',
         description: 'Seller title',
       },
       subtitle: {
@@ -66,12 +66,12 @@ export const information = {
       },
       nationalId: {
         id: 'ta.cov.application:information.labels.owner.nationalId',
-        defaultMessage: 'Kennitala seljanda',
+        defaultMessage: 'Kennitala eiganda',
         description: 'Seller national ID label',
       },
       name: {
         id: 'ta.cov.application:information.labels.owner.name',
-        defaultMessage: 'Nafn seljanda',
+        defaultMessage: 'Nafn eiganda',
         description: 'Seller name label',
       },
       email: {
@@ -179,6 +179,11 @@ export const information = {
         id: 'ta.cov.application:information.labels.operator.add',
         defaultMessage: 'Bæta við umráðamanni',
         description: 'Operator add label',
+      },
+      main: {
+        id: 'ta.cov.application:information.labels.operator.main',
+        defaultMessage: 'aðal',
+        description: 'Main label - for main operator',
       },
     }),
     mainOperator: defineMessages({

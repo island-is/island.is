@@ -4,9 +4,8 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messagesx'
 import Logo from '../assets/Logo'
-import { payment } from '../lib/messages'
+import { information, externalData, payment, review } from '../lib/messages'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
@@ -16,7 +15,12 @@ export const Approved: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: m.externalDataSection,
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'informationSection',
+      title: information.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -25,12 +29,17 @@ export const Approved: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confirmation',
-      title: m.confirmation,
+      id: 'reviewSection',
+      title: review.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'approved',
+      title: review.general.approvedSectionTitle,
       children: [
         buildCustomField({
-          component: 'ConfirmationField',
-          id: 'confirmationField',
+          component: 'Review',
+          id: 'review',
           title: '',
           description: '',
         }),
