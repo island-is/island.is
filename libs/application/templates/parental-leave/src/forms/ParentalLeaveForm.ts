@@ -509,7 +509,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   title:
                     parentalLeaveFormMessages.employer
                       .isRecivingUnemploymentBenefitsTitle,
-                  description: parentalLeaveFormMessages.employer
+                  description:
+                    parentalLeaveFormMessages.employer
                       .isRecivingUnemploymentBenefitsDescription,
                   condition: (answers) =>
                     (answers as {

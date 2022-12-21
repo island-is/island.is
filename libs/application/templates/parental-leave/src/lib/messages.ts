@@ -1282,8 +1282,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     isRecivingUnemploymentBenefitsDescription: {
       id: 'pl.application:employer.isRecivingUnemploymentBenefitsDesc',
-      defaultMessage: 'Bótaþegar sem þiggja bætur frá stéttarfélagi eða sjúkradagpeninga þurfa að skila inn staðfestingu ef við á.',
-      description: 'Those receiving union benefits or sick pay are required to submit documentation confirming this where applicable',
+      defaultMessage:
+        'Bótaþegar sem þiggja bætur frá stéttarfélagi eða sjúkradagpeninga þurfa að skila inn staðfestingu ef við á.',
+      description:
+        'Those receiving union benefits or sick pay are required to submit documentation confirming this where applicable',
     },
     unemploymentBenefits: {
       id: 'pl.application:employer.unemploymentBenefits',
