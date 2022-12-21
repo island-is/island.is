@@ -21,4 +21,17 @@ export const m = defineMessages({
     id: 'portals:close-module-switcher',
     defaultMessage: 'Loka stjórnborðs valmynd',
   },
+  dashboardIntro: {
+    defaultMessage:
+      'Hér eru stjórnborð sem þú hefur aðgang að fyrir ýmsar þjónustur tengdar Ísland.is.',
+    id: 'admin-portal:dashboard-title',
+  },
+  dashboardTitle: {
+    defaultMessage: 'Stjórnborð Ísland.is',
+    id: 'admin-portal:dashboard-title',
+  },
+  dashboardImageAlt: {
+    defaultMessage: 'Mynd af byggingu sem táknar stjórnborð',
+    id: 'admin-portal:dashboard-img-alt',
+  },
 })
