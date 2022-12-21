@@ -33,11 +33,7 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
             noPassport={
               Array.isArray(item.passports) && item.passports.length === 0
             }
-            nationalId={
-              item.childNationalId
-                ? formatNationalId(item.childNationalId)
-                : ' '
-            }
+            title={item.childName}
             name={true}
           />
         </Box>
