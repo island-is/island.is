@@ -6,6 +6,7 @@ import {
 import { TagVariant } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
 import { z } from 'zod'
+import { type } from 'os'
 
 export type ReviewCoOwnerAndOperatorField = {
   nationalId: string
@@ -51,4 +52,17 @@ export interface ReviewSectionProps {
   tagVariant: TagVariant
   reviewer?: ReviewerProps[]
   messageValue?: string
+}
+
+export type InsuranceCompany = {
+  code?: string | null
+  name?: string | null
+}
+
+export type VehiclesCurrentVehicle = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+  isStolen?: boolean
 }

@@ -72,6 +72,7 @@ export const validatePeriod = (
   }
 
   const dob = parseISO(expectedDateOfBirth)
+  const today = new Date()
   const minimumStartDate = addMonths(
     dob,
     -minimumPeriodStartBeforeExpectedDateOfBirth,
@@ -104,7 +105,7 @@ export const validatePeriod = (
   if (startDate === NO_ANSWER) {
     return buildError('startDate', errorMessages.periodsStartMissing)
   } else if (hasBeenAnswered(startDate)) {
-    if (isFirstPeriod) {
+    if (isFirstPeriod && parseISO(startDate) > today) {
       startDateValue =
         firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
         firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH
