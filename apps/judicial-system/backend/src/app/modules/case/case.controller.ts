@@ -51,6 +51,7 @@ import {
   staffRule,
   assistantRule,
 } from '../../guards'
+import { nowFactory } from '../../factories'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import { CaseExistsGuard } from './guards/caseExists.guard'
@@ -205,10 +206,18 @@ export class CaseController {
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
-    const update: { state: CaseState; parentCaseId?: null } = { state }
+    const update: {
+      state: CaseState
+      parentCaseId?: null
+      rulingDate?: Date
+    } = { state }
 
     if (state === CaseState.DELETED) {
       update.parentCaseId = null
+    }
+
+    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
+      update.rulingDate = nowFactory()
     }
 
     const updatedCase = await this.caseService.update(
@@ -218,11 +227,18 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
-    // Indictment cases are not signed
-    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
-        theCase,
-      )
+    if (isIndictmentCase(theCase.type)) {
+      if (completedCaseStates.includes(state)) {
+        // Indictment cases are not signed
+        await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
+          theCase,
+        )
+      } else if (state === CaseState.DELETED) {
+        // Indictment cases need some case file cleanup
+        await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
+          theCase,
+        )
+      }
     }
 
     // No need to wait
