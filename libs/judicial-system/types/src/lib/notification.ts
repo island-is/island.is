@@ -7,6 +7,7 @@ export enum NotificationType {
   MODIFIED = 'MODIFIED',
   REVOKED = 'REVOKED',
   DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
+  DEFENDANTS_NOT_UPDATED_AT_COURT = 'DEFENDANTS_NOT_UPDATED_AT_COURT',
 }
 
 export interface Recipient {

@@ -7,7 +7,7 @@ import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 import { Case } from '../../../case'
-import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
+import { SendNotificationResponse } from '../../models/sendNotification.response'
 import { SendNotificationDto } from '../../dto/sendNotification.dto'
 import { notificationModuleConfig } from '../../notification.config'
 import { Notification } from '../../models/notification.model'

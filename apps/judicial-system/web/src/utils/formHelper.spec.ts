@@ -1,4 +1,11 @@
-import { hasDateChanged, toggleInArray } from './formHelper'
+import * as constants from '@island.is/judicial-system/consts'
+import { Case } from '@island.is/judicial-system/types'
+
+import {
+  findFirstInvalidStep,
+  hasDateChanged,
+  toggleInArray,
+} from './formHelper'
 
 describe('toggleInArray', () => {
   it.each`
@@ -69,5 +76,46 @@ describe('hasDateChanged', () => {
     expect(hasDateChanged(currentDate, new Date('2020-10-24T13:37:00Z'))).toBe(
       true,
     )
+  })
+})
+
+describe('findLastValidStep', () => {
+  it('should return the last valid step', () => {
+    const lastValidStep = findFirstInvalidStep(
+      [
+        constants.INVESTIGATION_CASE_CASE_FILES_ROUTE,
+        constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+        constants.INDICTMENTS_PROCESSING_ROUTE,
+      ],
+      { policeCaseNumbers: ['test'] } as Case,
+    )
+
+    expect(lastValidStep).toEqual(constants.INDICTMENTS_PROCESSING_ROUTE)
+  })
+
+  it('should return the first step if no valid steps are found', () => {
+    const lastValidStep = findFirstInvalidStep(
+      [
+        constants.INDICTMENTS_PROCESSING_ROUTE,
+        constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+        constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+      ],
+      { policeCaseNumbers: ['test'] } as Case,
+    )
+
+    expect(lastValidStep).toEqual(constants.INDICTMENTS_PROCESSING_ROUTE)
+  })
+
+  it('should return the last step if all steps are valid', () => {
+    const lastValidStep = findFirstInvalidStep(
+      [
+        constants.INVESTIGATION_CASE_CASE_FILES_ROUTE,
+        constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+        constants.INDICTMENTS_CASE_FILES_ROUTE,
+      ],
+      { policeCaseNumbers: ['test'] } as Case,
+    )
+
+    expect(lastValidStep).toEqual(constants.INDICTMENTS_CASE_FILES_ROUTE)
   })
 })
