@@ -11,7 +11,7 @@ import { PaymentAPI } from '@island.is/clients/payment'
 import type { Item as ChargeItem } from '@island.is/clients/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { getSlugFromType } from '@island.is/application/core'
-import { CreateChargeResult } from './payment.type'
+import { CreateChargeResult } from './types/CreateChargeResult'
 
 import {
   Application as ApplicationModel,
@@ -19,10 +19,10 @@ import {
 } from '@island.is/application/api/core'
 import { PaymentModuleConfig } from './payment.config'
 import { ConfigType } from '@nestjs/config'
-import { formatCharge } from './models/Charge'
+import { formatCharge } from './types/Charge'
 import { PaymentType as BasePayment } from '@island.is/application/types'
 import { AuditService } from '@island.is/nest/audit'
-import { PaymentStatus } from './models/paymentStatus'
+import { PaymentStatus } from './types/paymentStatus'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 

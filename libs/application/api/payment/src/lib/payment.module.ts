@@ -6,16 +6,10 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
-import {
-  PaymentClientModule,
-  PaymentClientModuleConfig,
-} from '@island.is/clients/payment'
+import { PaymentClientModule } from '@island.is/clients/payment'
 import { PaymentController } from './payment.controller'
 import { PaymentCallbackController } from './payment-callback.controller'
 import { LoggingModule } from '@island.is/logging'
-import { ConfigModule } from '@nestjs/config'
-import { PaymentModuleConfig } from './payment.config'
-import { AuditModule } from '@island.is/nest/audit'
 
 @Module({
   imports: [
