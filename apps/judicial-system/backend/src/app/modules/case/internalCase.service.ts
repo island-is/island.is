@@ -18,7 +18,6 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
-  CaseFileState,
   CaseOrigin,
   CaseState,
   isIndictmentCase,
@@ -76,6 +75,7 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'prosecutorAppealAnnouncement',
   'caseModifiedExplanation',
   'caseResentExplanation',
+  'crimeScenes',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -414,12 +414,7 @@ export class InternalCaseService {
     const theCase = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
-        {
-          model: CaseFile,
-          as: 'caseFiles',
-          required: false,
-          where: { state: { [Op.not]: CaseFileState.DELETED } },
-        },
+        { model: CaseFile, as: 'caseFiles' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],

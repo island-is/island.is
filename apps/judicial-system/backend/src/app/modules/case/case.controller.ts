@@ -51,6 +51,7 @@ import {
   staffRule,
   assistantRule,
 } from '../../guards'
+import { nowFactory } from '../../factories'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import { CaseExistsGuard } from './guards/caseExists.guard'
@@ -205,10 +206,18 @@ export class CaseController {
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
-    const update: { state: CaseState; parentCaseId?: null } = { state }
+    const update: {
+      state: CaseState
+      parentCaseId?: null
+      rulingDate?: Date
+    } = { state }
 
     if (state === CaseState.DELETED) {
       update.parentCaseId = null
+    }
+
+    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
+      update.rulingDate = nowFactory()
     }
 
     const updatedCase = await this.caseService.update(
