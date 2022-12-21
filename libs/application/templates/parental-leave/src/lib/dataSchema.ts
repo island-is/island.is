@@ -130,7 +130,7 @@ export const dataSchema = z.object({
       params: errorMessages.otherParentId,
     }),
   otherParentRightOfAccess: z.enum([YES, NO]),
-  otherParentEmail: z.string().email(),
+  otherParentEmail: z.string().email().optional(),
   otherParentPhoneNumber: z
     .string()
     .refine(
