@@ -21,7 +21,10 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  TUploadFile,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   FormContext,
   SectionHeading,
@@ -30,6 +33,7 @@ import {
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 import * as styles from './PoliceCaseFiles.css'
+import { uuid } from 'uuidv4'
 
 interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
@@ -105,6 +109,8 @@ interface Props {
   >
   policeCaseNumber?: string
   setFilesInRVG: React.Dispatch<React.SetStateAction<UploadFile[] | undefined>>
+  refreshCase: () => void
+  addFileToCase: (file: TUploadFile) => Promise<void>
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
@@ -114,6 +120,8 @@ const PoliceCaseFiles: React.FC<Props> = ({
   policeCaseFileList,
   setPoliceCaseFileList,
   setFilesInRVG,
+  refreshCase,
+  addFileToCase,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
@@ -169,9 +177,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
 
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
 
-  const { uploadPoliceCaseFile, addFileToCase, files } = useS3Upload(
-    workingCase,
-  )
+  const { uploadPoliceCaseFile, files } = useS3Upload(workingCase)
   useEffect(() => {
     if (policeCaseFiles) {
       const policeCaseFilesNotStoredInRVG = policeCaseFiles.files.filter(
@@ -223,11 +229,14 @@ const PoliceCaseFiles: React.FC<Props> = ({
 
   const uploadToRVG = async () => {
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+    const filesWithId: Array<
+      [PoliceCaseFileCheck, string]
+    > = filesToUpload.map((file) => [file, uuid()])
     let newPoliceCaseFileList = [...policeCaseFileList]
 
     setIsUploading(true)
 
-    filesToUpload.forEach(async (policeCaseFile, index) => {
+    filesWithId.forEach(async ([policeCaseFile, id], index) => {
       const { key, size } = await uploadPoliceCaseFile(
         policeCaseFile.id,
         policeCaseFile.name,
@@ -244,7 +253,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
 
       setFilesInRVG([
         {
-          id: policeCaseFile.id,
+          id,
           name: policeCaseFile.name,
           type: 'application/pdf',
           status: 'done',
@@ -254,9 +263,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
         } as UploadFile,
       ])
 
-      newPoliceCaseFileList = newPoliceCaseFileList.filter(
-        (p) => p.id !== policeCaseFile.id,
-      )
+      newPoliceCaseFileList = newPoliceCaseFileList.filter((p) => p.id !== id)
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
@@ -265,6 +272,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
     })
 
     setPoliceCaseFileList(newPoliceCaseFileList)
+    refreshCase()
   }
 
   return (

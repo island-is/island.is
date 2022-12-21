@@ -21,6 +21,7 @@ import {
   rcCaseFiles as m,
 } from '@island.is/judicial-system-web/messages'
 import {
+  TUploadFile,
   useCase,
   useDeb,
   useS3Upload,
@@ -35,7 +36,7 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { CaseFile } from '@island.is/judicial-system/types'
+import { CaseFile, CaseFileState } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
@@ -46,6 +47,7 @@ export const StepFive: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    refreshCase,
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -61,6 +63,7 @@ export const StepFive: React.FC = () => {
     handleRemoveFromS3,
     handleRetry,
     handleS3Upload,
+    createFileMutation,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
 
@@ -69,6 +72,47 @@ export const StepFive: React.FC = () => {
   const stepIsValid = allFilesUploaded && !isUploading
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
+
+  const addFileToCase = async (file: TUploadFile) => {
+    if (workingCase && file.size && file.key) {
+      await createFileMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            type: file.type,
+            key: file.key,
+            size: file.size,
+            category: file.category,
+            policeCaseNumber: file.policeCaseNumber,
+          },
+        },
+      })
+        .then((res) => {
+          file.id = res.data.createFile.id
+          file.status = 'done'
+          setWorkingCase({
+            ...workingCase,
+            caseFiles: [
+              {
+                ...file,
+                id: file.id || '',
+                type: file.type || '',
+                size: file.size || 0,
+                caseId: workingCase.id,
+                state: CaseFileState.STORED_IN_RVG,
+                modified: new Date().toISOString(),
+                created: new Date().toISOString(),
+              },
+              ...(workingCase.caseFiles || []),
+            ],
+          })
+        })
+        .catch(() => {
+          // TODO: handle error
+          console.log('TODO!!!!')
+        })
+    }
+  }
 
   useEffect(() => {
     setFilesInRVG(workingCase.caseFiles)
@@ -114,6 +158,8 @@ export const StepFive: React.FC = () => {
           policeCaseFileList={policeCaseFileList}
           setPoliceCaseFileList={setPoliceCaseFileList}
           setFilesInRVG={setFilesInRVG}
+          refreshCase={refreshCase}
+          addFileToCase={addFileToCase}
         />
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
@@ -137,6 +183,12 @@ export const StepFive: React.FC = () => {
                   ...policeCaseFileList,
                   (file as unknown) as PoliceCaseFileCheck,
                 ])
+                setWorkingCase({
+                  ...workingCase,
+                  caseFiles: workingCase.caseFiles?.filter(
+                    (f) => f.id !== file.id,
+                  ),
+                })
               }}
               onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
