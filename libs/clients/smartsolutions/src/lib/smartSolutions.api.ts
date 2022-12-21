@@ -1,7 +1,12 @@
 import fetch, { Response } from 'node-fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { Result, ServiceResponse, FetchResponse } from './smartSolutions.types'
+import {
+  Result,
+  ApiResponse,
+  FetchResponse,
+  ServiceErrorCode,
+} from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
   Pass,
@@ -11,6 +16,7 @@ import {
 } from '../../gen/schema'
 import { Inject } from '@nestjs/common'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
+import { ErrorMessageToVerifyStatusCodeMap } from './utils'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -57,7 +63,7 @@ export class SmartSolutionsApi {
 
       return {
         error: {
-          serviceCode: 2,
+          code: 11,
           message: 'Service error',
         },
       }
@@ -70,14 +76,19 @@ export class SmartSolutionsApi {
         category: LOG_CATEGORY,
       })
 
+      if (!res.status) {
+        this.logger.warn('Expected 200 status', {
+          status: res.status,
+          statusText: res.statusText,
+          category: LOG_CATEGORY,
+        })
+      }
+
       return {
         error: {
-          serviceCode: 2,
-          message: 'Response object not ok',
-          httpStatus: {
-            status: res.status,
-            statusText: res.statusText,
-          },
+          code: res.status,
+          message: res.statusText,
+          data: JSON.stringify(res),
         },
       }
     }
@@ -92,12 +103,13 @@ export class SmartSolutionsApi {
       })
       return {
         error: {
-          serviceCode: 3,
-          message: 'Json parse failure',
+          code: 12,
+          message: 'JSON parse failure',
         },
       }
     }
-    return { data: json as T }
+
+    return { apiResponse: json as ApiResponse<T> }
   }
 
   async listPkPasses(queryId: string): Promise<Result<Pass[]>> {
@@ -105,7 +117,7 @@ export class SmartSolutionsApi {
       return {
         ok: false,
         error: {
-          serviceCode: 1,
+          code: 10,
           message: 'Service error',
         },
       }
@@ -144,14 +156,14 @@ export class SmartSolutionsApi {
       variables: {},
     })
 
-    const response = await this.fetchData<
-      ServiceResponse<{ passes?: { data: Array<Pass> } }>
-    >(graphql)
+    const response = await this.fetchData<{ passes?: { data: Array<Pass> } }>(
+      graphql,
+    )
 
-    if (response.data) {
+    if (response.apiResponse) {
       return {
         ok: true,
-        data: response.data.data?.passes?.data ?? [],
+        data: response.apiResponse.data?.passes?.data ?? [],
       }
     }
 
@@ -165,7 +177,7 @@ export class SmartSolutionsApi {
     return {
       ok: false,
       error: {
-        serviceCode: 99,
+        code: 99,
         message: 'Unknown error',
       },
     }
@@ -195,26 +207,49 @@ export class SmartSolutionsApi {
       },
     })
 
-    const response = await this.fetchData<
-      ServiceResponse<{ updateStatusOnPassWithDynamicBarcode?: Pass }>
-    >(graphql)
+    const response = await this.fetchData<{
+      updateStatusOnPassWithDynamicBarcode?: Pass
+    }>(graphql)
 
-    if (response.data) {
-      const pass = response?.data?.data?.updateStatusOnPassWithDynamicBarcode
-      if (!pass) {
-        this.logger.warn('Missing data from verify response', {
-          category: LOG_CATEGORY,
-        })
+    //If the fetch returned a response from the service
+    if (response.apiResponse) {
+      const apiRes = response.apiResponse
+
+      //If the api itself returned an error
+      if (apiRes.errors) {
+        const resError = apiRes.errors[0]
+        const mappedError =
+          resError.message in ErrorMessageToVerifyStatusCodeMap
+            ? (ErrorMessageToVerifyStatusCodeMap[
+                resError.message
+              ] as ServiceErrorCode)
+            : (99 as ServiceErrorCode)
+
         return {
           ok: false,
           error: {
-            serviceCode: 5,
-            message: 'Missing data',
+            code: mappedError,
+            message: resError.message,
+            data: JSON.stringify(resError),
+          },
+        }
+      }
+      //else, some the api return some business data
+      const pass = apiRes.data?.updateStatusOnPassWithDynamicBarcode
+
+      //The api should always return the pass
+      if (!pass) {
+        return {
+          ok: false,
+          error: {
+            code: 13,
+            data: JSON.stringify(apiRes),
+            message: 'Service error',
           },
         }
       }
 
-      //Successful!
+      //sweet success
       return {
         ok: true,
         data: {
@@ -224,6 +259,7 @@ export class SmartSolutionsApi {
       }
     }
 
+    //if the fetch returned a service error
     if (response.error) {
       return {
         ok: false,
@@ -231,10 +267,11 @@ export class SmartSolutionsApi {
       }
     }
 
+    //catchall
     return {
       ok: false,
       error: {
-        serviceCode: 99,
+        code: 99,
         message: 'Unknown error',
       },
     }
@@ -261,14 +298,12 @@ export class SmartSolutionsApi {
       },
     })
 
-    const response = await this.fetchData<
-      ServiceResponse<{ upsertPass: Pass }>
-    >(graphql)
+    const response = await this.fetchData<{ upsertPass: Pass }>(graphql)
 
-    if (response.data?.data) {
+    if (response.apiResponse?.data) {
       return {
         ok: true,
-        data: response.data.data.upsertPass,
+        data: response.apiResponse.data.upsertPass,
       }
     }
 
@@ -282,7 +317,7 @@ export class SmartSolutionsApi {
     return {
       ok: false,
       error: {
-        serviceCode: 99,
+        code: 99,
         message: 'Unknown error',
       },
     }
@@ -380,14 +415,14 @@ export class SmartSolutionsApi {
       variables: {},
     })
 
-    const response = await this.fetchData<
-      ServiceResponse<{ passTemplates?: { data: Array<PassTemplate> } }>
-    >(graphql)
+    const response = await this.fetchData<{
+      passTemplates?: { data: Array<PassTemplate> }
+    }>(graphql)
 
-    if (response.data) {
+    if (response.apiResponse?.data) {
       return {
         ok: true,
-        data: response.data.data?.passTemplates?.data ?? [],
+        data: response.apiResponse.data?.passTemplates?.data ?? [],
       }
     }
 
@@ -401,7 +436,7 @@ export class SmartSolutionsApi {
     return {
       ok: false,
       error: {
-        serviceCode: 99,
+        code: 99,
         message: 'Unknown error',
       },
     }

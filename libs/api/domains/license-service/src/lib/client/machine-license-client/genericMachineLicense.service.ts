@@ -8,7 +8,6 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
-  PkPassVerificationError,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
@@ -119,7 +118,12 @@ export class GenericMachineLicenseService
       payload,
       format(user.nationalId),
     )
-    return pass ?? null
+    if (pass.ok) {
+      return pass.data
+    }
+
+    //time to do some wicked error handling
+    return null
   }
   async getPkPassQRCode(
     user: User,
@@ -136,7 +140,12 @@ export class GenericMachineLicenseService
       payload,
       format(user.nationalId),
     )
-    return pass ?? null
+    if (pass.ok) {
+      return pass.data
+    }
+
+    //time to do some wicked error handling
+    return null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
@@ -149,33 +158,15 @@ export class GenericMachineLicenseService
       return null
     }
 
-    let error: PkPassVerificationError | undefined
-
-    if (result.error) {
-      let data = ''
-
-      try {
-        data = JSON.stringify(result.error.serviceError?.data)
-      } catch {
-        // noop
-      }
-
-      // Is there a status code from the service?
-      const serviceErrorStatus = result.error.serviceError?.status
-
-      // Use status code, or http status code from serivce, or "0" for unknown
-      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
-
-      error = {
-        status: status.toString(),
-        message: result.error.serviceError?.message || 'Unknown error',
-        data,
-      }
-
+    if (!result.ok) {
       return {
         valid: false,
         data: undefined,
-        error,
+        error: {
+          status: result.error.code.toString(),
+          message: result.error.message ?? '',
+          data: result.error.data,
+        },
       }
     }
 
@@ -185,13 +176,12 @@ export class GenericMachineLicenseService
       A robust verification needs to both check that the PkPass is valid,
       and that the user being scanned does indeed have a license!.
       This method currently checks the validity of the PkPass, but we can't
-      inspect the validity of their actual machine license. As of now, we can
+      inspect the validity of their actual ADR license. As of now, we can
       only retrieve the license of a logged in user, not the user being scanned!
     */
 
     return {
-      valid: result.valid,
-      error,
+      valid: result.data.valid,
     }
   }
 }
