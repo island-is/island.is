@@ -236,7 +236,6 @@
     "regulations": "libs/regulations",
     "residence-history": "libs/residence-history",
     "samradsgatt": "apps/samradsgatt",
-    "samradsgatt-e2e": "apps/samradsgatt-e2e",
     "service-portal": "apps/service-portal",
     "service-portal-applications": "libs/service-portal/applications",
     "service-portal-assets": "libs/service-portal/assets",
