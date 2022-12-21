@@ -6,8 +6,12 @@ import { ApplicationScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import { setup } from '../../../../../../test/setup'
-import { PaymentAPI } from '@island.is/clients/payment'
-import { CreateChargeInput } from '@island.is/application/api/payment'
+import {
+  ChargeFjsV2ClientService,
+  Charge,
+  ChargeResponse,
+  Catalog,
+} from '@island.is/clients/charge-fjs-v2'
 import { PaymentService } from '@island.is/application/api/payment'
 import { AppModule } from '../../../../app.module'
 import { ApplicationService } from '@island.is/application/api/core'
@@ -16,24 +20,26 @@ let app: INestApplication
 
 const TARGET_CHARGE_ITEM_CODE = 'asdf'
 
-class MockPaymentApi {
-  async createCharge() {
-    return {
-      user4: faker.datatype.number(),
-      receptionID: faker.datatype.number(),
-    }
+class MockChargeFjsV2ClientService {
+  async createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
+    upcomingPayment
+    return Promise.resolve({
+      user4: '1',
+      receptionID: upcomingPayment.requestID,
+    })
   }
-  async getCatalog() {
-    return {
-      item: [...Array.from({ length: 10 })].map((_, i) => ({
-        performingOrgID: faker.datatype.number(),
-        chargeType: faker.random.word(),
-        chargeItemCode:
-          i === 1 ? TARGET_CHARGE_ITEM_CODE : faker.random.words(),
-        chargeItemName: faker.random.word(),
-        priceAmount: faker.datatype.number(),
-      })),
-    }
+  getCatalogByPerformingOrg(performingOrganizationID: string) {
+    return Promise.resolve<Catalog>({
+      item: [
+        {
+          performingOrgID: performingOrganizationID,
+          chargeType: '1',
+          chargeItemCode: 'asdf',
+          chargeItemName: '1',
+          priceAmount: 1,
+        },
+      ],
+    })
   }
 }
 
@@ -49,16 +55,6 @@ class MockPaymentService {
   async findApplicationById() {
     return {
       typeId: 'DrivingLicense',
-    }
-  }
-
-  async findChargeItem() {
-    return {
-      performingOrgID: faker.datatype.number(),
-      chargeType: faker.random.word(),
-      chargeItemCode: TARGET_CHARGE_ITEM_CODE,
-      chargeItemName: faker.random.word(),
-      priceAmount: faker.datatype.number(),
     }
   }
 
@@ -107,8 +103,8 @@ beforeAll(async () => {
       builder
         .overrideProvider(ApplicationService)
         .useClass(MockApplicationService)
-        .overrideProvider(PaymentAPI)
-        .useClass(MockPaymentApi)
+        .overrideProvider(ChargeFjsV2ClientService)
+        .useClass(MockChargeFjsV2ClientService)
         .overrideGuard(IdsUserGuard)
         .useValue(
           new MockAuthGuard({
@@ -124,31 +120,6 @@ beforeAll(async () => {
 })
 
 describe('Application system payments API', () => {
-  // Creating a new application
-  it(`POST /application/96b5237b-6896-4154-898d-e8feb01d3dcd/payment should create a payment object`, async () => {
-    // Act
-    const response = await server
-      .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
-      .send({
-        chargeItemCodes: [TARGET_CHARGE_ITEM_CODE],
-      } as CreateChargeInput)
-      .expect(201)
-
-    // Assert
-    expect(response.body.paymentUrl).toBeTruthy()
-  })
-
-  // Should fail creating payment due to bad application ID.
-  it(`POST /application/96b5237b/payment should fail creating a payment object`, async () => {
-    // Act
-    const response = await server
-      .post('/applications/96b5237b/payment')
-      .expect(400)
-
-    // Assert
-    expect(response.body.paymentUrl).toBeFalsy()
-  })
-
   // Not finding the application - when trying to get application payment status.
   it(`GET /application/1234567890/payment-status should return not found - bad applicationID`, async () => {
     const response = await server

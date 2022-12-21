@@ -11,7 +11,6 @@ import {
   PaymentModule,
   PaymentModuleConfig,
 } from '@island.is/application/api/payment'
-import { PaymentClientModuleConfig } from '@island.is/clients/payment'
 
 @Module({
   imports: [
@@ -19,12 +18,7 @@ import { PaymentClientModuleConfig } from '@island.is/clients/payment'
     ChargeFjsV2ClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        XRoadConfig,
-        ChargeFjsV2ClientConfig,
-        PaymentModuleConfig,
-        PaymentClientModuleConfig,
-      ],
+      load: [XRoadConfig, ChargeFjsV2ClientConfig, PaymentModuleConfig],
     }),
     PaymentModule,
   ],

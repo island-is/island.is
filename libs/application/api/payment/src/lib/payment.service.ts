@@ -7,8 +7,11 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
-import { PaymentAPI } from '@island.is/clients/payment'
-import type { Item as ChargeItem } from '@island.is/clients/payment'
+import {
+  CatalogItem,
+  ChargeFjsV2ClientService,
+  ExtraData,
+} from '@island.is/clients/charge-fjs-v2'
 import { User } from '@island.is/auth-nest-tools'
 import { getSlugFromType } from '@island.is/application/core'
 import { CreateChargeResult } from './types/CreateChargeResult'
@@ -33,7 +36,7 @@ export class PaymentService {
     private paymentModel: typeof Payment,
     @Inject(PaymentModuleConfig.KEY)
     private config: ConfigType<typeof PaymentModuleConfig>,
-    private paymentApi: PaymentAPI,
+    private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly auditService: AuditService,
     private readonly applicationService: ApplicationService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -116,8 +119,9 @@ export class PaymentService {
   }
 
   private async createPaymentModel(
-    chargeItems: ChargeItem[],
+    chargeItems: CatalogItem[],
     applicationId: string,
+    performingOrganizationID: string,
   ): Promise<Payment> {
     const paymentModel: Pick<
       BasePayment,
@@ -130,7 +134,7 @@ export class PaymentService {
         0,
       ),
       definition: {
-        performingOrganizationID: chargeItems[0].performingOrgID,
+        performingOrganizationID: performingOrganizationID,
         chargeType: chargeItems[0].chargeType,
         charges: chargeItems.map((chargeItem) => ({
           chargeItemName: chargeItem.chargeItemName,
@@ -152,25 +156,32 @@ export class PaymentService {
    */
   async createCharge(
     user: User,
+    performingOrganizationID: string,
     chargeItemCodes: string[],
     applicationId: string,
+    extraData: ExtraData[] | undefined,
   ): Promise<CreateChargeResult> {
     try {
       //.1 Get charge items from FJS
-      const chargeItems = await this.findChargeItems(chargeItemCodes)
+      const chargeItems = await this.findChargeItems(
+        performingOrganizationID,
+        chargeItemCodes,
+      )
 
       //2. Create and insert payment db entry
       const paymentModel = await this.createPaymentModel(
         chargeItems,
         applicationId,
+        performingOrganizationID,
       )
 
       //3. Send charge to FJS
-      const chargeResult = await this.paymentApi.createCharge(
+      const chargeResult = await this.chargeFjsV2ClientService.createCharge(
         formatCharge(
           paymentModel,
           this.config.callbackBaseUrl,
           this.config.callbackAdditionUrl,
+          extraData,
           user,
         ),
       )
@@ -205,20 +216,6 @@ export class PaymentService {
     }
   }
 
-  async findChargeItem(targetChargeItemCode: string): Promise<ChargeItem> {
-    const { item: items } = await this.paymentApi.getCatalog()
-
-    const item = items.find(
-      ({ chargeItemCode }) => chargeItemCode === targetChargeItemCode,
-    )
-
-    if (!item) {
-      throw new Error('Bad chargeItemCode or empty catalog')
-    }
-
-    return item
-  }
-
   public makeDelegationPaymentUrl(
     docNum: string,
     loginHint: string,
@@ -236,9 +233,14 @@ export class PaymentService {
   }
 
   async findChargeItems(
+    performingOrganizationID: string,
     targetChargeItemCodes: string[],
-  ): Promise<ChargeItem[]> {
-    const { item: allItems } = await this.paymentApi.getCatalog()
+  ): Promise<CatalogItem[]> {
+    const {
+      item: allItems,
+    } = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+      performingOrganizationID,
+    )
 
     const items = allItems.filter(({ chargeItemCode }) =>
       targetChargeItemCodes.includes(chargeItemCode),
@@ -250,14 +252,10 @@ export class PaymentService {
 
     const firstItem = items[0]
     const notSame = items.find(
-      (item) =>
-        item.performingOrgID !== firstItem.performingOrgID ||
-        item.chargeType !== firstItem.chargeType,
+      (item) => item.chargeType !== firstItem.chargeType,
     )
     if (notSame) {
-      throw new Error(
-        'Not all chargeItemCodes have the same performingOrgID or chargeType',
-      )
+      throw new Error('Not all chargeItemCodes have the same chargeType')
     }
 
     return items

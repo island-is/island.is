@@ -16,17 +16,13 @@ import {
   SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
-import {
-  PAYMENT_QUERY,
-  PAYMENT_STATUS_QUERY,
-  PaymentChargeData,
-  PaymentStatusData,
-} from './shared.queries'
+import { PAYMENT_STATUS_QUERY, PaymentStatusData } from './shared.queries'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
+import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -200,12 +196,16 @@ export class SharedTemplateApiService {
   async createCharge(
     user: User,
     applicationId: string,
+    performingOrganizationID: string,
     chargeItemCodes: string[],
+    extraData: ExtraData[] | undefined = undefined,
   ) {
     return this.paymentService.createCharge(
       user,
+      performingOrganizationID,
       chargeItemCodes,
       applicationId,
+      extraData,
     )
   }
 

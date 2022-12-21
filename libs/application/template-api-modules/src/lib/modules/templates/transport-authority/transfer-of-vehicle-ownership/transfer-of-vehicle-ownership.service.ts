@@ -52,14 +52,18 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     | undefined
   > {
     try {
-      const chargeItemCodes = getChargeItemCodes(
-        application.answers as TransferOfVehicleOwnershipAnswers,
-      )
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
+      const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+      const chargeItemCodes = getChargeItemCodes(answers)
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
+        SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
+        [{ name: 'vehicle', value: answers?.vehicle?.plate }],
       )
       return result
     } catch (exeption) {

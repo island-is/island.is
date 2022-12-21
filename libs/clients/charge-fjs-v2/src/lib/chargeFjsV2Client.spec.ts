@@ -1,4 +1,4 @@
-import type { Catalog } from './payment.type'
+import type { Catalog } from './chargeFjsV2Client.types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 // MOCK START

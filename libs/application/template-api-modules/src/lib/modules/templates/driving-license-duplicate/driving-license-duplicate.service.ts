@@ -25,12 +25,15 @@ export class DrivingLicenseDuplicateService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
     // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
     const chargeItemCode = 'AY110'
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
+      SYSLUMADUR_NATIONAL_ID,
       [chargeItemCode],
     )
 

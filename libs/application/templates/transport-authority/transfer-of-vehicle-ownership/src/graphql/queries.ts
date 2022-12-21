@@ -1,15 +1,3 @@
-export const GET_CURRENT_VEHICLES = `
-  query GetCurrentVehicles($input: GetCurrentVehiclesInput!) {
-    currentVehicles(input: $input) {
-      permno
-      make
-      color
-      role
-      isStolen
-    }
-  } 
-`
-
 export const GET_CURRENT_VEHICLES_WITH_DEBT_STATUS = `
   query GetCurrentVehiclesWithDebtStatus($input: GetCurrentVehiclesInput!) {
     currentVehiclesWithDebtStatus(input: $input) {
@@ -45,15 +33,6 @@ export const GET_VEHICLE_INFORMATION = `
       isOutOfCommission
     }
   }
-`
-
-export const GET_INSURANCE_COMPANIES = `
-  query GetInsuranceCompanies {
-    transportAuthorityInsuranceCompanies {
-      code
-      name
-    }
-  } 
 `
 
 export const IDENTITY_QUERY = `

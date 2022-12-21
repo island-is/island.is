@@ -23,7 +23,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { PaymentModuleConfig } from '@island.is/application/api/payment'
-import { PaymentClientModuleConfig } from '@island.is/clients/payment'
+import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 
 @Module({
@@ -51,7 +51,7 @@ import { PassportsClientConfig } from '@island.is/clients/passports'
         CompanyRegistryConfig,
         FinancialStatementsInaoClientConfig,
         PaymentModuleConfig,
-        PaymentClientModuleConfig,
+        ChargeFjsV2ClientConfig,
         PassportsClientConfig,
       ],
     }),

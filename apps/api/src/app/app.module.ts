@@ -89,7 +89,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
-import { PaymentClientModuleConfig } from '@island.is/clients/payment'
+import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -286,7 +286,7 @@ const autoSchemaFile = environment.production
         FileStorageConfig,
         FiskistofaClientConfig,
         PowerBiConfig,
-        PaymentClientModuleConfig,
+        ChargeFjsV2ClientConfig,
         DisabilityLicenseClientConfig,
         ZenterSignupConfig,
       ],

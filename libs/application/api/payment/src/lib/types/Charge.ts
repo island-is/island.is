@@ -1,11 +1,12 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Charge } from '@island.is/clients/payment'
+import { Charge, ExtraData } from '@island.is/clients/charge-fjs-v2'
 import { Payment } from '../payment.model'
 
 export function formatCharge(
   payment: Payment,
   callbackBaseUrl: string,
   callbackAdditionUrl: string,
+  extraData: ExtraData[] | undefined,
   user: User,
 ): Charge {
   // TODO: island.is x-road service path for callback.. ??
@@ -27,6 +28,7 @@ export function formatCharge(
       amount: number
     },
   ]
+
   return {
     // TODO: this needs to be unique, but can only handle 22 or 23 chars
     // should probably be an id or token from the DB charge once implemented
@@ -47,5 +49,6 @@ export function formatCharge(
     immediateProcess: true,
     returnUrl: callbackUrl,
     requestID: payment.id,
+    extraData: extraData,
   }
 }
