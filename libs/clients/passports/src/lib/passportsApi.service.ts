@@ -1,5 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { XRoadConfig, ConfigType } from '@island.is/nest/config'
+import { XRoadConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import { Injectable, Inject } from '@nestjs/common'
 import {
   IdentityDocumentApi,
