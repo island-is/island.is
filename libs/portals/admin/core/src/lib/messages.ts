@@ -1,24 +1,24 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  dashboard: {
-    id: 'portals:dashboard',
+  shortTitle: {
+    id: 'admin-portal:short-title',
     defaultMessage: 'Stjórnborð',
   },
-  dashboardIslandis: {
-    id: 'portals:dashboard-islandis',
+  title: {
+    id: 'admin-portal:title',
     defaultMessage: 'Stjórnborð Ísland.is',
   },
-  moduleSwitcher: {
-    id: 'portals:module-switcher',
+  moduleSwitcherAria: {
+    id: 'admin-portal:module-switcher-aria',
     defaultMessage: 'Stjórnborðs valmynd',
   },
-  openModuleSwitcher: {
-    id: 'portals:open-module-switcher',
+  openModuleSwitcherAria: {
+    id: 'admin-portal:open-module-switcher-aria',
     defaultMessage: 'Opna stjórnborðs valmynd',
   },
-  closeModuleSwitcher: {
-    id: 'portals:close-module-switcher',
+  closeModuleSwitcherAria: {
+    id: 'admin-portal:close-module-switcher-aria',
     defaultMessage: 'Loka stjórnborðs valmynd',
   },
   dashboardIntro: {

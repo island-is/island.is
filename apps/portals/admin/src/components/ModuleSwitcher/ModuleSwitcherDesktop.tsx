@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/admin/core'
 import { useActiveModule } from '@island.is/portals/core'
 
-import { masterNavigation } from '../../lib/masterNavigation'
+import { rootNavigationItem } from '../../lib/masterNavigation'
 import { ModuleSwitcherItems } from './ModuleSwitcherItems'
 
 import * as styles from './ModuleSwitcherDesktop.css'
@@ -21,7 +21,12 @@ export const ModuleSwitcherDesktop = () => {
 
   return (
     <div className={styles.container}>
-      <MenuButton className={styles.menuButton} {...menu} as="div">
+      <MenuButton
+        className={styles.menuButton}
+        {...menu}
+        as="div"
+        aria-label={formatMessage(m.openModuleSwitcherAria)}
+      >
         <Box
           component="div"
           display="flex"
@@ -29,20 +34,21 @@ export const ModuleSwitcherDesktop = () => {
           paddingX={3}
         >
           <Box>
-            <Text variant="eyebrow">{formatMessage(m.dashboard)}</Text>
+            <Text variant="eyebrow">{formatMessage(m.shortTitle)}</Text>
             <Text>
               {formatMessage(
-                activeModule ? activeModule.name : masterNavigation.name,
+                activeModule ? activeModule.name : rootNavigationItem.name,
               )}
             </Text>
           </Box>
           <Box display="flex" alignItems="center">
             <Button
-              colorScheme="light"
-              circle={true}
+              colorScheme="negative"
+              circle
               size="small"
               icon="chevronDown"
-            ></Button>
+              aria-hidden
+            />
           </Box>
         </Box>
       </MenuButton>
@@ -50,7 +56,7 @@ export const ModuleSwitcherDesktop = () => {
       <Menu
         {...menu}
         className={styles.menuDropdown}
-        aria-label={formatMessage(m.moduleSwitcher)}
+        aria-label={formatMessage(m.moduleSwitcherAria)}
       >
         <Box background="white" paddingTop={3} padding={2} borderRadius="large">
           <Box
@@ -60,14 +66,15 @@ export const ModuleSwitcherDesktop = () => {
             justifyContent="spaceBetween"
             alignItems="center"
           >
-            <Text variant="eyebrow">{formatMessage(m.dashboard)}</Text>
+            <Text variant="eyebrow">{formatMessage(m.shortTitle)}</Text>
             <Button
               circle
               size="small"
               colorScheme="light"
               icon="close"
               onClick={menu.hide}
-            ></Button>
+              aria-label={formatMessage(m.closeModuleSwitcherAria)}
+            />
           </Box>
 
           <ModuleSwitcherItems onNavigation={menu.hide} />

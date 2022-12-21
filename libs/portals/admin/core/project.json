@@ -4,26 +4,6 @@
   "projectType": "library",
   "tags": ["lib:portals-admin"],
   "targets": {
-    "build": {
-      "executor": "@nrwl/web:rollup",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/portals/admin/core",
-        "tsConfig": "libs/portals/admin/core/tsconfig.lib.json",
-        "project": "libs/portals/admin/core/package.json",
-        "entryFile": "libs/portals/admin/core/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "compiler": "babel",
-        "assets": [
-          {
-            "glob": "libs/portals/admin/core/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
-      }
-    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],

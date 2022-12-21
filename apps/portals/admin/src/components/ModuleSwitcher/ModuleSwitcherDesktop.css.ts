@@ -7,9 +7,10 @@ export const container = style({
   alignItems: 'center',
   justifyContent: 'spaceBetween',
   width: '290px',
-  height: `${theme.headerHeight.large}px`,
-  marginLeft: `${theme.spacing[5]}px`,
+  height: theme.headerHeight.large,
+  marginLeft: theme.spacing[5],
   boxShadow: `inset 1px 0 0 0 ${theme.color.blue200}, inset -1px 0 0 0 ${theme.color.blue200}`,
+  cursor: 'pointer',
 })
 
 export const menuButton = style({
@@ -20,10 +21,7 @@ export const backdrop = style({
   background: 'rgba(242, 247, 255, 0.7)',
   zIndex: theme.zIndex.belowModal,
   position: 'fixed',
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0,
+  inset: 0,
 })
 
 export const menuDropdown = style({

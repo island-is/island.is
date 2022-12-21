@@ -1,13 +1,28 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import { Box, Icon, IconMapIcon, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FocusableBox,
+  Icon,
+  IconMapIcon,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, useActiveModule, useNavigation } from '@island.is/portals/core'
 
+import {
+  rootNavigationItem,
+  BOTTOM_NAVIGATION,
+  TOP_NAVIGATION,
+} from '../../lib/masterNavigation'
+
+import * as styles from './ModuleSwitcherItems.css'
+
 interface ModuleItemsProps {
   mobile?: boolean
-  onNavigation: () => void
+  onNavigation(): void
 }
 
 interface ModuleItemProps {
@@ -23,7 +38,8 @@ export const ModuleSwitcherItems = ({
   onNavigation,
 }: ModuleItemsProps) => {
   const activeModule = useActiveModule()
-  const navigation = useNavigation()
+  const topNavigation = useNavigation(TOP_NAVIGATION)
+  const bottomNavigation = useNavigation(BOTTOM_NAVIGATION)
   const { formatMessage } = useLocale()
 
   const ModuleSwitcherItem = ({
@@ -34,18 +50,18 @@ export const ModuleSwitcherItems = ({
     key,
   }: ModuleItemProps) => {
     const color = active ? 'blue400' : 'blue600'
-    const activeBackground = mobile ? 'white' : 'blue100'
 
     return (
-      <Link to={path} onClick={onNavigation}>
+      <Link to={path} onClick={onNavigation} className={styles.link}>
         <Box
           key={key}
           paddingX={mobile ? 3 : 2}
           paddingY={mobile ? 2 : 1}
           display="flex"
           alignItems="center"
-          background={active ? activeBackground : undefined}
+          background={active && mobile ? 'white' : undefined}
           borderRadius="large"
+          className={!mobile && styles.itemHover}
         >
           <Icon
             icon={icon}
@@ -63,11 +79,15 @@ export const ModuleSwitcherItems = ({
     )
   }
 
+  const navigationItems = (topNavigation?.children ?? []).concat(
+    bottomNavigation?.children ?? [],
+  )
+
   return (
     <>
       <Box marginBottom={1}>
         <ModuleSwitcherItem
-          path={navigation?.path ?? '/'}
+          path={rootNavigationItem?.path ?? '/'}
           label={formatMessage(m.overview)}
           icon="home"
           active={!activeModule}
@@ -75,15 +95,14 @@ export const ModuleSwitcherItems = ({
       </Box>
 
       <Stack space={mobile ? 0 : 1} dividers={false}>
-        {navigation?.children?.map((item, index) =>
+        {navigationItems.map((item, index) =>
           item.path ? (
             <ModuleSwitcherItem
               key={index}
               label={formatMessage(item.name)}
               path={item.path}
               icon={item.icon?.icon}
-              // TODO: Update comparison to use id instead of name
-              active={activeModule?.name === item.name}
+              active={item.active}
             />
           ) : null,
         )}
