@@ -610,7 +610,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           ratio: getRatio(
             period.ratio,
             periodLength.toString(),
-            isUsingNumberOfDays,
+            period.ratio === '100' ? isUsingNumberOfDays : true,
           ),
           approved: false,
           paid: false,
@@ -626,7 +626,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
@@ -693,7 +693,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                 ratio: getRatio(
                   period.ratio,
                   periodLength.toString(),
-                  isUsingNumberOfDays,
+                  period.ratio === '100' ? isUsingNumberOfDays : true,
                 ),
                 approved: false,
                 paid: false,
@@ -832,7 +832,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                   ratio: getRatio(
                     period.ratio,
                     periodLength.toString(),
-                    isUsingNumberOfDays,
+                    period.ratio === '100' ? isUsingNumberOfDays : true,
                   ),
                   approved: false,
                   paid: false,
@@ -853,7 +853,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
@@ -1014,7 +1014,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
