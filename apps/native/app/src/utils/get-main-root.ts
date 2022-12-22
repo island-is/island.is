@@ -17,6 +17,18 @@ export const getRightButtons = ({
 } = {}): OptionsTopBarButton[] => {
   return [
     {
+      accessibilityLabel: 'Settings',
+      id: ButtonRegistry.SettingsButton,
+      testID: testIDs.TOPBAR_SETTINGS_BUTTON,
+      icon: require('../assets/icons/settings.png'),
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 8,
+        width: 32,
+        height: 32,
+      },
+    },
+    {
       accessibilityLabel: 'Notifications',
       id: ButtonRegistry.NotificationsButton,
       testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
@@ -31,6 +43,7 @@ export const getRightButtons = ({
         height: 32,
       },
     },
+
   ]
 }
 

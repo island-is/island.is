@@ -223,7 +223,7 @@ export const en: TranslatedMessages = {
   'profile.screenTitle': 'My info',
   'profile.bottomTabText': 'Me',
   'profile.seeInfo': 'See info',
-  'profile.infoHeading': 'Info',
+  'profile.infoHeading': 'Assets and Family',
   'profile.family': 'Family',
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',

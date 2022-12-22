@@ -161,8 +161,8 @@ export const is = {
   // profile
   'profile.screenTitle': 'Mínar upplýsingar',
   'profile.bottomTabText': 'Ég',
-  'profile.seeInfo': 'Skoða upplýsingar',
-  'profile.infoHeading': 'Upplýsingar',
+  'profile.seeInfo': 'Nánar',
+  'profile.infoHeading': 'Eignir og fjölskylda',
   'profile.family': 'Fjölskylda',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
@@ -290,7 +290,7 @@ export const is = {
   'notificationDetail.screenTitle': 'Tilkynning',
 
   // applications screen
-  'applications.title': 'Umsóknir á Ísland.is',
+  'applications.title': 'Umsóknir',
   'applications.bottomTabText': 'Umsóknir',
   'applications.searchPlaceholder': 'Leita að umsóknum...',
   'applications.loadingText': 'Leita í skjölum...',

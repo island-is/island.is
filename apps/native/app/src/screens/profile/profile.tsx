@@ -12,8 +12,8 @@ import familyIcon from '../../assets/icons/family.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
 import assetsIcon from '../../assets/icons/assets.png'
 import { useIntl } from 'react-intl'
-import { ButtonRegistry } from '../../utils/component-registry'
 import { formatNationalId } from './tab-personal-info'
+import { getRightButtons } from '../../utils/get-main-root'
 
 const Row = styled.View`
   flex-direction: row;
@@ -28,23 +28,7 @@ const {
       title: {
         text: intl.formatMessage({ id: 'profile.screenTitle' }),
       },
-      rightButtons: initialized ? [{
-        accessibilityLabel: 'Settings',
-        id: ButtonRegistry.SettingsButton,
-        testID: testIDs.TOPBAR_SETTINGS_BUTTON,
-        icon: require('../assets/icons/settings.png'),
-        iconInsets: {
-          left: 8,
-        },
-        iconBackground: {
-          color: 'transparent',
-          cornerRadius: 8,
-          width: 32,
-          height: 32,
-        },
-      }] : [],
-
-
+      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
     },
     bottomTab: {
       iconColor: theme.color.blue400,
