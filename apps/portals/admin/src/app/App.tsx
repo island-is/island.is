@@ -30,7 +30,6 @@ export const App = () => {
                     portalType: 'admin',
                   }}
                 >
-                  <UserProfileLocale />
                   <Layout>
                     <Switch>
                       <Route exact path={AdminPortalPaths.Root}>
