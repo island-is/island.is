@@ -1,17 +1,17 @@
 import { CanActivate } from '@nestjs/common'
 
-import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
-import { InternalCaseController } from '../../internalCase.controller'
+import { CaseExistsGuard } from '../../../case'
+import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
+import { InternalFileController } from '../../internalFile.controller'
 
-describe('InternalCaseController - Deliver guards', () => {
+describe('InternalFileController - Deliver case file to court guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalCaseController.prototype.deliver,
+      InternalFileController.prototype.deliverCaseFileToCourt,
     )
   })
 
@@ -31,15 +31,15 @@ describe('InternalCaseController - Deliver guards', () => {
     })
   })
 
-  describe('CaseCompletedGuard', () => {
+  describe('CaseFileExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have CaseCompletedGuard as quard 2', () => {
-      expect(guard).toBeInstanceOf(CaseCompletedGuard)
+    it('should have CaseFileExistsGuard as quard 2', () => {
+      expect(guard).toBeInstanceOf(CaseFileExistsGuard)
     })
   })
 })
