@@ -19,6 +19,17 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
+      id: 'intro',
+      title: 'Um sjúkrakortið',
+      children: [
+        buildCustomField({
+          id: 'introScreen',
+          title: '',
+          component: 'IntroScreen',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'applicant',
       title: 'temp title',
       children: [
