@@ -10,7 +10,7 @@ Everything about our Continuous Delivery process can be found here: [Continuous 
 
 ## Quality gates
 
-We ensure software quality in many aspects. Here are some highlights: 
+We ensure software quality in many aspects. Here are some highlights:
 
 - Automatic tests are required in our projects. [More information](https://docs.devland.is/repository/system-e2e).
 - All code is owned by some team which reviews all changes to the code they are responsible for. All code must be reviewed by at least one separate person. [More information](https://docs.devland.is/technical-overview/code-reviews).
@@ -19,7 +19,7 @@ We ensure software quality in many aspects. Here are some highlights:
 
 ## Definition of done
 
-Before we release features to the general public we review the following list and make sure that all appropriate items have been addressed: 
+Before we release features to the general public we review the following list and make sure that all appropriate items have been addressed:
 
 - **Architecture:** has been reviewed by the Core and DevOps team.
 - **Language support:** user-facing products are available in both Icelandic and English.
@@ -32,7 +32,7 @@ Before we release features to the general public we review the following list an
 - **Audit logs:** all user interactions/changes are audit logged.
 - **Security:** review if new API functionality is correctly authorized and protected.
 - **Technical documentation:** technical documentation has been added in the context of the feature.
-- **Logging implemented:** logging is sufficient so that the solution can be monitored. [More information](https://docs.devland.is/technical-overview/devops/logging). 
+- **Logging implemented:** logging is sufficient so that the solution can be monitored. [More information](https://docs.devland.is/technical-overview/devops/logging).
 - **Analytics:** anonymous usage monitoring of new features has been set up.
 - **Organization approval:** if the feature is a collaboration with another organization they should approve the release.
 - **External APIs:** when using a new web service from another organization, verify that it is correctly configured and reachable in production.
