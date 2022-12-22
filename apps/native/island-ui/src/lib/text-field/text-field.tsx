@@ -1,14 +1,22 @@
 import React, { useRef } from "react";
 import { TextInput, TextInputProps } from "react-native";
 import styled from "styled-components/native";
-import { font } from "../../utils";
+import { dynamicColor, font } from "../../utils";
 
 
 const Host = styled.Pressable`
-  border: ${(props) => `1px solid ${props.theme.color.blue200}`};
   padding: ${({ theme }) => theme.spacing[1]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${(props) => props.theme.color.blue100};
+  border-width: 1px;
+  border-style: solid;
+  border-color: ${dynamicColor((props) => ({
+    dark: 'shade500',
+    light: props.theme.color.blue200,
+  }), true)};
+  background-color: ${dynamicColor((props) => ({
+    dark: 'shade300',
+    light: props.theme.color.blue100,
+  }))};
 `;
 
 const Label = styled.Text`
@@ -18,7 +26,10 @@ const Label = styled.Text`
     fontWeight: '600',
   })}
 
-  color: ${(props) => props.theme.color.blue400};
+  color: ${dynamicColor((props) => ({
+    dark: 'foreground',
+    light: props.theme.color.blue400,
+  }))};
   margin-bottom: 4px;
 `;
 

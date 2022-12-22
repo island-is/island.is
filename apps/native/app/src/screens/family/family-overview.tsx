@@ -7,7 +7,7 @@ import { client } from '../../graphql/client'
 import { useIntl } from "react-intl";
 import { useTheme } from 'styled-components/native'
 import { testIDs } from '../../utils/test-ids'
-import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
+import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from "../../components/bottom-tabs-indicator/bottom-tabs-indicator";
 import { navigateTo } from "../../lib/deep-linking";
 import { useThemedNavigationOptions } from "../../hooks/use-themed-navigation-options";
@@ -121,7 +121,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({ componentId 
                 id: 'family.emptyListDescription',
               })}
               image={
-                <Image source={illustrationSrc} height={192} width={145} />
+                <Image source={illustrationSrc} height={196} width={261} />
               }
             />
           </View>

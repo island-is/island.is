@@ -80,42 +80,42 @@ export const ProfileScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
   return (
     <>
-    <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16}}>
-      <SafeAreaView>
-       <UserCard
-        name={authStore.userInfo?.name}
-        ssn={formatNationalId(String(authStore.userInfo?.nationalId))}
-        actions={[
-          { text: intl.formatMessage({ id: 'profile.seeInfo' }), onPress: () => navigateTo(`/personalinfo`) },
-        ]}
-       />
+      <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16}}>
+        <SafeAreaView>
+        <UserCard
+          name={authStore.userInfo?.name}
+          ssn={formatNationalId(String(authStore.userInfo?.nationalId))}
+          actions={[
+            { text: intl.formatMessage({ id: 'profile.seeInfo' }), onPress: () => navigateTo(`/personalinfo`) },
+          ]}
+        />
 
-      <Heading>
-        {intl.formatMessage({ id: 'profile.infoHeading' })}
-      </Heading>
-      <Row>
-        <IconButton
-          title={intl.formatMessage({ id: 'profile.family' })}
-          onPress={() => navigateTo(`/family`)}
-          image={<Image source={familyIcon as any} style={{ width: 28, height: 20 }} /> }
-          style={{ marginRight: 8}}
-        />
-        <IconButton
-          title={intl.formatMessage({ id: 'profile.vehicles' })}
-          onPress={() => navigateTo(`/vehicles`)}
-          image={<Image source={vehicleIcon as any} style={{ width: 24, height: 20 }} /> }
-          style={{ marginRight: 8 }}
-        />
-        <IconButton
-          title={intl.formatMessage({ id: 'profile.assets' })}
-          onPress={() => navigateTo(`/assets`)}
-          image={<Image source={assetsIcon as any}
-          style={{ width: 30, height: 28 }} /> }
-        />
-      </Row>
-      </SafeAreaView>
-    </ScrollView>
-    <BottomTabsIndicator index={4} total={5} />
+        <Heading>
+          {intl.formatMessage({ id: 'profile.infoHeading' })}
+        </Heading>
+        <Row>
+          <IconButton
+            title={intl.formatMessage({ id: 'profile.family' })}
+            onPress={() => navigateTo(`/family`)}
+            image={<Image source={familyIcon as any} style={{ width: 28, height: 20 }} /> }
+            style={{ marginRight: 8}}
+          />
+          <IconButton
+            title={intl.formatMessage({ id: 'profile.vehicles' })}
+            onPress={() => navigateTo(`/vehicles`)}
+            image={<Image source={vehicleIcon as any} style={{ width: 24, height: 20 }} /> }
+            style={{ marginRight: 8 }}
+          />
+          <IconButton
+            title={intl.formatMessage({ id: 'profile.assets' })}
+            onPress={() => navigateTo(`/assets`)}
+            image={<Image source={assetsIcon as any}
+            style={{ width: 30, height: 28 }} /> }
+          />
+        </Row>
+        </SafeAreaView>
+      </ScrollView>
+      <BottomTabsIndicator index={4} total={5} />
     </>
   )
 }

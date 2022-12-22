@@ -131,7 +131,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
               </InputRow>
 
               <InputRow>
-                {unit?.buildYearDisplay &&
+                {unit?.buildYearDisplay ? (
                   <Input
                     loading={isLoading}
                     error={isError}
@@ -140,6 +140,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                     noBorder
                     isCompact
                   />
+                  ) : null
                 }
                 <Input
                   loading={isLoading}

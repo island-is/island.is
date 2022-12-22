@@ -210,8 +210,8 @@ export const is = {
 
   // family
   'family.screenTitle': 'Fjölskylda',
-  'family.emptyListTitle': 'Engir fjölskyldumeðlimir finnast fyrir notanda',
-  'family.emptyListDescription': 'Fjölskyldumeðlimir sem tengjast þér birtast hér.',
+  'family.emptyListTitle': 'Fjölskyldu upplýsingar',
+  'family.emptyListDescription': 'Hér munu birtast upplýsingar um fjölskyldu þína frá Þjóðskrá.',
 
   // family details
   'familyDetail.title': 'Upplýsingar',

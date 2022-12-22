@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl';
-import { ScrollView, View, Text, SafeAreaView } from "react-native";
+import { ScrollView, View, SafeAreaView } from "react-native";
 import { testIDs } from '../../utils/test-ids'
 import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
 import { Input, InputRow, NavigationBarSheet, Typography } from '@island.is/island-ui-native';
@@ -103,7 +103,6 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{ nationalId: strin
             value={item?.birthplace}
           />
         </InputRow>
-
 
       </SafeAreaView>
     </ScrollView>

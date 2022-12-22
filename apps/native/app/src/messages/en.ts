@@ -261,8 +261,8 @@ export const en: TranslatedMessages = {
   // assets details
   'assetsDetail.propertyNumber': 'Property number',
   'assetsDetail.displaySize': 'Size',
-  'assetsDetail.activeAppraisal': 'Fasteignamat {activeYear}',
-  'assetsDetail.plannedAppraisal': 'Fasteignamat {plannedYear}',
+  'assetsDetail.activeAppraisal': 'Property appraisal {activeYear}',
+  'assetsDetail.plannedAppraisal': 'Property appraisal {plannedYear}',
   'assetsDetail.explanation': 'Explanation',
   'assetsDetail.marking': 'Marking',
   'assetsDetail.municipality': 'Municipality',
@@ -271,8 +271,8 @@ export const en: TranslatedMessages = {
 
   // family
   'family.screenTitle': 'Family',
-  'family.emptyListTitle': 'No family members found for user',
-  'family.emptyListDescription': 'Family members related to you appear here.',
+  'family.emptyListTitle': 'Family information',
+  'family.emptyListDescription': 'Information about your family from the National Registry will appear here.',
 
   // family details
   'familyDetail.title': 'Info',
@@ -331,7 +331,7 @@ export const en: TranslatedMessages = {
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Edit Bank Info',
-  'edit.bankinfo.description': 'Hér getur þú gert breytingar á þeim bankareikningi sem þú vilt að Fjársýsla ríkisins noti til endurgreiðslu',
+  'edit.bankinfo.description': 'Here you can make changes to the bank account that you want the National Administration of Finance to use for reimbursement',
   'edit.bankinfo.inputlabel.bank': 'Bank',
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Account number',
@@ -339,7 +339,7 @@ export const en: TranslatedMessages = {
 
   // edit confirm
   'edit.confirm.screenTitle': 'Confirm edit',
-  'edit.confirm.description': 'Sláðu inn öryggisnúmerið sem hefur verið sent á símanúmerið sem þú hefur skráð.',
+  'edit.confirm.description': 'Enter the security code that has been sent to the phone number you have registered.',
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm'
