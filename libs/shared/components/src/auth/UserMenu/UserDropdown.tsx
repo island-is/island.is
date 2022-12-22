@@ -29,6 +29,7 @@ interface UserDropdownProps {
   onLogout?: () => void
   onSwitchUser: (nationalId: string) => void
   fullscreen: boolean
+
   showDropdownLanguage: boolean
 }
 
