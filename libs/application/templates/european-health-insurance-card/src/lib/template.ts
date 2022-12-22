@@ -51,7 +51,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('./forms/european-health-insurance-card').then((val) =>
+                import(
+                  './../forms/european-health-insurance-card'
+                ).then((val) =>
                   Promise.resolve(val.EuropeanHealthInsuranceCard),
                 ),
               actions: [
@@ -83,7 +85,9 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               read: 'all',
               formLoader: () =>
-                import('./forms/european-health-insurance-card').then((val) =>
+                import(
+                  './../forms/european-health-insurance-card'
+                ).then((val) =>
                   Promise.resolve(val.EuropeanHealthInsuranceCard),
                 ),
             },
