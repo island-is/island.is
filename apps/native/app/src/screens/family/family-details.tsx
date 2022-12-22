@@ -1,9 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl';
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View, Text, SafeAreaView } from "react-native";
 import { testIDs } from '../../utils/test-ids'
 import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
-import { Input, InputRow, NavigationBarSheet } from '@island.is/island-ui-native';
+import { Input, InputRow, NavigationBarSheet, Typography } from '@island.is/island-ui-native';
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options';
 import { useQuery } from '@apollo/client';
 import { client } from '../../graphql/client'
@@ -44,8 +44,10 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{ nationalId: strin
         style={{ marginHorizontal: 16 }}
       />
     <ScrollView style={{ flex: 1 }} >
-      <View>
-        <Text style={{ paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16, fontWeight: '300' }}>{intl.formatMessage({ id: 'familyDetail.description' })}</Text>
+      <SafeAreaView>
+        <View style={{ paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16 }}>
+          <Typography>{intl.formatMessage({ id: 'familyDetail.description' })}</Typography>
+        </View>
         <InputRow>
           <Input
             loading={loading}
@@ -103,7 +105,7 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{ nationalId: strin
         </InputRow>
 
 
-      </View>
+      </SafeAreaView>
     </ScrollView>
     </View>
   );

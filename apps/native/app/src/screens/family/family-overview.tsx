@@ -116,9 +116,9 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({ componentId 
         return (
           <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
             <EmptyList
-              title={intl.formatMessage({ id: 'assetsOverview.emptyListTitle' })}
+              title={intl.formatMessage({ id: 'family.emptyListTitle' })}
               description={intl.formatMessage({
-                id: 'assetsOverview.emptyListDescription',
+                id: 'family.emptyListDescription',
               })}
               image={
                 <Image source={illustrationSrc} height={192} width={145} />
