@@ -25,6 +25,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/login-service'),
   [ApplicationTypes.INSTITUTION_COLLABORATION]: () =>
     import('@island.is/application/templates/institution-collaboration'),
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
+    import('@island.is/application/templates/european-health-insurance-card'),
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: () =>
     import('@island.is/application/templates/funding-government-projects'),
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: () =>
