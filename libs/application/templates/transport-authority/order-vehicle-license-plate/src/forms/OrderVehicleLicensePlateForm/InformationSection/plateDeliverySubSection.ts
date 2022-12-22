@@ -5,6 +5,7 @@ import {
   buildRadioField,
   buildCheckboxField,
   YES,
+  NO,
   getValueViaPath,
   buildSelectField,
 } from '@island.is/application/core'
@@ -22,22 +23,22 @@ export const plateDeliverySubSection = buildSubSection({
       description: information.general.description,
       children: [
         buildDescriptionField({
-          id: 'plateDelivery.deliveryType.subTitle',
+          id: 'plateDelivery.subTitle',
           title: information.labels.plateDelivery.subTitle,
           titleVariant: 'h5',
           space: 3,
         }),
         buildRadioField({
           title: '',
-          id: 'plateDelivery.deliveryType',
+          id: 'plateDelivery.deliveryMethodIsDeliveryStation',
           options: [
             {
-              value: 'transportAuthority',
+              value: NO,
               label:
                 information.labels.plateDelivery.transportAuthorityOptionTitle,
             },
             {
-              value: 'deliveryStation',
+              value: YES,
               label:
                 information.labels.plateDelivery.deliveryStationOptionTitle,
             },
@@ -46,18 +47,18 @@ export const plateDeliverySubSection = buildSubSection({
           largeButtons: true,
         }),
         buildSelectField({
-          id: 'plateDelivery.deliveryStationCode',
+          id: 'plateDelivery.deliveryStationTypeCode',
           title: information.labels.plateDelivery.deliveryStationTitle,
           placeholder:
             information.labels.plateDelivery.deliveryStationPlaceholder,
           required: true,
           condition: (formValue) => {
-            const deliveryType = getValueViaPath(
+            const deliveryMethodIsDeliveryStation = getValueViaPath(
               formValue,
-              'plateDelivery.deliveryType',
+              'plateDelivery.deliveryMethodIsDeliveryStation',
               '',
             ) as string
-            return deliveryType === 'deliveryStation'
+            return deliveryMethodIsDeliveryStation === YES
           },
           options: (application) => {
             const deliveryStationList = getValueViaPath(
@@ -66,14 +67,14 @@ export const plateDeliverySubSection = buildSubSection({
               [],
             ) as DeliveryStation[]
 
-            return deliveryStationList.map(({ name, code }) => ({
-              value: code || '',
+            return deliveryStationList.map(({ name, codeType }) => ({
+              value: codeType,
               label: name || '',
             }))
           },
         }),
         buildDescriptionField({
-          id: 'plateDelivery.deliveryType.includeRushFeeSubTitle',
+          id: 'plateDelivery.includeRushFeeSubTitle',
           title: information.labels.plateDelivery.includeRushFeeSubTitle,
           titleVariant: 'h5',
           space: 3,

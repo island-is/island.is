@@ -8,6 +8,7 @@ import {
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
 import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
+import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { YES } from '@island.is/application/core'
 
 @Injectable()
@@ -15,12 +16,17 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
+    private readonly vehicleCodetablesClient: VehicleCodetablesClient,
   ) {
     super(ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE)
   }
 
   async getDeliveryStationList({ auth }: TemplateApiModuleActionProps) {
     return await this.vehiclePlateOrderingClient.getDeliveryStations(auth)
+  }
+
+  async getPlateTypeList() {
+    return await this.vehicleCodetablesClient.getPlateTypes()
   }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -75,8 +81,9 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       permno: answers?.vehicle?.plate,
       frontType: answers?.plateSize?.frontPlateSize,
       rearType: answers?.plateSize?.rearPlateSize,
-      deliveryType: answers?.plateDelivery?.deliveryType,
-      deliveryStationCode: answers?.plateDelivery?.deliveryStationCode || '',
+      deliveryMethodIsDeliveryStation:
+        answers.plateDelivery?.deliveryMethodIsDeliveryStation === YES,
+      deliveryStationTypeCode: answers?.plateDelivery?.deliveryStationTypeCode,
       expressOrder: includeRushFee,
     })
   }

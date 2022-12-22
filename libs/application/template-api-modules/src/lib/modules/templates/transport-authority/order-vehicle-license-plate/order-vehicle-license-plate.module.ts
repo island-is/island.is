@@ -7,6 +7,10 @@ import {
   VehiclePlateOrderingClientModule,
   VehiclePlateOrderingClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
+import {
+  VehicleCodetablesClientModule,
+  VehicleCodetablesClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-codetables'
 
 export class OrderVehicleLicensePlateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -15,9 +19,13 @@ export class OrderVehicleLicensePlateModule {
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         VehiclePlateOrderingClientModule,
+        VehicleCodetablesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [VehiclePlateOrderingClientConfig],
+          load: [
+            VehiclePlateOrderingClientConfig,
+            VehicleCodetablesClientConfig,
+          ],
         }),
       ],
       providers: [OrderVehicleLicensePlateService],

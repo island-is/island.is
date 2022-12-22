@@ -9,6 +9,7 @@ import {
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   DeliveryStationsApi,
+  PlateTypesApi,
 } from '../../dataProviders'
 
 export const prerequisitesSection = buildSection({
@@ -37,6 +38,10 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: DeliveryStationsApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: PlateTypesApi,
           title: '',
         }),
       ],

@@ -1,14 +1,17 @@
 import { Application } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../../types'
+import { VehiclesCurrentVehicle, PlateType } from '../../../types'
 import {
   buildMultiField,
   buildTextField,
   buildSubSection,
   buildDescriptionField,
   buildRadioField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedVehicle } from '../../../utils'
+import { formatMessage } from '@formatjs/intl'
+import { useLocale } from '@island.is/localization'
 
 export const plateSizeSubSection = buildSubSection({
   id: 'plateSize',
@@ -61,16 +64,33 @@ export const plateSizeSubSection = buildSubSection({
         buildRadioField({
           title: '',
           id: 'plateSize.frontPlateSize',
-          options: [
-            {
-              value: 'sizeA',
-              label: information.labels.plateSize.frontPlateSizeAOptionTitle,
-            },
-            {
-              value: 'sizeB',
-              label: information.labels.plateSize.frontPlateSizeBOptionTitle,
-            },
-          ],
+          options: (application) => {
+            const { formatMessage } = useLocale()
+
+            const plateTypeList = application.externalData.plateTypeList
+              .data as PlateType[]
+
+            const currentPlateType = getValueViaPath(
+              application.answers,
+              'pickVehicle.plateTypeFront',
+              '',
+            ) as string
+
+            return plateTypeList
+              .filter((x) => x.code === currentPlateType)
+              ?.map((x) => ({
+                value: x.code || '',
+                label:
+                  formatMessage(
+                    information.labels.plateSize.plateSizeOptionTitle,
+                    {
+                      name: x.name,
+                      height: x.plateHeight,
+                      width: x.plateWidth,
+                    },
+                  ) || '',
+              }))
+          },
           width: 'half',
           largeButtons: true,
         }),
@@ -83,16 +103,32 @@ export const plateSizeSubSection = buildSubSection({
         buildRadioField({
           title: '',
           id: 'plateSize.rearPlateSize',
-          options: [
-            {
-              value: 'sizeA',
-              label: information.labels.plateSize.rearPlateSizeAOptionTitle,
-            },
-            {
-              value: 'sizeB',
-              label: information.labels.plateSize.rearPlateSizeBOptionTitle,
-            },
-          ],
+          options: (application) => {
+            const { formatMessage } = useLocale()
+
+            const plateTypeList = application.externalData.plateTypeList
+              .data as PlateType[]
+
+            const currentPlateType = getValueViaPath(
+              application.answers,
+              'pickVehicle.plateTypeRear',
+              '',
+            ) as string
+
+            return plateTypeList
+              .filter((x) => x.code === currentPlateType)
+              ?.map((x) => ({
+                value: x.code || '',
+                label: formatMessage(
+                  information.labels.plateSize.plateSizeOptionTitle,
+                  {
+                    name: x.name,
+                    height: x.plateHeight,
+                    width: x.plateWidth,
+                  },
+                ),
+              }))
+          },
           width: 'half',
           largeButtons: true,
         }),

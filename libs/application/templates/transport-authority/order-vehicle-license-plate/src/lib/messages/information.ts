@@ -116,35 +116,17 @@ export const information = {
         defaultMessage: 'Veldu stærð merkis að framan',
         description: 'Plate size front plate sub title',
       },
-      frontPlateSizeAOptionTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateSize.frontPlateSizeAOptionTitle',
-        defaultMessage: 'Stærð A (110x520cm)',
-        description: 'Plate size front plate size A option title',
-      },
-      frontPlateSizeBOptionTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateSize.frontPlateSizeBOptionTitle',
-        defaultMessage: 'Stærð B (200x280cm)',
-        description: 'Plate size front plate size B option title',
-      },
       rearPlateSubtitle: {
         id:
           'ta.ovlp.application:information.labels.plateSize.rearPlateSubtitle',
         defaultMessage: 'Veldu stærð merkis að framan',
         description: 'Plate size front plate sub title',
       },
-      rearPlateSizeAOptionTitle: {
+      plateSizeOptionTitle: {
         id:
-          'ta.ovlp.application:information.labels.plateSize.rearPlateSizeAOptionTitle',
-        defaultMessage: 'Stærð A (110x520cm)',
-        description: 'Plate size front plate size A option title',
-      },
-      rearPlateSizeBOptionTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateSize.rearPlateSizeBOptionTitle',
-        defaultMessage: 'Stærð B (200x280cm)',
-        description: 'Plate size front plate size B option title',
+          'ta.ovlp.application:information.labels.plateSize.plateSizeOptionTitle',
+        defaultMessage: 'Stærð {name} ({height}x{width}cm)',
+        description: 'Plate size plate size option title',
       },
     }),
     plateDelivery: defineMessages({

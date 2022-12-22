@@ -28,6 +28,7 @@ export const VehicleRadioField: FC<
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
     setPlate(currentVehicle.permno || '')
+    // TODOx set pickVehicle.plateTypeFront and pickVehicle.plateTypeRear
   }
 
   const vehicleOptions = (vehicles: VehiclesCurrentVehicle[]) => {

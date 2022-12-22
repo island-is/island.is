@@ -23,6 +23,7 @@ import {
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   DeliveryStationsApi,
+  PlateTypesApi,
 } from '../dataProviders'
 
 const template: ApplicationTemplate<
@@ -76,6 +77,7 @@ const template: ApplicationTemplate<
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 DeliveryStationsApi,
+                PlateTypesApi,
               ],
             },
           ],

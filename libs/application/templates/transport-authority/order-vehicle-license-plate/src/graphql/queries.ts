@@ -19,6 +19,10 @@ export const GET_VEHICLE_INFORMATION = `
         postalcode
         city
       }
+      registrationInfo {
+        plateTypeFront
+        plateTypeRear
+      }
     }
   }
 `

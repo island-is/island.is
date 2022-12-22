@@ -32,3 +32,8 @@ export const DeliveryStationsApi = defineTemplateApi({
   action: 'getDeliveryStationList',
   externalDataId: 'deliveryStationList',
 })
+
+export const PlateTypesApi = defineTemplateApi({
+  action: 'getPlateTypeList',
+  externalDataId: 'plateTypeList',
+})

@@ -54,6 +54,7 @@ export const VehicleSelectField: FC<
         role: currentVehicle?.role,
       })
       setPlate(currentVehicle.permno || '')
+      // TODOx set pickVehicle.plateTypeFront and pickVehicle.plateTypeRear
       setIsLoading(false)
     }
   }
