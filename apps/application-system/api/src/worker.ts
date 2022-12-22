@@ -11,3 +11,4 @@ export const worker = async () => {
   await app.close()
   process.exit(0)
 }
+
