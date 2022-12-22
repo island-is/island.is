@@ -81,10 +81,11 @@ export class FileController {
   createPresignedPost(
     @Param('caseId') caseId: string,
     @Body() createPresignedPost: CreatePresignedPostDto,
+    @CurrentCase() theCase: Case,
   ): Promise<PresignedPost> {
     this.logger.debug(`Creating a presigned post for case ${caseId}`)
 
-    return this.fileService.createPresignedPost(caseId, createPresignedPost)
+    return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
@@ -103,10 +104,11 @@ export class FileController {
   async createCaseFile(
     @Param('caseId') caseId: string,
     @Body() createFile: CreateFileDto,
+    @CurrentCase() theCase: Case,
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.fileService.createCaseFile(caseId, createFile)
+    return this.fileService.createCaseFile(theCase, createFile)
   }
 
   @UseGuards(CaseExistsGuard, CaseReadGuard)

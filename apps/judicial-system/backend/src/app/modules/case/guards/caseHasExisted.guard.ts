@@ -5,11 +5,11 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 
-import { FileService } from '../file.service'
+import { CaseService } from '../case.service'
 
 @Injectable()
-export class CaseFileExistsGuard implements CanActivate {
-  constructor(private readonly fileService: FileService) {}
+export class CaseHasExistedGuard implements CanActivate {
+  constructor(private readonly caseService: CaseService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
@@ -20,13 +20,7 @@ export class CaseFileExistsGuard implements CanActivate {
       throw new BadRequestException('Missing case id')
     }
 
-    const fileId = request.params.fileId
-
-    if (!fileId) {
-      throw new BadRequestException('Missing file id')
-    }
-
-    request.caseFile = await this.fileService.findById(fileId, caseId)
+    request.case = await this.caseService.findById(caseId, true)
 
     return true
   }

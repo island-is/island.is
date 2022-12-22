@@ -5,6 +5,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   hasCaseBeenAppealed,
   indictmentCases,
   InstitutionType,
@@ -196,16 +197,14 @@ function isHightenedSecurityCaseHiddenFromUser(
   )
 }
 
+const lifetime = literal('current_date - 90')
+const indictmentLifetime = literal('current_date - 180')
+
 export const oldFilter = {
   [Op.or]: [
     {
       [Op.and]: [
-        { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-        { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-      ],
-    },
-    {
-      [Op.and]: [
+        { type: [...restrictionCases, ...investigationCases] },
         {
           state: [
             CaseState.NEW,
@@ -214,21 +213,35 @@ export const oldFilter = {
             CaseState.RECEIVED,
           ],
         },
-        { created: { [Op.lt]: literal('current_date - 90') } },
+        { created: { [Op.lt]: lifetime } },
+      ],
+    },
+    {
+      [Op.and]: [
+        { type: restrictionCases },
+        { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+        { ruling_date: { [Op.lt]: lifetime } },
       ],
     },
     {
       [Op.and]: [
         { type: restrictionCases },
         { state: CaseState.ACCEPTED },
-        { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
+        { valid_to_date: { [Op.lt]: lifetime } },
       ],
     },
     {
       [Op.and]: [
-        { [Op.not]: { type: restrictionCases } },
-        { state: CaseState.ACCEPTED },
-        { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+        { type: investigationCases },
+        { state: completedCaseStates },
+        { ruling_date: { [Op.lt]: lifetime } },
+      ],
+    },
+    {
+      [Op.and]: [
+        { type: indictmentCases },
+        { state: completedCaseStates },
+        { ruling_date: { [Op.lt]: indictmentLifetime } },
       ],
     },
   ],
