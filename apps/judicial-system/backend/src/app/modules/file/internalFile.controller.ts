@@ -4,15 +4,22 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { Case, CaseExistsGuard, CurrentCase } from '../case'
+import {
+  Case,
+  CaseExistsGuard,
+  CaseHasExistedGuard,
+  CaseTypeGuard,
+  CurrentCase,
+} from '../case'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { DeliverResponse } from './models/deliver.response'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 
-@UseGuards(TokenGuard, CaseExistsGuard, CaseFileExistsGuard)
+@UseGuards(TokenGuard)
 @Controller('api/internal/case/:caseId/file/:fileId')
 @ApiTags('internal files')
 export class InternalFileController {
@@ -21,6 +28,7 @@ export class InternalFileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
   @Post('deliverToCourt')
   @ApiCreatedResponse({
     type: DeliverResponse,
@@ -38,6 +46,28 @@ export class InternalFileController {
       caseFile,
       theCase,
     )
+
+    return { delivered: success }
+  }
+
+  @UseGuards(
+    CaseHasExistedGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseFileExistsGuard,
+  )
+  @Post('archive')
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Archives a case file',
+  })
+  async archiveCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Archiving file ${fileId} of case ${caseId}`)
+
+    const success = await this.fileService.archive(caseFile)
 
     return { delivered: success }
   }

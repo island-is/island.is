@@ -139,7 +139,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
             title: '',
             message: n(
               'submitFailureMessage',
-              'Ekki tókst að skrá þig póstlistann, reynið aftur síðar',
+              'Ekki tókst að skrá þig á póstlistann, reynið aftur síðar',
             ) as string,
           })
         }

@@ -7,6 +7,8 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -37,6 +39,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Breyting meðeiganda á ökutæki',
+          status: 'draft',
           actionCard: {
             tag: {
               label: m.actionCardDraft,
@@ -61,6 +64,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },
@@ -71,6 +75,7 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
           lifecycle: {
             shouldBeListed: true,
@@ -95,7 +100,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

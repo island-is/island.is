@@ -21,6 +21,13 @@ export enum Services {
   EXPRESS = 'express',
 }
 
+export enum PASSPORT_CHARGE_CODES {
+  REGULAR = 'AY105',
+  EXPRESS = 'AY106',
+  DISCOUNT_REGULAR = 'AY107',
+  DISCOUNT_EXPRESS = 'AY108',
+}
+
 export enum ApiActions {
   assignParentB = 'assignParentB',
   submitApplication = 'submitApplication',
@@ -31,6 +38,8 @@ export enum ApiActions {
 
 export const YES = 'yes'
 export const NO = 'no'
+
+export const SYSLUMADUR_NATIONAL_ID = '6509142520'
 
 export type Service = {
   type: Services
@@ -47,7 +56,7 @@ export type DistrictCommissionerAgencies = {
 
 export type SubmitResponse = {
   success: boolean
-  orderId?: string
+  orderId?: string[]
 }
 
 export type Passport = {
@@ -62,6 +71,15 @@ export type Guardian = {
   phoneNumber: string
 }
 
+export type PersonalInfo = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber: string
+  hasDisabilityDiscount: string[]
+  hasDisabilityDiscountChecked: boolean
+}
+
 export type ChildsPersonalInfo = {
   name: string
   nationalId: string
@@ -72,8 +90,47 @@ export type ChildsPersonalInfo = {
 
 export type IdentityDocument = {
   number: string
-  expirationDate: Date
+  type: string
+  verboseType: string
+  subType: string
+  status: string
+  issuingDate: string
+  expirationDate: string
+  displayFirstName: string
+  displayLastName: string
+  mrzFirstName: string
+  mrzLastName: string
+  sex: string
+}
+
+export interface IdentityDocumentChild {
+  childNationalId: string
+  secondParent: string
+  secondParentName: string
+  childName: string
+  passports?: IdentityDocument[]
+}
+
+export interface IdentityDocumentData {
+  userPassport: IdentityDocument
+  childPassports: IdentityDocumentChild[]
 }
 
 export const twoDays = 24 * 3600 * 1000 * 2
 export const sixtyDays = 24 * 3600 * 1000 * 60
+
+export const IdentityDocumentProviderMock = {
+  productionRequestID: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  number: 'A1234567',
+  type: 'P',
+  verboseType: 'Vegabréf: Almennt',
+  subType: 'A',
+  status: 'ISSUED',
+  issuingDate: new Date('2012-10-02'),
+  expirationDate: new Date('2022-10-02'),
+  displayFirstName: 'Gervimaður',
+  displayLastName: 'Mock',
+  mrzFirstName: 'GERVIMAÐUR',
+  mrzLastName: 'MOCK',
+  sex: 'X',
+}

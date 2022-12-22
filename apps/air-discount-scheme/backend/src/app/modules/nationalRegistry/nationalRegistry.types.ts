@@ -1,8 +1,10 @@
+import { Gender, RegistryGender } from '@island.is/air-discount-scheme/types'
+
 export interface NationalRegistryGeneralLookupResponse {
   source: 'Þjóðskrá' | 'Fyrirtækjaskrá'
   ssn: string
   name: string
-  gender: 'kk' | 'kvk' | 'hvk'
+  gender: RegistryGender
   address: string
   postalcode: string
   city: string
@@ -34,7 +36,7 @@ export interface NationalRegistryUser {
   firstName: string
   middleName: string
   lastName: string
-  gender: 'kk' | 'kvk' | 'hvk' | 'óvíst'
+  gender: Gender
   address: string
   postalcode: number
   city: string

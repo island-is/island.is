@@ -44,6 +44,7 @@ export abstract class ClientBaseDTO {
     this.supportsLegalGuardians = false
     this.supportsProcuringHolders = false
     this.supportsPersonalRepresentatives = false
+    this.requireApiScopes = false
   }
 
   nationalId: string
@@ -90,4 +91,5 @@ export abstract class ClientBaseDTO {
   supportsProcuringHolders!: boolean
   supportsPersonalRepresentatives!: boolean
   promptDelegations!: boolean
+  requireApiScopes!: boolean
 }

@@ -8,6 +8,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
@@ -60,12 +61,15 @@ export class PoliceService {
   }
 
   private async fetchPoliceDocumentApi(url: string): Promise<Response> {
-    if (!this.config.policeDocumentApiAvailable) {
+    if (!this.config.policeCaseApiAvailable) {
       throw 'Police document API not available'
     }
 
     return fetch(url, {
-      headers: { 'X-Road-Client': this.config.clientId },
+      headers: {
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
       agent: this.agent,
     } as RequestInit)
   }
@@ -91,7 +95,7 @@ export class PoliceService {
     })
 
     const pdf = await this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+      `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
     )
       .then(async (res) => {
         if (res.ok) {
@@ -124,6 +128,15 @@ export class PoliceService {
           reason,
         )
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the file was not found
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+            detail: reason.message,
+          })
+        }
+
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
@@ -143,7 +156,7 @@ export class PoliceService {
     user: User,
   ): Promise<PoliceCaseFile[]> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
+      `${this.xRoadPath}/GetDocumentListById/${caseId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -162,9 +175,9 @@ export class PoliceService {
         const reason = await res.text()
 
         // The police system does not provide a structured error response.
-        // When no files exist for the case, a stack trace is returned.
+        // When police case does not exist, a stack trace is returned.
         throw new NotFoundException({
-          message: `No police case files found for case ${caseId}`,
+          message: `Police case for case ${caseId} does not exist`,
           detail: reason,
         })
       })
@@ -182,6 +195,11 @@ export class PoliceService {
           },
           reason,
         )
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case has no files
+          return []
+        }
 
         throw new BadGatewayException({
           ...reason,
@@ -214,30 +232,28 @@ export class PoliceService {
     defendantNationalIds?: string[],
     caseConclusion?: string,
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(
-      `${this.xRoadPath}/api/Rettarvarsla/UpdateRVCase/${caseId}`,
-      {
-        method: 'PUT',
-        headers: {
-          accept: '*/*',
-          'Content-Type': 'application/json',
-          'X-Road-Client': this.config.clientId,
-        },
-        agent: this.agent,
-        body: JSON.stringify({
-          rvMal_ID: caseId,
-          caseNumber: policeCaseNumber,
-          ssn:
-            defendantNationalIds && defendantNationalIds[0]
-              ? defendantNationalIds[0]
-              : '',
-          type: caseType,
-          courtVerdict: caseState,
-          courtVerdictString: caseConclusion,
-          courtDocument: Base64.btoa(courtRecordPdf),
-        }),
-      } as RequestInit,
-    )
+    return this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
+      method: 'PUT',
+      headers: {
+        accept: '*/*',
+        'Content-Type': 'application/json',
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
+      agent: this.agent,
+      body: JSON.stringify({
+        rvMal_ID: caseId,
+        caseNumber: policeCaseNumber,
+        ssn:
+          defendantNationalIds && defendantNationalIds[0]
+            ? defendantNationalIds[0]
+            : '',
+        type: caseType,
+        courtVerdict: caseState,
+        courtVerdictString: caseConclusion,
+        courtDocument: Base64.btoa(courtRecordPdf),
+      }),
+    } as RequestInit)
       .then(async (res) => {
         if (res.ok) {
           return true
@@ -248,7 +264,12 @@ export class PoliceService {
         throw response
       })
       .catch((reason) => {
-        this.logger.error(`Failed to update police case ${caseId}`, { reason })
+        // Do not spam the logs with errors
+        if (!(reason instanceof ServiceUnavailableException)) {
+          this.logger.error(`Failed to update police case ${caseId}`, {
+            reason,
+          })
+        }
 
         this.eventService.postErrorEvent(
           'Failed to update police case',

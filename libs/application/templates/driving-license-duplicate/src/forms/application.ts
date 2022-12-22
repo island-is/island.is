@@ -10,7 +10,7 @@ export const getApplication = (): Form => {
   return buildForm({
     id: 'DrivingLicenseDuplicateDraftForm',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [

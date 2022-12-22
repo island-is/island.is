@@ -171,7 +171,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return null
 
     const elections: Election[] = data.value.map((x: any) => {
-      return <Election>{
+      return {
         electionId: x.star_electionid,
         name: x.star_name,
         electionDate: new Date(x.star_electiondate),
@@ -227,7 +227,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return null
 
     const financialTypes: FinancialType[] = data.value.map((x: any) => {
-      return <FinancialType>{
+      return {
         numericValue: x.star_numeric,
         financialTypeId: x.star_financialtypeid,
       }
@@ -475,7 +475,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return []
 
     const config: Config[] = data.value.map((x: any) => {
-      return <Config>{
+      return {
         key: x.star_key,
         value: x.star_value,
       }
@@ -495,7 +495,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return []
 
     const taxInfo: TaxInfo[] = data.value.map((x: any) => {
-      return <TaxInfo>{
+      return {
         key: x.star_FinancialType.star_numeric,
         value: x.star_value,
       }

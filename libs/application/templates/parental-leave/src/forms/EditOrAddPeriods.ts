@@ -20,22 +20,18 @@ import { parentalLeaveFormMessages } from '../lib/messages'
 import {
   getApplicationAnswers,
   getAllPeriodDates,
-  getExpectedDateOfBirth,
-  getLastValidPeriodEndDate,
   getPeriodImageTitle,
   getPeriodSectionTitle,
   getLeavePlanTitle,
+  getMinimumStartDate,
 } from '../lib/parentalLeaveUtils'
-import {
-  minimumPeriodStartBeforeExpectedDateOfBirth,
-  minPeriodDays,
-} from '../config'
+import { minPeriodDays } from '../config'
 
 export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
   title: parentalLeaveFormMessages.shared.formEditTitle,
   logo: Logo,
-  mode: FormModes.EDITING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'editOrAddPeriods',
@@ -87,35 +83,8 @@ export const EditOrAddPeriods: Form = buildForm({
                       !!currentPeriod?.firstPeriodStart
                     )
                   },
-                  minDate: (application: Application) => {
-                    const expectedDateOfBirth = getExpectedDateOfBirth(
-                      application,
-                    )
-
-                    const lastPeriodEndDate = getLastValidPeriodEndDate(
-                      application,
-                    )
-
-                    const today = new Date()
-                    if (lastPeriodEndDate) {
-                      return lastPeriodEndDate
-                    } else if (
-                      expectedDateOfBirth &&
-                      new Date(expectedDateOfBirth) > today
-                    ) {
-                      const leastStartDate = addDays(
-                        new Date(expectedDateOfBirth),
-                        -minimumPeriodStartBeforeExpectedDateOfBirth,
-                      )
-                      if (leastStartDate < today) {
-                        return today
-                      }
-
-                      return leastStartDate
-                    }
-
-                    return today
-                  },
+                  minDate: (application: Application) =>
+                    getMinimumStartDate(application),
                   excludeDates: (application) => {
                     const { periods } = getApplicationAnswers(
                       application.answers,

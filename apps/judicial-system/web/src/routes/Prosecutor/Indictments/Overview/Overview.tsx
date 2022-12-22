@@ -17,7 +17,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
@@ -57,9 +57,7 @@ const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
+      activeSection={Sections.PROSECUTOR}
       activeSubSection={
         caseHasBeenSentToCourt
           ? undefined
@@ -110,7 +108,7 @@ const Overview: React.FC = () => {
             onPrimaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
-            primaryButtonText={formatMessage(strings.overview.modalButtonText)}
+            primaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

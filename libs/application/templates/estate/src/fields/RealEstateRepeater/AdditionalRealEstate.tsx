@@ -45,6 +45,7 @@ export const AdditionalRealEstate = ({
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
   const dummyField = `${fieldIndex}.dummy`
+  const shareField = `${fieldIndex}.share`
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -77,7 +78,7 @@ export const AdditionalRealEstate = ({
           },
         },
       })
-    } else {
+    } else if (!field.initial) {
       setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
@@ -98,6 +99,11 @@ export const AdditionalRealEstate = ({
         name={dummyField}
         control={control}
         defaultValue={field.dummy || false}
+      />
+      <Controller
+        name={shareField}
+        control={control}
+        defaultValue={field.share || ''}
       />
       <Text variant="h4">
         {formatMessage(m.realEstateRepeaterHeader) + ' ' + (index + 1)}

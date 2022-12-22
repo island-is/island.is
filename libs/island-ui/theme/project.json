@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/island-ui/theme"]
     }
   },
-  "tags": []
+  "tags": ["lib:react"]
 }

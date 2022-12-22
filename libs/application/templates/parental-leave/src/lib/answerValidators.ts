@@ -15,12 +15,20 @@ import {
   StaticTextObject,
 } from '@island.is/application/types'
 
-import { Period, Payments, OtherParentObj } from '../types'
+import {
+  Period,
+  Payments,
+  OtherParentObj,
+  MultipleBirths,
+  RequestRightsObj,
+  GiveRightsObj,
+} from '../types'
 import {
   MANUAL,
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   SINGLE,
@@ -34,14 +42,22 @@ import {
   calculateDaysUsedByPeriods,
   getAvailableRightsInDays,
   getApplicationAnswers,
+  getMaxMultipleBirthsDays,
+  getSelectedChild,
 } from './parentalLeaveUtils'
 import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
+import { defaultMultipleBirthsMonths } from '../config'
 
 const EMPLOYER = 'employer'
 const FILEUPLOAD = 'fileUpload'
 const PAYMENTS = 'payments'
 const OTHER_PARENT = 'otherParentObj'
+const REQUEST_RIGHTS = 'requestRights'
+const GIVE_RIGHTS = 'giveRights'
+// Check Multiple_Births
+const MULTIPLE_BIRTHS = 'multipleBirths'
+const OTHER_PARENT_EMAIL = 'otherParentEmail'
 // When attempting to continue from the periods repeater main screen
 // this validator will get called to validate all of the periods
 export const VALIDATE_PERIODS = 'validatedPeriods'
@@ -135,7 +151,42 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     return undefined
   },
-  // TODO: should we add validation for otherParent's email?
+  [MULTIPLE_BIRTHS]: (newAnswer: unknown) => {
+    const obj = newAnswer as MultipleBirths
+
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${path}`)(message)
+
+    if (obj.hasMultipleBirths === YES) {
+      if (!obj.multipleBirths) {
+        return buildError(
+          errorMessages.missingMultipleBirthsAnswer,
+          'multipleBirths',
+        )
+      }
+      if (obj.multipleBirths < 2) {
+        return buildError(
+          errorMessages.tooFewMultipleBirthsAnswer,
+          'multipleBirths',
+        )
+      }
+      if (obj.multipleBirths > defaultMultipleBirthsMonths + 1) {
+        return buildError(
+          errorMessages.tooManyMultipleBirthsAnswer,
+          'multipleBirths',
+        )
+      }
+    }
+    return undefined
+  },
+  [OTHER_PARENT_EMAIL]: (newAnswer: unknown, application: Application) => {
+    const email = newAnswer as string
+    const { otherParent } = getApplicationAnswers(application.answers)
+    const hasOtherParent = otherParent !== NO && otherParent !== SINGLE
+    if (hasOtherParent && !isValidEmail(email)) {
+      return buildValidationError(OTHER_PARENT_EMAIL)(errorMessages.email)
+    }
+  },
   [OTHER_PARENT]: (newAnswer: unknown) => {
     const otherParentObj = newAnswer as OtherParentObj
 
@@ -146,6 +197,60 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (otherParentObj.chooseOtherParent === MANUAL) {
       if (isEmpty(otherParentObj.otherParentId))
         return buildError(coreErrorMessages.missingAnswer, 'otherParentId')
+    }
+
+    return undefined
+  },
+  [REQUEST_RIGHTS]: (newAnswer: unknown, application: Application) => {
+    const requestRightsObj = newAnswer as RequestRightsObj
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${path}`)(message)
+
+    const {
+      multipleBirthsRequestDays,
+      hasMultipleBirths,
+    } = getApplicationAnswers(application.answers)
+    const selectedChild = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
+
+    if (
+      requestRightsObj.isRequestingRights === YES &&
+      hasMultipleBirths === YES &&
+      multipleBirthsRequestDays * 1 !==
+        getMaxMultipleBirthsDays(application.answers) &&
+      selectedChild?.parentalRelation === ParentalRelations.primary
+    ) {
+      return buildError(
+        errorMessages.notAllowedToRequestRights,
+        'transferRights',
+      )
+    }
+
+    return undefined
+  },
+  [GIVE_RIGHTS]: (newAnswer: unknown, application: Application) => {
+    const givingRightsObj = newAnswer as GiveRightsObj
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${path}`)(message)
+
+    const {
+      multipleBirthsRequestDays,
+      hasMultipleBirths,
+    } = getApplicationAnswers(application.answers)
+
+    const selectedChild = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
+    if (
+      givingRightsObj.isGivingRights === YES &&
+      hasMultipleBirths === YES &&
+      multipleBirthsRequestDays * 1 !== 0 &&
+      selectedChild?.parentalRelation === ParentalRelations.primary
+    ) {
+      return buildError(errorMessages.notAllowedToGiveRights, 'transferRights')
     }
 
     return undefined
@@ -337,7 +442,8 @@ export const answerValidators: Record<string, AnswerValidator> = {
     return undefined
   },
   [VALIDATE_PERIODS]: (newAnswer: unknown, application: Application) => {
-    const periods = newAnswer as Period[]
+    // const periods = newAnswer as Period[]
+    const { periods } = getApplicationAnswers(application.answers)
 
     if (periods.length === 0) {
       return {

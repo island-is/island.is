@@ -4,18 +4,21 @@ import formatISO from 'date-fns/formatISO'
 import { useIntl, IntlShape } from 'react-intl'
 import { motion } from 'framer-motion'
 
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   DateTime,
   Modal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { Case, UpdateCase, UserRole } from '@island.is/judicial-system/types'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface DateTime {
@@ -318,9 +321,7 @@ const ModifyDatesModal: React.FC<Props> = ({
           caseType: workingCase.type,
         })}
         text={successText}
-        secondaryButtonText={formatMessage(
-          m.sections.modifyDatesModal.secondaryButtonTextSuccess,
-        )}
+        secondaryButtonText={formatMessage(core.closeModal)}
         onSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
           setIsModifyingDates(false)

@@ -30,6 +30,8 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { LandingPageFooter } from './index'
 
+const ARTICLES_PAGE_SIZE = 10
+
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   let link = organization.link
   if (link.includes('://')) {
@@ -74,7 +76,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
           lang: activeLocale,
           organization: organization.slug,
           sort: SortField.Popular,
-          size: 10,
+          size: ARTICLES_PAGE_SIZE,
         },
       },
     },
@@ -165,18 +167,28 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
                     resolvedArticles: articleResponse.data
                       .getArticles as Article[],
                     sortBy: SortField.Popular,
-                    title: n('', 'Efni stofnunar sem komið er á Ísland.is'),
+                    title: n(
+                      'agencyServicesTitle',
+                      'Efni stofnunar sem komið er á Ísland.is',
+                    ),
                     automaticallyFetchArticles: true,
                     hasBorderAbove: true,
                     image: null,
-                    link: {
-                      date: new Date().toISOString(),
-                      id: `featured-articles-${organization.slug}-link`,
-                      text: n('landingPageSeeMoreArticles', 'Sjá allt efni'),
-                      url: `${linkResolver('search').href}?q=*&organization=${
-                        organization.slug
-                      }`,
-                    },
+                    link:
+                      articleResponse.data.getArticles.length >
+                      ARTICLES_PAGE_SIZE
+                        ? {
+                            date: new Date().toISOString(),
+                            id: `featured-articles-${organization.slug}-link`,
+                            text: n(
+                              'landingPageSeeMoreArticles',
+                              'Sjá allt efni',
+                            ),
+                            url: `${
+                              linkResolver('search').href
+                            }?q=*&organization=${organization.slug}`,
+                          }
+                        : null,
                   }}
                   namespace={namespace}
                 />

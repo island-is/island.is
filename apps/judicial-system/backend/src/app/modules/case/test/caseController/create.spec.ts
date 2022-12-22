@@ -10,15 +10,16 @@ import {
   investigationCases,
   restrictionCases,
   User as TUser,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { Defendant, DefendantService } from '../../../defendant'
 import { User } from '../../../user'
 import { Institution } from '../../../institution'
+import { CaseFile } from '../../../file'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
-import { CaseFile } from '../../../file'
 
 interface Then {
   result: Case
@@ -40,6 +41,7 @@ describe('CaseController - Create', () => {
       caseModel,
       caseController,
     } = await createTestingCaseModule()
+
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
@@ -69,6 +71,7 @@ describe('CaseController - Create', () => {
       const courtId = uuid()
       const user = {
         id: userId,
+        role: UserRole.PROSECUTOR,
         institution: { defaultCourtId: courtId },
       } as TUser
       const caseToCreate = {
@@ -107,6 +110,7 @@ describe('CaseController - Create', () => {
     const courtId = uuid()
     const user = {
       id: userId,
+      role: UserRole.PROSECUTOR,
       institution: { defaultCourtId: courtId },
     } as TUser
     const caseToCreate = {
