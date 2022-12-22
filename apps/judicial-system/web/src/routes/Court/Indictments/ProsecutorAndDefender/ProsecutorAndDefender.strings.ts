@@ -20,7 +20,7 @@ export const prosecutorAndDefender = defineMessages({
     defaultMessage:
       'Skipaðir verjendur í sakamálum fá tilkynningu um skipan í tölvupósti en fá ekki afhent málsgögn í gegnum Réttarvörslugátt eins og er.',
     description:
-      'Nota[ur sem texti í alert banner á málflytjendurskjá í ákærum.',
+      'Notaður sem texti í alert banner á málflytjendurskjá í ákærum.',
   },
   selectDefenderHeading: {
     id:
