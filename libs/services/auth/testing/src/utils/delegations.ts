@@ -1,4 +1,5 @@
 import faker from 'faker'
+import { expect } from '@jest/globals'
 
 import {
   ApiScope,
