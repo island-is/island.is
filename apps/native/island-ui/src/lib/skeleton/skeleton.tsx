@@ -4,6 +4,7 @@ import {
   ColorValue,
   Dimensions,
   DynamicColorIOS,
+  DynamicColorIOSTuple,
   LayoutChangeEvent,
   Platform,
   ViewStyle,
@@ -16,8 +17,8 @@ interface SkeletonProps {
   error?: boolean
   height?: number
   style?: ViewStyle
-  backgroundColor?: ColorValue
-  overlayColor?: ColorValue
+  backgroundColor?: ColorValue | DynamicColorIOSTuple
+  overlayColor?: ColorValue | DynamicColorIOSTuple
   overlayOpacity?: number
 }
 
@@ -55,18 +56,26 @@ export function Skeleton(props: SkeletonProps) {
     })
   }
 
+  const overlayColor = baseDynamicColor(
+    typeof props.overlayColor === 'object' && props.overlayColor.light && props.overlayColor.dark ?
+      props.overlayColor : {
+        light: props.overlayColor ?? theme.shades.light.foreground,
+        dark: props.overlayColor ?? theme.shades.dark.shade600,
+     }
+  )
+
+  const backgroundColor = baseDynamicColor(
+    typeof props.backgroundColor === 'object' && props.backgroundColor.light && props.backgroundColor.dark ?
+      props.backgroundColor : {
+        light: props.backgroundColor ?? theme.shades.light.shade100,
+        dark: props.backgroundColor ?? theme.shades.dark.shade200,
+      }
+  )
+
   const {
     active,
     error,
     height = 20,
-    overlayColor = baseDynamicColor({
-      light: theme.shades.light.foreground,
-      dark: theme.shades.dark.shade600,
-    }),
-    backgroundColor = baseDynamicColor({
-      light: theme.shades.light.shade100,
-      dark: theme.shades.dark.shade200,
-    }),
     style,
   } = props
   const { overlayOpacity = height / aw.current } = props

@@ -21,13 +21,10 @@ const Host = styled.TouchableHighlight<HostProps>`
   padding-right: ${({ theme }) => theme.spacing[2]}px;
 
   border-bottom-width: 1px;
-  border-color: ${dynamicColor<HostProps>(
-    ({ theme }) =>
-      ({
-        dark: theme.color.blue400,
-        light: theme.color.blue200,
-      }),
-  )};
+  border-color: ${dynamicColor((props) => ({
+    dark: 'shade500',
+    light: props.theme.color.blue200,
+  }), true)};
 `
 
 const Content = styled.View`

@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { EmptyList, FamilyMemberCard, Skeleton, TopLine } from "@island.is/island-ui-native";
+import { dynamicColor, EmptyList, FamilyMemberCard, Skeleton, TopLine } from "@island.is/island-ui-native";
 import React, { useCallback, useRef, useState } from 'react'
 import { Animated, FlatList, Image, RefreshControl, SafeAreaView, TouchableHighlight, View } from "react-native";
 import { NavigationFunctionComponent } from "react-native-navigation";
@@ -99,8 +99,14 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({ componentId 
           <View style={{ paddingHorizontal: 16 }}>
             <Skeleton
               active
-              backgroundColor={theme.color.blue100}
-              overlayColor={theme.color.blue200}
+              backgroundColor={{
+                dark: theme.shades.dark.shade300,
+                light: theme.color.blue100,
+              }}
+              overlayColor={{
+                dark: theme.shades.dark.shade200,
+                light: theme.color.blue200,
+              }}
               overlayOpacity={1}
               height={104}
               style={{

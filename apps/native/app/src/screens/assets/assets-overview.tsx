@@ -137,8 +137,14 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({ componentId 
           <View style={{ paddingHorizontal: 16 }}>
             <Skeleton
               active
-              backgroundColor={theme.color.blue100}
-              overlayColor={theme.color.blue200}
+              backgroundColor={{
+                dark: theme.shades.dark.shade300,
+                light: theme.color.blue100,
+              }}
+              overlayColor={{
+                dark: theme.shades.dark.shade200,
+                light: theme.color.blue200,
+              }}
               overlayOpacity={1}
               height={104}
               style={{
