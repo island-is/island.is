@@ -12,6 +12,9 @@ module.exports = {
 
         CREATE INDEX defendant__case_id_created__index
         ON "defendant" (case_id uuid_ops, created);
+
+        CREATE INDEX notification__case_id_type__index
+        ON "notification" (case_id uuid_ops, type enum_ops);
       COMMIT;
     `)
   },
@@ -22,6 +25,7 @@ module.exports = {
         DROP INDEX case__parent_case_id__index;
         DROP INDEX case_file__case_id_state__index;
         DROP INDEX defendant__case_id_created__index;
+        DROP INDEX notification__case_id_type__index;
       COMMIT;
     `)
   },
