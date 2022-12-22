@@ -5,7 +5,11 @@ import {
   Result,
   ApiResponse,
   FetchResponse,
-  ServiceErrorCode,
+  ServiceError,
+  ListPassesResponseData,
+  VerifyPassResponseData,
+  VerifyPassData,
+  ParsedApiResponse,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
@@ -16,7 +20,7 @@ import {
 } from '../../gen/schema'
 import { Inject } from '@nestjs/common'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
-import { ErrorMessageToVerifyStatusCodeMap } from './utils'
+import { MapErrorMessageToActionStatusCode } from './utils'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -45,7 +49,7 @@ export class SmartSolutionsApi {
     })
   }
 
-  private async fetchData<T>(query: string): Promise<FetchResponse<T>> {
+  private async fetchData(query: string): Promise<FetchResponse> {
     let res: Response | null = null
     try {
       res = await this.fetchUrl(query)
@@ -104,12 +108,39 @@ export class SmartSolutionsApi {
       return {
         error: {
           code: 12,
-          message: 'JSON parse failure',
+          message: 'JSON parse failed',
         },
       }
     }
 
-    return { apiResponse: json as ApiResponse<T> }
+    return { apiResponse: json as ApiResponse }
+  }
+
+  private parseApiResponse<T>(apiRes: ApiResponse): ParsedApiResponse<T> {
+    if (apiRes.errors) {
+      const resError = apiRes.errors[0]
+      const code = MapErrorMessageToActionStatusCode(resError.message)
+      const error = {
+        code,
+        message: resError.message,
+        data: JSON.stringify(resError),
+      } as ServiceError
+
+      return { error }
+    }
+    const data = apiRes.data as T
+
+    //shouldn't happen
+    if (!data) {
+      const error = {
+        code: 13,
+        data: JSON.stringify(apiRes),
+        message: 'Service error',
+      }
+      return { error }
+    }
+
+    return { data }
   }
 
   async listPkPasses(queryId: string): Promise<Result<Pass[]>> {
@@ -156,14 +187,26 @@ export class SmartSolutionsApi {
       variables: {},
     })
 
-    const response = await this.fetchData<{ passes?: { data: Array<Pass> } }>(
-      graphql,
-    )
+    const response = await this.fetchData(graphql)
 
     if (response.apiResponse) {
+      const apiRes = this.parseApiResponse<ListPassesResponseData>(
+        response.apiResponse,
+      )
+
+      if (apiRes.error) {
+        return {
+          ok: false,
+          error: apiRes.error,
+        }
+      }
+
+      /** No error, so return the data. *
+       * If pass = undefined, it means the user currently has no passes */
+
       return {
         ok: true,
-        data: response.apiResponse.data?.passes?.data ?? [],
+        data: apiRes.data.passes?.data ?? [],
       }
     }
 
@@ -185,7 +228,7 @@ export class SmartSolutionsApi {
 
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
-  ): Promise<Result<Pass & { valid: boolean }>> {
+  ): Promise<Result<VerifyPassData>> {
     const verifyPkPassMutation = `
       mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
         updateStatusOnPassWithDynamicBarcode(dynamicBarcodeData: $dynamicBarcodeData) {
@@ -207,45 +250,18 @@ export class SmartSolutionsApi {
       },
     })
 
-    const response = await this.fetchData<{
-      updateStatusOnPassWithDynamicBarcode?: Pass
-    }>(graphql)
+    const response = await this.fetchData(graphql)
 
     //If the fetch returned a response from the service
     if (response.apiResponse) {
-      const apiRes = response.apiResponse
+      const parsedApiRes = this.parseApiResponse<VerifyPassResponseData>(
+        response.apiResponse,
+      )
 
-      //If the api itself returned an error
-      if (apiRes.errors) {
-        const resError = apiRes.errors[0]
-        const mappedError =
-          resError.message in ErrorMessageToVerifyStatusCodeMap
-            ? (ErrorMessageToVerifyStatusCodeMap[
-                resError.message
-              ] as ServiceErrorCode)
-            : (99 as ServiceErrorCode)
-
+      if (parsedApiRes.error) {
         return {
           ok: false,
-          error: {
-            code: mappedError,
-            message: resError.message,
-            data: JSON.stringify(resError),
-          },
-        }
-      }
-      //else, some the api return some business data
-      const pass = apiRes.data?.updateStatusOnPassWithDynamicBarcode
-
-      //The api should always return the pass
-      if (!pass) {
-        return {
-          ok: false,
-          error: {
-            code: 13,
-            data: JSON.stringify(apiRes),
-            message: 'Service error',
-          },
+          error: parsedApiRes.error,
         }
       }
 
@@ -254,12 +270,12 @@ export class SmartSolutionsApi {
         ok: true,
         data: {
           valid: true,
-          ...pass,
+          pass: parsedApiRes.data.updateStatusOnPassWithDynamicBarcode,
         },
       }
     }
 
-    //if the fetch returned a service error
+    //if the fetch returned a service error, return it
     if (response.error) {
       return {
         ok: false,
@@ -278,6 +294,16 @@ export class SmartSolutionsApi {
   }
 
   async upsertPkPass(payload: PassDataInput): Promise<Result<Pass>> {
+    if (!this.config.passTemplateId) {
+      return {
+        ok: false,
+        error: {
+          code: 10,
+          message: 'Service error',
+        },
+      }
+    }
+
     const createPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
         upsertPass(data: $inputData) {
@@ -298,12 +324,24 @@ export class SmartSolutionsApi {
       },
     })
 
-    const response = await this.fetchData<{ upsertPass: Pass }>(graphql)
+    const response = await this.fetchData(graphql)
 
-    if (response.apiResponse?.data) {
+    if (response.apiResponse) {
+      const parsedApiRes = this.parseApiResponse<{ upsertPass: Pass }>(
+        response.apiResponse,
+      )
+
+      if (parsedApiRes.error) {
+        return {
+          ok: false,
+          error: parsedApiRes.error,
+        }
+      }
+
+      //sweet success
       return {
         ok: true,
-        data: response.apiResponse.data.upsertPass,
+        data: parsedApiRes.data.upsertPass,
       }
     }
 
@@ -415,14 +453,24 @@ export class SmartSolutionsApi {
       variables: {},
     })
 
-    const response = await this.fetchData<{
-      passTemplates?: { data: Array<PassTemplate> }
-    }>(graphql)
+    const response = await this.fetchData(graphql)
 
-    if (response.apiResponse?.data) {
+    if (response.apiResponse) {
+      const parsedApiRes = this.parseApiResponse<{ data: Array<PassTemplate> }>(
+        response.apiResponse,
+      )
+
+      if (parsedApiRes.error) {
+        return {
+          ok: false,
+          error: parsedApiRes.error,
+        }
+      }
+
+      //sweet success
       return {
         ok: true,
-        data: response.apiResponse.data?.passTemplates?.data ?? [],
+        data: parsedApiRes.data.data,
       }
     }
 

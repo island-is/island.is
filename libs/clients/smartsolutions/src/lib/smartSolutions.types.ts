@@ -1,11 +1,17 @@
-export type FetchResponse<T> =
+import { Pass } from '../../gen/schema'
+
+export type ParsedApiResponse<T> =
+  | { data: T; error?: never }
+  | { data?: never; error: ServiceError }
+
+export type FetchResponse =
   /** Returns data if fetch executed */
-  | { apiResponse: ApiResponse<T>; error?: never }
+  | { apiResponse: ApiResponse; error?: never }
   /** Returns an error if the function failed */
   | { apiResponse?: never; error: ServiceError }
 
-export type ApiResponse<ResponseType> = {
-  data?: ResponseType
+export type ApiResponse = {
+  data?: unknown
   errors?: {
     message: string
     path: string
@@ -56,19 +62,30 @@ export type Result<ResultType, ErrorType = ServiceError> =
       ok: false
       error: ErrorType
     }
-/*
-function ui(result: Result<Array<PassTemplate>>) {
-  if (result.ok && result.data.length > 0) {
-    // til skírteini
-  } else if (result.ok && result.data.length === 0) {
-    // á ekki skírteini
-  } else if (!result.ok) {
-    // ökusk á cut-off date fyrir mynd
-    if (result.error.canBeDisplayedToUser) {
-      return 'of gamalt ökusk'
-    } else {
-      return 'villa kom upp'
-    }
+
+export interface VerifyPassData {
+  valid: boolean
+  pass?: Pass
+}
+
+export interface ListPassesResponseData {
+  passes?: {
+    data: Array<Pass>
   }
 }
-*/
+
+export interface VerifyPassResponseData {
+  updateStatusOnPassWithDynamicBarcode?: Pass
+}
+
+export interface UpsertPassResponseData {
+  passes?: {
+    data: Array<Pass>
+  }
+}
+
+export interface ListTemplatesResponseData {
+  passes?: {
+    data: Array<Pass>
+  }
+}
