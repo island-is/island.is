@@ -1,14 +1,22 @@
-import { Application } from "@island.is/application/types"
-import { Payments } from "../../types"
-import { getApplicationAnswers } from "../parentalLeaveUtils"
-import { AnswerValidationConstants, NO, NO_PRIVATE_PENSION_FUND, NO_UNION, PARENTAL_LEAVE, YES } from "../../constants"
-import { buildError } from "./utils"
-import { coreErrorMessages } from "@island.is/application/core"
-const {
-  PAYMENTS,
-} = AnswerValidationConstants
+import { Application } from '@island.is/application/types'
+import { Payments } from '../../types'
+import { getApplicationAnswers } from '../parentalLeaveUtils'
+import {
+  AnswerValidationConstants,
+  NO,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  PARENTAL_LEAVE,
+  YES,
+} from '../../constants'
+import { buildError } from './utils'
+import { coreErrorMessages } from '@island.is/application/core'
+const { PAYMENTS } = AnswerValidationConstants
 
-export const paymentsValidationSection = (newAnswer: unknown, application: Application) => {
+export const paymentsValidationSection = (
+  newAnswer: unknown,
+  application: Application,
+) => {
   const payments = newAnswer as Payments
 
   const {
@@ -19,7 +27,6 @@ export const paymentsValidationSection = (newAnswer: unknown, application: Appli
   } = getApplicationAnswers(application.answers)
 
   if (applicationType === PARENTAL_LEAVE) {
-
     if (!payments.pensionFund) {
       return buildError(coreErrorMessages.defaultError, 'pensionFund', PAYMENTS)
     }
@@ -44,14 +51,14 @@ export const paymentsValidationSection = (newAnswer: unknown, application: Appli
         return buildError(
           coreErrorMessages.defaultError,
           'privatePensionFund',
-          PAYMENTS
+          PAYMENTS,
         )
       }
       if (payments.privatePensionFundPercentage === '') {
         return buildError(
           coreErrorMessages.defaultError,
           'privatePensionFundPercentage',
-          PAYMENTS
+          PAYMENTS,
         )
       }
     }
@@ -60,7 +67,11 @@ export const paymentsValidationSection = (newAnswer: unknown, application: Appli
       payments.privatePensionFund === '' ||
       payments.privatePensionFund === NO_PRIVATE_PENSION_FUND
     ) {
-      return buildError(coreErrorMessages.defaultError, 'privatePensionFund', PAYMENTS)
+      return buildError(
+        coreErrorMessages.defaultError,
+        'privatePensionFund',
+        PAYMENTS,
+      )
     }
 
     // This case will only happen if the users has first selected NO
@@ -73,7 +84,7 @@ export const paymentsValidationSection = (newAnswer: unknown, application: Appli
       return buildError(
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',
-        PAYMENTS
+        PAYMENTS,
       )
     }
 
@@ -85,7 +96,7 @@ export const paymentsValidationSection = (newAnswer: unknown, application: Appli
       return buildError(
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',
-        PAYMENTS
+        PAYMENTS,
       )
     }
 

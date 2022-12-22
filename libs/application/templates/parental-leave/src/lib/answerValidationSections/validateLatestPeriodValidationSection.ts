@@ -74,8 +74,10 @@ export const validateLatestPeriodValidationSection = (
     (period) => !!period?.startDate || !!period?.firstPeriodStart,
   )
 
-  const validationError = validatePeriodRepeaterFields(periods);
-  if (validationError) { return validationError; }
+  const validationError = validatePeriodRepeaterFields(periods)
+  if (validationError) {
+    return validationError
+  }
 
   if (filterPeriods?.length !== periods?.length) {
     periods = getValueViaPath(application.answers, 'periods')

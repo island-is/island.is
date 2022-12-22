@@ -1,11 +1,14 @@
-import { Application } from "@island.is/application/types"
-import { GiveRightsObj } from "../../types"
-import { getApplicationAnswers, getSelectedChild } from "../parentalLeaveUtils"
-import { ParentalRelations, YES } from "../../constants"
-import { buildError } from "./utils"
-import { errorMessages } from "../messages"
+import { Application } from '@island.is/application/types'
+import { GiveRightsObj } from '../../types'
+import { getApplicationAnswers, getSelectedChild } from '../parentalLeaveUtils'
+import { ParentalRelations, YES } from '../../constants'
+import { buildError } from './utils'
+import { errorMessages } from '../messages'
 
-export const giveRightsValidationSection = (newAnswer: unknown, application: Application) => {
+export const giveRightsValidationSection = (
+  newAnswer: unknown,
+  application: Application,
+) => {
   const givingRightsObj = newAnswer as GiveRightsObj
 
   const {

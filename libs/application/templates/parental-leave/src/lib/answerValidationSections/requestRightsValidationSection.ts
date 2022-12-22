@@ -1,11 +1,18 @@
-import { Application } from "@island.is/application/types";
-import { ParentalRelations, YES } from "../../constants";
-import { RequestRightsObj } from "../../types";
-import { errorMessages } from "../messages";
-import { getApplicationAnswers, getMaxMultipleBirthsDays, getSelectedChild } from "../parentalLeaveUtils";
-import { buildError } from "./utils";
+import { Application } from '@island.is/application/types'
+import { ParentalRelations, YES } from '../../constants'
+import { RequestRightsObj } from '../../types'
+import { errorMessages } from '../messages'
+import {
+  getApplicationAnswers,
+  getMaxMultipleBirthsDays,
+  getSelectedChild,
+} from '../parentalLeaveUtils'
+import { buildError } from './utils'
 
-export const requestRightsValidationSection = (newAnswer: unknown, application: Application) => {
+export const requestRightsValidationSection = (
+  newAnswer: unknown,
+  application: Application,
+) => {
   const requestRightsObj = newAnswer as RequestRightsObj
 
   const {
@@ -24,11 +31,8 @@ export const requestRightsValidationSection = (newAnswer: unknown, application: 
       getMaxMultipleBirthsDays(application.answers) &&
     selectedChild?.parentalRelation === ParentalRelations.primary
   ) {
-    return buildError(
-      errorMessages.notAllowedToRequestRights,
-      'transferRights',
-    )
+    return buildError(errorMessages.notAllowedToRequestRights, 'transferRights')
   }
 
   return undefined
-};
+}

@@ -1,8 +1,8 @@
-import { defaultMultipleBirthsMonths } from "../../config";
-import { YES } from "../../constants";
-import { MultipleBirths } from "../../types";
-import { errorMessages } from "../messages";
-import { buildError } from "./utils";
+import { defaultMultipleBirthsMonths } from '../../config'
+import { YES } from '../../constants'
+import { MultipleBirths } from '../../types'
+import { errorMessages } from '../messages'
+import { buildError } from './utils'
 
 export const multipleBirthValidationSection = (newAnswer: unknown) => {
   const obj = newAnswer as MultipleBirths
@@ -28,4 +28,4 @@ export const multipleBirthValidationSection = (newAnswer: unknown) => {
     }
   }
   return undefined
-};
+}

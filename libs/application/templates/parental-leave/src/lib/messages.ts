@@ -2095,7 +2095,7 @@ export const errorMessages = defineMessages({
   periodsUseLengthMissing: {
     id: 'pl.application:answerValidators.periodsUseLengthMissing',
     defaultMessage: 'Vinsamlegast veldu annan hvorn möguleikann.',
-    description: 'Use length cannot be empty.'
+    description: 'Use length cannot be empty.',
   },
   periodsEndDateDefinitionMissing: {
     id: 'pl.application:answerValidators.periodsEndDateDefinitionMissing',

@@ -1,16 +1,17 @@
-import { Answer, Application } from "@island.is/application/types";
-import { getApplicationAnswers } from "../parentalLeaveUtils";
+import { Answer, Application } from '@island.is/application/types'
+import { getApplicationAnswers } from '../parentalLeaveUtils'
 import isEmpty from 'lodash/isEmpty'
-import { buildError } from "./utils";
-import { AnswerValidationConstants, NO, YES } from "../../constants";
-import { errorMessages } from "../messages";
-import { isValidEmail } from "../isValidEmail";
-import { coreErrorMessages } from "@island.is/application/core";
-const {
-  EMPLOYER,
-} = AnswerValidationConstants
+import { buildError } from './utils'
+import { AnswerValidationConstants, NO, YES } from '../../constants'
+import { errorMessages } from '../messages'
+import { isValidEmail } from '../isValidEmail'
+import { coreErrorMessages } from '@island.is/application/core'
+const { EMPLOYER } = AnswerValidationConstants
 
-export const employerValidationSection = (newAnswer: unknown, application: Application) => {
+export const employerValidationSection = (
+  newAnswer: unknown,
+  application: Application,
+) => {
   const obj = newAnswer as Record<string, Answer>
 
   const { isSelfEmployed } = getApplicationAnswers(application.answers)
@@ -24,7 +25,11 @@ export const employerValidationSection = (newAnswer: unknown, application: Appli
     isSelfEmployed === YES &&
     isEmpty((obj.selfEmployed as { file: unknown[] }).file)
   ) {
-    return buildError(errorMessages.requiredAttachment, 'selfEmployed.file', EMPLOYER)
+    return buildError(
+      errorMessages.requiredAttachment,
+      'selfEmployed.file',
+      EMPLOYER,
+    )
   }
 
   if (isSelfEmployed === NO && isEmpty(obj?.email)) {
@@ -39,8 +44,12 @@ export const employerValidationSection = (newAnswer: unknown, application: Appli
     if (isSelfEmployed) {
       return undefined
     }
-    return buildError(coreErrorMessages.defaultError, 'isSelfEmployed', EMPLOYER)
+    return buildError(
+      coreErrorMessages.defaultError,
+      'isSelfEmployed',
+      EMPLOYER,
+    )
   }
 
   return undefined
-};
+}

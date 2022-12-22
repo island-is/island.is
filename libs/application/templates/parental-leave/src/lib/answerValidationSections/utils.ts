@@ -38,10 +38,10 @@ export const buildError = (
 }
 
 export type ValidateField<T> = {
-  fieldName: string;
-  validationFn: (value: T) => boolean,
+  fieldName: string
+  validationFn: (value: T) => boolean
   message: MessageDescriptor
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const validateFieldInDictionary = <T extends Object>(
@@ -53,12 +53,12 @@ export const validateFieldInDictionary = <T extends Object>(
 ) => {
   try {
     const invalidKey = Object.keys(dictionary).find((key) => {
-      const currentPeriod = dictionary[key];
+      const currentPeriod = dictionary[key]
       // eslint-disable-next-line no-prototype-builtins
       if (currentPeriod.hasOwnProperty(fieldName)) {
         return validationFn(currentPeriod)
       }
-      return false;
+      return false
     })
 
     if (invalidKey) {

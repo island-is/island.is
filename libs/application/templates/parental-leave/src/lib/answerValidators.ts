@@ -1,10 +1,6 @@
-import {
-  AnswerValidator,
-} from '@island.is/application/core'
+import { AnswerValidator } from '@island.is/application/core'
 
-import {
-  AnswerValidationConstants,
-} from '../constants'
+import { AnswerValidationConstants } from '../constants'
 import { employerValidationSection } from './answerValidationSections/employerValidationSection'
 import { fileUploadValidationSection } from './answerValidationSections/fileUploadValidationSection'
 import { multipleBirthValidationSection } from './answerValidationSections/multipleBirthValidationSection'

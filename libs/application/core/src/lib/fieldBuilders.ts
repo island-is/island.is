@@ -154,7 +154,7 @@ export function buildRadioField(
     required,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
-  });
+  })
 
   return {
     ...extractCommonFields(data),
