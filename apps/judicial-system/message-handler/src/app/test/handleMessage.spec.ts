@@ -247,6 +247,58 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('deliver case to police', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_CASE_TO_POLICE,
+        caseId,
+      })
+    })
+
+    it('should deliver case to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverCaseToPolice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('archive case file', () => {
+    const caseFileId = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.ARCHIVE_CASE_FILE,
+        caseId,
+        caseFileId,
+      } as CaseFileMessage)
+    })
+
+    it('should archive case file', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/file/${caseFileId}/archive`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('send defendants not updated at court notification', () => {
     let then: Then
 

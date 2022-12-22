@@ -2,9 +2,15 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
+import {
+  CaseFileState,
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
+import { Case } from '../../../case'
 import { CreateFileDto } from '../../dto/createFile.dto'
 import { CaseFile } from '../../models/file.model'
 import { createTestingFileModule } from '../createTestingFileModule'
@@ -17,6 +23,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   createCaseFile: CreateFileDto,
+  theCase: Case,
 ) => Promise<Then>
 
 describe('FileController - Create case file', () => {
@@ -31,11 +38,12 @@ describe('FileController - Create case file', () => {
     givenWhenThen = async (
       caseId: string,
       createCaseFile: CreateFileDto,
+      theCase: Case,
     ): Promise<Then> => {
       const then = {} as Then
 
       await fileController
-        .createCaseFile(caseId, createCaseFile)
+        .createCaseFile(caseId, createCaseFile, theCase)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -43,47 +51,67 @@ describe('FileController - Create case file', () => {
     }
   })
 
-  describe('database insert', () => {
-    const caseId = uuid()
-    const uuId = uuid()
-    const createCaseFile: CreateFileDto = {
-      type: 'text/plain',
-      key: `uploads/${caseId}/${uuId}/test.txt`,
-      size: 99,
-    }
-    let mockCreate: jest.Mock
-
-    beforeEach(async () => {
-      mockCreate = mockFileModel.create as jest.Mock
-
-      await givenWhenThen(caseId, createCaseFile)
-    })
-
-    it('should create a case file in the database', () => {
-      expect(mockCreate).toHaveBeenCalledWith({
+  describe.each([...restrictionCases, ...investigationCases])(
+    'case file created for %s case',
+    (type) => {
+      const caseId = uuid()
+      const theCase = { id: caseId, type } as Case
+      const uuId = uuid()
+      const createCaseFile: CreateFileDto = {
         type: 'text/plain',
-        state: CaseFileState.STORED_IN_RVG,
         key: `uploads/${caseId}/${uuId}/test.txt`,
         size: 99,
-        caseId,
-        name: 'test.txt',
-      })
-    })
-  })
+      }
+      const fileId = uuid()
+      const timeStamp = randomDate()
+      const caseFile = {
+        type: 'text/plain',
+        key: `uploads/${caseId}/${uuId}/test.txt`,
+        size: 99,
+        id: fileId,
+        created: timeStamp,
+        modified: timeStamp,
+      }
+      let then: Then
 
-  describe('case file created', () => {
+      beforeEach(async () => {
+        const mockCreate = mockFileModel.create as jest.Mock
+        mockCreate.mockResolvedValueOnce(caseFile)
+
+        then = await givenWhenThen(caseId, createCaseFile, theCase)
+      })
+
+      it('should create a case file in the database', () => {
+        expect(mockFileModel.create).toHaveBeenCalledWith({
+          type: 'text/plain',
+          state: CaseFileState.STORED_IN_RVG,
+          key: `uploads/${caseId}/${uuId}/test.txt`,
+          size: 99,
+          caseId,
+          name: 'test.txt',
+        })
+      })
+
+      it('should return a case file', () => {
+        expect(then.result).toBe(caseFile)
+      })
+    },
+  )
+
+  describe.each(indictmentCases)('case file created for %s case', (type) => {
     const caseId = uuid()
+    const theCase = { id: caseId, type } as Case
     const uuId = uuid()
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
-      key: `uploads/${caseId}/${uuId}/test.txt`,
+      key: `indictments/${caseId}/${uuId}/test.txt`,
       size: 99,
     }
     const fileId = uuid()
     const timeStamp = randomDate()
     const caseFile = {
       type: 'text/plain',
-      key: `uploads/${caseId}/${uuId}/test.txt`,
+      key: `indictments/${caseId}/${uuId}/test.txt`,
       size: 99,
       id: fileId,
       created: timeStamp,
@@ -95,7 +123,18 @@ describe('FileController - Create case file', () => {
       const mockCreate = mockFileModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(caseFile)
 
-      then = await givenWhenThen(caseId, createCaseFile)
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should create a case file in the database', () => {
+      expect(mockFileModel.create).toHaveBeenCalledWith({
+        type: 'text/plain',
+        state: CaseFileState.STORED_IN_RVG,
+        key: `indictments/${caseId}/${uuId}/test.txt`,
+        size: 99,
+        caseId,
+        name: 'test.txt',
+      })
     })
 
     it('should return a case file', () => {
@@ -105,6 +144,7 @@ describe('FileController - Create case file', () => {
 
   describe('malformed key', () => {
     const caseId = uuid()
+    const theCase = { id: caseId } as Case
     const uuId = `-${uuid()}`
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
@@ -114,7 +154,7 @@ describe('FileController - Create case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, createCaseFile)
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
     })
 
     it('should throw bad gateway exception', () => {
@@ -127,6 +167,7 @@ describe('FileController - Create case file', () => {
 
   describe('database insert fails', () => {
     const caseId = uuid()
+    const theCase = { id: caseId } as Case
     const uuId = uuid()
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
@@ -139,7 +180,7 @@ describe('FileController - Create case file', () => {
       const mockCreate = mockFileModel.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, createCaseFile)
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
     })
 
     it('should throw error', () => {
