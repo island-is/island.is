@@ -1,0 +1,25 @@
+{
+  "root": "libs/european-health-insurance-card",
+  "sourceRoot": "libs/european-health-insurance-card/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/european-health-insurance-card/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/european-health-insurance-card"],
+      "options": {
+        "jestConfig": "libs/european-health-insurance-card/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

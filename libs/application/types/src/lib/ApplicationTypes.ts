@@ -39,6 +39,7 @@ export enum ApplicationTypes {
   ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
+  EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
 }
 
 export const ApplicationConfigurations = {
@@ -85,6 +86,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
     translation: 'ia.application',
+  },
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
+    slug: 'sjukrakort',
+    translation: 'ehic.application',
   },
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
     slug: 'fjarmognun-rikisverkefni',

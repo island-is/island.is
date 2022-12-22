@@ -27,6 +27,8 @@ export const institutionMapper = {
     InstitutionTypes.UMBODSMADUR_ALTHINGIS,
   [ApplicationTypes.ACCIDENT_NOTIFICATION]:
     InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]:
+    InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
   [ApplicationTypes.GENERAL_PETITION]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: InstitutionTypes.FISKISTOFA,
   [ApplicationTypes.P_SIGN]: InstitutionTypes.SYSLUMENN,
