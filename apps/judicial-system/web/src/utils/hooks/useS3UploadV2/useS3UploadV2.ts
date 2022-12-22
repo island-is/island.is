@@ -80,8 +80,8 @@ export const useS3UploadV2 = (caseId: string) => {
     (
       files: Array<[File, string]>,
       updateFile: (file: UploadFile, newId?: string) => void,
-      category: CaseFileCategory,
-      policeCaseNumber: string,
+      category?: CaseFileCategory,
+      policeCaseNumber?: string,
     ) => {
       files.forEach(async ([file, id]) => {
         try {
@@ -115,8 +115,8 @@ export const useS3UploadV2 = (caseId: string) => {
                 type: file.type,
                 key: presignedPost.fields.key,
                 size: file.size,
-                category: category,
-                policeCaseNumber: policeCaseNumber,
+                ...(category && { category }),
+                ...(policeCaseNumber && { policeCaseNumber }),
               },
             },
           })

@@ -20,7 +20,6 @@ import {
   LoadingDots,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 import {
   TUploadFile,
   useS3Upload,
@@ -110,7 +109,11 @@ interface Props {
   policeCaseNumber?: string
   setFilesInRVG: React.Dispatch<React.SetStateAction<UploadFile[] | undefined>>
   refreshCase: () => void
-  addFileToCase: (file: TUploadFile) => Promise<void>
+  addFileToCase: (
+    file: TUploadFile,
+    cb: (file: UploadFile) => void,
+  ) => Promise<void>
+  addFileToCaseCB: (file: UploadFile) => void
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
@@ -122,6 +125,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
   setFilesInRVG,
   refreshCase,
   addFileToCase,
+  addFileToCaseCB,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
@@ -241,15 +245,16 @@ const PoliceCaseFiles: React.FC<Props> = ({
         policeCaseFile.id,
         policeCaseFile.name,
       )
-
-      await addFileToCase({
+      const fileToUpload = {
         type: 'application/pdf',
         name: policeCaseFile.name,
         status: 'done',
         state: CaseFileState.STORED_IN_RVG,
         key,
         size,
-      } as UploadFile)
+      } as UploadFile
+
+      await addFileToCase(fileToUpload, () => addFileToCaseCB(fileToUpload))
 
       setFilesInRVG([
         {

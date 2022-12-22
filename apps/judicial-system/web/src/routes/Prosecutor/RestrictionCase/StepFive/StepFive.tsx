@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { uuid } from 'uuidv4'
 
 import {
   ProsecutorCaseInfo,
@@ -21,10 +22,10 @@ import {
   rcCaseFiles as m,
 } from '@island.is/judicial-system-web/messages'
 import {
-  TUploadFile,
   useCase,
   useDeb,
   useS3Upload,
+  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Box,
@@ -36,7 +37,7 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { CaseFile, CaseFileState } from '@island.is/judicial-system/types'
+import { CaseFileState } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
@@ -62,9 +63,9 @@ export const StepFive: React.FC = () => {
     allFilesUploaded,
     handleRemoveFromS3,
     handleRetry,
-    handleS3Upload,
-    createFileMutation,
+    addFileToCase,
   } = useS3Upload(workingCase)
+  const { upload } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -73,45 +74,32 @@ export const StepFive: React.FC = () => {
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  const addFileToCase = async (file: TUploadFile) => {
-    if (workingCase && file.size && file.key) {
-      await createFileMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            type: file.type,
-            key: file.key,
-            size: file.size,
-            category: file.category,
-            policeCaseNumber: file.policeCaseNumber,
-          },
+  const addFileToCaseCB = (file: UploadFile) => {
+    setWorkingCase({
+      ...workingCase,
+      caseFiles: [
+        {
+          ...file,
+          id: file.id || '',
+          type: file.type || '',
+          size: file.size || 0,
+          caseId: workingCase.id,
+          state: CaseFileState.STORED_IN_RVG,
+          modified: new Date().toISOString(),
+          created: new Date().toISOString(),
         },
-      })
-        .then((res) => {
-          file.id = res.data.createFile.id
-          file.status = 'done'
-          setWorkingCase({
-            ...workingCase,
-            caseFiles: [
-              {
-                ...file,
-                id: file.id || '',
-                type: file.type || '',
-                size: file.size || 0,
-                caseId: workingCase.id,
-                state: CaseFileState.STORED_IN_RVG,
-                modified: new Date().toISOString(),
-                created: new Date().toISOString(),
-              },
-              ...(workingCase.caseFiles || []),
-            ],
-          })
-        })
-        .catch(() => {
-          // TODO: handle error
-          console.log('TODO!!!!')
-        })
-    }
+        ...(workingCase.caseFiles || []),
+      ],
+    })
+  }
+
+  const handleUpload = (files: File[]) => {
+    const filesWithId: Array<[File, string]> = files.map((file) => [
+      file,
+      uuid(),
+    ])
+
+    upload(filesWithId, addFileToCaseCB)
   }
 
   useEffect(() => {
@@ -160,6 +148,7 @@ export const StepFive: React.FC = () => {
           setFilesInRVG={setFilesInRVG}
           refreshCase={refreshCase}
           addFileToCase={addFileToCase}
+          addFileToCaseCB={addFileToCaseCB}
         />
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
@@ -176,7 +165,7 @@ export const StepFive: React.FC = () => {
               fileList={filesInRVG || []}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
-              onChange={handleS3Upload}
+              onChange={handleUpload}
               onRemove={(file) => {
                 handleRemoveFromS3(file)
                 setPoliceCaseFileList([
