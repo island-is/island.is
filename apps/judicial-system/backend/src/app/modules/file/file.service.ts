@@ -137,9 +137,6 @@ export class FileService {
       case CaseFileCategory.RULING:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
-      case CaseFileCategory.CASE_FILE_CONTENTS:
-        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
-        break
       case CaseFileCategory.CASE_FILE:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
         break
