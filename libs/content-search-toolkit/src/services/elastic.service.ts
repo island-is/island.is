@@ -41,7 +41,6 @@ type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
 
-// REMOVE - SIMPLY A COMMENT LINE TO TRIGGER FEATURE DEPLOY STUFF ON GITHUB
 @Injectable()
 export class ElasticService {
   private client: Client | null = null
