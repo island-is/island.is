@@ -2,6 +2,7 @@
   "root": "apps/samradsgatt",
   "sourceRoot": "apps/samradsgatt",
   "projectType": "application",
+  "generators": {},
   "targets": {
     "build": {
       "executor": "@nrwl/workspace:run-commands",
@@ -25,11 +26,7 @@
         "outputPath": "dist/apps/samradsgatt"
       },
       "configurations": {
-        "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
-        }
+        "production": {}
       },
       "outputs": ["{options.outputPath}"]
     },
@@ -52,10 +49,9 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/next:server",
+      "executor": "@nrwl/node:node",
       "options": {
-        "buildTarget": "samradsgatt:build",
-        "dev": true
+        "buildTarget": "samradsgatt:build-server"
       }
     },
     "export": {
@@ -74,7 +70,6 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/samradsgatt/**/*.{ts,tsx,js,jsx}"]
       }
