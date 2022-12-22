@@ -38,11 +38,11 @@ export class VehiclePlateOrderingClient {
     let deliveryStationCode: string
 
     // Check if used selected delivery method: Pick up at delivery station
-    const deliveryStationTypeCode = plateOrder.deliveryStationTypeCode
-    if (plateOrder.deliveryMethodIsDeliveryStation && deliveryStationTypeCode) {
+    const deliveryStationCodeType = plateOrder.deliveryStationCodeType
+    if (plateOrder.deliveryMethodIsDeliveryStation && deliveryStationCodeType) {
       // Split up code+type (was merged when we fetched that data)
-      deliveryStationType = deliveryStationTypeCode.split('_')[0]
-      deliveryStationCode = deliveryStationTypeCode.split('_')[1]
+      deliveryStationCode = deliveryStationCodeType.split('_')[0]
+      deliveryStationType = deliveryStationCodeType.split('_')[1]
     } else {
       // Otherwise we will default to "Pick up at Samgöngustofa" which is type=R and code=1
       deliveryStationType = 'R'

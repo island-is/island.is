@@ -47,7 +47,7 @@ export const plateDeliverySubSection = buildSubSection({
           largeButtons: true,
         }),
         buildSelectField({
-          id: 'plateDelivery.deliveryStationTypeCode',
+          id: 'plateDelivery.deliveryStationCodeType',
           title: information.labels.plateDelivery.deliveryStationTitle,
           placeholder:
             information.labels.plateDelivery.deliveryStationPlaceholder,

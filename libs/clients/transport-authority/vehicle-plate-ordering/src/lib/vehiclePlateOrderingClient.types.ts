@@ -8,6 +8,6 @@ export interface PlateOrder {
   frontType?: string | null
   rearType?: string | null
   deliveryMethodIsDeliveryStation: boolean
-  deliveryStationTypeCode?: string
+  deliveryStationCodeType?: string
   expressOrder: boolean
 }

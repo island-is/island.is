@@ -83,7 +83,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       rearType: answers?.plateSize?.rearPlateSize,
       deliveryMethodIsDeliveryStation:
         answers.plateDelivery?.deliveryMethodIsDeliveryStation === YES,
-      deliveryStationTypeCode: answers?.plateDelivery?.deliveryStationTypeCode,
+      deliveryStationCodeType: answers?.plateDelivery?.deliveryStationCodeType,
       expressOrder: includeRushFee,
     })
   }
