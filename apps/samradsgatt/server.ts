@@ -5,7 +5,4 @@ bootstrap({
   name: 'samradsgatt',
   appDir: 'apps/samradsgatt',
   proxyConfig,
-  externalEndpointDependencies: process.env.BASE_URL
-    ? [process.env.BASE_URL]
-    : [],
 })
