@@ -86,12 +86,12 @@ export const USERS_ROUTE = '/notendur'
 export const CREATE_USER_ROUTE = '/notendur/nyr'
 export const CHANGE_USER_ROUTE = '/notendur/breyta'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
-export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/krafa/akaera/yfirlit'
+export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
 
 export const CREATE_RESTRICTION_CASE_ROUTE = '/krafa/ny/gaesluvardhald'
 export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
 export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
-export const CREATE_INDICTMENT_ROUTE = '/krafa/ny/akaera'
+export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
 export const DEFENDER_ROUTE = '/verjandi'
 
@@ -117,12 +117,12 @@ export const INVESTIGATION_CASE_CASE_FILES_ROUTE =
 export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
-export const INDICTMENTS_DEFENDANT_ROUTE = '/krafa/akaera/akaerdi'
-export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/krafa/akaera/malsgogn'
-export const INDICTMENTS_CASE_FILE_ROUTE = '/krafa/akaera/skjalaskra'
-export const INDICTMENTS_PROCESSING_ROUTE = '/krafa/akaera/malsmedferd'
-export const INDICTMENTS_CASE_FILES_ROUTE = '/krafa/akaera/domskjol'
-export const INDICTMENTS_OVERVIEW_ROUTE = '/krafa/akaera/stadfesta'
+export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
+export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
+export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
+export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
+export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */

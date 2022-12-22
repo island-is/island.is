@@ -121,7 +121,7 @@ export const estateSchema = z.object({
     })
     .array()
     .optional(),
-  acceptDebts: z.array(z.enum([YES, NO])).optional(),
+  acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
 
   // is: Heimild til setu í óskiptu búi skv. erfðaskrá
   undividedEstateResidencePermission: z.enum([YES, NO]),
