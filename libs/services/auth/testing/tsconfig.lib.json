@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../../../../dist/out-tsc",
     "declaration": true,
-    "types": ["jest"],
+    "types": [],
     "target": "es6"
   },
   "include": ["**/*.ts"],
