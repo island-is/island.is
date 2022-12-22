@@ -8,18 +8,12 @@ import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { matchPath, useLocation } from 'react-router-dom'
 import { LoadingScreen } from '../components/LoadingScreen/LoadingScreen'
-import {
-  PortalModule,
-  PortalNavigationItem,
-  PortalRoute,
-  PortalType,
-} from '../types/portalCore'
+import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
 import { arrangeRoutes, filterEnabledModules } from '../utils/modules'
 
 type PortalMeta = {
   portalType: PortalType
   basePath: string
-  masterNav?: PortalNavigationItem
 }
 
 export type PortalContextProps = {
@@ -67,7 +61,7 @@ export const PortalProvider = ({
             // Find the route path that matches the current pathname
             .find((path) =>
               matchPath(pathname, {
-                path: path,
+                path,
               }),
             ),
         )

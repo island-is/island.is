@@ -131,10 +131,11 @@ export class DefendantService {
       !defendant.nationalId ||
       defendant.nationalId.replace('-', '').length !== 10
     ) {
-      await this.messageService.sendMessageToQueue({
-        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
-        caseId: theCase.id,
-      })
+      // TODO: Uncomment when we are ready to send notifications
+      // await this.messageService.sendMessageToQueue({
+      //   type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+      //   caseId: theCase.id,
+      // })
 
       return { delivered: true }
     }
