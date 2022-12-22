@@ -63,7 +63,6 @@ interface FamilyMemberCardProps {
  }
 
 export function FamilyMemberCard({ name, nationalId }: FamilyMemberCardProps) {
-  return null;
   return (
     <Host>
       <ImageWrap>

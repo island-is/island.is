@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { TextInput } from "react-native";
+import { TextInput, TextInputProps } from "react-native";
 import styled from "styled-components/native";
 import { font } from "../../utils";
 
@@ -31,22 +31,25 @@ const Input = styled.TextInput`
   })}
 `;
 
-interface TextFieldProps {
+type TIProps = Omit<TextInputProps, 'onChange'>;
+
+interface TextFieldProps extends TIProps {
   label: string;
   value: string;
   onChange: (e: string) => void;
 }
 
-export const TextField = ({ label, onChange, value, ...rest }: TextFieldProps) => {
+export const TextField = ({ label, onChange, value, style, ...rest }: TextFieldProps) => {
   const inputRef = useRef<TextInput>(null)
 
   return (
-    <Host onPress={() => inputRef.current?.focus()} {...rest}>
+    <Host onPress={() => inputRef.current?.focus()} style={style}>
       <Label>{label}</Label>
       <Input
         onChangeText={onChange}
         value={value}
         ref={inputRef}
+        {...rest}
       />
     </Host>
   );

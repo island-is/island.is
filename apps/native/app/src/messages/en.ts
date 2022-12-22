@@ -339,5 +339,6 @@ export const en: TranslatedMessages = {
   'edit.confirm.screenTitle': 'Confirm edit',
   'edit.confirm.description': 'Sláðu inn öryggisnúmerið sem hefur verið sent á símanúmerið sem þú hefur skráð.',
   'edit.confirm.inputlabel': 'Security number',
-  'edit.confirm.button': 'Cancel',
+  'edit.cancel.button': 'Cancel',
+  'edit.confirm.button': 'Confirm'
 }

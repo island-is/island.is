@@ -337,5 +337,6 @@ export const is = {
   'edit.confirm.screenTitle': 'Staðfesta aðgerð',
   'edit.confirm.description': 'Sláðu inn öryggisnúmerið sem hefur verið sent á símanúmerið sem þú hefur skráð.',
   'edit.confirm.inputlabel': 'Öryggisnúmer',
-  'edit.confirm.button': 'Hætta við',
+  'edit.cancel.button': 'Hætta við',
+  'edit.confirm.button': 'Staðfesta'
 }

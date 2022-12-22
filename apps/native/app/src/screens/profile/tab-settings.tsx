@@ -5,17 +5,16 @@ import {
   IconButton,
   TableViewAccessory,
   TableViewCell,
-  TableViewGroup
+  TableViewGroup,
 } from '@island.is/island-ui-native'
 import messaging from '@react-native-firebase/messaging'
-import {
-  authenticateAsync
-} from 'expo-local-authentication'
+import { authenticateAsync } from 'expo-local-authentication'
 import gql from 'graphql-tag'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
-  Alert as RNAlert, Linking,
+  Alert as RNAlert,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -23,13 +22,11 @@ import {
   TouchableOpacity,
   View,
   Text,
-  Image
+  Image,
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
-import CodePush, {
-  LocalPackage
-} from 'react-native-code-push'
+import CodePush, { LocalPackage } from 'react-native-code-push'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
 import { client } from '../../graphql/client'
 import { showPicker } from '../../lib/show-picker'
@@ -37,7 +34,7 @@ import { authStore } from '../../stores/auth-store'
 import {
   PreferencesStore,
   preferencesStore,
-  usePreferencesStore
+  usePreferencesStore,
 } from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
@@ -47,6 +44,7 @@ import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
 import { navigateTo } from '../../lib/deep-linking'
 import editIcon from '../assets/icons/edit.png'
+import { USER_PROFILE_QUERY } from '../../graphql/queries/user-profile.query'
 
 const PreferencesSwitch = React.memo(
   ({ name }: { name: keyof PreferencesStore }) => {
@@ -98,29 +96,13 @@ export function TabSettings() {
     })
   }
 
-  const userProfileQuery = gql`
-    query {
-      getUserProfile {
-        nationalId
-        locale
-        documentNotifications
-        mobilePhoneNumber
-        mobileStatus
-        email
-        emailStatus
-        bankInfo
-        modified
-        canNudge
-        modified
-      }
-    }
-  `
-
-  const userProfile = useQuery(userProfileQuery, {
+  const userProfile = useQuery(USER_PROFILE_QUERY, {
     client,
-  });
+  })
 
-  const [documentNotifications, setDocumentNotifications] = useState(userProfile.data?.getUserProfile?.documentNotifications);
+  const [documentNotifications, setDocumentNotifications] = useState(
+    userProfile.data?.getUserProfile?.documentNotifications,
+  )
 
   const onLanguagePress = () => {
     showPicker({
@@ -157,39 +139,43 @@ export function TabSettings() {
   }, [])
 
   function updateDocumentNotifications(value: boolean) {
-    client.mutate({
-      mutation: gql`
-        mutation updateProfile($input: UpdateUserProfileInput!) {
-          updateProfile(input: $input) {
-            nationalId
-            locale
-            documentNotifications
+    client
+      .mutate({
+        mutation: gql`
+          mutation updateProfile($input: UpdateUserProfileInput!) {
+            updateProfile(input: $input) {
+              nationalId
+              locale
+              documentNotifications
+            }
           }
-        }
-      `,
-      update(cache, { data: { updateProfile } }) {
-        cache.modify({
-          fields: {
-            getUserProfile: (existing) => {
-              return { ...existing, ...updateProfile };
+        `,
+        update(cache, { data: { updateProfile } }) {
+          cache.modify({
+            fields: {
+              getUserProfile: (existing) => {
+                return { ...existing, ...updateProfile }
+              },
             },
-          }
-        });
-      },
-      variables: {
-        input: {
-          documentNotifications: value,
-        }
-      }
-    }).catch((err) => {
-      console.log(JSON.stringify(err));
-      alert(err.message)
-    })
+          })
+        },
+        variables: {
+          input: {
+            documentNotifications: value,
+          },
+        },
+      })
+      .catch((err) => {
+        console.log(JSON.stringify(err))
+        alert(err.message)
+      })
   }
 
   useEffect(() => {
     if (userProfile) {
-      setDocumentNotifications(userProfile.data?.getUserProfile?.documentNotifications)
+      setDocumentNotifications(
+        userProfile.data?.getUserProfile?.documentNotifications,
+      )
     }
   }, [userProfile])
 
@@ -203,32 +189,60 @@ export function TabSettings() {
         hideIcon
       />
       <View style={{ height: 32 }} />
-        <TableViewGroup
-          header={intl.formatMessage({
-            id: 'settings.usersettings.groupTitle',
+      <TableViewGroup
+        header={intl.formatMessage({
+          id: 'settings.usersettings.groupTitle',
+        })}
+      >
+        <TableViewCell
+          title={intl.formatMessage({
+            id: 'settings.usersettings.telephone',
           })}
-        >
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.usersettings.telephone',
-            })}
-            subtitle={userProfile.data?.getUserProfile?.mobilePhoneNumber ?? '-'}
-            accessory={<TouchableOpacity onPress={() => navigateTo(`/editphone`)} style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10 }}><Image source={editIcon as any} style={{ width: 19, height: 19 }} /></TouchableOpacity>}
-          />
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.usersettings.email',
-            })}
-            subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
-            accessory={<TouchableOpacity onPress={() => navigateTo(`/editemail`)}><Image source={editIcon as any} style={{ width: 19, height: 19 }} /></TouchableOpacity>}
-          />
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.usersettings.bankinfo',
-            })}
-            subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
-            accessory={<TouchableOpacity onPress={() => navigateTo(`/editbankinfo`)}><Image source={editIcon as any} style={{ width: 19, height: 19 }} /></TouchableOpacity>}
-          />
+          subtitle={userProfile.data?.getUserProfile?.mobilePhoneNumber ?? '-'}
+          accessory={
+            <TouchableOpacity
+              onPress={() => navigateTo(`/editphone`)}
+              style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10 }}
+            >
+              <Image
+                source={editIcon as any}
+                style={{ width: 19, height: 19 }}
+              />
+            </TouchableOpacity>
+          }
+        />
+        <TableViewCell
+          title={intl.formatMessage({
+            id: 'settings.usersettings.email',
+          })}
+          subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
+          accessory={
+            <TouchableOpacity onPress={() => navigateTo(`/editemail`)}>
+              <Image
+                source={editIcon as any}
+                style={{ width: 19, height: 19 }}
+              />
+            </TouchableOpacity>
+          }
+        />
+        <TableViewCell
+          title={intl.formatMessage({
+            id: 'settings.usersettings.bankinfo',
+          })}
+          subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
+          accessory={
+            <TouchableOpacity
+              onPress={() =>
+                navigateTo(`/editbankinfo`)
+              }
+            >
+              <Image
+                source={editIcon as any}
+                style={{ width: 19, height: 19 }}
+              />
+            </TouchableOpacity>
+          }
+        />
       </TableViewGroup>
       <TableViewGroup
         header={intl.formatMessage({
@@ -244,8 +258,7 @@ export function TabSettings() {
               onValueChange={(value) => {
                 updateDocumentNotifications(value)
                 setDocumentNotifications(value)
-              }
-              }
+              }}
               disabled={userProfile.loading && !userProfile.data}
               value={documentNotifications}
               thumbColor={Platform.select({ android: theme.color.dark100 })}
@@ -380,8 +393,11 @@ export function TabSettings() {
             },
           )}
           subtitle={
-            authenticationTypes.length === 0 ? intl.formatMessage({id: 'onboarding.biometrics.noAuthenticationTypes'}) :
-            isEnrolledBiometrics
+            authenticationTypes.length === 0
+              ? intl.formatMessage({
+                  id: 'onboarding.biometrics.noAuthenticationTypes',
+                })
+              : isEnrolledBiometrics
               ? intl.formatMessage(
                   {
                     id: 'settings.security.useBiometricsDescription',
@@ -507,9 +523,9 @@ export function TabSettings() {
           title={intl.formatMessage({ id: 'settings.about.codePushLabel' })}
           subtitle={
             loadingCP
-              ? intl.formatMessage({ id: 'settings.about.codePushLoading'})
+              ? intl.formatMessage({ id: 'settings.about.codePushLoading' })
               : !localPackage
-              ? intl.formatMessage({ id: 'settings.about.codePushUpToDate'})
+              ? intl.formatMessage({ id: 'settings.about.codePushUpToDate' })
               : `${localPackage?.label}`
           }
         />
