@@ -271,6 +271,8 @@ export const en: TranslatedMessages = {
 
   // family
   'family.screenTitle': 'Family',
+  'family.emptyListTitle': 'No family members found for user',
+  'family.emptyListDescription': 'Family members related to you appear here.',
 
   // family details
   'familyDetail.title': 'Info',

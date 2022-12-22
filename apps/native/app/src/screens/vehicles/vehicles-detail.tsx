@@ -108,7 +108,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, 
             />
           </InputRow>
 
-          <InputRow>
+           <InputRow>
             <Input
               loading={loading}
               error={isError}
@@ -127,36 +127,37 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, 
           </InputRow>
 
 
-          <InputRow>
-            {mainInfo?.co2 && (
-              <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
-                value={`${mainInfo?.co2} g/km`}
-              />
-            )}
-          </InputRow>
-          {mainInfo && (
+          {mainInfo?.co2 ? (
             <InputRow>
-            {mainInfo?.trailerWithBrakesWeight && (
-              <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({ id: 'vehicleDetail.trailerWithBrakes' })}
-                value={`${mainInfo?.trailerWithBrakesWeight} kg`}
-              />
-            )}
-            {mainInfo?.trailerWithoutBrakesWeight && (
-              <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({ id: 'vehicleDetail.trailerWithoutBrakes' })}
-                value={`${mainInfo?.trailerWithoutBrakesWeight} kg`}
-              />
-            )}
+                <Input
+                  loading={loading}
+                  error={isError}
+                  label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
+                  value={`${mainInfo?.co2} g/km`}
+                />
             </InputRow>
-          )}
+          ) : null}
+
+          {mainInfo ? (
+            <InputRow>
+              {mainInfo?.trailerWithBrakesWeight ? (
+                <Input
+                  loading={loading}
+                  error={isError}
+                  label={intl.formatMessage({ id: 'vehicleDetail.trailerWithBrakes' })}
+                  value={`${mainInfo?.trailerWithBrakesWeight} kg`}
+                />
+              ) : null}
+              {mainInfo?.trailerWithoutBrakesWeight ? (
+                <Input
+                  loading={loading}
+                  error={isError}
+                  label={intl.formatMessage({ id: 'vehicleDetail.trailerWithoutBrakes' })}
+                  value={`${mainInfo?.trailerWithoutBrakesWeight} kg`}
+                />
+              ) : null}
+            </InputRow>
+          ) : null}
         </View>
       </ScrollView>
     </View>

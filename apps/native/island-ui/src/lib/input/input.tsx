@@ -66,7 +66,7 @@ export function Input({
       <Content isCompact={isCompact}>
         <Label>{label}</Label>
         {loading || error ? (
-          <Skeleton active={loading} error={error} />
+          <Skeleton active={loading} error={error} height={size === 'big' ? 26 : undefined} />
         ) : (
           <Value testID={valueTestID} size={size}>{tvalue === '' || !value ? '-' : value}</Value>
         )}
