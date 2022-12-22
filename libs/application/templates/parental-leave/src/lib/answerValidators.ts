@@ -13,7 +13,7 @@ import { requestRightsValidationSection } from './answerValidationSections/reque
 import { giveRightsValidationSection } from './answerValidationSections/giveRightsValidationSection'
 import { paymentsValidationSection } from './answerValidationSections/paymentsValidationSection'
 import { validateLatestPeriodValidationSection } from './answerValidationSections/validateLatestPeriodValidationSection'
-import { validatePeriodsValidationSchema } from './answerValidationSections/validatePeriodsValidationSchema'
+import { validatePeriodsValidationSection } from './answerValidationSections/validatePeriodsValidationSection'
 
 const {
   EMPLOYER,
@@ -36,5 +36,5 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [GIVE_RIGHTS]: giveRightsValidationSection,
   [PAYMENTS]: paymentsValidationSection,
   [VALIDATE_LATEST_PERIOD]: validateLatestPeriodValidationSection,
-  [VALIDATE_PERIODS]: validatePeriodsValidationSchema,
+  [VALIDATE_PERIODS]: validatePeriodsValidationSection,
 }

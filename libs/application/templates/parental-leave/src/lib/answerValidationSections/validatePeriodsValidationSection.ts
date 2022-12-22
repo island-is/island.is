@@ -2,7 +2,7 @@ import { Application } from "@island.is/application/types"
 import { calculateDaysUsedByPeriods, getApplicationAnswers, getAvailableRightsInDays } from "../parentalLeaveUtils"
 import { errorMessages } from "../messages"
 
-export const validatePeriodsValidationSchema = (newAnswer: unknown, application: Application) => {
+export const validatePeriodsValidationSection = (newAnswer: unknown, application: Application) => {
   // const periods = newAnswer as Period[]
   const { periods } = getApplicationAnswers(application.answers)
 

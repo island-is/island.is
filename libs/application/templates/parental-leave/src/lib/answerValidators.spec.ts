@@ -408,6 +408,52 @@ describe('when constructing a new period', () => {
     )
   })
 
+  it('should not be allowed to pass without providing a start date', () => {
+    expect(createValidationResultForPeriod({
+      startDate: null
+    })).toEqual({
+      message: errorMessages.periodsStartMissing,
+      path: 'periods[0].startDate',
+      values: undefined,
+    })
+  });
+
+  it('should not be allowed to pass without providing a use length option', () => {
+    expect(createValidationResultForPeriod({
+      startDate: DEFAULT_DOB_DATE,
+      useLength: null
+    })).toEqual({
+      message: errorMessages.periodsUseLengthMissing,
+      path: 'periods[0].useLength',
+      values: undefined,
+    })
+  });
+
+  it('should not be allowed to pass without providing an end date', () => {
+    expect(createValidationResultForPeriod({
+      startDate: DEFAULT_DOB_DATE,
+      useLength: NO,
+      endDate: null
+    })).toEqual({
+      message: errorMessages.periodsEndDateRequired,
+      path: 'periods[0].endDate',
+      values: undefined,
+    })
+  });
+
+  it('should not be allowed to pass without providing a ratio', () => {
+    expect(createValidationResultForPeriod({
+      startDate: DEFAULT_DOB_DATE,
+      useLength: NO,
+      endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+      ratio: null
+    })).toEqual({
+      message: errorMessages.periodsRatioMissing,
+      path: 'periods[0].ratio',
+      values: undefined,
+    })
+  });
+
   it('should not be allowed to pass in a start date before dob but not further back than minimum', () => {
     const minimumDate = addMonths(
       DEFAULT_DOB_DATE,

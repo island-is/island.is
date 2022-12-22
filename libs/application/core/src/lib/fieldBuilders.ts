@@ -144,6 +144,18 @@ export function buildRadioField(
     required,
   } = data
 
+  console.log({
+    ...extractCommonFields(data),
+    children: undefined,
+    largeButtons,
+    options,
+    backgroundColor,
+    space,
+    required,
+    type: FieldTypes.RADIO,
+    component: FieldComponents.RADIO,
+  });
+
   return {
     ...extractCommonFields(data),
     children: undefined,

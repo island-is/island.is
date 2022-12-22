@@ -1,16 +1,71 @@
-import { Application, StaticTextObject } from "@island.is/application/types"
-import { Period } from "../../types"
-import { errorMessages } from "../messages"
-import { AnswerValidationError, buildValidationError, getValueViaPath } from "@island.is/application/core"
-import isArray from "lodash/isArray"
-import { calculateDaysUsedByPeriods, filterValidPeriods, getAvailableRightsInDays, getExpectedDateOfBirth } from "../parentalLeaveUtils"
-import { validatePeriod } from "./utils"
-import { AnswerValidationConstants } from "../../constants"
-const {
-  VALIDATE_LATEST_PERIOD,
-} = AnswerValidationConstants
+import { Application, StaticTextObject } from '@island.is/application/types'
+import { Period } from '../../types'
+import { errorMessages } from '../messages'
+import {
+  AnswerValidationError,
+  buildValidationError,
+  getValueViaPath,
+} from '@island.is/application/core'
+import isArray from 'lodash/isArray'
+import {
+  calculateDaysUsedByPeriods,
+  filterValidPeriods,
+  getAvailableRightsInDays,
+  getExpectedDateOfBirth,
+} from '../parentalLeaveUtils'
+import {
+  ValidateField,
+  validateFieldInDictionary,
+  validatePeriod,
+} from './utils'
+import { AnswerValidationConstants } from '../../constants'
+const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
-export const validateLatestPeriodValidationSection = (newAnswer: unknown, application: Application) => {
+const validatePeriodRepeaterFields = (
+  periods: Period[] | undefined,
+): AnswerValidationError | undefined => {
+  const periodDictionary = (periods as unknown) as Record<string, Period>
+  const validations: ValidateField<Period>[] = [
+    {
+      fieldName: 'startDate',
+      validationFn: (p) => isNaN(Date.parse(p.startDate)),
+      message: errorMessages.periodsStartMissing,
+    },
+    {
+      fieldName: 'useLength',
+      validationFn: (p) => !p.useLength,
+      message: errorMessages.periodsUseLengthMissing,
+    },
+    {
+      fieldName: 'endDate',
+      validationFn: (p) => isNaN(Date.parse(p.endDate)),
+      message: errorMessages.periodsEndDateRequired,
+    },
+    {
+      fieldName: 'ratio',
+      validationFn: (p) => !p.ratio,
+      message: errorMessages.periodsRatioMissing,
+    },
+  ]
+
+  for (const { fieldName, validationFn, message } of validations) {
+    const result = validateFieldInDictionary(
+      periodDictionary,
+      'periods',
+      fieldName,
+      validationFn,
+      message,
+    )
+    if (result) {
+      return result
+    }
+  }
+}
+
+export const validateLatestPeriodValidationSection = (
+  newAnswer: unknown,
+  application: Application,
+) => {
   let periods = newAnswer as Period[] | undefined
 
   // If added new a period, sometime the old periods in newAnswer are 'null'
@@ -19,18 +74,8 @@ export const validateLatestPeriodValidationSection = (newAnswer: unknown, applic
     (period) => !!period?.startDate || !!period?.firstPeriodStart,
   )
 
-  const periodDictionary = (periods as unknown) as Record<string, Period>
-  const invalidKey = Object.keys(periodDictionary).find((key) => {
-    const currentPeriod = periodDictionary[key]
-    return isNaN(Date.parse(currentPeriod.startDate))
-  })
-
-  if (invalidKey) {
-    return {
-      path: `periods[${invalidKey}].startDate`,
-      message: errorMessages.periodsStartDateRequired,
-    }
-  }
+  const validationError = validatePeriodRepeaterFields(periods);
+  if (validationError) { return validationError; }
 
   if (filterPeriods?.length !== periods?.length) {
     periods = getValueViaPath(application.answers, 'periods')
