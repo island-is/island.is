@@ -6,7 +6,7 @@ import {
 import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
 import { AdminPortalPaths } from './paths'
 
-const rootNavigationItem: PortalNavigationItem = {
+export const rootNavigationItem: PortalNavigationItem = {
   name: coreMessages.overview,
   systemRoute: true,
   path: AdminPortalPaths.Root,

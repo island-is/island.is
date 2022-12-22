@@ -9,7 +9,7 @@ import { UserService } from '../user.service'
 
 @Injectable()
 export class UserExistsGuard implements CanActivate {
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
