@@ -79,7 +79,7 @@ export class NotificationsController {
     return { id }
   }
 
-  @Post("/demo")
+  @Post('/demo')
   @ApiBody({
     schema: {
       type: 'object',
@@ -88,12 +88,10 @@ export class NotificationsController {
   })
   @ApiOkResponse({ type: CreateNotificationResponse })
   @HttpCode(201)
-  async create(
-    @Req() req: Request,
-  ): Promise<CreateNotificationResponse> {
+  async create(@Req() req: Request): Promise<CreateNotificationResponse> {
     const message = await validateMessage(req.body)
     const id = await this.queue.add(message)
     this.logger.info('Message queued 2', { messageId: id, ...message })
     return { id }
-  } 
+  }
 }
