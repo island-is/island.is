@@ -56,7 +56,7 @@ export const Header = () => {
                 flexWrap="nowrap"
                 marginLeft={1}
               >
-                <UserMenu fullscreen />
+                <UserMenu showLanguageSwitcher={false} iconOnlyMobile />
               </Box>
             </Hidden>
           </Box>
