@@ -1,8 +1,13 @@
-<<<<<<< HEAD
-export { NoDebtCertificateProvider } from './NoDebtCertificateProvider'
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { FeeInfoProvider } from './FeeInfoProvider'
-export { CriminalRecordProvider } from './CriminalRecordProvider'
-=======
+import { defineTemplateApi } from '@island.is/application/types'
+
 export { PaymentCatalogApi, UserProfileApi } from '@island.is/application/types'
->>>>>>> main
+
+export const CriminalRecordApi = defineTemplateApi({
+  action: 'criminalRecord',
+  externalDataId: 'criminalRecord',
+})
+
+export const NoDebtCertificateApi = defineTemplateApi({
+  action: 'debtLessCertificate',
+  externalDataId: 'debtStatus',
+})

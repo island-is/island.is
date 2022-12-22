@@ -19,17 +19,13 @@ import {
   SYSLUMADUR_NATIONAL_ID,
 } from './constants'
 import { m } from './messages'
-<<<<<<< HEAD
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '../types/schema'
 import {
   getApplicationFeatureFlags,
   OperatingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
-=======
-import { Features } from '@island.is/feature-flags'
-import { AuthDelegationType } from '@island.is/shared/types'
->>>>>>> main
+import { CriminalRecordApi, NoDebtCertificateApi } from '../dataProviders'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -93,6 +89,8 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                   externalDataId: 'payment',
                 }),
                 UserProfileApi,
+                CriminalRecordApi,
+                NoDebtCertificateApi,
               ],
             },
           ],
