@@ -160,14 +160,16 @@ const UploadFilesToPoliceCase: React.FC<{
   const onRemove = useCallback(
     async (file: UploadFile) => {
       try {
-        const response = await remove(file.id)
-        if (!response.data?.deleteFile.success) {
-          throw new Error(`Failed to delete file: ${file.id}`)
-        }
+        if (file.id) {
+          const response = await remove(file.id)
+          if (!response.data?.deleteFile.success) {
+            throw new Error(`Failed to delete file: ${file.id}`)
+          }
 
-        setDisplayFiles((previous) => {
-          return previous.filter((f) => f.id !== file.id)
-        })
+          setDisplayFiles((previous) => {
+            return previous.filter((f) => f.id !== file.id)
+          })
+        }
       } catch (e) {
         toast.error(formatMessage(errorMessages.failedDeleteFile))
       }

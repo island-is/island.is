@@ -103,12 +103,12 @@ export const CaseFiles: React.FC = () => {
             textProps={{ marginBottom: 0 }}
           />
         </Box>
-        <PoliceCaseFiles
+        {/* <PoliceCaseFiles
           isUploading={isUploading}
           setIsUploading={setIsUploading}
           policeCaseFileList={policeCaseFileList}
           setPoliceCaseFileList={setPoliceCaseFileList}
-        />
+        /> */}
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.files.heading)}

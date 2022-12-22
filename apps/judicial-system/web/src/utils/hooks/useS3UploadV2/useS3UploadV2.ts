@@ -149,7 +149,7 @@ export const useS3UploadV2 = (caseId: string) => {
   )
 
   const remove = useCallback(
-    (fileId) => {
+    (fileId: string) => {
       return deleteFileMutation({
         variables: {
           input: {

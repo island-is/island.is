@@ -102,11 +102,10 @@ export const StepFive: React.FC = () => {
   const {
     uploadErrorMessage,
     allFilesUploaded,
-    handleRemoveFromS3,
     handleRetry,
     addFileToCase,
   } = useS3Upload(workingCase)
-  const { upload } = useS3UploadV2(workingCase.id)
+  const { upload, remove } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -263,17 +262,18 @@ export const StepFive: React.FC = () => {
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleUpload}
               onRemove={(file) => {
-                handleRemoveFromS3(file)
-                setPoliceCaseFileList([
-                  ...policeCaseFileList,
-                  (file as unknown) as PoliceCaseFileCheck,
-                ])
-                setWorkingCase({
-                  ...workingCase,
-                  caseFiles: workingCase.caseFiles?.filter(
-                    (f) => f.id !== file.id,
-                  ),
-                })
+                if (file.id) {
+                  remove(file.id)
+                  setPoliceCaseFileList((previous) =>
+                    previous.filter((f) => f.id !== file.id),
+                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    caseFiles: workingCase.caseFiles?.filter(
+                      (f) => f.id !== file.id,
+                    ),
+                  })
+                }
               }}
               onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
