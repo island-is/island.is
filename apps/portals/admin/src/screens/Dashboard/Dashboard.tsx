@@ -1,3 +1,5 @@
+import { Link, Redirect } from 'react-router-dom'
+
 import {
   Box,
   CategoryCard,
@@ -10,10 +12,15 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Link } from 'react-router-dom'
-import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
+import {
+  getNavigationItemIfSingle,
+  PortalNavigationItem,
+  useNavigation,
+} from '@island.is/portals/core'
 import { m as adminMessages } from '@island.is/portals/admin/core'
+
 import { BOTTOM_NAVIGATION, TOP_NAVIGATION } from '../../lib/masterNavigation'
+
 import * as styles from './Dashboard.css'
 
 export const Dashboard = () => {
@@ -21,6 +28,16 @@ export const Dashboard = () => {
   const { md } = useBreakpoint()
   const topNavigation = useNavigation(TOP_NAVIGATION)
   const bottomNavigation = useNavigation(BOTTOM_NAVIGATION)
+  const navigationItem = getNavigationItemIfSingle(
+    TOP_NAVIGATION,
+    BOTTOM_NAVIGATION,
+  )
+
+  if (navigationItem) {
+    if (navigationItem.path) {
+      return <Redirect to={navigationItem.path} />
+    }
+  }
 
   const renderNavItem = (item: PortalNavigationItem, index: number) => (
     <GridColumn

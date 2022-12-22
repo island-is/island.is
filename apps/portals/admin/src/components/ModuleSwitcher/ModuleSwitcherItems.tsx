@@ -19,6 +19,7 @@ import {
 } from '../../lib/masterNavigation'
 
 import * as styles from './ModuleSwitcherItems.css'
+import { theme } from '@island.is/island-ui/theme'
 
 interface ModuleItemsProps {
   mobile?: boolean
@@ -70,7 +71,11 @@ export const ModuleSwitcherItems = ({
             size="small"
           />
           <Box marginLeft={3}>
-            <Text color={color} variant={mobile ? 'h3' : 'medium'}>
+            <Text
+              color={color}
+              variant={mobile ? 'h3' : 'medium'}
+              fontWeight={!mobile && active ? 'semiBold' : undefined}
+            >
               {label}
             </Text>
           </Box>

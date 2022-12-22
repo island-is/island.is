@@ -16,6 +16,7 @@ export * from './hooks/useQueryParam'
 // utils
 export * from './utils/formatNationalId'
 export * from './utils/modules'
+export * from './utils/navigation'
 export * from './utils/plausible'
 
 // screens
