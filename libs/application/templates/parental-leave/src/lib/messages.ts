@@ -1801,8 +1801,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     genericDescription: {
       id: 'pl.application:attachmentscreen.genericDescription',
-      defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `Here you can upload additional documentation for the Parental Leave Fund. Note that the document needs to be on .pdf format`,
+      defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Til dæmis ef barn tveggja mæðra var getið með tæknifrjóvgun þarf að skila staðfestingu frá Livio að um tæknifrjóvgun sé að ræða með samþykki beggja aðila. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Here you can upload additional documentation for the Parental Leave Fund. For example, if the child of two mothers was conceived via artificial insemination, the parents need to upload confirmation from Livio that artifical insemination was undergone with the consent of both parents. Note that the document needs to be on .pdf format`,
     },
     studentTitle: {
       id: 'pl.application:attachmentscreen.studentTitle',
