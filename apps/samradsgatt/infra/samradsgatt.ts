@@ -16,17 +16,27 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
     })
     .env({
       BASEPATH: '/samradsgatt',
-      SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
+      IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
+      NEXTAUTH_URL: {
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }loftbru.dev01.devland.is`,
+        ),
+        staging: 'https://loftbru.staging01.devland.is',
+        prod: 'https://loftbru.island.is',
+      },
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
-      SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
-      SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
-      SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
+      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      IDENTITY_SERVER_SECRET: '/k8s/samradsgatt/web/IDENTITY_SERVER_SECRET',
     })
     .ingress({
       primary: {
