@@ -10,12 +10,14 @@ import { giveRightsValidationSection } from './answerValidationSections/giveRigh
 import { paymentsValidationSection } from './answerValidationSections/paymentsValidationSection'
 import { validateLatestPeriodValidationSection } from './answerValidationSections/validateLatestPeriodValidationSection'
 import { validatePeriodsValidationSection } from './answerValidationSections/validatePeriodsValidationSection'
+import { otherParentEmailValidationSection } from './answerValidationSections/otherParentEmailValidationSection'
 
 const {
   EMPLOYER,
   FILEUPLOAD,
   MULTIPLE_BIRTHS,
   OTHER_PARENT,
+  OTHER_PARENT_EMAIL,
   REQUEST_RIGHTS,
   GIVE_RIGHTS,
   PAYMENTS,
@@ -28,6 +30,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [FILEUPLOAD]: fileUploadValidationSection,
   [MULTIPLE_BIRTHS]: multipleBirthValidationSection,
   [OTHER_PARENT]: otherParentValidationSection,
+  [OTHER_PARENT_EMAIL]: otherParentEmailValidationSection,
   [REQUEST_RIGHTS]: requestRightsValidationSection,
   [GIVE_RIGHTS]: giveRightsValidationSection,
   [PAYMENTS]: paymentsValidationSection,
