@@ -47,7 +47,6 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
     }
     try {
       const res = await updateUserProfile(input)
-      console.log(res);
       if (res.data?.updateProfile) {
         Navigation.dismissModal(componentId)
         if (parentComponentId) {
