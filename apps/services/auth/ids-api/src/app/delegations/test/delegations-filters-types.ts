@@ -29,7 +29,7 @@ export interface ITestCaseOptions {
 }
 
 export class TestCase {
-  domainName: '@island.is'
+  domainName = '@island.is'
   user: User
   client: CreateClient
   fromChildren: string[]
@@ -73,7 +73,7 @@ export class TestCase {
       name: s,
       description: s,
       displayName: s,
-      domainName: '',
+      domainName: this.domainName,
       grantToLegalGuardians: legalGuardianScopes.includes(s),
       grantToProcuringHolders: procurationHolderScopes.includes(s),
       allowExplicitDelegationGrant: customScopes.includes(s),

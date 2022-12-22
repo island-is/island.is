@@ -10,23 +10,23 @@ import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 
 describe('DelegationsController', () => {
-  let app: TestApp
-  let server: request.SuperTest<request.Test>
-  let factory: FixtureFactory
-  let nationalRegistryApi: NationalRegistryClientService
-  let rskApi: RskProcuringClient
-
   describe.each(Object.keys(testCases))(
     'Delegation filtering with test case: %s',
     (caseName) => {
       const testCase = testCases[caseName]
       const path = '/v2/delegations'
+      let app: TestApp
+      let server: request.SuperTest<request.Test>
+      let factory: FixtureFactory
+      let nationalRegistryApi: NationalRegistryClientService
+      let rskApi: RskProcuringClient
 
       beforeAll(async () => {
         app = await setupWithAuth({
           user: testCase.user,
         })
         server = request(app.getHttpServer())
+
         nationalRegistryApi = app.get(NationalRegistryClientService)
         jest
           .spyOn(nationalRegistryApi, 'getIndividual')
@@ -38,9 +38,7 @@ describe('DelegationsController', () => {
           )
 
         rskApi = app.get(RskProcuringClient)
-      })
 
-      beforeEach(async () => {
         factory = new FixtureFactory(app)
 
         await factory.createDomain(testCase.domain)
