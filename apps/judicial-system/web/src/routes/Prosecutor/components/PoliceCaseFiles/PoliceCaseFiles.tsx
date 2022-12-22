@@ -32,14 +32,7 @@ import {
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 import * as styles from './PoliceCaseFiles.css'
-import { uuid } from 'uuidv4'
-
-interface PoliceCaseFilesData {
-  files: PoliceCaseFile[]
-  isLoading: boolean
-  hasError: boolean
-  errorCode?: string
-}
+import { PoliceCaseFilesData } from '../../RestrictionCase/StepFive/StepFive'
 
 export interface PoliceCaseFileCheck extends PoliceCaseFile {
   checked: boolean
@@ -107,13 +100,14 @@ interface Props {
     React.SetStateAction<PoliceCaseFileCheck[]>
   >
   policeCaseNumber?: string
-  setFilesInRVG: React.Dispatch<React.SetStateAction<UploadFile[] | undefined>>
-  refreshCase: () => void
+  filesInRVG: UploadFile[]
+  setFilesInRVG: React.Dispatch<React.SetStateAction<UploadFile[]>>
   addFileToCase: (
     file: TUploadFile,
     cb: (file: UploadFile) => void,
   ) => Promise<void>
   addFileToCaseCB: (file: UploadFile) => void
+  policeCaseFiles?: PoliceCaseFilesData
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
@@ -122,91 +116,47 @@ const PoliceCaseFiles: React.FC<Props> = ({
   setIsUploading,
   policeCaseFileList,
   setPoliceCaseFileList,
+  filesInRVG,
   setFilesInRVG,
-  refreshCase,
   addFileToCase,
   addFileToCaseCB,
+  policeCaseFiles,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const router = useRouter()
   const id = router.query.id
 
-  const {
-    data: policeData,
-    loading: policeDataLoading,
-    error: policeDataError,
-  } = useQuery(PoliceCaseFilesQuery, {
-    variables: { input: { caseId: id } },
-    fetchPolicy: 'no-cache',
-    skip: workingCase.origin !== CaseOrigin.LOKE,
-  })
-
-  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-  useEffect(() => {
-    if (workingCase.origin !== CaseOrigin.LOKE) {
-      setPoliceCaseFiles({
-        files: [],
-        isLoading: false,
-        hasError: false,
-      })
-    } else if (policeData && policeData.policeCaseFiles) {
-      setPoliceCaseFiles({
-        files: policeData.policeCaseFiles,
-        isLoading: false,
-        hasError: false,
-      })
-    } else if (policeDataLoading) {
-      setPoliceCaseFiles({
-        files: policeData ? policeData.policeCaseFiles : [],
-        isLoading: true,
-        hasError: false,
-      })
-    } else {
-      setPoliceCaseFiles({
-        files: policeData ? policeData.policeCaseFiles : [],
-        isLoading: false,
-        hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0]?.extensions
-          ?.code as string,
-      })
-    }
-  }, [
-    policeData,
-    policeDataError,
-    policeDataLoading,
-    workingCase.origin,
-    setPoliceCaseFiles,
-  ])
-
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
 
-  const { uploadPoliceCaseFile, files } = useS3Upload(workingCase)
-  useEffect(() => {
-    if (policeCaseFiles) {
-      const policeCaseFilesNotStoredInRVG = policeCaseFiles.files.filter(
-        (p) => {
-          const xFiles = files as CaseFile[]
+  const { uploadPoliceCaseFile } = useS3Upload(workingCase)
 
-          return !xFiles.find((f) => f.name === p.name && f.key)
-        },
-      )
+  // useEffect(() => {
+  //   if (policeCaseFiles) {
+  //     const policeCaseFilesNotStoredInRVG = policeCaseFiles.files.filter(
+  //       (p) => !workingCase.caseFiles?.find((f) => f.name === p.name && f.key),
+  //     )
 
-      if (policeCaseFilesNotStoredInRVG.length !== policeCaseFileList.length) {
-        setPoliceCaseFileList(
-          policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
-            return {
-              id: policeCaseFile.id,
-              name: policeCaseFile.name,
-              checked:
-                policeCaseFileList.find((p) => p.id === policeCaseFile.id)
-                  ?.checked || false,
-            }
-          }),
-        )
-      }
-    }
-  }, [policeCaseFiles, files, policeCaseFileList, setPoliceCaseFileList])
+  //     if (policeCaseFilesNotStoredInRVG.length !== policeCaseFileList.length) {
+  //       setPoliceCaseFileList(
+  //         policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
+  //           return {
+  //             id: policeCaseFile.id,
+  //             name: policeCaseFile.name,
+  //             checked:
+  //               policeCaseFileList.find((p) => p.id === policeCaseFile.id)
+  //                 ?.checked || false,
+  //           }
+  //         }),
+  //       )
+  //     }
+  //   }
+  // }, [
+  //   policeCaseFiles,
+  //   policeCaseFileList,
+  //   setPoliceCaseFileList,
+  //   workingCase.caseFiles,
+  // ])
 
   const toggleCheckbox = (
     evt: React.ChangeEvent<HTMLInputElement>,
@@ -233,21 +183,14 @@ const PoliceCaseFiles: React.FC<Props> = ({
 
   const uploadToRVG = async () => {
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
-    const filesWithId: Array<
-      [PoliceCaseFileCheck, string]
-    > = filesToUpload.map((file) => [file, uuid()])
-    let newPoliceCaseFileList = [...policeCaseFileList]
 
     setIsUploading(true)
 
-    filesWithId.forEach(async ([policeCaseFile, id], index) => {
-      const { key, size } = await uploadPoliceCaseFile(
-        policeCaseFile.id,
-        policeCaseFile.name,
-      )
+    filesToUpload.forEach(async (f, index) => {
+      const { key, size } = await uploadPoliceCaseFile(f.id, f.name)
       const fileToUpload = {
         type: 'application/pdf',
-        name: policeCaseFile.name,
+        name: f.name,
         status: 'done',
         state: CaseFileState.STORED_IN_RVG,
         key,
@@ -259,27 +202,26 @@ const PoliceCaseFiles: React.FC<Props> = ({
       setFilesInRVG([
         {
           id,
-          name: policeCaseFile.name,
+          name: f.name,
           type: 'application/pdf',
           status: 'done',
           state: CaseFileState.STORED_IN_RVG,
           key,
           size,
         } as UploadFile,
+        ...filesInRVG,
       ])
 
-      newPoliceCaseFileList = newPoliceCaseFileList.filter((p) => p.id !== id)
+      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
         setCheckAllChecked(false)
       }
     })
-
-    setPoliceCaseFileList(newPoliceCaseFileList)
-    refreshCase()
   }
 
+  console.log(policeCaseFileList)
   return (
     <>
       <SectionHeading

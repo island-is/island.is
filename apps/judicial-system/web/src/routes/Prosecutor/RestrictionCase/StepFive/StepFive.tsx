@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
@@ -37,10 +37,40 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { CaseFileState } from '@island.is/judicial-system/types'
+import {
+  CaseFile,
+  CaseFileState,
+  CaseOrigin,
+  PoliceCaseFile,
+} from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import { useQuery } from '@apollo/client'
+import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
+
+export interface PoliceCaseFilesData {
+  files: PoliceCaseFile[]
+  isLoading: boolean
+  hasError: boolean
+  errorCode?: string
+}
+
+const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
+  name: file.name,
+  type: file.type,
+  id: file.id,
+  key: file.key,
+  status: 'done',
+  percent: 100,
+  size: file.size,
+})
+
+const mapToP = (file: PoliceCaseFile): PoliceCaseFileCheck => ({
+  id: file.id,
+  name: file.name,
+  checked: false,
+})
 
 export const StepFive: React.FC = () => {
   const {
@@ -48,15 +78,26 @@ export const StepFive: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
-    refreshCase,
   } = useContext(FormContext)
+  const {
+    data: policeData,
+    loading: policeDataLoading,
+    error: policeDataError,
+  } = useQuery(PoliceCaseFilesQuery, {
+    variables: { input: { caseId: workingCase.id } },
+    fetchPolicy: 'no-cache',
+    skip: workingCase.origin !== CaseOrigin.LOKE,
+  })
   const router = useRouter()
   const { formatMessage } = useIntl()
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
-  const [filesInRVG, setFilesInRVG] = useState<UploadFile[]>()
+  const [filesInRVG, setFilesInRVG] = useState<UploadFile[]>(
+    workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [],
+  )
+  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
   const {
     uploadErrorMessage,
@@ -74,37 +115,91 @@ export const StepFive: React.FC = () => {
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  const addFileToCaseCB = (file: UploadFile) => {
-    setWorkingCase({
-      ...workingCase,
-      caseFiles: [
-        {
-          ...file,
-          id: file.id || '',
-          type: file.type || '',
-          size: file.size || 0,
-          caseId: workingCase.id,
-          state: CaseFileState.STORED_IN_RVG,
-          modified: new Date().toISOString(),
-          created: new Date().toISOString(),
-        },
-        ...(workingCase.caseFiles || []),
-      ],
-    })
-  }
+  const setSingleFile = useCallback(
+    (displayFile: UploadFile, newId?: string) => {
+      setFilesInRVG((previous) => {
+        const index = previous.findIndex((f) => f.id === displayFile.id)
+        if (index === -1) {
+          return previous
+        }
+        const next = [...previous]
+        next[index] = { ...displayFile, id: newId ?? displayFile.id }
+        return next
+      })
+    },
+    [setFilesInRVG],
+  )
 
-  const handleUpload = (files: File[]) => {
-    const filesWithId: Array<[File, string]> = files.map((file) => [
-      file,
-      uuid(),
-    ])
+  const handleUpload = useCallback(
+    (files: File[]) => {
+      const filesWithId: Array<[File, string]> = files.map((file) => [
+        file,
+        uuid(),
+      ])
 
-    upload(filesWithId, addFileToCaseCB)
-  }
+      setFilesInRVG((previous) => [
+        ...filesWithId.map(
+          ([file, id]): UploadFile => ({
+            status: 'uploading',
+            percent: 1,
+            name: file.name,
+            id: id,
+            type: file.type,
+          }),
+        ),
+        ...(previous || []),
+      ])
+
+      upload(filesWithId, setSingleFile)
+    },
+    [setSingleFile, upload],
+  )
 
   useEffect(() => {
-    setFilesInRVG(workingCase.caseFiles)
+    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
   }, [workingCase.caseFiles])
+
+  useEffect(() => {
+    if (workingCase.origin !== CaseOrigin.LOKE) {
+      setPoliceCaseFiles({
+        files: [],
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeData && policeData.policeCaseFiles) {
+      setPoliceCaseFiles({
+        files: policeData.policeCaseFiles,
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeDataLoading) {
+      setPoliceCaseFiles({
+        files: policeData ? policeData.policeCaseFiles : [],
+        isLoading: true,
+        hasError: false,
+      })
+    } else {
+      setPoliceCaseFiles({
+        files: policeData ? policeData.policeCaseFiles : [],
+        isLoading: false,
+        hasError: true,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
+      })
+    }
+  }, [
+    policeData,
+    policeDataError,
+    policeDataLoading,
+    workingCase.origin,
+    setPoliceCaseFiles,
+  ])
+
+  useEffect(() => {
+    setPoliceCaseFileList(policeCaseFiles?.files.map(mapToP) || [])
+  }, [policeCaseFiles])
+
+  console.log('policeCaseFiles', policeCaseFileList)
 
   return (
     <PageLayout
@@ -145,10 +240,11 @@ export const StepFive: React.FC = () => {
           setIsUploading={setIsUploading}
           policeCaseFileList={policeCaseFileList}
           setPoliceCaseFileList={setPoliceCaseFileList}
+          filesInRVG={filesInRVG}
           setFilesInRVG={setFilesInRVG}
-          refreshCase={refreshCase}
           addFileToCase={addFileToCase}
-          addFileToCaseCB={addFileToCaseCB}
+          addFileToCaseCB={setSingleFile}
+          policeCaseFiles={policeCaseFiles}
         />
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
