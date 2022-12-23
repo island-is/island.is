@@ -1,7 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 import {
   ProsecutorCaseInfo,
@@ -20,6 +21,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   titles,
   rcCaseFiles as m,
+  errors,
 } from '@island.is/judicial-system-web/messages'
 import {
   useCase,
@@ -33,21 +35,20 @@ import {
   Input,
   InputFileUpload,
   Text,
+  toast,
   Tooltip,
   UploadFile,
 } from '@island.is/island-ui/core'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   CaseFile,
-  CaseFileState,
   CaseOrigin,
   PoliceCaseFile,
 } from '@island.is/judicial-system/types'
+import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
-import { useQuery } from '@apollo/client'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 
 export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
@@ -159,6 +160,31 @@ export const StepFive: React.FC = () => {
       upload(filesWithId, setSingleFile)
     },
     [setSingleFile, upload],
+  )
+
+  const handleRemove = useCallback(
+    async (file: UploadFile) => {
+      try {
+        if (file.id) {
+          const response = await remove(file.id)
+
+          if (!response.data?.deleteFile.success) {
+            throw new Error(`Failed to delete file: ${file.id}`)
+          }
+
+          setPoliceCaseFileList((previous) =>
+            previous.filter((f) => f.id !== file.id),
+          )
+          setWorkingCase({
+            ...workingCase,
+            caseFiles: workingCase.caseFiles?.filter((f) => f.id !== file.id),
+          })
+        }
+      } catch (e) {
+        toast.error(formatMessage(errors.failedDeleteFile))
+      }
+    },
+    [formatMessage, remove, setWorkingCase, workingCase],
   )
 
   useEffect(() => {
@@ -275,20 +301,7 @@ export const StepFive: React.FC = () => {
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleUpload}
-              onRemove={(file) => {
-                if (file.id) {
-                  remove(file.id)
-                  setPoliceCaseFileList((previous) =>
-                    previous.filter((f) => f.id !== file.id),
-                  )
-                  setWorkingCase({
-                    ...workingCase,
-                    caseFiles: workingCase.caseFiles?.filter(
-                      (f) => f.id !== file.id,
-                    ),
-                  })
-                }
-              }}
+              onRemove={handleRemove}
               onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
               disabled={isUploading}
