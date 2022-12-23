@@ -41,6 +41,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   CaseFile,
+  CaseFileState,
   CaseOrigin,
   isRestrictionCase,
   PoliceCaseFile,
@@ -94,7 +95,11 @@ export const CaseFiles: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { uploadErrorMessage, addFileToCase } = useS3Upload(workingCase)
+  const {
+    uploadErrorMessage,
+    addFileToCase,
+    uploadPoliceCaseFile,
+  } = useS3Upload(workingCase)
   const { upload, remove } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
@@ -215,6 +220,52 @@ export const CaseFiles: React.FC = () => {
     [setSingleFile, upload],
   )
 
+  const handlePoliceCaseFileUpload = useCallback(async () => {
+    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+
+    setIsUploading(true)
+
+    filesToUpload.forEach(async (f, index) => {
+      const { key, size } = await uploadPoliceCaseFile(f.id, f.name)
+      const fileToUpload = {
+        type: 'application/pdf',
+        name: f.name,
+        status: 'done',
+        state: CaseFileState.STORED_IN_RVG,
+        key,
+        size,
+      } as UploadFile
+
+      await addFileToCase(fileToUpload, () => setSingleFile(fileToUpload))
+
+      setFilesInRVG([
+        {
+          id: workingCase.id,
+          name: f.name,
+          type: 'application/pdf',
+          status: 'done',
+          state: CaseFileState.STORED_IN_RVG,
+          key,
+          size,
+        } as UploadFile,
+        ...filesInRVG,
+      ])
+
+      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
+
+      if (index === filesToUpload.length - 1) {
+        setIsUploading(false)
+      }
+    })
+  }, [
+    addFileToCase,
+    filesInRVG,
+    policeCaseFileList,
+    setSingleFile,
+    uploadPoliceCaseFile,
+    workingCase.id,
+  ])
+
   const handleRemove = useCallback(
     async (file: UploadFile) => {
       try {
@@ -295,14 +346,10 @@ export const CaseFiles: React.FC = () => {
           />
         </Box>
         <PoliceCaseFiles
+          onUpload={handlePoliceCaseFileUpload}
           isUploading={isUploading}
-          setIsUploading={setIsUploading}
           policeCaseFileList={policeCaseFileList}
           setPoliceCaseFileList={setPoliceCaseFileList}
-          filesInRVG={filesInRVG}
-          setFilesInRVG={setFilesInRVG}
-          addFileToCase={addFileToCase}
-          addFileToCaseCB={setSingleFile}
           policeCaseFiles={policeCaseFiles}
         />
         <Box marginBottom={3}>

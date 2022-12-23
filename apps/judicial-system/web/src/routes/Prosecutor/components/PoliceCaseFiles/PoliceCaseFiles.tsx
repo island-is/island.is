@@ -1,26 +1,16 @@
 import React, { Fragment, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
-import {
-  CaseFileState,
-  CaseOrigin,
-  PoliceCaseFile,
-} from '@island.is/judicial-system/types'
+import { CaseOrigin, PoliceCaseFile } from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
   Button,
   Checkbox,
   LoadingDots,
-  UploadFile,
 } from '@island.is/island-ui/core'
-import {
-  TUploadFile,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   FormContext,
   SectionHeading,
@@ -92,43 +82,27 @@ const CheckboxList: React.FC<ListItemProps> = ({
 )
 
 interface Props {
+  onUpload: () => Promise<void>
   isUploading: boolean
-  setIsUploading: React.Dispatch<React.SetStateAction<boolean>>
   policeCaseFileList: PoliceCaseFileCheck[]
   setPoliceCaseFileList: React.Dispatch<
     React.SetStateAction<PoliceCaseFileCheck[]>
   >
   policeCaseNumber?: string
-  filesInRVG: UploadFile[]
-  setFilesInRVG: React.Dispatch<React.SetStateAction<UploadFile[]>>
-  addFileToCase: (
-    file: TUploadFile,
-    cb: (file: UploadFile) => void,
-  ) => Promise<void>
-  addFileToCaseCB: (file: UploadFile) => void
   policeCaseFiles?: PoliceCaseFilesData
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
+  onUpload,
   policeCaseNumber,
   isUploading,
-  setIsUploading,
   policeCaseFileList,
   setPoliceCaseFileList,
-  filesInRVG,
-  setFilesInRVG,
-  addFileToCase,
-  addFileToCaseCB,
   policeCaseFiles,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-  const router = useRouter()
-  const id = router.query.id
-
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
-
-  const { uploadPoliceCaseFile } = useS3Upload(workingCase)
 
   const toggleCheckbox = (
     evt: React.ChangeEvent<HTMLInputElement>,
@@ -151,46 +125,6 @@ const PoliceCaseFiles: React.FC<Props> = ({
         .checked
       setPoliceCaseFileList(newPoliceCaseFileList)
     }
-  }
-
-  const uploadToRVG = async () => {
-    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
-
-    setIsUploading(true)
-
-    filesToUpload.forEach(async (f, index) => {
-      const { key, size } = await uploadPoliceCaseFile(f.id, f.name)
-      const fileToUpload = {
-        type: 'application/pdf',
-        name: f.name,
-        status: 'done',
-        state: CaseFileState.STORED_IN_RVG,
-        key,
-        size,
-      } as UploadFile
-
-      await addFileToCase(fileToUpload, () => addFileToCaseCB(fileToUpload))
-
-      setFilesInRVG([
-        {
-          id,
-          name: f.name,
-          type: 'application/pdf',
-          status: 'done',
-          state: CaseFileState.STORED_IN_RVG,
-          key,
-          size,
-        } as UploadFile,
-        ...filesInRVG,
-      ])
-
-      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
-
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-        setCheckAllChecked(false)
-      }
-    })
   }
 
   return (
@@ -266,7 +200,10 @@ const PoliceCaseFiles: React.FC<Props> = ({
             </motion.div>
             <motion.div layout className={styles.uploadToRVGButtonContainer}>
               <Button
-                onClick={uploadToRVG}
+                onClick={async () => {
+                  await onUpload()
+                  setCheckAllChecked(false)
+                }}
                 loading={isUploading}
                 disabled={policeCaseFileList.every((p) => !p.checked)}
               >
