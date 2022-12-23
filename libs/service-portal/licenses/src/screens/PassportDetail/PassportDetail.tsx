@@ -35,7 +35,7 @@ import { Gender, GenderType } from '../../types/passport.type'
 import { applyPassport, lostPassport } from '../../lib/constants'
 import { useLazyQuery } from '@apollo/client'
 import { capitalizeEveryWord } from '../../utils/capitalize'
-import { NotFound } from '@island.is/portals/core'
+import { NotFound } from '@island.is/service-portal/core'
 
 const getCurrentPassport = (
   id: string | undefined,
