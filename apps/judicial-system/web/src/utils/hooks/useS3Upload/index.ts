@@ -229,7 +229,6 @@ export const useS3Upload = (workingCase: Case) => {
         })
         .catch(() => {
           // TODO: handle error
-          console.log('TODO!!!!')
         })
     }
   }
