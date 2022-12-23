@@ -85,10 +85,8 @@ export class IncomingDelegationsCompanyService {
         attributes: ['nationalId'],
         ['distinct' as string]: true, // TODO: does this work?
         where: {
-          [Op.and]: [
-            { nationalId: { [Op.in]: nationalIds } },
-            { scope: { [Op.in]: protectedScopes } },
-          ],
+          nationalId: nationalIds,
+          scope: protectedScopes,
         },
       })
       .then((result) => result.map((access) => access.nationalId))
