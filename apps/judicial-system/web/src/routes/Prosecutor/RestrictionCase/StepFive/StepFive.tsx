@@ -100,12 +100,9 @@ export const StepFive: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const {
-    uploadErrorMessage,
-    allFilesUploaded,
-    handleRetry,
-    addFileToCase,
-  } = useS3Upload(workingCase)
+  const { uploadErrorMessage, allFilesUploaded, addFileToCase } = useS3Upload(
+    workingCase,
+  )
   const { upload, remove } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
@@ -185,6 +182,28 @@ export const StepFive: React.FC = () => {
       }
     },
     [formatMessage, remove, setWorkingCase, workingCase],
+  )
+
+  const handleRetry = useCallback(
+    (file: UploadFile) => {
+      setSingleFile({
+        name: file.name,
+        id: file.id,
+        percent: 1,
+        status: 'uploading',
+        type: file.type,
+      })
+      upload(
+        [
+          [
+            { name: file.name, type: file.type ?? '' } as File,
+            file.id ?? file.name,
+          ],
+        ],
+        setSingleFile,
+      )
+    },
+    [setSingleFile, upload],
   )
 
   useEffect(() => {
