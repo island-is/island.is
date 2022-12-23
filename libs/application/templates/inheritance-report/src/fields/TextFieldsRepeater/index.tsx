@@ -1,5 +1,5 @@
-import { FC, useEffect, useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { FC, useState } from 'react'
+import { useFieldArray } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -28,19 +28,20 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   application,
   field,
 }) => {
-  console.log(application.answers)
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
 
-  const [total, setTotal] = useState(0)
-  const [valueArray, setValueArray] = useState<any>([])
-  const { setValue } = useFormContext()
+  const answersValue = getValueViaPath(application.answers, id) as any
+  const sum = answersValue?.length
+    ? answersValue.reduce((accumulator: any, object: any) => {
+        return accumulator + Number(object[props.sumField])
+      }, 0)
+    : 0
 
-  useEffect(() => {
-    setValue(`${id}TotalAmount`, total)
-  }, [total])
+  const [total, setTotal] = useState(answersValue?.length ? sum : 0)
+  const [valueArray, setValueArray] = useState<any>(answersValue.map((v: any) => Number(v[props.sumField])))
 
   const getTheSumOfTheValues = (v: any, index: any) => {
     const arr = valueArray
@@ -153,10 +154,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
           {props.repeaterButtonText}
         </Button>
       </Box>
-      <Text marginTop={5}>
-        total:{' '}
-        {total || getValueViaPath(application.answers, `${id}TotalAmount`) || 0}
-      </Text>
+      <Text marginTop={5}>total: {total || 0}</Text>
     </Box>
   )
 }
