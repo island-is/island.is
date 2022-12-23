@@ -10,7 +10,7 @@ For example instead of:
 
 ```http
 https://api.example.com/v1/endpoint?nationalId=1234567890
-``` 
+```
 
 We should use:
 
@@ -18,5 +18,5 @@ We should use:
 https://api.example.com/v1/endpoint
 
 // Headers section
-X-National-Id: 1234567890 
+X-National-Id: 1234567890
 ```

@@ -91,4 +91,4 @@ For making a partial update on a resource
 For removing a resource
 
 - `200` can be returned after a successful execution, when there is a need for a content in the response.
-- `204` should be returned after a successful execution. It should also be used when the resource is not found or the user does not have permission to delete it. 
+- `204` should be returned after a successful execution. It should also be used when the resource is not found or the user does not have permission to delete it.
