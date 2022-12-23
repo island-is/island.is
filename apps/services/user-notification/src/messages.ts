@@ -3,7 +3,8 @@ import { MessageTypes } from './app/modules/notifications/types'
 
 export default {
   notifications: {
-    [MessageTypes.NewDocumentMessage]: defineMessages({
+    // [MessageTypes.NewDocumentMessage]: defineMessages({
+    newDocumentMessage: defineMessages({
       title: {
         id: 'user-notification.messages:new-document-title',
         description: 'Title of message letting user know of new inbox document',

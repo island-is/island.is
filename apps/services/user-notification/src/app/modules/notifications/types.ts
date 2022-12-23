@@ -3,9 +3,9 @@ export enum MessageTypes {
 }
 
 export interface Notification {
-  messageType: MessageTypes
+  messageType: string //MessageTypes
   title: string
   body: string
-  category: 'NEW_DOCUMENT'
+  category: string //'NEW_DOCUMENT'
   appURI?: string
 }

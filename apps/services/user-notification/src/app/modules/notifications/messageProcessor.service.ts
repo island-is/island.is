@@ -34,20 +34,27 @@ export class MessageProcessorService {
       profile.locale ?? 'is',
     )
 
-    const { title, body } = messages.notifications[message.type]
+    const { title, body } = messages.notifications.newDocumentMessage
 
     switch (message.type) {
+      default:
       case MessageTypes.NewDocumentMessage: {
         const formatArgs = {
           organization: message.organization,
         }
-        return {
+
+        const notification = {
           messageType: message.type,
           title: t.formatMessage(title, formatArgs),
           body: t.formatMessage(body, formatArgs),
-          category: 'NEW_DOCUMENT',
-          appURI: `${this.appProtocol}://inbox/${message.documentId}`,
+          category: 'NEW_DOCUMENT', // link intent
+          appURI: `${this.appProtocol}://inbox`, // testing
         }
+        if (message?.documentId) {
+          notification.appURI = `${this.appProtocol}://inbox/${message.documentId}`
+        }
+
+        return notification
       }
     }
   }

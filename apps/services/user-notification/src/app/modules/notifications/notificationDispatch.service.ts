@@ -68,10 +68,7 @@ export class NotificationDispatchService {
       )
     }
 
-    const {
-      responses,
-      successCount,
-    } = await this.firebase.messaging().sendMulticast({
+    const messageBody = {
       tokens,
       notification: {
         title: notification.title,
@@ -87,7 +84,16 @@ export class NotificationDispatchService {
       data: {
         ...(notification.appURI && { url: notification.appURI }),
       },
-    })
+    }
+    console.log(
+      '🚀 ~ file: notificationDispatch.service.ts:72 ~ NotificationDispatchService ~ messageBody',
+      messageBody,
+    )
+
+    const {
+      responses,
+      successCount,
+    } = await this.firebase.messaging().sendMulticast(messageBody)
 
     const errors = responses
       .map((r) => r.error)

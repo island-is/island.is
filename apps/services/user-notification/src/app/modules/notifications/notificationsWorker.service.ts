@@ -51,7 +51,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         // don't send message unless user wants this type of notification
         if (
-          !this.messageProcessor.shouldSendNotification(message.type, profile)
+          // !this.messageProcessor.shouldSendNotification(message.type, profile)
+          !profile.documentNotifications
         ) {
           this.logger.info(
             'User does not have notifications enabled this message type',
