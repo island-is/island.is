@@ -18,11 +18,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  titles,
-  rcCaseFiles as m,
-  errors,
-} from '@island.is/judicial-system-web/messages'
+import { errors } from '@island.is/judicial-system-web/messages'
 import {
   useCase,
   useDeb,
@@ -39,16 +35,22 @@ import {
   Tooltip,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  mapCaseFileToUploadFile,
+  removeTabsValidateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   CaseFile,
   CaseOrigin,
+  isRestrictionCase,
   PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
+import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import { caseFiles as strings } from './CaseFiles.strings'
 
 export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
@@ -57,23 +59,15 @@ export interface PoliceCaseFilesData {
   errorCode?: string
 }
 
-const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
-  name: file.name,
-  type: file.type,
-  id: file.id,
-  key: file.key,
-  status: 'done',
-  percent: 100,
-  size: file.size,
-})
-
-const mapToP = (file: PoliceCaseFile): PoliceCaseFileCheck => ({
+const mapPoliceCaseFileToPoliceCaseFileCheck = (
+  file: PoliceCaseFile,
+): PoliceCaseFileCheck => ({
   id: file.id,
   name: file.name,
   checked: false,
 })
 
-export const StepFive: React.FC = () => {
+export const CaseFiles: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -84,7 +78,7 @@ export const StepFive: React.FC = () => {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useQuery(PoliceCaseFilesQuery, {
+  } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
     variables: { input: { caseId: workingCase.id } },
     fetchPolicy: 'no-cache',
     skip: workingCase.origin !== CaseOrigin.LOKE,
@@ -105,6 +99,66 @@ export const StepFive: React.FC = () => {
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
+
+  useEffect(() => {
+    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
+  }, [workingCase.caseFiles])
+
+  useEffect(() => {
+    if (workingCase.origin !== CaseOrigin.LOKE) {
+      setPoliceCaseFiles({
+        files: [],
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeData && policeData.policeCaseFiles) {
+      setPoliceCaseFiles({
+        files: policeData.policeCaseFiles,
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeDataLoading) {
+      setPoliceCaseFiles({
+        files:
+          policeData && policeData.policeCaseFiles
+            ? policeData.policeCaseFiles
+            : [],
+        isLoading: true,
+        hasError: false,
+      })
+    } else {
+      setPoliceCaseFiles({
+        files:
+          policeData && policeData.policeCaseFiles
+            ? policeData.policeCaseFiles
+            : [],
+        isLoading: false,
+        hasError: true,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
+      })
+    }
+  }, [
+    policeData,
+    policeDataError,
+    policeDataLoading,
+    setPoliceCaseFiles,
+    workingCase.origin,
+    workingCase.caseFiles,
+  ])
+
+  useEffect(() => {
+    setPoliceCaseFileList(
+      policeCaseFiles?.files
+        .filter(
+          (f) =>
+            !workingCase.caseFiles?.some(
+              (caseFile) => caseFile.name === f.name,
+            ),
+        )
+        .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
+    )
+  }, [policeCaseFiles, workingCase.caseFiles])
 
   const stepIsValid = !isUploading
   const handleNavigationTo = (destination: string) =>
@@ -208,59 +262,6 @@ export const StepFive: React.FC = () => {
     [setSingleFile, upload],
   )
 
-  useEffect(() => {
-    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
-  }, [workingCase.caseFiles])
-
-  useEffect(() => {
-    if (workingCase.origin !== CaseOrigin.LOKE) {
-      setPoliceCaseFiles({
-        files: [],
-        isLoading: false,
-        hasError: false,
-      })
-    } else if (policeData && policeData.policeCaseFiles) {
-      setPoliceCaseFiles({
-        files: policeData.policeCaseFiles,
-        isLoading: false,
-        hasError: false,
-      })
-    } else if (policeDataLoading) {
-      setPoliceCaseFiles({
-        files: policeData ? policeData.policeCaseFiles : [],
-        isLoading: true,
-        hasError: false,
-      })
-    } else {
-      setPoliceCaseFiles({
-        files: policeData ? policeData.policeCaseFiles : [],
-        isLoading: false,
-        hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0]?.extensions
-          ?.code as string,
-      })
-    }
-  }, [
-    policeData,
-    policeDataError,
-    policeDataLoading,
-    workingCase.origin,
-    setPoliceCaseFiles,
-  ])
-
-  useEffect(() => {
-    setPoliceCaseFileList(
-      policeCaseFiles?.files
-        .filter(
-          (f) =>
-            !workingCase.caseFiles?.some(
-              (caseFile) => caseFile.name === f.name,
-            ),
-        )
-        .map(mapToP) || [],
-    )
-  }, [policeCaseFiles, workingCase.caseFiles])
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -273,13 +274,11 @@ export const StepFive: React.FC = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.restrictionCases.caseFiles)}
-      />
+      <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(m.heading)}
+            {formatMessage(strings.heading)}
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
@@ -287,11 +286,11 @@ export const StepFive: React.FC = () => {
         <Box marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.description.heading)}
+              {formatMessage(strings.descriptionHeading)}
             </Text>
           </Box>
           <MarkdownWrapper
-            markdown={formatMessage(m.sections.description.list)}
+            markdown={formatMessage(strings.descriptionList)}
             textProps={{ marginBottom: 0 }}
           />
         </Box>
@@ -308,19 +307,17 @@ export const StepFive: React.FC = () => {
         />
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.sections.files.heading)}
+            {formatMessage(strings.filesHeading)}
           </Text>
-          <Text marginTop={1}>
-            {formatMessage(m.sections.files.introduction)}
-          </Text>
+          <Text marginTop={1}>{formatMessage(strings.filesIntroduction)}</Text>
         </Box>
         <Box marginBottom={5}>
           <ContentBlock>
             <InputFileUpload
               name="fileUpload"
               fileList={filesInRVG}
-              header={formatMessage(m.sections.files.label)}
-              buttonLabel={formatMessage(m.sections.files.buttonLabel)}
+              header={formatMessage(strings.filesLabel)}
+              buttonLabel={formatMessage(strings.filesButtonLabel)}
               onChange={handleUpload}
               onRemove={handleRemove}
               onRetry={handleRetry}
@@ -333,19 +330,19 @@ export const StepFive: React.FC = () => {
         <Box>
           <Box marginBottom={3}>
             <Text variant="h3" as="h3">
-              {formatMessage(m.sections.comments.heading)}{' '}
+              {formatMessage(strings.commentsHeading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text={formatMessage(m.sections.comments.tooltip)}
+                text={formatMessage(strings.commentsTooltip)}
               />
             </Text>
           </Box>
           <Box marginBottom={10}>
             <Input
               name="caseFilesComments"
-              label={formatMessage(m.sections.comments.label)}
-              placeholder={formatMessage(m.sections.comments.placeholder)}
+              label={formatMessage(strings.commentsLabel)}
+              placeholder={formatMessage(strings.commentsPlaceholder)}
               value={workingCase.caseFilesComments || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -370,9 +367,17 @@ export const StepFive: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${
+            isRestrictionCase(workingCase.type)
+              ? constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
+              : constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE
+          }/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.RESTRICTION_CASE_OVERVIEW_ROUTE)
+            handleNavigationTo(
+              isRestrictionCase(workingCase.type)
+                ? constants.RESTRICTION_CASE_OVERVIEW_ROUTE
+                : constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+            )
           }
           nextIsDisabled={!stepIsValid}
         />
@@ -381,4 +386,4 @@ export const StepFive: React.FC = () => {
   )
 }
 
-export default StepFive
+export default CaseFiles

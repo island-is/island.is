@@ -1,13 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseFile,
   CaseFileState,
   CaseOrigin,
   PoliceCaseFile,
@@ -31,8 +28,8 @@ import {
 
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import { PoliceCaseFilesData } from '../CaseFiles/CaseFiles'
 import * as styles from './PoliceCaseFiles.css'
-import { PoliceCaseFilesData } from '../../RestrictionCase/StepFive/StepFive'
 
 export interface PoliceCaseFileCheck extends PoliceCaseFile {
   checked: boolean
