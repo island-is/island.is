@@ -86,6 +86,7 @@ const CheckboxList: React.FC<ListItemProps> = ({
           value={file.id}
           checked={file.checked}
           onChange={onCheck}
+          disabled={isUploading}
         />
       </CheckboxListItem>
     ))}
@@ -130,33 +131,6 @@ const PoliceCaseFiles: React.FC<Props> = ({
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
 
   const { uploadPoliceCaseFile } = useS3Upload(workingCase)
-
-  // useEffect(() => {
-  //   if (policeCaseFiles) {
-  //     const policeCaseFilesNotStoredInRVG = policeCaseFiles.files.filter(
-  //       (p) => !workingCase.caseFiles?.find((f) => f.name === p.name && f.key),
-  //     )
-
-  //     if (policeCaseFilesNotStoredInRVG.length !== policeCaseFileList.length) {
-  //       setPoliceCaseFileList(
-  //         policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
-  //           return {
-  //             id: policeCaseFile.id,
-  //             name: policeCaseFile.name,
-  //             checked:
-  //               policeCaseFileList.find((p) => p.id === policeCaseFile.id)
-  //                 ?.checked || false,
-  //           }
-  //         }),
-  //       )
-  //     }
-  //   }
-  // }, [
-  //   policeCaseFiles,
-  //   policeCaseFileList,
-  //   setPoliceCaseFileList,
-  //   workingCase.caseFiles,
-  // ])
 
   const toggleCheckbox = (
     evt: React.ChangeEvent<HTMLInputElement>,

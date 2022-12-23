@@ -100,15 +100,13 @@ export const StepFive: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { uploadErrorMessage, allFilesUploaded, addFileToCase } = useS3Upload(
-    workingCase,
-  )
+  const { uploadErrorMessage, addFileToCase } = useS3Upload(workingCase)
   const { upload, remove } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
 
-  const stepIsValid = allFilesUploaded && !isUploading
+  const stepIsValid = !isUploading
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
@@ -135,11 +133,13 @@ export const StepFive: React.FC = () => {
   )
 
   const handleUpload = useCallback(
-    (files: File[]) => {
+    async (files: File[]) => {
       const filesWithId: Array<[File, string]> = files.map((file) => [
         file,
         uuid(),
       ])
+
+      setIsUploading(true)
 
       setFilesInRVG((previous) => [
         ...filesWithId.map(
@@ -154,7 +154,9 @@ export const StepFive: React.FC = () => {
         ...(previous || []),
       ])
 
-      upload(filesWithId, setSingleFile)
+      await upload(filesWithId, setSingleFile)
+
+      setIsUploading(false)
     },
     [setSingleFile, upload],
   )
@@ -316,7 +318,7 @@ export const StepFive: React.FC = () => {
           <ContentBlock>
             <InputFileUpload
               name="fileUpload"
-              fileList={filesInRVG || []}
+              fileList={filesInRVG}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleUpload}

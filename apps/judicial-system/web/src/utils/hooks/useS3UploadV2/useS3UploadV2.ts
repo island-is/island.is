@@ -77,7 +77,7 @@ export const useS3UploadV2 = (caseId: string) => {
   >(DeleteFileMutationDocument)
 
   const upload = useCallback(
-    (
+    async (
       files: Array<[File, string]>,
       updateFile: (file: UploadFile, newId?: string) => void,
       category?: CaseFileCategory,
