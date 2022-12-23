@@ -221,7 +221,6 @@ const PoliceCaseFiles: React.FC<Props> = ({
     })
   }
 
-  console.log(policeCaseFileList)
   return (
     <>
       <SectionHeading

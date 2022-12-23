@@ -94,7 +94,7 @@ export const useS3UploadV2 = (caseId: string) => {
               },
             },
           })
-          console.log(data)
+
           if (!data.data?.createPresignedPost.fields?.key) {
             throw Error('failed to get presigned post')
           }

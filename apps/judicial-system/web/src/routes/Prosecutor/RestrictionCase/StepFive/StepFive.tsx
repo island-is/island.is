@@ -125,8 +125,15 @@ export const StepFive: React.FC = () => {
         next[index] = { ...displayFile, id: newId ?? displayFile.id }
         return next
       })
+
+      setWorkingCase((previous) => {
+        return {
+          ...previous,
+          caseFiles: [displayFile as CaseFile, ...(previous.caseFiles || [])],
+        }
+      })
     },
-    [setFilesInRVG],
+    [setWorkingCase],
   )
 
   const handleUpload = useCallback(
@@ -195,10 +202,17 @@ export const StepFive: React.FC = () => {
   ])
 
   useEffect(() => {
-    setPoliceCaseFileList(policeCaseFiles?.files.map(mapToP) || [])
-  }, [policeCaseFiles])
-
-  console.log('policeCaseFiles', policeCaseFileList)
+    setPoliceCaseFileList(
+      policeCaseFiles?.files
+        .filter(
+          (f) =>
+            !workingCase.caseFiles?.some(
+              (caseFile) => caseFile.name === f.name,
+            ),
+        )
+        .map(mapToP) || [],
+    )
+  }, [policeCaseFiles, workingCase.caseFiles])
 
   return (
     <PageLayout
