@@ -311,6 +311,5 @@ export const useS3Upload = (workingCase: Case) => {
     handleS3Upload,
     handleRemoveFromS3,
     handleRetry,
-    createFileMutation,
   }
 }
