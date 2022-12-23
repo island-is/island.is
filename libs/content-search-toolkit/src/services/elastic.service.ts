@@ -41,6 +41,7 @@ type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
 
+// REMOVE ME LATER - I AM JUST A TRIGGER LINE
 @Injectable()
 export class ElasticService {
   private client: Client | null = null
