@@ -1,7 +1,7 @@
 import {gql} from "@apollo/client";
 
 export const USER_PROFILE_QUERY = gql`
-  query {
+  query GetUserProfile {
     getUserProfile {
       nationalId
       locale
@@ -13,7 +13,6 @@ export const USER_PROFILE_QUERY = gql`
       bankInfo
       modified
       canNudge
-      modified
     }
   }
 `

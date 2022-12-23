@@ -8,11 +8,6 @@ export const useUpdateUserProfile = () => {
     UPDATE_USER_PROFILE,
     {
       client,
-      refetchQueries: [
-        {
-          query: USER_PROFILE_QUERY,
-        },
-      ],
     },
   )
 
@@ -27,6 +22,18 @@ export const useUpdateUserProfile = () => {
       variables: {
         input,
       },
+    }).then((res) => {
+      if (res.data) {
+        try {
+          client.query({
+            query: USER_PROFILE_QUERY,
+            fetchPolicy: 'network-only',
+          })
+        } catch (err) {
+          // do nothing
+        }
+      }
+      return res
     })
   }
 

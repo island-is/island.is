@@ -4,8 +4,8 @@ import {
   TextField,
   Typography,
 } from '@island.is/island-ui-native'
-import React, { useEffect } from 'react'
-import { View, Text, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Text, ScrollView, Alert } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -39,14 +39,13 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
 }> = ({ componentId, phone }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
-
+  const [loading, setLoading] = useState(false)
   const userProfile = useUserProfile()
   const [text, onChangeText] = React.useState(phone ?? '')
 
   const originalPhone = parsePhone(
     userProfile.data?.getUserProfile?.mobilePhoneNumber ?? phone ?? '',
   )
-  const disabled = parsePhone(text) === originalPhone || text.trim() === ''
 
   const updatePhone = (value: string) => {
     let str = parsePhone(value)
@@ -62,6 +61,9 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
     }
   }, [userProfile])
 
+  const disabled =
+    parsePhone(text) === originalPhone || text.trim() === ''
+
   // todo data bind default state
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_EDIT_PHONE}>
@@ -71,7 +73,7 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
       />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
         <View style={{ paddingHorizontal: 16 }}>
           <View style={{ marginBottom: 32, marginTop: 8 }}>
             <Typography>
@@ -90,9 +92,10 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
           </View>
           <Button
             title={intl.formatMessage({ id: 'edit.phone.button' })}
-            onPress={() => {
-              client
-                .mutate({
+            onPress={async () => {
+              setLoading(true)
+              try {
+                const res = await client.mutate({
                   mutation: CREATE_SMS_VERIFICATION,
                   variables: {
                     input: {
@@ -100,17 +103,21 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
                     },
                   },
                 })
-                .then((res) => {
-                  if (res.data) {
-                    navigateTo('/editconfirm/phone', {
-                      type: 'phone',
-                      phone: `+354-${text}`,
-                      parentComponentId: componentId,
-                    })
-                  }
-                })
+                if (res.data) {
+                  navigateTo('/editconfirm/phone', {
+                    type: 'phone',
+                    phone: `+354-${text.replace(/-/g, '')}`,
+                    parentComponentId: componentId,
+                  })
+                } else {
+                  throw new Error('Failed to create sms verification');
+                }
+              } catch (e) {
+                Alert.alert('Villa', 'Gat ekki sent staðfestingarkóða');
+              }
+              setLoading(false);
             }}
-            disabled={disabled}
+            disabled={disabled || loading}
           />
         </View>
       </ScrollView>

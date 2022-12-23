@@ -4,9 +4,9 @@ import {
   TextField,
   Typography
 } from '@island.is/island-ui-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
+import { Alert, ScrollView, View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent
@@ -77,7 +77,7 @@ export const EditBankInfoScreen: NavigationFunctionComponent<any> = ({
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
       />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
         <View style={{ paddingHorizontal: 16 }}>
           <View style={{ marginBottom: 32, marginTop: 8 }}>
             <Typography>
@@ -130,10 +130,10 @@ export const EditBankInfoScreen: NavigationFunctionComponent<any> = ({
                   })
                 } else {
                   // failure
-                  throw new Error('failed')
+                  throw new Error('Failed to update')
                 }
               } catch (e) {
-                console.log('handle error')
+                Alert.alert('Villa', 'Gat ekki vistað reikningsupplýsingar');
               }
             }}
           />

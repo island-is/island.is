@@ -37,9 +37,11 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
   const [text, onChangeText] = React.useState('')
   const { updateUserProfile } = useUpdateUserProfile()
   const disabled = text.trim().length < 6;
+  const [loading, setLoading] = React.useState(false)
 
   const handleConfirm = async () => {
     let input: any = {}
+    setLoading(true);
     if (type === 'email') {
       input = { email: email, emailCode: text }
     } else if (type === 'phone') {
@@ -58,6 +60,7 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
     } catch (e) {
       Alert.alert('Villa', 'Gat ekki uppfært upplýsingar');
     }
+    setLoading(false);
   }
 
   return (
@@ -68,7 +71,7 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
       />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
         <View style={{ paddingHorizontal: 16 }}>
           <View style={{ marginBottom: 32, marginTop: 8 }}>
             <Typography>
@@ -95,7 +98,7 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
             style={{
               marginBottom: 24,
             }}
-            disabled={disabled}
+            disabled={disabled || loading}
           />
           <View style={{ alignItems: 'center' }}>
             <CancelButton

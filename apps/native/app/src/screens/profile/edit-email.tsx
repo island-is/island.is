@@ -5,7 +5,7 @@ import {
   Typography,
 } from '@island.is/island-ui-native'
 import React, { useEffect } from 'react'
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Alert } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -33,6 +33,7 @@ export const EditEmailScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
   const intl = useIntl()
   const userProfile = useUserProfile()
+  const [loading, setLoading] = React.useState(false)
   const [text, onChangeText] = React.useState(email ?? '')
 
   const originalEmail = userProfile.data?.getUserProfile?.email ?? email
@@ -52,7 +53,7 @@ export const EditEmailScreen: NavigationFunctionComponent<{
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
       />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
         <View style={{ paddingHorizontal: 16 }}>
           <View style={{ marginBottom: 32, marginTop: 8 }}>
             <Typography>
@@ -75,10 +76,10 @@ export const EditEmailScreen: NavigationFunctionComponent<{
           </View>
           <Button
             title={intl.formatMessage({ id: 'edit.email.button' })}
-            disabled={disabled}
-            onPress={() => {
-              client
-                .mutate({
+            onPress={async () => {
+              setLoading(true)
+              try {
+                const res = await client.mutate({
                   mutation: CREATE_EMAIL_VERIFICATION,
                   variables: {
                     input: {
@@ -86,17 +87,21 @@ export const EditEmailScreen: NavigationFunctionComponent<{
                     }
                   },
                 })
-                .then((res) => {
-                  if (res.data?.createEmailVerification) {
-                    navigateTo('/editconfirm/email', {
-                      email: text,
-                      parentComponentId: componentId,
-                    })
-                  } else {
-                    console.log('error');
-                  }
-                });
+                if (res.data) {
+                  navigateTo('/editconfirm/email', {
+                    type: 'email',
+                    email: text,
+                    parentComponentId: componentId,
+                  })
+                } else {
+                  throw new Error('Failed to create sms verification');
+                }
+              } catch (e) {
+                Alert.alert('Villa', 'Gat ekki sent staðfestingarkóða');
+              }
+              setLoading(false);
             }}
+            disabled={disabled || loading}
           />
         </View>
       </ScrollView>
