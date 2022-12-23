@@ -190,7 +190,7 @@ export class DelegationsIncomingCustomService {
     scope: DelegationScope,
     customApiScopes: ApiScope[],
   ): boolean {
-    return customApiScopes.map((s) => s.name).includes(scope.scopeName)
+    return customApiScopes.some((s) => s.name === scope.scopeName)
   }
 
   private checkIfScopeAllowed(
@@ -199,28 +199,20 @@ export class DelegationsIncomingCustomService {
     accesses: ApiScopeUserAccess[],
     fromNationalId: string,
   ): boolean {
-    if (
-      customApiScopes
-        .filter((s) => !s.isAccessControlled)
-        .map((s) => s.name)
-        .includes(scope.scopeName)
-    ) {
-      return true
-    }
-
     const protectedScope = customApiScopes.find(
       (s) => s.name === scope.scopeName && s.isAccessControlled,
     )
 
-    if (protectedScope) {
-      const accessControlList = accesses
-        .filter((a) => a.scope === scope.scopeName)
-        .map((a) => a.nationalId)
+    if (!protectedScope) {
+      return true
+    }
 
-      return (
-        kennitala.isCompany(fromNationalId) &&
-        accessControlList.includes(fromNationalId)
-      )
+    const access = accesses.find(
+      (a) => a.scope === scope.scopeName && a.nationalId === fromNationalId,
+    )
+
+    if (access) {
+      return kennitala.isCompany(fromNationalId)
     }
 
     return false
