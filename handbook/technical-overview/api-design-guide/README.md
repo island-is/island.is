@@ -37,6 +37,9 @@ All feedback is welcomed and encouraged to help make the guide better so please 
 - [Methods](methods.md)
   - [Methods mapping to HTTP verbs](methods.md#methods-mapping-to-http-verbs)
   - [Custom methods](methods.md#custom-methods)
+- [REST Request](rest-request.md)
+  - [Query parameters](rest-request.md#query-parameters)
+    - [Working with sensitive data](rest-request.md#working-with-sensitive-data)
 - [REST Response](rest-response.md)
   - [General](rest-response.md#general)
   - [GET](rest-response.md#get)
@@ -65,6 +68,11 @@ All feedback is welcomed and encouraged to help make the guide better so please 
 - [Example Service](example.md)
 
 ## Changelog
+
+_Draft 4 - Published 2022-12-23_
+
+- Updated usage of [HTTP status codes](rest-response.md#http-status-codes) to use `204` instead of `404` when resources are not found or not accessible to the user.
+- Add description of how to work with sensitive data in [REST Requests](rest-request.md#working-with-sensitive-data).
 
 _Draft 3 - Published 2022-08-16_
 

@@ -37,6 +37,7 @@
   - [Once Only Principle](handbook/technical-overview/api-design-guide/once-only.md)
   - [Pagination](handbook/technical-overview/api-design-guide/pagination.md)
   - [Resource Oriented Design](handbook/technical-overview/api-design-guide/resource-oriented-design.md)
+  - [REST Request](handbook/technical-overview/api-design-guide/rest-request.md)
   - [REST Response](handbook/technical-overview/api-design-guide/rest-response.md)
   - [Security](handbook/technical-overview/api-design-guide/security.md)
   - [Versioning](handbook/technical-overview/api-design-guide/versioning.md)
