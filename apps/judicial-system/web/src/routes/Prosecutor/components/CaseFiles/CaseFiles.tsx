@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 import { useRouter } from 'next/router'
@@ -95,11 +101,7 @@ export const CaseFiles: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const {
-    uploadErrorMessage,
-    addFileToCase,
-    uploadPoliceCaseFile,
-  } = useS3Upload(workingCase)
+  const { addFileToCase, uploadPoliceCaseFile } = useS3Upload(workingCase)
   const { upload, remove } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
@@ -164,6 +166,14 @@ export const CaseFiles: React.FC = () => {
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
   }, [policeCaseFiles, workingCase.caseFiles])
+
+  const uploadErrorMessage = useMemo(() => {
+    if (filesInRVG.some((file) => file.status === 'error')) {
+      return formatMessage(errors.general)
+    } else {
+      return undefined
+    }
+  }, [filesInRVG, formatMessage])
 
   const stepIsValid = !isUploading
   const handleNavigationTo = (destination: string) =>
