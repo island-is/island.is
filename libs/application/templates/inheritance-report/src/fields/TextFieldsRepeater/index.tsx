@@ -8,10 +8,12 @@ import {
   GridRow,
   Button,
   Text,
+  Input,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
 import { getValueViaPath } from '@island.is/application/core'
+import { formatCurrency } from '@island.is/application/ui-components'
 
 type Props = {
   field: {
@@ -24,6 +26,14 @@ type Props = {
   }
 }
 
+export const currencyStringToNumber = (str: string) => {
+  if (!str) {
+    return str
+  }
+  const cleanString = str.replace(/[,\s]+|[.\s]+/g, '')
+  return parseInt(cleanString, 10)
+}
+
 export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   application,
   field,
@@ -33,17 +43,26 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     name: id,
   })
 
-  const answersValue = getValueViaPath(application.answers, id) as any
-  const sum = answersValue?.length
-    ? answersValue.reduce((accumulator: any, object: any) => {
-        return accumulator + Number(object[props.sumField])
+  const answersValues = getValueViaPath(
+    application.answers,
+    id,
+  ) as Array<object>
+  const answersValuesTotal = answersValues?.length
+    ? answersValues.reduce((a: number, o: any) => {
+        return a + Number(o[props.sumField])
       }, 0)
     : 0
 
-  const [total, setTotal] = useState(answersValue?.length ? sum : 0)
-  const [valueArray, setValueArray] = useState<any>(answersValue.map((v: any) => Number(v[props.sumField])))
+  const [total, setTotal] = useState(
+    answersValues?.length ? answersValuesTotal : 0,
+  )
+  const [valueArray, setValueArray] = useState<Array<number>>(
+    answersValues?.length
+      ? answersValues.map((v: any) => Number(v[props.sumField]))
+      : [],
+  )
 
-  const getTheSumOfTheValues = (v: any, index: any) => {
+  const getTheTotalOfTheValues = (v: any, index: any) => {
     const arr = valueArray
     if (arr[index]) {
       arr.splice(index, 1, v)
@@ -98,7 +117,9 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                     valueArray.splice(index, 1)
                     setTotal(
                       valueArray.length
-                        ? valueArray.reduce((a: any, v: any) => (a = a + v))
+                        ? valueArray.reduce(
+                            (a: number, v: number) => (a = a + v),
+                          )
                         : 0,
                     )
                     remove(index)
@@ -125,14 +146,17 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       label={field.title}
                       placeholder={field.placeholder}
                       backgroundColor={field.color ? field.color : 'blue'}
-                      //currency={field.currency}
+                      currency={field.currency}
                       readOnly={field.readOnly}
                       type={field.type}
                       textarea={field.variant}
                       rows={field.rows}
                       onChange={(e) =>
                         props.sumField === field.id
-                          ? getTheSumOfTheValues(Number(e.target.value), index)
+                          ? getTheTotalOfTheValues(
+                              currencyStringToNumber(e.target.value),
+                              index,
+                            )
                           : ''
                       }
                     />
@@ -154,7 +178,20 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
           {props.repeaterButtonText}
         </Button>
       </Box>
-      <Text marginTop={5}>total: {total || 0}</Text>
+      <Box marginTop={5}>
+        <GridRow>
+          <GridColumn span={['1/1', '1/2']}>
+            <Input
+              id={`${id}.total`}
+              name={`${id}.total`}
+              value={total ? formatCurrency(String(total)) : '0'}
+              label={'Samtals'}
+              backgroundColor={'white'}
+              readOnly={true}
+            />
+          </GridColumn>
+        </GridRow>
+      </Box>
     </Box>
   )
 }
