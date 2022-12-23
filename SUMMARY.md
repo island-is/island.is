@@ -45,7 +45,7 @@
   - [Authentication Flows](handbook/technical-overview/auth/authentication-flows.md)
   - [Authorising API Endpoints](handbook/technical-overview/auth/authorising-apis.md)
   - [Configuration](handbook/technical-overview/auth/configuration.md)
-  - [Delegations (BETA)](handbook/technical-overview/auth/delegations.md)
+  - [Delegations](handbook/technical-overview/auth/delegations.md)
   - [Environments](handbook/technical-overview/auth/environments.md)
   - [IAS Onboarding Questionnaire](handbook/technical-overview/auth/ias-onboarding-questionnaire.md)
   - [Tools and Examples](handbook/technical-overview/auth/integration-guidance.md)

@@ -1,4 +1,4 @@
-# Delegations (BETA)
+# Delegations
 
 IAS includes a delegation system which allows individuals and organisations to grant others access to digital services on their behalf. For example, guardians can sign in on behalf of their wards, and employees can sign in on behalf of the company they work for.
 
@@ -31,6 +31,15 @@ This design reduces the information shared with the client. The client only sees
 It also means resource servers can easily validate access tokens and return resources for the chosen delegation.
 
 To prevent impersonation attacks, resource servers MUST validate the audience and scope claims. If they support delegations they SHOULD also audit both identities from the token.
+
+## Delegation types
+
+The `delegationType` property in the ID and Access tokens indicates what kind of delegation the token represents. It is an array of strings, as delegation can be merged. For example a legal guardian can also have a custom delegation from its child. The property can contain the following values:
+
+- `LegalGuardian` - Legal guardian of a underage user based on National Registry.
+- `ProcuringHolder` - Procuring holder of a company based on Company Registry.
+- `PersonalRepresentative` - Personal representative of a represented person based on Félags- og vinnumarkaðsráðuneytið.
+- `Custom` - Explicit delegation created by the user in island.is delegation system.
 
 ## Audit Requirements
 
