@@ -123,11 +123,16 @@ export const EditBankInfoScreen: NavigationFunctionComponent<any> = ({
               try {
                 const bankData = stringifyBankData({ bank, l, account })
                 if (bankData) {
-                  updateUserProfile({
+                  const res = await updateUserProfile({
                     bankInfo: bankData,
-                  }).then(() => {
-                    Navigation.dismissModal(componentId)
                   })
+
+                  if(!res.data) {
+                    throw new Error('Faild to update')
+                  }
+
+                  Navigation.dismissModal(componentId)
+
                 } else {
                   // failure
                   throw new Error('Failed to update')

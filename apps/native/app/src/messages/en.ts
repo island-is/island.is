@@ -339,7 +339,13 @@ export const en: TranslatedMessages = {
 
   // edit confirm
   'edit.confirm.screenTitle': 'Confirm edit',
-  'edit.confirm.description': 'Enter the security code that has been sent to the phone number you have registered.',
+  'edit.confirm.description': `Enter the security code that has been sent to {
+    type,
+    select,
+    email {the email you have registered}
+    phone {the phone number you have registered}
+    other {to you}
+  }.`,
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm'
