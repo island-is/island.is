@@ -303,6 +303,7 @@ export const form: Form = buildForm({
                     ],
                     repeaterButtonText: m.addInventory.defaultMessage,
                     repeaterHeaderText: m.inventoryTitle.defaultMessage,
+                    sumField: 'inventoryValue',
                   },
                 ),
               ],

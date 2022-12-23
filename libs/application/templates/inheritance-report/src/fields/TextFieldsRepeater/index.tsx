@@ -1,5 +1,5 @@
-import { FC } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { FC, useEffect, useState } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
+import { getValueViaPath } from '@island.is/application/core'
 
 type Props = {
   field: {
@@ -18,17 +19,44 @@ type Props = {
       fields: Array<object>
       repeaterButtonText: string
       repeaterHeaderText: string
+      sumField: string
     }
   }
 }
 
 export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
+  application,
   field,
 }) => {
+  console.log(application.answers)
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
+
+  const [total, setTotal] = useState(0)
+  const [valueArray, setValueArray] = useState<any>([])
+  const { setValue } = useFormContext()
+
+  useEffect(() => {
+    setValue(`${id}TotalAmount`, total)
+  }, [total])
+
+  const getTheSumOfTheValues = (v: any, index: any) => {
+    const arr = valueArray
+    if (arr[index]) {
+      arr.splice(index, 1, v)
+      setValueArray(arr)
+    } else {
+      arr.push(v)
+      setValueArray(arr)
+    }
+    setTotal(
+      valueArray.length
+        ? valueArray.reduce((a: any, v: any) => (a = a + v))
+        : 0,
+    )
+  }
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
@@ -65,7 +93,15 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                   size="small"
                   circle
                   icon="remove"
-                  onClick={() => remove(index)}
+                  onClick={() => {
+                    valueArray.splice(index, 1)
+                    setTotal(
+                      valueArray.length
+                        ? valueArray.reduce((a: any, v: any) => (a = a + v))
+                        : 0,
+                    )
+                    remove(index)
+                  }}
                 />
               </Box>
             </Box>
@@ -88,11 +124,16 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       label={field.title}
                       placeholder={field.placeholder}
                       backgroundColor={field.color ? field.color : 'blue'}
-                      currency={field.currency}
+                      //currency={field.currency}
                       readOnly={field.readOnly}
                       type={field.type}
                       textarea={field.variant}
                       rows={field.rows}
+                      onChange={(e) =>
+                        props.sumField === field.id
+                          ? getTheSumOfTheValues(Number(e.target.value), index)
+                          : ''
+                      }
                     />
                   </GridColumn>
                 )
@@ -112,6 +153,10 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
           {props.repeaterButtonText}
         </Button>
       </Box>
+      <Text marginTop={5}>
+        total:{' '}
+        {total || getValueViaPath(application.answers, `${id}TotalAmount`) || 0}
+      </Text>
     </Box>
   )
 }
