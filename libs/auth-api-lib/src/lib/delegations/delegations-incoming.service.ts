@@ -24,6 +24,18 @@ type ClientDelegationInfo = Pick<
   | 'supportsPersonalRepresentatives'
   | 'requireApiScopes'
 >
+
+export type ApiScopeInfo = Pick<
+  ApiScope,
+  | 'name'
+  | 'enabled'
+  | 'grantToLegalGuardians'
+  | 'grantToProcuringHolders'
+  | 'grantToPersonalRepresentatives'
+  | 'allowExplicitDelegationGrant'
+  | 'isAccessControlled'
+>
+
 /**
  * Service class for incoming delegations.
  * This class supports domain based delegations.
@@ -224,7 +236,7 @@ export class DelegationsIncomingService {
     })
   }
 
-  private async getClientAllowedApiScopes(user: User): Promise<ApiScope[]> {
+  private async getClientAllowedApiScopes(user: User): Promise<ApiScopeInfo[]> {
     if (!user) return []
 
     const clientAllowedScopes = (
@@ -242,6 +254,15 @@ export class DelegationsIncomingService {
           { enabled: true },
         ],
       },
+      attributes: [
+        'name',
+        'enabled',
+        'grantToLegalGuardians',
+        'grantToProcuringHolders',
+        'grantToPersonalRepresentatives',
+        'allowExplicitDelegationGrant',
+        'isAccessControlled',
+      ],
     })
   }
 }

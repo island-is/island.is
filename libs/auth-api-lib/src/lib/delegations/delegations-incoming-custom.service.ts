@@ -22,6 +22,7 @@ import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
 import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
 import { Op } from 'sequelize'
+import { ApiScopeInfo } from './delegations-incoming.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -66,7 +67,7 @@ export class DelegationsIncomingCustomService {
 
   async findAllAvailableIncoming(
     user: User,
-    clientAllowedApiScopes: ApiScope[],
+    clientAllowedApiScopes: ApiScopeInfo[],
     requireApiScopes?: boolean,
   ): Promise<MergedDelegationDTO[]> {
     const customApiScopes = clientAllowedApiScopes.filter(
@@ -188,14 +189,14 @@ export class DelegationsIncomingCustomService {
 
   private checkIfScopeIsValid(
     scope: DelegationScope,
-    customApiScopes: ApiScope[],
+    customApiScopes: ApiScopeInfo[],
   ): boolean {
     return customApiScopes.some((s) => s.name === scope.scopeName)
   }
 
   private checkIfScopeAllowed(
     scope: DelegationScope,
-    customApiScopes: ApiScope[],
+    customApiScopes: ApiScopeInfo[],
     accesses: ApiScopeUserAccess[],
     fromNationalId: string,
   ): boolean {
@@ -313,7 +314,7 @@ export class DelegationsIncomingCustomService {
 
   private async findAccessControlList(
     delegations: Delegation[],
-    protectedScopes: ApiScope[],
+    protectedScopes: ApiScopeInfo[],
   ): Promise<ApiScopeUserAccess[]> {
     if (
       !delegations ||

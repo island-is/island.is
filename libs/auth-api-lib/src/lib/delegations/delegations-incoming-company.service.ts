@@ -5,7 +5,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
-import { ApiScope } from '../resources/models/api-scope.model'
+import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { DelegationType } from './types/delegationType'
 
@@ -21,7 +21,7 @@ export class IncomingDelegationsCompanyService {
 
   async findAllIncoming(
     user: User,
-    clientAllowedApiScopes?: ApiScope[],
+    clientAllowedApiScopes?: ApiScopeInfo[],
     requireApiScopes?: boolean,
   ): Promise<DelegationDTO[]> {
     const procuringHolderApiScopes = clientAllowedApiScopes?.filter(

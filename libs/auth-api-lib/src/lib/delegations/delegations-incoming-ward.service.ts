@@ -5,7 +5,7 @@ import {
 } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, Logger } from '@nestjs/common'
-import { ApiScope } from '../resources/models/api-scope.model'
+import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { DelegationType } from './types/delegationType'
 
@@ -19,7 +19,7 @@ export class DelegationsIncomingWardService {
 
   async findAllIncoming(
     user: User,
-    clientAllowedApiScopes?: ApiScope[],
+    clientAllowedApiScopes?: ApiScopeInfo[],
     requireApiScopes?: boolean,
   ): Promise<DelegationDTO[]> {
     if (

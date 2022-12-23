@@ -13,7 +13,7 @@ import { PersonalRepresentativeService } from '../personal-representative/servic
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { DelegationType } from './types/delegationType'
-import { ApiScope } from '../resources/models/api-scope.model'
+import { ApiScopeInfo } from './delegations-incoming.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -29,7 +29,7 @@ export class DelegationsIncomingRepresentativeService {
 
   async findAllIncoming(
     user: User,
-    clientAllowedApiScopes?: ApiScope[],
+    clientAllowedApiScopes?: ApiScopeInfo[],
     requireApiScopes?: boolean,
   ): Promise<DelegationDTO[]> {
     if (
