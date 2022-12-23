@@ -14,7 +14,6 @@ import {
   FlatList,
   Image,
   Platform,
-  SafeAreaView,
   View,
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
@@ -31,10 +30,12 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { client } from '../../graphql/client'
 import { IArticleSearchResults } from '../../graphql/fragments/search.fragment'
 import { LIST_SEARCH_QUERY } from '../../graphql/queries/list-search.query'
+import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { openBrowser } from '../../lib/rn-island'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
 const {
@@ -53,7 +54,7 @@ const {
         tintColor: theme.color.blue400,
         backgroundColor: 'transparent',
       },
-      rightButtons: [],
+      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       background: {
         component:
           Platform.OS === 'android'
@@ -84,7 +85,13 @@ const {
         visible: true,
         hideTopBarOnFocus: true,
       },
-      rightButtons: [],
+      largeTitle: {
+        visible: true,
+      },
+      scrollEdgeAppearance: {
+        active: true,
+        noBorder: true,
+      },
     },
     bottomTab: {
       testID: testIDs.TABBAR_TAB_APPLICATION,
@@ -202,6 +209,13 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [])
 
+  useActiveTabItemPress(3, () => {
+    flatListRef.current?.scrollToOffset({
+      offset: -200,
+      animated: true,
+    })
+  })
+
   useNavigationSearchBarUpdate((e) => {
     if (e.text !== ui.applicationQuery) {
       setSearchLoading(true)
@@ -250,27 +264,19 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   return (
     <>
-      <BottomTabsIndicator index={3} total={5} />
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_APPLICATIONS}
         scrollEventThrottle={16}
+        scrollToOverflowEnabled={true}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
           },
         )}
-        contentContainerStyle={{
-          paddingBottom: 16
-        }}
-        style={{ zIndex: 9 }}
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
-        stickyHeaderIndices={[0]}
-        contentInset={{
-          bottom: 32,
-        }}
         ListHeaderComponent={
           isSearch ? (
             <SearchHeader
@@ -297,8 +303,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         data={isLoading ? skeletonItems : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
         refreshing={res?.networkStatus === 4}
-        onRefresh={() => res?.refetch()}
+        onRefresh={() => res?.refetch?.()}
       />
+      <BottomTabsIndicator index={3} total={5} />
       {!isSearch && <TopLine scrollY={scrollY} />}
     </>
   )
