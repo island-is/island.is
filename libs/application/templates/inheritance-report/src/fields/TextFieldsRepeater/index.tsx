@@ -1,5 +1,5 @@
-import { FC, useState } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { FC, useState, useEffect } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -14,6 +14,7 @@ import { Answers } from '../../types'
 import * as styles from '../styles.css'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
+import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
 
 type Props = {
   field: {
@@ -26,14 +27,6 @@ type Props = {
   }
 }
 
-export const currencyStringToNumber = (str: string) => {
-  if (!str) {
-    return str
-  }
-  const cleanString = str.replace(/[,\s]+|[.\s]+/g, '')
-  return parseInt(cleanString, 10)
-}
-
 export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   application,
   field,
@@ -42,6 +35,9 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
+  const { setValue } = useFormContext()
+
+  console.log(application.answers)
 
   const answersValues = getValueViaPath(
     application.answers,
@@ -90,6 +86,10 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
 
     append(repeaterFields)
   }
+
+  useEffect(() => {
+    setValue(`totalAmounts.${id}Total`, total)
+  }, [total])
 
   return (
     <Box>

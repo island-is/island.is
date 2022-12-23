@@ -14,7 +14,10 @@ import {
 import { m } from '../lib/messages'
 import { UserProfile, Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import { removeCountryCode } from '@island.is/application/ui-components'
+import {
+  formatCurrency,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 import { isEstateInfo } from '../lib/utils/isEstateInfo'
 import format from 'date-fns/format'
 
@@ -280,8 +283,8 @@ export const form: Form = buildForm({
                   {
                     title: '',
                     id: 'inventory',
-                    component: 'TextFieldsRepeater',
                     doesNotRequireAnswer: true,
+                    component: 'TextFieldsRepeater',
                   },
                   {
                     fields: [
@@ -589,7 +592,10 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: 'Markaðsverð samtals á dánardegi',
-              value: ({ answers }) => '1.200.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String((answers.totalAmounts as any).inventoryTotal),
+                ),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -601,7 +607,10 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: 'Innistæða í bönkum með vöxtum á dánardegi',
-              value: ({ answers }) => '1.200.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String((answers.totalAmounts as any).bankAccountsTotal),
+                ),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -613,7 +622,10 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: 'Verðmæti samtals  á dánardegi',
-              value: ({ answers }) => '1.200.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String((answers.totalAmounts as any).claimsTotal),
+                ),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -625,7 +637,10 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: 'Verðmæti samtals  á dánardegi',
-              value: ({ answers }) => '1.200.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String((answers.totalAmounts as any).stocksTotal),
+                ),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -637,7 +652,10 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: 'Fjárhæð samtals  á dánardegi',
-              value: ({ answers }) => '1.200.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String((answers.totalAmounts as any).moneyTotal),
+                ),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -649,7 +667,10 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: 'Matsverð annarra eigna samtals á dánardegi',
-              value: ({ answers }) => '1.200.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String((answers.totalAmounts as any).otherAssetsTotal),
+                ),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -661,7 +682,15 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: 'Samtals alls',
-              value: ({ answers }) => '123.230.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String(
+                    Object.values(answers.totalAmounts as any).reduce(
+                      (a: any, o: any) => (a = a + o),
+                      0,
+                    ),
+                  ),
+                ),
             }),
           ],
         }),
