@@ -36,9 +36,6 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     name: id,
   })
   const { setValue } = useFormContext()
-
-  console.log(application.answers)
-
   const answersValues = getValueViaPath(
     application.answers,
     id,
@@ -178,20 +175,22 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
           {props.repeaterButtonText}
         </Button>
       </Box>
-      <Box marginTop={5}>
-        <GridRow>
-          <GridColumn span={['1/1', '1/2']}>
-            <Input
-              id={`${id}.total`}
-              name={`${id}.total`}
-              value={total ? formatCurrency(String(total)) : '0'}
-              label={'Samtals'}
-              backgroundColor={'white'}
-              readOnly={true}
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
+      {!!fields.length && (
+        <Box marginTop={5}>
+          <GridRow>
+            <GridColumn span={['1/1', '1/2']}>
+              <Input
+                id={`${id}.total`}
+                name={`${id}.total`}
+                value={formatCurrency(String(total))}
+                label={'Samtals'}
+                backgroundColor={'white'}
+                readOnly={true}
+              />
+            </GridColumn>
+          </GridRow>
+        </Box>
+      )}
     </Box>
   )
 }
