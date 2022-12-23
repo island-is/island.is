@@ -179,7 +179,9 @@ const UploadFilesToPoliceCase: React.FC<{
     <InputFileUpload
       name="fileUpload"
       fileList={displayFiles}
+      accept="application/pdf"
       header={formatMessage(m.inputFileUpload.header)}
+      description={formatMessage(m.inputFileUpload.description)}
       buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
       onChange={onChange}
       onRemove={onRemove}
