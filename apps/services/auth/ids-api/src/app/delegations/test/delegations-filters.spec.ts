@@ -6,12 +6,12 @@ import { setupWithAuth } from '../../../../test/setup'
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { DelegationDTO } from '@island.is/auth-api-lib'
-import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { user } from './delegations-filters-types'
 import { Sequelize } from 'sequelize-typescript'
 import { getConnectionToken } from '@nestjs/sequelize'
 import { Type } from '@nestjs/common'
+import { FixtureFactory } from '@island.is/services/auth/testing'
 
 describe('DelegationsController', () => {
   let sequelize: Sequelize

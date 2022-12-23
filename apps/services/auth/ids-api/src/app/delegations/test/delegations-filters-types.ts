@@ -1,13 +1,13 @@
 import { User } from '@island.is/auth-nest-tools'
 import { ClientAllowedScope } from '@island.is/auth-api-lib'
-import { CreateClient } from '@island.is/services/auth/testing'
-import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
   CreateApiScope,
   CreateApiScopeUserAccess,
+  CreateClient,
   CreateCustomDelegation,
   CreateDomain,
-} from '../../../../test/fixtures/types'
+} from '@island.is/services/auth/testing'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import { ResponseSimple } from '@island.is/clients/rsk/procuring'
 
 export const clientId = '@island.is/webapp'
