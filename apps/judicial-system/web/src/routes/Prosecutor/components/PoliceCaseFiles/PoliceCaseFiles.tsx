@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { Fragment, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
@@ -35,11 +35,10 @@ export interface PoliceCaseFileCheck extends PoliceCaseFile {
   checked: boolean
 }
 
-const CheckboxListItem: React.FC<{ key: string }> = ({ children, key }) => (
+const CheckboxListItem: React.FC = ({ children }) => (
   <motion.li
     layout
     className={styles.policeCaseFile}
-    key={key}
     initial={{
       opacity: 0,
     }}
@@ -67,25 +66,27 @@ const CheckboxList: React.FC<ListItemProps> = ({
 }) => (
   <AnimatePresence>
     {files.map((file) => (
-      <CheckboxListItem key={file.id}>
-        <Checkbox
-          label={
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="spaceBetween"
-            >
-              {file.name}
-              {isUploading && file.checked && <LoadingDots />}
-            </Box>
-          }
-          name={file.id}
-          value={file.id}
-          checked={file.checked}
-          onChange={onCheck}
-          disabled={isUploading}
-        />
-      </CheckboxListItem>
+      <Fragment key={file.id}>
+        <CheckboxListItem>
+          <Checkbox
+            label={
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="spaceBetween"
+              >
+                {file.name}
+                {isUploading && file.checked && <LoadingDots />}
+              </Box>
+            }
+            name={file.id}
+            value={file.id}
+            checked={file.checked}
+            onChange={onCheck}
+            disabled={isUploading}
+          />
+        </CheckboxListItem>
+      </Fragment>
     ))}
   </AnimatePresence>
 )
