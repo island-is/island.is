@@ -190,6 +190,7 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
+      // TODOx rejected state
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

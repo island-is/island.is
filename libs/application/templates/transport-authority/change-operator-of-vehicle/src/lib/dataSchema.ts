@@ -15,6 +15,7 @@ export const OperatorInformationSchema = z.object({
   phone: z.string(),
   approved: z.boolean().optional(),
   wasAdded: z.string().optional(),
+  // startDate: z.date().optional(), //TODOx need to set this value for previous operators
 })
 
 export const RejecterSchema = z.object({
