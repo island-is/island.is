@@ -1,4 +1,4 @@
-import { TestApp } from '@island.is/testing/nest'
+import { TestApp, truncate } from '@island.is/testing/nest'
 import { testCases } from './delegations-filters-test-cases'
 import request from 'supertest'
 import faker from 'faker'
@@ -8,38 +8,55 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { DelegationDTO } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { user } from './delegations-filters-types'
+import { Sequelize } from 'sequelize-typescript'
+import { getConnectionToken } from '@nestjs/sequelize'
+import { Type } from '@nestjs/common'
 
 describe('DelegationsController', () => {
+  let sequelize: Sequelize
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+  let factory: FixtureFactory
+  let nationalRegistryApi: NationalRegistryClientService
+  let rskApi: RskProcuringClient
+
+  beforeAll(async () => {
+    app = await setupWithAuth({
+      user: user,
+    })
+    sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+
+    server = request(app.getHttpServer())
+
+    nationalRegistryApi = app.get(NationalRegistryClientService)
+    jest
+      .spyOn(nationalRegistryApi, 'getIndividual')
+      .mockImplementation(async (nationalId: string) =>
+        createNationalRegistryUser({
+          nationalId,
+          name: faker.name.findName(),
+        }),
+      )
+
+    rskApi = app.get(RskProcuringClient)
+
+    factory = new FixtureFactory(app)
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
   describe.each(Object.keys(testCases))(
     'Delegation filtering with test case: %s',
     (caseName) => {
       const testCase = testCases[caseName]
+      testCase.user = user
       const path = '/v2/delegations'
-      let app: TestApp
-      let server: request.SuperTest<request.Test>
-      let factory: FixtureFactory
-      let nationalRegistryApi: NationalRegistryClientService
-      let rskApi: RskProcuringClient
 
       beforeAll(async () => {
-        app = await setupWithAuth({
-          user: testCase.user,
-        })
-        server = request(app.getHttpServer())
-
-        nationalRegistryApi = app.get(NationalRegistryClientService)
-        jest
-          .spyOn(nationalRegistryApi, 'getIndividual')
-          .mockImplementation(async (nationalId: string) =>
-            createNationalRegistryUser({
-              nationalId,
-              name: faker.name.findName(),
-            }),
-          )
-
-        rskApi = app.get(RskProcuringClient)
-
-        factory = new FixtureFactory(app)
+        await truncate(sequelize)
 
         await factory.createDomain(testCase.domain)
 
@@ -69,15 +86,11 @@ describe('DelegationsController', () => {
 
         jest
           .spyOn(nationalRegistryApi, 'getCustodyChildren')
-          .mockImplementationOnce(async () => testCase.fromChildren)
+          .mockImplementation(async () => testCase.fromChildren)
 
         jest
           .spyOn(rskApi, 'getSimple')
-          .mockImplementationOnce(async () => testCase.procuration)
-      })
-
-      afterAll(async () => {
-        await app.cleanUp()
+          .mockImplementation(async () => testCase.procuration)
       })
 
       it(`GET ${path} returns correct filtered delegations`, async () => {

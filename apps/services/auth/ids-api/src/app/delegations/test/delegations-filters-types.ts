@@ -12,6 +12,12 @@ import { ResponseSimple } from '@island.is/clients/rsk/procuring'
 
 export const clientId = '@island.is/webapp'
 
+export const user = createCurrentUser({
+  nationalIdType: 'person',
+  scope: ['@identityserver.api/authentication'],
+  client: clientId,
+})
+
 export const legalGuardianScopes = ['lg1', 'lg2']
 export const procurationHolderScopes = ['ph1', 'ph2']
 export const customScopes = ['cu1', 'cu2']
@@ -42,12 +48,6 @@ export class TestCase {
   expectedFrom: string[]
 
   constructor(client: CreateClient, options: ITestCaseOptions) {
-    this.user = createCurrentUser({
-      nationalIdType: 'person',
-      scope: ['@identityserver.api/authentication'],
-      client: client.clientId,
-    })
-
     this.client = client
     this.fromChildren = options.fromChildren ?? []
     this.fromCompanies = options.fromCompanies ?? []
