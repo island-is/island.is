@@ -402,4 +402,11 @@ export class FileService {
         return false
       })
   }
+
+  async resetCaseFileStates(caseId: string, transaction: Transaction) {
+    await this.fileModel.update(
+      { state: CaseFileState.STORED_IN_RVG },
+      { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
+    )
+  }
 }

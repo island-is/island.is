@@ -17,6 +17,7 @@ import {
   RskCompanyInfo,
   VehicleServiceFjsV1,
   TransportAuthority,
+  Vehicles,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -237,6 +238,7 @@ export const serviceSetup = (services: {
       RskCompanyInfo,
       VehicleServiceFjsV1,
       TransportAuthority,
+      Vehicles,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
