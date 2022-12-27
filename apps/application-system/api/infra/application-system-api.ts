@@ -18,6 +18,7 @@ import {
   VehicleServiceFjsV1,
   TransportAuthority,
   Vehicles,
+  Passports,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -239,6 +240,7 @@ export const serviceSetup = (services: {
       VehicleServiceFjsV1,
       TransportAuthority,
       Vehicles,
+      Passports,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
