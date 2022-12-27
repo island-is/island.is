@@ -283,7 +283,6 @@ const FileUploadField = () => {
       request.open('PUT', url)
 
       const formData = new FormData()
-
       Object.keys(fields).forEach((key) => formData.append(key, fields[key]))
       formData.append('file', file)
 
