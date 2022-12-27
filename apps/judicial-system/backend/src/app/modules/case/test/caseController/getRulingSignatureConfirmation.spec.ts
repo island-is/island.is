@@ -3,7 +3,11 @@ import { Transaction } from 'sequelize/types'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseFileState,
+  User,
+} from '@island.is/judicial-system/types'
 import { MessageType, MessageService } from '@island.is/judicial-system/message'
 
 import { randomDate } from '../../../../test'
@@ -83,8 +87,26 @@ describe('CaseController - Get ruling signature confirmation', () => {
   describe('successful completion', () => {
     const userId = uuid()
     const user = { id: userId } as User
+    const caseFileId = uuid()
     const caseId = uuid()
-    const theCase = { id: caseId, judgeId: userId } as Case
+    const theCase = {
+      id: caseId,
+      caseFiles: [
+        {
+          id: caseFileId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.CASE_FILE,
+        },
+        {
+          id: uuid(),
+          key: uuid(),
+          state: CaseFileState.STORED_IN_COURT,
+          category: CaseFileCategory.CASE_FILE,
+        },
+      ],
+      judgeId: userId,
+    } as Case
     const documentToken = uuid()
     let then: Then
 
@@ -105,10 +127,11 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.CASE_COMPLETED, caseId },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
         { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
         { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
+        { type: MessageType.DELIVER_CASE_FILE_TO_COURT, caseId, caseFileId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
+        { type: MessageType.DELIVER_CASE_TO_POLICE, caseId },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })

@@ -174,9 +174,14 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
           children: undefined,
           options,
           backgroundColor: 'blue',
-          defaultValue: null,
           onSelect,
         }}
+      />
+
+      <input
+        type="hidden"
+        ref={register}
+        name={`periods[${currentIndex}].ratio`}
       />
 
       {currentPeriod.firstPeriodStart === undefined && (

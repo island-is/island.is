@@ -24,7 +24,7 @@ export const estateMembersFields = [
       cards: ({ externalData }: Application) =>
         (
           (externalData.syslumennOnEntry.data as { estate: EstateRegistrant })
-            ?.estate.estateMembers ?? []
+            ?.estate?.estateMembers ?? []
         ).map((member: EstateMember) => ({
           title: member.name,
           description: [formatNationalId(member.nationalId), member.relation],

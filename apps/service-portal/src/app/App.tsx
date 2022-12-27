@@ -43,7 +43,6 @@ export const App = () => {
                       modules={Object.values(modules)}
                       meta={{
                         basePath: ServicePortalPath.MinarSidurPath,
-                        masterNav: servicePortalMasterNavigation[0],
                         portalType: 'my-pages',
                       }}
                     >

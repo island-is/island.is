@@ -46,6 +46,15 @@ export interface PortalNavigationItem {
    * Description for module
    */
   description?: MessageDescriptor
+  /**
+   * Active state for navigation item
+   */
+  active?: boolean
+
+  /**
+   * Active state if current path is exact match
+   */
+  activeIfExact?: boolean
 }
 
 /**
