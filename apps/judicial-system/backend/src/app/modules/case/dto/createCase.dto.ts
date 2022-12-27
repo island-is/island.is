@@ -19,7 +19,7 @@ import type {
 export class CreateCaseDto {
   @IsNotEmpty()
   @IsString()
-  @ApiPropertyOptional({ enum: CaseType })
+  @ApiProperty({ enum: CaseType })
   readonly type!: CaseType
 
   @IsOptional()

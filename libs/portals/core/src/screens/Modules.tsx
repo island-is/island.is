@@ -9,7 +9,11 @@ import { ModuleErrorScreen, ModuleErrorBoundary } from './ModuleErrorScreen'
 import { AccessDenied } from './AccessDenied'
 import { NotFound } from './NotFound'
 import { PortalRoute } from '../types/portalCore'
-import { usePortalMeta, useRoutes } from '../components/PortalProvider'
+import {
+  useModules,
+  usePortalMeta,
+  useRoutes,
+} from '../components/PortalProvider'
 import { plausiblePageviewDetail } from '../utils/plausible'
 
 type RouteComponentProps = {
@@ -93,11 +97,16 @@ const RouteLoader = React.memo(
 export const Modules = () => {
   const routes = useRoutes()
   const { userInfo, client } = useModuleProps()
+  const modules = useModules()
+
+  if (!userInfo) return null
 
   return (
     <Box paddingY={1}>
-      {userInfo && (
+      {modules.length > 0 ? (
         <RouteLoader routes={routes} userInfo={userInfo} client={client} />
+      ) : (
+        <AccessDenied userInfo={userInfo} client={client} />
       )}
     </Box>
   )
