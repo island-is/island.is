@@ -1,13 +1,14 @@
 export interface DeliveryStation {
   name?: string | null
-  codeType: string
+  type: string
+  code: string
 }
 
 export interface PlateOrder {
   permno: string
   frontType?: string | null
   rearType?: string | null
-  deliveryMethodIsDeliveryStation: boolean
-  deliveryStationCodeType?: string
+  deliveryStationType?: string
+  deliveryStationCode?: string
   expressOrder: boolean
 }

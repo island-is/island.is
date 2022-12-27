@@ -47,7 +47,7 @@ export const plateDeliverySubSection = buildSubSection({
           largeButtons: true,
         }),
         buildSelectField({
-          id: 'plateDelivery.deliveryStationCodeType',
+          id: 'plateDelivery.deliveryStationTypeCode',
           title: information.labels.plateDelivery.deliveryStationTitle,
           placeholder:
             information.labels.plateDelivery.deliveryStationPlaceholder,
@@ -67,8 +67,8 @@ export const plateDeliverySubSection = buildSubSection({
               [],
             ) as DeliveryStation[]
 
-            return deliveryStationList.map(({ name, codeType }) => ({
-              value: codeType,
+            return deliveryStationList.map(({ name, value }) => ({
+              value: value,
               label: name || '',
             }))
           },

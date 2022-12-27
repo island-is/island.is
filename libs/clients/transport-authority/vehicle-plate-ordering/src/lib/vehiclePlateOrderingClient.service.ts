@@ -21,34 +21,14 @@ export class VehiclePlateOrderingClient {
       apiVersion2: '1.0',
     })
 
-    return (
-      result
-        // Filtering out type=R and code=1 (that is the option "Pick up at Samgöngustofa")
-        .filter((x) => x.stationType !== 'R' && x.stationCode !== '1')
-        .map((item) => ({
-          name: item.name,
-          // Since the result is only unique per code+type, we will just merge them together here
-          codeType: (item.stationCode || '') + '_' + (item.stationType || ''),
-        }))
-    )
+    return result.map((item) => ({
+      name: item.name,
+      type: item.stationType || '',
+      code: item.stationCode || '',
+    }))
   }
 
   public async orderPlates(auth: User, plateOrder: PlateOrder): Promise<void> {
-    let deliveryStationType: string
-    let deliveryStationCode: string
-
-    // Check if used selected delivery method: Pick up at delivery station
-    const deliveryStationCodeType = plateOrder.deliveryStationCodeType
-    if (plateOrder.deliveryMethodIsDeliveryStation && deliveryStationCodeType) {
-      // Split up code+type (was merged when we fetched that data)
-      deliveryStationCode = deliveryStationCodeType.split('_')[0]
-      deliveryStationType = deliveryStationCodeType.split('_')[1]
-    } else {
-      // Otherwise we will default to "Pick up at Samgöngustofa" which is type=R and code=1
-      deliveryStationType = 'R'
-      deliveryStationCode = '1'
-    }
-
     await this.plateOrderingApiWithAuth(auth).orderplatesPost({
       apiVersion: '1.0',
       apiVersion2: '1.0',
@@ -56,8 +36,8 @@ export class VehiclePlateOrderingClient {
         permno: plateOrder.permno,
         frontType: plateOrder.frontType,
         rearType: plateOrder.rearType,
-        stationToDeliverTo: deliveryStationCode,
-        stationType: deliveryStationType,
+        stationToDeliverTo: plateOrder.deliveryStationCode,
+        stationType: plateOrder.deliveryStationType,
         expressOrder: plateOrder.expressOrder,
       },
     })

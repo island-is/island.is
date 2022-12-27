@@ -8,7 +8,7 @@ export type VehiclesCurrentVehicle = {
 
 export type DeliveryStation = {
   name?: string | null
-  codeType: string
+  value: string
 }
 
 export type PlateType = {

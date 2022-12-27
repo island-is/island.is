@@ -22,7 +22,20 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
   }
 
   async getDeliveryStationList({ auth }: TemplateApiModuleActionProps) {
-    return await this.vehiclePlateOrderingClient.getDeliveryStations(auth)
+    const result = await this.vehiclePlateOrderingClient.getDeliveryStations(
+      auth,
+    )
+
+    return (
+      result
+        // Filtering out type=R and code=1 (that is the option "Pick up at Samgöngustofa")
+        .filter((x) => x.type !== 'R' && x.code !== '1')
+        .map((item) => ({
+          name: item.name,
+          // Since the result is only unique per type+code, we will just merge them together here
+          value: item.type + '_' + item.code,
+        }))
+    )
   }
 
   async getPlateTypeList() {
@@ -77,13 +90,30 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     const includeRushFee =
       answers?.plateDelivery?.includeRushFee?.includes(YES) || false
 
+    // Check if used selected delivery method: Pick up at delivery station
+    const deliveryStationTypeCode =
+      answers?.plateDelivery?.deliveryStationTypeCode
+    let deliveryStationType: string
+    let deliveryStationCode: string
+    if (
+      answers.plateDelivery?.deliveryMethodIsDeliveryStation === YES &&
+      deliveryStationTypeCode
+    ) {
+      // Split up code+type (was merged when we fetched that data)
+      deliveryStationType = deliveryStationTypeCode.split('_')[0]
+      deliveryStationCode = deliveryStationTypeCode.split('_')[1]
+    } else {
+      // Otherwise we will default to "Pick up at Samgöngustofa" which is type=R and code=1
+      deliveryStationType = 'R'
+      deliveryStationCode = '1'
+    }
+
     await this.vehiclePlateOrderingClient.orderPlates(auth, {
       permno: answers?.vehicle?.plate,
       frontType: answers?.plateSize?.frontPlateSize,
       rearType: answers?.plateSize?.rearPlateSize,
-      deliveryMethodIsDeliveryStation:
-        answers.plateDelivery?.deliveryMethodIsDeliveryStation === YES,
-      deliveryStationCodeType: answers?.plateDelivery?.deliveryStationCodeType,
+      deliveryStationType: deliveryStationType,
+      deliveryStationCode: deliveryStationCode,
       expressOrder: includeRushFee,
     })
   }
