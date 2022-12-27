@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import { UsersApi } from '@island.is/clients/air-discount-scheme'
+import { AdminApi, UsersApi } from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -11,6 +11,8 @@ import {
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
 import { Discount as DiscountModel } from '../models/discount.model'
+import type { FlightLeg as TFlightLeg } from '@island.is/clients/air-discount-scheme'
+import { FlightLeg } from '../models/flightLeg.model'
 
 @Injectable()
 export class DiscountService {
@@ -18,6 +20,7 @@ export class DiscountService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private usersApi: UsersApi,
+    private adminApi: AdminApi,
   ) {}
 
   handleError(error: any): any {
@@ -60,6 +63,12 @@ export class DiscountService {
     )
   }
 
+  private getADSFlightWithAuth(auth: Auth) {
+    return this.adminApi.withMiddleware(
+      new AuthMiddleware(auth, { forwardUserInfo: true }),
+    )
+  }
+
   async getCurrentDiscounts(auth: User): Promise<DiscountModel[]> {
     const relations: TUser[] = await this.getUserRelations(auth)
 
@@ -96,6 +105,30 @@ export class DiscountService {
     }
 
     return discounts
+  }
+
+  async getFlightLegsByNationalId(
+    auth: User,
+    nationalId: string,
+  ): Promise<TFlightLeg[]> {
+    const getFlightsResponse = await this.getADSFlightWithAuth(auth)
+      .privateFlightControllerGetUserFlights({ nationalId })
+      .catch((e) => {
+        this.handle4xx(e)
+      })
+
+    if (!getFlightsResponse) {
+      return []
+    }
+    const flightLegs: TFlightLeg[] = []
+
+    getFlightsResponse.forEach((flight) => {
+      if (flight?.flightLegs) {
+        flightLegs.push(...flight.flightLegs)
+      }
+    })
+
+    return flightLegs
   }
 
   private async getDiscount(
