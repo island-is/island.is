@@ -124,10 +124,14 @@ export class ChildrenService {
     }
 
     if (children.length <= 0 && existingApplications.length <= 0) {
-      throw new TemplateApiError(
-        parentalLeaveFormMessages.shared.childrenError,
-        500,
-      )
+      // Instead of throwing error, ask applicant questions 
+      // father without mother
+      
+
+      // throw new TemplateApiError(
+      //   parentalLeaveFormMessages.shared.childrenError,
+      //   500,
+      // )
     }
 
     return {

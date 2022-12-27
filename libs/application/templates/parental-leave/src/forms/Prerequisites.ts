@@ -328,15 +328,16 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'noPrimaryParent',
-          title: 'Áætlaður fæðingardagur fannst ekki',
-          children : [
+          title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
+          children: [
             buildMultiField({
-              id: 'selectedChildScreen',
-              title: parentalLeaveFormMessages.selectChild.screenTitle,
+              id: 'noPrimaryParent',
+              title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
               children: [
                 buildRadioField({
                   id: 'noPrimaryParent.question.one',
-                  title: 'Er barn að fæðast erlendis?',
+                  title:
+                    parentalLeaveFormMessages.shared.noPrimaryParentQuestionOne,
                   options: [
                     { value: YES, label: 'Já' },
                     { value: NO, label: 'Nei' },
@@ -346,7 +347,8 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'noPrimaryParent.question.two',
-                  title: 'Er móðir búsett erlendis og/eða ekki með íslenska kennitölu?',
+                  title:
+                    parentalLeaveFormMessages.shared.noPrimaryParentQuestionTwo,
                   options: [
                     { value: YES, label: 'Já' },
                     { value: NO, label: 'Nei' },
@@ -356,7 +358,9 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'noPrimaryParent.question.three',
-                  title: 'Á móðir ekki rétt á fæðingarorlofi á Íslandi?',
+                  title:
+                    parentalLeaveFormMessages.shared
+                      .noPrimaryParentQuestionThree,
                   options: [
                     { value: YES, label: 'Já' },
                     { value: NO, label: 'Nei' },
@@ -366,18 +370,29 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDateField({
                   id: 'birthDate',
-                  title: 'Hvenær er áætlaður / raunverulegur fæðingardagur barns',
+                  condition: (answers) => {
+                    const questionOne =
+                      getValueViaPath(
+                        answers,
+                        'noPrimaryParent.question.one',
+                      ) === YES
+                    const questionTwo =
+                      getValueViaPath(
+                        answers,
+                        'noPrimaryParent.question.two',
+                      ) === YES
+                    const questionThree =
+                      getValueViaPath(
+                        answers,
+                        'noPrimaryParent.question.three',
+                      ) === YES
+
+                    return questionOne && questionTwo && questionThree
+                  },
+                  title:
+                  parentalLeaveFormMessages.shared.noPrimaryParentDatePickerTitle,
                   description: '',
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  // minDate: (application: Application) =>
-                  //   getMinimumStartDate(application),
-                  // excludeDates: (application) => {
-                  //   const { periods } = getApplicationAnswers(
-                  //     application.answers,
-                  //   )
-
-                  //   return getAllPeriodDates(periods)
-                  // },
                 }),
               ],
             }),
