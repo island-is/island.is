@@ -13,7 +13,6 @@ import { Jobs } from '../../assets/Jobs'
 import { conclusion } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
 import { isLastReviewer } from '../../utils'
-import { CopyLink } from '@island.is/application/ui-components'
 
 export const ReviewConclusion: FC<FieldBaseProps & ReviewScreenProps> = ({
   refetch,

@@ -9,7 +9,7 @@ import { FC, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { RadioController } from '@island.is/shared/form-fields'
-import { gql, useLazyQuery, useQuery } from '@apollo/client'
+import { gql, useLazyQuery } from '@apollo/client'
 import { CHECK_TACHO_NET_EXISTS } from '../graphql/queries'
 import {
   getValueViaPath,
@@ -24,7 +24,7 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const { application, errors } = props
-  const { control, setValue } = useFormContext()
+  const { setValue } = useFormContext()
 
   const [deliveryMethodIsSend, setDeliveryMethodIsSend] = useState<string>(
     getValueViaPath(

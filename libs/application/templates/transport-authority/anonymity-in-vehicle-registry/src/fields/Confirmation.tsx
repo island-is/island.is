@@ -1,4 +1,3 @@
-import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -12,7 +11,7 @@ import { FC } from 'react'
 import { Jobs } from '../assets/Jobs'
 import { confirmation } from '../lib/messages'
 
-export const Confirmation: FC<FieldBaseProps> = ({ application }) => {
+export const Confirmation: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
 
   return (

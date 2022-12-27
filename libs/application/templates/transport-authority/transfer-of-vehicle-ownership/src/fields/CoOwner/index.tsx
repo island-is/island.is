@@ -8,7 +8,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { useFormContext } from 'react-hook-form'
 import { VehiclesCurrentVehicle } from '../../types'
 
 export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {

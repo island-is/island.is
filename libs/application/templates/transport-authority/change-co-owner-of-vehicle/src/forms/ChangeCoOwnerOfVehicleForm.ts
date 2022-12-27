@@ -5,7 +5,6 @@ import {
   buildDataProviderItem,
   buildCustomField,
   buildSubmitField,
-  buildSubSection,
   buildMultiField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'

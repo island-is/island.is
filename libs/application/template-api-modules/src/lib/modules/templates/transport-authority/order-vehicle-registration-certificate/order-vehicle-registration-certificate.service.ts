@@ -20,9 +20,7 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const chargeItemCodes = getChargeItemCodes(
-        application.answers as OrderVehicleRegistrationCertificateAnswers,
-      )
+      const chargeItemCodes = getChargeItemCodes()
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,

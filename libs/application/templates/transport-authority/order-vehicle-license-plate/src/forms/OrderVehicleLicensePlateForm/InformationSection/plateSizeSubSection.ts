@@ -10,8 +10,6 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedVehicle } from '../../../utils'
-import { formatMessage } from '@formatjs/intl'
-import { useLocale } from '@island.is/localization'
 
 export const plateSizeSubSection = buildSubSection({
   id: 'plateSize',
@@ -65,8 +63,6 @@ export const plateSizeSubSection = buildSubSection({
           title: '',
           id: 'plateSize.frontPlateSize',
           options: (application) => {
-            const { formatMessage } = useLocale()
-
             const plateTypeList = application.externalData.plateTypeList
               .data as PlateType[]
 
@@ -80,15 +76,17 @@ export const plateSizeSubSection = buildSubSection({
               .filter((x) => x.code === currentPlateType)
               ?.map((x) => ({
                 value: x.code || '',
-                label:
-                  formatMessage(
-                    information.labels.plateSize.plateSizeOptionTitle,
-                    {
-                      name: x.name,
-                      height: x.plateHeight,
-                      width: x.plateWidth,
-                    },
-                  ) || '',
+                label: information.labels.plateSize.plateSizeOptionTitle,
+                // TODOx get formatMessage to work
+                // label:
+                //   formatMessage(
+                //     information.labels.plateSize.plateSizeOptionTitle,
+                //     {
+                //       name: x.name,
+                //       height: x.plateHeight,
+                //       width: x.plateWidth,
+                //     },
+                //   ) || '',
               }))
           },
           width: 'half',
@@ -104,8 +102,6 @@ export const plateSizeSubSection = buildSubSection({
           title: '',
           id: 'plateSize.rearPlateSize',
           options: (application) => {
-            const { formatMessage } = useLocale()
-
             const plateTypeList = application.externalData.plateTypeList
               .data as PlateType[]
 
@@ -119,14 +115,16 @@ export const plateSizeSubSection = buildSubSection({
               .filter((x) => x.code === currentPlateType)
               ?.map((x) => ({
                 value: x.code || '',
-                label: formatMessage(
-                  information.labels.plateSize.plateSizeOptionTitle,
-                  {
-                    name: x.name,
-                    height: x.plateHeight,
-                    width: x.plateWidth,
-                  },
-                ),
+                label: information.labels.plateSize.plateSizeOptionTitle,
+                // TODOx get formatMessage to work
+                // label: formatMessage(
+                //   information.labels.plateSize.plateSizeOptionTitle,
+                //   {
+                //     name: x.name,
+                //     height: x.plateHeight,
+                //     width: x.plateWidth,
+                //   },
+                // ),
               }))
           },
           width: 'half',

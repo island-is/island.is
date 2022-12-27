@@ -6,7 +6,6 @@ import {
 import { TagVariant } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
 import { z } from 'zod'
-import { type } from 'os'
 
 export type ReviewCoOwnerAndOperatorField = {
   nationalId: string
