@@ -42,7 +42,7 @@ export class VehicleOperatorsClient {
         operators: operators.map((operator) => ({
           personIdNumber: operator.ssn || '',
           startDate: operator.startDate || new Date(),
-          endDate: operator.endDate || new Date(),
+          endDate: null, //TODOx will be remove in newer api version
           mainOperator: operator.isMainOperator ? 1 : 0,
         })),
       },

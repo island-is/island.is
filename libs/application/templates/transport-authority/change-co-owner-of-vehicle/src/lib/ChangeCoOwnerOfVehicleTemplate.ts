@@ -98,7 +98,7 @@ const template: ApplicationTemplate<
             action: ApiActions.createCharge,
           }),
           onExit: defineTemplateApi({
-            action: ApiActions.submitApplication,
+            action: ApiActions.initReview,
           }),
           roles: [
             {
@@ -118,12 +118,17 @@ const template: ApplicationTemplate<
           [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
+      // TODOx review state
+      // TODOx rejected state
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           actionCard: {
             tag: {
               label: m.actionCardDone,

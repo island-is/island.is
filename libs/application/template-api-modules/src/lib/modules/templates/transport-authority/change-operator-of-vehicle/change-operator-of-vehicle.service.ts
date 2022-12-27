@@ -18,6 +18,19 @@ import {
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { applicationCheck } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
+import {
+  generateRequestReviewEmail,
+  generateApplicationSubmittedEmail,
+  generateApplicationRejectedEmail,
+} from './emailGenerators'
+import {
+  generateRequestReviewSms,
+  generateApplicationSubmittedSms,
+  generateApplicationRejectedSms,
+} from './smsGenerators'
+
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
   constructor(
@@ -89,7 +102,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     ])
 
     // 2b. Send email/sms individually to each recipient
-    /* for (let i = 0; i < recipientList.length; i++) {
+    for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
           (props) => generateRequestReviewEmail(props, recipientList[i]),
@@ -103,7 +116,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           application,
         )
       }
-    } */
+    }
 
     return recipientList
   }
@@ -129,7 +142,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     // 2a. Get list of users that need to be notified
     const answers = application.answers as ChangeOperatorOfVehicleAnswers
-    /* const recipientList = getRecipients(answers, getAllRoles())
+    const recipientList = getRecipients(answers, getAllRoles())
 
     // 2b. Send email/sms individually to each recipient about success of withdrawing application
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
@@ -157,13 +170,17 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           application,
         )
       }
-    } */
+    }
   }
 
+  // After everyone has reviewed (and approved), then submit the application, and notify everyone involved it was a success
   async submitApplication({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Validate payment
+
+    // 1a. Make sure a paymentUrl was created
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
@@ -173,6 +190,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
+    // 1b. Make sure payment is fulfilled (has been paid)
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
@@ -186,10 +204,24 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
+    // 2. Submit the application
+
     const answers = application.answers as ChangeOperatorOfVehicleAnswers
+    // // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
+    if (answers?.owner?.nationalId !== application.applicant) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.submitApplication.sellerNotValid,
+          summary: applicationCheck.submitApplication.sellerNotValid,
+        },
+        400,
+      )
+    }
+
     const permno = answers?.pickVehicle?.plate
     const mainOperatorNationalId = answers?.mainOperator?.nationalId
     const newOperators = answers?.operators.map((operator) => ({
+      // startDate: operator.startDate, //TODOx waiting for field to be added to schema
       ssn: operator.nationalId,
       isMainOperator:
         answers.operators.length > 1
@@ -197,7 +229,28 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    // Submit the application
     await this.vehicleOperatorsClient.saveOperators(auth, permno, newOperators)
+
+    // 3. Notify everyone in the process that the application has successfully been submitted
+
+    // 3a. Get list of users that need to be notified
+    const recipientList = getRecipients(answers, getAllRoles())
+
+    // 3b. Send email/sms individually to each recipient about success of submitting application
+    for (let i = 0; i < recipientList.length; i++) {
+      if (recipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) => generateApplicationSubmittedEmail(props, recipientList[i]),
+          application,
+        )
+      }
+
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateApplicationSubmittedSms(application, recipientList[i]),
+          application,
+        )
+      }
+    }
   }
 }
