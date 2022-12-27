@@ -19,7 +19,10 @@ import {
   Form as FormType,
   GenericFormMutation,
   GenericFormMutationVariables,
+  Mutation,
+  MutationCreateUploadUrlArgs,
 } from '@island.is/web/graphql/schema'
+import { CREATE_UPLOAD_URL } from '@island.is/application/graphql'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
@@ -196,17 +199,111 @@ export const FormField = ({
 const FileUploadField = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([])
 
+  const [createUploadUrl] = useMutation<Mutation, MutationCreateUploadUrlArgs>(
+    CREATE_UPLOAD_URL,
+  )
+
+  const onChange = async (files: File[]) => {
+    setFileList(files)
+
+    const filesToUpload = [...files]
+
+    const presignedPostResponses = await Promise.all(
+      filesToUpload.map((file) =>
+        createUploadUrl({
+          variables: {
+            filename: file.name,
+          },
+        }),
+      ),
+    )
+
+    let i = 0
+
+    for (const presignedPostResponse of presignedPostResponses) {
+      const file = filesToUpload[i++]
+      const request = new XMLHttpRequest()
+      request.withCredentials = true
+      request.responseType = 'json'
+
+      request.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          // setFileList((list) =>
+          //   list.map((f) => {
+          //     if (f.key !== (file as UploadFile)?.key) return f
+          //     return {
+          //       ...f,
+          //       percent: (event.loaded / event.total) * 100,
+          //       status: 'uploading',
+          //     }
+          //   }),
+          // )
+        }
+      })
+
+      request.upload.addEventListener('error', () => {
+        // setFileList((list) =>
+        //   list.map((f) => {
+        //     if (f.key !== (file as UploadFile)?.key) return f
+        //     return {
+        //       ...f,
+        //       percent: 0,
+        //       status: 'error',
+        //     }
+        //   }),
+        // )
+      })
+
+      request.addEventListener('load', (e) => {
+        console.log('LOAD', e)
+        console.log(request)
+        const requestStatus = request.status
+        const requestResponse = request.response
+        console.log(requestResponse)
+        // setFileList((list) =>
+        //   list.map((f) => {
+        //     if (f.key !== (file as UploadFile)?.key) return f
+        //     if (requestStatus >= 200 && requestStatus < 300) {
+        //       return {
+        //         ...f,
+        //         status: 'done',
+        //       }
+        //     }
+        //     return {
+        //       ...f,
+        //       percent: 0,
+        //       status: 'error',
+        //     }
+        //   }),
+        // )
+      })
+
+      const { url, fields } = presignedPostResponse.data.createUploadUrl
+
+      request.open('PUT', url)
+
+      const formData = new FormData()
+
+      Object.keys(fields).forEach((key) => formData.append(key, fields[key]))
+      formData.append('file', file)
+
+      request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
+
+      request.send(formData)
+    }
+  }
+
   return (
     <InputFileUpload
       fileList={fileList}
       onRemove={(fileToRemove) => {
+        console.log(fileToRemove.key)
+        console.log(fileList.map((f) => f.key))
         setFileList((list) =>
-          list.filter((file) => file.id !== fileToRemove.id),
+          list.filter((file) => file.key !== fileToRemove.key),
         )
       }}
-      onChange={(files) => {
-        setFileList(files)
-      }}
+      onChange={onChange}
     />
   )
 }
@@ -344,10 +441,27 @@ export const Form = ({ form, namespace }: FormProps) => {
     return data[slugify(form.recipientFormFieldDecider.title)]
   }
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const valid = validate()
 
+    console.log(valid)
+
     if (valid) {
+      // TODO: upload the attachments to AWS and get a link that'll be appended to the email message
+
+      // if there are any attachments then go over them all and create an upload url for each of them
+      const responses = await Promise.all([
+        createUploadUrl({
+          variables: {
+            filename: 'test.png',
+          },
+        }),
+      ])
+
+      for (const response of responses) {
+        console.log(response.data.url)
+      }
+
       submit({
         variables: {
           input: {
