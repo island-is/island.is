@@ -12,7 +12,6 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { Discount as DiscountModel } from '../models/discount.model'
 import type { FlightLeg as TFlightLeg } from '@island.is/clients/air-discount-scheme'
-import { FlightLeg } from '../models/flightLeg.model'
 
 @Injectable()
 export class DiscountService {
