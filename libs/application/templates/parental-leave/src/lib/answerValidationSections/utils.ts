@@ -3,22 +3,71 @@ import parseISO from 'date-fns/parseISO'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import isValid from 'date-fns/isValid'
-import { AnswerValidationError, NO_ANSWER } from '@island.is/application/core'
-import { Application, StaticTextObject } from '@island.is/application/types'
-import { StartDateOptions, YES, NO } from '../constants'
-import { getExpectedDateOfBirth } from './parentalLeaveUtils'
+import {
+  AnswerValidationError,
+  NO_ANSWER,
+  buildValidationError,
+} from '@island.is/application/core'
+import {
+  Application,
+  StaticText,
+  StaticTextObject,
+} from '@island.is/application/types'
+import { StartDateOptions, YES, NO } from '../../constants'
+import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
   minPeriodDays,
   usageMaxMonths,
   usageMinMonths,
-} from '../config'
-import { errorMessages } from './messages'
+} from '../../config'
+import { errorMessages } from '../messages'
 
-import { Period } from '../types'
+import { Period } from '../../types'
+import { MessageDescriptor } from 'react-intl'
 
 const hasBeenAnswered = (answer: unknown) => answer !== undefined
+export const buildError = (
+  message: StaticText,
+  path: string,
+  root?: string,
+) => {
+  const pathString = root ? `${root}.${path}` : path
+  return buildValidationError(pathString)(message)
+}
+
+export type ValidateField<T> = {
+  fieldName: string
+  validationFn: (value: T) => boolean
+  message: MessageDescriptor
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const validateFieldInDictionary = <T extends Object>(
+  dictionary: Record<string, T>,
+  answerField: string,
+  fieldName: string,
+  validationFn: (value: T) => boolean,
+  message: MessageDescriptor,
+) => {
+  try {
+    const invalidKey = Object.keys(dictionary).find((key) => {
+      const currentPeriod = dictionary[key]
+      // eslint-disable-next-line no-prototype-builtins
+      if (currentPeriod.hasOwnProperty(fieldName)) {
+        return validationFn(currentPeriod)
+      }
+      return false
+    })
+
+    if (invalidKey) {
+      return buildError(message, `${answerField}[${invalidKey}].${fieldName}`)
+    }
+  } catch (e) {
+    // Ignore
+  }
+}
 
 export const dateIsWithinOtherPeriods = (
   date: Date,
@@ -198,7 +247,7 @@ export const validatePeriod = (
     }
   }
 
-  if (hasBeenAnswered(ratio) && ratio === NO_ANSWER) {
+  if (ratio === NO_ANSWER) {
     return buildError('ratio', errorMessages.periodsRatioMissing)
   } else if (hasBeenAnswered(ratio)) {
     if (!hasBeenAnswered(startDate)) {
