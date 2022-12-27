@@ -58,7 +58,7 @@ export class VehicleOwnerChangeClient {
     return {
       hasError: errorList.length > 0,
       errorMessages: errorList.map((item) => ({
-        errorNo: -1, // TODOx // item.errorNo,
+        errorNo: item.warningSerialNumber,
         defaultMessage: item.errorMess,
       })),
     }
@@ -123,7 +123,7 @@ export class VehicleOwnerChangeClient {
     return {
       hasError: errorList.length > 0,
       errorMessages: errorList.map((item) => ({
-        errorNo: -1, // TODOx // item.errorNo,
+        errorNo: item.warningSerialNumber,
         defaultMessage: item.errorMess,
       })),
     }
