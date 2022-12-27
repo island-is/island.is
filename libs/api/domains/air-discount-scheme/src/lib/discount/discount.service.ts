@@ -96,7 +96,7 @@ export class DiscountService {
         relation.nationalId,
       )
 
-      if (createdDiscount) {
+      if (createdDiscount && this.discountIsValid(createdDiscount)) {
         discounts.push({
           ...createdDiscount,
           user: { ...relation, name: relation.firstName },
