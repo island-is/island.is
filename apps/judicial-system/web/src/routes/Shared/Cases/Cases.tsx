@@ -294,9 +294,7 @@ export const Cases: React.FC = () => {
             value={filter}
           />
         </Box>
-        {loading || isFiltering || !user ? (
-          <TableSkeleton />
-        ) : error ? (
+        {error ? (
           <div
             className={styles.infoContainer}
             data-testid="custody-requests-error"
@@ -307,6 +305,8 @@ export const Cases: React.FC = () => {
               type="error"
             />
           </div>
+        ) : loading || isFiltering || !user ? (
+          <TableSkeleton />
         ) : (
           !isHighCourtUser && (
             <>
