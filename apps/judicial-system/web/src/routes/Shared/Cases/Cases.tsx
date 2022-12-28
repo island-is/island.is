@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import router from 'next/router'
@@ -121,6 +121,8 @@ export const Cases: React.FC = () => {
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
 
+  const [isFiltering, setIsFiltering] = useState<boolean>()
+
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isRepresentative = user?.role === UserRole.REPRESENTATIVE
   const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
@@ -151,6 +153,20 @@ export const Cases: React.FC = () => {
     sendNotification,
     isSendingNotification,
   } = useCase()
+
+  useEffect(() => {
+    if (isFiltering === undefined) {
+      return
+    }
+
+    const loadingTimeout = setTimeout(() => {
+      setIsFiltering(false)
+    }, 250)
+
+    return () => {
+      clearTimeout(loadingTimeout)
+    }
+  }, [isFiltering])
 
   const resCases = data?.cases
 
@@ -271,11 +287,14 @@ export const Cases: React.FC = () => {
             name="filter-cases"
             options={filterOptions}
             label={formatMessage(m.filter.label)}
-            onChange={(value) => setFilter(value as FilterOption)}
+            onChange={(value) => {
+              setIsFiltering(true)
+              setFilter(value as FilterOption)
+            }}
             value={filter}
           />
         </Box>
-        {loading || !user ? (
+        {loading || isFiltering || !user ? (
           <TableSkeleton />
         ) : error ? (
           <div
