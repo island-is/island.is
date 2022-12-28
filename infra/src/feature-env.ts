@@ -98,9 +98,13 @@ const buildIngressComment = (data: HelmService[]): string =>
     .join('\n')
 
 const buildComment = (data: Services<HelmService>): string => {
-  return `Feature deployment successful! Access your feature here:\n\n${buildIngressComment(
-    Object.values(data),
-  )}`
+  if (Object.values(data.ingress).length > 0) {
+    return `Feature deployment successful! Access your feature here:\n\n${buildIngressComment(
+      Object.values(data),
+    )}`
+  } else {
+    return `Feature deployment successful, but no ingresses were defined.`
+  }
 }
 
 yargs(process.argv.slice(2))
