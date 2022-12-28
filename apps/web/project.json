@@ -20,7 +20,8 @@
       "executor": "@nrwl/next:build",
       "options": {
         "root": "apps/web",
-        "outputPath": "dist/apps/web"
+        "outputPath": "dist/apps/web",
+        "generatePackageJson": true
       },
       "configurations": {
         "production": {}
@@ -33,6 +34,7 @@
         "outputPath": "dist/apps/web",
         "main": "apps/web/server.ts",
         "tsConfig": "apps/web/tsconfig.json",
+        "generatePackageJson": true,
         "maxWorkers": 2,
         "assets": []
       },
