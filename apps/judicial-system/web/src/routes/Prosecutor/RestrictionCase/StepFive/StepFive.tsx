@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -19,11 +19,13 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   titles,
   rcCaseFiles as m,
+  errors,
 } from '@island.is/judicial-system-web/messages'
 import {
   useCase,
   useDeb,
   useS3Upload,
+  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Box,
@@ -31,10 +33,12 @@ import {
   Input,
   InputFileUpload,
   Text,
+  toast,
   Tooltip,
+  UploadFile,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 
@@ -55,18 +59,41 @@ export const StepFive: React.FC = () => {
   const {
     uploadErrorMessage,
     allFilesUploaded,
-    handleRemoveFromS3,
     handleRetry,
     handleS3Upload,
     files,
   } = useS3Upload(workingCase)
+  const { remove } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
 
   const stepIsValid = allFilesUploaded && !isUploading
-  const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}/${workingCase.id}`)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
+
+  const handleRemove = useCallback(
+    async (file: UploadFile) => {
+      try {
+        await remove(file)
+        setWorkingCase((prev) => ({
+          ...prev,
+          caseFiles: prev.caseFiles?.filter(
+            (caseFile) => caseFile.id !== file.id,
+          ),
+        }))
+        setPoliceCaseFileList([
+          ...policeCaseFileList,
+          (file as unknown) as PoliceCaseFileCheck,
+        ])
+      } catch {
+        toast.error(formatMessage(errors.general))
+      }
+    },
+    [formatMessage, policeCaseFileList, remove, setWorkingCase],
+  )
 
   return (
     <PageLayout
@@ -124,13 +151,7 @@ export const StepFive: React.FC = () => {
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleS3Upload}
-              onRemove={(file) => {
-                handleRemoveFromS3(file)
-                setPoliceCaseFileList([
-                  ...policeCaseFileList,
-                  (file as unknown) as PoliceCaseFileCheck,
-                ])
-              }}
+              onRemove={handleRemove}
               onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
               disabled={isUploading}

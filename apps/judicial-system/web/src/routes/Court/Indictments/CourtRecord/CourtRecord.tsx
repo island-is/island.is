@@ -74,15 +74,19 @@ const CourtRecord: React.FC = () => {
 
   const handleRemoveFile = useCallback(
     async (file: UploadFile) => {
-      await remove(file.id)
-      setWorkingCase((prev) => ({
-        ...prev,
-        caseFiles: prev.caseFiles?.filter(
-          (caseFile) => caseFile.id !== file.id,
-        ),
-      }))
+      try {
+        await remove(file.id)
+        setWorkingCase((prev) => ({
+          ...prev,
+          caseFiles: prev.caseFiles?.filter(
+            (caseFile) => caseFile.id !== file.id,
+          ),
+        }))
+      } catch {
+        toast.error(formatMessage(errors.general))
+      }
     },
-    [remove, setWorkingCase],
+    [formatMessage, remove, setWorkingCase],
   )
 
   return (

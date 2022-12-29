@@ -19,11 +19,13 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   titles,
   icCaseFiles as m,
+  errors,
 } from '@island.is/judicial-system-web/messages'
 import {
   useCase,
   useDeb,
   useS3Upload,
+  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Box,
@@ -31,7 +33,9 @@ import {
   Input,
   InputFileUpload,
   Text,
+  toast,
   Tooltip,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
@@ -57,9 +61,9 @@ export const CaseFiles: React.FC = () => {
     uploadErrorMessage,
     allFilesUploaded,
     handleS3Upload,
-    handleRemoveFromS3,
     handleRetry,
   } = useS3Upload(workingCase)
+  const { remove } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -67,6 +71,23 @@ export const CaseFiles: React.FC = () => {
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
+  )
+
+  const handleRemove = useCallback(
+    async (file: UploadFile) => {
+      try {
+        await remove(file)
+        setWorkingCase((prev) => ({
+          ...prev,
+          caseFiles: prev.caseFiles?.filter(
+            (caseFile) => caseFile.id !== file.id,
+          ),
+        }))
+      } catch {
+        toast.error(formatMessage(errors.general))
+      }
+    },
+    [formatMessage, remove, setWorkingCase],
   )
 
   return (
@@ -125,7 +146,7 @@ export const CaseFiles: React.FC = () => {
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleS3Upload}
-              onRemove={(file) => handleRemoveFromS3(file)}
+              onRemove={handleRemove}
               onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
               showFileSize

@@ -6,7 +6,6 @@ import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFileMutation,
   CreatePresignedPostMutation,
-  DeleteFileMutation,
   UploadPoliceCaseFileMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
@@ -55,9 +54,6 @@ export const useS3Upload = (workingCase: Case) => {
   ] = useMutation(CreatePresignedPostMutation)
   const [createFileMutation, { error: createFileFailed }] = useMutation(
     CreateFileMutation,
-  )
-  const [deleteFileMutation, { error: deleteFileFailed }] = useMutation(
-    DeleteFileMutation,
   )
 
   // File upload spesific functions
@@ -192,16 +188,6 @@ export const useS3Upload = (workingCase: Case) => {
     setFilesRefAndState(newFiles)
   }
 
-  const removeFileFromState = (file: UploadFile) => {
-    const newFiles = [...files]
-
-    if (newFiles.includes(file)) {
-      setFilesRefAndState(
-        newFiles.filter((fileInFiles) => fileInFiles !== file),
-      )
-    }
-  }
-
   /**
    * Insert file in database and update state.
    * @param file The file to add to case.
@@ -266,30 +252,6 @@ export const useS3Upload = (workingCase: Case) => {
     })
   }
 
-  const handleRemoveFromS3 = (file: UploadFile) => {
-    if (workingCase) {
-      deleteFileMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            id: file.id,
-          },
-        },
-      })
-        .then((res) => {
-          if (!res.errors) {
-            removeFileFromState(file)
-          } else {
-            // TODO: handle failure
-            console.log(res.errors)
-          }
-        })
-        .catch(() => {
-          // TODO: handle error
-        })
-    }
-  }
-
   const handleRetry = (file: UploadFile) => {
     handleS3Upload([file as File], true)
   }
@@ -299,7 +261,6 @@ export const useS3Upload = (workingCase: Case) => {
     uploadErrorMessage:
       uploadPoliceCaseFileFailed ||
       createFileFailed ||
-      deleteFileFailed ||
       createPresignedPostFailed
         ? formatMessage(errors.general)
         : undefined,
@@ -307,7 +268,6 @@ export const useS3Upload = (workingCase: Case) => {
     uploadPoliceCaseFile,
     addFileToCase,
     handleS3Upload,
-    handleRemoveFromS3,
     handleRetry,
   }
 }
