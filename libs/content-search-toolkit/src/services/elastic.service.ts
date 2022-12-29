@@ -40,6 +40,7 @@ import { filterDoc } from './utils'
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
+
 @Injectable()
 export class ElasticService {
   private client: Client | null = null
