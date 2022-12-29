@@ -41,6 +41,7 @@ type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
 
+// TRIGGER LINE - FOR FEATRUE DEPLOY - REMOVE ONCE FEATURE DEPLOY LOADS
 @Injectable()
 export class ElasticService {
   private client: Client | null = null
