@@ -1,6 +1,6 @@
 import { Injectable, Inject, OnApplicationBootstrap } from '@nestjs/common'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
-import { Message } from './dto/createNotification.dto'
+import { CreateNotificationDto } from './dto/createNotification.dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { UserProfileApi } from '@island.is/clients/user-profile'
@@ -30,7 +30,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   }
 
   async run() {
-    await this.worker.run<Message>(
+    await this.worker.run<CreateNotificationDto>( // Message type renamed
       async (message, job): Promise<void> => {
         const messageId = job.id
         this.logger.info('Message received by worker', { messageId })

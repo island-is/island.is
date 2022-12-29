@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { IntlService } from '@island.is/cms-translations'
-import { Message } from './dto/createNotification.dto'
+import { CreateNotificationDto } from './dto/createNotification.dto'
 import { Notification, MessageTypes } from './types'
 import messages from '../../../messages'
 import { UserProfile } from '@island.is/clients/user-profile'
@@ -21,12 +21,13 @@ export class MessageProcessorService {
   shouldSendNotification(type: MessageTypes, profile: UserProfile): boolean {
     switch (type) {
       case MessageTypes.NewDocumentMessage:
+      case MessageTypes.TestMessage:
         return profile.documentNotifications
     }
   }
 
   async convertToNotification(
-    message: Message,
+    message: CreateNotificationDto,
     profile: UserProfile,
   ): Promise<Notification> {
     const t = await this.intlService.useIntl(
@@ -47,6 +48,15 @@ export class MessageProcessorService {
           body: t.formatMessage(body, formatArgs),
           category: 'NEW_DOCUMENT',
           appURI: `${this.appProtocol}://inbox/${message.documentId}`,
+        }
+      }
+      case MessageTypes.TestMessage: {
+        return {
+          messageType: message.type,
+          title: 'fixed test title', // t.formatMessage(title),
+          body: 'fixed test body', //t.formatMessage(body),
+          // category: 'NEW_DOCUMENT',
+          // appURI: `${this.appProtocol}://inbox/${message.documentId}`,
         }
       }
     }

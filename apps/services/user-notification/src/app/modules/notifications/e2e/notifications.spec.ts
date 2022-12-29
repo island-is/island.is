@@ -3,7 +3,7 @@ import { INestApplication, Injectable } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { NotificationsController } from '../notifications.controller'
 import { NotificationsWorkerService } from '../notificationsWorker.service'
-import { Message } from '../dto/createNotification.dto'
+import { CreateNotificationDto } from '../dto/createNotification.dto'
 import { LoggingModule } from '@island.is/logging'
 import { environment } from '../../../../environments/environment'
 import {
@@ -18,7 +18,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 const waitForDelivery = async (
   worker: WorkerMock,
-  cond: (messages: Message[]) => boolean,
+  cond: (messages: CreateNotificationDto[]) => boolean,
   max = 1000,
 ): Promise<void> => {
   const start = Date.now()
@@ -29,12 +29,12 @@ const waitForDelivery = async (
 
 @Injectable()
 class WorkerMock {
-  public received: Message[] = []
+  public received: CreateNotificationDto[] = []
 
   constructor(@InjectWorker('notifications') private worker: WorkerService) {}
 
   async run() {
-    this.worker.run(async (msg: Message) => {
+    this.worker.run(async (msg: CreateNotificationDto) => {
       this.received.push(msg)
     })
   }
@@ -72,11 +72,28 @@ describe('Notifications API', () => {
   })
 
   it('Accepts a valid message input', async () => {
-    const msg: Message = {
+    const msg: CreateNotificationDto = {
       type: MessageTypes.NewDocumentMessage,
       organization: 'Skatturinn',
-      recipient: '0409084390',
+      recipient: '1234567890',
       documentId: '123',
+    }
+
+    await request(app.getHttpServer())
+      .post('/notifications')
+      .send(msg)
+      .expect(201)
+
+    const worker = app.get(NotificationsWorkerService) as WorkerMock
+    await waitForDelivery(worker, (msgs) => msgs.length > 0)
+    expect(worker.received).toEqual([msg])
+  })
+
+  it('Accepts new message input', async () => {
+    const msg: CreateNotificationDto = {
+      type: MessageTypes.TestMessage,
+      organization: 'testSender',
+      recipient: '1234567890',
     }
 
     await request(app.getHttpServer())
