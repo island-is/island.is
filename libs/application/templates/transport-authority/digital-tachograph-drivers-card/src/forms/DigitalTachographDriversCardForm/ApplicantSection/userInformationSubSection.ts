@@ -82,7 +82,7 @@ export const userInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.drivingLicense?.data?.birthCountry,
+            application.externalData?.currentLicense?.data?.birthCountry,
         }),
         buildDescriptionField({
           id: 'emailPhoneSubtitle',

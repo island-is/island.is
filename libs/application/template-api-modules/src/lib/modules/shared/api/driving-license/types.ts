@@ -30,6 +30,8 @@ export type DrivingLicense = {
   currentLicense: string | null
   healthRemarks?: string[]
   categories?: DrivingLicenseCategory[]
+  id?: number
+  birthCountry?: string | null
 }
 
 export interface StudentAssessment {

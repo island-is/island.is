@@ -87,9 +87,8 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
     ) as string
     const drivingLicenceNumber = getValueViaPath(
       application.externalData,
-      'drivingLicense.data.id',
-      '',
-    ) as string
+      'currentLicense.data.id',
+    ) as number
     // Note: We are not exactly fetching the driving license issuing country, but since we
     //       can only continue if user has the necessary license categories through the Icelandic
     //       license registry, we can assume that the user has the issuing country "Ísland"
@@ -103,7 +102,7 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
           lastName: lastName,
           birthDate: birthday,
           birthPlace: birthPlace,
-          drivingLicenceNumber: drivingLicenceNumber,
+          drivingLicenceNumber: drivingLicenceNumber?.toString() || '',
           drivingLicenceIssuingCountry: drivingLicenceIssuingCountry,
         },
       },

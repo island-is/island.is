@@ -151,7 +151,7 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       ?.data as NationalRegistry
     const nationalRegistryBirthplaceData = application.externalData
       .nationalRegistryBirthplace?.data as NationalRegistryBirthplace
-    const drivingLicenseData = application.externalData.drivingLicense
+    const currentLicenseData = application.externalData.currentLicense
       ?.data as DrivingLicense
     const createChargeDate = application.externalData.createCharge?.date
     const qualityPhotoData = application.externalData.qualityPhoto
@@ -166,7 +166,7 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       address: nationalRegistryData?.address?.streetAddress,
       postalCode: nationalRegistryData?.address?.postalCode,
       place: nationalRegistryData?.address?.city,
-      birthCountry: drivingLicenseData?.birthCountry,
+      birthCountry: currentLicenseData?.birthCountry,
       birthPlace: nationalRegistryBirthplaceData?.location,
       emailAddress: answers.applicant.email,
       phoneNumber: answers.applicant.phone,
