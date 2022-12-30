@@ -10,18 +10,20 @@ import {
   PkPassVerification,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import {
   createPkPassDataInput,
   parseAdrLicensePayload,
 } from './adrLicenseMapper'
-import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
+import {
+  AdrDto,
+  AdrLicenseService,
+} from '@island.is/clients/adr-and-machine-license'
 import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
-import { handle404 } from '@island.is/clients/middlewares'
 import { Locale } from '@island.is/shared/types'
 import compareAsc from 'date-fns/compareAsc'
 
@@ -32,15 +34,12 @@ const LOG_CATEGORY = 'adrlicense-service'
 export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private adrApi: AdrApi,
+    private adrApi: AdrLicenseService,
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private adrApiWithAuth = (user: User) =>
-    this.adrApi.withMiddleware(new AuthMiddleware(user as Auth))
-
   async fetchLicense(user: User) {
-    const license = await this.adrApiWithAuth(user).getAdr().catch(handle404)
+    const license = await this.adrApi.getLicenseInfo(user)
     return license
   }
 

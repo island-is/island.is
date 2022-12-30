@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common'
 import { ApiConfig } from './api.config'
-import { exportedApis } from './providers'
-
+import {
+  AdrLicenseServiceProvider,
+  MachineLicenseServiceProvider,
+} from './providers'
 @Module({
-  providers: [ApiConfig, ...exportedApis],
-  exports: exportedApis,
+  providers: [
+    ApiConfig,
+    MachineLicenseServiceProvider,
+    AdrLicenseServiceProvider,
+  ],
+  exports: [MachineLicenseServiceProvider, AdrLicenseServiceProvider],
 })
 export class AdrAndMachineLicenseClientModule {}

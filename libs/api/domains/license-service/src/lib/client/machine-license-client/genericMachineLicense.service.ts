@@ -10,16 +10,15 @@ import {
   PkPassVerification,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import {
-  VinnuvelaApi,
+  MachineLicenseService,
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
 import {
   createPkPassDataInput,
   parseMachineLicensePayload,
 } from './machineLicenseMapper'
-import { handle404 } from '@island.is/clients/middlewares'
 import {
   PassDataInput,
   SmartSolutionsApi,
@@ -35,17 +34,12 @@ export class GenericMachineLicenseService
   implements GenericLicenseClient<VinnuvelaDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private machineApi: VinnuvelaApi,
+    private machineApi: MachineLicenseService,
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private machineApiWithAuth = (user: User) =>
-    this.machineApi.withMiddleware(new AuthMiddleware(user as Auth))
-
   async fetchLicense(user: User) {
-    const license = await this.machineApiWithAuth(user)
-      .getVinnuvela()
-      .catch(handle404)
+    const license = await this.machineApi.getLicenseInfo(user)
     return license
   }
 
