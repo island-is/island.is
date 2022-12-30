@@ -2092,6 +2092,11 @@ export const errorMessages = defineMessages({
     description:
       'Copy for when end date is more than 23.5 months away from expected date of birth',
   },
+  periodsUseLengthMissing: {
+    id: 'pl.application:answerValidators.periodsUseLengthMissing',
+    defaultMessage: 'Vinsamlegast veldu annan hvorn möguleikann.',
+    description: 'Use length cannot be empty.',
+  },
   periodsEndDateDefinitionMissing: {
     id: 'pl.application:answerValidators.periodsEndDateDefinitionMissing',
     defaultMessage: 'Ekki er búið að skilgreina hvernig á að enda tímabil.',
