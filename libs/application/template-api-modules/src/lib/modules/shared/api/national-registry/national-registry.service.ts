@@ -28,7 +28,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
-    const result = await this.getIndividual('0101304929') //TODOx auth.nationalId)
+    const result = await this.getIndividual(auth.nationalId)
 
     // Make sure user has domicile country as Iceland
     if (params?.legalDomicileIceland) {
@@ -162,7 +162,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryBirthplace | null> {
     const birthplace = await this.nationalRegistryApi.getBirthplace(
-      '0101304929', //TODOx auth.nationalId,
+      auth.nationalId,
     )
 
     if (!birthplace?.locality) {
