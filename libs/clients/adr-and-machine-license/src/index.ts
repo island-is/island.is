@@ -1,4 +1,5 @@
 export * from './lib/adr-and-machine-license.module'
 export * from '../gen/fetch'
 export * from './lib/adr-and-machine-license.config'
-export * from './lib/services'
+export { AdrLicenseService } from './lib/services/adrLicense.service'
+export { MachineLicenseService } from './lib/services/machineLicense.service'

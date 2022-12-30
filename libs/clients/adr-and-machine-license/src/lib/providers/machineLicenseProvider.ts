@@ -1,7 +1,8 @@
 import { Provider } from '@nestjs/common'
-import { Configuration, MachineLicenseService, VinnuvelaApi } from '../..'
+import { Configuration, VinnuvelaApi } from '../..'
 import { LazyDuringDevScope } from '@island.is/nest/config'
 import { ApiConfig } from '../api.config'
+import { MachineLicenseService } from '../services/machineLicense.service'
 
 export const MachineLicenseServiceProvider: Provider<MachineLicenseService> = {
   provide: MachineLicenseService,
