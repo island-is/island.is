@@ -75,7 +75,7 @@ export const CaseFiles: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={allFilesUploaded && !isUploading}

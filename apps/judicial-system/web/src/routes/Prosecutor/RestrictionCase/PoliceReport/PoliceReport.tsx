@@ -26,7 +26,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import * as constants from '@island.is/judicial-system/consts'
 
-export const StepFour: React.FC = () => {
+export const PoliceReport: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -59,7 +59,7 @@ export const StepFour: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FOUR}
+      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_REPORT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -244,4 +244,4 @@ export const StepFour: React.FC = () => {
   )
 }
 
-export default StepFour
+export default PoliceReport

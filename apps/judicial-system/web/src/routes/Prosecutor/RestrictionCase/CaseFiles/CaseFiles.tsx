@@ -38,7 +38,7 @@ import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/uti
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 
-export const StepFive: React.FC = () => {
+export const CaseFiles: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -74,7 +74,7 @@ export const StepFive: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -189,4 +189,4 @@ export const StepFive: React.FC = () => {
   )
 }
 
-export default StepFive
+export default CaseFiles

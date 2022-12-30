@@ -1,3 +1,3 @@
-import StepFive from '@island.is/judicial-system-web/src/routes/Prosecutor/RestrictionCase/StepFive/StepFive'
+import CaseFiles from '@island.is/judicial-system-web/src/routes/Prosecutor/RestrictionCase/CaseFiles/CaseFiles'
 
-export default StepFive
+export default CaseFiles
