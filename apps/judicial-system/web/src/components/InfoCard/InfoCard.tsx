@@ -12,7 +12,7 @@ import * as styles from './InfoCard.css'
 interface Defender {
   name: string
   defenderNationalId?: string
-  sessionArrangement: SessionArrangements | undefined
+  sessionArrangement?: SessionArrangements
   email?: string
   phoneNumber?: string
 }
