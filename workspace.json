@@ -151,6 +151,7 @@
     "clients-rsk-procuring": "libs/clients/rsk/procuring",
     "clients-smartsolutions": "libs/clients/smartsolutions",
     "clients-syslumenn": "libs/clients/syslumenn",
+    "clients-transport-authority-digital-tachograph-drivers-card": "libs/clients/transport-authority/digital-tachograph-drivers-card",
     "clients-transport-authority-vehicle-codetables": "libs/clients/transport-authority/vehicle-codetables",
     "clients-transport-authority-vehicle-owner-change": "libs/clients/transport-authority/vehicle-owner-change",
     "clients-user-profile": "libs/clients/user-profile",

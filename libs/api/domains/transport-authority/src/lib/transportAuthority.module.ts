@@ -6,13 +6,21 @@ import {
   VehicleCodetablesClientModule,
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
+import {
+  DigitalTachographDriversCardClientModule,
+  DigitalTachographDriversCardClientConfig,
+} from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 
 @Module({
   imports: [
     VehicleCodetablesClientModule,
+    DigitalTachographDriversCardClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [VehicleCodetablesClientConfig],
+      load: [
+        VehicleCodetablesClientConfig,
+        DigitalTachographDriversCardClientConfig,
+      ],
     }),
   ],
   providers: [MainResolver, TransportAuthorityApi],
