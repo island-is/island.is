@@ -1,0 +1,93 @@
+{
+  "root": "apps/license-api",
+  "sourceRoot": "apps/license-api/src",
+  "projectType": "application",
+  "prefix": "license-api",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "options": {
+        "outputPath": "dist/apps/license-api",
+        "main": "apps/license-api/src/main.ts",
+        "tsConfig": "apps/license-api/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/license-api/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/license-api",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/license-api",
+            "output": "./"
+          }
+        ],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "license-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/license-api/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/license-api/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/license-api"]
+    },
+    "docker-express": {},
+    "dev-services": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "docker-compose up -d",
+        "cwd": "apps/license-api"
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/license-api/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/license-api/tsconfig.app.json apps/license-api/src/buildOpenApi.ts"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../node_modules/.bin/sequelize-cli db:migrate",
+        "cwd": "apps/license-api"
+      }
+    },
+    "migrate/generate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/license-api"
+      }
+    }
+  },
+  "tags": []
+}
