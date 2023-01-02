@@ -1,4 +1,4 @@
-const audience = ['island.is', '@admin.island.is']
+const audience = ['@island.is', '@admin.island.is']
 
 const devConfig = {
   audit: {
