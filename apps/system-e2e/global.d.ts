@@ -5,7 +5,7 @@ declare global {
   namespace PlaywrightTest {
     interface Matchers<R, T> {
       toHaveCountGreaterThan(a: number): R
-      toBeApplication(): R
+      toBeApplication(ofType?: string): R
     }
   }
 }
