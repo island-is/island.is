@@ -459,4 +459,52 @@ export const m = defineMessages({
     defaultMessage: 'Eign',
     description: '',
   },
+
+  // Overview
+  overview: {
+    id: 'ir.application:overview',
+    defaultMessage: 'Yfirlit',
+    description: '',
+  },
+  assetOverview: {
+    id: 'ir.application:assetOverview',
+    defaultMessage: 'Yfirlit eigna',
+    description: '',
+  },
+  assetOverviewDescription: {
+    id: 'ir.application:assetOverviewDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+    description: '',
+  },
+  realEstateEstimation: {
+    id: 'ir.application:realEstateEstimation',
+    defaultMessage: 'Fasteignamat samtals á dánardegi',
+    description: '',
+  },
+  marketValue: {
+    id: 'ir.application:marketValue',
+    defaultMessage: 'Markaðsverð samtals á dánardegi',
+    description: '',
+  },
+  totalValue: {
+    id: 'ir.application:totalValue',
+    defaultMessage: 'Verðmæti samtals á dánardegi',
+    description: '',
+  },
+  banksBalance: {
+    id: 'ir.application:banksBalance',
+    defaultMessage: 'Innistæða í bönkum með vöxtum á dánardegi',
+    description: '',
+  },
+  totalValueOfAssets: {
+    id: 'ir.application:totalValueOfAssets',
+    defaultMessage: 'Samtals virði eigna',
+    description: '',
+  },
+  total: {
+    id: 'ir.application:total',
+    defaultMessage: 'Samtals alls',
+    description: '',
+  },
 })

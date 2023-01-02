@@ -1,5 +1,6 @@
 export const currencyStringToNumber = (str: string) => {
-  if (!str) {
+  console.log('str', str)
+  if (!str || str === '') {
     return str
   }
   const cleanString = str.replace(/[,\s]+|[.\s]+/g, '')

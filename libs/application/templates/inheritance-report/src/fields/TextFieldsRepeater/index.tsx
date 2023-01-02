@@ -57,7 +57,9 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
 
   const getTheTotalOfTheValues = (v: any, index: any) => {
     const arr = valueArray
-    if (arr[index]) {
+    if (v === '') {
+      arr.splice(index, 1)
+    } else if (arr[index]) {
       arr.splice(index, 1, v)
       setValueArray(arr)
     } else {

@@ -550,13 +550,12 @@ export const form: Form = buildForm({
     }),
     buildSection({
       id: 'assetOverview',
-      title: 'Yfirlit',
+      title: m.overview,
       children: [
         buildMultiField({
           id: 'assetOverview',
-          title: 'Yfirlit eigna',
-          description:
-            'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+          title: m.assetOverview,
+          description: m.assetOverviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -567,7 +566,7 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Fasteignamat samtals á dánardegi',
+              label: m.realEstateEstimation,
               value: ({ answers }) => '1.200.000 kr',
             }),
             buildDividerField({}),
@@ -579,7 +578,7 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Markaðsverð samtals á dánardegi',
+              label: m.marketValue,
               value: ({ answers }) => '1.200.000 kr',
             }),
             buildDividerField({}),
@@ -591,7 +590,7 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Markaðsverð samtals á dánardegi',
+              label: m.marketValue,
               value: ({ answers }) =>
                 formatCurrency(
                   String((answers.totalAmounts as any).inventoryTotal),
@@ -606,7 +605,7 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Innistæða í bönkum með vöxtum á dánardegi',
+              label: m.banksBalance,
               value: ({ answers }) =>
                 formatCurrency(
                   String((answers.totalAmounts as any).bankAccountsTotal),
@@ -621,7 +620,7 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Verðmæti samtals  á dánardegi',
+              label: m.totalValue,
               value: ({ answers }) =>
                 formatCurrency(
                   String((answers.totalAmounts as any).claimsTotal),
@@ -636,7 +635,7 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Verðmæti samtals  á dánardegi',
+              label: m.totalValue,
               value: ({ answers }) =>
                 formatCurrency(
                   String((answers.totalAmounts as any).stocksTotal),
@@ -651,7 +650,7 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Fjárhæð samtals  á dánardegi',
+              label: m.totalValue,
               value: ({ answers }) =>
                 formatCurrency(
                   String((answers.totalAmounts as any).moneyTotal),
@@ -675,13 +674,13 @@ export const form: Form = buildForm({
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewAllAssetsWorth',
-              title: 'Samtals virði eigna',
+              title: m.totalValueOfAssets,
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Samtals alls',
+              label: m.total,
               value: ({ answers }) =>
                 formatCurrency(
                   String(
