@@ -44,7 +44,7 @@ const initialState: Case = {
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumbers: [],
-  defendants: [{ id: '' } as Defendant],
+  defendants: [{ id: '', noNationalId: false } as Defendant],
   defendantWaivesRightToCounsel: false,
 }
 

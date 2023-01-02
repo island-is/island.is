@@ -143,7 +143,7 @@ export const useS3Upload = (workingCase: Case) => {
 
     request.addEventListener('load', () => {
       if (request.status >= 200 && request.status < 300) {
-        addFileToCase(file)
+        addFileToCase(file, updateFile)
       } else {
         file.status = 'error'
         file.percent = 0
@@ -181,7 +181,6 @@ export const useS3Upload = (workingCase: Case) => {
      * (source: https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559)
      */
     const newFiles = [...filesRef.current]
-
     if (newFiles.some((f) => f.key === file.key)) {
       const index = newFiles.findIndex((f) => f.key === file.key)
       newFiles[index] = file
@@ -206,7 +205,10 @@ export const useS3Upload = (workingCase: Case) => {
    * Insert file in database and update state.
    * @param file The file to add to case.
    */
-  const addFileToCase = async (file: TUploadFile) => {
+  const addFileToCase = async (
+    file: TUploadFile,
+    cb: (file: TUploadFile) => void,
+  ) => {
     if (workingCase && file.size && file.key) {
       await createFileMutation({
         variables: {
@@ -223,7 +225,7 @@ export const useS3Upload = (workingCase: Case) => {
         .then((res) => {
           file.id = res.data.createFile.id
           file.status = 'done'
-          updateFile(file)
+          cb(file)
         })
         .catch(() => {
           // TODO: handle error
