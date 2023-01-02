@@ -227,23 +227,6 @@ export class LicenseServiceService {
         }
       }
 
-      /*
-      //TODO - Máni (thorkellmani @ github)
-      //Re-implement when app has updated their GenericUserLicenseStatus logic!!!
-      const isDataFetched =
-        licenseDataFromService?.fetch?.status ===
-        GenericUserLicenseFetchStatus.Fetched
-
-      const licenseUserData = licenseDataFromService?.data ?? {
-        status: isDataFetched
-          ? GenericUserLicenseStatus.NotAvailable
-          : GenericUserLicenseStatus.Unknown,
-        pkpassStatus: isDataFetched
-          ? GenericUserLicensePkPassStatus.NotAvailable
-          : GenericUserLicensePkPassStatus.Unknown,
-      }
-      */
-
       const licenseUserData = licenseDataFromService?.data ?? {
         status: GenericUserLicenseStatus.Unknown,
         pkpassStatus: GenericUserLicensePkPassStatus.Unknown,

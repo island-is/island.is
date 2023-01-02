@@ -50,11 +50,28 @@ export class GenericMachineLicenseService
   ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicense(user)
 
-    if (!licenseData) {
-      return null
+    if (!licenseData.ok) {
+      return {
+        status: GenericUserLicenseStatus.Unknown,
+        pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
+        error: {
+          status: licenseData.error.code,
+          message: licenseData.error.message ?? 'Unknown',
+          data: licenseData.error.data,
+        },
+      }
     }
 
-    const payload = parseMachineLicensePayload(licenseData, locale, labels)
+    //Response was ok, but did the service return a license?
+    if (!licenseData.data) {
+      return {
+        status: GenericUserLicenseStatus.NotAvailable,
+        pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
+        payload: null,
+      }
+    }
+
+    const payload = parseMachineLicensePayload(licenseData.data, locale, labels)
 
     if (payload) {
       return {
@@ -84,11 +101,16 @@ export class GenericMachineLicenseService
     locale: Locale,
   ): Promise<PassDataInput | null> {
     const license = await this.fetchLicense(user)
-    if (!license) {
+
+    if (!license.ok || !license.data) {
       return null
     }
 
-    const inputValues = createPkPassDataInput(license, user.nationalId, locale)
+    const inputValues = createPkPassDataInput(
+      license.data,
+      user.nationalId,
+      locale,
+    )
     if (!inputValues) return null
     //Fetch template from api?
     return {

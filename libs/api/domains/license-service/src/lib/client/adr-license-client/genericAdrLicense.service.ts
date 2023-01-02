@@ -50,16 +50,34 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
   ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicense(user)
 
-    if (!licenseData) {
-      return null
+    if (!licenseData.ok) {
+      return {
+        status: GenericUserLicenseStatus.Unknown,
+        pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
+        error: {
+          status: licenseData.error.code,
+          message: licenseData.error.message ?? 'Unknown',
+          data: licenseData.error.data,
+        },
+      }
     }
-    const payload = parseAdrLicensePayload(licenseData, locale, labels)
+
+    //Response was ok, but did the service return a license?
+    if (!licenseData.data) {
+      return {
+        status: GenericUserLicenseStatus.NotAvailable,
+        pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
+        payload: null,
+      }
+    }
+
+    const payload = parseAdrLicensePayload(licenseData.data, locale, labels)
 
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
 
     if (payload) {
       pkpassStatus = GenericAdrLicenseService.licenseIsValidForPkpass(
-        licenseData,
+        licenseData.data,
       )
     }
 
@@ -80,11 +98,15 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
 
   private async createPkPassPayload(user: User): Promise<PassDataInput | null> {
     const license = await this.fetchLicense(user)
-    if (!license) {
+
+    if (!license.ok || !license.data) {
       return null
     }
 
-    const inputValues = createPkPassDataInput(license, format(user.nationalId))
+    const inputValues = createPkPassDataInput(
+      license.data,
+      format(user.nationalId),
+    )
     if (!inputValues) return null
     //Fetch template from api?
     return {

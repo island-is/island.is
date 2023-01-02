@@ -120,6 +120,12 @@ export type GenericUserLicensePayload = {
   metadata?: GenericUserLicenseMetadata
 }
 
+export type GenericUserLicenseError = {
+  status: number
+  message: string
+  data?: string
+}
+
 export type GenericLicenseUserdata = {
   status: GenericUserLicenseStatus
   pkpassStatus: GenericUserLicensePkPassStatus
@@ -131,6 +137,7 @@ export type GenericLicenseUserdataExternal = {
   status: GenericUserLicenseStatus
   pkpassStatus: GenericUserLicensePkPassStatus
   payload?: GenericUserLicensePayload | null
+  error?: GenericUserLicenseError
 }
 
 export type GenericLicenseFetch = {
