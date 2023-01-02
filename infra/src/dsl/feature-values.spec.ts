@@ -61,7 +61,7 @@ describe('Feature-deployment support', () => {
     const chart1 = new Kubernetes(Dev)
     const services = await generateOutput({
       runtime: chart1,
-      services: services1,
+      services: services1.included,
       outputFormat: renderers.helm,
       env: Dev,
     })
