@@ -91,7 +91,7 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
   return (
     <GridContainer>
       {!loading && !error && student && Object.entries(student).length > 0 ? (
-        studentInfo
+        studentInfo(student)
       ) : error ? (
         <AlertMessage
           type="error"
