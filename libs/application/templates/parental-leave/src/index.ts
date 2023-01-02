@@ -10,6 +10,7 @@ export * from './lib/parentalLeaveUtils'
 export {
   calculatePeriodLength,
   calculateRemainingNumberOfDays,
+  DAYS_IN_MONTH,
 } from './lib/directorateOfLabour.utils'
 export * from './constants'
 export * from './types'
