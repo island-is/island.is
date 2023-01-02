@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest",
     "charts": "scripts/generate-chart-values.sh",
-    "cli": "ts-node src/cli/cli.ts"
+    "cli": "node -r esbuild-register src/cli/cli.ts"
   },
   "license": "MIT",
   "devDependencies": {

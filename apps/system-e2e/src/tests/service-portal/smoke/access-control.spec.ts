@@ -28,7 +28,7 @@ test.describe('Service portal, in access control', () => {
 
     await test.step('Remove delegations', async () => {
       // Arrange
-      await page.goto('/minarsidur/adgangsstyring/umbod')
+      await page.goto('/minarsidur/adgangsstyring/umbod?locale=is')
       await expect(
         page.locator(
           '[data-testid="access-card"], [data-testid="delegations-empty-state"]',
@@ -58,7 +58,7 @@ test.describe('Service portal, in access control', () => {
     await test.step('Create delegation', async () => {
       // Arrange
       const page = await context.newPage()
-      await page.goto('/minarsidur/adgangsstyring/umbod')
+      await page.goto('/minarsidur/adgangsstyring/umbod?locale=is')
 
       // Act
       await page.locator('role=button[name="Nýtt umboð"]').click()
@@ -95,7 +95,7 @@ test.describe('Service portal, in access control', () => {
       })
       const page = await context2.newPage()
       const { findByRole } = helpers(page)
-      await page.goto('/minarsidur')
+      await page.goto('/minarsidur?locale=is')
 
       // Act
       await page.locator('data-testid=user-menu >> visible=true').click()
@@ -111,4 +111,22 @@ test.describe('Service portal, in access control', () => {
       await context2.close()
     })
   })
+})
+
+test.describe.skip('Aðgangsstýring', () => {
+  for (const { testCase, home } of [
+    { testCase: 'Aðgangsstýring - kanna að notandi missi umboð', home: '/en' },
+    {
+      testCase: 'Aðgangsstýring - kanna að bara ákv. umboð sjáist',
+      home: '/en',
+    },
+    { testCase: 'Aðgangsstýring - Veita eitt umboð', home: '/en' },
+    { testCase: 'Aðgangstýring - kanna að öll umboð sjáist', home: '/en' },
+    { testCase: 'Aðgansttýring - eyða umboði', home: '/en' },
+    { testCase: 'Aðgangsstýring - Veita öll umboð', home: '/en' },
+  ]) {
+    test(testCase, () => {
+      return
+    })
+  }
 })

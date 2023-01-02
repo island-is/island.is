@@ -15,6 +15,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationConfigurations,
   Application,
+  ApplicationTypes,
 } from '@island.is/application/types'
 import {
   getApplicationAnswers,
@@ -59,6 +60,8 @@ import {
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ChildrenService } from './children/children.service'
 
 interface VMSTError {
   type: string
@@ -85,7 +88,7 @@ const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
 
 @Injectable()
-export class ParentalLeaveService {
+export class ParentalLeaveService extends BaseTemplateApiService {
   s3 = new S3()
 
   constructor(
@@ -96,7 +99,10 @@ export class ParentalLeaveService {
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-  ) {}
+    private readonly childrenService: ChildrenService,
+  ) {
+    super(ApplicationTypes.PARENTAL_LEAVE)
+  }
 
   private parseErrors(e: Error | VMSTError) {
     if (e instanceof Error) {
@@ -106,6 +112,10 @@ export class ParentalLeaveService {
     return {
       message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
     }
+  }
+
+  async getChildren({ application, auth }: TemplateApiModuleActionProps) {
+    return this.childrenService.provideChildren(application, auth.nationalId)
   }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {

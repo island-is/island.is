@@ -6,6 +6,7 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -79,9 +80,9 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           },
           progress: 0.9,
           lifecycle: pruneAfter(thirtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -106,11 +107,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

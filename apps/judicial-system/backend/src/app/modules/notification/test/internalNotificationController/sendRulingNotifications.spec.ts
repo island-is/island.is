@@ -15,7 +15,7 @@ import {
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
-import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
+import { DeliverResponse } from '../../models/deliver.response'
 import { SendNotificationDto } from '../../dto/sendNotification.dto'
 import { notificationModuleConfig } from '../../notification.config'
 import { Notification } from '../../models/notification.model'
@@ -23,7 +23,7 @@ import { Notification } from '../../models/notification.model'
 jest.mock('../../../factories')
 
 interface Then {
-  result: SendNotificationResponse
+  result: DeliverResponse
   error: Error
 }
 

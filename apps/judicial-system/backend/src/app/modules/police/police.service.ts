@@ -8,6 +8,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
@@ -60,7 +61,7 @@ export class PoliceService {
   }
 
   private async fetchPoliceDocumentApi(url: string): Promise<Response> {
-    if (!this.config.policeDocumentApiAvailable) {
+    if (!this.config.policeCaseApiAvailable) {
       throw 'Police document API not available'
     }
 
@@ -127,6 +128,15 @@ export class PoliceService {
           reason,
         )
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the file was not found
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+            detail: reason.message,
+          })
+        }
+
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
@@ -167,7 +177,7 @@ export class PoliceService {
         // The police system does not provide a structured error response.
         // When police case does not exist, a stack trace is returned.
         throw new NotFoundException({
-          message: `Police case does not exist ${caseId}`,
+          message: `Police case for case ${caseId} does not exist`,
           detail: reason,
         })
       })
@@ -185,6 +195,11 @@ export class PoliceService {
           },
           reason,
         )
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case has no files
+          return []
+        }
 
         throw new BadGatewayException({
           ...reason,
@@ -249,7 +264,12 @@ export class PoliceService {
         throw response
       })
       .catch((reason) => {
-        this.logger.error(`Failed to update police case ${caseId}`, { reason })
+        // Do not spam the logs with errors
+        if (!(reason instanceof ServiceUnavailableException)) {
+          this.logger.error(`Failed to update police case ${caseId}`, {
+            reason,
+          })
+        }
 
         this.eventService.postErrorEvent(
           'Failed to update police case',

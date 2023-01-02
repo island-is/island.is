@@ -79,7 +79,7 @@ export const servicePortalOutboundLink = (params: ParamType) => {
       props: {
         location: params.location,
       },
-      url: params.url,
+      u: params.url,
     })
   }
 }

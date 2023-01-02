@@ -40,8 +40,7 @@ export const hasSpouse = (
   answers: FAApplication['answers'],
   externalData: FAApplication['externalData'],
 ) => {
-  const nationalRegistrySpouse =
-    externalData.nationalRegistry?.data?.applicant?.spouse
+  const nationalRegistrySpouse = externalData.nationalRegistrySpouse.data
 
   const unregisteredCohabitation =
     answers?.relationshipStatus?.unregisteredCohabitation
@@ -57,7 +56,7 @@ export function isMuncipalityNotRegistered(context: ApplicationContext) {
 
   const municipality = getValueViaPath(
     externalData,
-    `nationalRegistry.data.municipality.`,
+    `municipality.data`,
   ) as Municipality | null
   return municipality == null || !municipality.active
 }
@@ -71,10 +70,10 @@ export function findFamilyStatus(
 ) {
   switch (true) {
     case martialStatusTypeFromMartialCode(
-      externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
+      externalData.nationalRegistrySpouse.data?.maritalStatus,
     ) === MartialStatusType.MARRIED:
       return FamilyStatus.MARRIED
-    case externalData.nationalRegistry?.data?.applicant?.spouse != null:
+    case externalData.nationalRegistrySpouse.data != null:
       return FamilyStatus.COHABITATION
     case answers?.relationshipStatus?.unregisteredCohabitation ===
       ApproveOptions.Yes:
@@ -86,11 +85,11 @@ export function findFamilyStatus(
 
 export function hasActiveCurrentApplication(context: ApplicationContext) {
   const { externalData } = context.application
-  const dataProvider = getValueViaPath(
+  const currentApplication = getValueViaPath(
     externalData,
-    'veita.data',
+    'currentApplication.data',
   ) as CurrentApplication
-  return dataProvider.currentApplicationId != null
+  return currentApplication?.currentApplicationId != null
 }
 
 export const hasFiles = (

@@ -6,8 +6,8 @@ import {
   buildSection,
   buildSubSection,
 } from '@island.is/application/core'
+import { NationalRegistryUserApi } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
-import { DataProviderTypes } from '../../types'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
@@ -53,37 +53,31 @@ export const externalDataSection = buildSection({
           dataProviders: [
             buildDataProviderItem({
               id: 'directoryOfLabor',
-              type: '',
               title: externalData.directoryOfLabor.title,
               subTitle: externalData.directoryOfLabor.description,
             }),
             buildDataProviderItem({
               id: 'revAndCustoms',
-              type: '',
               title: externalData.revAndCustoms.title,
               subTitle: externalData.revAndCustoms.description,
             }),
             buildDataProviderItem({
               id: 'nationalInsurancy',
-              type: '',
               title: externalData.nationalInsurancy.title,
               subTitle: externalData.nationalInsurancy.description,
             }),
             buildDataProviderItem({
               id: 'municipalCollectionAgency',
-              type: '',
               title: externalData.municipalCollectionAgency.title,
               subTitle: externalData.municipalCollectionAgency.description,
             }),
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: DataProviderTypes.NationalRegistry,
+              provider: NationalRegistryUserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.description,
             }),
             buildDataProviderItem({
               id: 'accidentProvider',
-              type: '',
               title: '',
               subTitle: externalData.accidentProvider.description,
             }),

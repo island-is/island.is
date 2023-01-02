@@ -8,12 +8,14 @@ type Props = {
   onBackButtonClick: () => void
   onSendButtonClick: () => void
   loading?: boolean
+  sendText?: string
 }
 
 const BottomBar = ({
   onBackButtonClick,
   onSendButtonClick,
   loading = false,
+  sendText,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -27,7 +29,7 @@ const BottomBar = ({
           {formatMessage(m.goBack)}
         </Button>
         <Button icon="checkmark" onClick={onSendButtonClick} loading={loading}>
-          {formatMessage(m.send)}
+          {sendText ? sendText : formatMessage(m.send)}
         </Button>
       </Box>
     </Fragment>

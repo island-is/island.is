@@ -32,6 +32,7 @@ export const Base = new XroadConf({
       dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
       staging: 'http://securityserver.staging01.devland.is',
       prod: 'http://securityserver.island.is',
+      local: ref((h) => h.svc('http://localhost:8081')),
     },
     XROAD_BASE_PATH_WITH_ENV: {
       dev: ref(
@@ -223,13 +224,12 @@ export const Firearm = new XroadConf({
   },
 })
 
-// TODO: Get correct staging and prod values before release
-export const Disability = new XroadConf({
+export const DisabilityLicense = new XroadConf({
   env: {
-    XROAD_DISABILITY_LICENSE_PATH: {
+    XROAD_DISABILTITY_LICENSE_PATH: {
       dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
-      staging: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
-      prod: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
+      staging: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1',
+      prod: 'IS/GOV/5012130120/TR-Protected/oryrki-v1',
     },
   },
 })

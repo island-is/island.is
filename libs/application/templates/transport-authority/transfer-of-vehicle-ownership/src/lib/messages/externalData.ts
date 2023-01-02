@@ -78,11 +78,6 @@ export const externalData = {
         'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar bifreiðar og stöðu þeirra.',
       description: 'To make stuff easier',
     },
-    empty: {
-      id: 'ta.tvo.application:externalData.currentVehicles.empty',
-      defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
-      description: 'You do not have any vehicles where you are the main owner',
-    },
   }),
   payment: defineMessages({
     title: {
@@ -94,11 +89,6 @@ export const externalData = {
       id: 'ta.tvo.application:externalData.payment.subTitle',
       defaultMessage: 'Um stöðu bifreiðagjalda',
       description: 'To make stuff easier',
-    },
-    empty: {
-      id: 'ta.tvo.application:externalData.payment.empty',
-      defaultMessage: 'Ekki tókst að sækja upplýsingar frá Fjársýslunni',
-      description: 'You do not have any vehicles where you are the main owner',
     },
   }),
 }

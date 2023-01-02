@@ -68,6 +68,9 @@
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
+      "@island.is/api/domains/disability-license": [
+        "libs/api/domains/disability-license/src/index.ts"
+      ],
       "@island.is/api/domains/document-provider": [
         "libs/api/domains/document-provider/src/index.ts"
       ],
@@ -85,6 +88,9 @@
       ],
       "@island.is/api/domains/electronic-registration-statistics": [
         "libs/api/domains/electronic-registration-statistics/src/index.ts"
+      ],
+      "@island.is/api/domains/email-signup": [
+        "libs/api/domains/email-signup/src/index.ts"
       ],
       "@island.is/api/domains/endorsement-system": [
         "libs/api/domains/endorsement-system/src/index.ts"
@@ -122,9 +128,6 @@
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
-      "@island.is/api/domains/mailchimp": [
-        "libs/api/domains/mailchimp/src/index.ts"
-      ],
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
       ],
@@ -136,6 +139,9 @@
       ],
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
+      ],
+      "@island.is/api/domains/passport": [
+        "libs/api/domains/passport/src/index.ts"
       ],
       "@island.is/api/domains/payment": [
         "libs/api/domains/payment/src/index.ts"
@@ -403,6 +409,7 @@
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
       ],
+      "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
@@ -549,6 +556,10 @@
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/portals/admin/air-discount-scheme": [
+        "libs/portals/admin/air-discount-scheme/src/index.ts"
+      ],
+      "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
