@@ -51,7 +51,9 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
       <GridRow marginBottom={3}>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">{formatMessage(m.confirmationSectionName)}</Text>
-          <Text variant="default" dataTestId='student-name'>{s.name}</Text>
+          <Text variant="default" dataTestId="student-name">
+            {s.name}
+          </Text>
         </GridColumn>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">
