@@ -122,7 +122,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
-        `servicePortalFetchAllLicenses`,
+        `isServicePortalDisabilityLicenseEnabled`,
         false,
       )
       if (ffEnabled) {
