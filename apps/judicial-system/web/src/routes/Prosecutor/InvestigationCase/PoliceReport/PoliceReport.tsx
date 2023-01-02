@@ -38,9 +38,11 @@ const PoliceReport = () => {
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
 
-  useDeb(workingCase, 'caseFacts')
-  useDeb(workingCase, 'legalArguments')
-  useDeb(workingCase, 'prosecutorOnlySessionRequest')
+  useDeb(workingCase, [
+    'caseFacts',
+    'legalArguments',
+    'prosecutorOnlySessionRequest',
+  ])
 
   useEffect(() => {
     if (
