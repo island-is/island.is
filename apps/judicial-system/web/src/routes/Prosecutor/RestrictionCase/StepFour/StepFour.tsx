@@ -45,9 +45,7 @@ export const StepFour: React.FC = () => {
 
   const { updateCase } = useCase()
 
-  useDeb(workingCase, 'demands')
-  useDeb(workingCase, 'caseFacts')
-  useDeb(workingCase, 'legalArguments')
+  useDeb(workingCase, ['demands', 'caseFacts', 'legalArguments'])
 
   const stepIsValid = isPoliceReportStepValidRC(workingCase)
   const handleNavigationTo = (destination: string) =>
