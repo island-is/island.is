@@ -14,7 +14,6 @@ import {
   GenericLicenseType,
   GenericUserLicenseFetchStatus,
   GetChildrenIdentityDocumentQuery,
-  useChildrenPassport,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import {
@@ -99,6 +98,9 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
     GenericLicenseType.DriversLicense,
+    GenericLicenseType.AdrLicense,
+    GenericLicenseType.MachineLicense,
+    GenericLicenseType.FirearmLicense,
   ])
   const [passportEnabled, setPassportEnabled] = useState(false)
 
@@ -116,6 +118,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     { data: childIdentityDocumentData, loading: childrenLoading },
   ] = useLazyQuery(GetChildrenIdentityDocumentQuery)
 
+  /* Flag to hide disability license */
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
