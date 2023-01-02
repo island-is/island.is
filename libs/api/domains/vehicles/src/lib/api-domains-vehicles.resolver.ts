@@ -16,7 +16,6 @@ import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
   VehicleDebtStatusByPermno,
-  VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithDebtStatus,
 } from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
@@ -95,24 +94,6 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
-  }
-
-  @Scopes(ApiScope.internal)
-  @Query(() => [VehiclesCurrentVehicle], {
-    name: 'currentVehicles',
-    nullable: true,
-  })
-  @Audit()
-  async getCurrentVehicles(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.getCurrentVehicles(
-      user,
-      input.showOwned,
-      input.showCoowned,
-      input.showOperated,
-    )
   }
 
   @Scopes(ApiScope.internal)

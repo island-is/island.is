@@ -116,10 +116,24 @@ export class PrivateDiscountController {
       unConnectedFlights,
     )
   }
+}
 
-  @ApiExcludeEndpoint()
-  @Scopes(AirDiscountSchemeScope.admin)
+@ApiTags('Admin')
+@Controller('api/private')
+@Scopes(AirDiscountSchemeScope.admin)
+@UseGuards(IdsUserGuard, ScopesGuard)
+export class PrivateDiscountAdminController {
+  constructor(
+    private readonly discountService: DiscountService,
+    @Inject(forwardRef(() => FlightService))
+    private readonly flightService: FlightService,
+  ) {}
+
   @Post('users/createExplicitDiscountCode')
+  @ApiOkResponse({ type: Discount })
+  @ApiBearerAuth()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @Scopes(AirDiscountSchemeScope.admin)
   async createExplicitDiscountCode(
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,

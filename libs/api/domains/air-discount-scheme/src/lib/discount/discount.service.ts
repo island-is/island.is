@@ -11,7 +11,6 @@ import {
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
 import { Discount as DiscountModel } from '../models/discount.model'
-type DiscountWithTUser = DiscountModel & { user: TUser }
 
 const TWO_HOURS = 7200
 @Injectable()
@@ -52,10 +51,10 @@ export class DiscountService {
     )
   }
 
-  async getCurrentDiscounts(auth: User): Promise<DiscountWithTUser[]> {
+  async getCurrentDiscounts(auth: User): Promise<DiscountModel[]> {
     const relations: TUser[] = await this.getUserRelations(auth)
 
-    const discounts: DiscountWithTUser[] = []
+    const discounts: DiscountModel[] = []
     for (const relation of relations) {
       const discount: TDiscount = (await this.getDiscount(
         auth,

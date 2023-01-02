@@ -19,11 +19,10 @@ import React, { useEffect, useState } from 'react'
 import { overview } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
 import {
-  NatRegResult,
   PaymentPlan,
   Applicant,
   CorrectedEmployer,
-  IdsRegResult,
+  IdentityResult,
 } from '../../types'
 import { DistributionTable } from './DistributionTabel'
 import * as styles from './Overview.css'
@@ -57,16 +56,10 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     'paymentPlans',
   ) as PaymentPlan[]
 
-  // National Registry
-  const nationalRegistry = getValueViaPath(
-    application.externalData,
-    'nationalRegistry',
-  ) as NatRegResult
-
   const identityRegistry = getValueViaPath(
     application.externalData,
     'identityRegistry',
-  ) as IdsRegResult
+  ) as IdentityResult
 
   // Applicant
   const applicant = getValueViaPath(

@@ -23,8 +23,8 @@ export const Application: Form = buildForm({
       children: [
         buildSubSection({
           condition: (_, externalData) =>
-            ((externalData as unknown) as ExternalData).nationalRegistry?.data
-              ?.applicant?.spouse != null,
+            ((externalData as unknown) as ExternalData).nationalRegistrySpouse
+              .data != null,
           title: m.inRelationship.general.sectionTitle,
           children: [
             buildCustomField({
@@ -36,8 +36,8 @@ export const Application: Form = buildForm({
         }),
         buildSubSection({
           condition: (_, externalData) =>
-            ((externalData as unknown) as ExternalData).nationalRegistry?.data
-              ?.applicant?.spouse == null,
+            ((externalData as unknown) as ExternalData).nationalRegistrySpouse
+              .data == null,
           title: m.unknownRelationship.general.sectionTitle,
           children: [
             buildCustomField({
@@ -111,9 +111,9 @@ export const Application: Form = buildForm({
         }),
         buildSubSection({
           condition: (_, externalData) =>
-            ((externalData as unknown) as ExternalData).taxDataFetch?.data
+            ((externalData as unknown) as ExternalData).taxData?.data
               .municipalitiesDirectTaxPayments.success === false ||
-            ((externalData as unknown) as ExternalData).taxDataFetch?.data
+            ((externalData as unknown) as ExternalData).taxData?.data
               ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
           id: Routes.TAXRETURNFILES,
           title: m.taxReturnForm.general.sectionTitle,

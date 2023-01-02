@@ -1,10 +1,7 @@
 import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import {
-  VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithDebtStatus,
-} from '@island.is/api/schema'
+import { VehiclesCurrentVehicleWithDebtStatus } from '@island.is/api/schema'
 import { information } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
@@ -12,6 +9,7 @@ import { GET_CURRENT_VEHICLES_WITH_DEBT_STATUS } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
+import { VehiclesCurrentVehicle } from '../../types'
 
 interface Option {
   value: string

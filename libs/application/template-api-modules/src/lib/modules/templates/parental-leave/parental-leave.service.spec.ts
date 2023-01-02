@@ -42,6 +42,8 @@ import {
 } from './parental-leave.service'
 import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
+import { ChildrenService } from './children/children.service'
+import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 
 const nationalId = '1234564321'
 let id = 0
@@ -139,6 +141,10 @@ describe('ParentalLeaveService', () => {
     const module = await Test.createTestingModule({
       providers: [
         ParentalLeaveService,
+        {
+          provide: ChildrenService,
+          useValue: {},
+        },
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
@@ -254,7 +260,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -284,7 +290,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.artificialInseminationRightsId,
@@ -319,7 +325,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -363,7 +369,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2022-05-17',
           to: '2022-07-09',
-          ratio: '100',
+          ratio: 'D53',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.multipleBirthsOrlofRightsId,
@@ -406,7 +412,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2022-02-17',
           to: '2022-04-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -473,7 +479,11 @@ describe('ParentalLeaveService', () => {
         scope: [''],
       }
 
-      await parentalLeaveService.sendApplication({ application, auth })
+      await parentalLeaveService.sendApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
 
       // One email to the applicant and one to the employer
       expect(mockedSendEmail.mock.calls.length).toBe(2)
@@ -495,7 +505,11 @@ describe('ParentalLeaveService', () => {
         scope: [''],
       }
 
-      await parentalLeaveService.sendApplication({ application, auth })
+      await parentalLeaveService.sendApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
 
       // One email to the applicant and one to the employer
       expect(mockedSendEmail.mock.calls.length).toBe(0)
@@ -519,7 +533,11 @@ describe('ParentalLeaveService', () => {
         scope: [''],
       }
 
-      await parentalLeaveService.sendApplication({ application, auth })
+      await parentalLeaveService.sendApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
 
       // No email should be sent since applicant is aware of their own approval
       expect(mockedSendEmail.mock.calls.length).toBe(0)
@@ -543,7 +561,11 @@ describe('ParentalLeaveService', () => {
         scope: [''],
       }
 
-      await parentalLeaveService.sendApplication({ application, auth })
+      await parentalLeaveService.sendApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
 
       // No email should be sent since applicant is aware of their own approval
       expect(mockedSendEmail.mock.calls.length).toBe(0)

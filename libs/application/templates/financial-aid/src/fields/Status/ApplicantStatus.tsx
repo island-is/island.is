@@ -20,9 +20,9 @@ import * as styles from './Status.css'
 
 const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication, loading } = useApplication(
-    application.externalData.veita.data.currentApplicationId,
+    application.externalData.currentApplication.data?.currentApplicationId,
   )
-  const { nationalRegistry } = application.externalData
+  const { municipality } = application.externalData
   const isWaitingForSpouse = waitingForSpouse(application.state)
 
   const state =
@@ -39,7 +39,9 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       <Header state={state} />
 
       {isWaitingForSpouse && (
-        <SpouseAlert showCopyUrl={!application.answers.spouseEmailSuccess} />
+        <SpouseAlert
+          showCopyUrl={!application.externalData.sendSpouseEmail?.data.success}
+        />
       )}
 
       {state === ApplicationState.APPROVED && (
@@ -49,9 +51,9 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       {state === ApplicationState.REJECTED && (
         <RejectionMessage
           rejectionComment={currentApplication?.rejection}
-          rulesPage={nationalRegistry?.data?.municipality?.rulesHomepage}
-          homepage={nationalRegistry?.data?.municipality?.homepage}
-          email={nationalRegistry?.data?.municipality?.email}
+          rulesPage={municipality.data?.rulesHomepage}
+          homepage={municipality.data?.homepage}
+          email={municipality.data?.email}
         />
       )}
 
@@ -64,7 +66,7 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
           application={application}
           veitaApplication={currentApplication}
           state={state}
-          nationalRegistry={application.externalData.nationalRegistry}
+          municipality={municipality}
           amount={currentApplication?.amount}
         />
       )}
@@ -81,10 +83,8 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <MoreActions
-        municipalityRulesPage={
-          nationalRegistry?.data?.municipality?.rulesHomepage
-        }
-        municipalityEmail={nationalRegistry?.data?.municipality?.email}
+        municipalityRulesPage={municipality.data?.rulesHomepage}
+        municipalityEmail={municipality.data?.email}
       />
     </Box>
   )

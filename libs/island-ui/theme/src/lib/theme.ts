@@ -120,6 +120,7 @@ export const theme = {
       '0 2px 4px 0px rgba(28,28,28,.1), 0 8px 8px -4px rgba(28,28,28,.1), 0 12px 12px -8px rgba(28,28,28,.2)',
     large:
       '0 2px 4px 0px rgba(28,28,28,.1), 0 12px 12px -4px rgba(28,28,28,.1), 0 20px 20px -12px rgba(28,28,28,.2)',
+    strong: '0px 4px 30px rgba(0, 97, 255, 0.16)',
     subtle: '0px 4px 30px #F2F7FF',
   },
   color,
