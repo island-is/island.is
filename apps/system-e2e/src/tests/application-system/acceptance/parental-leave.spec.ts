@@ -118,7 +118,6 @@ test.describe('Parental leave', () => {
       label(parentalLeaveFormMessages.shared.otherParentID),
     )
     await otherParentKt.selectText()
-    // eslint-disable-next-line local-rules/disallow-kennitalas
     await otherParentKt.type('0101302989')
     await proceed()
 
