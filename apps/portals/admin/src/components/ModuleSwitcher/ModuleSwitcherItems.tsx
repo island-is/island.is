@@ -1,14 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import {
-  Box,
-  FocusableBox,
-  Icon,
-  IconMapIcon,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, useActiveModule, useNavigation } from '@island.is/portals/core'
 
@@ -19,7 +12,6 @@ import {
 } from '../../lib/masterNavigation'
 
 import * as styles from './ModuleSwitcherItems.css'
-import { theme } from '@island.is/island-ui/theme'
 
 interface ModuleItemsProps {
   mobile?: boolean

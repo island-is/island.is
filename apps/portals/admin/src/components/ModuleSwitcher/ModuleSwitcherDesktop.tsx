@@ -3,10 +3,7 @@ import { Menu, MenuButton, useMenuState } from 'reakit/Menu'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/admin/core'
-import {
-  getNavigationItemIfSingle,
-  useActiveModule,
-} from '@island.is/portals/core'
+import { getNavigationItemIfSingle } from '@island.is/portals/core'
 
 import { BOTTOM_NAVIGATION, TOP_NAVIGATION } from '../../lib/masterNavigation'
 import { ModuleSwitcherItems } from './ModuleSwitcherItems'
