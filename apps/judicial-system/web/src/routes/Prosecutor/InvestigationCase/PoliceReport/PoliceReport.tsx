@@ -75,7 +75,7 @@ const PoliceReport = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FOUR}
+      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_REPORT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
