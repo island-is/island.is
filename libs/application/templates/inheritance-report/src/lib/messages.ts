@@ -561,7 +561,7 @@ export const m = defineMessages({
   },
   debtsRepeaterButton: {
     id: 'ir.application:debtsRepeaterButton',
-    defaultMessage: 'Bæta við skuld',
+    defaultMessage: 'Bæta við skuldum',
     description: '',
   },
   publicChargesTitle: {
@@ -589,6 +589,70 @@ export const m = defineMessages({
   totalAmount: {
     id: 'ir.application:totalAmount',
     defaultMessage: 'Samtals fjárhæð',
+    description: '',
+  },
+
+  // Business
+  business: {
+    id: 'ir.application:business',
+    defaultMessage: 'Atvinnurekstur',
+    description: '',
+  },
+  businessTitle: {
+    id: 'ir.application:businessTitle',
+    defaultMessage: 'Eignir og skuldir í atvinnurekstri',
+    description: '',
+  },
+  businessDescription: {
+    id: 'ir.application:businessDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar eignir og skuldir arfláta í atvinnurekstri',
+    description: '',
+  },
+  businessAssets: {
+    id: 'ir.application:businessAssets',
+    defaultMessage: 'Eignir í atvinnurekstri',
+    description: '',
+  },
+  businessAssetsDescription: {
+    id: 'ir.application:businessAssetsDescription',
+    defaultMessage:
+      'Aðrar eignir en fasteignir, t.d. vélar og tæki í landbúnaði. Færast á markaðsverði.',
+    description: '',
+  },
+  businessAsset: {
+    id: 'ir.application:businessAsset',
+    defaultMessage: 'Hvaða eign',
+    description: '',
+  },
+  businessAssetAmount: {
+    id: 'ir.application:businessAssetAmount',
+    defaultMessage: 'Fjárhæð á dánardegi',
+    description: '',
+  },
+  businessAssetRepeaterButton: {
+    id: 'ir.application:businessAssetRepeaterButton',
+    defaultMessage: 'Bæta við eign',
+    description: '',
+  },
+  businessAssetRepeaterHeader: {
+    id: 'ir.application:businessAssetRepeaterHeader',
+    defaultMessage: 'Eign',
+    description: '',
+  },
+  businessDebtsTitle: {
+    id: 'ir.application:businessDebtsTitle',
+    defaultMessage: 'Skuldir',
+    description: '',
+  },
+  businessDebts: {
+    id: 'ir.application:businessDebts',
+    defaultMessage: 'Skuldir í atvinnurekstri',
+    description: '',
+  },
+  businessDebtsDescription: {
+    id: 'ir.application:businessDebtsDescription',
+    defaultMessage: 'Tilgreinið kennitölu ef um einstakling er að ræða',
     description: '',
   },
 })
