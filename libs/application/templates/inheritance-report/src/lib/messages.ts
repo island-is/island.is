@@ -460,7 +460,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  // Overview
+  // AssetsOverview
   overview: {
     id: 'ir.application:overview',
     defaultMessage: 'Yfirlit',
@@ -505,6 +505,90 @@ export const m = defineMessages({
   total: {
     id: 'ir.application:total',
     defaultMessage: 'Samtals alls',
+    description: '',
+  },
+
+  // Debts
+  debtsAndFuneralCost: {
+    id: 'ir.application:debtsAndFuneralCost',
+    defaultMessage: 'Skuldir og útfararkostnaður',
+    description: '',
+  },
+  domesticAndForeignDebts: {
+    id: 'es.application:debtsDescription',
+    defaultMessage: 'Innlendar og erlendar skuldir',
+    description: '',
+  },
+  domesticAndForeignDebtsDescription: {
+    id: 'es.application:domesticAndForeignDebtsDescription',
+    defaultMessage: 'Tilgreinið kennitölu ef um einstakling er að ræða',
+    description: '',
+  },
+  funeralCostTitle: {
+    id: 'es.application:funeralCostTitle',
+    defaultMessage: 'Útfarakostnaður',
+    description: '',
+  },
+  amount: {
+    id: 'es.application:funeralCostAmount',
+    defaultMessage: 'Fjárhæð',
+    description: '',
+  },
+  debtsTitle: {
+    id: 'es.application:debtsTitle',
+    defaultMessage: 'Skuldir',
+    description: '',
+  },
+  debtsCreditorHeader: {
+    id: 'ir.application:debtsCreditorHeader',
+    defaultMessage: 'Skuld',
+    description: '',
+  },
+  debtsCreditorName: {
+    id: 'ir.application:debtsCreditorName',
+    defaultMessage: 'Nafn kröfuhafa',
+    description: '',
+  },
+  debtsSsn: {
+    id: 'ir.application:debtsSsn',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  debtsBalance: {
+    id: 'ir.application:debtsBalance',
+    defaultMessage: 'Eftirstöðvar á dánardegi',
+    description: '',
+  },
+  debtsRepeaterButton: {
+    id: 'ir.application:debtsRepeaterButton',
+    defaultMessage: 'Bæta við skuld',
+    description: '',
+  },
+  publicChargesTitle: {
+    id: 'ir.application:publicChargesTitle',
+    defaultMessage: 'Opinber gjöld',
+    description: '',
+  },
+  publicChargesDescription: {
+    id: 'ir.application:publicChargesDescription',
+    defaultMessage: 'Skuld við opinberar stofnanir',
+    description: '',
+  },
+  publicChargesRepeaterButton: {
+    id: 'ir.application:publicChargesRepeaterButton',
+    defaultMessage: 'Bæta við opinberum gjöldum',
+    description: '',
+  },
+  publicChargeHeader: {
+    id: 'ir.application:publicChargeHeader',
+    defaultMessage: 'Gjald',
+    description: '',
+  },
+
+  // DebtsOverview
+  totalAmount: {
+    id: 'ir.application:totalAmount',
+    defaultMessage: 'Samtals fjárhæð',
     description: '',
   },
 })
