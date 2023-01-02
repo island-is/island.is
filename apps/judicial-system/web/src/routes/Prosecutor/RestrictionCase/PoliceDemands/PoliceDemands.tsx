@@ -105,9 +105,11 @@ export const PoliceDemands: React.FC = () => {
     '',
   )
   const { updateCase, setAndSendCaseToServer } = useCase()
-  useDeb(workingCase, 'lawsBroken')
-  useDeb(workingCase, 'legalBasis')
-  useDeb(workingCase, 'requestedOtherRestrictions')
+  useDeb(workingCase, [
+    'lawsBroken',
+    'legalBasis',
+    'requestedOtherRestrictions',
+  ])
 
   useEffect(() => {
     if (
