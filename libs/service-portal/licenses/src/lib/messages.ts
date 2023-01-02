@@ -229,13 +229,13 @@ export const m = defineMessages({
     defaultMessage: 'Athugið að vegabréf er ógilt og þarf að sækja um nýtt',
   },
   passportExpiring: {
-    id: 'sp.license:passport-expired',
+    id: 'sp.license:passport-expiring',
     defaultMessage: 'Rennur út innan 6 mánaða',
   },
   passportExpiringText: {
-    id: 'sp.license:passport-expired-text',
+    id: 'sp.license:passport-expiring-text',
     defaultMessage:
-      'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða. ',
+      'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða. Þeir sem hyggast ferðast utan EES verða að hafa vegabréf sem gilda í amk 6 mánuði frá áætluðum ferðalokum.',
   },
   passportDescription: {
     id: 'sp.license:passport-description',
@@ -277,5 +277,9 @@ export const m = defineMessages({
   licenseTabSecondary: {
     id: 'sp.license:tab-secondary',
     defaultMessage: 'Skírteini barna þinna',
+  },
+  seeLicenses: {
+    id: 'sp.license:see-licenses',
+    defaultMessage: 'Skoða skírteini',
   },
 })

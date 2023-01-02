@@ -1,5 +1,6 @@
 export { Case } from './models/case.model'
 export { CaseExistsGuard } from './guards/caseExists.guard'
+export { CaseHasExistedGuard } from './guards/caseHasExisted.guard'
 export { CaseReadGuard } from './guards/caseRead.guard'
 export { CaseWriteGuard } from './guards/caseWrite.guard'
 export { CaseNotCompletedGuard } from './guards/caseNotCompleted.guard'

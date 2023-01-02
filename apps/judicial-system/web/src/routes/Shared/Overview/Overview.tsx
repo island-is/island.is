@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -27,7 +27,6 @@ import { overview as m } from './Overview.strings'
 
 const Overview = () => {
   const router = useRouter()
-  const id = router.query.id
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
@@ -35,6 +34,11 @@ const Overview = () => {
 
   const caseIsClosed = completedCaseStates.includes(workingCase.state)
   const isDefender = router.pathname.includes(constants.DEFENDER_ROUTE)
+
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
 
   return (
     <PageLayout
@@ -45,6 +49,8 @@ const Overview = () => {
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={true}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={
@@ -76,7 +82,11 @@ const Overview = () => {
           <FormFooter
             previousUrl={`${constants.CASES_ROUTE}`}
             nextIsLoading={isLoadingWorkingCase}
-            nextUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
+            onNextButtonClick={() =>
+              handleNavigationTo(
+                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+              )
+            }
             nextButtonText={formatMessage(core.continue)}
           />
         </FormContentContainer>

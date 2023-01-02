@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
@@ -178,7 +179,9 @@ const UploadFilesToPoliceCase: React.FC<{
     <InputFileUpload
       name="fileUpload"
       fileList={displayFiles}
+      accept="application/pdf"
       header={formatMessage(m.inputFileUpload.header)}
+      description={formatMessage(m.inputFileUpload.description)}
       buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
       onChange={onChange}
       onRemove={onRemove}
@@ -268,6 +271,12 @@ const PoliceCaseFilesRoute = () => {
     [setAllUploaded],
   )
 
+  const stepIsValid = !Object.values(allUploaded).some((v) => v)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -275,6 +284,8 @@ const PoliceCaseFilesRoute = () => {
       activeSubSection={IndictmentsProsecutorSubsections.POLICE_CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
@@ -297,8 +308,10 @@ const PoliceCaseFilesRoute = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={Object.values(allUploaded).some((v) => v)}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILE_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

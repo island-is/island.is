@@ -17,7 +17,6 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import {
   VehicleDebtStatusByPermno,
-  VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithDebtStatus,
 } from '../models/getCurrentVehicles.model'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
@@ -125,34 +124,6 @@ export class VehiclesService {
     }
   }
 
-  async getCurrentVehicles(
-    auth: User,
-    showOwned: boolean,
-    showCoowned: boolean,
-    showOperated: boolean,
-  ): Promise<VehiclesCurrentVehicle[] | null | ApolloError> {
-    try {
-      const res = await this.getVehiclesWithAuth(auth).currentVehiclesGet({
-        persidNo: auth.nationalId,
-        showOwned: showOwned,
-        showCoowned: showCoowned,
-        showOperated: showOperated,
-      })
-
-      if (!res) return []
-
-      return res.map((vehicle: VehicleMiniDto) => ({
-        permno: vehicle.permno || undefined,
-        make: vehicle.make || undefined,
-        color: vehicle.color || undefined,
-        role: vehicle.role || undefined,
-        isStolen: vehicle.stolen,
-      }))
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get current vehicles')
-    }
-  }
-
   async getCurrentVehiclesWithDebtStatus(
     auth: User,
     showOwned: boolean,
@@ -168,19 +139,26 @@ export class VehiclesService {
 
     return await Promise.all(
       (
-        await this.getCurrentVehicles(
-          auth,
-          showOwned,
-          showCoowned,
-          showOperated,
-        )
-      )?.map(async (vehicle: VehiclesCurrentVehicleWithDebtStatus) => {
+        await this.getVehiclesWithAuth(auth).currentVehiclesGet({
+          persidNo: auth.nationalId,
+          showOwned: showOwned,
+          showCoowned: showCoowned,
+          showOperated: showOperated,
+        })
+      )?.map(async (vehicle: VehicleMiniDto) => {
         const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
           auth,
           vehicle.permno || '',
         )
-        vehicle.isDebtLess = debtStatus.isDebtLess
-        return vehicle
+
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          isStolen: vehicle.stolen,
+          isDebtLess: debtStatus.isDebtLess,
+        }
       }),
     )
   }
@@ -190,10 +168,14 @@ export class VehiclesService {
     permno: string,
   ): Promise<VehicleDebtStatusByPermno | null | ApolloError> {
     // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
-    const myVehicles = await this.getCurrentVehicles(auth, true, true, false)
+    const myVehicles = await this.getVehiclesWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: true,
+      showOperated: false,
+    })
     const isOwnerOrCoOwner = !!myVehicles?.find(
-      (vehicle: VehiclesCurrentVehicleWithDebtStatus) =>
-        vehicle.permno === permno,
+      (vehicle: VehicleMiniDto) => vehicle.permno === permno,
     )
     if (!isOwnerOrCoOwner) {
       throw Error(

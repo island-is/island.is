@@ -35,6 +35,7 @@ const autoSchemaFile = environment.production
       debug,
       playground,
       autoSchemaFile,
+      cache: 'bounded',
       path: '/api/graphql',
       context: ({ req }: never) => ({ req }),
       dataSources: () => ({ backendApi: new BackendApi() }),

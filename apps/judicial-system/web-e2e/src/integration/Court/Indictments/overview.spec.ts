@@ -72,9 +72,6 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should navigate to the next page when the next button is clicked', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should(
-      'include',
-      `${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/test_id_stadfest`,
-    )
+    cy.url().should('include', `${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}`)
   })
 })
