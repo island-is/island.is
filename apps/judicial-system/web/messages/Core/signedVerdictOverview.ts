@@ -128,6 +128,7 @@ export const signedVerdictOverview = {
       },
     }),
     modifyDatesModal: defineMessages({
+      // TODO: Remove titleV2
       titleV2: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.title_v2',
@@ -136,6 +137,15 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem titill í "Breyting á lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      titleV3: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.title_v3',
+        defaultMessage:
+          'Breyting á lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}}',
+        description:
+          'Notaður sem titill í "Breyting á lengd gæsluvarðhalds/vistunar/farbanns" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      // TODO: Remove successTitleV2
       successTitleV2: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_title_v2',
@@ -143,6 +153,14 @@ export const signedVerdictOverview = {
           'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}} breytt',
         description:
           'Notaður sem titill í "Lengd gæsluvarðhalds/vistunar breytt" glugga á yfirlitsskjá afgreiddra mála þegar breyting á lengd gæsluvarðhalds/vistunar hefur verið geymd.',
+      },
+      successTitleV3: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_title_v3',
+        defaultMessage:
+          'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} breytt',
+        description:
+          'Notaður sem titill í "Lengd gæsluvarðhalds/vistunar/farbanns breytt" glugga á yfirlitsskjá afgreiddra mála þegar breyting á lengd gæsluvarðhalds/vistunar/farbanns hefur verið geymd.',
       },
       reasonForChangeTitle: {
         id:
@@ -158,11 +176,20 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem titill í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
       },
+      // TODO: Remove reasonForChangePlaceholderV2
       reasonForChangePlaceholderV2: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_placeholder_v2',
         defaultMessage:
           'Bóka þarf ástæðu fyrir breytingu á skráðri lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}.',
+        description:
+          'Notaður sem skýritexti í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
+      },
+      reasonForChangePlaceholderV3: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_placeholder_v3',
+        defaultMessage:
+          'Bóka þarf ástæðu fyrir breytingu á skráðri lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}}.',
         description:
           'Notaður sem skýritexti í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
       },
@@ -173,6 +200,14 @@ export const signedVerdictOverview = {
           'Hafi {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
         description:
           'Notaður sem texti í "Breyting á lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      travelBanText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.travel_ban_text',
+        defaultMessage:
+          'Hafi farbanni verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd farbanns. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
+        description:
+          'Notaður sem texti í "Breyting á lengd farbanns" glugga á yfirlitsskjá afgreiddra farbannsmála.',
       },
       validToDateAndIsolationToDateAreTheSame: {
         id:
@@ -227,11 +262,20 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í loka takka í "Lengd gæsluvarðhalds/vistunar breytt" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      // TODO: Remove modifiedValidToDateLabelV2
       modifiedValidToDateLabelV2: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label_v2',
         defaultMessage:
           '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} other {Gæsluvarðhald}} til',
+        description:
+          'Notaður sem texti í  "Breyting á lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      modifiedValidToDateLabelV3: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label_v3',
+        defaultMessage:
+          '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} TRAVEL_BAN {Farbann} other {Gæsluvarðhald}} til',
         description:
           'Notaður sem texti í  "Breyting á lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },

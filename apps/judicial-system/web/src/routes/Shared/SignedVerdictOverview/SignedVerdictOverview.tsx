@@ -274,8 +274,7 @@ export const SignedVerdictOverview: React.FC = () => {
         user.role,
       ) ||
         user.institution?.type === InstitutionType.PRISON_ADMIN) &&
-      (workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.ADMISSION_TO_FACILITY)
+      isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
 
