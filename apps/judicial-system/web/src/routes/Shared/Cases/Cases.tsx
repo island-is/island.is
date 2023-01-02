@@ -121,7 +121,7 @@ export const Cases: React.FC = () => {
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
 
-  const [isFiltering, setIsFiltering] = useState<boolean>()
+  const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isRepresentative = user?.role === UserRole.REPRESENTATIVE
@@ -155,10 +155,6 @@ export const Cases: React.FC = () => {
   } = useCase()
 
   useEffect(() => {
-    if (isFiltering === undefined) {
-      return
-    }
-
     const loadingTimeout = setTimeout(() => {
       setIsFiltering(false)
     }, 250)
