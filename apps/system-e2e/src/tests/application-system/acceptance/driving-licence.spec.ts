@@ -11,9 +11,8 @@ test.describe('Driving licence', () => {
   test.beforeEach(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'driving-licence.json',
       homeUrl: `/umsoknir/okuskoli`,
-      phoneNumber: '0102399',
+      phoneNumber: '0107789',
       idsLoginOn: true,
     })
   })
@@ -34,6 +33,7 @@ test.describe('Driving licence', () => {
       'input[data-testid="agree-to-data-providers"]',
     )
     const nationalIdField = page.locator('input[name="student.nationalId"]')
+    const nameInfo = page.locator('[data-testid="student-name"]')
     const schoolSelector = (n: number) =>
       page.locator(`input[name="confirmation.school"][value="${n}"]`)
     const submitButton = page.locator('button[type="submit"]')
@@ -57,6 +57,7 @@ test.describe('Driving licence', () => {
     await forwardsButton.click()
 
     // Change date, school, and submit
+    await expect(nameInfo).toHaveText('Gervimaður Bandaríkin')
     await schoolSelector(1).click()
     await dateField.fill(format(monthAgo, 'dd.MM.yyyy'))
     await submitButton.click()
