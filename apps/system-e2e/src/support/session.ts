@@ -97,7 +97,7 @@ export async function session({
   idsLoginOn,
 }: {
   browser: Browser
-  storageState: string
+  storageState?: string
   homeUrl: string
   phoneNumber: string
   idsLoginOn:
@@ -109,7 +109,10 @@ export async function session({
       }
   authUrl?: string
 }) {
-  const storageStatePath = join(sessionsPath, storageState)
+  const storageStatePath = join(
+    sessionsPath,
+    storageState ?? `${homeUrl}-${phoneNumber}`,
+  )
   const context = existsSync(storageStatePath)
     ? await browser.newContext({ storageState: storageStatePath })
     : await browser.newContext()
