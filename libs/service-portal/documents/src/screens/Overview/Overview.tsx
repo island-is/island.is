@@ -128,6 +128,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [sendersAvailable, setSendersAvailable] = useState<DocumentSender[]>([])
 
   const [typesAvailable, setTypesAvailable] = useState<DocumentType[]>([])
+
   useEffect(() => {
     if (
       !sendersLoading &&
@@ -161,11 +162,20 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
   const dateOfBirth = userInfo?.profile.dateOfBirth
   let isOver15 = false
+
   if (dateOfBirth) {
     isOver15 = differenceInYears(new Date(), dateOfBirth) > 15
   }
 
   const filteredDocuments = data.documents
+
+  let legalFilteredDocuments = filteredDocuments
+  if (isLegal && isOver15) {
+    // filter out category id 3 = líf og heilsa
+    legalFilteredDocuments = filteredDocuments.filter(
+      (document) => document.categoryId !== '3',
+    )
+  }
 
   useEffect(() => {
     if (!loading && totalCount === 0 && filterValue === defaultFilterValues) {
@@ -173,10 +183,14 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     }
   }, [loading])
 
+  const filteredCount =
+    totalCount !== legalFilteredDocuments.length
+      ? legalFilteredDocuments.length
+      : totalCount
   const pagedDocuments = {
     from: (page - 1) * pageSize,
     to: pageSize * page,
-    totalPages: Math.ceil(totalCount / pageSize),
+    totalPages: Math.ceil(filteredCount / pageSize),
   }
 
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
@@ -264,13 +278,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
       debouncedResults.cancel()
     }
   })
+
   const debouncedResults = useMemo(() => {
     return debounce(handleSearchChange, 500)
   }, [])
-
-  if (isLegal && isOver15) {
-    return <AccessDeniedLegal userInfo={userInfo} client={client} />
-  }
 
   if (isEmpty) {
     return (
@@ -280,6 +291,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
       </Box>
     )
   }
+
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <IntroHeader title={messages.title} intro={messages.intro} />
@@ -335,7 +347,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <LoadingDots large />
                 </Box>
               )}
-              {!loading && !error && filteredDocuments?.length === 0 && (
+              {!loading && !error && legalFilteredDocuments?.length === 0 && (
                 <Box
                   display="flex"
                   justifyContent="center"
@@ -358,7 +370,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Box>
               )}
               <Box marginTop={[2, 0]}>
-                {filteredDocuments.map((doc, index) => (
+                {legalFilteredDocuments.map((doc, index) => (
                   <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
                     <DocumentLine
                       img={getOrganizationLogoUrl(
@@ -374,7 +386,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               </Box>
             </Box>
 
-            {filteredDocuments && (
+            {legalFilteredDocuments && (
               <Box marginTop={4}>
                 <Pagination
                   page={page}
