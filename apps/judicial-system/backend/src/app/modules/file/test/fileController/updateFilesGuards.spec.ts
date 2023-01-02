@@ -1,6 +1,6 @@
-//todo
-import { indictmentCases } from '@island.is/judicial-system/types'
 import { CanActivate } from '@nestjs/common'
+
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
   CaseExistsGuard,

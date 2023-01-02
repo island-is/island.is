@@ -1,8 +1,6 @@
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
 import * as styles from './FjarsyslaRikisinsHeader.css'
@@ -12,12 +10,11 @@ interface HeaderProps {
 }
 
 const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
-  const { width } = useWindowSize()
   const { linkResolver } = useLinkResolver()
 
   return (
-    <Box className={styles.headerBg}>
-      <Box className={styles.headerWrapper}>
+    <div className={styles.headerBg}>
+      <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization.logo && (
@@ -73,8 +70,8 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
             </Link>
           </Box>
         </SidebarLayout>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 

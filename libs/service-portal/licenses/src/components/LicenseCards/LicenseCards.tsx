@@ -6,20 +6,16 @@ import { IdentityDocumentModel } from '@island.is/api/schema'
 import SingleLicenseCard from '../SingleLicenseCard/SingleLicenseCard'
 import { m } from '../../lib/messages'
 import { applyPassport, passportLogo } from '../../lib/constants'
+import { capitalizeEveryWord } from '../../utils/capitalize'
 
 interface Props {
   passportData?: IdentityDocumentModel[]
   name?: boolean
   noPassport?: boolean
-  nationalId?: string | null
+  title?: string | null
 }
 
-const LicenseCards: FC<Props> = ({
-  passportData,
-  name,
-  noPassport,
-  nationalId,
-}) => {
+const LicenseCards: FC<Props> = ({ passportData, name, noPassport, title }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   return (
@@ -28,7 +24,7 @@ const LicenseCards: FC<Props> = ({
         <Stack space={2}>
           {noPassport ? (
             <SingleLicenseCard
-              title={nationalId || formatMessage(m.passportCardTitle)}
+              title={title || formatMessage(m.passportCardTitle)}
               subtitle={formatMessage(m.noValidPassport)}
               link={applyPassport}
               img={passportLogo}
@@ -47,7 +43,9 @@ const LicenseCards: FC<Props> = ({
                 }
                 name={
                   item.displayFirstName && item.displayLastName && name
-                    ? item.displayFirstName + ' ' + item.displayLastName
+                    ? capitalizeEveryWord(
+                        item.displayFirstName + ' ' + item.displayLastName,
+                      )
                     : item.verboseType
                 }
               />
