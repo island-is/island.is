@@ -1,10 +1,10 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  getNavigationItemIfSingle,
-  useActiveModule,
-} from '@island.is/portals/core'
 import { m } from '@island.is/portals/admin/core'
+import {
+  useActiveModule,
+  useSingleNavigationItem,
+} from '@island.is/portals/core'
 
 import {
   BOTTOM_NAVIGATION,
@@ -19,7 +19,7 @@ interface ModuleSwitcherHeaderProps {
 export const ModuleSwitcherHeader = ({ mobile }: ModuleSwitcherHeaderProps) => {
   const activeModule = useActiveModule()
   const { formatMessage } = useLocale()
-  const hasSingleNavItem = !!getNavigationItemIfSingle(
+  const hasSingleNavItem = !!useSingleNavigationItem(
     TOP_NAVIGATION,
     BOTTOM_NAVIGATION,
   )

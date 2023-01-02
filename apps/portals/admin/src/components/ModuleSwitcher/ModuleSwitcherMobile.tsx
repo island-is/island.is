@@ -2,8 +2,8 @@ import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 
 import { Box, Button, Logo, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getNavigationItemIfSingle } from '@island.is/portals/core'
 import { m } from '@island.is/portals/admin/core'
+import { useSingleNavigationItem } from '@island.is/portals/core'
 
 import { BOTTOM_NAVIGATION, TOP_NAVIGATION } from '../../lib/masterNavigation'
 import { ModuleSwitcherHeader } from './ModuleSwitcherHeader'
@@ -14,7 +14,7 @@ import * as styles from './ModuleSwitcherMobile.css'
 export const ModuleSwitcherMobile = () => {
   const dialog = useDialogState()
   const { formatMessage } = useLocale()
-  const hasSingleNavItem = !!getNavigationItemIfSingle(
+  const hasSingleNavItem = !!useSingleNavigationItem(
     TOP_NAVIGATION,
     BOTTOM_NAVIGATION,
   )

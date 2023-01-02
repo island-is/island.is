@@ -13,9 +13,9 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  getNavigationItemIfSingle,
   PortalNavigationItem,
   useNavigation,
+  useSingleNavigationItem,
 } from '@island.is/portals/core'
 import { m as adminMessages } from '@island.is/portals/admin/core'
 
@@ -28,15 +28,13 @@ export const Dashboard = () => {
   const { md } = useBreakpoint()
   const topNavigation = useNavigation(TOP_NAVIGATION)
   const bottomNavigation = useNavigation(BOTTOM_NAVIGATION)
-  const navigationItem = getNavigationItemIfSingle(
+  const navigationItem = useSingleNavigationItem(
     TOP_NAVIGATION,
     BOTTOM_NAVIGATION,
   )
 
-  if (navigationItem) {
-    if (navigationItem.path) {
-      return <Redirect to={navigationItem.path} />
-    }
+  if (navigationItem && navigationItem.path) {
+    return <Redirect to={navigationItem.path} />
   }
 
   const renderNavItem = (item: PortalNavigationItem, index: number) => (
