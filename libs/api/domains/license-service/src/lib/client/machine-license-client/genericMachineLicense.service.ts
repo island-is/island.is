@@ -51,6 +51,11 @@ export class GenericMachineLicenseService
     const licenseData = await this.fetchLicense(user)
 
     if (!licenseData.ok) {
+      this.logger.info('received an invalid response from service', {
+        status: licenseData.error.code,
+        statusText: licenseData.error.message,
+        category: LOG_CATEGORY,
+      })
       return {
         status: GenericUserLicenseStatus.Unknown,
         pkpassStatus: GenericUserLicensePkPassStatus.Unknown,

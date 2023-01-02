@@ -51,24 +51,6 @@ export class LicenseServiceService {
     private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
-  private handleError(
-    licenseType: GenericLicenseType,
-    error: Partial<FetchError>,
-  ): unknown {
-    // Ignore 403/404
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-
-    this.logger.warn(`${licenseType} fetch failed`, {
-      exception: error,
-      message: (error as Error)?.message,
-      category: LOG_CATEGORY,
-    })
-
-    return null
-  }
-
   private async getCachedOrCache(
     license: GenericLicenseMetadata,
     user: User,
@@ -113,7 +95,6 @@ export class LicenseServiceService {
         }
       }
     } catch (e) {
-      this.handleError(license.type, e)
       return {
         data: null,
         fetch: {
@@ -124,7 +105,18 @@ export class LicenseServiceService {
       }
     }
 
-    const { payload, ...userData } = fetchedData
+    const { payload, error, ...userData } = fetchedData
+
+    if (error) {
+      return {
+        data: null,
+        fetch: {
+          status: GenericUserLicenseFetchStatus.Error,
+          updated: new Date(),
+          data: `error code ${error.status} - ${error.message}`,
+        },
+      }
+    }
 
     const dataWithFetch: GenericLicenseCached = {
       data: userData,
@@ -295,6 +287,9 @@ export class LicenseServiceService {
           ? GenericUserLicenseFetchStatus.Fetched
           : GenericUserLicenseFetchStatus.Error,
         updated: new Date(),
+        data: licenseUserdata?.error
+          ? `error code ${licenseUserdata.error.status} - ${licenseUserdata.error.message}`
+          : undefined,
       },
       payload: licenseUserdata?.payload ?? undefined,
     }

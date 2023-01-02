@@ -143,6 +143,8 @@ export type GenericLicenseUserdataExternal = {
 export type GenericLicenseFetch = {
   status: GenericUserLicenseFetchStatus
   updated: Date
+  //optional data
+  data?: string
 }
 
 export type GenericLicenseCached = {
