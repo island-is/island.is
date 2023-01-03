@@ -74,11 +74,13 @@ export const CourtRecord: React.FC = () => {
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  useDeb(workingCase, 'courtAttendees')
-  useDeb(workingCase, 'sessionBookings')
-  useDeb(workingCase, 'accusedAppealAnnouncement')
-  useDeb(workingCase, 'prosecutorAppealAnnouncement')
-  useDeb(workingCase, 'endOfSessionBookings')
+  useDeb(workingCase, [
+    'courtAttendees',
+    'sessionBookings',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealAnnouncement',
+    'endOfSessionBookings',
+  ])
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {

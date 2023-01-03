@@ -448,6 +448,9 @@
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/vehicle-infolocks": [
+        "libs/clients/transport-authority/vehicle-infolocks/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
       ],

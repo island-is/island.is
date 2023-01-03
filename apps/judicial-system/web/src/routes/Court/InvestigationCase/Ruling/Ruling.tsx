@@ -84,10 +84,12 @@ const Ruling = () => {
     constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   )
 
-  useDeb(workingCase, 'prosecutorDemands')
-  useDeb(workingCase, 'courtCaseFacts')
-  useDeb(workingCase, 'courtLegalArguments')
-  useDeb(workingCase, 'conclusion')
+  useDeb(workingCase, [
+    'prosecutorDemands',
+    'courtCaseFacts',
+    'courtLegalArguments',
+    'conclusion',
+  ])
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {

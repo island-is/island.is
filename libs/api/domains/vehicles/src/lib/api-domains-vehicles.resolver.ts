@@ -15,8 +15,8 @@ import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
-  VehicleDebtStatusByPermno,
-  VehiclesCurrentVehicleWithDebtStatus,
+  VehicleOwnerchangeChecksByPermno,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
@@ -97,33 +97,36 @@ export class VehiclesResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [VehiclesCurrentVehicleWithDebtStatus], {
-    name: 'currentVehiclesWithDebtStatus',
+  @Query(() => [VehiclesCurrentVehicleWithOwnerchangeChecks], {
+    name: 'currentVehiclesWithOwnerchangeChecks',
     nullable: true,
   })
   @Audit()
-  async getCurrentVehiclesWithDebtStatus(
+  async getCurrentVehiclesWithOwnerchangeChecks(
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.getCurrentVehiclesWithDebtStatus(
+    return await this.vehiclesService.getCurrentVehiclesWithOwnerchangeChecks(
       user,
       input.showOwned,
-      input.showCoowned,
+      input.showCoOwned,
       input.showOperated,
     )
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => VehicleDebtStatusByPermno, {
-    name: 'vehicleDebtStatusByPermno',
+  @Query(() => VehicleOwnerchangeChecksByPermno, {
+    name: 'vehicleOwnerchangeChecksByPermno',
     nullable: true,
   })
   @Audit()
-  async getVehicleDebtStatusByPermno(
+  async getVehicleOwnerchangeChecksByPermno(
     @Args('permno', { type: () => String }) permno: string,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.getVehicleDebtStatusByPermno(user, permno)
+    return await this.vehiclesService.getVehicleOwnerchangeChecksByPermno(
+      user,
+      permno,
+    )
   }
 }

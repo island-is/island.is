@@ -2,14 +2,6 @@ import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templa
 import { EmailRecipient, EmailRole } from './types'
 import { join } from 'path'
 
-// Returns date object with the timestamp 12:00 (UTC timezone)
-export const getDateAtNoonFromString = (dateStr: string): Date => {
-  const dateObj = new Date(dateStr)
-  const date =
-    dateObj instanceof Date && !isNaN(dateObj.getDate()) ? dateObj : new Date()
-  return new Date(date.toISOString().substring(0, 10) + 'T12:00:00Z')
-}
-
 export const pathToAsset = (file: string) => {
   return join(
     __dirname,
