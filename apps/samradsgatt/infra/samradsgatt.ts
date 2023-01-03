@@ -4,7 +4,7 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
   service('samradsgatt')
     .namespace('samradsgatt')
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/liveness')
     .replicaCount({
       default: 5,
       max: 30,
@@ -16,11 +16,6 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
     })
     .env({
       BASEPATH: '/samradsgatt',
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
       NEXTAUTH_URL: {
         dev: ref(
           (ctx) =>
