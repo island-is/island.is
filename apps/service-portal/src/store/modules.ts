@@ -13,7 +13,7 @@ import { petitionsModule } from '@island.is/service-portal/endorsements'
 import { educationCareerModule } from '@island.is/service-portal/education-career'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
 import { applicationsModule } from '@island.is/service-portal/applications'
-import { licensesModule } from '@island.is/service-portal/licenses'
+import { licenseModule } from '@island.is/service-portal/licenses'
 import { vehiclesModule } from '@island.is/service-portal/vehicles'
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 
@@ -75,7 +75,7 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   assets: assetsModule,
   applications: applicationsModule,
   accessControl: accessControlModule,
-  licenses: licensesModule,
+  licenses: licenseModule,
   vehicles: vehiclesModule,
   delegations: delegationsModule,
 }
