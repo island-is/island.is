@@ -63,6 +63,7 @@ test.describe('Service portal, in access control', () => {
       // Act
       await page.locator('role=button[name="Nýtt umboð"]').click()
       await page.locator('role=textbox[name*="Kennitala"]').click()
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       await page.locator('role=textbox[name*="Kennitala"]').fill('010130-2989')
 
       await page.locator('data-testid=proceed').click()
