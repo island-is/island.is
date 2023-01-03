@@ -32,7 +32,7 @@ expect.extend({
     const applicationType = ofType // e.g. p-merki, okuskoli
     const applicationId = '(/(\\w|-)*)?'
     const applicationRegExp = new RegExp(
-      `^${protocol}${host}${applicationType}${applicationId}$`,
+      `^${protocol}${host}/umsoknir/${applicationType}${applicationId}$`,
     )
     const pass = !!applicationRegExp.test(url)
     const message = () =>
