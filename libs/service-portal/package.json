@@ -1,0 +1,30 @@
+{
+  "name": "service-portal",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@apollo/client": "^3.7.3",
+    "@nrwl/eslint-plugin-nx": "^15.4.2",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@vanilla-extract/css": "^1.9.2",
+    "classnames": "^2.3.2",
+    "cross-fetch": "^3.1.5",
+    "csv-stringify": "^6.2.3",
+    "date-fns": "^2.29.3",
+    "dependencies": "^0.0.1",
+    "graphql-tag": "^2.12.6",
+    "js-cookie": "^3.0.1",
+    "kennitala": "^2.0.0-beta.1",
+    "libphonenumber-js": "^1.10.15",
+    "lodash": "^4.17.21",
+    "react": "workspace:^",
+    "react-animate-height": "^3.1.0",
+    "react-hook-form": "^7.41.3",
+    "react-html-parser": "^2.0.2",
+    "react-intl": "^6.2.5",
+    "react-router-dom": "^6.6.1",
+    "react-select": "^5.7.0",
+    "react-use": "^17.4.0",
+    "xlsx": "^0.18.5"
+  }
+}

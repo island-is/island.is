@@ -1,0 +1,13 @@
+{
+  "name": "financial-aid",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@apollo/client": "^3.7.3",
+    "@vanilla-extract/css": "^1.9.2",
+    "classnames": "^2.3.2",
+    "date-fns": "^2.29.3",
+    "dependencies": "^0.0.1",
+    "lodash": "^4.17.21",
+    "react": "workspace:^"
+  }
+}

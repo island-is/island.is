@@ -1,0 +1,26 @@
+{
+  "name": "judicial-system",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.241.0",
+    "@nestjs/common": "^9.2.1",
+    "@nestjs/core": "^9.2.1",
+    "@nestjs/graphql": "^10.1.7",
+    "@nestjs/jwt": "^10.0.1",
+    "@nestjs/passport": "^9.0.0",
+    "@nestjs/testing": "^9.2.1",
+    "apollo-server-express": "^3.11.1",
+    "date-fns": "^2.29.3",
+    "dependencies": "^0.0.1",
+    "express": "^4.18.2",
+    "form-data": "^4.0.0",
+    "jest-each": "^29.3.1",
+    "jest-mock-extended": "^3.0.1",
+    "jsonwebtoken": "^9.0.0",
+    "passport-jwt": "^4.0.1",
+    "request": "^2.88.2",
+    "uuidv4": "^6.2.13",
+    "winston": "^3.8.2",
+    "winston-cloudwatch": "^6.1.1"
+  }
+}

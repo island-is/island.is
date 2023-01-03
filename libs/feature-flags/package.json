@@ -1,0 +1,10 @@
+{
+  "name": "feature-flags",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@nrwl/eslint-plugin-nx": "^15.4.2",
+    "configcat-js": "^6.0.1",
+    "dependencies": "^0.0.1",
+    "eslint-plugin-local-rules": "^1.3.2"
+  }
+}

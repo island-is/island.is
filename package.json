@@ -470,6 +470,7 @@
     "apps/financial-aid/web-veita",
     "apps/judicial-system/web",
     "apps/skilavottord/web",
-    "apps/web"
+    "apps/web",
+    "libs/*"
   ]
 }

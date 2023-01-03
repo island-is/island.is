@@ -1,0 +1,32 @@
+{
+  "name": "nest",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@nestjs/apollo": "^10.1.7",
+    "@nestjs/common": "^9.2.1",
+    "@nestjs/config": "^2.2.0",
+    "@nestjs/core": "^9.2.1",
+    "@nestjs/graphql": "^10.1.7",
+    "@nestjs/sequelize": "^9.0.0",
+    "@nestjs/swagger": "^6.1.4",
+    "@nestjs/testing": "^9.2.1",
+    "@nrwl/eslint-plugin-nx": "^15.4.2",
+    "apollo-server-express": "^3.11.1",
+    "aws-sdk": "^2.1286.0",
+    "class-validator": "^0.14.0",
+    "dataloader": "^2.1.0",
+    "date-fns": "^2.29.3",
+    "dependencies": "^0.0.1",
+    "express": "^4.18.2",
+    "jest-mock-extended": "^3.0.1",
+    "kennitala": "^2.0.0-beta.1",
+    "lodash": "^4.17.21",
+    "logform": "^2.4.2",
+    "rxjs": "^7.8.0",
+    "sequelize": "^6.28.0",
+    "supertest": "^6.3.3",
+    "winston": "^3.8.2",
+    "winston-cloudwatch": "^6.1.1",
+    "zod": "^3.20.2"
+  }
+}

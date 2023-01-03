@@ -1,0 +1,16 @@
+{
+  "name": "api-catalogue",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.5.0",
+    "@nestjs/common": "^9.2.1",
+    "@nestjs/testing": "^9.2.1",
+    "aws-elasticsearch-connector": "^9.2.0",
+    "aws-sdk": "^2.1286.0",
+    "dependencies": "^0.0.1",
+    "isomorphic-fetch": "^3.0.0",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "openapi3-ts": "^3.1.2"
+  }
+}

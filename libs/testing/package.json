@@ -1,0 +1,16 @@
+{
+  "name": "testing",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@nestjs/bull": "^0.6.2",
+    "@nestjs/common": "^9.2.1",
+    "@nestjs/testing": "^9.2.1",
+    "dependencies": "^0.0.1",
+    "faker": "^6.6.6",
+    "kennitala": "^2.0.0-beta.1",
+    "supertest": "^6.3.3",
+    "testcontainers": "^9.1.1",
+    "xstate": "^4.35.1",
+    "zod": "^3.20.2"
+  }
+}

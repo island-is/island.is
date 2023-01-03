@@ -1,0 +1,7 @@
+{
+  "name": "air-discount-scheme",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "depcheck": "^1.4.3"
+  }
+}

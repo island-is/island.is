@@ -1,0 +1,9 @@
+{
+  "name": "services",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "date-fns": "^2.29.3",
+    "dependencies": "^0.0.1",
+    "faker": "^6.6.6"
+  }
+}
