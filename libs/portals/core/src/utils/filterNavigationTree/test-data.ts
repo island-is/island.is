@@ -330,19 +330,6 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
   },
 
   /**
-   * Only descendants included.
-   * If the item is not included, but one or more of it's descendants are
-   * then we remove the item's path but include it in the tree.
-   */
-  onlyDescendantsIncluded: {
-    currentLocationPath: '/route',
-    navigation,
-    // Remove the first route from the "filtered" routes array
-    routes: [...routes.slice(1)],
-    expected: navigation,
-  },
-
-  /**
    * Maps route enabled state to navigation item enabled state
    */
   setsEnabled: {
@@ -366,6 +353,19 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
         },
       ],
     },
+  },
+
+  /**
+   * Only descendants included.
+   * If the item is not included, but one or more of it's descendants are
+   * then we remove the item's path but include it in the tree.
+   */
+  onlyDescendantsIncluded: {
+    currentLocationPath: '/route',
+    navigation,
+    // Remove the first route from the "filtered" routes array
+    routes: [...routes.slice(1)],
+    expected: navigation,
   },
 
   /**
