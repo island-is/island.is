@@ -24,12 +24,12 @@ export class Flight {
   @Field()
   bookingDate!: Date
 
-  @Field((_) => [FlightLeg])
-  flightLegs!: FlightLeg[]
+  @Field((_) => [FlightLeg], { defaultValue: [] })
+  flightLegs?: FlightLeg[]
 
-  @Field((_) => User)
-  user!: User
+  @Field((_) => User, { nullable: true })
+  user?: User
 
-  @Field((_) => UserInfo)
-  userInfo!: UserInfo
+  @Field((_) => UserInfo, { nullable: true })
+  userInfo?: UserInfo
 }

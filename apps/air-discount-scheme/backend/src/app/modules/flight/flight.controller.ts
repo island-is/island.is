@@ -346,7 +346,7 @@ export class PublicFlightController {
 @Controller('api/private')
 @ApiTags('Admin')
 @ApiBearerAuth()
-export class PrivateFlightController {
+export class PrivateFlightAdminController {
   constructor(private readonly flightService: FlightService) {}
 
   @Get('flights')
@@ -371,9 +371,17 @@ export class PrivateFlightController {
     flightLegs = await this.flightService.finalizeCreditsAndDebits(flightLegs)
     return flightLegs
   }
+}
+
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AirDiscountSchemeScope.default)
+@Controller('api/private')
+@ApiTags('Users')
+@ApiBearerAuth()
+export class PrivateFlightUserController {
+  constructor(private readonly flightService: FlightService) {}
 
   @Get('users/:nationalId/flights')
-  @Scopes(AirDiscountSchemeScope.admin, AirDiscountSchemeScope.default)
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   @ApiOkResponse({ type: [Flight] })
   getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {

@@ -4,7 +4,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { Flight, FlightLeg } from './flight.model'
 import {
   PublicFlightController,
-  PrivateFlightController,
+  PrivateFlightAdminController,
+  PrivateFlightUserController,
 } from './flight.controller'
 import { FlightService } from './flight.service'
 import { DiscountModule } from '../discount'
@@ -19,7 +20,11 @@ import { ExplicitCode } from '../discount/discount.model'
     NationalRegistryModule,
     CacheModule,
   ],
-  controllers: [PublicFlightController, PrivateFlightController],
+  controllers: [
+    PublicFlightController,
+    PrivateFlightAdminController,
+    PrivateFlightUserController,
+  ],
   providers: [FlightService],
   exports: [FlightService],
 })
