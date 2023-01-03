@@ -949,7 +949,7 @@ export class NotificationService {
       )
     }
 
-    const subject = this.formatMessage(notifications.modified.subject, {
+    const subject = this.formatMessage(notifications.modified.subjectV2, {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
     })
@@ -965,7 +965,7 @@ export class NotificationService {
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
           isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
         })
-      : this.formatMessage(notifications.modified.html, {
+      : this.formatMessage(notifications.modified.htmlV2, {
           caseType: theCase.type,
           actorInstitution: user.institution?.name,
           actorName: user.name,
