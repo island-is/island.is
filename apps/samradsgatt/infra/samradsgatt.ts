@@ -31,7 +31,6 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
     .secrets({
       DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
-      IDENTITY_SERVER_SECRET: '/k8s/samradsgatt/web/IDENTITY_SERVER_SECRET',
     })
     .ingress({
       primary: {
