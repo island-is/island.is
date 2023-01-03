@@ -1,5 +1,4 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
-import { devices } from '@playwright/test'
 import './addons'
 /**
  * Read environment variables from file.
@@ -108,7 +107,7 @@ const config: PlaywrightTestConfig = {
   // ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  outputDir: 'test-results/',
+  outputDir: 'dist/test-results/',
 
   /* Run your local dev server before starting the tests */
   // webServer: {
