@@ -14,7 +14,10 @@ module.exports = {
     },
     create: function (context) {
       function checkKennitala(value, node) {
-        if (kennitala.isValid(value) && !fakeNationalIdPrefixes.some((nID) => value.search(nID) >= 0)) {
+        if (
+          kennitala.isValid(value) &&
+          !fakeNationalIdPrefixes.some((nID) => value.search(nID) >= 0)
+        ) {
           context.report({
             node: node,
             message: `Found valid SSN: ${value}`,
