@@ -1,3 +1,7 @@
+# helm related files
+apps/**/infra/*
+libs/**/infra/*
+
 # Readmes in parent folders
 **/README.md
 
