@@ -118,14 +118,6 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í "undirritun þingbókar" skrefi ef undirritun var ekki lokið á yfirlitsskjá afgreiddra mála.',
       },
-      // TODO: Remove closeButon
-      closeButon: {
-        id:
-          'judicial.system.core:signed_verdict_overview.court_record_signature.close_button',
-        defaultMessage: 'Loka glugga',
-        description:
-          'Notaður sem texti fyrir "loka hnappi" í "undirritun þingbókar" skrefi á yfirlitsskjá afgreiddra mála.',
-      },
     }),
     modifyDatesModal: defineMessages({
       // TODO: Remove titleV2
@@ -262,14 +254,6 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í hætta við takka í "Breyta lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },
-      // TODO: Remove secondaryButtonTextSuccess
-      secondaryButtonTextSuccess: {
-        id:
-          'judicial.system.core:signed_verdict_overview.modify_dates_modal.secondary_button_text_success',
-        defaultMessage: 'Loka glugga',
-        description:
-          'Notaður sem texti í loka takka í "Lengd gæsluvarðhalds/vistunar breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      },
       // TODO: Remove modifiedValidToDateLabelV2
       modifiedValidToDateLabelV2: {
         id:
@@ -397,13 +381,6 @@ export const signedVerdictOverview = {
           '**{prosecutorsOffice}** hefur ekki lengur aðgang að málinu.',
         description:
           'Notaður sem texti í modal glugga þegar máli hefur verið lokað fyrir öðru embætti',
-      },
-      // TODO: Remove buttonClose
-      buttonClose: {
-        id:
-          'judicial.system.core:signed_verdict_overview.share_case_modal.button_close',
-        defaultMessage: 'Loka glugga',
-        description: 'Notaður sem label á loka takka í modal glugga',
       },
     }),
     caseExtension: defineMessages({
