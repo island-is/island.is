@@ -1,27 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { Fragment, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-import {
-  CaseFile,
-  CaseFileState,
-  CaseOrigin,
-  PoliceCaseFile,
-} from '@island.is/judicial-system/types'
+import { CaseOrigin, PoliceCaseFile } from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
   Button,
   Checkbox,
   LoadingDots,
-  UploadFile,
 } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
-import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   FormContext,
   SectionHeading,
@@ -29,24 +18,17 @@ import {
 
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import { PoliceCaseFilesData } from '../CaseFiles/CaseFiles'
 import * as styles from './PoliceCaseFiles.css'
-
-interface PoliceCaseFilesData {
-  files: PoliceCaseFile[]
-  isLoading: boolean
-  hasError: boolean
-  errorCode?: string
-}
 
 export interface PoliceCaseFileCheck extends PoliceCaseFile {
   checked: boolean
 }
 
-const CheckboxListItem: React.FC<{ key: string }> = ({ children, key }) => (
+const CheckboxListItem: React.FC = ({ children }) => (
   <motion.li
     layout
     className={styles.policeCaseFile}
-    key={key}
     initial={{
       opacity: 0,
     }}
@@ -74,127 +56,53 @@ const CheckboxList: React.FC<ListItemProps> = ({
 }) => (
   <AnimatePresence>
     {files.map((file) => (
-      <CheckboxListItem key={file.id}>
-        <Checkbox
-          label={
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="spaceBetween"
-            >
-              {file.name}
-              {isUploading && file.checked && <LoadingDots />}
-            </Box>
-          }
-          name={file.id}
-          value={file.id}
-          checked={file.checked}
-          onChange={onCheck}
-        />
-      </CheckboxListItem>
+      <Fragment key={file.id}>
+        <CheckboxListItem>
+          <Checkbox
+            label={
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="spaceBetween"
+              >
+                {file.name}
+                {isUploading && file.checked && <LoadingDots />}
+              </Box>
+            }
+            name={file.id}
+            value={file.id}
+            checked={file.checked}
+            onChange={onCheck}
+            disabled={isUploading}
+          />
+        </CheckboxListItem>
+      </Fragment>
     ))}
   </AnimatePresence>
 )
 
 interface Props {
+  onUpload: () => Promise<void>
   isUploading: boolean
-  setIsUploading: React.Dispatch<React.SetStateAction<boolean>>
   policeCaseFileList: PoliceCaseFileCheck[]
   setPoliceCaseFileList: React.Dispatch<
     React.SetStateAction<PoliceCaseFileCheck[]>
   >
   policeCaseNumber?: string
+  policeCaseFiles?: PoliceCaseFilesData
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
+  onUpload,
   policeCaseNumber,
   isUploading,
-  setIsUploading,
   policeCaseFileList,
   setPoliceCaseFileList,
+  policeCaseFiles,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-  const router = useRouter()
-  const id = router.query.id
-
-  const {
-    data: policeData,
-    loading: policeDataLoading,
-    error: policeDataError,
-  } = useQuery(PoliceCaseFilesQuery, {
-    variables: { input: { caseId: id } },
-    fetchPolicy: 'no-cache',
-    skip: workingCase.origin !== CaseOrigin.LOKE,
-  })
-
-  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-  useEffect(() => {
-    if (workingCase.origin !== CaseOrigin.LOKE) {
-      setPoliceCaseFiles({
-        files: [],
-        isLoading: false,
-        hasError: false,
-      })
-    } else if (policeData && policeData.policeCaseFiles) {
-      setPoliceCaseFiles({
-        files: policeData.policeCaseFiles,
-        isLoading: false,
-        hasError: false,
-      })
-    } else if (policeDataLoading) {
-      setPoliceCaseFiles({
-        files: policeData ? policeData.policeCaseFiles : [],
-        isLoading: true,
-        hasError: false,
-      })
-    } else {
-      setPoliceCaseFiles({
-        files: policeData ? policeData.policeCaseFiles : [],
-        isLoading: false,
-        hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0]?.extensions
-          ?.code as string,
-      })
-    }
-  }, [
-    policeData,
-    policeDataError,
-    policeDataLoading,
-    workingCase.origin,
-    setPoliceCaseFiles,
-  ])
-
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
-
-  const { uploadPoliceCaseFile, addFileToCase, files } = useS3Upload(
-    workingCase,
-  )
-  useEffect(() => {
-    if (policeCaseFiles) {
-      const policeCaseFilesNotStoredInRVG = policeCaseFiles.files.filter(
-        (p) => {
-          const xFiles = files as CaseFile[]
-
-          return !xFiles.find((f) => f.name === p.name && f.key)
-        },
-      )
-
-      if (policeCaseFilesNotStoredInRVG.length !== policeCaseFileList.length) {
-        setPoliceCaseFileList(
-          policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
-            return {
-              id: policeCaseFile.id,
-              name: policeCaseFile.name,
-              checked:
-                policeCaseFileList.find((p) => p.id === policeCaseFile.id)
-                  ?.checked || false,
-            }
-          }),
-        )
-      }
-    }
-  }, [policeCaseFiles, files, policeCaseFileList, setPoliceCaseFileList])
 
   const toggleCheckbox = (
     evt: React.ChangeEvent<HTMLInputElement>,
@@ -217,40 +125,6 @@ const PoliceCaseFiles: React.FC<Props> = ({
         .checked
       setPoliceCaseFileList(newPoliceCaseFileList)
     }
-  }
-
-  const uploadToRVG = async () => {
-    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
-    let newPoliceCaseFileList = [...policeCaseFileList]
-
-    setIsUploading(true)
-
-    filesToUpload.forEach(async (policeCaseFile, index) => {
-      const { key, size } = await uploadPoliceCaseFile(
-        policeCaseFile.id,
-        policeCaseFile.name,
-      )
-
-      await addFileToCase({
-        type: 'application/pdf',
-        name: policeCaseFile.name,
-        status: 'done',
-        state: CaseFileState.STORED_IN_RVG,
-        key,
-        size,
-      } as UploadFile)
-
-      newPoliceCaseFileList = newPoliceCaseFileList.filter(
-        (p) => p.id !== policeCaseFile.id,
-      )
-
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-        setCheckAllChecked(false)
-      }
-    })
-
-    setPoliceCaseFileList(newPoliceCaseFileList)
   }
 
   return (
@@ -319,16 +193,19 @@ const PoliceCaseFiles: React.FC<Props> = ({
                   <PoliceCaseFilesMessageBox
                     icon="checkmark"
                     iconColor="blue400"
-                    message={formatMessage(errors.general)}
+                    message={formatMessage(m.allFilesUploadedMessage)}
                   />
                 )}
               </motion.ul>
             </motion.div>
             <motion.div layout className={styles.uploadToRVGButtonContainer}>
               <Button
-                onClick={uploadToRVG}
+                onClick={async () => {
+                  await onUpload()
+                  setCheckAllChecked(false)
+                }}
                 loading={isUploading}
-                disabled={policeCaseFileList.length === 0}
+                disabled={policeCaseFileList.every((p) => !p.checked)}
               >
                 {formatMessage(m.uploadButtonLabel)}
               </Button>
