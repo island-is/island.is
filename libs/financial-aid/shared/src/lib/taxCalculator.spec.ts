@@ -31,7 +31,7 @@ describe('Tax calculator', () => {
     test('should return number with personal tax allowance amount is 250000', () => {
       const amountWithTaxAllowance = calculateAidFinalAmount(250000, true)
 
-      expect(amountWithTaxAllowance).toEqual(225291)
+      expect(amountWithTaxAllowance).toEqual(231040)
     })
   })
 
