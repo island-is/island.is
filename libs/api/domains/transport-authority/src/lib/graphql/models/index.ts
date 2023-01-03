@@ -1,1 +1,1 @@
-export * from './insuranceCompany.model'
+export * from './ownerChangeValidation.model'

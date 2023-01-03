@@ -36,7 +36,6 @@ export const TransferOfVehicleOwnershipSchema = z.object({
     type: z.string().min(1),
     salePrice: z.string().optional(),
     date: z.string().min(1),
-    isOutOfCommission: z.boolean().optional(),
   }),
   seller: UserInformationSchema,
   sellerCoOwner: z.array(UserInformationSchema),
