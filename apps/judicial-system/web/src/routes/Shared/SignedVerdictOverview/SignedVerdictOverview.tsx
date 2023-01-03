@@ -553,7 +553,7 @@ export const SignedVerdictOverview: React.FC = () => {
           <Box marginBottom={5}>
             <AlertMessage
               type="info"
-              title={formatMessage(m.sections.modifyDatesInfo.titleV2, {
+              title={formatMessage(m.sections.modifyDatesInfo.titleV3, {
                 caseType: workingCase.type,
               })}
               message={

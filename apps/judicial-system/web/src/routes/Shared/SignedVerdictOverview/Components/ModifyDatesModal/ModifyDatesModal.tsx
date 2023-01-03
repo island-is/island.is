@@ -90,7 +90,14 @@ const getModificationSuccessText = (
     modifiedIsolationToDate?.value,
   )
 
-  if (validToDateAndIsolationToDateAreTheSame) {
+  if (workingCase.type === CaseType.TRAVEL_BAN) {
+    return formatMessage(m.sections.modifyDatesModal.travelBanSuccessText, {
+      date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
+        'dagur,',
+        'dagsins',
+      )} kl. ${formatDate(modifiedValidToDate?.value, constants.TIME_FORMAT)}`,
+    })
+  } else if (validToDateAndIsolationToDateAreTheSame) {
     modification = formatMessage(
       m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
       {

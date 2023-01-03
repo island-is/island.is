@@ -240,6 +240,14 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í "Lengd gæsluvarðhalds/vistunar breytt" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      travelBanSuccessText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.travel_ban_success_text',
+        defaultMessage:
+          'Farbann til {date}. Tilkynning verður send á ábyrgðaraðila málsins hjá héraðsdómstól.',
+        description:
+          'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      },
       primaryButtonText: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.primary_button_text',
@@ -288,11 +296,20 @@ export const signedVerdictOverview = {
       },
     }),
     modifyDatesInfo: defineMessages({
+      // TODO: Remove titleV2
       titleV2: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_info.title_V2',
         defaultMessage:
           'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}} uppfærð',
+        description:
+          'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
+      },
+      titleV3: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_info.title_V3',
+        defaultMessage:
+          'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæslu}} uppfærð',
         description:
           'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
       },
