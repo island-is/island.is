@@ -24,11 +24,12 @@ import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { useStore } from '../../store/stateProvider'
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
 import * as styles from './Dashboard.css'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useNavigation } from '@island.is/portals/core'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 const Widget: FC<{
   widget: ServicePortalWidget
@@ -101,7 +102,7 @@ export const Dashboard: FC<{}> = () => {
   const [{ modules, modulesPending }] = useStore()
   const { userInfo, client } = useModuleProps()
   const location = useLocation()
-  const navigation = useNavigation()
+  const mainNav = useNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -131,8 +132,8 @@ export const Dashboard: FC<{}> = () => {
         </Box>
 
         <GridRow data-testid={'service-portal-dashboard'}>
-          {navigation.map((rootItem) => {
-            return rootItem.children?.map(
+          {[mainNav].map((rootItem) => {
+            return rootItem?.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot &&
                 !navRoot.navHide && (

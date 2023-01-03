@@ -2,7 +2,7 @@ import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/service-portal/core'
 import { EducationPaths } from './paths'
 
-export const financeNavigation: PortalNavigationItem = {
+export const educationNavigation: PortalNavigationItem = {
   name: m.education,
   path: EducationPaths.EducationRoot,
   icon: {

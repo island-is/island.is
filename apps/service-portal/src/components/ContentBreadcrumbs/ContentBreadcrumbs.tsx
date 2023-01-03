@@ -9,8 +9,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 
-import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { isDefined } from '@island.is/shared/utils'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import { useNavigation } from '@island.is/portals/core'
 
 interface ContentBreadcrumb {
   name: string | MessageDescriptor
@@ -40,13 +41,13 @@ const parseNavItemName = (
  * match as the Breadcrumbs to render.
  */
 const ContentBreadcrumbs: FC = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation(MAIN_NAVIGATION)
   const location = useLocation()
   const { formatMessage } = useLocale()
   let items: ContentBreadcrumb[] = []
 
   const findBreadcrumbsPath = (
-    navItem: ServicePortalNavigationItem,
+    navItem: ServicePortalNavigationItem | undefined,
     currentBreadcrumbs: ContentBreadcrumb[],
   ) => {
     if (navItem) {
@@ -80,7 +81,7 @@ const ContentBreadcrumbs: FC = () => {
     }
   }
 
-  findBreadcrumbsPath(navigation[0], [])
+  findBreadcrumbsPath(navigation, [])
 
   if (items.length < 2) return null
 
