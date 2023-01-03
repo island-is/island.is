@@ -24,6 +24,7 @@ import {
 import { assets } from './assets'
 import { debts } from './debts'
 import { business } from './business'
+import { heirs } from './heirs'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',
@@ -211,6 +212,7 @@ export const form: Form = buildForm({
     }),
     //assets,
     //debts,
-    business,
+    //business,
+    heirs,
   ],
 })
