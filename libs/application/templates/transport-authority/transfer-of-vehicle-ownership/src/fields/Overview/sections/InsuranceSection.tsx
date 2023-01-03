@@ -42,7 +42,7 @@ export const InsuranceSection: FC<
 
   const getInsurance = () => {
     const insuranceName = insuranceCompanyList?.find(
-      (insureanceItem) => insureanceItem.code === insurance,
+      (insuranceItem) => insuranceItem.code === insurance,
     )
     return insuranceName ? insuranceName.name : undefined
   }

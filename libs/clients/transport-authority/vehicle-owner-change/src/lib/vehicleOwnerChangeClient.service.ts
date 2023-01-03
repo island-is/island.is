@@ -1,6 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { lookup } from 'dns'
 import { ReturnTypeMessage } from '../../gen/fetch'
 import { OwnerChangeApi } from '../../gen/fetch/apis'
 import {
@@ -42,7 +41,7 @@ export class VehicleOwnerChangeClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, becuase if ownerchange results in error,
+      // Note: We need to wrap in try-catch to get the error messages, because if ownerchange results in error,
       // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
       // that is of the same class as 200 result schema
       if (e?.problem?.Errors) {
@@ -81,6 +80,7 @@ export class VehicleOwnerChangeClient {
         insuranceCompanyCode = dummyInsuranceCompanyCode
       }
 
+      // Note: API throws error if timestamp is 00:00:00, so we will use noon
       const purchaseDate = getDateAtNoon(ownerChange.dateOfPurchase)
 
       // Note: we have manually changed this endpoint to void, since the messages we want only
@@ -107,7 +107,7 @@ export class VehicleOwnerChangeClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, becuase if ownerchange results in error,
+      // Note: We need to wrap in try-catch to get the error messages, because if ownerchange results in error,
       // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
       // that is of the same class as 200 result schema
       if (e?.problem?.Errors) {
@@ -159,6 +159,7 @@ export class VehicleOwnerChangeClient {
   ): Promise<void> {
     const useGroup = '000'
 
+    // Note: API throws error if timestamp is 00:00:00, so we will use noon
     const purchaseDate = getDateAtNoon(ownerChange.dateOfPurchase)
 
     await this.ownerchangeApiWithAuth(auth).rootPost({

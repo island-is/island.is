@@ -179,7 +179,6 @@ export class VehiclesService {
           make: vehicle.make || undefined,
           color: vehicle.color || undefined,
           role: vehicle.role || undefined,
-          isStolen: vehicle.stolen,
           isDebtLess: debtStatus.isDebtLess,
           updatelocks: updatelocks,
           ownerChangeErrorMessages: ownerChangeValidation?.hasError

@@ -118,7 +118,7 @@ describe('FileController - Upload case file to court', () => {
       courtCaseNumber,
     } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `indictments/${caseId}/${uuid()}/test.txt`
     const fileName = 'test.txt'
     const fileType = 'text/plain'
     const caseFile = {
@@ -163,7 +163,6 @@ describe('FileController - Upload case file to court', () => {
     ${CaseFileCategory.INDICTMENT}         | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.CRIMINAL_RECORD}    | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.COST_BREAKDOWN}     | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.CASE_FILE_CONTENTS} | ${CourtDocumentFolder.CASE_DOCUMENTS}
     ${CaseFileCategory.CASE_FILE}          | ${CourtDocumentFolder.CASE_DOCUMENTS}
     `.describe(
     'indictment file upload to court',
