@@ -10,10 +10,12 @@ import { useLocale } from '@island.is/localization'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 
 import useNavigation from '../../hooks/useNavigation/useNavigation'
+import { isDefined } from '@island.is/shared/utils'
 
 interface ContentBreadcrumb {
   name: string | MessageDescriptor
   path?: string
+  hidden?: boolean
 }
 
 /**
@@ -57,6 +59,7 @@ const ContentBreadcrumbs: FC = () => {
       // Push the nav item to the current array as we are currently located here in our search
       currentBreadcrumbs.push({
         name: parseNavItemName(navItem, activePath),
+        hidden: navItem.breadcrumbHide ?? false,
         path: activePath ? location.pathname : navItem.path,
       })
 
@@ -85,7 +88,7 @@ const ContentBreadcrumbs: FC = () => {
     <Box paddingTop={[0, 3]} paddingBottom={[2, 3]}>
       <Breadcrumbs color="blue400" separatorColor="blue400">
         {items.map((item, index) =>
-          item.path !== undefined ? (
+          isDefined(item.path) && !item.hidden ? (
             <Link key={index} to={item.path}>
               {formatMessage(item.name)}
             </Link>

@@ -9,7 +9,6 @@ import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
-import SubNavModal from './SubNavModal'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
@@ -62,16 +61,6 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
         isModuleActive && styles.itemWrapperActive,
       )}
     >
-      {/* {navArray && nav.enabled !== false && collapsed && (
-        <SubNavModal>
-          <SubNav
-            collapsed
-            navChildren={navChildren}
-            onItemClick={() => handleRootItemClick(false)}
-            pathname={pathname}
-          />
-        </SubNavModal>
-      )} */}
       <NavItem
         path={nav.path}
         icon={nav.icon}

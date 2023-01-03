@@ -10,10 +10,9 @@ import {
   CaseState,
   CaseType,
   Defendant,
-  isCourtRole,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   capitalize,
   displayFirstPlusRemaining,
@@ -21,7 +20,10 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
-import { Table } from '@island.is/judicial-system-web/src/components'
+import {
+  Table,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import {
@@ -192,7 +194,7 @@ const PastCases: React.FC<Props> = (props) => {
           const tagVariant = mapCaseStateToTagVariant(
             formatMessage,
             row.row.original.state,
-            user?.role ? isCourtRole(user.role) : false,
+            user?.role ? isExtendedCourtRole(user.role) : false,
             row.row.original.type,
             row.row.original.isValidToDateInThePast,
           )

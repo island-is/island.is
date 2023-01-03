@@ -1,4 +1,6 @@
 import {
+  FaqList,
+  FaqListProps,
   renderConnectedComponent,
   richText,
   SliceType,
@@ -19,6 +21,7 @@ import {
   ShipSearch,
   SidebarShipSearchInput,
   StraddlingStockCalculator,
+  TwoColumnTextSlice,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -26,6 +29,7 @@ import {
   AccordionSlice as AccordionSliceSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
+import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 
 const webRenderConnectedComponent = (slice) => {
   const data = slice.json ?? {}
@@ -41,6 +45,8 @@ const webRenderConnectedComponent = (slice) => {
       return <CatchQuotaCalculator namespace={data} />
     case 'Fiskistofa/SelectedShip':
       return <SelectedShip />
+    case 'ElectronicRegistrations/MonthlyStatistics':
+      return <MonthlyStatistics slice={slice} />
     default:
       break
   }
@@ -50,13 +56,14 @@ const webRenderConnectedComponent = (slice) => {
 
 const defaultRenderComponent = {
   PowerBiSlice: (slice: PowerBiSliceSchema) => <PowerBiSlice slice={slice} />,
-  AccordionSlice: (slice: AccordionSliceSchema) => (
-    <AccordionSlice slice={slice} />
-  ),
+  AccordionSlice: (slice: AccordionSliceSchema) =>
+    slice.accordionItems && <AccordionSlice slice={slice} />,
   ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
   GraphCard: (chart) => <ChartsCard chart={chart} />,
   OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
+  TwoColumnText: (slice) => <TwoColumnTextSlice slice={slice} />,
   EmailSignup: (slice) => <EmailSignup slice={slice} />,
+  FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
 }
 
 export const webRichText = (

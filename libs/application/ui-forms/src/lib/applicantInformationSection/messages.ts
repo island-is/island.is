@@ -45,4 +45,16 @@ export const applicantInformation = {
       description: 'Telephone number',
     },
   }),
+  error: defineMessages({
+    phoneNumber: {
+      id: 'uiForms.application:applicantInfo.error.phoneNumber',
+      defaultMessage: 'Símanúmer verður að vera 7 stafir',
+      description: 'Phone number must be 7 digits',
+    },
+    email: {
+      id: 'uiForms.application:applicantInfo.error.email',
+      defaultMessage: 'Netfang verður að vera gilt',
+      description: 'Email must be valid',
+    },
+  }),
 }

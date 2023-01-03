@@ -3,6 +3,7 @@ import { getModelToken } from '@nestjs/sequelize'
 
 import { FlightService, ADS_POSTAL_CODES } from '../../flight.service'
 import { Flight, FlightLeg } from '../../flight.model'
+import { ExplicitCode } from '../../../discount/discount.model'
 
 describe('PublicFlightController', () => {
   let flightService: FlightService
@@ -20,6 +21,10 @@ describe('PublicFlightController', () => {
         },
         {
           provide: getModelToken(FlightLeg),
+          useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: getModelToken(ExplicitCode),
           useClass: jest.fn(() => ({})),
         },
       ],

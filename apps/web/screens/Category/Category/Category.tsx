@@ -184,16 +184,21 @@ const Category: Screen<CategoryProps> = ({
     }
   }, [])
 
-  const sidebarCategoryLinks = categories.map(
-    ({ __typename: typename, title, slug }) => {
+  const sidebarCategoryLinks = categories
+    .filter(
+      (item) =>
+        category.id === item.id ||
+        (item?.slug !== 'thjonusta-island-is' &&
+          item?.slug !== 'services-on-island-is'),
+    )
+    .map(({ __typename: typename, title, slug }) => {
       return {
         title,
         typename,
         active: slug === Router.query.slug,
         slug: [slug],
       }
-    },
-  )
+    })
 
   const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
     const bySubgroup = articles.reduce((result, item) => {
@@ -236,10 +241,8 @@ const Category: Screen<CategoryProps> = ({
   const handleAccordionClick = (groupSlug: string) => {
     const updatedArr = updateHashArray(hashArray, groupSlug)
     setHashArray(updatedArr)
-    Router.replace({
-      pathname: linkResolver(category.__typename as LinkType, [slug]).href,
-      hash: getHashString(updatedArr),
-    })
+    // eslint-disable-next-line no-restricted-globals
+    history?.replaceState({}, '', `#${getHashString(updatedArr)}`)
   }
 
   const sortArticles = (articles: Articles) => {

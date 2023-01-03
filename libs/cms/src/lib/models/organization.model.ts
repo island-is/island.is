@@ -61,6 +61,9 @@ export class Organization {
 
   @Field(() => Boolean, { nullable: true })
   showsUpOnTheOrganizationsPage?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hasALandingPage?: boolean
 }
 
 export const mapOrganization = ({
@@ -90,5 +93,6 @@ export const mapOrganization = ({
       ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
       : [],
     showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
+    hasALandingPage: fields.hasALandingPage ?? true,
   }
 }

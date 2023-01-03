@@ -47,7 +47,9 @@ export const vehiclesModule: ServicePortalModule = {
     {
       name: m.vehiclesLookup,
       path: ServicePortalPath.AssetsVehiclesLookup,
-      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.internalProcuring),
       key: 'VehicleLookup',
       render: () => lazy(() => import('./screens/Lookup/Lookup')),
     },

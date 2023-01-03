@@ -61,7 +61,7 @@ export {
 export { default as Skeleton } from './Skeleton/Skeleton'
 export { default as Table } from './Table/Table'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
-export { default as UserProvider } from './UserProvider/UserProvider'
+export { UserProvider, UserContext } from './UserProvider/UserProvider'
 export {
   ViewportProvider,
   ViewportContext,

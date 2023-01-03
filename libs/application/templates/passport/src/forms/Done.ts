@@ -4,13 +4,18 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { ChildsPersonalInfo, Passport, SubmitResponse } from '../lib/constants'
+import {
+  ChildsPersonalInfo,
+  Passport,
+  PersonalInfo,
+  SubmitResponse,
+} from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
   id: 'PassportApplicationComplete',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.COMPLETED,
   children: [
     buildMultiField({
       id: 'done',
@@ -20,19 +25,21 @@ export const Done: Form = buildForm({
         values: {
           name:
             (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-              ?.name ?? (application.answers.personalInfo as any)?.name,
+              ?.name ??
+            (application.answers.personalInfo as PersonalInfo)?.name,
         },
       }),
       children: [
-        buildDescriptionField({
-          id: 'applicationNr',
-          title: m.applicationCompleteNumber,
-          titleVariant: 'h3',
-          description: (application: Application) =>
-            (application.externalData.submitPassportApplication
-              ?.data as SubmitResponse)?.orderId,
-          space: 'gutter',
-        }),
+        // TODO: Add back in once preregistration service starts returing an orederID
+        // buildDescriptionField({
+        //   id: 'applicationNr',
+        //   title: m.applicationCompleteNumber,
+        //   titleVariant: 'h3',
+        //   description: (application: Application) =>
+        //     (application.externalData.submitPassportApplication
+        //       ?.data as SubmitResponse)?.orderId ?? '',
+        //   space: 'gutter',
+        // }),
         buildDescriptionField({
           id: 'nextStepsDescription',
           title: m.applicationCompleteNextSteps,

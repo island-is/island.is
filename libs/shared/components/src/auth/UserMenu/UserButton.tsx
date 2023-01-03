@@ -15,13 +15,20 @@ import { checkDelegation } from '@island.is/shared/utils'
 interface UserButtonProps {
   user: User
   small: boolean
-  onClick: () => void
+  onClick(): void
+  iconOnlyMobile?: boolean
 }
 
-export const UserButton = ({ onClick, user, small }: UserButtonProps) => {
+export const UserButton = ({
+  onClick,
+  user,
+  small,
+  iconOnlyMobile = false,
+}: UserButtonProps) => {
   const isDelegation = checkDelegation(user)
   const { profile } = user
   const { formatMessage } = useLocale()
+
   return (
     <>
       <Hidden above="sm">
@@ -29,9 +36,10 @@ export const UserButton = ({ onClick, user, small }: UserButtonProps) => {
           <Box className={styles.smallAvatar}>
             <UserAvatar
               isDelegation={isDelegation}
-              username={profile.name}
+              username={iconOnlyMobile ? undefined : profile.name}
               onClick={onClick}
               aria-label={formatMessage(userMessages.userButtonAria)}
+              dataTestid="user-menu"
             />
           </Box>
         ) : (
@@ -39,17 +47,18 @@ export const UserButton = ({ onClick, user, small }: UserButtonProps) => {
             variant="utility"
             colorScheme={isDelegation ? 'primary' : 'default'}
             onClick={onClick}
-            icon="person"
+            icon={isDelegation ? 'people' : 'person'}
             iconType="outline"
             aria-label={formatMessage(userMessages.userButtonAria)}
+            data-testid="user-menu"
           >
-            <div className={styles.resetButtonPadding}>
-              {
+            {!iconOnlyMobile && (
+              <div className={styles.resetButtonPadding}>
                 <Inline space={1} alignY="center">
                   {profile.name.split(' ')[0]}
                 </Inline>
-              }
-            </div>
+              </div>
+            )}
           </Button>
         )}
       </Hidden>
@@ -60,6 +69,7 @@ export const UserButton = ({ onClick, user, small }: UserButtonProps) => {
           onClick={onClick}
           icon="chevronDown"
           aria-label={formatMessage(userMessages.userButtonAria)}
+          data-testid="user-menu"
         >
           <div className={styles.resetButtonPadding}>
             {isDelegation ? (

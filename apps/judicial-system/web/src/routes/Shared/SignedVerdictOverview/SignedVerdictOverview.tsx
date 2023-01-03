@@ -22,6 +22,7 @@ import {
   isAcceptingCaseDecision,
   UpdateCase,
   User,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -43,8 +44,8 @@ import {
   SignedDocument,
   useRequestRulingSignature,
   SigningModal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
@@ -638,13 +639,15 @@ export const SignedVerdictOverview: React.FC = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
@@ -652,8 +655,8 @@ export const SignedVerdictOverview: React.FC = () => {
           workingCase.prosecutorAppealDecision ===
             CaseAppealDecision.POSTPONE ||
           workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
-          (user?.role === UserRole.JUDGE ||
-            user?.role === UserRole.REGISTRAR) &&
+          user?.role &&
+          isCourtRole(user.role) &&
           user?.institution?.type !== InstitutionType.HIGH_COURT && (
             <Box marginBottom={7}>
               <AppealSection
@@ -743,8 +746,7 @@ export const SignedVerdictOverview: React.FC = () => {
                       signatory={workingCase.courtRecordSignatory.name}
                       signingDate={workingCase.courtRecordSignatureDate}
                     />
-                  ) : user?.role === UserRole.JUDGE ||
-                    user?.role === UserRole.REGISTRAR ? (
+                  ) : user?.role && isCourtRole(user.role) ? (
                     <Button
                       variant="ghost"
                       size="small"
@@ -907,9 +909,7 @@ export const SignedVerdictOverview: React.FC = () => {
         <Modal
           title={shareCaseModal.title}
           text={shareCaseModal.text}
-          primaryButtonText={formatMessage(
-            m.sections.shareCaseModal.buttonClose,
-          )}
+          primaryButtonText={formatMessage(core.closeModal)}
           onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
         />
       )}
@@ -965,7 +965,7 @@ export const SignedVerdictOverview: React.FC = () => {
           }
           primaryButtonText={
             courtRecordSignatureConfirmationResponse
-              ? formatMessage(m.sections.courtRecordSignatureModal.closeButon)
+              ? formatMessage(core.closeModal)
               : ''
           }
           onPrimaryButtonClick={() => {

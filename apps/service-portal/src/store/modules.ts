@@ -15,7 +15,7 @@ import { educationStudentAssessmentModule } from '@island.is/service-portal/educ
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { vehiclesModule } from '@island.is/service-portal/vehicles'
-import { delegationsModule } from '@island.is/service-portal/access-control/delegations'
+import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 
 /**
  * NOTE:

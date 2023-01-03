@@ -5,6 +5,7 @@ import {
   Repeater,
   FormNode,
   Schema,
+  StaticText,
 } from '@island.is/application/types'
 
 type ScreenAttributes = {
@@ -57,4 +58,5 @@ export type DelegationsScreenDataType = {
   screenType: ScreenType
   allowedDelegations?: string[]
   authDelegations?: Delegation[]
+  templateName?: StaticText
 }
