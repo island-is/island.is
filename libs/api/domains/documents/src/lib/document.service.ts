@@ -66,7 +66,8 @@ export class DocumentService {
     let newInput: GetDocumentListInput = input
     try {
       if (
-        (input.categoryId === '' || input.categoryId === healthId) &&
+        (input.categoryId === '' ||
+          input.categoryId?.indexOf(healthId) !== -1) &&
         input.isLegalGuardian
       ) {
         const allCategories = await this.getCategories(nationalId)
