@@ -6,7 +6,4 @@ export enum InformationPaths {
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
   Company = '/fyrirtaeki',
-
-  Petitions = '/medmaeli',
-  PetitionsAdminView = '/medmaeli-admin',
 }

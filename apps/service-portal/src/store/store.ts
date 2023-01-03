@@ -1,8 +1,4 @@
-import {
-  ServicePortalModule,
-  ServicePortalRoute,
-} from '@island.is/service-portal/core'
-import { modules, ModuleKeys } from './modules'
+import { ServicePortalRoute } from '@island.is/service-portal/core'
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
 
 export interface StoreState {

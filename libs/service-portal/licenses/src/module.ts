@@ -5,7 +5,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { LicensePaths } from './lib/paths'
 import { defineMessage } from 'react-intl'
 
-export const licenseModule: PortalModule = {
+export const licensesModule: PortalModule = {
   name: m.licenseNavTitle,
   widgets: () => [],
   routes: ({ userInfo }) => [

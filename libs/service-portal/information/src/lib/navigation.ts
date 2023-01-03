@@ -1,5 +1,6 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/service-portal/core'
+import { PetitionPaths } from '@island.is/service-portal/endorsements'
 import { InformationPaths } from './paths'
 
 export const informationNavigation: PortalNavigationItem = {
@@ -28,12 +29,12 @@ export const informationNavigation: PortalNavigationItem = {
     {
       // Petitions
       name: m.endorsements,
-      path: InformationPaths.Petitions,
+      path: PetitionPaths.Petitions,
     },
     {
       // Petitions Admin
       name: m.endorsementsAdmin,
-      path: InformationPaths.PetitionsAdminView,
+      path: PetitionPaths.PetitionsAdminView,
     },
   ],
   description: m.userInfoDescription,
