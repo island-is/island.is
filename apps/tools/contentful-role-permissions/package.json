@@ -1,6 +1,48 @@
 {
   "name": "contentful-role-permissions",
   "version": "0.0.1",
+  "scripts": {
+    "nx": "nx",
+    "start": "nx serve",
+    "build": "nx build",
+    "deploy": "nx deploy",
+    "test": "nx test",
+    "lint": "nx workspace-lint && nx lint",
+    "dev-services": "nx dev-services",
+    "dev": "nx dev",
+    "dev-init": "nx dev-init",
+    "analyze": "cross-env ANALYZE=true nx build",
+    "e2e": "nx e2e",
+    "e2e-ci": "node ./scripts/e2e-ci.js",
+    "codegen": "nx codegen",
+    "translations": "nx translations",
+    "affected:apps": "nx affected:apps",
+    "affected:build": "nx affected:build",
+    "affected:libs": "nx affected:libs",
+    "affected:e2e": "nx affected:e2e",
+    "affected:test": "nx affected:test",
+    "affected:lint": "nx affected:lint",
+    "affected:dep-graph": "nx affected:dep-graph",
+    "affected:docker": "nx affected --target=docker",
+    "affected": "nx affected",
+    "security-audit": "bash -c 'yarn audit --level high ; [[ \"$?\" -lt  \"8\" ]]'",
+    "license-audit": "license-checker --failOn 'GPL; AGPL; UNLICENSED' --summary",
+    "generate": "nx generate",
+    "get-secrets": "./scripts/get-secrets.sh",
+    "create-secret": "./scripts/create-secret.sh",
+    "format": "nx format:write",
+    "format:check": "nx format:check",
+    "update": "nx migrate latest",
+    "workspace-generator": "nx workspace-generator",
+    "dep-graph": "nx dep-graph",
+    "help": "nx help",
+    "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
+    "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
+    "schemas": "node ./scripts/schemas.js",
+    "gitbook": "node ./scripts/gitbook.js",
+    "charts": "cd ./infra && yarn charts"
+  },
+
   "dependencies": {
     "next": "12.1.2",
     "react": "17.0.2",
@@ -56,8 +98,5 @@
     "csstype": "2.6.13",
     "ts-morph": "16.0.0",
     "@storybook/theming": "6.5.8"
-  },
-  "scripts": {
-    "start": "next start"
   }
 }

@@ -465,7 +465,7 @@
   "workspaces": [
     "apps/air-discount-scheme/web",
     "apps/auth-admin-web",
-    "apps/contentful-role-permissions",
+    "apps/tools/contentful-role-permissions",
     "apps/financial-aid/web-osk",
     "apps/financial-aid/web-veita",
     "apps/judicial-system/web",
