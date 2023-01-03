@@ -2,6 +2,7 @@ import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
   service('samradsgatt')
+    .image('samradsgatt')
     .namespace('samradsgatt')
     .liveness('/liveness')
     .readiness('/liveness')
