@@ -7,7 +7,7 @@ import {
   CaseDecision,
 } from '@island.is/judicial-system/types'
 
-import { DemandsAutofillProps, getDemandsAutofill } from './StepThree'
+import { DemandsAutofillProps, getDemandsAutofill } from './PoliceDemands'
 
 const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
 describe('getDemandsAutofill', () => {

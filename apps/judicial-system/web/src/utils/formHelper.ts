@@ -1,8 +1,13 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
+import type {
+  Case,
+  CaseFile,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
+import { UploadFile } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import * as validations from './validate'
@@ -335,3 +340,13 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
 
   return key
 }
+
+export const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
+  name: file.name,
+  type: file.type,
+  id: file.id,
+  key: file.key,
+  status: 'done',
+  percent: 100,
+  size: file.size,
+})
