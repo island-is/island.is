@@ -61,11 +61,65 @@ export const heirs = buildSection({
           description:
             'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004',
           children: [
-            buildDescriptionField({
-              id: 'temp',
-              title: '',
-              space: 'gutter',
-            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'inventory',
+                doesNotRequireAnswer: true,
+                component: 'TextFieldsRepeater',
+              },
+              {
+                fields: [
+                  {
+                    title: m.debtsSsn.defaultMessage,
+                    id: 'ssn',
+                    format: '######-####',
+                  },
+                  {
+                    title: 'Nafn',
+                    id: 'creditorName',
+                  },
+                  {
+                    title: 'Netfang',
+                    id: 'email',
+                  },
+                  {
+                    title: 'Símanúmer',
+                    id: 'phone',
+                  },
+                  {
+                    title: 'Tengsl við arfláta',
+                    id: 'relation',
+                  },
+                  {
+                    title: 'Arfshlutfall',
+                    id: 'percentage',
+                  },
+                  {
+                    title: 'Óskattskyldur arfur',
+                    id: 'arfur',
+                    readOnly: true,
+                  },
+                  {
+                    title: 'Fjárhæð arfshluta',
+                    id: 'amount',
+                    readOnly: true,
+                  },
+                  {
+                    title: 'Skattskyldur arfur',
+                    id: 'skattskyldur',
+                    readOnly: true,
+                  },
+                  {
+                    title: 'Erfðafjárskattur',
+                    id: 'Erfðafjárskattur',
+                    readOnly: true,
+                  },
+                ],
+                repeaterButtonText: 'Bæta við erfingja',
+                repeaterHeaderText: 'Erfingi',
+              },
+            ),
           ],
         }),
       ],

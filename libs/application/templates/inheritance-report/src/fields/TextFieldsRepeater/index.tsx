@@ -126,7 +126,6 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                 />
               </Box>
             </Box>
-
             <GridRow>
               {props.fields.map((field: any) => {
                 return (
@@ -177,7 +176,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
           {props.repeaterButtonText}
         </Button>
       </Box>
-      {!!fields.length && (
+      {!!fields.length && props.sumField && (
         <Box marginTop={5}>
           <GridRow>
             <GridColumn span={['1/1', '1/2']}>

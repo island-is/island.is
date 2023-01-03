@@ -210,9 +210,9 @@ export const form: Form = buildForm({
         }),
       ],
     }),
-    //assets,
-    //debts,
-    //business,
+    assets,
+    debts,
+    business,
     heirs,
   ],
 })
