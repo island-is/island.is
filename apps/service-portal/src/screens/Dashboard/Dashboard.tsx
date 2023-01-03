@@ -1,7 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { FC, Suspense, useEffect, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
   CategoryCard,
@@ -20,8 +20,6 @@ import {
 } from '@island.is/service-portal/core'
 import { User } from '@island.is/shared/types'
 import Greeting from '../../components/Greeting/Greeting'
-import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
-import { useStore } from '../../store/stateProvider'
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import * as styles from './Dashboard.css'
@@ -99,8 +97,7 @@ const WidgetLoader: FC<{
 }
 
 export const Dashboard: FC<{}> = () => {
-  const [{ modules, modulesPending }] = useStore()
-  const { userInfo, client } = useModuleProps()
+  const { userInfo } = useAuth()
   const location = useLocation()
   const mainNav = useNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
@@ -180,14 +177,6 @@ export const Dashboard: FC<{}> = () => {
           })}
         </GridRow>
       </GridContainer>
-
-      {userInfo !== null && !modulesPending && (
-        <WidgetLoader
-          modules={Object.values(modules)}
-          userInfo={userInfo}
-          client={client}
-        />
-      )}
     </Box>
   )
 }
