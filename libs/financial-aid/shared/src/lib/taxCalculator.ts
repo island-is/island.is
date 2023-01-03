@@ -1,4 +1,16 @@
-export const taxInfoNumbers = {
+import format from 'date-fns/format'
+import { Amount, Calculations } from './interfaces'
+
+export interface TaxInfo {
+  personalTaxAllowance: number
+  taxPercentage: number
+}
+interface TaxInfoYear {
+  [id: string]: TaxInfo
+}
+
+const currentYear = format(new Date(), 'yyyy')
+export const taxInfoNumbers: TaxInfoYear = {
   '2021': {
     taxPercentage: 31.45,
     personalTaxAllowance: 50792,
@@ -9,18 +21,12 @@ export const taxInfoNumbers = {
   },
 }
 
-interface TaxInfoYear {
-  [id: string]: TaxInfo
+// Set current year tax to latest available if tax info is missing
+// for the current year
+if (!taxInfoNumbers[currentYear]) {
+  const keys = Object.keys(taxInfoNumbers).sort()
+  taxInfoNumbers[currentYear] = taxInfoNumbers[keys[keys.length - 1]]
 }
-
-export interface TaxInfo {
-  personalTaxAllowance: number
-  taxPercentage: number
-}
-import format from 'date-fns/format'
-import { Amount, Calculations } from './interfaces'
-
-const currentYear = format(new Date(), 'yyyy')
 
 export const calculateAidFinalAmount = (
   amount: number,
