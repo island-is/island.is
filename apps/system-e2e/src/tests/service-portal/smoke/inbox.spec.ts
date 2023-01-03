@@ -32,7 +32,7 @@ test.describe('Pósthólf overview', () => {
       await page.goto('/minarsidur/postholf')
 
       // Act
-      const inputField = findByTestId('e-docs')
+      const inputField = page.locator('input[name="rafraen-skjol-input"]')
       await inputField.click()
       await inputField.type('greiðslukvittun', { delay: 100 })
       await page.keyboard.press('Enter')
