@@ -6,7 +6,6 @@ import { informationModule } from '@island.is/service-portal/information'
 import { financeModule } from '@island.is/service-portal/finance'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
-import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
 import { petitionsModule } from '@island.is/service-portal/endorsements'
@@ -28,7 +27,6 @@ import { delegationsModule } from '@island.is/portals/shared-modules/delegations
  * `isServicePortalFinanceModuleEnabled` where your module is called `finance`.
  */
 export type ModuleKeys =
-  | 'accessControl'
   | 'documentProvider'
   | 'documents'
   | 'information'
@@ -54,10 +52,7 @@ export const companyModules: ModuleKeys[] = [
   'information',
   'vehicles',
   'personalInformation',
-  'accessControl',
   'delegations',
-  // TODO: Next in:
-  // 'licenses',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
@@ -74,7 +69,6 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   educationStudentAssessment: educationStudentAssessmentModule,
   assets: assetsModule,
   applications: applicationsModule,
-  accessControl: accessControlModule,
   licenses: licensesModule,
   vehicles: vehiclesModule,
   delegations: delegationsModule,

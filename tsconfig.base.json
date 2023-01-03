@@ -630,9 +630,6 @@
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
       ],
-      "@island.is/service-portal/settings/access-control": [
-        "libs/service-portal/settings/access-control/src/index.ts"
-      ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
       ],
