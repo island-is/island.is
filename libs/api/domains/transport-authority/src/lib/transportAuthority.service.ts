@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
-import { OwnerChangeAnswers } from './graphql/dto'
-import { OwnerChangeValidation } from './graphql/models'
+import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
+import { OwnerChangeAnswers, CheckTachoNetInput } from './graphql/dto'
+import { OwnerChangeValidation, CheckTachoNetExists } from './graphql/models'
 
 @Injectable()
 export class TransportAuthorityApi {
   constructor(
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
+    private readonly digitalTachographDriversCardClient: DigitalTachographDriversCardClient,
   ) {}
 
   async validateApplicationForOwnerChange(
@@ -60,5 +62,17 @@ export class TransportAuthorityApi {
     )
 
     return result
+  }
+
+  async checkTachoNet(
+    user: User,
+    input: CheckTachoNetInput,
+  ): Promise<CheckTachoNetExists> {
+    const hasActiveCard = await this.digitalTachographDriversCardClient.checkIfHasActiveCardInTachoNet(
+      user,
+      input,
+    )
+
+    return { exists: hasActiveCard }
   }
 }

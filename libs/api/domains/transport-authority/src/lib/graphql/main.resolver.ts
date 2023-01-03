@@ -7,8 +7,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { TransportAuthorityApi } from '../transportAuthority.service'
-import { OwnerChangeAnswers } from './dto'
-import { OwnerChangeValidation } from './models'
+import { OwnerChangeAnswers, CheckTachoNetInput } from './dto'
+import { OwnerChangeValidation, CheckTachoNetExists } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -24,5 +24,13 @@ export class MainResolver {
       user,
       answers,
     )
+  }
+
+  @Query(() => CheckTachoNetExists)
+  digitalTachographTachoNetExists(
+    @CurrentUser() user: User,
+    @Args('input') input: CheckTachoNetInput,
+  ) {
+    return this.transportAuthorityApi.checkTachoNet(user, input)
   }
 }
