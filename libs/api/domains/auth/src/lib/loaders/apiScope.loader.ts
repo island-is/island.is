@@ -12,7 +12,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { ApiScopeInput } from '../dto/apiScope.input'
 import { ApiScope } from '../models'
 import { ApiScopeService } from '../services/apiScope.service'
-import { ISLAND_DOMAIN } from '../services-v1/constants'
+import { ISLAND_DOMAIN } from '../services/constants'
 
 export type ApiScopeDataLoader = DataLoader<ApiScopeInput, ApiScope, string>
 
