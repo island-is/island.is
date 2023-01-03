@@ -27,8 +27,12 @@ expect.extend({
   },
   async toBeApplication(received: string | Page, ofType = '\\w+') {
     const url: string = typeof received == 'string' ? received : received.url()
+    const protocol = 'https?://'
+    const host = '[^/]+'
+    const applicationType = ofType // e.g. p-merki, okuskoli
+    const applicationId = '(/(\\w|-)*)?'
     const applicationRegExp = new RegExp(
-      `^https?://[^/]+/umsoknir/${ofType}(/(\\w|-)*)?$`,
+      `^${protocol}${host}${applicationType}${applicationId}$`,
     )
     const pass = !!applicationRegExp.test(url)
     const message = () =>

@@ -23,12 +23,7 @@ test.describe('Driving licence', () => {
   test('Student registration should complete', async () => {
     const page = await context.newPage()
     const nameField = page.locator('input[name="student.name"]')
-    const datePicker = page.locator('[data-testid="datepicker"]')
-    const errorMessage = page.locator('[data-testid="alertMessage"]')
     const forwardsButton = page.locator('button[data-testid="proceed"]')
-    const backwardsButton = page.locator(
-      'button[data-testid="step-back"]:visible',
-    )
     const dataProviders = page.locator(
       'input[data-testid="agree-to-data-providers"]',
     )
