@@ -55,7 +55,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/laws'
 import * as constants from '@island.is/judicial-system/consts'
 
-import * as styles from './StepThree.css'
+import * as styles from './PoliceDemands.css'
 
 export interface DemandsAutofillProps {
   defendant: Defendant
@@ -92,7 +92,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const StepThree: React.FC = () => {
+export const PoliceDemands: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -105,9 +105,11 @@ export const StepThree: React.FC = () => {
     '',
   )
   const { updateCase, setAndSendCaseToServer } = useCase()
-  useDeb(workingCase, 'lawsBroken')
-  useDeb(workingCase, 'legalBasis')
-  useDeb(workingCase, 'requestedOtherRestrictions')
+  useDeb(workingCase, [
+    'lawsBroken',
+    'legalBasis',
+    'requestedOtherRestrictions',
+  ])
 
   useEffect(() => {
     if (
@@ -176,7 +178,7 @@ export const StepThree: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_THREE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_DEMANDS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -555,4 +557,4 @@ export const StepThree: React.FC = () => {
   )
 }
 
-export default StepThree
+export default PoliceDemands

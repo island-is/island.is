@@ -56,7 +56,6 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { OtherParent } from '../fields'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -110,12 +109,12 @@ export function formatPeriods(
     let canDelete = startDateDateTime.getTime() > currentDateStartTime()
     const today = new Date()
 
-    if (applicationFundId === '') {
+    if (!applicationFundId || applicationFundId === '') {
       canDelete = true
     } else if (canDelete && today.getDate() >= 20) {
       const startDateBeginOfMonth = addDays(
         startDateDateTime,
-        startDateDateTime.getDate() * -1,
+        startDateDateTime.getDate() * -1 + 1,
       )
       const currentDateBeginOfMonth = getBeginningOfThisMonth()
       if (

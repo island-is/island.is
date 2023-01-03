@@ -196,7 +196,9 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'okuskirteinisnumer',
-      value: license.okuskirteinisNumer ?? '',
+      //temporary fix until VE make this field optional
+      //DO NOT FORGET THIS
+      value: license.okuskirteinisNumer ?? '-',
     },
     {
       identifier: 'rettindi',

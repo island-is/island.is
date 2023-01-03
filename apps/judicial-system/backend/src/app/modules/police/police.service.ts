@@ -61,7 +61,7 @@ export class PoliceService {
   }
 
   private async fetchPoliceDocumentApi(url: string): Promise<Response> {
-    if (!this.config.policeDocumentApiAvailable) {
+    if (!this.config.policeCaseApiAvailable) {
       throw 'Police document API not available'
     }
 

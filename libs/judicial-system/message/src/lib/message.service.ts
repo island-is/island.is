@@ -165,6 +165,10 @@ export class MessageService {
   }
 
   async sendMessagesToQueue(messages: CaseMessage[]): Promise<void> {
+    if (messages.length === 0) {
+      return
+    }
+
     return this.sqs
       .send(
         new SendMessageBatchCommand({
