@@ -16,7 +16,7 @@ module.exports = {
       function checkKennitala(value, node) {
         if (
           kennitala.isValid(value) &&
-          !fakeNationalIdPrefixes.some((nID) => value.search(nID) >= 0)
+          !fakeNationalIdPrefixes.some((nID) => new String(value).search(nID) >= 0)
         ) {
           context.report({
             node: node,
