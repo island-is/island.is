@@ -26,7 +26,7 @@ import {
   InsuranceCompaniesApi,
 } from '../dataProviders'
 
-const pruneInDaysATen = (application: Application, days: number) => {
+const pruneInDaysAtTen = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
   const pruneDate = new Date(date.toUTCString())
@@ -62,6 +62,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -146,12 +149,15 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysATen(application, 8),
+              pruneInDaysAtTen(application, 8),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
           onEntry: defineTemplateApi({
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
           }),
           roles: [
             {

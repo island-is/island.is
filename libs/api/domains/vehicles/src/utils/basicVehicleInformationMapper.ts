@@ -45,6 +45,13 @@ export const basicVehicleInformationMapper = (
   const coOwners = data.owners?.find((x) => x.current)?.coOwners
   const owner = data.owners?.find((x) => x.current === true)
 
+  const today = new Date()
+  const updatelocks = data.updatelocks?.filter(
+    (x) =>
+      (!x.startdate || x.startdate <= today) &&
+      (!x.enddate || x.enddate > today),
+  )
+
   const subModel = [data.vehcom, data.speccom].filter(Boolean).join(' ')
   const response: VehiclesDetail = {
     mainInfo: {
@@ -167,8 +174,12 @@ export const basicVehicleInformationMapper = (
           endDate: operator.enddate,
         }
       }) || undefined,
-    isStolen: data.stolens ? data.stolens.length > 0 : false,
     isOutOfCommission: data.vehiclestatus === 'Úr umferð',
+    updatelocks: updatelocks?.map((lock) => {
+      return {
+        lockNo: lock.type,
+      }
+    }),
   }
 
   return response
