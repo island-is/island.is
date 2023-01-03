@@ -21,7 +21,6 @@ if (userMocked) {
     scope: [
       'openid',
       'profile',
-      UserProfileScope.read,
       AdminPortalScope.delegations,
       AdminPortalScope.airDiscountScheme,
     ],
