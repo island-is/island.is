@@ -50,8 +50,6 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   const controls = useAnimation()
 
-  const [showDeleteButton, setShowDeleteButton] = useState(false)
-
   const variants = {
     isDeleting: (custom: number) =>
       custom === requestToRemoveIndex ? { x: '-150px' } : { x: '0px' },
@@ -380,7 +378,6 @@ const ActiveCases: React.FC<Props> = (props) => {
                         onClick={async (evt) => {
                           evt.stopPropagation()
 
-                          setShowDeleteButton((show) => !show)
                           await new Promise((resolve) => {
                             setRequestToRemoveIndex(
                               requestToRemoveIndex === i ? undefined : i,
@@ -397,29 +394,26 @@ const ActiveCases: React.FC<Props> = (props) => {
                     )}
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
-                  {showDeleteButton ? (
-                    <Button
-                      colorScheme="destructive"
-                      size="small"
-                      loading={isDeletingCase}
-                      onClick={async (evt) => {
-                        if (onDeleteCase) {
-                          evt.stopPropagation()
+                  <Button
+                    colorScheme="destructive"
+                    size="small"
+                    loading={isDeletingCase}
+                    onClick={async (evt) => {
+                      if (onDeleteCase) {
+                        evt.stopPropagation()
 
-                          await onDeleteCase(cases[i])
+                        await onDeleteCase(cases[i])
 
-                          controls.start('isNotDeleting').then(() => {
-                            setRequestToRemoveIndex(undefined)
-                            setShowDeleteButton(false)
-                          })
-                        }
-                      }}
-                    >
-                      <Box as="span" className={styles.deleteButtonText}>
-                        Afturkalla
-                      </Box>
-                    </Button>
-                  ) : null}
+                        controls.start('isNotDeleting').then(() => {
+                          setRequestToRemoveIndex(undefined)
+                        })
+                      }
+                    }}
+                  >
+                    <Box as="span" className={styles.deleteButtonText}>
+                      Afturkalla
+                    </Box>
+                  </Button>
                 </td>
               </motion.tr>
             ))}
