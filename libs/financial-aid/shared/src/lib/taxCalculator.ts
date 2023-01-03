@@ -11,6 +11,19 @@ export const taxInfoNumbers = {
     taxPercentage: 31.45,
     personalTaxAllowance: 59665,
   },
+  // TODO  update on new year
+  '2024': {
+    taxPercentage: 31.45,
+    personalTaxAllowance: 59665,
+  },
+  '2025': {
+    taxPercentage: 31.45,
+    personalTaxAllowance: 59665,
+  },
+  '2026': {
+    taxPercentage: 31.45,
+    personalTaxAllowance: 59665,
+  },
 }
 
 interface TaxInfoYear {
