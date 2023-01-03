@@ -53,13 +53,15 @@ const CaseFiles: React.FC = () => {
   const handleRemove = useCallback(
     async (file: UploadFile) => {
       try {
-        await remove(file)
-        setWorkingCase((prev) => ({
-          ...prev,
-          caseFiles: prev.caseFiles?.filter(
-            (caseFile) => caseFile.id !== file.id,
-          ),
-        }))
+        if (file.id) {
+          await remove(file.id)
+          setWorkingCase((prev) => ({
+            ...prev,
+            caseFiles: prev.caseFiles?.filter(
+              (caseFile) => caseFile.id !== file.id,
+            ),
+          }))
+        }
       } catch {
         toast.error(formatMessage(errors.general))
       }
