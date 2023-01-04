@@ -2,15 +2,15 @@ import { Module } from '@nestjs/common'
 import { LicenseController } from './license.controller'
 import { LicenseService } from './license.service'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
-import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
 import { DisabilityLicenseClientModule } from './clients/disabilityLicense/disabilityLicenseClient.module'
 import { FirearmLicenseClientModule } from './clients/firearmLicense/firearmLicenseClient.module'
 import {
   CLIENT_FACTORY,
-  DISABILITY_API,
-  FIREARM_API,
+  GenericLicenseClient,
   LicenseId,
 } from './license.types'
+import { DisabilityLicenseClientService } from './clients/disabilityLicense/disabilityLicenseClient.service'
+import { FirearmLicenseClientService } from './clients/firearmLicense/firearmLicenseClient.service'
 
 @Module({
   imports: [DisabilityLicenseClientModule, FirearmLicenseClientModule],
@@ -23,19 +23,19 @@ import {
     {
       provide: CLIENT_FACTORY,
       useFactory: (
-        firearmApi: SmartSolutionsApi,
-        disabilityApi: SmartSolutionsApi,
-      ) => async (type: LicenseId): Promise<SmartSolutionsApi | null> => {
+        disabilityClient: DisabilityLicenseClientService,
+        firearmClient: FirearmLicenseClientService,
+      ) => async (type: LicenseId): Promise<GenericLicenseClient | null> => {
         switch (type) {
           case LicenseId.DISABILITY_LICENSE:
-            return disabilityApi
+            return disabilityClient
           case LicenseId.FIREARM_LICENSE:
-            return firearmApi
+            return firearmClient
           default:
             return null
         }
       },
-      inject: [FIREARM_API, DISABILITY_API],
+      inject: [DisabilityLicenseClientService, FirearmLicenseClientService],
     },
     LicenseService,
   ],

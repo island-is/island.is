@@ -7,8 +7,12 @@ export class DeleteLicenseDto {
   @IsString()
   @Length(10)
   readonly nationalId!: string
-  @ApiProperty({ enum: ['FirearmLicense', 'DisabilityLicense'] })
-  readonly licenseId!: string
+  @ApiProperty({
+    enum: LicenseId,
+    description: 'The Id of a license as defined by island.is',
+  })
+  @IsString()
+  readonly licenseId!: LicenseId
 }
 
 export class UpdateLicenseDto {

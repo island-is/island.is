@@ -15,7 +15,13 @@ export enum LicenseId {
   DISABILITY_LICENSE = 'DisabilityLicense',
 }
 
-export const CLIENT_FACTORY = 'client-factory'
+/**
+ * Interface for client services, fetches generic payload and status from a third party API.
+ * Only one license per client to start with.
+ */
+export interface GenericLicenseClient {
+  update: () => Promise<string | null>
+  delete: () => Promise<string | null>
+}
 
-export const DISABILITY_API = 'disability-api'
-export const FIREARM_API = 'firearm-api'
+export const CLIENT_FACTORY = 'client-factory'
