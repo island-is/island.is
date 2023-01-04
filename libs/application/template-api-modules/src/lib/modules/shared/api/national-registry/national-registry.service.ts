@@ -181,7 +181,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     )
   }
-  
+
   async getBirthplace({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryBirthplace | null> {
