@@ -1486,7 +1486,7 @@ samradsgatt:
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
-        - host: 'samradsgatt.dev01.devland.is'
+        - host: 'beta.dev01.devland.is'
           paths:
             - '/samradsgatt'
   namespace: 'samradsgatt'

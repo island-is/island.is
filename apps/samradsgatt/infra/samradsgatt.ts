@@ -36,9 +36,9 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
     .ingress({
       primary: {
         host: {
-          dev: 'samradsgatt',
-          staging: 'samradsgatt',
-          prod: 'samradsgatt',
+          dev: ['beta'],
+          staging: ['beta'],
+          prod: ['', 'www.island.is'],
         },
         extraAnnotations: {
           dev: {
