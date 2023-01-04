@@ -264,19 +264,16 @@ export const CaseFiles: React.FC = () => {
           if (!response.data?.deleteFile.success) {
             throw new Error(`Failed to delete file: ${file.id}`)
           }
-          if (policeCaseFiles?.files.some((f) => f.name === file.name)) {
-            const policeCaseFile = policeCaseFiles.files.find(
-              (f) => f.name === file.name,
-            )
 
-            if (!policeCaseFile) {
-              return
-            } else {
-              setPoliceCaseFileList((previous) => [
-                mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-                ...previous,
-              ])
-            }
+          const policeCaseFile = policeCaseFiles?.files.find(
+            (f) => f.name === file.name,
+          )
+
+          if (policeCaseFile) {
+            setPoliceCaseFileList((previous) => [
+              mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+              ...previous,
+            ])
           }
 
           setFilesInRVG((previous) => previous.filter((f) => f.id !== file.id))
