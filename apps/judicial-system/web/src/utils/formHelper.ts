@@ -341,12 +341,14 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
   return key
 }
 
-export const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
-  name: file.name,
-  type: file.type,
-  id: file.id,
-  key: file.key,
-  status: 'done',
-  percent: 100,
-  size: file.size,
-})
+export const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => {
+  return {
+    name: file.name,
+    type: file.type,
+    id: file.id,
+    key: file.key,
+    status: 'done',
+    percent: 100,
+    size: file.size,
+  }
+}
