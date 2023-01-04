@@ -32,4 +32,15 @@ export const error = defineMessages({
     defaultMessage: 'Vinsamlegast fylltu inn gilt gildi',
     description: 'Need to fill in valid input',
   },
+  minAgeNotFulfilled: {
+    id: 'ta.tvo.application:error.minAgeNotFulfilled',
+    defaultMessage:
+      'Lágmarksaldur til að taka þátt í tilkynnu um eigendaskipti er 18 ára',
+    description: 'Min age not fulfilled error',
+  },
+  failedToFetchData: {
+    id: 'ta.tvo.application:error.failedToFetchData',
+    defaultMessage: 'Ekki tókst að sækja gögn',
+    description: 'Failed to fetch data error',
+  },
 })
