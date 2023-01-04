@@ -1,6 +1,4 @@
 {
   "name": "icelandic-names-registry",
-  "packageManager": "yarn@3.2.3",
-  "dependencies": {
-  }
+  "packageManager": "yarn@3.2.3"
 }

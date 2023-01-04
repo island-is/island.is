@@ -4,7 +4,6 @@
   "dependencies": {
     "@nestjs/common": "8.4.4",
     "@nrwl/eslint-plugin-nx": "13.10.5",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "logform": "2.4.0",
     "nest-winston": "1.4.0",

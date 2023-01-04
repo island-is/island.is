@@ -3,7 +3,6 @@
   "packageManager": "yarn@3.2.3",
   "dependencies": {
     "@nrwl/eslint-plugin-nx": "13.10.5",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "express": "4.18.1",
     "prom-client": "14.1.0"

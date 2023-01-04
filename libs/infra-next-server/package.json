@@ -4,10 +4,9 @@
   "dependencies": {
     "@nrwl/eslint-plugin-nx": "13.10.5",
     "@nrwl/next": "13.10.5",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "express": "4.18.1",
     "http-proxy-middleware": "2.0.6",
-    "next": "12.1.2",
+    "next": "12.1.2"
   }
 }

@@ -4,9 +4,8 @@
   "dependencies": {
     "@nrwl/eslint-plugin-nx": "13.10.5",
     "axios": "0.21.4",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "jsonwebtoken": "8.5.1",
-    "next-auth": "3.29.10",
+    "next-auth": "3.29.10"
   }
 }

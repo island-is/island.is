@@ -8,7 +8,6 @@
     "@nrwl/eslint-plugin-nx": "13.10.5",
     "amazon-s3-uri": "0.0.3",
     "aws-sdk": "2.814.0",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "lodash": "4.17.21",
     "uuidv4": "6.0.8",

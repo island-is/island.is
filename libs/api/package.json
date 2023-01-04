@@ -18,14 +18,12 @@
     "class-validator": "0.13.2",
     "dataloader": "2.1.0",
     "date-fns": "2.28.0",
-    
     "express": "4.18.1",
     "form-data": "3.0.0",
     "graphql": "16.6.0",
     "graphql-type-json": "0.3.2",
     "isomorphic-fetch": "3.0.0",
     "kennitala": "2.0.0-beta.2",
-    
     "lodash": "4.17.21",
     "msw": "0.21.3",
     "node-fetch": "2.6.7",

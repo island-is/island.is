@@ -13,7 +13,7 @@
     "@nestjs/testing": "8.4.4",
     "@nrwl/eslint-plugin-nx": "13.10.5",
     "apollo-server-express": "3.10.2",
-   "aws-sdk": "2.814.0",
+    "aws-sdk": "2.814.0",
     "class-validator": "0.13.2",
     "dataloader": "2.1.0",
     "date-fns": "2.28.0",

@@ -5,11 +5,10 @@
     "@nestjs/bull": "0.1.2",
     "@nestjs/common": "8.4.4",
     "@nestjs/testing": "8.4.4",
-    
     "faker": "5.5.3",
     "kennitala": "2.0.0-beta.2",
     "supertest": "^6.3.3",
-    "testcontainers": "7.23.2",,
+    "testcontainers": "7.23.2",
     "xstate": "4.20.0",
     "zod": "3.19.1"
   }

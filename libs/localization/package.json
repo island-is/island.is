@@ -12,7 +12,6 @@
     "contentful-management": "10.12.0",
     "cross-spawn": "7.0.3",
     "date-fns": "2.28.0",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "glob": "7.1.6",
     "graphql-tag": "2.12.5",
@@ -21,6 +20,6 @@
     "lodash": "4.17.21",
     "next": "12.1.2",
     "react": "workspace:^",
-    "react-intl": "5.13.1",
+    "react-intl": "5.13.1"
   }
 }

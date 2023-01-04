@@ -6,7 +6,6 @@
     "@nestjs/graphql": "10.1.1",
     "@nrwl/eslint-plugin-nx": "13.10.5",
     "class-validator": "0.13.2",
-    
     "eslint-plugin-local-rules": "1.0.1"
   }
 }

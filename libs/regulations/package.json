@@ -4,7 +4,6 @@
   "dependencies": {
     "@nrwl/eslint-plugin-nx": "13.10.5",
     "@vanilla-extract/css": "1.7.0",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "react": "workspace:^"
   }

@@ -23,7 +23,6 @@
     "copy-to-clipboard": "3.3.1",
     "date-fns": "2.28.0",
     "deepmerge": "4.2.2",
-    
     "graphql": "16.6.0",
     "graphql-tag": "2.12.5",
     "history": "4.10.1",

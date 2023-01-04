@@ -6,11 +6,10 @@
     "@nestjs/testing": "8.4.4",
     "@nrwl/eslint-plugin-nx": "13.10.5",
     "aws-sdk": "2.814.0",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "glob": "7.1.6",
     "handlebars": "4.7.7",
     "juice": "8.0.0",
-    "nodemailer": "6.7.2",
+    "nodemailer": "6.7.2"
   }
 }

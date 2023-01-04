@@ -7,9 +7,8 @@
     "@nestjs/testing": "8.4.4",
     "@nrwl/eslint-plugin-nx": "13.10.5",
     "aws-sdk": "2.814.0",
-    
     "eslint-plugin-local-rules": "1.0.1",
     "sqs-consumer": "5.4.0",
-    "testcontainers": "7.23.2",
+    "testcontainers": "7.23.2"
   }
 }

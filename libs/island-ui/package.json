@@ -9,10 +9,9 @@
     "@vanilla-extract/css": "1.7.0",
     "@vanilla-extract/webpack-plugin": "2.1.10",
     "csstype": "2.6.13",
-    
     "lodash": "4.17.21",
     "react": "workspace:^",
     "react-hook-form": "6.4.1",
-    "react-intl": "5.13.1",
+    "react-intl": "5.13.1"
   }
 }

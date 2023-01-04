@@ -4,7 +4,6 @@
   "dependencies": {
     "@datadog/browser-rum": "^4.29.0",
     "@nrwl/eslint-plugin-nx": "13.10.5",
-    
     "eslint-plugin-local-rules": "1.0.1"
   }
 }
