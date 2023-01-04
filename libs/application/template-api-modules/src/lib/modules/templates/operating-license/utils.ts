@@ -1,4 +1,7 @@
-import { ApplicationWithAttachments, PaymentCatalogItem } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  PaymentCatalogItem,
+} from '@island.is/application/types'
 import { OperatingLicenseAnswers } from '@island.is/application/templates/operating-license/types'
 import {
   APPLICATION_TYPES,
