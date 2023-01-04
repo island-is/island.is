@@ -50,7 +50,7 @@ export class VehiclesVehicle {
   operatorStartDate?: Date
 
   @Field({ nullable: true })
-  operatorEndDate?: string
+  operatorEndDate?: Date
 
   @Field({ nullable: true })
   outOfUse?: boolean
