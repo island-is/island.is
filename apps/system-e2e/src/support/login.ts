@@ -1,0 +1,50 @@
+import { expect, Page } from '@playwright/test'
+import { urls } from './urls'
+
+export type CognitoCreds = {
+  username: string
+  password: string
+}
+export const getCognitoCredentials = (): CognitoCreds => {
+  const username = process.env.AWS_COGNITO_USERNAME
+  const password = process.env.AWS_COGNITO_PASSWORD
+  if (!username || !password) throw new Error('Cognito credentials missing')
+  return {
+    username,
+    password,
+  }
+}
+export const cognitoLogin = async (
+  page: Page,
+  { username, password }: CognitoCreds,
+  home: string,
+  authUrl: string,
+) => {
+  const cognito = page.locator('form[name="cognitoSignInForm"]:visible')
+  await cognito.locator('input[id="signInFormUsername"]:visible').type(username)
+  const passwordInput = cognito.locator(
+    'input[id="signInFormPassword"]:visible',
+  )
+
+  await passwordInput.selectText()
+  await passwordInput.type(password)
+  await cognito.locator('input[name="signInSubmitButton"]:visible').click()
+  await page.waitForURL(new RegExp(`${home}|${authUrl}`))
+}
+
+export const idsLogin = async (
+  page: Page,
+  phoneNumber: string,
+  home: string,
+) => {
+  await page.waitForURL(`${urls.authUrl}/**`, { timeout: 15000 })
+  const input = await page.locator('#phoneUserIdentifier')
+  await input.type(phoneNumber, { delay: 100 })
+
+  const btn = page.locator('button[id="submitPhoneNumber"]')
+  await expect(btn).toBeEnabled()
+  await btn.click()
+  await page.waitForURL(new RegExp(`${home}`), {
+    waitUntil: 'domcontentloaded',
+  })
+}
