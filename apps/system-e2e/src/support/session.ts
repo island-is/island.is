@@ -1,9 +1,10 @@
 import { Browser, BrowserContext, expect, Page } from '@playwright/test'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
-import { cognitoLogin, getCognitoCredentials, idsLogin, urls } from './utils'
+import { cognitoLogin, idsLogin } from './login'
+import { urls } from './urls'
 
-export const sessionsPath = join(__dirname, 'tmp-sessions')
+const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
   mkdirSync(sessionsPath)
 }
@@ -16,8 +17,8 @@ if (!existsSync(sessionsPath)) {
  */
 async function ensureCognitoSessionIfNeeded(
   page: Page,
-  homeUrl: string,
-  authUrlPrefix: string,
+  homeUrl = '/',
+  authUrlPrefix = '',
 ) {
   const cognitoSessionValidation = await page.request.get(homeUrl)
   if (
@@ -26,7 +27,7 @@ async function ensureCognitoSessionIfNeeded(
       .startsWith('https://cognito.shared.devland.is/')
   ) {
     await page.goto(homeUrl)
-    await cognitoLogin(page, getCognitoCredentials(), homeUrl, authUrlPrefix)
+    await cognitoLogin(page, homeUrl, authUrlPrefix)
   } else {
     console.log(`Cognito session exists`)
   }
@@ -90,11 +91,11 @@ async function ensureIDSsession(
 
 export async function session({
   browser,
-  storageState,
   homeUrl,
   phoneNumber,
   authUrl,
   idsLoginOn,
+  storageState = `${homeUrl}-${phoneNumber}`,
 }: {
   browser: Browser
   storageState?: string

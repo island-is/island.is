@@ -1,7 +1,4 @@
 import { test } from '@playwright/test'
-import { urls } from '../../../support/utils'
-
-test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe.skip('Sites of institutions', () => {
   for (const { institution, home } of [

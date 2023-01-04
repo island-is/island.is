@@ -5,7 +5,7 @@ export type CognitoCreds = {
   username: string
   password: string
 }
-export const getCognitoCredentials = (): CognitoCreds => {
+function getCognitoCredentials(): CognitoCreds {
   const username = process.env.AWS_COGNITO_USERNAME
   const password = process.env.AWS_COGNITO_PASSWORD
   if (!username || !password) throw new Error('Cognito credentials missing')
@@ -16,10 +16,11 @@ export const getCognitoCredentials = (): CognitoCreds => {
 }
 export const cognitoLogin = async (
   page: Page,
-  { username, password }: CognitoCreds,
   home: string,
   authUrl: string,
+  creds?: CognitoCreds,
 ) => {
+  const { username, password } = creds ?? getCognitoCredentials()
   const cognito = page.locator('form[name="cognitoSignInForm"]:visible')
   await cognito.locator('input[id="signInFormUsername"]:visible').type(username)
   const passwordInput = cognito.locator(

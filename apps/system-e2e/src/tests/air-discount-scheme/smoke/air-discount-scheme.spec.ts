@@ -1,9 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/utils'
 import { graphqlSpy } from '../../../support/api-tools'
 import { session } from '../../../support/session'
-
-test.use({ baseURL: urls.adsBaseUrl })
 
 test.describe('Air discount scheme', () => {
   let context: BrowserContext
@@ -11,10 +8,10 @@ test.describe('Air discount scheme', () => {
     context = await session({
       browser: browser,
       storageState: 'loftbru.json',
-      homeUrl: `${urls.adsBaseUrl}/min-rettindi`,
+      homeUrl: `/min-rettindi`,
       idsLoginOn: {
         nextAuth: {
-          nextAuthRoot: urls.adsBaseUrl,
+          nextAuthRoot: '/', // TODO set auth URL?
         },
       },
       phoneNumber: '0103019',

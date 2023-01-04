@@ -1,9 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/utils'
 import { session } from '../../../support/session'
 import { helpers } from '../../../support/locator-helpers'
-
-test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Admin portal', () => {
   let context: BrowserContext
