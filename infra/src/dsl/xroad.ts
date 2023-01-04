@@ -433,6 +433,11 @@ export const TransportAuthority = new XroadConf({
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1',
     },
+    XROAD_VEHICLE_INFOLOCKS_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+    },
     XROAD_VEHICLE_OPERATORS_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',

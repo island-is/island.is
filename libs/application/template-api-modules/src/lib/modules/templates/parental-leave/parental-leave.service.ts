@@ -130,16 +130,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (otherParentPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+    try {
+      if (otherParentPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateAssignOtherParentApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateAssignOtherParentApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send assigned SMS to otherParent in parental leave application',
+        e,
       )
     }
   }
@@ -154,17 +161,24 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (applicantPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
+    try {
+      if (applicantPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
 
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateOtherParentRejectedApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateOtherParentRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about otherParent rejection in parental leave application',
+        e,
       )
     }
   }
@@ -179,17 +193,24 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (applicantPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
+    try {
+      if (applicantPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
 
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateEmployerRejectedApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateEmployerRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about Employer rejection in parental leave application',
+        e,
       )
     }
   }
@@ -209,11 +230,18 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     // send confirmation sms to employer
-    if (employerPhoneNumber) {
-      await this.sharedTemplateAPIService.assignApplicationThroughSms(
-        generateAssignEmployerApplicationSms,
-        application,
-        token,
+    try {
+      if (employerPhoneNumber) {
+        await this.sharedTemplateAPIService.assignApplicationThroughSms(
+          generateAssignEmployerApplicationSms,
+          application,
+          token,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send assign SMS notification to Employer in parental leave application',
+        e,
       )
     }
   }
