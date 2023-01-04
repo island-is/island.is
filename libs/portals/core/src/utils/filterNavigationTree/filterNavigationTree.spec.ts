@@ -29,8 +29,6 @@ describe.each(Object.keys(filterNavigationTreeTestCases))(
         ),
       }
 
-      console.log('filteredNavigation', filteredNavigation)
-
       // Assert
       expect(filteredNavigation).toStrictEqual(expected)
     })
