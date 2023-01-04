@@ -36,9 +36,9 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
     .ingress({
       primary: {
         host: {
-          dev: ['beta'],
-          staging: ['beta'],
-          prod: ['', 'www.island.is'],
+          dev: 'samradsgatt',
+          staging: 'samradsgatt',
+          prod: 'samradsgatt',
         },
         extraAnnotations: {
           dev: {
@@ -58,3 +58,4 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
         paths: ['/samradsgatt'],
       },
     })
+    .grantNamespaces('islandis', 'nginx-ingress-external')
