@@ -282,12 +282,6 @@ export class VehiclesOperator {
 }
 
 @ObjectType()
-export class VehiclesUpdatelocks {
-  @Field(() => String, { nullable: true })
-  lockNo?: string | null
-}
-
-@ObjectType()
 export class VehiclesDetail {
   @Field(() => VehiclesMainInfo, { nullable: true })
   mainInfo?: VehiclesMainInfo
@@ -324,7 +318,4 @@ export class VehiclesDetail {
 
   @Field(() => Boolean, { nullable: true })
   isOutOfCommission?: boolean
-
-  @Field(() => [VehiclesUpdatelocks], { nullable: true })
-  updatelocks?: VehiclesUpdatelocks[]
 }
