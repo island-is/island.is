@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import sortBy from 'lodash/sortBy'
+import omit from 'lodash/omit'
 import {
   SkeletonLoader,
   Stack,
@@ -22,29 +23,54 @@ import { ALL_DOMAINS } from '../../../constants/domain'
 import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 
+const prepareDomainName = (domainName: string | null) =>
+  domainName === ALL_DOMAINS ? null : domainName
+
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [searchValue, setSearchValue] = useState('')
+
   const [
     delegation,
     setDelegation,
   ] = useState<AuthCustomDelegationOutgoing | null>(null)
   const { name: domainName } = useDomains()
+  const [queryOptions, setQueryOptions] = useState({
+    // We need to skip the query if the domainName or lang is not defined
+    skip: !domainName || !lang,
+    lang,
+    domainName,
+  })
 
   const { data, loading, refetch, error } = useAuthDelegationsOutgoingQuery({
     variables: {
+      lang,
       input: {
-        domain: domainName,
+        domain: prepareDomainName(queryOptions.domainName),
         direction: AuthDelegationDirection.outgoing,
       },
-      lang,
     },
-    skip: !domainName || !lang || !AuthDelegationDirection.outgoing,
+    skip: queryOptions.skip,
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })
+
+  useEffect(() => {
+    // We want to make sure that the useAuthDelegationsOutgoingQuery is not executed multiple times.
+    // There fore we keep state of the query options and only execute the query if
+    // 1. domainName or lang has changed
+    // 2. Component is remounted
+    // 3. Query refetch is called.
+    if (queryOptions.domainName !== domainName || queryOptions.lang !== lang) {
+      setQueryOptions({
+        skip: false,
+        lang,
+        domainName,
+      })
+    }
+  }, [domainName, lang, queryOptions.domainName, queryOptions.lang])
 
   const delegations = useMemo(
     () =>
@@ -61,7 +87,7 @@ export const DelegationsOutgoing = () => {
     // The service takes null as a value for all domains.
     refetch({
       input: {
-        domain: option.value === ALL_DOMAINS ? null : option.value,
+        domain: prepareDomainName(option.value),
       },
     })
   }
@@ -96,7 +122,7 @@ export const DelegationsOutgoing = () => {
           onSearchChange={setSearchValue}
         />
         <div>
-          {loading ? (
+          {loading || (!loading && domainName === null) ? (
             <SkeletonLoader width="100%" height={191} />
           ) : error && !delegations ? (
             <AlertBanner
@@ -134,7 +160,7 @@ export const DelegationsOutgoing = () => {
           setDelegation(null)
           refetch({
             input: {
-              domain: domainName,
+              domain: prepareDomainName(domainName),
             },
           })
         }}

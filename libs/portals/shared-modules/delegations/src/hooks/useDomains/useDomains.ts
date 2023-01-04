@@ -140,7 +140,7 @@ export const useDomains = (includeDefaultOption = true) => {
   }, [data?.authDomains])
 
   return {
-    name: domainName === ALL_DOMAINS ? null : domainName,
+    name: domainName,
     updateDomain,
     options,
     selectedOption: getOptionByName(domainName),
