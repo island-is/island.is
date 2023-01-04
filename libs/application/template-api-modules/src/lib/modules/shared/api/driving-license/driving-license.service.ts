@@ -88,7 +88,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }
 
   async teachers(): Promise<Teacher[]> {
-    console.log("hello")
     const teachers = await this.drivingLicenseService.getTeachers()
     if (teachers) {
       return teachers.sort(sortTeachers)
