@@ -19,7 +19,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   UserProfileApi,
-  NationalRegistryUserApi,
+  NationalRegistryPersonApi,
 } from '@island.is/application/types'
 
 import {
@@ -129,7 +129,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi, ChildrenApi],
+              api: [UserProfileApi, NationalRegistryPersonApi, ChildrenApi],
             },
           ],
         },

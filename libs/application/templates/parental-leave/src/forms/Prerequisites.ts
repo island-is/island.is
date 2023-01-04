@@ -17,8 +17,8 @@ import {
 import {
   Form,
   FormModes,
-  NationalRegistryUserApi,
   UserProfileApi,
+  NationalRegistryPersonApi,
 } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -298,7 +298,7 @@ export const PrerequisitesForm: Form = buildForm({
                       .userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  provider: NationalRegistryUserApi,
+                  provider: NationalRegistryPersonApi,
                   title:
                     parentalLeaveFormMessages.shared.familyInformationTitle,
                   subTitle:
