@@ -11,7 +11,7 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import type { User } from '@island.is/judicial-system/types'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -76,6 +76,13 @@ export class NotificationController {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${caseId}`,
     )
+
+    if (notification.type === NotificationType.HEADS_UP) {
+      return this.notificationService
+        .addMessagesForHeadsUpNotificationToQueue(theCase)
+        .then(() => ({ notificationSent: true }))
+        .catch(() => ({ notificationSent: false }))
+    }
 
     return this.notificationService.sendCaseNotification(
       notification,

@@ -99,6 +99,13 @@ export class MessageHandlerService implements OnModuleDestroy {
         )
         break
       }
+      case MessageType.SEND_HEADS_UP_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.HEADS_UP },
+        )
+        break
       case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.caseId,
