@@ -1457,8 +1457,8 @@ samradsgatt:
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-internal'
     - 'islandis'
-    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

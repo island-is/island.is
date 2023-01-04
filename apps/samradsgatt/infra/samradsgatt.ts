@@ -58,4 +58,4 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
         paths: ['/samradsgatt'],
       },
     })
-    .grantNamespaces('islandis', 'nginx-ingress-external')
+    .grantNamespaces('nginx-ingress-internal', 'islandis')
