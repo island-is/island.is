@@ -11,7 +11,7 @@ test.describe('Admin portal', () => {
     context = await session({
       browser: browser,
       storageState: 'service-portal-afrika.json',
-      homeUrl: `${urls.islandisBaseUrl}/stjornbord`,
+      homeUrl: `/stjornbord`,
       phoneNumber: '0103019',
       idsLoginOn: true,
     })
