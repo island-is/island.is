@@ -1,6 +1,11 @@
 import faker from 'faker'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   DEFENDER_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
@@ -38,6 +43,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   }
 
   beforeEach(() => {
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/test_id`)
