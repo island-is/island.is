@@ -1,15 +1,13 @@
-import { ApplicationWithAttachments } from '@island.is/application/types'
+import { ApplicationWithAttachments, PaymentCatalogItem } from '@island.is/application/types'
 import { OperatingLicenseAnswers } from '@island.is/application/templates/operating-license/types'
 import {
   APPLICATION_TYPES,
   OPERATION_CATEGORY,
   CATEGORIES,
   Operation,
-  Property,
 } from './types/application'
 import { YES } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
-import { PaymentCatalogItem } from '@island.is/api/schema'
 
 export const getExtraData = (application: ApplicationWithAttachments) => {
   const answers: OperatingLicenseAnswers = application.answers as OperatingLicenseAnswers
