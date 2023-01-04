@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -17,8 +18,15 @@ import { application } from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../types'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+  CurrentVehiclesApi,
+  InsuranceCompaniesApi,
+} from '../dataProviders'
 
-const pruneInDaysATen = (application: Application, days: number) => {
+const pruneInDaysAtTen = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
   const pruneDate = new Date(date.toUTCString())
@@ -54,6 +62,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -72,6 +83,13 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SamgongustofaPaymentCatalogApi,
+                CurrentVehiclesApi,
+                InsuranceCompaniesApi,
+              ],
             },
           ],
         },
@@ -91,12 +109,12 @@ const template: ApplicationTemplate<
           },
           progress: 0.4,
           lifecycle: pruneAfterDays(1 / 24),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.initReview,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.initReview,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -131,13 +149,16 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysATen(application, 8),
+              pruneInDaysAtTen(application, 8),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.addReview,
+          onEntry: defineTemplateApi({
+            action: ApiActions.addReview,
             shouldPersistToExternalData: true,
-          },
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -196,9 +217,9 @@ const template: ApplicationTemplate<
           status: 'rejected',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          onEntry: {
-            apiModuleAction: ApiActions.rejectApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.rejectApplication,
+          }),
           actionCard: {
             tag: {
               label: application.actionCardRejected,
@@ -239,9 +260,9 @@ const template: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           actionCard: {
             tag: {
               label: application.actionCardDone,

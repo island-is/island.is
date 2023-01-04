@@ -15,6 +15,7 @@ const createRandomApiScope = (): ApiScopesDTO => {
     showInDiscoveryDocument: true,
     required: false,
     emphasize: false,
+    grantToAuthenticatedUser: true,
     grantToLegalGuardians: false,
     grantToProcuringHolders: false,
     allowExplicitDelegationGrant: true,

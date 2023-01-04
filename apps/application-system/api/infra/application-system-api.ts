@@ -12,8 +12,13 @@ import {
   FishingLicense,
   MunicipalitiesFinancialAid,
   ChargeFjsV2,
+  Finance,
+  Properties,
+  RskCompanyInfo,
   VehicleServiceFjsV1,
   TransportAuthority,
+  Vehicles,
+  Passports,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -108,6 +113,8 @@ export const serviceSetup = (services: {
   service('application-system-api')
     .namespace(namespace)
     .serviceAccount(serviceAccount)
+    .command('node')
+    .args('main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -227,8 +234,13 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      Finance,
+      Properties,
+      RskCompanyInfo,
       VehicleServiceFjsV1,
       TransportAuthority,
+      Vehicles,
+      Passports,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -259,6 +271,8 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
       FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
+      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
+      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       VMST_ID: '/k8s/application-system/VMST_ID',
     })
     .initContainer({
@@ -280,6 +294,7 @@ export const serviceSetup = (services: {
       max: 60,
       min: 10,
     })
+    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {

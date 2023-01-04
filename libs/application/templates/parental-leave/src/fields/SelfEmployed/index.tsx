@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { formatText, getErrorViaPath } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
@@ -14,8 +14,12 @@ import { NO, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
-  const { errors, setValue } = useFormContext()
+export const SelfEmployed: FC<FieldBaseProps> = ({
+  application,
+  field,
+  error,
+}) => {
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
 
@@ -25,7 +29,7 @@ export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
         {formatText(title, application, formatMessage)}
       </Text>
       <RadioFormField
-        error={errors && getErrorViaPath(errors, id)}
+        error={error}
         application={application}
         field={{
           id: id,

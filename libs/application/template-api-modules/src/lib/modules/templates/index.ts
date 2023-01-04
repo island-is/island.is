@@ -19,25 +19,68 @@ import { ExamplePaymentActionsModule } from './example-payment-actions/examplePa
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
 import { MarriageConditionsSubmissionModule } from './marriage-conditions-submission/marriage-conditions-submission.module'
+import { MarriageConditionsSubmissionService } from './marriage-conditions-submission/marriage-conditions-submission.service'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 import { PassportModule } from './passport/passport.module'
 import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
+import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { ParentalLeaveService } from './parental-leave/parental-leave.service'
+import { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
+import { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
+import { HealthInsuranceService } from './health-insurance/health-insurance.service'
+import { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
+import { LoginServiceService } from './login-service/login-service.service'
+import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
+import { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
+import { AccidentNotificationService } from './accident-notification/accident-notification.service'
+import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
+import { GeneralPetitionService } from './general-petition/general-petition.service'
+import { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
+import { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
+import { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
+import { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
+import { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
+import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
+import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
+import { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
+import { FinancialAidService } from './financial-aid/financial-aid.service'
+import { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
+import { PassportService } from './passport/passport.service'
+import { OperatingLicenseService } from './operating-license/operatingLicense.service'
 import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
-import { EstateTemplateModule } from './estate/estate.module'
-import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
+import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
+import { NoDebtCertificateModule } from './no-debt-certificate/no-debt-certificate.module'
+import { NoDebtCertificateService } from './no-debt-certificate/no-debt-certificate.service'
 import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
+import { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
 import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
+import { ChangeCoOwnerOfVehicleService } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.service'
 import { ChangeOperatorOfVehicleModule } from './transport-authority/change-operator-of-vehicle/change-operator-of-vehicle.module'
+import { ChangeOperatorOfVehicleService } from './transport-authority/change-operator-of-vehicle/change-operator-of-vehicle.service'
 import { DigitalTachographCompanyCardModule } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.module'
+import { DigitalTachographCompanyCardService } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.service'
 import { DigitalTachographDriversCardModule } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.module'
+import { DigitalTachographDriversCardService } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.service'
 import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
+import { DigitalTachographWorkshopCardService } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.service'
 import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
+import { OrderVehicleLicensePlateService } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.service'
 import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
+import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
+import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
+import { EstateTemplateModule } from './estate/estate.module'
+import { EstateTemplateService } from './estate/estate.service'
+
+//TODO: ADD These templates.
+import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 
 export const modules = [
   ReferenceTemplateModule,
+  GeneralFishingLicenseModule,
+  DataProtectionComplaintModule,
+  PublicDebtPaymentPlanTemplateModule,
   ParentalLeaveModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
@@ -47,7 +90,6 @@ export const modules = [
   FundingGovernmentProjectsModule,
   DrivingLicenseSubmissionModule,
   AccidentNotificationModule,
-  PublicDebtPaymentPlanTemplateModule,
   GeneralPetitionModule,
   CriminalRecordSubmissionModule,
   GeneralFishingLicenseModule,
@@ -63,53 +105,57 @@ export const modules = [
   PassportModule,
   OperatingLicenseModule,
   FinancialStatementsInaoTemplateModule,
-  EstateTemplateModule,
-  DrivingLicenseDuplicateModule,
+  NoDebtCertificateModule,
   AnonymityInVehicleRegistryModule,
   ChangeCoOwnerOfVehicleModule,
   ChangeOperatorOfVehicleModule,
   DigitalTachographCompanyCardModule,
   DigitalTachographDriversCardModule,
   DigitalTachographWorkshopCardModule,
-  OrderVehicleRegistrationCertificateModule,
   OrderVehicleLicensePlateModule,
+  OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
+  EstateTemplateModule,
 ]
 
-export { ReferenceTemplateService } from './reference-template/reference-template.service'
-export { ParentalLeaveService } from './parental-leave/parental-leave.service'
-export { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
-export { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
-export { HealthInsuranceService } from './health-insurance/health-insurance.service'
-export { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
-export { LoginServiceService } from './login-service/login-service.service'
-export { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
-export { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
-export { AccidentNotificationService } from './accident-notification/accident-notification.service'
-export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
-export { GeneralPetitionService } from './general-petition/general-petition.service'
-export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
-export { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
-export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
-export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
-export { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
-export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
-export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
-export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
-export { MarriageConditionsSubmissionService } from './marriage-conditions-submission/marriage-conditions-submission.service'
-export { FinancialAidService } from './financial-aid/financial-aid.service'
-export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
-export { PassportService } from './passport/passport.service'
-export { OperatingLicenseService } from './operating-license/operatingLicense.service'
-export { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
-export { EstateTemplateService } from './estate/estate.service'
-export { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
-export { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
-export { ChangeCoOwnerOfVehicleService } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.service'
-export { ChangeOperatorOfVehicleService } from './transport-authority/change-operator-of-vehicle/change-operator-of-vehicle.service'
-export { DigitalTachographCompanyCardService } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.service'
-export { DigitalTachographDriversCardService } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.service'
-export { DigitalTachographWorkshopCardService } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.service'
-export { OrderVehicleLicensePlateService } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.service'
-export { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
-export { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
+export const services = [
+  ReferenceTemplateService,
+  GeneralFishingLicenseService,
+  DataProtectionComplaintService,
+  PublicDebtPaymentPlanTemplateService,
+  ParentalLeaveService,
+  DocumentProviderOnboardingService,
+  InstitutionCollaborationService,
+  HealthInsuranceService,
+  ChildrenResidenceChangeService,
+  LoginServiceService,
+  FundingGovernmentProjectsService,
+  DrivingLicenseSubmissionService,
+  AccidentNotificationService,
+  GeneralPetitionService,
+  CriminalRecordSubmissionService,
+  GeneralFishingLicenseService,
+  DataProtectionComplaintService,
+  PSignSubmissionService,
+  AnnouncementOfDeathService,
+  ExamplePaymentActionsService,
+  ComplaintsToAlthingiOmbudsmanTemplateService,
+  MortgageCertificateSubmissionService,
+  FinancialAidService,
+  DrivingSchoolConfirmationService,
+  PassportService,
+  OperatingLicenseService,
+  FinancialStatementsInaoTemplateService,
+  MarriageConditionsSubmissionService,
+  NoDebtCertificateService,
+  AnonymityInVehicleRegistryService,
+  ChangeCoOwnerOfVehicleService,
+  ChangeOperatorOfVehicleService,
+  DigitalTachographCompanyCardService,
+  DigitalTachographDriversCardService,
+  DigitalTachographWorkshopCardService,
+  OrderVehicleLicensePlateService,
+  OrderVehicleRegistrationCertificateService,
+  TransferOfVehicleOwnershipService,
+  EstateTemplateService,
+]

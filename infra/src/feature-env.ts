@@ -32,6 +32,7 @@ interface Arguments {
   chart: ChartName
   output?: string
   jobImage?: string
+  withMocks?: boolean
 }
 
 const writeToOutput = async (data: string, output?: string) => {
@@ -71,7 +72,6 @@ const parseArguments = (argv: Arguments) => {
     ...Envs[Deployments[chart][envName]],
     feature: feature,
   }
-  const ch = new Kubernetes(env)
 
   const habitat = charts[chart][envName]
 
@@ -82,7 +82,7 @@ const parseArguments = (argv: Arguments) => {
         (images.length === 1 && images[0] === '*') ||
         images?.includes(h.serviceDef.image ?? h.serviceDef.name),
     )
-  return { ch, habitat, affectedServices, env }
+  return { habitat, affectedServices, env }
 }
 
 const buildIngressComment = (data: HelmService[]): string =>
@@ -121,7 +121,7 @@ yargs(process.argv.slice(2))
           env,
           habitat,
           featureYaml,
-          'with-mocks',
+          argv.withMocks ?? false ? 'with-mocks' : 'no-mocks',
         ),
         argv.output,
       )
@@ -141,7 +141,8 @@ yargs(process.argv.slice(2))
       )
       await writeToOutput(
         buildComment(
-          (await renderHelmServices(env, habitat, featureYaml)).services,
+          (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
+            .services,
         ),
         argv.output,
       )

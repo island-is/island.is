@@ -6,7 +6,7 @@ import {
   Text,
   BulletList,
   Bullet,
-  Link,
+  LinkV2,
   TextProps,
 } from '@island.is/island-ui/core'
 
@@ -36,9 +36,9 @@ const LinkComponent = ({
   href: string
 }) => {
   return (
-    <Link href={href} className={styles.link}>
+    <LinkV2 href={href} className={styles.link}>
       {children}
-    </Link>
+    </LinkV2>
   )
 }
 

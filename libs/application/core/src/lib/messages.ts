@@ -233,6 +233,11 @@ export const coreMessages = defineMessages({
 })
 
 export const coreErrorMessages = defineMessages({
+  defaultTemplateApiError: {
+    id: 'application.system:core.defaultTemplateApiError',
+    defaultMessage: 'Villa kom upp',
+    description: 'Unkonwn template api error',
+  },
   defaultError: {
     id: 'application.system:core.default.error',
     defaultMessage: 'Ógilt gildi',
@@ -344,6 +349,78 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Vinsamlegast athugaðu hvort að rétt var slegið inn.',
     description: 'Error Message when no company search result is found',
   },
+  nationalRegistryAgeLimitNotMetTitle: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetTitle',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
+    description:
+      'Error Title when age restriciton from national registry is not met',
+  },
+  nationalRegistryAgeLimitNotMetSummary: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetSummary',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn ',
+    description:
+      'Error message when age restriciton from national registry is not met',
+  },
+  drivingLicenseNoTeachingRightsTitle: {
+    id:
+      'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
+    defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNoTeachingRightsSummary: {
+    id:
+      'application.system:core.fetch.data.drivingLicenseNoTeachingRightsSummary',
+    defaultMessage:
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða.',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNotEmployeeTitle: {
+    id: 'application.system:core.fetch.data.drivingLicenseNotEmployeeTitle',
+    defaultMessage: 'Ekki fannst staðfesting á skráningarréttindum',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNotEmployeeSummary: {
+    id: 'application.system:core.fetch.data.drivingLicenseNotEmployeeSummary',
+    defaultMessage:
+      'Vinsamlega hafðu samband við Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
+    description: 'Driving License provider no teaching rights error',
+  },
+  vehiclesEmptyListOwner: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListOwner',
+    defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
+    description: 'You do not have any vehicles where you are the main owner',
+  },
+  vehiclesEmptyListOwnerOrCoOwner: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListOwnerOrCoOwner',
+    defaultMessage:
+      'Þú átt engin ökutæki þar sem þú ert aðaleigandi eða meðeigandi',
+    description: 'You do not have any vehicles where you are the main owner',
+  },
+  vehiclesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
+    defaultMessage: 'Ekki fannst nein ökutæki',
+    description: 'Did not find any vehicles',
+  },
+  drivingLicenseMissingValidCategory: {
+    id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
+    defaultMessage:
+      'Þú ert ekki með nauðsynleg ökuréttindi til að sækja um þessa umsókn',
+    description:
+      'You do not have enough driving permission to apply for this application',
+  },
+  nationalRegistryLegalDomicileNotIceland: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',
+    defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
+    description: 'You do not have a domicile in Iceland',
+  },
+  nationalRegistryBirthplaceMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryBirthplaceMissing',
+    defaultMessage: 'Náði ekki að sækja fæðingarstað',
+    description: 'Not able to fetch birthplace',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({
@@ -371,7 +448,7 @@ export const coreDelegationsMessages = defineMessages({
   delegationScreenTitleForOngoingApplication: {
     id:
       'application.system:core.delegations.delegationScreenTitleForOngoingApplication',
-    defaultMessage: 'Umsókn um stæðiskort',
+    defaultMessage: 'Umsókn',
     description: 'Delegations screen title for ongoing application',
   },
   delegationScreenSubtitleForOngoingApplication: {

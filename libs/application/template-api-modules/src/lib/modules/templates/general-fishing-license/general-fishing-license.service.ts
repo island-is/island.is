@@ -4,20 +4,26 @@ import { SharedTemplateApiService } from '../../shared'
 import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  FishingLicenseService,
   mapFishingLicenseToCode,
   UmsoknirApi,
 } from '@island.is/clients/fishing-license'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class GeneralFishingLicenseService {
+export class GeneralFishingLicenseService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly fishingLicenceApi: FishingLicenseService,
     private readonly umsoknirApi: UmsoknirApi,
-  ) {}
+  ) {
+    super(ApplicationTypes.GENERAL_FISHING_LICENSE)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as GeneralFishingLicenseAnswers
@@ -147,5 +153,10 @@ export class GeneralFishingLicenseService {
       )
       throw new Error('Villa kom upp við skil á umsókn.')
     }
+  }
+
+  async getShips({ auth }: TemplateApiModuleActionProps) {
+    const ships = await this.fishingLicenceApi.getShips(auth.nationalId, auth)
+    return { ships }
   }
 }

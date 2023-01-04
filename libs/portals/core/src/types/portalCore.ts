@@ -46,6 +46,15 @@ export interface PortalNavigationItem {
    * Description for module
    */
   description?: MessageDescriptor
+  /**
+   * Active state for navigation item
+   */
+  active?: boolean
+
+  /**
+   * Active state if current path is exact match
+   */
+  activeIfExact?: boolean
 }
 
 /**
@@ -129,6 +138,8 @@ export type PortalWidget = {
   render: (props: PortalModuleProps) => PortalModuleRenderValue
 }
 
+export type PortalType = 'admin' | 'my-pages'
+
 /**
  * A global component provides functionality that
  * is applicable system wide and does not belong in one route
@@ -184,4 +195,27 @@ export interface PortalModule {
    * Indicates if module is enabled or not
    */
   enabled?: (props: { userInfo: User; isCompany: boolean }) => boolean
+
+  /**
+   * The layout type of the module
+   */
+  layout?:
+    | 'none' // Full screen
+    | 'full' // Full grid, i.e 12 cols
+    | 'default' // Narrow grid, i.e. 8 cols
+
+  /**
+   * Module layout wrapper component,that wraps all the module content.
+   * This can be convenient to keep state between module routes.
+   * @example
+    moduleLayoutWrapper({ children }) {
+      return (
+        <SomeProvider>
+          <h1>I am module wrapper</h1>
+          {children}
+        </SomeProvider>
+      )
+    },
+   */
+  moduleLayoutWrapper?: React.FC<PortalModuleProps & { portalType: PortalType }>
 }

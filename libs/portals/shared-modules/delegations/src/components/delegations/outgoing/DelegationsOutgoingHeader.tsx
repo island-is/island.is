@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom'
 
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { DomainOption } from '../../../hooks/useDomains'
+import { DomainOption } from '../../../hooks/useDomains/useDomains'
 import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
 import * as styles from './DelegationsOutgoingHeader.css'
 import { DelegationPaths } from '../../../lib/paths'
