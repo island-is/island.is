@@ -1456,8 +1456,10 @@ samradsgatt:
     NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1484,7 +1486,7 @@ samradsgatt:
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
-        - host: 'beta.dev01.devland.is'
+        - host: 'samradsgatt.dev01.devland.is'
           paths:
             - '/samradsgatt'
   namespace: 'samradsgatt'
