@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { ICalendar } from 'datebook'
+import _uniqBy from 'lodash/uniqBy'
 
 import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -1263,7 +1264,11 @@ export class NotificationService {
     const promises: Promise<Recipient>[] = []
 
     if (isIndictmentCase(theCase.type)) {
-      for (const defendant of theCase.defendants ?? []) {
+      const uniqDefendants = _uniqBy(
+        theCase.defendants ?? [],
+        (d: Defendant) => d.defenderEmail,
+      )
+      for (const defendant of uniqDefendants) {
         const { defenderEmail, defenderNationalId, defenderName } = defendant
 
         const shouldSend = await this.shouldSendDefenderAssignedNotification(
