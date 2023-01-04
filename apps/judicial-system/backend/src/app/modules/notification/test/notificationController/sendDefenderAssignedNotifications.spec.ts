@@ -2,7 +2,12 @@ import { uuid } from 'uuidv4'
 
 import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import {
+  NotificationType,
+  User,
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system/types'
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -232,6 +237,66 @@ describe('NotificationController - Send defender assigned notifications', () => 
       expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
       expect(then.result).toEqual(
         expect.objectContaining({ notificationSent: false }),
+      )
+    })
+  })
+
+  describe('should send email to every defender', () => {
+    const notification: SendNotificationDto = {
+      type: NotificationType.DEFENDER_ASSIGNED,
+    }
+    const caseId = uuid()
+    const defender1 = { defenderEmail: 'some-email@island.is' } as Defendant
+    const defender2 = { defenderEmail: 'other-email@island.is' } as Defendant
+    const defendants = [defender1, defender2] as Defendant[] | undefined
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants,
+    } as Case
+    const user = {} as User
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockNotificationModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({} as Notification)
+      then = await givenWhenThen(caseId, user, theCase, notification)
+    })
+
+    it('should return notification was not sent', () => {
+      expect(mockNotificationModel.create).toHaveBeenCalled()
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
+      expect(then.result).toEqual(
+        expect.objectContaining({ notificationSent: true }),
+      )
+    })
+  })
+  describe('should only send one email to each defender', () => {
+    const notification: SendNotificationDto = {
+      type: NotificationType.DEFENDER_ASSIGNED,
+    }
+    const caseId = uuid()
+    const defender1 = { defenderEmail: 'some-email@island.is' } as Defendant
+    const defendants = [defender1, defender1] as Defendant[] | undefined
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants,
+    } as Case
+    const user = {} as User
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockNotificationModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({} as Notification)
+      then = await givenWhenThen(caseId, user, theCase, notification)
+    })
+
+    it('should return notification was not sent', () => {
+      expect(mockNotificationModel.create).toHaveBeenCalled()
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(then.result).toEqual(
+        expect.objectContaining({ notificationSent: true }),
       )
     })
   })
