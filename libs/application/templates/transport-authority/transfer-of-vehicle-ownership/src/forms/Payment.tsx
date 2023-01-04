@@ -108,13 +108,7 @@ export const Payment: Form = buildForm({
     buildSection({
       id: 'confirmation',
       title: conclusion.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'conclusion',
-          component: 'Conclusion',
-          title: '',
-        }),
-      ],
+      children: [],
     }),
   ],
 })

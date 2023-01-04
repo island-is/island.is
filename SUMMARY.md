@@ -76,6 +76,7 @@
   - [Skjalaveita API](handbook/technical-overview/postholf/postholf-03-interface-skjalaveita.md)
   - [Sequence Diagram](handbook/technical-overview/postholf/postholf-04-sequence-diagram.md)
   - [Interfaces](handbook/technical-overview/postholf/postholf-05-interfaces.md)
+- [Project Management](handbook/technical-overview/project-management.md)
 - [Teamwork](handbook/technical-overview/teamwork.md)
 - [Technical Direction](handbook/technical-overview/technical-direction.md)
 - [X-Road / Straumurinn](handbook/technical-overview/x-road/README.md)

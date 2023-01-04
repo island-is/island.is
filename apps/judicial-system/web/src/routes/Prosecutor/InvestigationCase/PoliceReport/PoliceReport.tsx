@@ -38,9 +38,11 @@ const PoliceReport = () => {
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
 
-  useDeb(workingCase, 'caseFacts')
-  useDeb(workingCase, 'legalArguments')
-  useDeb(workingCase, 'prosecutorOnlySessionRequest')
+  useDeb(workingCase, [
+    'caseFacts',
+    'legalArguments',
+    'prosecutorOnlySessionRequest',
+  ])
 
   useEffect(() => {
     if (
@@ -73,7 +75,7 @@ const PoliceReport = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FOUR}
+      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_REPORT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}

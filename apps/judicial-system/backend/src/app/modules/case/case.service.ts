@@ -169,6 +169,97 @@ export class CaseService {
     return theCase.id
   }
 
+  private async syncPoliceCaseNumbersAndCaseFiles(
+    theCase: Case,
+    update: UpdateCaseDto,
+    transaction: Transaction,
+  ): Promise<void> {
+    if (update.policeCaseNumbers && theCase.caseFiles) {
+      const oldPoliceCaseNumbers = theCase.policeCaseNumbers
+      const newPoliceCaseNumbers = update.policeCaseNumbers
+      const maxIndex = Math.max(
+        oldPoliceCaseNumbers.length,
+        newPoliceCaseNumbers.length,
+      )
+
+      // Assumptions:
+      // 1. The police case numbers are in the same order as they were before
+      // 2. The police case numbers are not duplicated
+      // 3. At most one police case number is changed, added or removed
+      for (let i = 0; i < maxIndex; i++) {
+        // Police case number added
+        if (i === oldPoliceCaseNumbers.length) {
+          break
+        }
+
+        // Police case number deleted
+        if (
+          i === newPoliceCaseNumbers.length ||
+          (newPoliceCaseNumbers[i] !== oldPoliceCaseNumbers[i] &&
+            newPoliceCaseNumbers.length < oldPoliceCaseNumbers.length)
+        ) {
+          for (const caseFile of theCase.caseFiles) {
+            if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
+              await this.fileService.deleteCaseFile(caseFile, transaction)
+            }
+          }
+
+          break
+        }
+
+        // Police case number unchanged
+        if (newPoliceCaseNumbers[i] === oldPoliceCaseNumbers[i]) {
+          continue
+        }
+
+        // Police case number changed
+        for (const caseFile of theCase.caseFiles) {
+          if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
+            await this.fileService.updateCaseFile(
+              theCase.id,
+              caseFile.id,
+              { policeCaseNumber: newPoliceCaseNumbers[i] },
+              transaction,
+            )
+          }
+        }
+
+        break
+      }
+    }
+  }
+
+  private async updateCourtCase(
+    theCase: Case,
+    updatedCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    if (
+      updatedCase.courtCaseNumber &&
+      updatedCase.courtCaseNumber !== theCase.courtCaseNumber
+    ) {
+      isIndictmentCase(updatedCase.type)
+        ? await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
+            updatedCase,
+            user,
+          )
+        : await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
+    } else if (theCase.courtCaseNumber) {
+      if (updatedCase.prosecutorId !== theCase.prosecutorId) {
+        await this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
+      }
+
+      if (
+        !isIndictmentCase(theCase.type) &&
+        theCase.defendants &&
+        theCase.defendants.length > 0 &&
+        updatedCase.defenderEmail !== theCase.defenderEmail
+      ) {
+        await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
+      }
+    }
+  }
+
   private getDeliverDefendantToCourtMessages(
     theCase: Case,
     user: TUser,
@@ -424,94 +515,25 @@ export class CaseService {
         }
 
         // Update police case numbers of case files if necessary
-        if (update.policeCaseNumbers && theCase.caseFiles) {
-          const oldPoliceCaseNumbers = theCase.policeCaseNumbers
-          const newPoliceCaseNumbers = update.policeCaseNumbers
-          const maxIndex = Math.max(
-            oldPoliceCaseNumbers.length,
-            newPoliceCaseNumbers.length,
-          )
+        await this.syncPoliceCaseNumbersAndCaseFiles(
+          theCase,
+          update,
+          transaction,
+        )
 
-          // Assumptions:
-          // 1. The police case numbers are in the same order as they were before
-          // 2. The police case numbers are not duplicated
-          // 3. At most one police case number is changed, added or removed
-          for (let i = 0; i < maxIndex; i++) {
-            // Police case number added
-            if (i === oldPoliceCaseNumbers.length) {
-              break
-            }
-
-            // Police case number deleted
-            if (
-              i === newPoliceCaseNumbers.length ||
-              (newPoliceCaseNumbers[i] !== oldPoliceCaseNumbers[i] &&
-                newPoliceCaseNumbers.length < oldPoliceCaseNumbers.length)
-            ) {
-              for (const caseFile of theCase.caseFiles) {
-                if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-                  await this.fileService.deleteCaseFile(caseFile, transaction)
-                }
-              }
-
-              break
-            }
-
-            // Police case number unchanged
-            if (newPoliceCaseNumbers[i] === oldPoliceCaseNumbers[i]) {
-              continue
-            }
-
-            // Police case number changed
-            for (const caseFile of theCase.caseFiles) {
-              if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-                await this.fileService.updateCaseFile(
-                  theCase.id,
-                  caseFile.id,
-                  { policeCaseNumber: newPoliceCaseNumbers[i] },
-                  transaction,
-                )
-              }
-            }
-
-            break
-          }
+        // Reset case file states if court case number is changed or removed
+        if (
+          theCase.courtCaseNumber &&
+          update.courtCaseNumber !== theCase.courtCaseNumber
+        ) {
+          await this.fileService.resetCaseFileStates(theCase.id, transaction)
         }
       })
       .then(async () => {
         const updatedCase = await this.findById(theCase.id)
 
         // Update the court case if necessary
-        if (
-          updatedCase.courtCaseNumber &&
-          updatedCase.courtCaseNumber !== theCase.courtCaseNumber
-        ) {
-          isIndictmentCase(updatedCase.type)
-            ? await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
-                updatedCase,
-                user,
-              )
-            : await this.addMessagesForCourtCaseConnectionToQueue(
-                updatedCase,
-                user,
-              )
-        } else if (theCase.courtCaseNumber) {
-          if (updatedCase.prosecutorId !== theCase.prosecutorId) {
-            await this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
-          }
-
-          if (
-            !isIndictmentCase(theCase.type) &&
-            theCase.defendants &&
-            theCase.defendants.length > 0 &&
-            updatedCase.defenderEmail !== theCase.defenderEmail
-          ) {
-            await this.addMessagesForDefenderEmailChangeToQueue(
-              updatedCase,
-              user,
-            )
-          }
-        }
+        await this.updateCourtCase(theCase, updatedCase, user)
 
         if (returnUpdatedCase) {
           return updatedCase

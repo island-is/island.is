@@ -137,9 +137,6 @@ export class FileService {
       case CaseFileCategory.RULING:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
-      case CaseFileCategory.CASE_FILE_CONTENTS:
-        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
-        break
       case CaseFileCategory.CASE_FILE:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
         break
@@ -404,5 +401,12 @@ export class FileService {
 
         return false
       })
+  }
+
+  async resetCaseFileStates(caseId: string, transaction: Transaction) {
+    await this.fileModel.update(
+      { state: CaseFileState.STORED_IN_RVG },
+      { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
+    )
   }
 }
