@@ -46,6 +46,6 @@ export interface OwnerChangeValidation {
 }
 
 export interface OwnerChangeValidationMessage {
-  errorNo?: number | null
+  errorNo?: string | null
   defaultMessage?: string | null
 }
