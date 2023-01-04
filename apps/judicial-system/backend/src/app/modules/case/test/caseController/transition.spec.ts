@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import { Op, Transaction } from 'sequelize'
 
 import {
+  CaseFileState,
   CaseState,
   CaseTransition,
   completedCaseStates,
@@ -12,12 +13,16 @@ import {
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageService } from '@island.is/judicial-system/message'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
+import { nowFactory } from '../../../../factories'
+import { randomDate } from '../../../../test'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { order, include } from '../../case.service'
+
+jest.mock('../../../factories')
 
 interface Then {
   result: Case
@@ -31,6 +36,7 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Transition', () => {
+  const date = randomDate()
   let mockMessageService: MessageService
   let transaction: Transaction
   let mockCaseModel: typeof Case
@@ -53,6 +59,8 @@ describe('CaseController - Transition', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
+    const mockToday = nowFactory as jest.Mock
+    mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
 
@@ -99,7 +107,25 @@ describe('CaseController - Transition', () => {
         ...indictmentCases,
       ]).describe('%s case', (type) => {
         const caseId = uuid()
-        const theCase = { id: caseId, type, state: oldState } as Case
+        const caseFileId1 = uuid()
+        const caseFileId2 = uuid()
+        const theCase = {
+          id: caseId,
+          type,
+          state: oldState,
+          caseFiles: [
+            {
+              id: caseFileId1,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+            },
+            {
+              id: caseFileId2,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_COURT,
+            },
+          ],
+        } as Case
         const updatedCase = { id: caseId, type, state: newState } as Case
         let then: Then
 
@@ -118,6 +144,10 @@ describe('CaseController - Transition', () => {
               state: newState,
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
+              rulingDate:
+                isIndictmentCase(type) && completedCaseStates.includes(newState)
+                  ? date
+                  : undefined,
             },
             { where: { id: caseId }, transaction },
           )
@@ -126,7 +156,36 @@ describe('CaseController - Transition', () => {
             isIndictmentCase(type) &&
             completedCaseStates.includes(newState)
           ) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalled()
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  caseId,
+                  caseFileId: caseFileId1,
+                },
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  caseId,
+                  caseFileId: caseFileId2,
+                },
+                { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
+              ],
+            )
+          } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  caseId,
+                  caseFileId: caseFileId1,
+                },
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  caseId,
+                  caseFileId: caseFileId2,
+                },
+              ],
+            )
           } else {
             expect(
               mockMessageService.sendMessagesToQueue,

@@ -6,15 +6,13 @@ import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Authenticator } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
-import { UserProfileLocale } from '@island.is/shared/components'
 import { Modules, PortalProvider } from '@island.is/portals/core'
 import { modules } from '../lib/modules'
 import environment from '../environments/environment'
 import { Layout } from '../components/Layout/Layout'
 import { ApplicationErrorBoundary } from '@island.is/portals/core'
 import { AdminPortalPaths } from '../lib/paths'
-import { Dashboard } from '../screens/Dashboard'
-import { masterNavigation } from '../lib/masterNavigation'
+import { Dashboard } from '../screens/Dashboard/Dashboard'
 
 export const App = () => {
   return (
@@ -28,11 +26,9 @@ export const App = () => {
                   modules={modules}
                   meta={{
                     basePath: AdminPortalPaths.Base,
-                    masterNav: masterNavigation,
                     portalType: 'admin',
                   }}
                 >
-                  <UserProfileLocale />
                   <Layout>
                     <Switch>
                       <Route exact path={AdminPortalPaths.Root}>

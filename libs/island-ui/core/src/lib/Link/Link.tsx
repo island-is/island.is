@@ -1,8 +1,10 @@
 import * as React from 'react'
-import cn from 'classnames'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
+import cn from 'classnames'
+
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 import * as styles from './Link.css'
 
 export type LinkColor = 'white' | 'blue400' | 'blue600'
@@ -16,9 +18,9 @@ export interface LinkProps extends NextLinkProps {
   underline?: UnderlineVariants
   underlineVisibility?: UnderlineVisibility
   skipTab?: boolean
+  onClick?: () => void
   pureChildren?: boolean
   newTab?: boolean
-  onClick?: () => void
 }
 
 // Next link that can handle external urls
@@ -38,9 +40,9 @@ export const Link: React.FC<LinkProps> = ({
   pureChildren,
   newTab = false,
   dataTestId = undefined,
-  onClick,
   ...linkProps
 }) => {
+  useDeprecatedComponent('Link', 'LinkV2')
   const isInternal = !shouldLinkOpenInNewWindow(href as string)
   const classNames = cn(
     styles.link,
@@ -50,7 +52,18 @@ export const Link: React.FC<LinkProps> = ({
       ? styles.underlineVisibilities[underlineVisibility]
       : undefined,
     className,
+    {
+      [styles.pointer]: href || linkProps.onClick,
+    },
   )
+
+  if (!href) {
+    return (
+      <span className={classNames} {...linkProps}>
+        {children}
+      </span>
+    )
+  }
 
   if (isInternal) {
     return (

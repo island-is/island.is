@@ -52,20 +52,29 @@ import { FinancialStatementsInaoTemplateModule } from './financial-statements-in
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 import { NoDebtCertificateModule } from './no-debt-certificate/no-debt-certificate.module'
 import { NoDebtCertificateService } from './no-debt-certificate/no-debt-certificate.service'
+import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
+import { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
+import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
+import { ChangeCoOwnerOfVehicleService } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.service'
+import { ChangeOperatorOfVehicleModule } from './transport-authority/change-operator-of-vehicle/change-operator-of-vehicle.module'
+import { ChangeOperatorOfVehicleService } from './transport-authority/change-operator-of-vehicle/change-operator-of-vehicle.service'
+import { DigitalTachographCompanyCardModule } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.module'
+import { DigitalTachographCompanyCardService } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.service'
+import { DigitalTachographDriversCardModule } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.module'
+import { DigitalTachographDriversCardService } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.service'
+import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
+import { DigitalTachographWorkshopCardService } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.service'
+import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
+import { OrderVehicleLicensePlateService } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.service'
+import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
+import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
+import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
+import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
 import { EstateTemplateModule } from './estate/estate.module'
 import { EstateTemplateService } from './estate/estate.service'
 
 //TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
-import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
-import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
-import { ChangeOperatorOfVehicleModule } from './transport-authority/change-operator-of-vehicle/change-operator-of-vehicle.module'
-import { DigitalTachographCompanyCardModule } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.module'
-import { DigitalTachographDriversCardModule } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.module'
-import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
-import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
-import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
-import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -97,6 +106,15 @@ export const modules = [
   OperatingLicenseModule,
   FinancialStatementsInaoTemplateModule,
   NoDebtCertificateModule,
+  AnonymityInVehicleRegistryModule,
+  ChangeCoOwnerOfVehicleModule,
+  ChangeOperatorOfVehicleModule,
+  DigitalTachographCompanyCardModule,
+  DigitalTachographDriversCardModule,
+  DigitalTachographWorkshopCardModule,
+  OrderVehicleLicensePlateModule,
+  OrderVehicleRegistrationCertificateModule,
+  TransferOfVehicleOwnershipModule,
   EstateTemplateModule,
 ]
 
@@ -130,5 +148,14 @@ export const services = [
   FinancialStatementsInaoTemplateService,
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
+  AnonymityInVehicleRegistryService,
+  ChangeCoOwnerOfVehicleService,
+  ChangeOperatorOfVehicleService,
+  DigitalTachographCompanyCardService,
+  DigitalTachographDriversCardService,
+  DigitalTachographWorkshopCardService,
+  OrderVehicleLicensePlateService,
+  OrderVehicleRegistrationCertificateService,
+  TransferOfVehicleOwnershipService,
   EstateTemplateService,
 ]

@@ -142,8 +142,10 @@ export class GenericMachineLicenseService
     if (pass.ok) {
       return pass.data
     }
-
-    //time to do some wicked error handling
+    /**
+     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
+     * For now we return null, just to keep existing behavior unchanged
+     */
     return null
   }
   async getPkPassQRCode(
@@ -164,8 +166,10 @@ export class GenericMachineLicenseService
     if (pass.ok) {
       return pass.data
     }
-
-    //time to do some wicked error handling
+    /**
+     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
+     * For now we return null, just to keep existing behavior unchanged
+     */
     return null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

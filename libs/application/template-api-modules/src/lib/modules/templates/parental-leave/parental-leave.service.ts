@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 import cloneDeep from 'lodash/cloneDeep'
 
 import type { Attachment, Period } from '@island.is/clients/vmst'
@@ -31,6 +32,7 @@ import {
   SINGLE,
   getAdditionalSingleParentRightsInDays,
   getApplicationExternalData,
+  DAYS_IN_MONTH,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -128,16 +130,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (otherParentPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+    try {
+      if (otherParentPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateAssignOtherParentApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateAssignOtherParentApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send assigned SMS to otherParent in parental leave application',
+        e,
       )
     }
   }
@@ -152,17 +161,24 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (applicantPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
+    try {
+      if (applicantPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
 
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateOtherParentRejectedApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateOtherParentRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about otherParent rejection in parental leave application',
+        e,
       )
     }
   }
@@ -177,17 +193,24 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (applicantPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
+    try {
+      if (applicantPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
 
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateEmployerRejectedApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateEmployerRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about Employer rejection in parental leave application',
+        e,
       )
     }
   }
@@ -207,11 +230,18 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     // send confirmation sms to employer
-    if (employerPhoneNumber) {
-      await this.sharedTemplateAPIService.assignApplicationThroughSms(
-        generateAssignEmployerApplicationSms,
-        application,
-        token,
+    try {
+      if (employerPhoneNumber) {
+        await this.sharedTemplateAPIService.assignApplicationThroughSms(
+          generateAssignEmployerApplicationSms,
+          application,
+          token,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send assign SMS notification to Employer in parental leave application',
+        e,
       )
     }
   }
@@ -389,34 +419,62 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     period: AnswerPeriod,
     rightsCodePeriod: string,
   ): Promise<Period> {
-    const isUsingNumberOfDays = period.daysToUse !== undefined
-    const getPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-      {
-        nationalRegistryId,
-        startDate: startDate,
-        length: String(periodLength),
-        percentage: period.ratio,
-      },
-    )
-
-    if (getPeriodEndDate.periodEndDate === undefined) {
-      throw new Error(
-        `Could not calculate end date of period starting ${period.startDate} and using ${periodLength} days of rights`,
-      )
-    }
-
-    // Add the period rights
-    return {
+    const periodObj = {
       from: startDateString ?? format(startDate, df),
-      to: format(getPeriodEndDate.periodEndDate, df),
-      ratio: getRatio(
-        period.ratio,
-        periodLength.toString(),
-        isUsingNumberOfDays,
-      ),
       approved: false,
       paid: false,
       rightsCodePeriod: rightsCodePeriod,
+    }
+    if (period.ratio === '100') {
+      const isUsingNumberOfDays = period.daysToUse !== undefined
+      const getPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+        {
+          nationalRegistryId,
+          startDate: startDate,
+          length: String(periodLength),
+          percentage: period.ratio,
+        },
+      )
+
+      if (getPeriodEndDate.periodEndDate === undefined) {
+        throw new Error(
+          `Could not calculate end date of period starting ${period.startDate} and using ${periodLength} days of rights`,
+        )
+      }
+
+      return {
+        ...periodObj,
+        to: format(getPeriodEndDate.periodEndDate, df),
+        ratio: getRatio(
+          period.ratio,
+          periodLength.toString(),
+          isUsingNumberOfDays,
+        ),
+      }
+    } else {
+      const isUsingNumberOfDays = true
+
+      // Calculate endDate from periodLength, startDate and percentage ( period.ratio )
+      const actualDaysFromPercentage = Math.floor(
+        periodLength / (Number(period.ratio) / 100),
+      )
+      const additionalMonths = Math.floor(
+        actualDaysFromPercentage / DAYS_IN_MONTH,
+      )
+      const additionalDays = actualDaysFromPercentage % DAYS_IN_MONTH
+
+      const startDateAddMonths = addMonths(startDate, additionalMonths)
+      const endDate = addDays(startDateAddMonths, additionalDays)
+
+      return {
+        ...periodObj,
+        to: format(endDate, df),
+        ratio: getRatio(
+          period.ratio,
+          periodLength.toString(),
+          isUsingNumberOfDays,
+        ),
+      }
     }
   }
 
@@ -558,7 +616,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         ** 2. single parent rights
         ** 3. common rights ( from multiple births)
         ** 4. transfer rights ( from other parent)
-        We have to finished first one before go to next and so on
+        We have to finish first one before go to next and so on
         */
       if (
         !isUsingTransferredRights &&
@@ -580,7 +638,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           ratio: getRatio(
             period.ratio,
             periodLength.toString(),
-            isUsingNumberOfDays,
+            period.ratio === '100' ? isUsingNumberOfDays : true,
           ),
           approved: false,
           paid: false,
@@ -596,7 +654,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
@@ -642,16 +700,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               const lengthOfPeriodUsingAdditionalSingleParentDays =
                 periodLength - daysLeftOfPersonalRights
 
-              const additionalPeriod = await this.getCalculatedPeriod(
-                nationalRegistryId,
-                additionalSingleParentPeriodStartDate,
-                undefined,
-                lengthOfPeriodUsingAdditionalSingleParentDays,
-                period,
-                apiConstants.rights.artificialInseminationRightsId,
-              )
-
-              periods.push(additionalPeriod)
+              periods.push({
+                from: format(additionalSingleParentPeriodStartDate, df),
+                to: period.endDate,
+                ratio: getRatio(
+                  period.ratio,
+                  lengthOfPeriodUsingAdditionalSingleParentDays.toString(),
+                  true,
+                ),
+                approved: false,
+                paid: false,
+                rightsCodePeriod:
+                  apiConstants.rights.artificialInseminationRightsId,
+              })
             } else {
               // 4. Additional rights
               periods.push({
@@ -660,7 +721,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                 ratio: getRatio(
                   period.ratio,
                   periodLength.toString(),
-                  isUsingNumberOfDays,
+                  period.ratio === '100' ? isUsingNumberOfDays : true,
                 ),
                 approved: false,
                 paid: false,
@@ -719,29 +780,37 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                   periodLength -
                   daysLeftOfPersonalRights -
                   maximumAdditionalSingleParentDaysToSpend
-                const commonPeriod = await this.getCalculatedPeriod(
-                  nationalRegistryId,
-                  commonPeriodStartDate,
-                  undefined,
-                  lengthOfPeriodUsingCommonDays,
-                  period,
-                  mulitpleBirthsRights,
-                )
 
-                periods.push(commonPeriod)
+                periods.push({
+                  from: format(commonPeriodStartDate, df),
+                  to: period.endDate,
+                  ratio: getRatio(
+                    period.ratio,
+                    lengthOfPeriodUsingCommonDays.toString(),
+                    true,
+                  ),
+                  approved: false,
+                  paid: false,
+                  rightsCodePeriod: mulitpleBirthsRights,
+                })
               } else {
                 // Additional rights
                 const lengthOfPeriodUsingAdditionalDays =
                   periodLength - daysLeftOfPersonalRights
-                const additionalPeriod = await this.getCalculatedPeriod(
-                  nationalRegistryId,
-                  additionalSingleParentPeriodStartDate,
-                  undefined,
-                  lengthOfPeriodUsingAdditionalDays,
-                  period,
-                  apiConstants.rights.artificialInseminationRightsId,
-                )
-                periods.push(additionalPeriod)
+
+                periods.push({
+                  from: format(additionalSingleParentPeriodStartDate, df),
+                  to: period.endDate,
+                  ratio: getRatio(
+                    period.ratio,
+                    lengthOfPeriodUsingAdditionalDays.toString(),
+                    true,
+                  ),
+                  approved: false,
+                  paid: false,
+                  rightsCodePeriod:
+                    apiConstants.rights.artificialInseminationRightsId,
+                })
               }
             } else {
               // 3. Additional rights and multipleBirths rights
@@ -770,16 +839,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                 )
                 const lengthOfPeriodUsingCommonDays =
                   periodLength - lengthOfPeriodUsingAdditionalSingleParentDays
-                const commonPeriod = await this.getCalculatedPeriod(
-                  nationalRegistryId,
-                  commonPeriodStartDate,
-                  undefined,
-                  lengthOfPeriodUsingCommonDays,
-                  period,
-                  mulitpleBirthsRights,
-                )
 
-                periods.push(commonPeriod)
+                periods.push({
+                  from: format(commonPeriodStartDate, df),
+                  to: period.endDate,
+                  ratio: getRatio(
+                    period.ratio,
+                    lengthOfPeriodUsingCommonDays.toString(),
+                    true,
+                  ),
+                  approved: false,
+                  paid: false,
+                  rightsCodePeriod: mulitpleBirthsRights,
+                })
               } else {
                 // Only additional rights
                 periods.push({
@@ -788,7 +860,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                   ratio: getRatio(
                     period.ratio,
                     periodLength.toString(),
-                    isUsingNumberOfDays,
+                    period.ratio === '100' ? isUsingNumberOfDays : true,
                   ),
                   approved: false,
                   paid: false,
@@ -809,7 +881,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
@@ -849,16 +921,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             )
             const lengthOfPeriodUsingTransferredDays =
               periodLength - daysLeftOfPersonalRights
-            const transferredPeriod = await this.getCalculatedPeriod(
-              nationalRegistryId,
-              transferredPeriodStartDate,
-              undefined,
-              lengthOfPeriodUsingTransferredDays,
-              period,
-              apiConstants.rights.receivingRightsId,
-            )
 
-            periods.push(transferredPeriod)
+            periods.push({
+              from: format(transferredPeriodStartDate, df),
+              to: period.endDate,
+              ratio: getRatio(
+                period.ratio,
+                lengthOfPeriodUsingTransferredDays.toString(),
+                true,
+              ),
+              approved: false,
+              paid: false,
+              rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            })
           }
           // 2. Period includes common and transfer rights
           else if (maximumPersonalDaysToSpend < numberOfDaysAlreadySpent) {
@@ -883,16 +958,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             )
             const lengthOfPeriodUsingTransferredDays =
               periodLength - daysLeftOfCommonRights
-            const transferredPeriod = await this.getCalculatedPeriod(
-              nationalRegistryId,
-              transferredPeriodStartDate,
-              undefined,
-              lengthOfPeriodUsingTransferredDays,
-              period,
-              apiConstants.rights.receivingRightsId,
-            )
 
-            periods.push(transferredPeriod)
+            periods.push({
+              from: format(transferredPeriodStartDate, df),
+              to: period.endDate,
+              ratio: getRatio(
+                period.ratio,
+                lengthOfPeriodUsingTransferredDays.toString(),
+                true,
+              ),
+              approved: false,
+              paid: false,
+              rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            })
           }
           // 3. Period includes personal, common and transfer rights
           else {
@@ -941,16 +1019,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               periodLength -
               daysLeftOfPersonalRights -
               maximumMultipleBirthsDaysToSpend
-            const transferredPeriod = await this.getCalculatedPeriod(
-              nationalRegistryId,
-              transferredPeriodStartDate,
-              undefined,
-              lengthOfPeriodUsingTransferredDays,
-              period,
-              apiConstants.rights.receivingRightsId,
-            )
 
-            periods.push(transferredPeriod)
+            periods.push({
+              from: format(transferredPeriodStartDate, df),
+              to: period.endDate,
+              ratio: getRatio(
+                period.ratio,
+                lengthOfPeriodUsingTransferredDays.toString(),
+                true,
+              ),
+              approved: false,
+              paid: false,
+              rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            })
           }
         } else if (isUsingMultipleBirthsRights) {
           // Applicant used upp his/her basic rights and started to use 'common' rights
@@ -961,7 +1042,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
@@ -993,16 +1074,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           const commonPeriodStartDate = addDays(new Date(personalPeriod.to), 1)
           const lengthOfPeriodUsingCommonDays =
             periodLength - daysLeftOfPersonalRights
-          const commonPeriod = await this.getCalculatedPeriod(
-            nationalRegistryId,
-            commonPeriodStartDate,
-            undefined,
-            lengthOfPeriodUsingCommonDays,
-            period,
-            mulitpleBirthsRights,
-          )
 
-          periods.push(commonPeriod)
+          periods.push({
+            from: format(commonPeriodStartDate, df),
+            to: period.endDate,
+            ratio: getRatio(
+              period.ratio,
+              lengthOfPeriodUsingCommonDays.toString(),
+              true,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod: mulitpleBirthsRights,
+          })
         }
       }
 

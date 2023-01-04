@@ -34,6 +34,8 @@ import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
 import { applyPassport, lostPassport } from '../../lib/constants'
 import { useLazyQuery } from '@apollo/client'
+import { capitalizeEveryWord } from '../../utils/capitalize'
+import { NotFound } from '@island.is/portals/core'
 
 const getCurrentPassport = (
   id: string | undefined,
@@ -63,6 +65,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [passportEnabled, setPassportEnabled] = useState(false)
+  const [blockedAccess, setBlockedAccess] = useState(false)
   const { formatMessage, lang } = useLocale()
   const { id }: { id: string | undefined } = useParams()
 
@@ -86,6 +89,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
       )
 
       setPassportEnabled(isPassEnabled)
+      setBlockedAccess(!isPassEnabled)
     }
     isPassportFlagEnabled()
   }, [])
@@ -130,20 +134,24 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           />
         </Box>
       )}
-      <Box marginBottom={3}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '5/8', '5/8']}>
-            <Stack space={1}>
-              <Text variant="h3" as="h1" paddingTop={0}>
-                {data?.verboseType || ''}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(m.passportDescription)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      {blockedAccess ? (
+        <NotFound />
+      ) : (
+        <Box marginBottom={3}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '5/8', '5/8']}>
+              <Stack space={1}>
+                <Text variant="h3" as="h1" paddingTop={0}>
+                  {data?.verboseType || ''}
+                </Text>
+                <Text as="p" variant="default">
+                  {formatMessage(m.passportDescription)}
+                </Text>
+              </Stack>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      )}
       {data && (
         <Stack space={2}>
           {licenseExpired || expireWarning || licenseLost ? (
@@ -191,7 +199,9 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           )}
           <UserInfoLine
             label={defineMessage(m.passportName)}
-            content={data?.displayFirstName + ' ' + data?.displayLastName}
+            content={capitalizeEveryWord(
+              data?.displayFirstName + ' ' + data?.displayLastName,
+            )}
             loading={loading}
             titlePadding={3}
             paddingBottom={1}
@@ -242,7 +252,13 @@ const PassportDetail: ServicePortalModuleComponent = () => {
                   >
                     <Icon
                       icon={isInvalid ? 'closeCircle' : 'checkmarkCircle'}
-                      color={isInvalid ? 'red600' : 'mint600'}
+                      color={
+                        isInvalid
+                          ? 'red600'
+                          : expireWarning
+                          ? 'yellow600'
+                          : 'mint600'
+                      }
                       type="filled"
                     />
                   </Box>

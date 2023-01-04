@@ -11,7 +11,7 @@ import { DefendantService } from '../defendant.service'
 
 @Injectable()
 export class DefendantExistsGuard implements CanActivate {
-  constructor(private defendantService: DefendantService) {}
+  constructor(private readonly defendantService: DefendantService) {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
