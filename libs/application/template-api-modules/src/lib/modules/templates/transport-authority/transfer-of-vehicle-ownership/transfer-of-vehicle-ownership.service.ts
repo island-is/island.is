@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
@@ -17,20 +19,24 @@ import {
 } from './smsGenerators'
 import { EmailRecipient, EmailRole } from './types'
 import {
-  getDateAtNoonFromString,
   getAllRoles,
   getRecipients,
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
+import {
+  ChargeFjsV2ClientService,
+  getChargeId,
+} from '@island.is/clients/charge-fjs-v2'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
-import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { applicationCheck } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
   ) {
@@ -39,6 +45,71 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
   async getInsuranceCompanyList({ auth }: TemplateApiModuleActionProps) {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()
+  }
+
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+    // No need to continue with this validation in user is neither seller nor buyer
+    // (only time application data changes is on state change from these roles)
+    const sellerSsn = answers?.seller?.nationalId
+    const buyerSsn = answers?.buyer?.nationalId
+    if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
+      return
+    }
+
+    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'operator',
+    )
+
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      auth,
+      {
+        permno: answers?.vehicle?.plate,
+        seller: {
+          ssn: sellerSsn,
+          email: answers?.seller?.email,
+        },
+        buyer: {
+          ssn: buyerSsn,
+          email: answers?.buyer?.email,
+        },
+        dateOfPurchase: new Date(answers?.vehicle?.date),
+        saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        insuranceCompanyCode: answers?.insurance?.value,
+        coOwners: buyerCoOwners?.map((coOwner) => ({
+          ssn: coOwner.nationalId,
+          email: coOwner.email,
+        })),
+        operators: buyerOperators?.map((operator) => ({
+          ssn: operator.nationalId,
+          email: operator.email,
+          isMainOperator:
+            buyerOperators.length > 1
+              ? operator.nationalId === answers?.buyerMainOperator?.nationalId
+              : true,
+        })),
+      },
+    )
+
+    // If we get any error messages, we will just throw an error with a default title
+    // We will fetch these error messages again through graphql in the template, to be able
+    // to translate the error message
+    if (result.hasError && result.errorMessages?.length) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: applicationCheck.validation.alertTitle,
+        },
+        400,
+      )
+    }
   }
 
   async createCharge({
@@ -52,9 +123,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     | undefined
   > {
     try {
-      const chargeItemCodes = getChargeItemCodes(
-        application.answers as TransferOfVehicleOwnershipAnswers,
-      )
+      const chargeItemCodes = getChargeItemCodes()
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
@@ -233,8 +302,18 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // 1. Revert charge so that the seller gets reimburshed
-    // Note: Will be added when FJS api has been updated
+    // 1. Delete charge so that the seller gets reimburshed
+    const chargeId = getChargeId(application)
+    if (chargeId) {
+      const status = await this.chargeFjsV2ClientService.getChargeStatus(
+        chargeId,
+      )
+
+      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
+      if (status !== 'cancelled') {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
+    }
 
     // 2. Notify everyone in the process that the application has been withdrawn
 
@@ -306,8 +385,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.seller?.nationalId !== application.applicant) {
-      throw new Error(
-        'Aðeins sá sem skráði umsókn má vera skráður sem seljandi.',
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.submitApplication.sellerNotValid,
+          summary: applicationCheck.submitApplication.sellerNotValid,
+        },
+        400,
       )
     }
 
@@ -319,7 +402,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
 
     await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
-      // await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
       permno: answers?.vehicle?.plate,
       seller: {
         ssn: answers?.seller?.nationalId,
@@ -329,9 +411,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         ssn: answers?.buyer?.nationalId,
         email: answers?.buyer?.email,
       },
-      // Note: API throws error if timestamp is 00:00:00, so we will use noon
-      dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
-      saleAmount: Number(answers?.vehicle?.salePrice) || 0,
+      dateOfPurchase: new Date(answers?.vehicle?.date),
+      saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
         ssn: coOwner.nationalId,
