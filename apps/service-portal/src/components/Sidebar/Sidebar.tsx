@@ -22,35 +22,11 @@ interface Props {
 
 export const Sidebar = ({ position }: Props) => {
   const navigation = useNavigation()
-  //const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(false) //useState(sidebarState === 'closed')
-  // const { width } = useWindowSize()
   const { signOut } = useAuth()
-  // const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
-  // const isMobile = width < theme.breakpoints.md
+
   const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
-
-  /* This is commented out because this will be revisited next fall (2022) */
-  // useEffect(() => {
-  //   if (isTablet) {
-  //     dispatch({
-  //       type: ActionType.SetSidebarMenuState,
-  //       payload: 'closed',
-  //     })
-  //     setCollapsed(true)
-  //   }
-  // }, [isTablet])
-
-  // useEffect(() => {
-  //   if (isMobile) {
-  //     dispatch({
-  //       type: ActionType.SetSidebarMenuState,
-  //       payload: 'open',
-  //     })
-  //     setCollapsed(false)
-  //   }
-  // }, [isMobile])
 
   return (
     <aside
@@ -72,30 +48,6 @@ export const Sidebar = ({ position }: Props) => {
           )}
         </Link>
       </Box>
-      {/* This is commented out because this will be revisited next fall (2022) */}
-      {/* <Box
-        className={styles.navIcon}
-        borderRadius="circle"
-        display="flex"
-        alignItems="center"
-        marginRight={2}
-        padding="smallGutter"
-        background="blue200"
-        onClick={() => {
-          dispatch({
-            type: ActionType.SetSidebarMenuState,
-            payload: collapsed ? 'open' : 'closed',
-          })
-          setCollapsed(!collapsed)
-        }}
-      >
-        <Icon
-          type="outline"
-          icon={collapsed ? 'chevronForward' : 'chevronBack'}
-          size="medium"
-          color="blue400"
-        />
-      </Box> */}
 
       <Box
         display="flex"

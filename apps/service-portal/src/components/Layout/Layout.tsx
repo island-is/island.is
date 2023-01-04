@@ -35,6 +35,7 @@ import { Link as ReactLink } from 'react-router-dom'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import { useStore } from '../../store/stateProvider'
 import * as styles from './Layout.css'
+import GoBack from '../GoBack/GoBack'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -144,7 +145,7 @@ const Layout: FC = ({ children }) => {
             sidebarContent={
               <Sticky>
                 <Box style={{ marginTop: height }}>
-                  {/* <GoBack /> */}
+                  <GoBack />
                   <Box marginBottom={3}>
                     <InstitutionPanel
                       institution={org?.title ?? ''}
