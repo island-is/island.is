@@ -36,6 +36,9 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
 
   const [rateOfExchange, setRateOfExchange] = useState(0)
   const [faceValue, setFaceValue] = useState(0)
+  const [total, setTotal] = useState(0)
+  const [index, setIndex] = useState('0')
+
   const { control, setValue } = useFormContext()
 
   const handleAddRepeaterFields = () => {
@@ -55,7 +58,10 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     if (fields.length === 0) {
       handleAddRepeaterFields()
     }
-  }, [])
+
+    setTotal(faceValue * rateOfExchange)
+    setValue(`${index}.value`, String(total))
+  }, [fields, faceValue, rateOfExchange, total, setValue])
 
   return (
     <Box>
@@ -106,18 +112,13 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       readOnly={field.readOnly}
                       type={field.type}
                       onChange={(e) => {
+                        setIndex(fieldIndex)
+
                         if (field.id === 'rateOfExchange') {
-                          console.log('rate')
                           setRateOfExchange(Number(e.target.value))
                         } else if (field.id === 'faceValue') {
-                          console.log('face')
                           setFaceValue(Number(e.target.value))
                         }
-
-                        setValue(
-                          `${fieldIndex}.value`,
-                          String(faceValue * rateOfExchange),
-                        )
                       }}
                     />
                   </GridColumn>
