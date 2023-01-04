@@ -138,6 +138,7 @@ export class GenericFirearmLicenseService
     )
     return pass ?? null
   }
+
   async getPkPassQRCode(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
     if (!data) return null

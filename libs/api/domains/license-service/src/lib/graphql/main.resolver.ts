@@ -96,6 +96,7 @@ export class MainResolver {
         onlyList: input?.onlyList,
       },
     )
+    console.log('LicenseInput', input?.includedTypes)
     return licenses
   }
 
