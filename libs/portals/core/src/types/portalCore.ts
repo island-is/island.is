@@ -55,6 +55,11 @@ export interface PortalNavigationItem {
    * Active state if current path is exact match
    */
   activeIfExact?: boolean
+
+  /**
+   * Service provider
+   */
+  serviceProvider?: string
 }
 
 /**
