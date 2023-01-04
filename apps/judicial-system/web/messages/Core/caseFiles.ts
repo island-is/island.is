@@ -3,13 +3,6 @@ import { defineMessages, defineMessage } from 'react-intl'
 export const caseFiles = {
   modal: {
     fileNotFound: defineMessages({
-      // TODO: Remove title
-      title: {
-        id: 'judicial.system.core:modalfile_not_found.title',
-        defaultMessage: 'Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt',
-        description:
-          'Notaður sem titill fyrir popup glugga sem segir að skjal sé ekki lengur aðgengilegt í RVG þegar reynt er að opna það',
-      },
       text: {
         id: 'judicial.system.core:modal.file_not_found.text',
         defaultMessage:
