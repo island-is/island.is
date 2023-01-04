@@ -28,7 +28,6 @@ const prepareDomainName = (domainName: string | null) =>
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [searchValue, setSearchValue] = useState('')
-
   const [
     delegation,
     setDelegation,
