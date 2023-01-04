@@ -57,7 +57,8 @@
     "cacheable-request",
     "decompress-response",
     "lowercase-keys",
-    "mimic-response"
+    "mimic-response",
+    "pdfkit"
   ],
   "keepNames": true
 }

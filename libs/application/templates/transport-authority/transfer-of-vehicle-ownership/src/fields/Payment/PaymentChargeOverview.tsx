@@ -3,18 +3,23 @@ import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { payment } from '../../lib/messages'
-import { formatIsk } from '../../utils'
+import { formatIsk, getChargeItemCodes } from '../../utils'
 
 export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
+  const chargeItemCodes = getChargeItemCodes()
   const { externalData } = application
-  const items = externalData?.payment?.data as [
+  const allItems = externalData?.payment?.data as [
     {
       priceAmount: number
       chargeItemName: string
+      chargeItemCode: string
     },
   ]
+  const items = allItems.filter(({ chargeItemCode }) =>
+    chargeItemCodes.includes(chargeItemCode),
+  )
 
   const totalPrice = items.reduce(
     (sum, item) => sum + (item?.priceAmount || 0),
@@ -28,7 +33,12 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
           {formatMessage(payment.paymentChargeOverview.forPayment)}
         </Text>
         {items.map((item) => (
-          <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+          <Box
+            paddingTop={1}
+            key={item.chargeItemCode}
+            display="flex"
+            justifyContent="spaceBetween"
+          >
             <Text>{item?.chargeItemName}</Text>
             <Text>{formatIsk(item?.priceAmount || 0)}</Text>
           </Box>

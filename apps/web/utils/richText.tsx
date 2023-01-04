@@ -21,6 +21,7 @@ import {
   ShipSearch,
   SidebarShipSearchInput,
   StraddlingStockCalculator,
+  TwoColumnTextSlice,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -60,6 +61,7 @@ const defaultRenderComponent = {
   ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
   GraphCard: (chart) => <ChartsCard chart={chart} />,
   OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
+  TwoColumnText: (slice) => <TwoColumnTextSlice slice={slice} />,
   EmailSignup: (slice) => <EmailSignup slice={slice} />,
   FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
 }

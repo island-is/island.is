@@ -50,7 +50,7 @@ export class VehiclesVehicle {
   operatorStartDate?: Date
 
   @Field({ nullable: true })
-  operatorEndDate?: string
+  operatorEndDate?: Date
 
   @Field({ nullable: true })
   outOfUse?: boolean
@@ -83,7 +83,7 @@ export class VehiclesVehicle {
   nextInspection?: NextInspection
 
   @Field({ nullable: true })
-  deregistrationDate?: string
+  deregistrationDate?: Date
 
   @Field({ nullable: true, defaultValue: null })
   operatorNumber?: number

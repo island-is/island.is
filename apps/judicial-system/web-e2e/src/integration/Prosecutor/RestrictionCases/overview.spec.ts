@@ -6,7 +6,10 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
-import { RESTRICTION_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_ROUTE,
+  RESTRICTION_CASE_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import {
   makeCourt,
@@ -108,7 +111,10 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
           .its('navigator.clipboard')
           .invoke('readText')
           .then((data) => data)
-          .should('equal', `${window.location.origin}/verjandi/${caseData.id}`)
+          .should(
+            'equal',
+            `${window.location.origin}${DEFENDER_ROUTE}/${caseData.id}`,
+          )
       })
 
       it('should navigate to /krofur on successful confirmation', () => {
