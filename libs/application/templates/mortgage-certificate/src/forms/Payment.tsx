@@ -18,7 +18,7 @@ type CreateChargeData = {
 export const Payment: Form = buildForm({
   id: 'MortgageCertificateApplicationPaymentForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: false,
   renderLastScreenBackButton: false,
   children: [

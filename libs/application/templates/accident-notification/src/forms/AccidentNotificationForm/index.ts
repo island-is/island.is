@@ -15,7 +15,7 @@ export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
   title: application.general.name,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     betaTestSection,
     externalDataSection,

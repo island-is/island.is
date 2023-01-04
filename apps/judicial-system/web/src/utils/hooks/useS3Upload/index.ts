@@ -6,7 +6,6 @@ import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFileMutation,
   CreatePresignedPostMutation,
-  DeleteFileMutation,
   UploadPoliceCaseFileMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
@@ -55,9 +54,6 @@ export const useS3Upload = (workingCase: Case) => {
   ] = useMutation(CreatePresignedPostMutation)
   const [createFileMutation, { error: createFileFailed }] = useMutation(
     CreateFileMutation,
-  )
-  const [deleteFileMutation, { error: deleteFileFailed }] = useMutation(
-    DeleteFileMutation,
   )
 
   // File upload spesific functions
@@ -143,7 +139,7 @@ export const useS3Upload = (workingCase: Case) => {
 
     request.addEventListener('load', () => {
       if (request.status >= 200 && request.status < 300) {
-        addFileToCase(file)
+        addFileToCase(file, updateFile)
       } else {
         file.status = 'error'
         file.percent = 0
@@ -181,7 +177,6 @@ export const useS3Upload = (workingCase: Case) => {
      * (source: https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559)
      */
     const newFiles = [...filesRef.current]
-
     if (newFiles.some((f) => f.key === file.key)) {
       const index = newFiles.findIndex((f) => f.key === file.key)
       newFiles[index] = file
@@ -192,21 +187,14 @@ export const useS3Upload = (workingCase: Case) => {
     setFilesRefAndState(newFiles)
   }
 
-  const removeFileFromState = (file: UploadFile) => {
-    const newFiles = [...files]
-
-    if (newFiles.includes(file)) {
-      setFilesRefAndState(
-        newFiles.filter((fileInFiles) => fileInFiles !== file),
-      )
-    }
-  }
-
   /**
    * Insert file in database and update state.
    * @param file The file to add to case.
    */
-  const addFileToCase = async (file: TUploadFile) => {
+  const addFileToCase = async (
+    file: TUploadFile,
+    cb: (file: TUploadFile) => void,
+  ) => {
     if (workingCase && file.size && file.key) {
       await createFileMutation({
         variables: {
@@ -223,7 +211,7 @@ export const useS3Upload = (workingCase: Case) => {
         .then((res) => {
           file.id = res.data.createFile.id
           file.status = 'done'
-          updateFile(file)
+          cb(file)
         })
         .catch(() => {
           // TODO: handle error
@@ -266,30 +254,6 @@ export const useS3Upload = (workingCase: Case) => {
     })
   }
 
-  const handleRemoveFromS3 = (file: UploadFile) => {
-    if (workingCase) {
-      deleteFileMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            id: file.id,
-          },
-        },
-      })
-        .then((res) => {
-          if (!res.errors) {
-            removeFileFromState(file)
-          } else {
-            // TODO: handle failure
-            console.log(res.errors)
-          }
-        })
-        .catch(() => {
-          // TODO: handle error
-        })
-    }
-  }
-
   const handleRetry = (file: UploadFile) => {
     handleS3Upload([file as File], true)
   }
@@ -299,7 +263,6 @@ export const useS3Upload = (workingCase: Case) => {
     uploadErrorMessage:
       uploadPoliceCaseFileFailed ||
       createFileFailed ||
-      deleteFileFailed ||
       createPresignedPostFailed
         ? formatMessage(errors.general)
         : undefined,
@@ -307,7 +270,6 @@ export const useS3Upload = (workingCase: Case) => {
     uploadPoliceCaseFile,
     addFileToCase,
     handleS3Upload,
-    handleRemoveFromS3,
     handleRetry,
   }
 }

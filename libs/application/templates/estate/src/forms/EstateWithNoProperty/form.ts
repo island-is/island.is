@@ -3,7 +3,6 @@ import {
   buildDescriptionField,
   buildDividerField,
   buildForm,
-  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -12,7 +11,7 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
-import { NO, YES } from '../../lib/constants'
+import { YES } from '../../lib/constants'
 import { estateMembersFields } from './externalDataFields/estateMembersFields'
 import { propertiesFields } from './externalDataFields/propertiesFields'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
@@ -20,7 +19,7 @@ import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 export const form: Form = buildForm({
   id: 'estateWithoutProperty',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
@@ -52,8 +51,8 @@ export const form: Form = buildForm({
               id: 'acceptDebts',
               title: '',
               defaultValue: [],
-              backgroundColor: 'white',
-              large: false,
+              backgroundColor: 'blue',
+              large: true,
               options: [
                 {
                   label: m.acceptDebtsLabel,
@@ -106,11 +105,6 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             ...propertiesFields,
-            buildKeyValueField({
-              label: m.acceptDebtsLabel,
-              value: ({ answers: { acceptDebts } }) =>
-                (acceptDebts as string[]).includes(YES) ? YES : NO,
-            }),
             buildSubmitField({
               id: 'estateWithNoProperty.submit',
               title: '',

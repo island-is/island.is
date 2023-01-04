@@ -21,12 +21,11 @@ import {
   TableGrid,
   formatDate,
   ErrorScreen,
+  ExcludesFalse,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
 import chunk from 'lodash/chunk'
-
-type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 export const GET_USERS_VEHICLES_SEARCH_LIMIT = gql`
   query GetUsersVehiclesSearchLimit {

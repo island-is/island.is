@@ -27,7 +27,10 @@ import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import BottomBar from '../../components/BottomBar'
 import { GREATER } from '../../lib/constants'
 import { CapitalNumberOverview } from '../Shared/CapitalNumberOverview'
-import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
+import {
+  starterColumnStyle,
+  sectionColumn,
+} from '../Shared/styles/overviewStyles.css'
 
 export const Overview = ({
   application,
@@ -40,6 +43,7 @@ export const Overview = ({
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
+
   const [
     submitApplication,
     { error: submitError, loading },
@@ -79,22 +83,17 @@ export const Overview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersIncomeAndExpenses)}
+            {formatMessage(m.expensesIncome)}
           </Text>
         </Box>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
+        <GridRow direction="row">
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.income)}
               </Text>
             </Box>
-            <ValueLine
-              label={m.candidatesOwnContributions}
-              value={formatCurrency(
-                answers.individualIncome?.candidatesOwnContributions,
-              )}
-            />
+
             <ValueLine
               label={m.contributionsFromLegalEntities}
               value={formatCurrency(
@@ -108,6 +107,12 @@ export const Overview = ({
               )}
             />
             <ValueLine
+              label={m.candidatesOwnContributions}
+              value={formatCurrency(
+                answers.individualIncome?.candidatesOwnContributions,
+              )}
+            />
+            <ValueLine
               label={m.otherIncome}
               value={formatCurrency(answers.individualIncome?.otherIncome)}
             />
@@ -117,7 +122,7 @@ export const Overview = ({
               isTotal
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.expenses)}
@@ -155,7 +160,7 @@ export const Overview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersDebt)}
+            {formatMessage(m.propertiesAndDebts)}
           </Text>
         </Box>
         <AssetDebtEquityOverview answers={answers} />

@@ -26,7 +26,7 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/general-petition/src/lib/messages.ts'"
       }
     },
-    "dev/init": {
+    "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [

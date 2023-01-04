@@ -27,6 +27,7 @@ import {
   paymentPlan,
   betaTest,
 } from '../lib/messages'
+import { isApplicantPerson } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
 import {
   PaymentPlanBuildIndex,
@@ -67,7 +68,7 @@ const buildPaymentPlanSteps = (): CustomField[] =>
 export const PaymentPlanForm: Form = buildForm({
   id: 'PaymentPlanForm',
   title: application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   logo: Logo,
   children: [
     // TODO remove section on official release
@@ -155,16 +156,20 @@ export const PaymentPlanForm: Form = buildForm({
           ],
         }),
       ],
-      condition: (_formValue, externalData) => {
+      condition: (formValue, externalData) => {
         const debts = (externalData as PaymentPlanExternalData)
           ?.paymentPlanPrerequisites?.data?.debts
 
-        return debts?.find((x) => x.type === 'Wagedection') !== undefined
+        return (
+          isApplicantPerson(formValue) &&
+          debts?.find((x) => x.type === 'Wagedection') !== undefined
+        )
       },
     }),
     buildSection({
       id: 'disposableIncomeSection',
       title: section.disposableIncome,
+      condition: isApplicantPerson,
       children: [
         buildCustomField({
           id: 'disposableIncome',

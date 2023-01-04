@@ -7,11 +7,11 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import './auth'
 import environment from './environments/environment'
-import App from './app/App'
+import { App } from './app/App'
 
 if (!isRunningOnEnvironment('local')) {
   userMonitoring.initDdRum({
-    service: 'service-portal',
+    service: 'admin-portal',
     applicationId: environment.DD_RUM_APPLICATION_ID,
     clientToken: environment.DD_RUM_CLIENT_TOKEN,
     env: environment.ENVIRONMENT,

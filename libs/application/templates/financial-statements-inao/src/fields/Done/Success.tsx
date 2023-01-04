@@ -22,7 +22,7 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
     const currentDate = format(new Date(), "dd.MM.yyyy 'kl.' kk:mm")
     if (userType === FSIUSERTYPE.INDIVIDUAL) {
       return `${formatMessage(m.individualReceivedMsgFirst)} ${
-        applicationAnswers.election.electionName
+        applicationAnswers.election.genitiveName
       }
       ${formatMessage(m.individualReceivedMsgSecond)} ${currentDate}`
     } else {

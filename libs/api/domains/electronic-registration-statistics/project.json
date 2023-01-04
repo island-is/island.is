@@ -2,9 +2,9 @@
   "root": "libs/api/domains/electronic-registration-statistics",
   "sourceRoot": "libs/api/domains/electronic-registration-statistics/src",
   "projectType": "library",
-  "architect": {
+  "targets": {
     "lint": {
-      "builder": "@nrwl/linter:eslint",
+      "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,7 +13,7 @@
       }
     },
     "test": {
-      "builder": "@nrwl/jest:jest",
+      "executor": "@nrwl/jest:jest",
       "outputs": [
         "coverage/libs/api/domains/electronic-registration-statistics"
       ],

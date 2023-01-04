@@ -55,14 +55,9 @@ export const transportsModule: ServicePortalModule = {
     {
       name: m.vehiclesLookup,
       path: ServicePortalPath.TransportVehiclesLookup,
-      enabled: userInfo.scopes.includes(ApiScope.vehicles),
-      key: 'VehicleLookup',
-      render: () => lazy(() => import('./screens/Lookup/Lookup')),
-    },
-    {
-      name: 'Loftbrú',
-      path: ServicePortalPath.TransportLowerAirfare,
-      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.internalProcuring),
       key: 'VehicleLookup',
       render: () => lazy(() => import('./screens/Lookup/Lookup')),
     },

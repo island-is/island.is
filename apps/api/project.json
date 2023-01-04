@@ -69,7 +69,7 @@
         "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
       }
     },
-    "dev/init": {
+    "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": ["yarn get-secrets api"],

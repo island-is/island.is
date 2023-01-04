@@ -1899,6 +1899,9 @@ export interface INewsFields {
 
   /** Generic tags */
   genericTags?: IGenericTag[] | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2210,13 +2213,14 @@ export interface IOrganizationPageFields {
   slices?:
     | (
         | IAccordionSlice
+        | ILifeEventPageListSlice
         | IBigBulletList
         | IDistricts
         | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
         | IFeaturedArticles
         | ISectionHeading
-        | ILifeEventPageListSlice
         | ILogoListSlice
         | IMultipleStatistics
         | IOneColumnText
@@ -2464,6 +2468,15 @@ export interface IPowerBiSliceFields {
 
   /** Config */
   config: Record<string, any>
+
+  /** Workspace ID */
+  workSpaceId?: string | undefined
+
+  /** Report ID */
+  reportId?: string | undefined
+
+  /** Owner */
+  owner?: 'Fiskistofa' | undefined
 }
 
 /** A Slice that embeds a Power BI report */
@@ -2494,6 +2507,7 @@ export interface IProcessEntryFields {
     | 'Leyfisveitingagatt'
     | 'Drop and sign'
     | 'Paper'
+    | 'Ísland.is mínar síður'
 
   /** Process title */
   processTitle: string
@@ -2542,7 +2556,7 @@ export interface IProjectPageFields {
     | 'election'
     | 'ukraine'
     | 'opinbernyskopun'
-    | 'maelabord-fiskistofu'
+    | 'gagnasidur-fiskistofu'
 
   /** Sidebar */
   sidebar: boolean

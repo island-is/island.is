@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Hidden } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 
+type UserMenuProps = {
+  fullscreen?: boolean
+  small?: boolean
+  showDropdownLanguage?: boolean
+  setUserMenuOpen?(state: boolean): void
+  userMenuOpen?: boolean
+  iconOnlyMobile?: boolean
+  showLanguageSwitcher?: boolean
+}
+
 export const UserMenu = ({
-  fullscreen = false,
+  fullscreen = true,
   showDropdownLanguage = false,
   userMenuOpen,
   small = false,
   setUserMenuOpen,
-}: {
-  fullscreen?: boolean
-  small?: boolean
-  showDropdownLanguage?: boolean
-  setUserMenuOpen?: (state: boolean) => void
-  userMenuOpen?: boolean
-}) => {
+  showLanguageSwitcher = true,
+  iconOnlyMobile = false,
+}: UserMenuProps) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
@@ -42,8 +48,17 @@ export const UserMenu = ({
 
   return (
     <Box display="flex" position="relative" height="full">
-      {/* <UserLanguageSwitcher user={user} /> */}
-      <UserButton user={user} onClick={handleClick} small={small} />
+      {showLanguageSwitcher && (
+        <Hidden below="md">
+          <UserLanguageSwitcher user={user} />
+        </Hidden>
+      )}
+      <UserButton
+        user={user}
+        onClick={handleClick}
+        small={small}
+        iconOnlyMobile={iconOnlyMobile}
+      />
       <UserDropdown
         user={user}
         dropdownState={dropdownState}

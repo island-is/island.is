@@ -94,6 +94,7 @@ describe('DrivingLicenseSubmissionService', () => {
       const res = await drivingLicenseSubmissionService.submitApplication({
         application,
         auth: user,
+        currentUserLocale: 'is',
       })
 
       expect(res).toEqual({

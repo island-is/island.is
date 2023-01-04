@@ -17,7 +17,7 @@ export class DigitalTachographCompanyCardService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        [ChargeItemCode.TRANSPORT_AUTHORITY_XXX],
       )
       return result
     } catch (exeption) {

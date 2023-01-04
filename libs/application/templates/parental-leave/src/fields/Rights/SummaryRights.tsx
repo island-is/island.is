@@ -10,9 +10,10 @@ import {
   getAvailablePersonalRightsInMonths,
   getAvailablePersonalRightsSingleParentInMonths,
   getAvailableRightsInMonths,
+  getMultipleBirthsDays,
 } from '../../lib/parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
-import { SINGLE, YES } from '../../constants'
+import { SINGLE, YES, NO } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface SummaryRightsProps {
@@ -25,11 +26,13 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
   const { formatMessage } = useLocale()
   const {
     isRequestingRights,
+    isRequestingRightsSecondary,
     requestDays,
     isGivingRights,
     giveDays,
     otherParent,
   } = useApplicationAnswers(application)
+  const hasSelectedOtherParent = otherParent !== NO && otherParent !== SINGLE
   const personalMonths =
     otherParent !== SINGLE
       ? getAvailablePersonalRightsInMonths(application)
@@ -37,6 +40,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
   const total = round(getAvailableRightsInMonths(application))
   const requested = daysToMonths(requestDays)
   const given = daysToMonths(Math.abs(giveDays))
+  const common = daysToMonths(getMultipleBirthsDays(application))
 
   return (
     <DataValue
@@ -57,34 +61,68 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               )}
             </Text>
 
-            {isRequestingRights === YES && requestDays > 0 && (
+            {common > 0 && otherParent === SINGLE && (
               <>
                 {', '}
                 <Text as="span">
                   {formatMessage(
                     parentalLeaveFormMessages.reviewScreen
-                      .rightsAllowanceRequested,
+                      .rightsSingleParentMultipleBirths,
                     {
-                      requested: round(requested),
+                      common: round(common),
                     },
                   )}
                 </Text>
               </>
             )}
 
-            {isGivingRights === YES && giveDays !== 0 && (
+            {common > 0 && otherParent !== SINGLE && (
               <>
                 {', '}
                 <Text as="span">
                   {formatMessage(
-                    parentalLeaveFormMessages.reviewScreen.rightsAllowanceGiven,
+                    parentalLeaveFormMessages.reviewScreen.rightsMultipleBirths,
                     {
-                      given: round(given),
+                      common: round(common),
                     },
                   )}
                 </Text>
               </>
             )}
+
+            {hasSelectedOtherParent &&
+              (isRequestingRights === YES || isRequestingRightsSecondary) &&
+              requestDays > 0 && (
+                <>
+                  {', '}
+                  <Text as="span">
+                    {formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .rightsAllowanceRequested,
+                      {
+                        requested: round(requested),
+                      },
+                    )}
+                  </Text>
+                </>
+              )}
+
+            {hasSelectedOtherParent &&
+              isGivingRights === YES &&
+              giveDays !== 0 && (
+                <>
+                  {', '}
+                  <Text as="span">
+                    {formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .rightsAllowanceGiven,
+                      {
+                        given: round(given),
+                      },
+                    )}
+                  </Text>
+                </>
+              )}
           </Box>
         </Box>
       }

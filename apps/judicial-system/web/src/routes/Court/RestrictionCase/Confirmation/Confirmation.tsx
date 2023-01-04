@@ -15,6 +15,7 @@ import {
   FormContext,
   useRequestRulingSignature,
   SigningModal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
@@ -26,7 +27,6 @@ import {
   completedCaseStates,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'

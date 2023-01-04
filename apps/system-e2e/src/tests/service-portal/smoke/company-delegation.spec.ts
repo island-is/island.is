@@ -27,7 +27,7 @@ test.describe('Service portal', () => {
     // Arrange
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
+    await page.goto('/minarsidur?locale=is')
 
     // Act
     await page.locator('data-testid=user-menu >> visible=true').click()
@@ -39,7 +39,7 @@ test.describe('Service portal', () => {
       .textContent()
     expect(companyName).toBeTruthy()
     await firstCompany.click()
-    await page.waitForURL(homeUrl, {
+    await page.waitForURL(new RegExp(homeUrl), {
       waitUntil: 'domcontentloaded',
     })
 
