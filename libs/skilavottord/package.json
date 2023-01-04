@@ -2,7 +2,7 @@
   "name": "skilavottord",
   "packageManager": "yarn@3.2.3",
   "dependencies": {
-    "@nestjs/common": "^9.2.1",
+    "@nestjs/common": "8.4.4",
     "dependencies": "^0.0.1"
   }
 }

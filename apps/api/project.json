@@ -12,7 +12,8 @@
         "main": "apps/api/src/main.ts",
         "tsConfig": "apps/api/tsconfig.app.json",
         "showCircularDependencies": false,
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "generatePackageJson": true
       },
       "configurations": {
         "production": {
@@ -26,6 +27,7 @@
     "serve": {
       "executor": "@nrwl/node:node",
       "options": {
+        "generatePackageJson": true,
         "buildTarget": "api:build"
       }
     },

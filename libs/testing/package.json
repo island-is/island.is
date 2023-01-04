@@ -2,15 +2,15 @@
   "name": "testing",
   "packageManager": "yarn@3.2.3",
   "dependencies": {
-    "@nestjs/bull": "^0.6.2",
-    "@nestjs/common": "^9.2.1",
-    "@nestjs/testing": "^9.2.1",
-    "dependencies": "^0.0.1",
-    "faker": "^6.6.6",
-    "kennitala": "^2.0.0-beta.1",
+    "@nestjs/bull": "0.1.2",
+    "@nestjs/common": "8.4.4",
+    "@nestjs/testing": "8.4.4",
+    
+    "faker": "5.5.3",
+    "kennitala": "2.0.0-beta.2",
     "supertest": "^6.3.3",
-    "testcontainers": "^9.1.1",
-    "xstate": "^4.35.1",
-    "zod": "^3.20.2"
+    "testcontainers": "7.23.2",,
+    "xstate": "4.20.0",
+    "zod": "3.19.1"
   }
 }

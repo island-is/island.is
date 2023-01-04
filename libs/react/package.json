@@ -2,8 +2,7 @@
   "name": "react",
   "packageManager": "yarn@3.2.3",
   "dependencies": {
-    "@nrwl/eslint-plugin-nx": "^15.4.2",
-    "dependencies": "^0.0.1",
-    "react": "^18.2.0"
+    "@nrwl/eslint-plugin-nx": "13.10.5",
+    "react": "17.0.2"
   }
 }
