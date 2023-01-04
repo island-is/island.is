@@ -1,15 +1,22 @@
-import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { VehiclesCurrentVehicleWithDebtStatus } from '@island.is/api/schema'
-import { information } from '../../lib/messages'
+import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
+import { VehiclesCurrentVehicle } from '../../types'
+import { information, applicationCheck } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
-import { GET_CURRENT_VEHICLES_WITH_DEBT_STATUS } from '../../graphql/queries'
+import { GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { VehiclesCurrentVehicle } from '../../types'
 
 interface Option {
   value: string
@@ -38,13 +45,13 @@ export const VehicleRadioField: FC<
 
   const { data, loading } = useQuery(
     gql`
-      ${GET_CURRENT_VEHICLES_WITH_DEBT_STATUS}
+      ${GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS}
     `,
     {
       variables: {
         input: {
           showOwned: true,
-          showCoowned: false,
+          showCoOwned: false,
           showOperated: false,
         },
       },
@@ -57,15 +64,20 @@ export const VehicleRadioField: FC<
     setColor(currentVehicle.color || undefined)
   }
 
-  const vehicleOptions = (vehicles: VehiclesCurrentVehicleWithDebtStatus[]) => {
+  const vehicleOptions = (
+    vehicles: VehiclesCurrentVehicleWithOwnerchangeChecks[],
+  ) => {
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      const disabled = !!vehicle.isStolen || !vehicle.isDebtLess
+      const disabled =
+        !vehicle.isDebtLess ||
+        !!vehicle.updatelocks?.length ||
+        !!vehicle.ownerChangeErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+          <Box display="flex" flexDirection="column">
             <Box>
               <Text variant="default" color={disabled ? 'dark200' : 'dark400'}>
                 {vehicle.make}
@@ -74,22 +86,64 @@ export const VehicleRadioField: FC<
                 {vehicle.color} - {vehicle.permno}
               </Text>
             </Box>
-            <Box display="flex" flexDirection="row" wrap="wrap">
-              {vehicle.isStolen && (
-                <Tag variant="red">
-                  {formatMessage(information.labels.pickVehicle.isStolenTag)}
-                </Tag>
-              )}
-              {!vehicle.isDebtLess && (
-                <Box paddingLeft={2}>
-                  <Tag variant="red">
-                    {formatMessage(
-                      information.labels.pickVehicle.isNotDebtLessTag,
-                    )}
-                  </Tag>
-                </Box>
-              )}
-            </Box>
+            {disabled && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="error"
+                  title={formatMessage(
+                    information.labels.pickVehicle.hasErrorTitle,
+                  )}
+                  message={
+                    <Box>
+                      <BulletList>
+                        {!vehicle.isDebtLess && (
+                          <Bullet>
+                            {formatMessage(
+                              information.labels.pickVehicle.isNotDebtLessTag,
+                            )}
+                          </Bullet>
+                        )}
+                        {!!vehicle.updatelocks?.length &&
+                          vehicle.updatelocks?.map((lock) => {
+                            const message = formatMessage(
+                              getValueViaPath(
+                                applicationCheck.locks,
+                                lock.lockNo || '',
+                              ),
+                            )
+                            const fallbackMessage =
+                              formatMessage(applicationCheck.locks['0']) +
+                              ' - ' +
+                              lock.lockNo
+
+                            return <Bullet>{message || fallbackMessage}</Bullet>
+                          })}
+                        {!!vehicle.ownerChangeErrorMessages?.length &&
+                          vehicle.ownerChangeErrorMessages?.map((error) => {
+                            const message = formatMessage(
+                              getValueViaPath(
+                                applicationCheck.validation,
+                                error.errorNo || '',
+                              ),
+                            )
+                            const defaultMessage = error.defaultMessage
+                            const fallbackMessage =
+                              formatMessage(applicationCheck.validation['0']) +
+                              ' - ' +
+                              error.errorNo
+
+                            return (
+                              <Bullet>
+                                {message || defaultMessage || fallbackMessage}
+                              </Bullet>
+                            )
+                          })}
+                      </BulletList>
+                    </Box>
+                  }
+                />
+              </Box>
+            )}
           </Box>
         ),
         disabled: disabled,
@@ -114,7 +168,7 @@ export const VehicleRadioField: FC<
           backgroundColor="blue"
           onSelect={onRadioControllerSelect}
           options={vehicleOptions(
-            data.currentVehiclesWithDebtStatus as VehiclesCurrentVehicleWithDebtStatus[],
+            data.currentVehiclesWithOwnerchangeChecks as VehiclesCurrentVehicleWithOwnerchangeChecks[],
           )}
         />
       )}

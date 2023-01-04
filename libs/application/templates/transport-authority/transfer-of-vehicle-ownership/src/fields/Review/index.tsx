@@ -15,7 +15,7 @@ export const Review: FC<FieldBaseProps> = (props) => {
   const { userInfo } = useAuth()
   const [step, setStep] = useState<ReviewState>('states')
   const [insurance, setInsurance] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'insurance.name', undefined),
+    getValueViaPath(application.answers, 'insurance.value', undefined),
   )
   const [coOwnersAndOperators, setCoOwnersAndOperators] = useState<
     ReviewCoOwnerAndOperatorField[]

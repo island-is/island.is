@@ -21,6 +21,7 @@ import {
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { CurrentLicenseParameters } from '@island.is/application/types'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -104,7 +105,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async currentLicense({
     auth,
     application,
-  }: TemplateApiModuleActionProps): Promise<DrivingLicense> {
+    params,
+  }: TemplateApiModuleActionProps<CurrentLicenseParameters>): Promise<DrivingLicense> {
     const fakeData = getValueViaPath<DrivingLicenseFakeData>(
       application.answers,
       'fakeData',
@@ -118,15 +120,38 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
             : undefined,
       }
     }
+
     const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
       nationalId: auth.nationalId,
     })
+
     const categoryB = (drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )
+
+    // Validate that user has the necessary categories
+    if (
+      params?.validCategories &&
+      (!drivingLicense?.categories ||
+        !drivingLicense.categories.some((x) =>
+          params.validCategories?.includes(x.name),
+        ))
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.drivingLicenseMissingValidCategory,
+          summary: coreErrorMessages.drivingLicenseMissingValidCategory,
+        },
+        400,
+      )
+    }
+
     return {
       currentLicense: categoryB ? categoryB.name : null,
       healthRemarks: drivingLicense?.healthRemarks,
+      categories: drivingLicense?.categories,
+      id: drivingLicense?.id,
+      birthCountry: drivingLicense?.birthCountry,
     }
   }
 
