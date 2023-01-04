@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class OwnerChangeValidationMessage {
-  @Field(() => Number, { nullable: true })
-  errorNo?: number | null
+  @Field(() => String, { nullable: true })
+  errorNo?: string | null
 
   @Field(() => String, { nullable: true })
   defaultMessage?: string | null
