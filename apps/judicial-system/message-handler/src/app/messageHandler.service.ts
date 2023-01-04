@@ -13,7 +13,6 @@ import {
 import type { CaseMessage } from '@island.is/judicial-system/message'
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { CaseDeliveryService } from './caseDelivery.service'
 import { InternalDeliveryService } from './internalDelivery.service'
 import { appModuleConfig } from './app.config'
 
@@ -24,7 +23,6 @@ export class MessageHandlerService implements OnModuleDestroy {
 
   constructor(
     private readonly messageService: MessageService,
-    private readonly caseDeliveryService: CaseDeliveryService,
     private readonly internalDeliveryService: InternalDeliveryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
