@@ -14,3 +14,8 @@ export enum LicenseId {
   FIREARM_LICENSE = 'FirearmLicense',
   DISABILITY_LICENSE = 'DisabilityLicense',
 }
+
+export const CLIENT_FACTORY = 'client-factory'
+
+export const DISABILITY_API = 'disability-api'
+export const FIREARM_API = 'firearm-api'
