@@ -187,7 +187,7 @@ const PoliceDemands: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_THREE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_DEMANDS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
