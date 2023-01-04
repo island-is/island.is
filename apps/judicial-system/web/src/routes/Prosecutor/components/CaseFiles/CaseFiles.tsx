@@ -46,7 +46,6 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  CaseFile,
   CaseFileState,
   CaseOrigin,
   isRestrictionCase,
@@ -230,9 +229,9 @@ export const CaseFiles: React.FC = () => {
 
     filesToUpload.forEach(async (f, index) => {
       const { key, size } = await uploadPoliceCaseFile(f.id, f.name)
-      const id = uuid()
+
       const fileToUpload = {
-        id,
+        id: f.id,
         type: 'application/pdf',
         name: f.name,
         status: 'done',
@@ -241,7 +240,7 @@ export const CaseFiles: React.FC = () => {
         size,
       } as UploadFile
 
-      await addFileToCase(fileToUpload, () => setSingleFile(fileToUpload, id))
+      await addFileToCase(fileToUpload, () => setSingleFile(fileToUpload, f.id))
 
       setFilesInRVG([fileToUpload, ...filesInRVG])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
@@ -268,10 +267,18 @@ export const CaseFiles: React.FC = () => {
             throw new Error(`Failed to delete file: ${file.id}`)
           }
           if (policeCaseFiles?.files.some((f) => f.name === file.name)) {
-            setPoliceCaseFileList((previous) => [
-              mapPoliceCaseFileToPoliceCaseFileCheck(file as PoliceCaseFile),
-              ...previous,
-            ])
+            const policeCaseFile = policeCaseFiles.files.find(
+              (f) => f.name === file.name,
+            )
+
+            if (!policeCaseFile) {
+              return
+            } else {
+              setPoliceCaseFileList((previous) => [
+                mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+                ...previous,
+              ])
+            }
           }
 
           setFilesInRVG((previous) => previous.filter((f) => f.id !== file.id))
