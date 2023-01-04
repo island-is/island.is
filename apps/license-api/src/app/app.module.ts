@@ -8,6 +8,7 @@ import { LicenseModule } from './modules/license/license.module'
 import { LoggingModule } from '@island.is/logging'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { FirearmLicenseClientConfig } from './modules/license'
+import { DisabilityLicenseClientConfig } from './modules/license/clients/disabilityLicense/disabilityLicenseClient.config'
 
 @Module({
   imports: [
@@ -16,7 +17,11 @@ import { FirearmLicenseClientConfig } from './modules/license'
     LoggingModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, FirearmLicenseClientConfig],
+      load: [
+        XRoadConfig,
+        FirearmLicenseClientConfig,
+        DisabilityLicenseClientConfig,
+      ],
     }),
     LicenseModule,
   ],

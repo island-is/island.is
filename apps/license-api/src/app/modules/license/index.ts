@@ -1,1 +1,2 @@
-export { FirearmLicenseClientConfig } from './config/firearmLicenseClient.config'
+export { FirearmLicenseClientConfig } from './clients/firearmLicense/firearmLicenseClient.config'
+export { DisabilityLicenseClientConfig } from './clients/disabilityLicense/disabilityLicenseClient.config'
