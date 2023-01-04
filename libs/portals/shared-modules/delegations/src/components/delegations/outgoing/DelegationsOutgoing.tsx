@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import sortBy from 'lodash/sortBy'
 import {
   SkeletonLoader,
@@ -34,44 +34,21 @@ export const DelegationsOutgoing = () => {
     setDelegation,
   ] = useState<AuthCustomDelegationOutgoing | null>(null)
   const { name: domainName } = useDomains()
-  const [queryOptions, setQueryOptions] = useState({
-    skip: !domainName || !lang,
-    lang,
-    domainName,
-  })
 
   const { data, loading, refetch, error } = useAuthDelegationsOutgoingQuery({
     variables: {
       lang,
       input: {
-        domain: prepareDomainName(queryOptions.domainName),
+        domain: prepareDomainName(domainName),
         direction: AuthDelegationDirection.outgoing,
       },
     },
-    // We need to skip the query if
-    // 1. the domainName or lang is not defined
-    // 2. or these options have not changed.
-    skip: queryOptions.skip,
+    skip: !domainName || !lang,
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })
-
-  useEffect(() => {
-    // We want to make sure that the useAuthDelegationsOutgoingQuery is not executed multiple times.
-    // There fore we keep state of the query options and only execute the query if
-    // 1. domainName or lang has changed
-    // 2. Component is remounted
-    // 3. Query refetch is called.
-    if (queryOptions.domainName !== domainName || queryOptions.lang !== lang) {
-      setQueryOptions({
-        skip: false,
-        lang,
-        domainName,
-      })
-    }
-  }, [domainName, lang, queryOptions.domainName, queryOptions.lang])
 
   const delegations = useMemo(
     () =>
