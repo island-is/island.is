@@ -1,58 +1,29 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ChargeItemCode } from '@island.is/shared/constants'
+import { VehicleInfolocksClient } from '@island.is/clients/transport-authority/vehicle-infolocks'
+import { AnonymityInVehicleRegistryAnswers } from '@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry'
+import { YES } from '@island.is/application/core'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class AnonymityInVehicleRegistryService {
-  constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
-
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        id,
-        SAMGONGUSTOFA_NATIONAL_ID,
-        [ChargeItemCode.TRANSPORT_AUTHORITY_XXX],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
+export class AnonymityInVehicleRegistryService extends BaseTemplateApiService {
+  constructor(private readonly vehicleInfolocksClient: VehicleInfolocksClient) {
+    super(ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY)
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const { paymentUrl } = application.externalData.createCharge.data as {
-      paymentUrl: string
-    }
-    if (!paymentUrl) {
-      return {
-        success: false,
-      }
-    }
+  async getAnonymityStatus({ auth }: TemplateApiModuleActionProps) {
+    const result = await this.vehicleInfolocksClient.getAnonymityStatus(auth)
+    return { isChecked: result?.isChecked || false }
+  }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const answers = application.answers as AnonymityInVehicleRegistryAnswers
+    const isChecked = answers.isChecked?.includes(YES) || false
 
-    if (isPayment?.fulfilled) {
-      return {
-        success: true,
-      }
-    } else {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
+    await this.vehicleInfolocksClient.setAnonymityStatus(auth, isChecked)
   }
 }

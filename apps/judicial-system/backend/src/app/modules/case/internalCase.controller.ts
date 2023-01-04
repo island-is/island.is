@@ -28,7 +28,6 @@ import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { DeliverProsecutorToCourtDto } from './dto/deliverProsecutorToCourt.dto'
 import { Case } from './models/case.model'
 import { ArchiveResponse } from './models/archive.response'
-import { DeliverCompletedCaseResponse } from './models/deliverCompletedCase.response'
 import { DeliverResponse } from './models/deliver.response'
 import { InternalCaseService } from './internalCase.service'
 
@@ -63,21 +62,6 @@ export class InternalCaseController {
     this.logger.debug('Archiving a case')
 
     return this.internalCaseService.archive()
-  }
-
-  @UseGuards(CaseExistsGuard, CaseCompletedGuard)
-  @Post('case/:caseId/deliver')
-  @ApiOkResponse({
-    type: DeliverCompletedCaseResponse,
-    description: 'Delivers a completed case to court and police',
-  })
-  deliver(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
-  ): Promise<DeliverCompletedCaseResponse> {
-    this.logger.debug(`Delivering case ${caseId} to court and police`)
-
-    return this.internalCaseService.deliver(theCase)
   }
 
   @UseGuards(CaseExistsGuard, UserExistsGuard)
@@ -178,5 +162,24 @@ export class InternalCaseController {
     this.logger.debug(`Delivering the court record for case ${caseId} to court`)
 
     return this.internalCaseService.deliverSignedRulingToCourt(theCase)
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post('case/:caseId/deliverCaseToPolice')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a completed case to police',
+  })
+  deliverCaseToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering case ${caseId} to police`)
+
+    return this.internalCaseService.deliverCaseToPolice(theCase)
   }
 }

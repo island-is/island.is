@@ -447,11 +447,20 @@
         "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
+      "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
+        "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/vehicle-infolocks": [
+        "libs/clients/transport-authority/vehicle-infolocks/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-printing": [
+        "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"

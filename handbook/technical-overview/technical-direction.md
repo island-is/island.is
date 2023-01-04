@@ -131,7 +131,7 @@ All websites and digital government services need to be accessible to all users.
 
 All solutions built for Ísland.is will be audited according to the [Commission Implementing Decision (EU) 2018/1524](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32018D1524&from=EN) (Accessibility of websites)1. The decision includes requirements to periodically test user interfaces with automatic accessibility tests and manual audits for critical interfaces. Additionally, it emphasizes an efficient reporting system where users can report accessibility issues which we address quickly and securely.
 
-You can find more information about the government's website accessibility policy from [the Government of Iceland](https://www.stjornarradid.is/verkefni/upplysingasamfelagid/opinberir-vefir/adgengisstefna/).
+You can find more information about the government's website accessibility policy from [the Government of Iceland](https://www.stjornarradid.is/um-vefinn/adgengisstefna/).
 
 Teams should test web interfaces and ensure they work on different devices and in all browsers with more than 1% usage in Iceland, according to StatCounter.
 

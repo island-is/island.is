@@ -50,10 +50,11 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
       '/v/gagnasidur-fiskistofu?selectedTab=skip',
     ) as string
 
-    const queryParams = new URLSearchParams(href.split('?')[1])
-    queryParams.append(n('shipDetailsNumberQueryParam', 'nr'), String(id))
+    const [pathname, params] = href.split('?')
 
-    return `${href}?${queryParams.toString()}`
+    const queryParams = new URLSearchParams(params)
+    queryParams.append(n('shipDetailsNumberQueryParam', 'nr'), String(id))
+    return `${pathname}?${queryParams.toString()}`
   }
 
   const [loadShips, { data, error, loading, called }] = useLazyQuery<

@@ -403,6 +403,24 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ekki fannst nein ökutæki',
     description: 'Did not find any vehicles',
   },
+  drivingLicenseMissingValidCategory: {
+    id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
+    defaultMessage:
+      'Þú ert ekki með nauðsynleg ökuréttindi til að sækja um þessa umsókn',
+    description:
+      'You do not have enough driving permission to apply for this application',
+  },
+  nationalRegistryLegalDomicileNotIceland: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',
+    defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
+    description: 'You do not have a domicile in Iceland',
+  },
+  nationalRegistryBirthplaceMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryBirthplaceMissing',
+    defaultMessage: 'Náði ekki að sækja fæðingarstað',
+    description: 'Not able to fetch birthplace',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

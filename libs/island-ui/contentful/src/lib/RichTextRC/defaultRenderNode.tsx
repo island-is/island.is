@@ -160,6 +160,15 @@ export const defaultRenderNodeObject: RenderNode = {
     <T.HeadData>{children}</T.HeadData>
   ),
   [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
+  [BLOCKS.EMBEDDED_ASSET]: (node) => {
+    const url = node?.data?.target?.fields?.file?.url
+    const title = node?.data?.target?.fields
+    return (
+      <Box marginTop={url ? 5 : 0}>
+        <img src={url} alt={title} />
+      </Box>
+    )
+  },
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),

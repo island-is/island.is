@@ -3,6 +3,7 @@ import { Op, Transaction } from 'sequelize'
 
 import {
   CaseFileCategory,
+  CaseFileState,
   CaseState,
   CaseType,
   indictmentCases,
@@ -214,6 +215,7 @@ describe('CaseController - Create court case', () => {
     const indictmentId = uuid()
     const criminalRecordId = uuid()
     const costBreakdownId = uuid()
+    const uncategorisedId = uuid()
     const theCase = {
       id: caseId,
     } as Case
@@ -222,10 +224,42 @@ describe('CaseController - Create court case', () => {
       type,
       policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
       caseFiles: [
-        { id: coverLetterId, category: CaseFileCategory.COVER_LETTER },
-        { id: indictmentId, category: CaseFileCategory.INDICTMENT },
-        { id: criminalRecordId, category: CaseFileCategory.CRIMINAL_RECORD },
-        { id: costBreakdownId, category: CaseFileCategory.COST_BREAKDOWN },
+        {
+          id: coverLetterId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.COVER_LETTER,
+        },
+        {
+          id: indictmentId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.INDICTMENT,
+        },
+        {
+          id: criminalRecordId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.CRIMINAL_RECORD,
+        },
+        {
+          id: costBreakdownId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.COST_BREAKDOWN,
+        },
+        {
+          id: uncategorisedId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.CASE_FILE,
+        },
+        {
+          id: uuid(),
+          key: uuid(),
+          state: CaseFileState.STORED_IN_COURT,
+          category: CaseFileCategory.CASE_FILE,
+        },
       ],
       courtCaseNumber,
     } as Case
@@ -273,6 +307,11 @@ describe('CaseController - Create court case', () => {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
           caseId,
           caseFileId: costBreakdownId,
+        },
+        {
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          caseId,
+          caseFileId: uncategorisedId,
         },
       ])
     })

@@ -1,20 +1,33 @@
-export const GET_CURRENT_VEHICLES_WITH_DEBT_STATUS = `
-  query GetCurrentVehiclesWithDebtStatus($input: GetCurrentVehiclesInput!) {
-    currentVehiclesWithDebtStatus(input: $input) {
+export const GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS = `
+  query GetCurrentVehiclesWithOwnerchangeChecks($input: GetCurrentVehiclesInput!) {
+    currentVehiclesWithOwnerchangeChecks(input: $input) {
       permno
       make
       color
       role
-      isStolen
       isDebtLess
+      updatelocks {
+        lockNo
+      }
+      ownerChangeErrorMessages {
+        errorNo
+        defaultMessage
+      }
     }
   } 
 `
 
-export const GET_VEHICLE_DEBT_STATUS_BY_PERMNO = `
-  query GetVehicleDebtStatusByPermno($permno: String!) {
-    vehicleDebtStatusByPermno(permno: $permno) {
+export const GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO = `
+  query GetVehicleOwnerchangeChecksByPermno($permno: String!) {
+    vehicleOwnerchangeChecksByPermno(permno: $permno) {
       isDebtLess
+      updatelocks {
+        lockNo
+      }
+      ownerChangeErrorMessages {
+        errorNo
+        defaultMessage
+      }
     }
   } 
 `
@@ -30,7 +43,6 @@ export const GET_VEHICLE_INFORMATION = `
         nationalId
         name
       }
-      isOutOfCommission
     }
   }
 `
@@ -42,4 +54,16 @@ export const IDENTITY_QUERY = `
       nationalId
     }
   }
+`
+
+export const VALIDATE_VEHICLE_OWNER_CHANGE = `
+  query GetVehicleOwnerChangeValidation($answers: OwnerChangeAnswers!) {
+    vehicleOwnerChangeValidation(answers: $answers) {
+      hasError
+      errorMessages {
+        errorNo
+        defaultMessage
+      }
+    }
+  } 
 `

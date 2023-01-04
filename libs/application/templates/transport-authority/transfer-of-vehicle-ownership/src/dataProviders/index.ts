@@ -19,7 +19,7 @@ export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
 
 interface CurrentVehiclesParameters {
   showOwned?: boolean
-  showCoowned?: boolean
+  showCoOwned?: boolean
   showOperated?: boolean
 }
 export const CurrentVehiclesApi = defineTemplateApi<CurrentVehiclesParameters>({

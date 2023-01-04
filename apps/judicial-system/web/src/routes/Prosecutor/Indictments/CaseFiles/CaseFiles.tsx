@@ -15,31 +15,58 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
-import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
+import {
+  Box,
+  InputFileUpload,
+  Text,
+  toast,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import {
+  useS3Upload,
+  useS3UploadV2,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
 
 const CaseFiles: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
-  const { formatMessage } = useIntl()
   const {
-    files,
-    handleS3Upload,
-    handleRemoveFromS3,
-    handleRetry,
-    allFilesUploaded,
-  } = useS3Upload(workingCase)
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
+  const { formatMessage } = useIntl()
+  const { files, handleS3Upload, handleRetry, allFilesUploaded } = useS3Upload(
+    workingCase,
+  )
+  const { remove } = useS3UploadV2(workingCase.id)
 
   const stepIsValid = allFilesUploaded
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
+  )
+  const handleRemove = useCallback(
+    async (file: UploadFile) => {
+      try {
+        if (file.id) {
+          await remove(file.id)
+          setWorkingCase((prev) => ({
+            ...prev,
+            caseFiles: prev.caseFiles?.filter(
+              (caseFile) => caseFile.id !== file.id,
+            ),
+          }))
+        }
+      } catch {
+        toast.error(formatMessage(errors.general))
+      }
+    },
+    [formatMessage, remove, setWorkingCase],
   )
 
   return (
@@ -76,7 +103,7 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.COVER_LETTER)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemove}
             onRetry={handleRetry}
           />
         </Box>
@@ -94,7 +121,7 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.INDICTMENT)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemove}
             onRetry={handleRetry}
           />
         </Box>
@@ -111,7 +138,7 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.CRIMINAL_RECORD)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemove}
             onRetry={handleRetry}
           />
         </Box>
@@ -128,7 +155,7 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.COST_BREAKDOWN)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemove}
             onRetry={handleRetry}
           />
         </Box>
@@ -147,7 +174,7 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.CASE_FILE)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemove}
             onRetry={handleRetry}
           />
         </Box>
