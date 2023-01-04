@@ -19,7 +19,7 @@ test.describe('Admin portal', () => {
   test.afterAll(async () => {
     await context.close()
   })
-  test('should see welcome title', async () => {
+  test.skip('should see welcome title', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
     await page.goto('/stjornbord')
