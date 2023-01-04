@@ -242,9 +242,7 @@ export const overview = buildSection({
                   )}`,
                   `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
                   `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
-                  `${m.stocksValue.defaultMessage}: ${formatCurrency(
-                    stock.value,
-                  )}`,
+                  `${m.stocksValue.defaultMessage}: ${stock.value}`,
                 ],
               })),
           },
