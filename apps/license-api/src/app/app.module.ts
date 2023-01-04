@@ -1,21 +1,24 @@
 import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
 
 import { environment } from '../environments'
-import { ResourceModule } from './modules/resource/resource.module'
-import { SequelizeConfigService } from './sequelizeConfig.service'
+import { LicenseModule } from './modules/license/license.module'
+import { LoggingModule } from '@island.is/logging'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { FirearmLicenseClientConfig } from './modules/license'
 
 @Module({
   imports: [
     AuthModule.register(environment.auth),
     AuditModule.forRoot(environment.audit),
-    SequelizeModule.forRootAsync({
-      useClass: SequelizeConfigService,
+    LoggingModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [XRoadConfig, FirearmLicenseClientConfig],
     }),
-    ResourceModule,
+    LicenseModule,
   ],
 })
 export class AppModule {}
