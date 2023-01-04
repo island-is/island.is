@@ -1,12 +1,19 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useState } from 'react'
-import { Box, CategoryCard, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  CategoryCard,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import {
   GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithDebtStatus,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '@island.is/api/schema'
-import { information } from '../../lib/messages'
+import { information, applicationCheck } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
@@ -34,15 +41,16 @@ export const VehicleSelectField: FC<
   const [
     selectedVehicle,
     setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithDebtStatus | null>(
+  ] = useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
     currentVehicle && currentVehicle.permno
       ? {
           permno: currentVehicle.permno,
           make: currentVehicle?.make || '',
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
-          isStolen: currentVehicle?.isStolen,
           isDebtLess: true,
+          updatelocks: [],
+          ownerChangeErrorMessages: [],
         }
       : null,
   )
@@ -70,15 +78,20 @@ export const VehicleSelectField: FC<
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            isStolen: currentVehicle?.isStolen,
-            isDebtLess: response?.vehicleDebtStatusByPermno?.isDebtLess,
+            isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
+            updatelocks:
+              response?.vehicleOwnerchangeChecksByPermno?.updatelocks,
+            ownerChangeErrorMessages:
+              response?.vehicleOwnerchangeChecksByPermno
+                ?.ownerChangeErrorMessages,
           })
-          setPlate(
-            !!currentVehicle?.isStolen ||
-              !response?.vehicleDebtStatusByPermno?.isDebtLess
-              ? ''
-              : currentVehicle.permno || '',
-          )
+
+          const disabled =
+            !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
+            !!response?.vehicleOwnerchangeChecksByPermno?.updatelocks?.length ||
+            !!response?.vehicleOwnerchangeChecksByPermno
+              ?.ownerChangeErrorMessages?.length
+          setPlate(disabled ? '' : currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
           setIsLoading(false)
         })
@@ -95,6 +108,12 @@ export const VehicleSelectField: FC<
     },
     [getVehicleDetails],
   )
+
+  const disabled =
+    selectedVehicle &&
+    (!selectedVehicle.isDebtLess ||
+      !!selectedVehicle.updatelocks?.length ||
+      !!selectedVehicle.ownerChangeErrorMessages?.length)
 
   return (
     <Box>
@@ -119,46 +138,72 @@ export const VehicleSelectField: FC<
           <Box>
             {selectedVehicle && (
               <CategoryCard
-                colorScheme={
-                  !!selectedVehicle.isStolen || !selectedVehicle.isDebtLess
-                    ? 'red'
-                    : 'blue'
-                }
+                colorScheme={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
-                tags={
-                  selectedVehicle.isStolen
-                    ? !selectedVehicle.isDebtLess
-                      ? [
-                          {
-                            label: formatMessage(
-                              information.labels.pickVehicle.isStolenTag,
-                            ),
-                          },
-                          {
-                            label: formatMessage(
-                              information.labels.pickVehicle.isNotDebtLessTag,
-                            ),
-                          },
-                        ]
-                      : [
-                          {
-                            label: formatMessage(
-                              information.labels.pickVehicle.isStolenTag,
-                            ),
-                          },
-                        ]
-                    : !selectedVehicle.isDebtLess
-                    ? [
-                        {
-                          label: formatMessage(
-                            information.labels.pickVehicle.isNotDebtLessTag,
-                          ),
-                        },
-                      ]
-                    : []
-                }
               />
+            )}
+            {selectedVehicle && disabled && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="error"
+                  title={formatMessage(
+                    information.labels.pickVehicle.hasErrorTitle,
+                  )}
+                  message={
+                    <Box>
+                      <BulletList>
+                        {!selectedVehicle.isDebtLess && (
+                          <Bullet>
+                            {formatMessage(
+                              information.labels.pickVehicle.isNotDebtLessTag,
+                            )}
+                          </Bullet>
+                        )}
+                        {!!selectedVehicle.updatelocks?.length &&
+                          selectedVehicle.updatelocks?.map((lock) => {
+                            const message = formatMessage(
+                              getValueViaPath(
+                                applicationCheck.locks,
+                                lock.lockNo || '',
+                              ),
+                            )
+                            const fallbackMessage =
+                              formatMessage(applicationCheck.locks['0']) +
+                              ' - ' +
+                              lock.lockNo
+
+                            return <Bullet>{message || fallbackMessage}</Bullet>
+                          })}
+                        {!!selectedVehicle.ownerChangeErrorMessages?.length &&
+                          selectedVehicle.ownerChangeErrorMessages?.map(
+                            (error) => {
+                              const message = formatMessage(
+                                getValueViaPath(
+                                  applicationCheck.validation,
+                                  error.errorNo || '',
+                                ),
+                              )
+                              const defaultMessage = error.defaultMessage
+                              const fallbackMessage =
+                                formatMessage(
+                                  applicationCheck.validation['0'],
+                                ) +
+                                ' - ' +
+                                error.errorNo
+
+                              return (
+                                <Bullet>
+                                  {message || defaultMessage || fallbackMessage}
+                                </Bullet>
+                              )
+                            },
+                          )}
+                      </BulletList>
+                    </Box>
+                  }
+                />
+              </Box>
             )}
           </Box>
         )}
