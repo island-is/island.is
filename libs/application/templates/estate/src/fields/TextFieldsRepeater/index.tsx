@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -8,7 +8,6 @@ import {
   GridRow,
   Button,
   Text,
-  Input,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
@@ -20,7 +19,6 @@ type Props = {
       fields: Array<object>
       repeaterButtonText: string
       repeaterHeaderText: string
-      calculateField: string
     }
   }
 }
@@ -36,10 +34,9 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
 
   const [rateOfExchange, setRateOfExchange] = useState(0)
   const [faceValue, setFaceValue] = useState(0)
-  const [total, setTotal] = useState(0)
   const [index, setIndex] = useState('0')
 
-  const { control, setValue } = useFormContext()
+  const { setValue } = useFormContext()
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
@@ -59,9 +56,8 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
       handleAddRepeaterFields()
     }
 
-    setTotal(faceValue * rateOfExchange)
-    setValue(`${index}.value`, String(total))
-  }, [fields, faceValue, rateOfExchange, total, setValue])
+    setValue(`${index}.value`, String(faceValue * rateOfExchange))
+  }, [fields, faceValue, rateOfExchange, setValue])
 
   return (
     <Box>

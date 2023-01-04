@@ -265,7 +265,6 @@ export const form: Form = buildForm({
                     ],
                     repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
                     repeaterHeaderText: m.stocksTitle.defaultMessage,
-                    calculateField: 'value',
                   },
                 ),
               ],
