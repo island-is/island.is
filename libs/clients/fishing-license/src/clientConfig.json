@@ -44,41 +44,6 @@
         }
       }
     },
-    "/v1/umsoknir/{umsoknId}": {
-      "get": {
-        "tags": ["Umsoknir"],
-        "summary": "Sækir veiðileyfaumsókn.",
-        "parameters": [
-          {
-            "name": "umsoknId",
-            "in": "path",
-            "description": "Umsóknarauðkenni",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": { "$ref": "#/components/schemas/Umsokn" }
-              },
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Umsokn" }
-              },
-              "text/json": {
-                "schema": { "$ref": "#/components/schemas/Umsokn" }
-              }
-            }
-          },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Server Error" }
-        }
-      }
-    },
     "/v1/umsoknir": {
       "post": {
         "tags": ["Umsoknir"],
@@ -102,13 +67,13 @@
             "description": "Created",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/UmsoknResponse" }
+                "schema": { "$ref": "#/components/schemas/UmsoknCreated" }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/UmsoknResponse" }
+                "schema": { "$ref": "#/components/schemas/UmsoknCreated" }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/UmsoknResponse" }
+                "schema": { "$ref": "#/components/schemas/UmsoknCreated" }
               }
             }
           },
@@ -377,15 +342,9 @@
         },
         "additionalProperties": false
       },
-      "UmsoknResponse": {
+      "UmsoknCreated": {
         "type": "object",
-        "properties": {
-          "umsoknId": {
-            "type": "integer",
-            "description": "Umsóknarauðkenni.",
-            "format": "int32"
-          }
-        },
+        "properties": { "umsoknId": { "type": "integer", "format": "int32" } },
         "additionalProperties": false
       },
       "UmsoknarTimabil": {
