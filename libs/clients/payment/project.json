@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/clients/payment"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest"]
 }

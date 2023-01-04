@@ -27,6 +27,6 @@
       }
     }
   },
-  "tags": [],
+  "tags": ["lib:nest"],
   "implicitDependencies": ["services-auth-public-api"]
 }

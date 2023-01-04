@@ -29,6 +29,6 @@
       }
     }
   },
-  "tags": [],
+  "tags": ["lib:nest"],
   "implicitDependencies": ["services-user-profile"]
 }
