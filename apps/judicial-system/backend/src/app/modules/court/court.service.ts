@@ -209,6 +209,54 @@ export class CourtService {
       })
   }
 
+  async createCourtRecord(
+    caseId: string,
+    courtId = '',
+    courtCaseNumber = '',
+    subject: string,
+    fileName: string,
+    fileType: string,
+    content: Buffer,
+    user?: TUser,
+  ): Promise<string> {
+    return this.courtClientService
+      .uploadStream(courtId, {
+        value: content,
+        options: { filename: fileName, contentType: fileType },
+      })
+      .then((streamId) =>
+        this.courtClientService.createThingbok(courtId, {
+          caseNumber: courtCaseNumber,
+          subject,
+          fileName,
+          streamID: streamId,
+        }),
+      )
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create a court record at court',
+          {
+            caseId,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
+            courtId,
+            courtCaseNumber,
+            subject: this.mask(subject),
+            fileName: this.mask(fileName),
+            fileType,
+          },
+          reason,
+        )
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document was created successfully
+          return ''
+        }
+
+        throw reason
+      })
+  }
+
   async createCourtCase(
     user: TUser,
     caseId: string,
