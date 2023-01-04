@@ -233,6 +233,11 @@ export class CourtService {
         }),
       )
       .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document was created successfully
+          return ''
+        }
+
         this.eventService.postErrorEvent(
           'Failed to create a court record at court',
           {
@@ -247,11 +252,6 @@ export class CourtService {
           },
           reason,
         )
-
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the document was created successfully
-          return ''
-        }
 
         throw reason
       })
