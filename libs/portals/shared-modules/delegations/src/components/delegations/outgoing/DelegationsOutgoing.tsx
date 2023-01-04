@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import sortBy from 'lodash/sortBy'
-import omit from 'lodash/omit'
 import {
   SkeletonLoader,
   Stack,
@@ -36,7 +35,6 @@ export const DelegationsOutgoing = () => {
   ] = useState<AuthCustomDelegationOutgoing | null>(null)
   const { name: domainName } = useDomains()
   const [queryOptions, setQueryOptions] = useState({
-    // We need to skip the query if the domainName or lang is not defined
     skip: !domainName || !lang,
     lang,
     domainName,
@@ -50,6 +48,9 @@ export const DelegationsOutgoing = () => {
         direction: AuthDelegationDirection.outgoing,
       },
     },
+    // We need to skip the query if
+    // 1. the domainName or lang is not defined
+    // 2. or these options have not changed.
     skip: queryOptions.skip,
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
