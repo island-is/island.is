@@ -35,9 +35,6 @@ export class MessageHandlerService implements OnModuleDestroy {
     let handled = false
 
     switch (message.type) {
-      case MessageType.CASE_COMPLETED:
-        handled = await this.caseDeliveryService.deliverCase(message.caseId)
-        break
       case MessageType.DELIVER_PROSECUTOR_TO_COURT: {
         const userMessage = message as UserMessage
         handled = await this.internalDeliveryService.deliver(
@@ -90,6 +87,20 @@ export class MessageHandlerService implements OnModuleDestroy {
           'deliverSignedRulingToCourt',
         )
         break
+      case MessageType.DELIVER_CASE_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'deliverCaseToPolice',
+        )
+        break
+      case MessageType.ARCHIVE_CASE_FILE: {
+        const caseFileMessage = message as CaseFileMessage
+        handled = await this.internalDeliveryService.deliver(
+          caseFileMessage.caseId,
+          `file/${caseFileMessage.caseFileId}/archive`,
+        )
+        break
+      }
       case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.caseId,
