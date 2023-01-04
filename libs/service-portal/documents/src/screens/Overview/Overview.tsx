@@ -15,6 +15,8 @@ import {
   ServicePortalModuleComponent,
   IntroHeader,
   EmptyState,
+  ServicePortalPath,
+  formatPlausiblePathToParams,
 } from '@island.is/service-portal/core'
 import {
   DocumentCategory,
@@ -30,7 +32,6 @@ import { messages } from '../../utils/messages'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
-import * as Sentry from '@sentry/react'
 import differenceInYears from 'date-fns/differenceInYears'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilter'
 import debounce from 'lodash/debounce'
@@ -41,6 +42,7 @@ import {
 } from '../../utils/types'
 import TableHeading from '../../components/TableHeading/TableHeading'
 import * as styles from './Overview.css'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -76,9 +78,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   client,
 }) => {
   useNamespaces('sp.documents')
-  Sentry.configureScope((scope) =>
-    scope.setTransactionName('Electronic-Documents'),
-  )
 
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
@@ -160,7 +159,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     }
   }, [categoriesLoading])
 
-  const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
+  const isLegal = userInfo.profile.delegationType?.includes(
+    AuthDelegationType.LegalGuardian,
+  )
   const dateOfBirth = userInfo?.profile.dateOfBirth
   let isOver15 = false
   if (dateOfBirth) {
@@ -251,7 +252,11 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         searchQuery: e.target?.value ?? '',
       }))
       if (!searchInteractionEventSent) {
-        documentsSearchDocumentsInitialized(pathname)
+        documentsSearchDocumentsInitialized(
+          formatPlausiblePathToParams(
+            ServicePortalPath.ElectronicDocumentsRoot,
+          ),
+        )
         setSearchInteractionEventSent(true)
       }
     }
@@ -365,6 +370,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       )}
                       documentLine={doc}
                       documentCategories={categoriesAvailable}
+                      userInfo={userInfo}
                     />
                   </Box>
                 ))}

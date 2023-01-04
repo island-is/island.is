@@ -8,14 +8,11 @@ describe(CREATE_INDICTMENT_ROUTE, () => {
 
   it('should validate the form', () => {
     // Police case number
-    cy.get('#policeCaseNumbers').type('0').type('{enter}')
-    cy.getByTestid('noPoliceCaseNumbersAssignedMessage').should('exist')
-    cy.getByTestid('policeCaseNumbers-list').should('not.exist')
-    cy.get('#policeCaseNumbers').clear().blur()
+    cy.getByTestid('policeCaseNumber0').type('0').blur()
+    cy.getByTestid('inputErrorMessage').contains('Dæmi: 012-3456-7890')
+    cy.getByTestid('policeCaseNumber0').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.get('#policeCaseNumbers').type('007202201').type('{enter}')
-    cy.getByTestid('noPoliceCaseNumbersAssignedMessage').should('not.exist')
-    cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 1)
+    cy.getByTestid('policeCaseNumber0').type('007202201').blur()
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')
 

@@ -19,7 +19,13 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+  assistantRule,
+} from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -29,12 +35,14 @@ import {
 } from '../case'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './notification.service'
 import {
   judgeNotificationRule,
   prosecutorNotificationRule,
   registrarNotificationRule,
+  representativeNotificationRule,
+  assistantNotificationRule,
 } from './guards/rolesRules'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
@@ -49,8 +57,10 @@ export class NotificationController {
   @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorNotificationRule,
+    representativeNotificationRule,
     judgeNotificationRule,
     registrarNotificationRule,
+    assistantNotificationRule,
   )
   @Post('notification')
   @ApiCreatedResponse({
@@ -75,7 +85,13 @@ export class NotificationController {
   }
 
   @UseGuards(CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('notifications')
   @ApiOkResponse({
     type: Notification,

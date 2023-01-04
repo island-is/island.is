@@ -6,12 +6,13 @@ import { useFormContext } from 'react-hook-form'
 import { m } from '../../lib/messages'
 
 import { getFinancialLimit } from '../../graphql'
-import { CEMETRYOPERATIONIDS, USERTYPE } from '../../lib/constants'
+import { CEMETRYOPERATIONIDS } from '../../lib/constants'
+import { FSIUSERTYPE } from '../../types'
 
 export const CemeteryIncomeLimit = ({
   currentUserType,
 }: {
-  currentUserType?: USERTYPE
+  currentUserType?: FSIUSERTYPE
 }) => {
   const { getValues, setValue } = useFormContext()
   const { formatMessage } = useLocale()

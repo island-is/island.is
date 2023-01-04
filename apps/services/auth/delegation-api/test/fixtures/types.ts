@@ -20,8 +20,8 @@ export type CreateCustomDelegationScope = Optional<
   'validFrom' | 'validTo'
 >
 export type CreateCustomDelegation = Optional<
-  Pick<DelegationDTO, 'toNationalId' | 'fromNationalId'>,
-  'toNationalId' | 'fromNationalId'
+  Pick<DelegationDTO, 'toNationalId' | 'fromNationalId' | 'fromName'>,
+  'toNationalId' | 'fromNationalId' | 'fromName'
 > & {
   domainName: string
   scopes?: CreateCustomDelegationScope[]

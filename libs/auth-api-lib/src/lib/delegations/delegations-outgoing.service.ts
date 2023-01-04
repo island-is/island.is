@@ -27,6 +27,7 @@ import {
 import { NamesService } from './names.service'
 import { getDelegationNoActorWhereClause } from './utils/delegations'
 import { DelegationResourcesService } from '../resources/delegation-resources.service'
+import { DelegationDirection } from './types/delegationDirection'
 
 /**
  * Service class for outgoing delegations.
@@ -58,10 +59,11 @@ export class DelegationsOutgoingService {
         },
         domainName ? { domainName } : {},
         getDelegationNoActorWhereClause(user),
-        ...this.delegationResourceService.apiScopeFilter(
+        ...this.delegationResourceService.apiScopeFilter({
           user,
-          'delegationScopes->apiScope',
-        ),
+          prefix: 'delegationScopes->apiScope',
+          direction: DelegationDirection.OUTGOING,
+        }),
       ),
       include: [
         {
@@ -72,7 +74,10 @@ export class DelegationsOutgoingService {
               model: ApiScope,
               required: true,
               include: [
-                ...this.delegationResourceService.apiScopeInclude(user),
+                ...this.delegationResourceService.apiScopeInclude(
+                  user,
+                  DelegationDirection.OUTGOING,
+                ),
               ],
             },
           ],
@@ -96,11 +101,15 @@ export class DelegationsOutgoingService {
       )
     }
 
-    const delegation = await this.findOneInternal(user, {
-      fromNationalId: user.nationalId,
-      toNationalId: otherUser,
-      domainName,
-    })
+    const delegation = await this.findOneInternal(
+      user,
+      DelegationDirection.OUTGOING,
+      {
+        fromNationalId: user.nationalId,
+        toNationalId: otherUser,
+        domainName,
+      },
+    )
     return delegation ? [delegation] : []
   }
 
@@ -109,10 +118,14 @@ export class DelegationsOutgoingService {
       throw new BadRequestException('delegationId must be a valid uuid')
     }
 
-    const delegation = await this.findOneInternal(user, {
-      fromNationalId: user.nationalId,
-      id: delegationId,
-    })
+    const delegation = await this.findOneInternal(
+      user,
+      DelegationDirection.OUTGOING,
+      {
+        fromNationalId: user.nationalId,
+        id: delegationId,
+      },
+    )
     if (!delegation) {
       throw new NoContentException()
     }
@@ -142,6 +155,7 @@ export class DelegationsOutgoingService {
       !(await this.delegationResourceService.validateScopeAccess(
         user,
         createDelegation.domainName,
+        DelegationDirection.OUTGOING,
         (createDelegation.scopes ?? []).map((scope) => scope.name),
       ))
     ) {
@@ -185,7 +199,13 @@ export class DelegationsOutgoingService {
       createDelegation.scopes,
     )
 
-    const newDelegation = await this.findById(user, delegation.id)
+    const newDelegation = await this.findOneInternal(
+      user,
+      DelegationDirection.OUTGOING,
+      {
+        id: delegation.id,
+      },
+    )
 
     if (!newDelegation) {
       throw new InternalServerErrorException(
@@ -220,6 +240,7 @@ export class DelegationsOutgoingService {
       !(await this.delegationResourceService.validateScopeAccess(
         user,
         currentDelegation.domainName,
+        DelegationDirection.OUTGOING,
         [
           ...(patchedDelegation.updateScopes ?? []).map((scope) => scope.name),
           ...(patchedDelegation.deleteScopes ?? []),
@@ -290,10 +311,12 @@ export class DelegationsOutgoingService {
 
   private async findOneInternal(
     user: User,
+    direction: DelegationDirection,
     where: WhereOptions<Delegation>,
   ): Promise<DelegationDTO | null> {
     const delegation = await this.delegationModel.findOne({
       where,
+      useMaster: true,
       include: [
         {
           model: DelegationScope,
@@ -316,6 +339,7 @@ export class DelegationsOutgoingService {
     const userScopes = await this.delegationResourceService.findScopeNames(
       user,
       delegation.domainName,
+      direction,
     )
     if (!userScopes.length) {
       return null

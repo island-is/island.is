@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import {
+  formatPlausiblePathToParams,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 import {
   ModalBase,
   GridRow,
@@ -29,7 +32,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const { pathname } = useLocation()
 
   const dropOnboardingSideEffects = () => {
-    servicePortalCloseOnBoardingModal(pathname)
+    servicePortalCloseOnBoardingModal(formatPlausiblePathToParams(pathname))
     sessionStorage.setItem(
       onboardingModalStorage.key,
       onboardingModalStorage.value,

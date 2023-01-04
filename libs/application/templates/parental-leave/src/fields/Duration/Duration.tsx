@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
-import * as Sentry from '@sentry/react'
 
 import {
   extractRepeaterIndexFromField,
@@ -73,7 +72,7 @@ export const Duration: FC<FieldBaseProps> = ({
 
         return calculatedEndDate
       } catch (e) {
-        Sentry.captureException((e as Error).message)
+        console.error((e as Error).message)
 
         setError('component', {
           type: 'error',

@@ -97,7 +97,11 @@ export const Checkbox = ({
             [styles.checkboxDisabled]: disabled,
           })}
         >
-          <Icon icon="checkmark" color={checked ? 'white' : 'transparent'} />
+          <Icon
+            icon="checkmark"
+            color={checked ? 'white' : 'transparent'}
+            ariaHidden
+          />
         </div>
         <span className={styles.labelText}>
           <Text

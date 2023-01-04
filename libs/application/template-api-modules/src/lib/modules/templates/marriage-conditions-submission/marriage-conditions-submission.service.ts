@@ -9,25 +9,80 @@ import {
   Person,
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
-import { PersonTypes } from './types'
-import { MarriageConditionsAnswers } from '@island.is/application/templates/marriage-conditions/types'
+import {
+  ALLOWED_MARITAL_STATUSES,
+  maritalStatuses,
+  PersonTypes,
+  YES,
+} from './types'
+import {
+  MarriageConditionsAnswers,
+  MarriageConditionsFakeData,
+} from '@island.is/application/templates/marriage-conditions/types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
-export class MarriageConditionsSubmissionService {
+export class MarriageConditionsSubmissionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+    private readonly nationalRegistryService: NationalRegistryXRoadService,
+  ) {
+    super(ApplicationTypes.MARRIAGE_CONDITIONS)
+  }
+
+  async maritalStatus({ auth, application }: TemplateApiModuleActionProps) {
+    const fakeData = getValueViaPath<MarriageConditionsFakeData>(
+      application.answers,
+      'fakeData',
+    )
+    const useFakeData = fakeData?.useFakeData === YES
+    if (useFakeData) {
+      return this.handleReturn(fakeData?.maritalStatus || '')
+    }
+
+    const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
+    const maritalStatus = spouse?.maritalStatus || '1'
+    return this.handleReturn(maritalStatus)
+  }
+
+  private formatMaritalStatus(maritalCode: string): string {
+    return maritalStatuses[maritalCode]
+  }
+
+  private allowedCodes(maritalCode: string): boolean {
+    return ALLOWED_MARITAL_STATUSES.includes(maritalCode)
+  }
+
+  private handleReturn(maritalStatus: string) {
+    if (this.allowedCodes(maritalStatus)) {
+      return Promise.resolve({
+        maritalStatus: this.formatMaritalStatus(maritalStatus),
+      })
+    } else {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+  }
 
   async createCharge({
-    application: { id, answers },
+    application: { id },
     auth,
   }: TemplateApiModuleActionProps) {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
-      'AY129',
+      ['AY129'],
     )
 
     // last chance to validate before the user receives a dummy
@@ -56,7 +111,7 @@ export class MarriageConditionsSubmissionService {
     )
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     const {
       applicant,
       spouse,
@@ -91,16 +146,19 @@ export class MarriageConditionsSubmissionService {
       signed: true,
       type: person.type,
     }))
-    const ceramonyPlace: string =
-      ceremony.ceremonyPlace === 'office' && ceremony.office
-        ? ceremony.office
-        : ceremony.society
-        ? ceremony.society
+    const ceremonyPlace: string =
+      ceremony.place?.ceremonyPlace === 'office' && ceremony.place?.office
+        ? ceremony.place?.office
+        : ceremony.place?.society
+        ? ceremony.place?.society
         : ''
 
     const extraData: { [key: string]: string } = {
-      vigsluDagur: ceremony.date || '',
-      vigsluStadur: ceramonyPlace,
+      vigsluDagur:
+        ceremony.date ||
+        ceremony.period?.dateFrom + ' - ' + ceremony.period?.dateTo ||
+        '',
+      vigsluStadur: ceremonyPlace,
       umsaekjandiRikisfang: personalInfo.citizenship,
       umsaekjandiHjuskaparstada: personalInfo.maritalStatus,
       makiRikisfang: spousePersonalInfo.citizenship,

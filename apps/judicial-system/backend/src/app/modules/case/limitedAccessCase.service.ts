@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Includeable, Op, OrderItem } from 'sequelize'
 
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -16,12 +16,13 @@ import { User } from '../user'
 import { Case } from './models/case.model'
 import { CaseFile } from '../file'
 
-const attributes: (keyof Case)[] = [
+export const attributes: (keyof Case)[] = [
   'id',
   'created',
   'modified',
   'origin',
   'type',
+  'indictmentSubtypes',
   'state',
   'policeCaseNumbers',
   'defenderName',
@@ -51,6 +52,51 @@ const attributes: (keyof Case)[] = [
   'seenByDefender',
 ]
 
+export const include: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
+  { model: Institution, as: 'court' },
+  {
+    model: User,
+    as: 'creatingProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'judge',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'courtRecordSignatory',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  { model: Case, as: 'parentCase', attributes },
+  { model: Case, as: 'childCase', attributes },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: {
+      state: { [Op.not]: CaseFileState.DELETED },
+      category: { [Op.not]: null },
+    },
+  },
+]
+
+export const order: OrderItem[] = [
+  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+]
+
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(@InjectModel(Case) private readonly caseModel: typeof Case) {}
@@ -58,47 +104,8 @@ export class LimitedAccessCaseService {
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
       attributes,
-      include: [
-        { model: Defendant, as: 'defendants' },
-        { model: Institution, as: 'court' },
-        {
-          model: User,
-          as: 'creatingProsecutor',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'prosecutor',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'judge',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'registrar',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'courtRecordSignatory',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Case, as: 'parentCase', attributes },
-        { model: Case, as: 'childCase', attributes },
-        {
-          model: CaseFile,
-          as: 'caseFiles',
-          required: false,
-          where: {
-            state: { [Op.not]: CaseFileState.DELETED },
-            category: { [Op.not]: null },
-          },
-        },
-      ],
-      order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+      include,
+      order,
       where: {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },

@@ -17,8 +17,8 @@ import {
   IndictmentsCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { Box } from '@island.is/island-ui/core'
+import { titles } from '@island.is/judicial-system-web/messages'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { isProsecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import { NotificationType } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -58,10 +58,16 @@ const HearingArrangements: React.FC = () => {
     [workingCase, setWorkingCase, setAndSendCaseToServer],
   )
 
-  const onNextButttonClick = useCallback(async () => {
-    await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
-    router.push(`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`)
-  }, [workingCase.id, sendNotification, router])
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [workingCase.id, sendNotification, router],
+  )
+
+  const stepIsValid =
+    !isSendingNotification && isProsecutorAndDefenderStepValid(workingCase)
 
   return (
     <PageLayout
@@ -70,6 +76,8 @@ const HearingArrangements: React.FC = () => {
       activeSubSection={IndictmentsCourtSubsections.PROSECUTOR_AND_DEFENDER}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.indictments.prosecutorAndDefender)}
@@ -77,6 +85,12 @@ const HearingArrangements: React.FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        <Box component="section" marginBottom={5}>
+          <AlertMessage
+            message={formatMessage(m.alertBannerText)}
+            type="info"
+          />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.selectProsecutorHeading)} />
           <ProsecutorSelection onChange={handleProsecutorChange} />
@@ -95,13 +109,12 @@ const HearingArrangements: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase || isSendingNotification}
-          nextButtonText={formatMessage(core.continue)}
+          nextButtonText={formatMessage(m.nextButtonText)}
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            isSendingNotification ||
-            !isProsecutorAndDefenderStepValid(workingCase)
+          nextIsDisabled={!stepIsValid}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
           }
-          onNextButtonClick={onNextButttonClick}
         />
       </FormContentContainer>
     </PageLayout>

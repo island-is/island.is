@@ -15,7 +15,7 @@ export const ElectronicRegistrationsClientConfig = defineConfig({
     return {
       url: env.required(
         'ELECTRONIC_REGISTRATION_STATISTICS_API_URL',
-        'https://gw-api-staging.skra.is/business/tolfraedi',
+        'https://api-staging.thinglysing.is/business/tolfraedi',
       ),
       fetch: {
         timeout:

@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
-import * as Sentry from '@sentry/react'
 
 import {
   NO_ANSWER,
@@ -42,7 +41,7 @@ export const PeriodEndDate: FC<
 
   useEffect(() => {
     if (currentIndex < 0) {
-      Sentry.captureException(
+      console.error(
         new Error(
           'Cannot render PeriodEndDate component with a currentIndex of -1',
         ),

@@ -171,7 +171,7 @@ describe('ApplicationFormReducer', () => {
       }
       const state = {
         ...initialState,
-        form: { ...form, mode: FormModes.REVIEW },
+        form: { ...form, mode: FormModes.IN_PROGRESS },
         application: {
           ...application,
           answers,

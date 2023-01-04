@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -65,13 +65,17 @@ const Processing: React.FC = () => {
     return false
   }
 
-  const handleNextButtonClick = async () => {
-    if (workingCase.state === CaseState.NEW) {
-      await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
-    }
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      if (workingCase.state === CaseState.NEW) {
+        await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+      }
 
-    router.push(`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`)
-  }
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [router, setWorkingCase, transitionCase, workingCase],
+  )
+  const stepIsValid = isProcessingStepValidIndictments(workingCase)
 
   return (
     <PageLayout
@@ -80,6 +84,8 @@ const Processing: React.FC = () => {
       activeSubSection={IndictmentsProsecutorSubsections.PROCESSING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      onNavigationTo={handleNavigationTo}
+      isValid={stepIsValid}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.processing)}
@@ -108,9 +114,11 @@ const Processing: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isProcessingStepValidIndictments(workingCase)}
-          onNextButtonClick={handleNextButtonClick}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={!stepIsValid}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
+          }
         />
       </FormContentContainer>
     </PageLayout>

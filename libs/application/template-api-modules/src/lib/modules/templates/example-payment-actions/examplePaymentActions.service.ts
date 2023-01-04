@@ -3,12 +3,16 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { Item } from '@island.is/clients/payment'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class ExamplePaymentActionsService {
+export class ExamplePaymentActionsService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.EXAMPLE_PAYMENT)
+  }
 
   async createCharge({
     application: { id, answers },
@@ -29,7 +33,7 @@ export class ExamplePaymentActionsService {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
-      chargeItemCode,
+      [chargeItemCode],
     )
 
     // last chance to validate before the user receives a dummy

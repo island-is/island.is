@@ -10,4 +10,7 @@ export class Election {
 
   @Field(() => Date)
   electionDate!: Date
+
+  @Field({ nullable: true })
+  genitiveName?: string
 }

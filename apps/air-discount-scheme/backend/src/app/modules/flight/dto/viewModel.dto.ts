@@ -35,7 +35,7 @@ export class FlightViewModel {
     this.id = flight.id
     this.nationalId = FlightViewModel.maskNationalId(flight.nationalId)
     this.bookingDate = flight.bookingDate
-    this.flightLegs = flight.flightLegs.map(
+    this.flightLegs = (flight.flightLegs ?? []).map(
       (flightLeg) => new FlightLegViewModel(flightLeg),
     )
   }

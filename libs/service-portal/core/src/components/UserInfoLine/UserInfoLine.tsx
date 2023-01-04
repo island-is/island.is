@@ -12,11 +12,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.css'
+import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
 
 export type EditLink = {
   external?: boolean
@@ -59,10 +60,12 @@ export const UserInfoLine: FC<Props> = ({
   warning,
   className,
 }) => {
-  const trackExternalLinkClick = () => {
-    servicePortalOutboundLink()
-  }
+  const { pathname } = useLocation()
   const { formatMessage } = useLocale()
+
+  const trackExternalLinkClick = () => {
+    servicePortalOutboundLink(formatPlausiblePathToParams(pathname))
+  }
 
   return (
     <Box

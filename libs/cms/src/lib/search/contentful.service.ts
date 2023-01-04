@@ -110,7 +110,7 @@ export class ContentfulService {
           )
           chunkSize = Math.floor(chunkSize / 2)
         } else {
-          logger.error(error.message)
+          logger.error(error)
           return items
         }
       }

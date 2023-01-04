@@ -1,4 +1,5 @@
 import {
+  ClaimDto,
   UserIdentitiesService,
   UserIdentity,
   UserIdentityDto,
@@ -11,6 +12,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
@@ -90,5 +92,15 @@ export class UserIdentitiesController {
     }
 
     return userIdentity
+  }
+
+  @Scopes('@identityserver.api/authentication')
+  @Put(':subjectId/claims')
+  @ApiOkResponse({ type: [ClaimDto] })
+  async updateClaims(
+    @Param('subjectId') subjectId: string,
+    @Body() claims: ClaimDto[],
+  ): Promise<ClaimDto[]> {
+    return this.userIdentityService.updateClaims(subjectId, claims)
   }
 }

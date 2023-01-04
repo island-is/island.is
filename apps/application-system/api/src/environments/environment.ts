@@ -5,7 +5,6 @@ const devConfig = {
   environment: 'local',
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
-  sentryDsn: '',
   audit: {
     defaultNamespace: '@island.is/applications',
   },
@@ -93,7 +92,22 @@ const devConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
+    userProfile: {
+      serviceBasePath: 'http://localhost:3366',
+    },
+    nationalRegistry: {
+      baseSoapUrl: 'https://localhost:8443',
+      user: process.env.SOFFIA_USER ?? '',
+      password: process.env.SOFFIA_PASS ?? '',
+      host: 'soffiaprufa.skra.is',
+    },
+    islykill: {
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+    },
   },
+
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
@@ -102,8 +116,6 @@ const devConfig = {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
-  sentryDsn:
-    'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
   audit: {
@@ -179,10 +191,27 @@ const prodConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
+    userProfile: {
+      serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,
+    },
+    nationalRegistry: {
+      baseSoapUrl: process.env.SOFFIA_SOAP_URL,
+      user: process.env.SOFFIA_USER,
+      password: process.env.SOFFIA_PASS,
+      host: process.env.SOFFIA_HOST_URL,
+    },
+    islykill: {
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+    },
   },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
 } as Environment
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default process.env.PROD_MODE === 'true' ||
+process.env.NODE_ENV === 'production'
+  ? prodConfig
+  : devConfig

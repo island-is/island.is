@@ -11,18 +11,26 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  SINGLE,
 } from '../constants'
 import { errorMessages } from './messages'
 
 const PersonalAllowance = z
   .object({
+    usePersonalAllowance: z.enum([YES, NO]),
     usage: z
       .string()
-      .refine((x) => parseFloat(x) >= 0 && parseFloat(x) <= 100)
+      .refine((x) => parseFloat(x) > 0 && parseFloat(x) <= 100)
       .optional(),
-    useAsMuchAsPossible: z.enum([YES, NO]),
+    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
-  .optional()
+  .refine(
+    (schema) =>
+      schema.usePersonalAllowance === YES ? !!schema.useAsMuchAsPossible : true,
+    {
+      path: ['useAsMuchAsPossible'],
+    },
+  )
 
 /**
  * Both periods and employer objects had been removed from here, and the logic has
@@ -35,7 +43,6 @@ export const dataSchema = z.object({
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
-  artificialInseminationQuestion: z.enum([YES, NO]),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(
@@ -65,11 +72,9 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  employerNationalRegistryId: z
-    .string()
-    .refine((n) => n && kennitala.isValid(n), {
-      params: errorMessages.employerNationalRegistryId,
-    }),
+  employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
+    params: errorMessages.employerNationalRegistryId,
+  }),
   employerPhoneNumber: z
     .string()
     .refine(
@@ -106,7 +111,7 @@ export const dataSchema = z.object({
   ]),
   otherParentObj: z
     .object({
-      chooseOtherParent: z.enum([SPOUSE, NO, MANUAL]),
+      chooseOtherParent: z.enum([SPOUSE, NO, MANUAL, SINGLE]),
       otherParentName: z.string().optional(),
       otherParentId: z
         .string()
@@ -116,7 +121,7 @@ export const dataSchema = z.object({
         }),
     })
     .optional(),
-  otherParent: z.enum([SPOUSE, NO, MANUAL]).optional(),
+  otherParent: z.enum([SPOUSE, NO, MANUAL, SINGLE]).optional(),
   otherParentName: z.string().optional(),
   otherParentId: z
     .string()
@@ -125,7 +130,7 @@ export const dataSchema = z.object({
       params: errorMessages.otherParentId,
     }),
   otherParentRightOfAccess: z.enum([YES, NO]),
-  otherParentEmail: z.string().email(),
+  otherParentEmail: z.string().email().optional(),
   otherParentPhoneNumber: z
     .string()
     .refine(
@@ -137,8 +142,13 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
-  usePersonalAllowance: z.enum([YES, NO]),
-  usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
+  multipleBirths: z.object({
+    hasMultipleBirths: z.enum([YES, NO]),
+    multipleBirths: z
+      .string()
+      .refine((v) => !isNaN(Number(v)))
+      .optional(),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

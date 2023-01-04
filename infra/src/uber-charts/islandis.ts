@@ -12,6 +12,8 @@ import { serviceSetup as appSystemFormSetup } from '../../../apps/application-sy
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
+import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
+
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
@@ -41,6 +43,7 @@ import { serviceSetup as externalContractsTestsSetup } from '../../../apps/exter
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
+import { ServiceBuilder } from '../dsl/dsl'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -50,20 +53,27 @@ const appSystemApi = appSystemApiSetup({
   servicesEndorsementApi: endorsement,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
-const appSystemForm = appSystemFormSetup({})
 
 const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
+const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
+
+const adsBackend = adsBackendSetup()
+const adsApi = adsApiSetup({ adsBackend })
+const adsWeb = adsWebSetup({ adsApi })
 const rabBackend = rabBackendSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
   documentsService,
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
+  airDiscountSchemeBackend: adsBackend,
   regulationsAdminBackend: rabBackend,
 })
+const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
@@ -85,9 +95,6 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
 
-const adsBackend = adsBackendSetup()
-const adsApi = adsApiSetup({ adsBackend })
-const adsWeb = adsWebSetup({ adsApi })
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
@@ -98,6 +105,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     searchIndexer,
@@ -113,7 +121,6 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
-    rabBackend,
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
@@ -123,6 +130,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     skilavottordWeb,
@@ -138,7 +146,6 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
-    rabBackend,
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
@@ -148,6 +155,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     searchIndexer,
@@ -167,18 +175,18 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     externalContractsTests,
-    rabBackend,
     appSystemApiWorker,
     contentfulEntryTagger,
   ],
 }
 
 // Services that are not included in any environment above but should be used in feature deployments
-export const FeatureDeploymentServices = []
+export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
-export const ExcludedFeatureDeploymentServices = [
+export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   contentfulEntryTagger,
+  searchIndexer,
 ]

@@ -2,6 +2,7 @@ export const YES = 'yes'
 export const NO = 'no'
 export const MANUAL = 'manual'
 export const SPOUSE = 'spouse'
+export const SINGLE = 'single'
 export const PARENTAL_LEAVE = 'parentalLeave'
 export const PARENTAL_GRANT = 'parentalGrant'
 export const PARENTAL_GRANT_STUDENTS = 'parentalGrantStudents'
@@ -11,6 +12,7 @@ export const FILE_SIZE_LIMIT = 10000000 // 10MB
 export const NO_UNION = 'F000'
 export const NO_PRIVATE_PENSION_FUND = 'X000'
 export const NO_UNEMPLOYED_BENEFITS = 'B000'
+export const NO_MULTIPLE_BIRTHS = '1'
 
 export enum UnEmployedBenefitTypes {
   vmst = 'Vinnumálastofnun (atvinnuleysisbætur)',
@@ -74,6 +76,25 @@ export enum States {
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
+}
+
+export enum AnswerValidationConstants {
+  EMPLOYER = 'employer',
+  FILEUPLOAD = 'fileUpload',
+  PAYMENTS = 'payments',
+  OTHER_PARENT = 'otherParentObj',
+  OTHER_PARENT_EMAIL = 'otherParentEmail',
+  REQUEST_RIGHTS = 'requestRights',
+  GIVE_RIGHTS = 'giveRights',
+  // Check Multiple_Births
+  MULTIPLE_BIRTHS = 'multipleBirths',
+  // When attempting to continue from the periods repeater main screen
+  // this validator will get called to validate all of the periods
+  VALIDATE_PERIODS = 'validatedPeriods',
+  // When a new entry is added to the periods repeater
+  // the repeater sends all the periods saved in 'periods'
+  // to this validator, which will validate the latest one
+  VALIDATE_LATEST_PERIOD = 'periods',
 }
 
 export const DATE_FORMAT = 'yyyy-MM-dd'

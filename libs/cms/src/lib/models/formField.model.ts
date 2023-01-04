@@ -10,11 +10,21 @@ export class FormField {
   @Field()
   title!: string
 
+  @Field({ nullable: true })
+  name?: string
+
   @Field()
   placeholder!: string
 
   @Field()
-  type!: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+  type!:
+    | 'input'
+    | 'text'
+    | 'dropdown'
+    | 'radio'
+    | 'acceptTerms'
+    | 'email'
+    | 'checkboxes'
 
   @Field()
   required!: boolean
@@ -29,6 +39,7 @@ export class FormField {
 export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
   id: sys.id,
   title: fields.title ?? '',
+  name: fields.name ?? '',
   placeholder: fields.placeholder ?? '',
   type: fields.type ?? 'input',
   required: fields.required ?? false,

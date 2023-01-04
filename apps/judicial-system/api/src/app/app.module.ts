@@ -35,8 +35,9 @@ const autoSchemaFile = environment.production
       debug,
       playground,
       autoSchemaFile,
+      cache: 'bounded',
       path: '/api/graphql',
-      context: ({ req }: any) => ({ req }),
+      context: ({ req }: never) => ({ req }),
       dataSources: () => ({ backendApi: new BackendApi() }),
     }),
     SharedAuthModule.register({

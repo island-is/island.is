@@ -29,18 +29,16 @@ import {
   ApiQuery,
 } from '@nestjs/swagger'
 import {
-  callDataProviders,
   ApplicationTemplateHelper,
   mergeAnswers,
 } from '@island.is/application/core'
 import {
   ApplicationWithAttachments as BaseApplication,
-  CustomTemplateFindQuery,
   DefaultEvents,
   ApplicationTypes,
   FormValue,
   ExternalData,
-  ApplicationTemplateAPIAction,
+  TemplateApi,
   PdfTypes,
   ApplicationStatus,
   ApplicationTemplate,
@@ -57,7 +55,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import {
-  getApplicationDataProviders,
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
@@ -75,10 +72,6 @@ import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
-import {
-  buildDataProviders,
-  buildExternalData,
-} from './utils/externalDataUtils'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -99,12 +92,16 @@ import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
 import { EventObject } from 'xstate'
+import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '../payment/payment.service'
 import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { logger as islandis_logger } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
@@ -131,6 +128,7 @@ export class ApplicationController {
     private intlService: IntlService,
     private paymentService: PaymentService,
     private applicationChargeService: ApplicationChargeService,
+    private readonly templateApiActionRunner: TemplateApiActionRunner,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -223,11 +221,11 @@ export class ApplicationController {
       if (
         templateTypeToIsReady[application.typeId] &&
         templates[application.typeId] !== undefined &&
-        this.applicationAccessService.shouldShowApplicationOnOverview(
+        (await this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
           user,
           templates[application.typeId],
-        )
+        ))
       ) {
         filteredApplications.push(application)
         continue
@@ -245,23 +243,22 @@ export class ApplicationController {
       templates[application.typeId] = applicationTemplate
 
       if (
-        (await this.validationService.isTemplateReady(
-          user,
-          applicationTemplate,
-        )) &&
-        this.applicationAccessService.shouldShowApplicationOnOverview(
-          application as BaseApplication,
-          user,
-          applicationTemplate,
-        )
+        await this.validationService.isTemplateReady(user, applicationTemplate)
       ) {
         templateTypeToIsReady[application.typeId] = true
-        filteredApplications.push(application)
+        if (
+          await this.applicationAccessService.shouldShowApplicationOnOverview(
+            application as BaseApplication,
+            user,
+            applicationTemplate,
+          )
+        ) {
+          filteredApplications.push(application)
+        }
       } else {
         templateTypeToIsReady[application.typeId] = false
       }
     }
-
     return filteredApplications
   }
 
@@ -274,6 +271,7 @@ export class ApplicationController {
     application: CreateApplicationDto,
     @CurrentUser()
     user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const { typeId } = application
     const template = await getApplicationTemplateByTypeId(typeId)
@@ -314,7 +312,7 @@ export class ApplicationController {
       applicantActors: user.actor ? [user.actor.nationalId] : [],
       attachments: {},
       state: initialState,
-      status: ApplicationStatus.IN_PROGRESS,
+      status: ApplicationStatus.DRAFT,
       typeId: application.typeId,
     }
 
@@ -366,6 +364,7 @@ export class ApplicationController {
         template,
         user,
         onEnterStateAction,
+        locale,
       )
 
       //Programmers responsible for handling failure status
@@ -385,6 +384,7 @@ export class ApplicationController {
   async assignApplication(
     @Body() assignApplicationDto: AssignApplicationDto,
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const decodedToken = verifyToken<DecodedAssignmentToken>(
       assignApplicationDto.token,
@@ -459,6 +459,7 @@ export class ApplicationController {
       template,
       DefaultEvents.ASSIGN,
       user,
+      locale,
     )
 
     if (hasError) {
@@ -565,48 +566,71 @@ export class ApplicationController {
       user,
     )
 
-    await this.validationService.validateIncomingExternalDataProviders(
+    const templateId = existingApplication.typeId as ApplicationTypes
+    const template = await getApplicationTemplateByTypeId(templateId)
+
+    const helper = new ApplicationTemplateHelper(
       existingApplication as BaseApplication,
-      externalDataDto,
-      user.nationalId,
+      template,
     )
+
+    const userRole = template.mapUserToRole(
+      user.nationalId,
+      existingApplication as BaseApplication,
+    )
+
+    const providersFromRole = userRole
+      ? helper.getApisFromRoleInState(userRole)
+      : []
 
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
     )
     const intl = await this.intlService.useIntl(namespaces, locale)
-    const templateDataProviders = await getApplicationDataProviders(
-      existingApplication.typeId,
-    )
-    const results = await callDataProviders(
-      buildDataProviders(externalDataDto, templateDataProviders, user, locale),
+
+    const templateApis: TemplateApi[] = []
+
+    for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
+      const found = providersFromRole.find(
+        (x) => x.actionId === externalDataDto.dataProviders[i].actionId,
+      )
+
+      if (found) {
+        templateApis.push(found)
+      } else {
+        throw new BadRequestException(
+          `Current user is not permitted to update external data in this state with actionId: ${externalDataDto.dataProviders[i].actionId}`,
+        )
+      }
+    }
+
+    await this.validationService.validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
-      this.applicationService.customTemplateFindQuery(
-        existingApplication.typeId,
-      ) as CustomTemplateFindQuery,
-      intl.formatMessage,
+      templateApis,
+      user.nationalId,
     )
 
-    const {
-      updatedApplication,
-    } = await this.applicationService.updateExternalData(
-      existingApplication.id,
-      existingApplication.externalData as ExternalData,
-      buildExternalData(externalDataDto, results),
+    const updatedApplication = await this.templateApiActionRunner.run(
+      existingApplication as BaseApplication,
+      templateApis,
+      user,
+      locale,
+      intl.formatMessage,
     )
 
     if (!updatedApplication) {
       throw new NotFoundException(
-        `An application with the id ${existingApplication.id} does not exist`,
+        `An application with the id ${id} does not exist`,
       )
     }
 
     this.auditService.audit({
       auth: user,
       action: 'updateExternalData',
-      resources: updatedApplication.id,
+      resources: existingApplication.id,
       meta: { providers: externalDataDto },
     })
+
     return updatedApplication
   }
 
@@ -651,7 +675,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
-      true,
+      false,
       intl.formatMessage,
     )
 
@@ -682,6 +706,7 @@ export class ApplicationController {
       template,
       updateApplicationStateDto.event,
       user,
+      locale,
     )
 
     this.auditService.audit({
@@ -696,9 +721,11 @@ export class ApplicationController {
       },
     })
 
-    if (hasError) {
-      this.logger.error(`Application submission ended with an error: ${error}`)
-      throw new BadRequestException(error)
+    if (hasError && error) {
+      this.logger.error(
+        `Application submission ended with an error: ${JSON.stringify(error)}`,
+      )
+      throw new TemplateApiError(error, 500)
     }
     this.logger.info(`Application submission ended successfully`)
 
@@ -713,74 +740,40 @@ export class ApplicationController {
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     auth: User,
-    action: ApplicationTemplateAPIAction,
+    api: TemplateApi,
+    locale: Locale,
   ): Promise<TemplateAPIModuleActionResult> {
-    const {
-      apiModuleAction,
-      shouldPersistToExternalData,
-      externalDataId,
-      throwOnError,
-    } = action
+    const { action, externalDataId, throwOnError } = api
     this.logger.debug(
-      `Performing action ${apiModuleAction} on ${JSON.stringify(
-        template.name,
-      )}`,
+      `Performing action ${action} on ${JSON.stringify(template.name)}`,
     )
-    const actionResult = await this.templateAPIService.performAction({
-      templateId: template.type,
-      type: apiModuleAction,
-      props: {
-        application,
-        auth,
-      },
-    })
-    this.logger.debug(
-      `Performing action ${apiModuleAction} on ${JSON.stringify(
-        template.name,
-      )} ended with ${actionResult.success ? 'success' : 'failure'}`,
+    const namespaces = await getApplicationTranslationNamespaces(application)
+    const intl = await this.intlService.useIntl(namespaces, locale)
+
+    const updatedApplication = await this.templateApiActionRunner.run(
+      application,
+      [api],
+      auth,
+      locale,
+      intl.formatMessage,
     )
 
-    let updatedApplication: BaseApplication = application
-
-    if (shouldPersistToExternalData) {
-      const newExternalDataEntry: ExternalData = {
-        [externalDataId || apiModuleAction]: {
-          status: actionResult.success ? 'success' : 'failure',
-          date: new Date(),
-          data: actionResult.success
-            ? (actionResult.response as ExternalData['data'])
-            : actionResult.error,
-        },
-      }
-      this.logger.debug(
-        `Updating external data for application with ID ${updatedApplication.id}`,
-      )
-
-      const {
-        updatedApplication: withExternalData,
-      } = await this.applicationService.updateExternalData(
-        updatedApplication.id,
-        updatedApplication.externalData,
-        newExternalDataEntry,
-      )
-
-      updatedApplication = {
-        ...updatedApplication,
-        externalData: {
-          ...updatedApplication.externalData,
-          ...withExternalData.externalData,
-        },
-      }
-    }
-
-    if (!actionResult.success && throwOnError) {
+    const result = updatedApplication.externalData[externalDataId || action]
+    this.logger.debug(
+      `Performing action ${action} on ${JSON.stringify(
+        template.name,
+      )} ended with ${result.status}`,
+    )
+    if (result.status === 'failure' && throwOnError) {
       return {
         updatedApplication,
         hasError: true,
-        error: actionResult.error,
+        error: result.reason,
       }
     }
-
+    this.logger.debug(
+      `Updated external data for application with ID ${updatedApplication.id}`,
+    )
     return {
       updatedApplication,
       hasError: false,
@@ -792,10 +785,12 @@ export class ApplicationController {
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
     auth: User,
+    locale: Locale,
   ): Promise<StateChangeResult> {
     const helper = new ApplicationTemplateHelper(application, template)
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
     let updatedApplication: BaseApplication = application
+
     await this.applicationService.clearNonces(updatedApplication.id)
     if (onExitStateAction) {
       const {
@@ -807,6 +802,7 @@ export class ApplicationController {
         template,
         auth,
         onExitStateAction,
+        locale,
       )
       updatedApplication = withUpdatedExternalData
 
@@ -857,6 +853,7 @@ export class ApplicationController {
         template,
         auth,
         onEnterStateAction,
+        locale,
       )
       updatedApplication = withUpdatedExternalData
 
@@ -864,7 +861,7 @@ export class ApplicationController {
         return {
           hasError: true,
           hasChanged: false,
-          error,
+          error: error,
           application,
         }
       }

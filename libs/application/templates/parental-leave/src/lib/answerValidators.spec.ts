@@ -5,13 +5,16 @@ import {
   ApplicationTypes,
 } from '@island.is/application/types'
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
-import { MANUAL, ParentalRelations } from '../constants'
-import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
+import { MANUAL, ParentalRelations, YES } from '../constants'
+import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
-import { NO, StartDateOptions } from '../constants'
+import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
+
+const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
 const dateFormat = 'yyyy-MM-dd'
 const DEFAULT_DOB = '2021-01-15'
@@ -99,6 +102,53 @@ describe('answerValidators', () => {
     })
   })
 
+  describe('multipleBirths', () => {
+    it('should return error if multipleBirths is selected but multipleBirths is empty', () => {
+      const newAnswer = {
+        hasMultipleBirths: YES,
+        multipleBirths: '',
+      }
+
+      expect(
+        answerValidators['multipleBirths'](newAnswer, application),
+      ).toStrictEqual({
+        message: errorMessages.missingMultipleBirthsAnswer,
+        path: 'multipleBirths',
+        values: undefined,
+      })
+    })
+
+    it('should return error if multipleBirths is selected but multipleBirths is smaller than 2', () => {
+      const newAnswer = {
+        hasMultipleBirths: YES,
+        multipleBirths: 1,
+      }
+
+      expect(
+        answerValidators['multipleBirths'](newAnswer, application),
+      ).toStrictEqual({
+        message: errorMessages.tooFewMultipleBirthsAnswer,
+        path: 'multipleBirths',
+        values: undefined,
+      })
+    })
+
+    it('should return error if multipleBirths is selected but multipleBirths is bigger than 4', () => {
+      const newAnswer = {
+        hasMultipleBirths: YES,
+        multipleBirths: 5,
+      }
+
+      expect(
+        answerValidators['multipleBirths'](newAnswer, application),
+      ).toStrictEqual({
+        message: errorMessages.tooManyMultipleBirthsAnswer,
+        path: 'multipleBirths',
+        values: undefined,
+      })
+    })
+  })
+
   describe('otherParentObj', () => {
     it('should return error if MANUAL selected and nation id empty', () => {
       const newAnswer = {
@@ -114,6 +164,118 @@ describe('answerValidators', () => {
         path: 'otherParentObj.otherParentId',
         values: undefined,
       })
+    })
+  })
+
+  describe('requestRights', () => {
+    it('should return error if not using all "common" days from multipleBirths and request more days', () => {
+      const newAnswer = {
+        isRequestingRights: YES,
+        requestDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 30,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['requestRights'](newAnswer, newApplication),
+      ).toStrictEqual({
+        message: errorMessages.notAllowedToRequestRights,
+        path: 'transferRights',
+        values: undefined,
+      })
+    })
+
+    it('should return not error if using all "common" days from multipleBirths and request more days', () => {
+      const newAnswer = {
+        isRequestingRights: YES,
+        requestDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['requestRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
+    })
+  })
+
+  describe('giveRights', () => {
+    it('should return error if not using all "common" days from multipleBirths and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 30,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual({
+        message: errorMessages.notAllowedToGiveRights,
+        path: 'transferRights',
+        values: undefined,
+      })
+    })
+
+    it('should return not error if using 0 "common" days from multipleBirths and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
     })
   })
 
@@ -244,8 +406,62 @@ describe('when constructing a new period', () => {
     )
   })
 
+  it('should not be allowed to pass without providing a start date', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsStartMissing,
+      path: 'periods[0].startDate',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing a use length option', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsUseLengthMissing,
+      path: 'periods[0].useLength',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing an end date', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: NO,
+        endDate: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsEndDateRequired,
+      path: 'periods[0].endDate',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing a ratio', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        ratio: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsRatioMissing,
+      path: 'periods[0].ratio',
+      values: undefined,
+    })
+  })
+
   it('should not be allowed to pass in a start date before dob but not further back than minimum', () => {
-    const minimumDate = addDays(
+    const minimumDate = addMonths(
       DEFAULT_DOB_DATE,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )

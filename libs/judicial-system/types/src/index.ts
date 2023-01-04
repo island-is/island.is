@@ -13,6 +13,7 @@ export type { Institution } from './lib/institution'
 
 export { NotificationType } from './lib/notification'
 export type {
+  Recipient,
   Notification,
   SendNotification,
   SendNotificationResponse,
@@ -34,12 +35,21 @@ export type {
   CreateFile,
 } from './lib/file'
 
-export { UserRole, courtRoles, isCourtRole } from './lib/user'
+export {
+  UserRole,
+  prosecutionRoles,
+  isProsecutionRole,
+  courtRoles,
+  isCourtRole,
+  extendedCourtRoles,
+  isExtendedCourtRole,
+} from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {
   CaseOrigin,
   CaseType,
+  IndictmentSubtype,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,
@@ -60,6 +70,9 @@ export {
 } from './lib/case'
 export type {
   Case,
+  CrimeScene,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
   CreateCase,
   UpdateCase,
   TransitionCase,

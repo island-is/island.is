@@ -13,6 +13,7 @@ import {
 } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import { m } from '../lib/messages'
 
 import { FormScreen } from '../types'
 
@@ -39,12 +40,11 @@ const FormStepper: FC<FormStepperProps> = ({
   const { formatMessage } = useLocale()
 
   const progressTheme: Record<FormModes, FormStepperThemes> = {
-    [FormModes.APPLYING]: FormStepperThemes.PURPLE,
-    [FormModes.EDITING]: FormStepperThemes.PURPLE,
+    [FormModes.DRAFT]: FormStepperThemes.PURPLE,
     [FormModes.APPROVED]: FormStepperThemes.GREEN,
-    [FormModes.REVIEW]: FormStepperThemes.BLUE,
-    [FormModes.PENDING]: FormStepperThemes.BLUE,
+    [FormModes.IN_PROGRESS]: FormStepperThemes.BLUE,
     [FormModes.REJECTED]: FormStepperThemes.RED,
+    [FormModes.COMPLETED]: FormStepperThemes.GREEN,
   }
 
   // Cannot infers type because of circular loop
@@ -63,25 +63,38 @@ const FormStepper: FC<FormStepperProps> = ({
 
   const ProgressTag: FC = () => {
     switch (mode) {
-      case FormModes.REVIEW:
-      case FormModes.PENDING:
+      case FormModes.IN_PROGRESS:
         return (
           <Tag variant="darkerBlue" outlined>
-            Status: In Review
+            {formatMessage(m.progressTag.inProgress)}
           </Tag>
         )
 
       case FormModes.APPROVED:
         return (
           <Tag variant="blueberry" outlined>
-            Status: Approved
+            {formatMessage(m.progressTag.approved)}
           </Tag>
         )
 
       case FormModes.REJECTED:
         return (
           <Tag variant="red" outlined>
-            Status: Rejected
+            {formatMessage(m.progressTag.rejected)}
+          </Tag>
+        )
+
+      case FormModes.COMPLETED:
+        return (
+          <Tag variant="blueberry" outlined>
+            {formatMessage(m.progressTag.completed)}
+          </Tag>
+        )
+
+      case FormModes.DRAFT:
+        return (
+          <Tag variant="purple" outlined>
+            {formatMessage(m.progressTag.draft)}
           </Tag>
         )
 

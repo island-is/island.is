@@ -7,7 +7,7 @@ import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 import { Case } from '../../../case'
-import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
+import { SendNotificationResponse } from '../../models/sendNotification.response'
 import { SendNotificationDto } from '../../dto/sendNotification.dto'
 import { notificationModuleConfig } from '../../notification.config'
 import { Notification } from '../../models/notification.model'
@@ -110,7 +110,7 @@ describe('NotificationController - Send defender assigned notifications', () => 
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
-        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli <a href="${mockConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">S-123/2022</a>. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.`,
+        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli S-123/2022.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
       })
     })
   })
@@ -161,12 +161,12 @@ describe('NotificationController - Send defender assigned notifications', () => 
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: notification.type,
-        recipients: JSON.stringify([
+        recipients: [
           {
             address: theCase.defenderEmail,
             success: true,
           },
-        ]),
+        ],
       })
     })
   })
@@ -220,7 +220,7 @@ describe('NotificationController - Send defender assigned notifications', () => 
         {
           caseId,
           type: notification.type,
-          recipients: theCase.defenderEmail,
+          recipients: [{ address: theCase.defenderEmail, success: true }],
         } as Notification,
       ])
 

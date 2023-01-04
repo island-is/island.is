@@ -7,16 +7,18 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { z } from 'zod'
-import { m } from './messages'
 import { Features } from '@island.is/feature-flags'
-
-const AnonymityInVehicleRegistrySchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-})
+import { ApiActions } from '../shared'
+import { AnonymityInVehicleRegistrySchema } from './dataSchema'
+import { application } from './messages'
+import { AnonymityStatusApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -24,8 +26,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY,
-  name: m.name,
-  institution: m.institutionName,
+  name: application.name,
+  institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.AnonymityInVehicleRegistry.translation,
   ],
@@ -37,20 +39,24 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Nafnleynd í ökutækjaskrá',
+          status: 'draft',
           actionCard: {
             tag: {
-              label: m.actionCardDraft,
+              label: application.actionCardDraft,
               variant: 'blue',
             },
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  '../forms/AnonymityInVehicleRegistryForm'
+                  '../forms/AnonymityInVehicleRegistryForm/index'
                 ).then((module) =>
                   Promise.resolve(module.AnonymityInVehicleRegistryForm),
                 ),
@@ -63,6 +69,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [AnonymityStatusApi],
             },
           ],
         },
@@ -73,16 +80,12 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
-              label: m.actionCardDone,
+              label: application.actionCardDone,
               variant: 'blueberry',
             },
           },
@@ -90,14 +93,13 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/Confirmation').then((val) =>
+                  Promise.resolve(val.Confirmation),
                 ),
               read: 'all',
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

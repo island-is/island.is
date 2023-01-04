@@ -19,6 +19,7 @@ import {
   CEMETRYEQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   OPERATINGCOST,
+  CAPITALNUMBERS,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
@@ -38,20 +39,19 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
     setError,
   } = useFormContext()
 
-  const operatingCostTotal = getValueViaPath(
-    answers,
-    OPERATINGCOST.total,
-  ) as string
+  const operatingCostTotal = Number(
+    getValueViaPath(answers, OPERATINGCOST.total),
+  )
+
+  const capitalTotal = Number(getValueViaPath(answers, CAPITALNUMBERS.total))
 
   useEffect(() => {
-    setValue(
-      CEMETRYEQUITIESANDLIABILITIESIDS.operationResult,
-      operatingCostTotal,
-    )
-    setTotalOperatingCost(operatingCostTotal)
-  }, [operatingCostTotal, setValue])
+    const total = operatingCostTotal + capitalTotal
+    setValue(CEMETRYEQUITIESANDLIABILITIESIDS.operationResult, total)
+    setTotalOperatingCost(total)
+  }, [operatingCostTotal, capitalTotal, setValue])
 
-  const [totalOperatingCost, setTotalOperatingCost] = useState('0')
+  const [totalOperatingCost, setTotalOperatingCost] = useState(0)
   const [equityTotal, setEquityTotal] = useState(0)
   const [equityAndDebts, setEquityAndDebts] = useState(0)
 
@@ -123,6 +123,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }, INPUTCHANGEINTERVAL)}
               label={formatMessage(m.fixedAssetsTotal)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -143,6 +144,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
                 )
               }
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -154,7 +156,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
-            {formatMessage(m.debtsAndCash)}
+            {formatMessage(m.debtsAndEquity)}
           </Text>
           <Box paddingY={1}>
             <InputController
@@ -173,6 +175,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.longTerm)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -193,6 +196,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.shortTerm)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -201,7 +205,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
             total={totalLiabilities}
             label={formatMessage(m.totalDebts)}
           />
-          <Box paddingY={1}>
+          <Box paddingBottom={1} paddingTop={2}>
             <InputController
               id={
                 CEMETRYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear
@@ -224,6 +228,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.equityAtTheBeginningOfTheYear)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -248,6 +253,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.revaluationDueToPriceChanges)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -268,6 +274,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.reevaluateOther)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -285,6 +292,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.operationResult)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -305,7 +313,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
       {errors && errors.validator ? (
         <Box paddingY={2}>
           <AlertBanner
-            title={formatMessage(m.genericError)}
+            title={formatMessage(m.equityErrorTitle)}
             description={formatMessage(m.equityDebtsAssetsValidatorError)}
             variant="error"
           />

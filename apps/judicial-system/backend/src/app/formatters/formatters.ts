@@ -491,9 +491,7 @@ export function formatCourtRevokedSmsNotification(
 
   const courtRevokedText = formatMessage(
     notifications.courtRevoked.caseTypeRevoked,
-    {
-      caseType: type,
-    },
+    { caseType: type },
   )
 
   return [courtRevokedText, prosecutorText, courtDateText]
@@ -562,17 +560,22 @@ export function formatDefenderRevokedEmailNotification(
           ?.replace(' kl.', ', kl.')
       : 'NONE',
   })
-  const revokedText = formatMessage(cf.revoked, {
-    courtText,
-    courtDateText,
-    investigationPrefix:
-      type === CaseType.OTHER
-        ? 'onlyPrefix'
-        : isInvestigationCase(type)
-        ? 'withPrefix'
-        : 'noPrefix',
-    courtTypeName: caseTypes[type],
-  })
+  const revokedText = isIndictmentCase(type)
+    ? formatMessage(cf.revokedIndictment, {
+        courtText,
+        courtDateText,
+      })
+    : formatMessage(cf.revoked, {
+        courtText,
+        courtDateText,
+        investigationPrefix:
+          type === CaseType.OTHER
+            ? 'onlyPrefix'
+            : isInvestigationCase(type)
+            ? 'withPrefix'
+            : 'noPrefix',
+        courtTypeName: caseTypes[type],
+      })
 
   const defendantNationalIdText = defendantNoNationalId
     ? defendantNationalId || 'NONE'
@@ -582,7 +585,7 @@ export function formatDefenderRevokedEmailNotification(
     defendantNationalId: defendantNationalIdText,
     defendantNoNationalId: defendantNoNationalId ? 'NONE' : 'SOME',
   })
-  const defenderAssignedText = formatMessage(cf.defenderAssigned)
+  const defenderAssignedText = formatMessage(cf.defenderAssignedV2)
 
   return formatMessage(cf.body, {
     revokedText,
@@ -654,15 +657,17 @@ export function formatCourtUploadRulingTitle(
 export function formatDefenderAssignedEmailNotification(
   formatMessage: FormatMessage,
   theCase: Case,
-  overviewUrl: string,
+  overviewUrl?: string,
 ): SubjectAndBody {
   const subject = formatMessage(notifications.defenderAssignedEmail.subject, {
     court: capitalize(theCase.court?.name ?? ''),
   })
 
-  const body = formatMessage(notifications.defenderAssignedEmail.body, {
+  const body = formatMessage(notifications.defenderAssignedEmail.bodyV2, {
+    defenderHasAccessToRVG: Boolean(overviewUrl),
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     court: theCase.court?.name ?? '',
+    courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

@@ -12,20 +12,18 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import {
   INPUTCHANGEINTERVAL,
   EQUITIESANDLIABILITIESIDS,
-  OPERATINGCOST,
   VALIDATOR,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 import { getTotal } from '../../lib/utils/helpers'
 
 export const ElectionEquities: FC<FieldBaseProps> = ({
-  application,
   setBeforeSubmitCallback,
 }): JSX.Element => {
   const { formatMessage } = useLocale()
@@ -51,7 +49,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
 
   useEffect(() => {
     clearErrors(VALIDATOR)
-  }, [totalEquity, totalLiabilities, totalAssets])
+  }, [totalEquity, totalLiabilities, totalAssets, clearErrors])
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -83,6 +81,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
               name={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
+              rightAlign
               error={
                 errors &&
                 getErrorViaPath(
@@ -107,6 +106,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.currentAssets)
               }
+              rightAlign
               onChange={debounce(() => {
                 getTotalAssets()
                 clearErrors(EQUITIESANDLIABILITIESIDS.currentAssets)
@@ -124,12 +124,13 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
-            {formatMessage(m.expenses)}
+            {formatMessage(m.debtsAndEquity)}
           </Text>
           <Box paddingY={1}>
             <InputController
               id={EQUITIESANDLIABILITIESIDS.longTerm}
               name={EQUITIESANDLIABILITIESIDS.longTerm}
+              rightAlign
               onChange={debounce(() => {
                 getTotalLiabilities()
                 clearErrors(EQUITIESANDLIABILITIESIDS.longTerm)
@@ -147,6 +148,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.shortTerm}
               name={EQUITIESANDLIABILITIESIDS.shortTerm}
+              rightAlign
               onChange={debounce(() => {
                 getTotalLiabilities()
                 clearErrors(EQUITIESANDLIABILITIESIDS.shortTerm)
@@ -165,10 +167,11 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             total={totalLiabilities}
             label={formatMessage(m.totalDebts)}
           />
-          <Box paddingY={1}>
+          <Box paddingBottom={1} paddingTop={2}>
             <InputController
               id={EQUITIESANDLIABILITIESIDS.totalEquity}
               name={EQUITIESANDLIABILITIESIDS.totalEquity}
+              rightAlign
               onChange={debounce(() => {
                 getTotalEquity()
                 clearErrors(EQUITIESANDLIABILITIESIDS.totalEquity)
@@ -194,7 +197,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
       {errors && errors.validator ? (
         <Box paddingY={2}>
           <AlertBanner
-            title={formatMessage(m.genericError)}
+            title={formatMessage(m.equityErrorTitle)}
             description={formatMessage(m.equityDebtsAssetsValidatorError)}
             variant="error"
           />

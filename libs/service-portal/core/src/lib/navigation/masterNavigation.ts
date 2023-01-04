@@ -130,6 +130,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.detailInfo,
             path: ServicePortalPath.LicensesDetail,
           },
+          {
+            navHide: true,
+            name: m.passport,
+            path: ServicePortalPath.LicensesPassportDetail,
+          },
         ],
         description: m.licensesDescription,
       },
@@ -364,7 +369,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.accessControl,
         path: ServicePortalPath.AccessControlDelegations,
         icon: {
-          icon: 'lockClosed',
+          icon: 'people',
         },
         description: m.accessControlDescription,
         children: [
@@ -381,9 +386,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             ],
           },
           {
-            name: m.accessControlDelegationsToMe,
-            path: ServicePortalPath.AccessControlDelegationsToMe,
+            name: m.accessControlDelegationsIncoming,
+            path: ServicePortalPath.AccessControlDelegationsIncoming,
             navHide: true,
+            breadcrumbHide: true,
           },
           {
             name: m.accessControlAccess,

@@ -25,6 +25,7 @@ import {
   titles,
   core,
   defendant as m,
+  errors,
 } from '@island.is/judicial-system-web/messages'
 import {
   Case,
@@ -32,7 +33,14 @@ import {
   Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
-import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Input,
+  Select,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
@@ -72,53 +80,58 @@ const Defendant = () => {
     workingCase,
   )
 
-  const handleNextButtonClick = async (theCase: Case) => {
-    if (!theCase.id) {
-      const createdCase = await createCase(theCase)
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      if (!workingCase.id) {
+        const createdCase = await createCase(workingCase)
 
-      if (createdCase) {
-        workingCase.defendants?.forEach(async (defendant, index) => {
-          if (
-            index === 0 &&
-            createdCase.defendants &&
-            createdCase.defendants.length > 0
-          ) {
-            await updateDefendant(
-              createdCase.id,
-              createdCase.defendants[0].id,
-              {
+        if (createdCase) {
+          workingCase.defendants?.forEach(async (defendant, index) => {
+            if (
+              index === 0 &&
+              createdCase.defendants &&
+              createdCase.defendants.length > 0
+            ) {
+              await updateDefendant(
+                createdCase.id,
+                createdCase.defendants[0].id,
+                {
+                  gender: defendant.gender,
+                  name: defendant.name,
+                  address: defendant.address,
+                  nationalId: defendant.nationalId,
+                  noNationalId: defendant.noNationalId,
+                  citizenship: defendant.citizenship,
+                },
+              )
+            } else {
+              await createDefendant(createdCase.id, {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
                 nationalId: defendant.nationalId,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
-              },
-            )
-          } else {
-            await createDefendant(createdCase.id, {
-              gender: defendant.gender,
-              name: defendant.name,
-              address: defendant.address,
-              nationalId: defendant.nationalId,
-              noNationalId: defendant.noNationalId,
-              citizenship: defendant.citizenship,
-            })
-          }
-        })
-        router.push(
-          `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
-        )
+              })
+            }
+          })
+          router.push(`${destination}/${createdCase.id}`)
+        } else {
+          toast.error(formatMessage(errors.createCase))
+        }
       } else {
-        // TODO handle error
-        return
+        router.push(`${destination}/${workingCase.id}`)
       }
-    } else {
-      router.push(
-        `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
-      )
-    }
-  }
+    },
+    [
+      workingCase,
+      createCase,
+      router,
+      updateDefendant,
+      createDefendant,
+      formatMessage,
+    ],
+  )
 
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {
@@ -221,16 +234,24 @@ const Defendant = () => {
     }
   }
 
+  const stepIsValid = isDefendantStepValidIC(
+    workingCase,
+    caseType,
+    clientPoliceNumbers,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_ONE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.investigationCases.defendant)}
@@ -417,10 +438,12 @@ const Defendant = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.CASES_ROUTE}`}
-          onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={
-            !isDefendantStepValidIC(workingCase, caseType, clientPoliceNumbers)
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+            )
           }
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isCreatingCase}
           nextButtonText={formatMessage(
             workingCase.id === '' ? core.createCase : core.continue,

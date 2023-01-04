@@ -8,9 +8,15 @@ import {
   ApplicationTypes,
   DefaultEvents,
   ApplicationConfigurations,
+  defineTemplateApi,
+  UserProfileApi,
+  IdentityApi,
 } from '@island.is/application/types'
+import { PaymentPlanPrerequisitesApi } from '../dataProviders'
+import { Features } from '@island.is/feature-flags'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
+import { AuthDelegationType } from 'delegation'
 
 const States = {
   draft: 'draft',
@@ -40,6 +46,13 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   readyForProduction: true,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.applicationTemplatePublicDeptPaymentPlanAllowDelegation,
+    },
+  ],
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
@@ -49,6 +62,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
     states: {
       [States.prerequisites]: {
         meta: {
+          status: 'draft',
           name: States.prerequisites,
           actionCard: {
             title: application.name,
@@ -71,6 +85,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [IdentityApi, UserProfileApi, PaymentPlanPrerequisitesApi],
               delete: true,
             },
           ],
@@ -82,6 +97,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
@@ -120,13 +136,14 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.closed]: {
         meta: {
           name: States.closed,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,
           },
           progress: 1,
           lifecycle: {
-            shouldBeListed: true,
+            shouldBeListed: false,
             shouldBePruned: true,
             whenToPrune: 0,
           },
@@ -135,13 +152,14 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,
           },
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.sendApplication,
+          }),
           progress: 1,
           lifecycle: {
             shouldBeListed: true,

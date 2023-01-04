@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
@@ -37,23 +38,15 @@ import {
 import {
   CaseFile,
   CaseFileCategory,
-  Feature,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
-
-const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
-  name: file.name,
-  type: file.type,
-  id: file.id,
-  key: file.key,
-  status: 'done',
-  percent: 100,
-  size: file.size,
-})
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
@@ -158,14 +151,16 @@ const UploadFilesToPoliceCase: React.FC<{
   const onRemove = useCallback(
     async (file: UploadFile) => {
       try {
-        const response = await remove(file.id)
-        if (!response.data?.deleteFile.success) {
-          throw new Error(`Failed to delete file: ${file.id}`)
-        }
+        if (file.id) {
+          const response = await remove(file.id)
+          if (!response.data?.deleteFile.success) {
+            throw new Error(`Failed to delete file: ${file.id}`)
+          }
 
-        setDisplayFiles((previous) => {
-          return previous.filter((f) => f.id !== file.id)
-        })
+          setDisplayFiles((previous) => {
+            return previous.filter((f) => f.id !== file.id)
+          })
+        }
       } catch (e) {
         toast.error(formatMessage(errorMessages.failedDeleteFile))
       }
@@ -177,7 +172,9 @@ const UploadFilesToPoliceCase: React.FC<{
     <InputFileUpload
       name="fileUpload"
       fileList={displayFiles}
+      accept="application/pdf"
       header={formatMessage(m.inputFileUpload.header)}
+      description={formatMessage(m.inputFileUpload.description)}
       buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
       onChange={onChange}
       onRemove={onRemove}
@@ -199,41 +196,59 @@ type allUploadedState = {
 const PoliceUploadListMemo: React.FC<{
   caseId: string
   policeCaseNumbers: string[]
+  subtypes?: IndictmentSubtypeMap
+  crimeScenes?: CrimeSceneMap
   caseFiles?: CaseFile[]
   setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-}> = memo(({ caseId, policeCaseNumbers, caseFiles, setAllUploaded }) => {
-  const { formatMessage } = useIntl()
-  return (
-    <Box paddingBottom={4}>
-      {policeCaseNumbers.map((policeCaseNumber, index) => (
-        <Box key={index} marginBottom={6}>
-          <SectionHeading
-            title={formatMessage(m.policeCaseNumberSectionHeading, {
-              policeCaseNumber,
-            })}
-          />
-          <UploadFilesToPoliceCase
-            caseId={caseId}
-            caseFiles={
-              caseFiles?.filter(
-                (file) => file.policeCaseNumber === policeCaseNumber,
-              ) ?? []
-            }
-            policeCaseNumber={policeCaseNumber}
-            setAllUploaded={setAllUploaded(policeCaseNumber)}
-          />
-        </Box>
-      ))}
-    </Box>
-  )
-})
+}> = memo(
+  ({
+    caseId,
+    policeCaseNumbers,
+    subtypes,
+    crimeScenes,
+    caseFiles,
+    setAllUploaded,
+  }) => {
+    const { formatMessage } = useIntl()
+    return (
+      <Box paddingBottom={4}>
+        {policeCaseNumbers.map((policeCaseNumber, index) => (
+          <Box key={index} marginBottom={6}>
+            <SectionHeading
+              title={formatMessage(m.policeCaseNumberSectionHeading, {
+                policeCaseNumber,
+              })}
+              marginBottom={2}
+            />
+            <Box marginBottom={3}>
+              <IndictmentInfo
+                policeCaseNumber={policeCaseNumber}
+                subtypes={subtypes}
+                crimeScenes={crimeScenes}
+              />
+            </Box>
+            <UploadFilesToPoliceCase
+              caseId={caseId}
+              caseFiles={
+                caseFiles?.filter(
+                  (file) => file.policeCaseNumber === policeCaseNumber,
+                ) ?? []
+              }
+              policeCaseNumber={policeCaseNumber}
+              setAllUploaded={setAllUploaded(policeCaseNumber)}
+            />
+          </Box>
+        ))}
+      </Box>
+    )
+  },
+)
 
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
-  const { features } = useContext(FeatureContext)
 
   const [allUploaded, setAllUploaded] = useState<allUploadedState>(
     workingCase.policeCaseNumbers.reduce(
@@ -249,6 +264,12 @@ const PoliceCaseFilesRoute = () => {
     [setAllUploaded],
   )
 
+  const stepIsValid = !Object.values(allUploaded).some((v) => v)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -256,6 +277,8 @@ const PoliceCaseFilesRoute = () => {
       activeSubSection={IndictmentsProsecutorSubsections.POLICE_CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
@@ -269,15 +292,19 @@ const PoliceCaseFilesRoute = () => {
         <PoliceUploadListMemo
           caseId={workingCase.id}
           caseFiles={workingCase.caseFiles}
+          subtypes={workingCase.indictmentSubtypes}
+          crimeScenes={workingCase.crimeScenes}
           setAllUploaded={setAllUploadedForPoliceCaseNumber}
           policeCaseNumbers={workingCase.policeCaseNumbers}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={Object.values(allUploaded).some((v) => v)}
+          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILE_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

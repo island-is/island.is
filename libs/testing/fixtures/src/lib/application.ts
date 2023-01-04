@@ -71,6 +71,7 @@ export const createApplicationTemplate = (
         meta: {
           name: 'draft',
           progress: 0.33,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -100,6 +101,7 @@ export const createApplicationTemplate = (
       inReview: {
         meta: {
           name: 'In Review',
+          status: 'inprogress',
           progress: 0.66,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -125,14 +127,15 @@ export const createApplicationTemplate = (
       approved: {
         meta: {
           name: 'Approved',
+          status: 'approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
         },
-        type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
+          status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {

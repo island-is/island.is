@@ -11,6 +11,7 @@ export {
   formatBankInfo,
   formatPhoneNumber,
   removeCountryCode,
+  formatCurrency,
 } from './utilities/formatters'
 export { handleServerError } from './utilities/handleServerError'
 export { InputImageUpload } from './components/InputImageUpload/InputImageUpload'

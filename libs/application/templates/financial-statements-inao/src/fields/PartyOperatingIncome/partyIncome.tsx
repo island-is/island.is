@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import debounce from 'lodash/debounce'
 import { RecordObject } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -8,15 +8,43 @@ import { useLocale } from '@island.is/localization'
 import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { INPUTCHANGEINTERVAL, PARTYOPERATIONIDS } from '../../lib/constants'
+import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
 
 interface PropTypes {
+  data?: {
+    financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[]
+  } | null
+  loading: boolean
   getSum: () => void
   errors: RecordObject<unknown> | undefined
 }
 
-export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
+export const PartyIncome = ({
+  data,
+  loading,
+  errors,
+  getSum,
+}: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { clearErrors } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
+
+  useEffect(() => {
+    if (data?.financialStatementsInaoTaxInfo) {
+      setValue(
+        PARTYOPERATIONIDS.contributionsFromTheTreasury,
+        data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
+      )
+      setValue(
+        PARTYOPERATIONIDS.parliamentaryPartySupport,
+        data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
+      )
+      setValue(
+        PARTYOPERATIONIDS.municipalContributions,
+        data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
+      )
+    }
+    getSum()
+  }, [data, getSum, setValue])
 
   const onInputChange = debounce((fieldId: string) => {
     getSum()
@@ -33,7 +61,9 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.contributionsFromTheTreasury)
           }
+          rightAlign
           backgroundColor="blue"
+          loading={loading}
           currency
           error={
             errors &&
@@ -52,7 +82,9 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.parliamentaryPartySupport)
           }
+          loading={loading}
           backgroundColor="blue"
+          rightAlign
           currency
           error={
             errors &&
@@ -68,7 +100,9 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.municipalContributions)
           }
+          loading={loading}
           backgroundColor="blue"
+          rightAlign
           currency
           error={
             errors &&
@@ -81,6 +115,7 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={PARTYOPERATIONIDS.contributionsFromLegalEntities}
           name={PARTYOPERATIONIDS.contributionsFromLegalEntities}
           label={formatMessage(m.contributionsFromLegalEntities)}
+          rightAlign
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.contributionsFromLegalEntities)
           }
@@ -100,6 +135,7 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={PARTYOPERATIONIDS.contributionsFromIndividuals}
           name={PARTYOPERATIONIDS.contributionsFromIndividuals}
           label={formatMessage(m.contributionsFromIndividuals)}
+          rightAlign
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.contributionsFromIndividuals)
           }
@@ -122,6 +158,7 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.generalMembershipFees)
           }
+          rightAlign
           backgroundColor="blue"
           currency
           error={
@@ -136,6 +173,7 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           name={PARTYOPERATIONIDS.otherIncome}
           label={formatMessage(m.otherIncome)}
           onChange={() => onInputChange(PARTYOPERATIONIDS.otherIncome)}
+          rightAlign
           backgroundColor="blue"
           currency
           error={
