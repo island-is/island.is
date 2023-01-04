@@ -8,6 +8,7 @@ import {
   BoxProps,
   Text,
 } from '@island.is/island-ui/core'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import {
   AccordionSlice as AccordionSliceSchema,
   Html,
@@ -108,7 +109,9 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                     !!item.link?.url &&
                     window.open(
                       item.link.url,
-                      item.link.url.includes('://') ? '_blank' : '_self',
+                      shouldLinkOpenInNewWindow(item.link.url)
+                        ? '_blank'
+                        : '_self',
                     ),
                 }}
               />

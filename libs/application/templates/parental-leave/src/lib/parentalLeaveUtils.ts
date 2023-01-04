@@ -109,12 +109,12 @@ export function formatPeriods(
     let canDelete = startDateDateTime.getTime() > currentDateStartTime()
     const today = new Date()
 
-    if (applicationFundId === '') {
+    if (!applicationFundId || applicationFundId === '') {
       canDelete = true
     } else if (canDelete && today.getDate() >= 20) {
       const startDateBeginOfMonth = addDays(
         startDateDateTime,
-        startDateDateTime.getDate() * -1,
+        startDateDateTime.getDate() * -1 + 1,
       )
       const currentDateBeginOfMonth = getBeginningOfThisMonth()
       if (
@@ -186,8 +186,12 @@ export const getTransferredDays = (
     requestDays,
     isGivingRights,
     giveDays,
+    otherParent,
   } = getApplicationAnswers(application.answers)
 
+  if (otherParent === NO || otherParent === SINGLE) {
+    return 0
+  }
   let days = 0
 
   if (isRequestingRights === YES && requestDays) {
@@ -861,6 +865,12 @@ export const requiresOtherParentApproval = (
   externalData: Application['externalData'],
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
+
+  const { otherParent } = applicationAnswers
+  if (otherParent === NO || otherParent === SINGLE) {
+    return false
+  }
+
   const selectedChild = getSelectedChild(answers, externalData)
   const { navId } = getApplicationExternalData(externalData)
 

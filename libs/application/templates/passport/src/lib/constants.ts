@@ -21,6 +21,13 @@ export enum Services {
   EXPRESS = 'express',
 }
 
+export enum PASSPORT_CHARGE_CODES {
+  REGULAR = 'AY105',
+  EXPRESS = 'AY106',
+  DISCOUNT_REGULAR = 'AY107',
+  DISCOUNT_EXPRESS = 'AY108',
+}
+
 export enum ApiActions {
   assignParentB = 'assignParentB',
   submitApplication = 'submitApplication',
@@ -49,7 +56,7 @@ export type DistrictCommissionerAgencies = {
 
 export type SubmitResponse = {
   success: boolean
-  orderId?: string
+  orderId?: string[]
 }
 
 export type Passport = {
@@ -64,6 +71,15 @@ export type Guardian = {
   phoneNumber: string
 }
 
+export type PersonalInfo = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber: string
+  hasDisabilityDiscount: string[]
+  hasDisabilityDiscountChecked: boolean
+}
+
 export type ChildsPersonalInfo = {
   name: string
   nationalId: string
@@ -74,7 +90,30 @@ export type ChildsPersonalInfo = {
 
 export type IdentityDocument = {
   number: string
-  expirationDate: Date
+  type: string
+  verboseType: string
+  subType: string
+  status: string
+  issuingDate: string
+  expirationDate: string
+  displayFirstName: string
+  displayLastName: string
+  mrzFirstName: string
+  mrzLastName: string
+  sex: string
+}
+
+export interface IdentityDocumentChild {
+  childNationalId: string
+  secondParent: string
+  secondParentName: string
+  childName: string
+  passports?: IdentityDocument[]
+}
+
+export interface IdentityDocumentData {
+  userPassport: IdentityDocument
+  childPassports: IdentityDocumentChild[]
 }
 
 export const twoDays = 24 * 3600 * 1000 * 2

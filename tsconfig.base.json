@@ -68,6 +68,9 @@
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
+      "@island.is/api/domains/disability-license": [
+        "libs/api/domains/disability-license/src/index.ts"
+      ],
       "@island.is/api/domains/document-provider": [
         "libs/api/domains/document-provider/src/index.ts"
       ],
@@ -442,11 +445,20 @@
         "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
+      "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
+        "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/vehicle-infolocks": [
+        "libs/clients/transport-authority/vehicle-infolocks/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-printing": [
+        "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
@@ -556,6 +568,7 @@
       "@island.is/portals/admin/air-discount-scheme": [
         "libs/portals/admin/air-discount-scheme/src/index.ts"
       ],
+      "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
