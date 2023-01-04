@@ -1,8 +1,10 @@
 import { defineConfig } from '@island.is/nest/config'
-import { SmartSolutionsApiConfigSchema as schema } from '@island.is/clients/smartsolutions'
-import * as z from 'zod'
+import {
+  SmartSolutionsConfig,
+  SmartSolutionsApiConfigSchema as schema,
+} from '@island.is/clients/smartsolutions'
 
-export const FirearmLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
+export const FirearmLicenseClientConfig = defineConfig<SmartSolutionsConfig>({
   name: 'FirearmLicenseClientConfig',
   schema,
   load: (env) => ({

@@ -3,7 +3,6 @@ import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import {
   SmartSolutionsApi,
   SmartSolutionsApiClientModule,
-  SmartSolutionsConfig,
 } from '@island.is/clients/smartsolutions'
 import { ConfigType } from '@nestjs/config'
 import { DisabilityLicenseClientConfig } from './disabilityLicenseClient.config'
@@ -12,16 +11,8 @@ import { DISABILITY_API } from '../../license.types'
 @Module({
   imports: [
     SmartSolutionsApiClientModule.registerAsync({
-      useFactory: (
-        config: ConfigType<typeof DisabilityLicenseClientConfig>,
-      ) => {
-        const smartConfig: SmartSolutionsConfig = {
-          apiKey: config.apiKey,
-          apiUrl: config.apiUrl,
-          passTemplateId: config.passTemplateId,
-        }
-        return smartConfig
-      },
+      useFactory: (config: ConfigType<typeof DisabilityLicenseClientConfig>) =>
+        config,
       inject: [DisabilityLicenseClientConfig.KEY],
     }),
   ],
