@@ -150,10 +150,6 @@ export const CaseFiles: React.FC = () => {
   ])
 
   useEffect(() => {
-    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
-  }, [workingCase.caseFiles])
-
-  useEffect(() => {
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
@@ -164,6 +160,8 @@ export const CaseFiles: React.FC = () => {
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
+
+    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
