@@ -31,13 +31,8 @@ import {
 const isDateExpired = (date?: string | null) =>
   date ? new Date(date) < new Date() : false
 
-const getTagName = (apiScope: AuthApiScope) => {
-  if (apiScope?.group) {
-    return apiScope?.group.displayName
-  }
-
-  return apiScope.displayName
-}
+const getTagName = (apiScope: AuthApiScope) =>
+  apiScope?.group?.displayName ?? apiScope.displayName
 
 const getTags = (delegation: AuthCustomDelegation) =>
   sortBy(
