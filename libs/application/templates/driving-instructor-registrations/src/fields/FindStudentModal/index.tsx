@@ -81,6 +81,7 @@ const FindStudentModal = ({
               <Button
                 size="small"
                 variant="text"
+                preTextIcon="pencil"
                 onClick={() => setIsModalOpen(true)}
               >
                 {formatMessage(m.studentsOverviewRegisterHoursForOtherStudent)}
