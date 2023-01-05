@@ -46,7 +46,6 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  CaseFile,
   CaseFileState,
   CaseOrigin,
   isRestrictionCase,
@@ -108,10 +107,6 @@ export const CaseFiles: React.FC = () => {
   useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
-    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
-  }, [workingCase.caseFiles])
-
-  useEffect(() => {
     if (workingCase.origin !== CaseOrigin.LOKE) {
       setPoliceCaseFiles({
         files: [],
@@ -165,6 +160,8 @@ export const CaseFiles: React.FC = () => {
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
+
+    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
@@ -190,15 +187,8 @@ export const CaseFiles: React.FC = () => {
         next[index] = { ...displayFile, id: newId ?? displayFile.id }
         return next
       })
-
-      setWorkingCase((previous) => {
-        return {
-          ...previous,
-          caseFiles: [displayFile as CaseFile, ...(previous.caseFiles || [])],
-        }
-      })
     },
-    [setWorkingCase],
+    [],
   )
 
   const handleUpload = useCallback(
@@ -237,7 +227,9 @@ export const CaseFiles: React.FC = () => {
 
     filesToUpload.forEach(async (f, index) => {
       const { key, size } = await uploadPoliceCaseFile(f.id, f.name)
+
       const fileToUpload = {
+        id: f.id,
         type: 'application/pdf',
         name: f.name,
         status: 'done',
@@ -246,21 +238,9 @@ export const CaseFiles: React.FC = () => {
         size,
       } as UploadFile
 
-      await addFileToCase(fileToUpload, () => setSingleFile(fileToUpload))
+      await addFileToCase(fileToUpload, () => setSingleFile(fileToUpload, f.id))
 
-      setFilesInRVG([
-        {
-          id: workingCase.id,
-          name: f.name,
-          type: 'application/pdf',
-          status: 'done',
-          state: CaseFileState.STORED_IN_RVG,
-          key,
-          size,
-        } as UploadFile,
-        ...filesInRVG,
-      ])
-
+      setFilesInRVG([fileToUpload, ...filesInRVG])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
       if (index === filesToUpload.length - 1) {
@@ -273,7 +253,6 @@ export const CaseFiles: React.FC = () => {
     policeCaseFileList,
     setSingleFile,
     uploadPoliceCaseFile,
-    workingCase.id,
   ])
 
   const handleRemove = useCallback(
@@ -286,19 +265,24 @@ export const CaseFiles: React.FC = () => {
             throw new Error(`Failed to delete file: ${file.id}`)
           }
 
-          setPoliceCaseFileList((previous) =>
-            previous.filter((f) => f.id !== file.id),
+          const policeCaseFile = policeCaseFiles?.files.find(
+            (f) => f.name === file.name,
           )
-          setWorkingCase({
-            ...workingCase,
-            caseFiles: workingCase.caseFiles?.filter((f) => f.id !== file.id),
-          })
+
+          if (policeCaseFile) {
+            setPoliceCaseFileList((previous) => [
+              mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+              ...previous,
+            ])
+          }
+
+          setFilesInRVG((previous) => previous.filter((f) => f.id !== file.id))
         }
       } catch (e) {
         toast.error(formatMessage(errors.failedDeleteFile))
       }
     },
-    [formatMessage, remove, setWorkingCase, workingCase],
+    [formatMessage, policeCaseFiles?.files, remove],
   )
 
   const handleRetry = useCallback(

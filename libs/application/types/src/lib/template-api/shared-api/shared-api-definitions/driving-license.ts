@@ -12,7 +12,11 @@ export const TeachersApi = defineTemplateApi({
   namespace,
 })
 
-export const CurrentLicenseApi = defineTemplateApi({
+export interface CurrentLicenseParameters {
+  validCategories?: string[]
+}
+
+export const CurrentLicenseApi = defineTemplateApi<CurrentLicenseParameters>({
   action: 'currentLicense',
   namespace,
 })
