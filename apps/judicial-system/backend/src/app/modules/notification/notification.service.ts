@@ -15,6 +15,7 @@ import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   DEFENDER_ROUTE,
@@ -95,6 +96,7 @@ export class NotificationService {
     private readonly eventService: EventService,
     private readonly intlService: IntlService,
     private readonly defendantService: DefendantService,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -869,6 +871,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises = [this.sendRunlingEmailNotificationToProsecutor(theCase)]
+
     if (isIndictmentCase(theCase.type)) {
       theCase.defendants?.forEach((defendant) => {
         promises.push(
@@ -1415,5 +1418,12 @@ export class NotificationService {
       case NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
         return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
     }
+  }
+
+  async addMessagesForHeadsUpNotificationToQueue(theCase: Case): Promise<void> {
+    this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+      caseId: theCase.id,
+    })
   }
 }
