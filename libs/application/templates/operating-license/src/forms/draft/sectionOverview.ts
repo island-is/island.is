@@ -4,12 +4,12 @@ import {
   buildDescriptionField,
   buildKeyValueField,
   buildCustomField,
+  hasYes,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
   APPLICATION_TYPES,
   Operation,
-  OPERATION_CATEGORY,
   OpeningHours,
   YES,
 } from '../../lib/constants'
@@ -40,19 +40,22 @@ export const sectionOverview = buildMultiField({
       label: m.operationType,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).operation ===
+        (application.answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.HOTEL
           ? m.operationHotel
           : m.operationResturant,
     }),
     buildKeyValueField({
-      label: m.operationTypeResturantDescription,
+      label: m.operationCategory,
       width: 'half',
-      value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).operation ===
-        APPLICATION_TYPES.HOTEL
-          ? (application.answers.applicationInfo as Operation).hotel.type
-          : (application.answers.applicationInfo as Operation).resturant.type,
+      value: ({ answers }: Application) =>
+        `Flokkur ${
+          (answers.applicationInfo as Operation)?.category === '2'
+            ? 'II'
+            : (answers.applicationInfo as Operation)?.category === '3'
+            ? 'III'
+            : 'IV'
+        }`,
     }),
     buildDescriptionField({
       id: 'overview.space0',
@@ -61,62 +64,27 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
     }),
     buildKeyValueField({
-      label: 'Flokkur',
-      value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).resturant
-          .category === OPERATION_CATEGORY.ONE
-          ? m.operationCategoryResturantOne
-          : m.operationCategoryResturantTwo,
-      condition: (answers) =>
+      label: m.typeHotel,
+      width: 'half',
+      value: ({ answers }: Application) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.RESTURANT,
+        APPLICATION_TYPES.HOTEL
+          ? (answers.applicationInfo as Operation)?.typeHotel?.substring(2)
+          : (answers.applicationInfo as Operation)?.typeResturant?.map((type) =>
+              type.substring(2),
+            ),
     }),
-    buildDescriptionField({
-      id: 'overview.availableService',
-      title: m.availableService,
-      titleVariant: 'h4',
-      description: '',
-      space: 'gutter',
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
+    buildKeyValueField({
+      label: m.openingHoursOutside,
+      width: 'half',
+      condition: (answers) => displayOpeningHours(answers),
+      value: ({ answers }: Application) =>
+        hasYes((answers.applicationInfo as Operation)?.willServe)
+          ? 'Já'
+          : 'Nei',
     }),
     buildDescriptionField({
       id: 'overview.space1',
-      title: '',
-      description: '',
-      space: 'gutter',
-    }),
-    buildKeyValueField({
-      label: m.operationCategoryHotelOne,
-      width: 'half',
-      value: (application: Application) =>
-        (application.answers
-          .applicationInfo as Operation).hotel.category?.includes(
-          OPERATION_CATEGORY.ONE,
-        )
-          ? m.yes
-          : m.no,
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
-    }),
-    buildKeyValueField({
-      label: m.operationCategoryHotelTwo,
-      width: 'half',
-      value: (application: Application) =>
-        (application.answers
-          .applicationInfo as Operation).hotel.category?.includes(
-          OPERATION_CATEGORY.TWO,
-        )
-          ? m.yes
-          : m.no,
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
-    }),
-    buildDescriptionField({
-      id: 'overview.space1.2',
       title: '',
       description: '',
       space: 'gutter',
@@ -190,11 +158,30 @@ export const sectionOverview = buildMultiField({
       description: '',
       space: 'gutter',
     }),
-    buildCustomField({
-      id: 'propertiesOverview',
-      title: '',
-      component: 'PropertyOverviewRepeater',
-    }),
+    buildCustomField(
+      {
+        id: 'propertiesOverview.stay',
+        title: m.stayTitle,
+        component: 'PropertyOverviewRepeater',
+      },
+      { id: 'properties.stay' },
+    ),
+    buildCustomField(
+      {
+        id: 'propertiesOverview.dining',
+        title: m.diningTitle,
+        component: 'PropertyOverviewRepeater',
+      },
+      { id: 'properties.dining' },
+    ),
+    buildCustomField(
+      {
+        id: 'propertiesOverview.outside',
+        title: m.outsideTitle,
+        component: 'PropertyOverviewRepeater',
+      },
+      { id: 'properties.outside' },
+    ),
     buildDescriptionField({
       id: 'overview.space3',
       title: '',
@@ -268,24 +255,15 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
       condition: (answers) => displayOpeningHours(answers),
     }),
-    buildKeyValueField({
-      label: m.openingHoursOutside,
-      condition: (answers) => displayOpeningHours(answers),
-      value: (application: Application) =>
-        (application.answers.openingHours as OpeningHours).willServe?.includes(
-          YES,
-        )
-          ? 'Já'
-          : 'Nei',
-    }),
+
     buildDescriptionField({
       id: 'overview.openingHoursOutside',
       title: m.openingHoursOutsideTitle,
-      titleVariant: 'h3',
+      titleVariant: 'h4',
       description: '',
       space: 'gutter',
       condition: (answers) =>
-        (answers.openingHours as OpeningHours)?.willServe?.includes(YES) &&
+        hasYes((answers.applicationInfo as Operation)?.willServe) &&
         displayOpeningHours(answers),
     }),
     buildDescriptionField({
@@ -294,7 +272,7 @@ export const sectionOverview = buildMultiField({
       description: '',
       space: 'gutter',
       condition: (answers) =>
-        (answers.openingHours as OpeningHours)?.willServe?.includes(YES) &&
+        hasYes((answers.applicationInfo as Operation)?.willServe) &&
         displayOpeningHours(answers),
     }),
     buildKeyValueField({
@@ -310,7 +288,7 @@ export const sectionOverview = buildMultiField({
         )
       },
       condition: (answers) =>
-        (answers.openingHours as OpeningHours)?.willServe?.includes(YES) &&
+        hasYes((answers.applicationInfo as Operation)?.willServe) &&
         displayOpeningHours(answers),
     }),
     buildKeyValueField({
@@ -326,7 +304,7 @@ export const sectionOverview = buildMultiField({
         )
       },
       condition: (answers) =>
-        (answers.openingHours as OpeningHours)?.willServe?.includes(YES) &&
+        hasYes((answers.applicationInfo as Operation)?.willServe) &&
         displayOpeningHours(answers),
     }),
     buildDividerField({}),
