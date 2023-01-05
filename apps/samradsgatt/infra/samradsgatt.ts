@@ -45,6 +45,6 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: ['/'],
+        paths: ['/samradsgatt'],
       },
     })
