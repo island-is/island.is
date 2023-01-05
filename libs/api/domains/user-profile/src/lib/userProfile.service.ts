@@ -113,7 +113,7 @@ export class UserProfileService {
           hasModifiedDateLate: true,
         }
       }
-      handleError(error, `getUserProfileStatus error: ${error.status}`)
+      handleError(error, `getUserProfileStatus error`)
     }
   }
 
@@ -144,7 +144,7 @@ export class UserProfileService {
          */
         return await this.getIslykillProfile(user)
       }
-      handleError(error, `getUserProfile error: ${error.status}`)
+      handleError(error, `getUserProfile error`)
     }
   }
 
@@ -175,7 +175,7 @@ export class UserProfileService {
 
     const userProfileResponse = await this.userProfileApiWithAuth(user)
       .userProfileControllerCreate(request)
-      .catch((e) => handleError(e, `createUserProfile error: ${e.status}`))
+      .catch((e) => handleError(e, `createUserProfile error`))
 
     if (input.email || input.mobilePhoneNumber) {
       const islyklarData = await this.islyklarService.getIslykillSettings(
@@ -200,10 +200,7 @@ export class UserProfileService {
             mobile: mobileVerified ? input.mobilePhoneNumber : undefined,
           })
           .catch((e) =>
-            handleError(
-              e,
-              `createUserProfile:createIslykillSettings error: ${e.status}`,
-            ),
+            handleError(e, `createUserProfile:createIslykillSettings error`),
           )
       } else {
         await this.islyklarService
@@ -216,10 +213,7 @@ export class UserProfileService {
             canNudge: islyklarData.canNudge,
           }) // Current version does not return the updated user in the response.
           .catch((e) =>
-            handleError(
-              e,
-              `createUserProfile:updateIslykillSettings error: ${e.status}`,
-            ),
+            handleError(e, `createUserProfile:updateIslykillSettings error`),
           )
       }
     }
@@ -258,10 +252,7 @@ export class UserProfileService {
     const updatedUserProfile = await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdate(request)
       .catch((e) =>
-        handleError(
-          e,
-          `updateUserProfile:userProfileControllerUpdate error: ${e.status}`,
-        ),
+        handleError(e, `updateUserProfile:userProfileControllerUpdate error`),
       )
 
     const emailVerified = updatedUserProfile.emailStatus === DataStatus.VERIFIED
@@ -285,10 +276,7 @@ export class UserProfileService {
               : islyklarData.mobile,
         })
         .catch((e) =>
-          handleError(
-            e,
-            `updateUserProfile:createIslykillSettings error: ${e.status}`,
-          ),
+          handleError(e, `updateUserProfile:createIslykillSettings error`),
         )
     } else {
       await this.islyklarService
@@ -303,10 +291,7 @@ export class UserProfileService {
           bankInfo: input.bankInfo ?? islyklarData.bankInfo,
         })
         .catch((e) =>
-          handleError(
-            e,
-            `updateUserProfile:updateIslykillSettings error: ${e.status}`,
-          ),
+          handleError(e, `updateUserProfile:updateIslykillSettings error`),
         )
     }
 
@@ -327,10 +312,7 @@ export class UserProfileService {
           mobile: undefined,
         })
         .catch((e) =>
-          handleError(
-            e,
-            `deleteIslykillValue:createIslykillSettings error: ${e.status}`,
-          ),
+          handleError(e, `deleteIslykillValue:createIslykillSettings error`),
         )
     } else {
       await this.islyklarService
@@ -341,10 +323,7 @@ export class UserProfileService {
           bankInfo: islyklarData.bankInfo,
         })
         .catch((e) =>
-          handleError(
-            e,
-            `deleteIslykillValue:updateIslykillSettings error: ${e.status}`,
-          ),
+          handleError(e, `deleteIslykillValue:updateIslykillSettings error`),
         )
     }
 
@@ -359,10 +338,7 @@ export class UserProfileService {
         updateUserProfileDto: profileUpdate,
       })
       .catch((e) =>
-        handleError(
-          e,
-          `deleteIslykillValue:userProfileControllerUpdate error: ${e.status}`,
-        ),
+        handleError(e, `deleteIslykillValue:userProfileControllerUpdate error`),
       )
 
     return {
@@ -378,7 +354,7 @@ export class UserProfileService {
     const createSmsVerificationDto = { nationalId: user.nationalId, ...input }
     await this.userProfileApiWithAuth(user)
       .userProfileControllerCreateSmsVerification({ createSmsVerificationDto })
-      .catch((e) => handleError(e, `createSmsVerification error: ${e.status}`))
+      .catch((e) => handleError(e, `createSmsVerification error`))
   }
 
   async createEmailVerification(
@@ -390,9 +366,7 @@ export class UserProfileService {
       .userProfileControllerCreateEmailVerification({
         createEmailVerificationDto,
       })
-      .catch((e) =>
-        handleError(e, `createEmailVerification error: ${e.status}`),
-      )
+      .catch((e) => handleError(e, `createEmailVerification error`))
   }
 
   async resendEmailVerification(user: User): Promise<void> {
@@ -400,9 +374,7 @@ export class UserProfileService {
       .userProfileControllerRecreateVerification({
         nationalId: user.nationalId,
       })
-      .catch((e) =>
-        handleError(e, `resendEmailVerification error: ${e.status}`),
-      )
+      .catch((e) => handleError(e, `resendEmailVerification error`))
   }
 
   async confirmSms(
@@ -415,7 +387,7 @@ export class UserProfileService {
         nationalId: user.nationalId,
         confirmSmsDto,
       })
-      .catch((e) => handleError(e, `confirmSms error: ${e.status}`))
+      .catch((e) => handleError(e, `confirmSms error`))
   }
 
   async confirmEmail(
@@ -428,7 +400,7 @@ export class UserProfileService {
         nationalId: user.nationalId,
         confirmEmailDto,
       })
-      .catch((e) => handleError(e, `confirmEmail error: ${e.status}`))
+      .catch((e) => handleError(e, `confirmEmail error`))
   }
 
   async addDeviceToken(input: UserDeviceTokenInput, user: User) {
@@ -437,7 +409,7 @@ export class UserProfileService {
         nationalId: user.nationalId,
         deviceTokenDto: input,
       })
-      .catch((e) => handleError(e, `addDeviceToken error: ${e.status}`))
+      .catch((e) => handleError(e, `addDeviceToken error`))
   }
 
   async deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
@@ -446,6 +418,6 @@ export class UserProfileService {
         nationalId: user.nationalId,
         deviceTokenDto: input,
       })
-      .catch((e) => handleError(e, `deleteDeviceToken error: ${e.status}`))
+      .catch((e) => handleError(e, `deleteDeviceToken error`))
   }
 }
