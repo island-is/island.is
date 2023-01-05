@@ -70,7 +70,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 PaymentCatalogApi.configure({
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
                   externalDataId: 'payment',
                 }),
                 UserProfileApi,
