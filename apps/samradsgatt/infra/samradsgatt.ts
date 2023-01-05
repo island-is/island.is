@@ -17,16 +17,6 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
     })
     .env({
       BASEPATH: '/samradsgatt',
-      NEXTAUTH_URL: {
-        dev: ref(
-          (ctx) =>
-            `https://${
-              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-            }loftbru.dev01.devland.is`,
-        ),
-        staging: 'https://loftbru.staging01.devland.is',
-        prod: 'https://loftbru.island.is',
-      },
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
@@ -58,4 +48,3 @@ export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
         paths: ['/samradsgatt'],
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
