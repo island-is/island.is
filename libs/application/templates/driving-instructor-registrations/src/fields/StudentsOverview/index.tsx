@@ -19,6 +19,7 @@ import { useQuery } from '@apollo/client'
 import { InstructorsStudentsQuery } from '../../graphql/queries'
 import Skeleton from './Skeleton'
 import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
+import { format as formatKennitala } from 'kennitala'
 import * as styles from '../style.css'
 
 const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
@@ -122,7 +123,7 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                     return (
                       <T.Row key={student.id}>
                         <T.Data>{student.name}</T.Data>
-                        <T.Data>{student.nationalId}</T.Data>
+                        <T.Data>{formatKennitala(student.nationalId)}</T.Data>
                         <T.Data box={{ textAlign: 'center' }}>
                           {student.totalLessonCount ?? 0}
                         </T.Data>

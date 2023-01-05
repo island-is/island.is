@@ -184,6 +184,11 @@ export class CourtService {
         }),
       )
       .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document was created successfully
+          return ''
+        }
+
         this.eventService.postErrorEvent(
           'Failed to create a document at court',
           {
@@ -200,10 +205,53 @@ export class CourtService {
           reason,
         )
 
+        throw reason
+      })
+  }
+
+  async createCourtRecord(
+    caseId: string,
+    courtId = '',
+    courtCaseNumber = '',
+    subject: string,
+    fileName: string,
+    fileType: string,
+    content: Buffer,
+    user?: TUser,
+  ): Promise<string> {
+    return this.courtClientService
+      .uploadStream(courtId, {
+        value: content,
+        options: { filename: fileName, contentType: fileType },
+      })
+      .then((streamId) =>
+        this.courtClientService.createThingbok(courtId, {
+          caseNumber: courtCaseNumber,
+          subject,
+          fileName,
+          streamID: streamId,
+        }),
+      )
+      .catch((reason) => {
         if (reason instanceof ServiceUnavailableException) {
           // Act as if the document was created successfully
           return ''
         }
+
+        this.eventService.postErrorEvent(
+          'Failed to create a court record at court',
+          {
+            caseId,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
+            courtId,
+            courtCaseNumber,
+            subject: this.mask(subject),
+            fileName: this.mask(fileName),
+            fileType,
+          },
+          reason,
+        )
 
         throw reason
       })
@@ -238,6 +286,11 @@ export class CourtService {
         sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
       })
     } catch (reason) {
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the court case was created successfully
+        return 'R-9999/9999'
+      }
+
       this.eventService.postErrorEvent(
         'Failed to create a court case',
         {
@@ -251,11 +304,6 @@ export class CourtService {
         },
         reason,
       )
-
-      if (reason instanceof ServiceUnavailableException) {
-        // Act as if the court case was created successfully
-        return 'R-9999/9999'
-      }
 
       throw reason
     }
@@ -282,6 +330,11 @@ export class CourtService {
         fromName,
       })
       .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the email was created successfully
+          return ''
+        }
+
         this.eventService.postErrorEvent(
           'Failed to create an email',
           {
@@ -297,11 +350,6 @@ export class CourtService {
           },
           reason,
         )
-
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the email was created successfully
-          return ''
-        }
 
         throw reason
       })
@@ -325,6 +373,11 @@ export class CourtService {
         },
       })
       .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case was updated successfully
+          return ''
+        }
+
         this.eventService.postErrorEvent(
           'Failed to update case with prosecutor',
           {
@@ -338,11 +391,6 @@ export class CourtService {
           },
           reason,
         )
-
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case was updated successfully
-          return ''
-        }
 
         throw reason
       })
@@ -366,6 +414,11 @@ export class CourtService {
         },
       })
       .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case was updated successfully
+          return ''
+        }
+
         this.eventService.postErrorEvent(
           'Failed to update case with defendant',
           {
@@ -378,11 +431,6 @@ export class CourtService {
           },
           reason,
         )
-
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case was updated successfully
-          return ''
-        }
 
         throw reason
       })
