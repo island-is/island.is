@@ -11,7 +11,8 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
