@@ -185,11 +185,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         }}
       />
 
-      <input
-        type="hidden"
-        ref={register}
-        name={`periods[${currentIndex}].ratio`}
-      />
+      <input type="hidden" {...register(`periods[${currentIndex}].ratio`)} />
 
       {currentPeriod.firstPeriodStart === undefined && (
         <input

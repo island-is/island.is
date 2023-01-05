@@ -199,8 +199,7 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
       <input
         type="hidden"
         value={!loading && !error ? 'forward' : ''}
-        ref={register({ required: true })}
-        name="cardDelivery.canGoForward"
+        {...register('cardDelivery.canGoForward', { required: true })}
       />
     </Box>
   )
