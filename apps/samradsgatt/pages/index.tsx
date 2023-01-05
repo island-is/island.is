@@ -9,6 +9,13 @@ import {
 import { ReactNode } from 'react'
 import Card from '../components/Card/Card'
 import { filterProps } from '../components/Filter/Utils/FilterOptions'
+export async function getStaticProps(context) {
+  console.log(context)
+  console.log('test')
+  return {
+    props: {}, // will be passed to the page component as props
+  }
+}
 export const Index = () => {
   const clearFilter = () => {
     console.log('clear')
