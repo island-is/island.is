@@ -34,12 +34,12 @@ export const cognitoLogin = async (
   await page.waitForURL(new RegExp(`${home}|${authUrl}/delegation`))
 }
 
-export const idsLogin = async (
+export async function idsLogin(
   page: Page,
   phoneNumber: string,
   home: string,
-  delegationNationalId?: string,
-) => {
+  delegation?: string,
+) {
   await page.waitForURL(`${urls.authUrl}/**`, { timeout: 15000 })
   const input = await page.locator('#phoneUserIdentifier')
   await input.type(phoneNumber, { delay: 100 })
@@ -57,10 +57,10 @@ export const idsLogin = async (
     const delegations = page.locator('button[name="SelectedNationalId"]')
     await expect(delegations).toHaveCountGreaterThan(2)
     // Default to the first delegation
-    if (!delegationNationalId) await delegations.first().click()
+    if (!delegation) await delegations.first().click()
     else
       await delegations
-        .locator(`[value="${delegationNationalId.replace('-', '')}"]`)
+        .locator(`[value="${delegation.replace('-', '')}"]`)
         .click()
   }
   await page.waitForURL(new RegExp(`${home}`), {

@@ -41,6 +41,7 @@ async function ensureCognitoSessionIfNeeded(
  * @param homeUrl
  * @param phoneNumber
  * @param authUrlPrefix
+ * @param delegation - National ID of delegation to choose, if any
  */
 async function ensureIDSsession(
   idsLoginOn: { nextAuth?: { nextAuthRoot: string } } | boolean,
@@ -49,6 +50,7 @@ async function ensureIDSsession(
   homeUrl: string,
   phoneNumber: string,
   authUrlPrefix: string,
+  delegation?: string,
 ) {
   if (typeof idsLoginOn === 'object' && idsLoginOn.nextAuth) {
     const idsSessionValidation = await page.request.get(
@@ -58,7 +60,7 @@ async function ensureIDSsession(
     if (!sessionObject.expires) {
       const idsPage = await context.newPage()
       await idsPage.goto(homeUrl)
-      await idsLogin(idsPage, phoneNumber, homeUrl)
+      await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
       await idsPage.close()
     } else {
       console.log(`IDS(next-auth) session exists`)
@@ -81,7 +83,7 @@ async function ensureIDSsession(
     ) {
       const idsPage = await context.newPage()
       await idsPage.goto(homeUrl)
-      await idsLogin(idsPage, phoneNumber, homeUrl)
+      await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
       await idsPage.close()
     } else {
       console.log(`IDS session exists`)
@@ -99,10 +101,9 @@ export async function session({
   storageState = `${homeUrl}-${phoneNumber}`,
 }: {
   browser: Browser
-  delegation?: string,
-  storageState?: string
   homeUrl: string
   phoneNumber: string
+  authUrl?: string
   idsLoginOn:
     | boolean
     | {
@@ -110,12 +111,13 @@ export async function session({
           nextAuthRoot: string
         }
       }
-  authUrl?: string
+  delegation?: string
+  storageState?: string
 }) {
   // Browser context storage, keyed by user/phonenumber
   const storageStatePath = join(
     sessionsPath,
-    storageState ?? `${homeUrl}-${phoneNumber}`,
+    storageState ?? `${homeUrl}-${phoneNumber}-${delegation}`,
   )
   const context = existsSync(storageStatePath)
     ? await browser.newContext({ storageState: storageStatePath })

@@ -1,7 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test'
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
 expect.extend({
   async toHaveCountGreaterThan(
     received: Locator,
