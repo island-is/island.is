@@ -112,7 +112,7 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                   style={styles.tableStyles}
                   box={{ textAlign: 'center' }}
                 >
-                  {'Tímar'}
+                  {formatMessage(m.studentsOverviewTableHeaderCol3)}
                 </T.HeadData>
                 <T.HeadData
                   box={{ textAlign: 'center' }}
@@ -149,7 +149,9 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                               setShowStudentOverview(false)
                             }}
                           >
-                            Skrá
+                            {formatMessage(
+                              m.studentsOverviewRegisterHoursButton,
+                            )}
                           </Button>
                         </T.Data>
                       </T.Row>

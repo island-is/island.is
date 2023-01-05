@@ -79,7 +79,7 @@ export const m = defineMessages({
   },
   studentsOverviewTableHeaderCol3: {
     id: 'dir.application:studentsOverviewTableHeaderCol3',
-    defaultMessage: 'Kennslustundir',
+    defaultMessage: 'Tímar',
     description: 'Table header 3',
   },
   studentsOverviewRegisterHoursCancelButton: {
@@ -89,7 +89,7 @@ export const m = defineMessages({
   },
   studentsOverviewRegisterHoursButton: {
     id: 'dir.application:studentsOverviewRegisterHoursButton',
-    defaultMessage: 'Skrá ökutíma',
+    defaultMessage: 'Skrá',
     description: 'Register button',
   },
   studentsOverviewOtherStudentIdModalTitle: {
@@ -104,8 +104,13 @@ export const m = defineMessages({
   },
   studentsOverviewOtherStudentInputLabel: {
     id: 'dir.application:studentsOverviewOtherStudentIdModalDecription',
-    defaultMessage: 'Kennitala umsækjanda',
+    defaultMessage: 'Kennitala ökunema',
     description: 'Input id',
+  },
+  studentsOverviewOtherStudentRegisterButton: {
+    id: 'dir.application:studentsOverviewOtherStudentRegisterButton',
+    defaultMessage: 'Skrá ökutima',
+    description: 'Button ',
   },
   studentsOverviewNoStudentFound: {
     id: 'dir.application:studentsOverviewNoStudentFound',
@@ -191,22 +196,22 @@ export const m = defineMessages({
   },
   viewStudentEditRegistration: {
     id: 'dir.application:viewStudentEditRegistration',
-    defaultMessage: 'Breyta skráningu',
+    defaultMessage: 'Breyta',
     description: 'Edit registration button',
   },
   viewStudentTableHeaderCol1: {
     id: 'dir.application:viewStudentTableHeaderCol1',
-    defaultMessage: 'Dagsetning',
+    defaultMessage: 'Dags.',
     description: 'Table header col 1',
   },
   viewStudentTableHeaderCol2: {
     id: 'dir.application:viewStudentTableHeaderCol2',
-    defaultMessage: 'Ökukennari',
+    defaultMessage: 'Kennari',
     description: 'Table header col 2',
   },
   viewStudentTableHeaderCol3: {
     id: 'dir.application:viewStudentTableHeaderCol3',
-    defaultMessage: 'Mínútur skráðar',
+    defaultMessage: 'Mínútur',
     description: 'Table header col 3',
   },
   viewStudentGoBackToOverviewButton: {

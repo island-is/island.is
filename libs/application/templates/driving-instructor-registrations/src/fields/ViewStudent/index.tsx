@@ -362,13 +362,13 @@ const ViewStudent = ({
                 <T.Head>
                   <T.Row>
                     <T.HeadData style={styles.tableStyles}>
-                      {'Dags.'}
+                      {formatMessage(m.viewStudentTableHeaderCol1)}
                     </T.HeadData>
                     <T.HeadData style={styles.tableStyles}>
-                      {'Kennari'}
+                      {formatMessage(m.viewStudentTableHeaderCol2)}
                     </T.HeadData>
                     <T.HeadData style={styles.tableStyles}>
-                      {'Mínútur'}
+                      {formatMessage(m.viewStudentTableHeaderCol3)}
                     </T.HeadData>
                     <T.HeadData
                       style={styles.tableStyles}
@@ -445,7 +445,9 @@ const ViewStudent = ({
                                     {editingRegistration &&
                                     editingRegistration.id === entry.id
                                       ? ''
-                                      : 'Breyta'}
+                                      : formatMessage(
+                                          m.viewStudentEditRegistration,
+                                        )}
                                   </Button>
                                   {newRegId &&
                                     entry.id === newRegId &&

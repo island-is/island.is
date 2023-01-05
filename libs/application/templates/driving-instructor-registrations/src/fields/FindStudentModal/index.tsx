@@ -130,7 +130,7 @@ const FindStudentModal = ({
                   setIsSearching(true)
                 }}
               >
-                {formatMessage(m.studentsOverviewRegisterHoursButton)}
+                {formatMessage(m.studentsOverviewOtherStudentRegisterButton)}
               </Button>
             </Box>
           </Box>
