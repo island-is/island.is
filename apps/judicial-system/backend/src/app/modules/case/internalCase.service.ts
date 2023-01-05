@@ -195,11 +195,10 @@ export class InternalCaseService {
         courtCaseNumber: theCase.courtCaseNumber,
       })
 
-      await this.courtService.createDocument(
+      await this.courtService.createCourtRecord(
         theCase.id,
         theCase.courtId,
         theCase.courtCaseNumber,
-        CourtDocumentFolder.COURT_DOCUMENTS,
         fileName,
         `${fileName}.pdf`,
         'application/pdf',
