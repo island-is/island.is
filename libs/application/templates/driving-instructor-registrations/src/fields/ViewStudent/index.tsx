@@ -411,7 +411,10 @@ const ViewStudent = ({
                             </T.Data>
                             <T.Data
                               style={styles.tableStyles}
-                              box={{ className: bgr, textAlign: ['center', 'left'] }}
+                              box={{
+                                className: bgr,
+                                textAlign: ['center', 'left'],
+                              }}
                             >
                               {entry.lessonTime}
                             </T.Data>
@@ -438,10 +441,12 @@ const ViewStudent = ({
                                       setMinutes(entry.lessonTime)
                                       setDate(entry.registerDate)
                                     }}
-                                  >{editingRegistration &&
+                                  >
+                                    {editingRegistration &&
                                     editingRegistration.id === entry.id
                                       ? ''
-                                      : 'Breyta'}</Button>
+                                      : 'Breyta'}
+                                  </Button>
                                   {newRegId &&
                                     entry.id === newRegId &&
                                     !loadingStudentsBook && (
