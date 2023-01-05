@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 
-import { ApiScopeServiceInterface } from './types'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
 import { ApiScope } from '../models'
@@ -11,7 +10,7 @@ import {
 } from '@island.is/clients/auth/delegation-api'
 
 @Injectable()
-export class ApiScopeService implements ApiScopeServiceInterface {
+export class ApiScopeService {
   constructor(private domainsApi: DomainsApi) {}
 
   private domainsApiWithAuth(auth: Auth) {
