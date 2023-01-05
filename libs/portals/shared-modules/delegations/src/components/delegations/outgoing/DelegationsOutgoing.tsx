@@ -99,7 +99,7 @@ export const DelegationsOutgoing = () => {
           onSearchChange={setSearchValue}
         />
         <div>
-          {loading || (!loading && domainName === null) ? (
+          {loading || domainName === null ? (
             <SkeletonLoader width="100%" height={191} />
           ) : error && !delegations ? (
             <AlertBanner
