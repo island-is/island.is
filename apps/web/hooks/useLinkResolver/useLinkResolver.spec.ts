@@ -93,7 +93,8 @@ describe('Link resolver', () => {
   it('should have no path repetition', () => {
     const types = Object.values(routesTemplate).reduce<Array<string>>(
       (types, templateObject) => {
-        if (templateObject.en) {
+        // remove /minarsidur from 'en' object as we dont have specified en page for the login screen
+        if (templateObject.en && templateObject.en !== '/minarsidur') {
           types.push(templateObject.en)
         }
         if (templateObject.is) {
