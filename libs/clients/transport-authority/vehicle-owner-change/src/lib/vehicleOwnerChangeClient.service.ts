@@ -52,12 +52,16 @@ export class VehicleOwnerChangeClient {
     }
 
     const warnSeverityError = 'E'
-    errorList = errorList.filter((x) => x.warnSever === warnSeverityError)
+    const warnSeverityLock = 'L'
+    errorList = errorList.filter(
+      (x) =>
+        x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock,
+    )
 
     return {
       hasError: errorList.length > 0,
       errorMessages: errorList.map((item) => ({
-        errorNo: item.warningSerialNumber,
+        errorNo: (item.warnSever || '_') + item.warningSerialNumber,
         defaultMessage: item.errorMess,
       })),
     }
@@ -118,12 +122,16 @@ export class VehicleOwnerChangeClient {
     }
 
     const warnSeverityError = 'E'
-    errorList = errorList.filter((x) => x.warnSever === warnSeverityError)
+    const warnSeverityLock = 'L'
+    errorList = errorList.filter(
+      (x) =>
+        x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock,
+    )
 
     return {
       hasError: errorList.length > 0,
       errorMessages: errorList.map((item) => ({
-        errorNo: item.warningSerialNumber,
+        errorNo: (item.warnSever || '_') + item.warningSerialNumber,
         defaultMessage: item.errorMess,
       })),
     }
