@@ -1,5 +1,8 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
+
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Search feature', () => {
   let context: BrowserContext
@@ -7,7 +10,7 @@ test.describe('Search feature', () => {
     context = await session({
       browser: browser,
       storageState: 'homepage.json',
-      homeUrl: `/`,
+      homeUrl: `${urls.islandisBaseUrl}/`,
       phoneNumber: '0103019',
       idsLoginOn: false,
     })

@@ -1,6 +1,9 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
 import { helpers } from '../../../support/locator-helpers'
+
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal', () => {
   let context: BrowserContext
@@ -8,7 +11,7 @@ test.describe('Service portal', () => {
     context = await session({
       browser: browser,
       storageState: 'service-portal-afrika.json',
-      homeUrl: `/minarsidur`,
+      homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
       phoneNumber: '0103019',
       idsLoginOn: true,
     })

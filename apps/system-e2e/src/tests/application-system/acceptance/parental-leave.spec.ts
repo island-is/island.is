@@ -1,5 +1,12 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import {
+  BaseAuthority,
+  env,
+  getEnvironmentBaseUrl,
+  TestEnvironment,
+  urls,
+} from '../../../support/urls'
+import {
   employerFormMessages,
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave/messages'
@@ -11,11 +18,13 @@ import { session } from '../../../support/session'
 import { mockApi } from '../../../support/api-tools'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
+test.use({ baseURL: urls.islandisBaseUrl })
+
 const applicationSystemApi: { [env in TestEnvironment]: string } = {
   dev: getEnvironmentBaseUrl(BaseAuthority.dev),
   staging: getEnvironmentBaseUrl(BaseAuthority.staging),
   prod: getEnvironmentBaseUrl(BaseAuthority.prod),
-  local: 'http://localhost:9456', // TODO set local port in utils or smth 🤷
+  local: 'http://localhost:9456',
 }
 
 test.describe('Parental leave', () => {
@@ -31,7 +40,7 @@ test.describe('Parental leave', () => {
     context = await session({
       browser: browser,
       storageState: 'parental-leave.json',
-      homeUrl: `/umsoknir/faedingarorlof`,
+      homeUrl: `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
       phoneNumber: '0103019',
       idsLoginOn: true,
     })

@@ -1,6 +1,10 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
 import { helpers } from '../../../support/locator-helpers'
+
+const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal, in access control', () => {
   let context: BrowserContext
@@ -9,7 +13,7 @@ test.describe('Service portal, in access control', () => {
     context = await session({
       browser: browser,
       storageState: 'service-portal-faereyjar.json',
-      homeUrl: '/minarsidur',
+      homeUrl,
       phoneNumber: '0102399',
       idsLoginOn: true,
     })

@@ -1,5 +1,16 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
+import {
+  DefaultStub,
+  HttpMethod,
+  Imposter,
+  Mountebank,
+  Proxy,
+  ProxyMode,
+} from '@anev/ts-mountebank'
+
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Front page', () => {
   let context: BrowserContext
@@ -7,7 +18,7 @@ test.describe('Front page', () => {
     context = await session({
       browser: browser,
       storageState: 'homepage.json',
-      homeUrl: `/`,
+      homeUrl: `${urls.islandisBaseUrl}/`,
       phoneNumber: '0103019',
       idsLoginOn: false,
     })

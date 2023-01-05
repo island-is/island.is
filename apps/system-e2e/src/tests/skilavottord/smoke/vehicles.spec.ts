@@ -1,5 +1,8 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { AuthUrl, getEnvironmentBaseUrl, urls } from '../../../support/urls'
 import { session } from '../../../support/session'
+
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe.skip('Service portal', () => {
   let context: BrowserContext
@@ -7,14 +10,14 @@ test.describe.skip('Service portal', () => {
     context = await session({
       browser: browser,
       storageState: 'vehicles.json',
-      homeUrl: `/app/skilavottord/my-cars`,
+      homeUrl: `${urls.islandisBaseUrl}/app/skilavottord/my-cars`,
       phoneNumber: '0103019',
       idsLoginOn: {
         nextAuth: {
-          nextAuthRoot: `/app/skilavottord`,
+          nextAuthRoot: `${urls.islandisBaseUrl}/app/skilavottord`,
         },
       },
-      authUrl: getEnvironmentBaseUrl(AuthUrl.staging), // TODO authUrl?
+      authUrl: getEnvironmentBaseUrl(AuthUrl.staging),
     })
   })
   test.afterAll(async () => {
