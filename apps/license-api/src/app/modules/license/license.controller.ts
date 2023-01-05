@@ -50,6 +50,7 @@ export class LicenseController {
     }
     return { ...response.data }
   }
+
   @ApiOkResponse({
     description: 'License successfully revoked',
     type: RevokeLicenseResponse,
@@ -69,6 +70,7 @@ export class LicenseController {
     this.licenseService.revokeLicense(data)
     return
   }
+
   @ApiOkResponse({
     description: 'License successfully verified',
     type: VerifyLicenseResponse,
