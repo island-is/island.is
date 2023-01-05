@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { useDebounce } from 'react-use'
 import {
   Button,
@@ -19,8 +19,8 @@ import { useQuery } from '@apollo/client'
 import { InstructorsStudentsQuery } from '../../graphql/queries'
 import Skeleton from './Skeleton'
 import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
-import * as styles from '../style.css'
 import { format as formatKennitala } from 'kennitala'
+import * as styles from '../style.css'
 
 const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -134,10 +134,7 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                         <T.Data style={styles.tableStyles}>
                           {formatKennitala(student.nationalId)}
                         </T.Data>
-                        <T.Data
-                          style={styles.tableStyles}
-                          box={{ textAlign: 'center' }}
-                        >
+                        <T.Data box={{ textAlign: 'center' }}>
                           {student.totalLessonCount ?? 0}
                         </T.Data>
                         <T.Data

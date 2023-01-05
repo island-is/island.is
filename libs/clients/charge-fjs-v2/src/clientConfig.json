@@ -202,7 +202,7 @@
         }
       },
       "PostchargeResult_DT": {
-        "required": ["receptionID", "doc_num"],
+        "required": ["doc_num", "receptionID"],
         "type": "object",
         "properties": {
           "doc_num": {
@@ -211,20 +211,6 @@
           },
           "receptionID": {
             "type": "string"
-          }
-        }
-      },
-      "chargeStatusResult": {
-        "required": ["status", "doc_num"],
-        "type": "object",
-        "properties": {
-          "doc_num": {
-            "type": "string",
-            "description": "Document number for Ark"
-          },
-          "status": {
-            "type": "string",
-            "description": "UUID for reception"
           }
         }
       },
@@ -306,12 +292,10 @@
           "chargeType",
           "charges",
           "immediateProcess",
-          "payInfo",
           "payeeNationalID",
           "performerNationalID",
           "performingOrgID",
           "requestID",
-          "returnUrl",
           "systemID"
         ],
         "type": "object",
@@ -342,11 +326,14 @@
           },
           "immediateProcess": {
             "type": "boolean",
-            "description": "process immediately and return doc_num"
+            "description": "process immediately and return user4"
           },
           "returnUrl": {
             "type": "string",
             "description": "Callback url"
+          },
+          "returnType": {
+            "type": "string"
           },
           "requestID": {
             "type": "string",
@@ -462,6 +449,20 @@
           },
           "param": {
             "type": "string"
+          }
+        }
+      },
+      "chargeStatusResult": {
+        "required": ["doc_num", "status"],
+        "type": "object",
+        "properties": {
+          "doc_num": {
+            "type": "string",
+            "description": "Document number for Ark"
+          },
+          "status": {
+            "type": "string",
+            "description": "UUID for reception"
           }
         }
       }

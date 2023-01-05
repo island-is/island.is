@@ -35,6 +35,12 @@ export const modalStyle = style({
   justifyContent: 'center',
   position: 'absolute',
   top: '35%',
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      top: '10%',
+    },
+  },
 })
 
 export const mobileWidth = style({

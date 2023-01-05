@@ -85,7 +85,7 @@ const PassportTemplate: ApplicationTemplate<
                 UserProfileApi,
                 PaymentCatalogApi.configure({
                   externalDataId: 'payment',
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
                 }),
                 IdentityDocumentApi,
                 DistrictsApi,
@@ -168,12 +168,9 @@ const PassportTemplate: ApplicationTemplate<
                 UserProfileApi,
                 PaymentCatalogApi.configure({
                   externalDataId: 'payment',
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
                 }),
-                MockProviderApi.configure({
-                  externalDataId: 'identityDocument',
-                  params: IdentityDocumentProviderMock,
-                }),
+                IdentityDocumentApi,
                 DistrictsApi,
               ],
             },
@@ -233,10 +230,10 @@ const PassportTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToParentB: assign((context) => {
-        const parentB = getValueViaPath(
+        const parentB = getValueViaPath<string>(
           context.application.answers,
           'childsPersonalInfo.guardian2.nationalId',
-        ) as string
+        )
 
         return {
           ...context,
