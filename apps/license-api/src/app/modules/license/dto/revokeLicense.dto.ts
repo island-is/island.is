@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Length, IsEnum, Validate } from 'class-validator'
+import { IsEnum, Validate } from 'class-validator'
 import { LicenseId } from '../license.types'
 import { ValidNationalId } from '../validation/validNationalId'
 

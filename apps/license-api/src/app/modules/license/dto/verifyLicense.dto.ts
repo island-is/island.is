@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LicenseId } from '../license.types'
-import { IsEnum, IsJSON, Validate } from 'class-validator'
+import { IsEnum, IsJSON, Length, Validate } from 'class-validator'
+import { Type } from 'class-transformer'
 import { ValidNationalId } from '../validation/validNationalId'
 
 export class VerifyLicenseRequest {
@@ -17,6 +18,8 @@ export class VerifyLicenseRequest {
   readonly licenseId!: LicenseId
   @ApiProperty({ description: 'PDF417 barcode scanner data' })
   @IsJSON()
+  //TODO: VERIFY PAYLOAD - Here or in service???
+  //2 possible variations, maybe try validation the v2 smart solutions one first???
   readonly barcodeData!: string
 }
 

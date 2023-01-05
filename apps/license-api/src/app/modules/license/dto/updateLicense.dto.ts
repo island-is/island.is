@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger'
-import { IsEnum, IsDateString, IsISO8601, Validate } from 'class-validator'
+import {
+  IsEnum,
+  IsDateString,
+  IsISO8601,
+  Validate,
+  Length,
+} from 'class-validator'
 import { LicenseId, LicenseUpdateType, LicenseStatus } from '../license.types'
 import { ValidNationalId } from '../validation/validNationalId'
 
@@ -27,10 +33,12 @@ export class UpdateLicenseRequest {
 
   @ApiProperty()
   @IsISO8601()
-  @IsDateString()
   readonly expiryDate!: string
 
-  @ApiPropertyOptional({ description: 'Data to updated' })
+  @ApiPropertyOptional({ description: 'Data to be updated' })
+  //Should we type the payload? Maybe Partial<Something or other>
+  // Should we validate in client service (firearm, adr, etc...)
+  // dont think its possible here, too variable
   readonly payload?: unknown
 }
 export class UpdateLicenseResponse extends OmitType(UpdateLicenseRequest, [
