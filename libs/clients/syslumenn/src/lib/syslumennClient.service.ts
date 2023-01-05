@@ -224,7 +224,6 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
-    console.log('PAYLOAD', payload)
     const response = await api.syslMottakaGognPost(payload)
     const success = response.skilabod === UPLOAD_DATA_SUCCESS
     if (!success) {
@@ -360,8 +359,6 @@ export class SyslumennService {
       },
     })
     if (res.length > 0) {
-      console.log(res)
-
       const ret = {
         propertyNumber: propertyNumber,
         defaultAddress: {
@@ -375,7 +372,6 @@ export class SyslumennService {
           ],
         },
       }
-      console.log(ret)
       return ret
     } else {
       throw new Error()

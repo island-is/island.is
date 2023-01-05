@@ -145,6 +145,11 @@ export const m = defineMessages({
     description: 'Some description',
   },
   // Categories
+  operationCategory: {
+    id: 'ol.application:applicationInfo.operationCategory',
+    defaultMessage: 'Flokkur',
+    description: 'Some description',
+  },
   operationCategoryTwo: {
     id: 'ol.application:applicationInfo.operationCategory:two',
     defaultMessage: 'Flokkur II',

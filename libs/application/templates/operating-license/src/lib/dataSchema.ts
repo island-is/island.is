@@ -91,7 +91,7 @@ export const dataSchema = z.object({
     )
     // Check type for hotel
     .refine(
-      ({ operation, typeHotel, typeResturant }) =>
+      ({ operation, typeHotel }) =>
         (operation === APPLICATION_TYPES.HOTEL && !!typeHotel) ||
         operation === APPLICATION_TYPES.RESTURANT,
       {
@@ -99,9 +99,9 @@ export const dataSchema = z.object({
         path: ['typeHotel'],
       },
     )
-    // Check type for resturan
+    // Check type for resturant
     .refine(
-      ({ operation, typeHotel, typeResturant }) =>
+      ({ operation, typeResturant }) =>
         operation === APPLICATION_TYPES.HOTEL ||
         (operation === APPLICATION_TYPES.RESTURANT &&
           typeResturant?.length &&

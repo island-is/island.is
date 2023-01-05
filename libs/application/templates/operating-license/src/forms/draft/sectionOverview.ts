@@ -46,7 +46,7 @@ export const sectionOverview = buildMultiField({
           : m.operationResturant,
     }),
     buildKeyValueField({
-      label: 'Flokkur',
+      label: m.operationCategory,
       width: 'half',
       value: ({ answers }: Application) =>
         `Flokkur ${

@@ -8,20 +8,21 @@ import {
   OPERATION_CATEGORY,
   CATEGORIES,
   Operation,
+  Property,
 } from './types/application'
 import { YES } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const getExtraData = (application: ApplicationWithAttachments) => {
   const answers: OperatingLicenseAnswers = application.answers as OperatingLicenseAnswers
-  const chargeItems = getValueViaPath(
+  const chargeItems = getValueViaPath<PaymentCatalogItem[]>(
     application.externalData,
     'payment.data',
-  ) as PaymentCatalogItem[]
+  )
   const { chargeItemCode } = answers
   const charge =
     chargeItems
-      .find((item) => item.chargeItemCode === chargeItemCode)
+      ?.find((item) => item.chargeItemCode === chargeItemCode)
       ?.priceAmount.toString() || ''
   const isHotel = answers.applicationInfo.operation === APPLICATION_TYPES.HOTEL
   const category = getHotelCategory(answers.applicationInfo.category)
@@ -70,36 +71,36 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
           ),
         }
       : {}),
-    // gistirymi: JSON.stringify(
-    //   [answers.properties.stay].map((selection: Property[]) =>
-    //     selection.map((property: Property) => ({
-    //       stadur: property.address,
-    //       fasteignanumer: property.propertyNumber,
-    //       rymisnumer: property.spaceNumber,
-    //       hamarksfjoldiGesta: property.customerCount,
-    //     })),
-    //   ),
-    // ),
-    // veitingarymi: JSON.stringify(
-    //   [answers.properties.dining].map((selection: Property[]) =>
-    //     selection.map((property: Property) => ({
-    //       stadur: property.address,
-    //       fasteignanumer: property.propertyNumber,
-    //       rymisnumer: property.spaceNumber,
-    //       hamarksfjoldiGesta: property.customerCount,
-    //     })),
-    //   ),
-    // ),
-    // utirymi: JSON.stringify(
-    //   [answers.properties.outside].map((selection: Property[]) =>
-    //     selection.map((property: Property) => ({
-    //       stadur: property.address,
-    //       fasteignanumer: property.propertyNumber,
-    //       rymisnumer: property.spaceNumber,
-    //       hamarksfjoldiGesta: property.customerCount,
-    //     })),
-    //   ),
-    // ),
+    gistirymi: JSON.stringify(
+      [answers.properties.stay as Property[]].map((selection: Property[]) =>
+        selection?.map((property: Property) => ({
+          stadur: property.address,
+          fasteignanumer: property.propertyNumber,
+          rymisnumer: property.spaceNumber,
+          hamarksfjoldiGesta: property.customerCount,
+        })),
+      ),
+    ),
+    veitingarymi: JSON.stringify(
+      [answers.properties.dining as Property[]].map((selection: Property[]) =>
+        selection?.map((property: Property) => ({
+          stadur: property.address,
+          fasteignanumer: property.propertyNumber,
+          rymisnumer: property.spaceNumber,
+          hamarksfjoldiGesta: property.customerCount,
+        })),
+      ),
+    ),
+    utirymi: JSON.stringify(
+      [answers.properties.outside as Property[]].map((selection: Property[]) =>
+        selection?.map((property: Property) => ({
+          stadur: property.address,
+          fasteignanumer: property.propertyNumber,
+          rymisnumer: property.spaceNumber,
+          hamarksfjoldiGesta: property.customerCount,
+        })),
+      ),
+    ),
     bradabirgdarleyfi: answers.temporaryLicense?.includes(YES) ? 'Já' : 'Nei',
     skuldastada: answers.debtClaim?.includes(YES) ? 'Já' : 'Nei',
     annad: answers.otherInfoText || '',

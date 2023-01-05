@@ -200,6 +200,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     }
 
     try {
+      console.log('here')
       const uploadDataName = 'rekstrarleyfi1.0'
       const uploadDataId = 'rekstrarleyfi1.0'
       const info = getValueViaPath(application.answers, 'info') as Info
@@ -226,12 +227,11 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         signed: true,
         type: PersonType.CounterParty,
       }))
-      // TODO: ADD criminal record and skuldleysis
 
       const persons: Person[] = [applicant, ...actors]
+
       const attachments = await this.getAttachments(application)
       const extraData = getExtraData(application)
-      console.log('EXTRA DATA', extraData)
       const result: DataUploadResponse = await this.syslumennService
         .uploadData(
           persons,

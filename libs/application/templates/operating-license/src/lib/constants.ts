@@ -106,12 +106,6 @@ export const HotelTypes: Option[] = [
     subLabel:
       'Gisting í herbergjum eða í svefnskálum staðsett utan alfaraleiðar og almenningur hefur aðgang að, svo sem skálar fyrir ferðamenn, veiðiskálar og sæluhús.',
   },
-  // {
-  //   value: 'F Heimagisting',
-  //   label: 'Heimagisting',
-  //   subLabel:
-  //     'Gisting á lögheimili einstaklings eða einni annarri fasteign í hans eigu sem hann hefur persónuleg not af.',
-  // },
   {
     value: 'G Íbúðir',
     label: 'Íbúðir',
@@ -125,13 +119,6 @@ export const HotelTypes: Option[] = [
       'Hús utan þéttbýlis sem er nýtt til tímabundinnar dvalar. Orlofshús félagasamtaka, svo sem stéttarfélaga og starfsgreinafélaga, eru undanskilin.',
   },
 ]
-
-// {
-//   value: 'A Hótel',
-//   label: 'Hótel',
-//   subLabel:
-//     'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
-// },
 
 export const HotelCategories: Option[] = [
   {
