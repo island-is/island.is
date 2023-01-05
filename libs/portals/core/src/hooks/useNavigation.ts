@@ -5,7 +5,10 @@ import { useRoutes } from '../components/PortalProvider'
 import { PortalNavigationItem } from '../types/portalCore'
 import { filterNavigationTree } from '../utils/filterNavigationTree/filterNavigationTree'
 
-export const useNavigation = (navigation: PortalNavigationItem) => {
+export const useNavigation = (
+  navigation: PortalNavigationItem,
+  dynamicRouteArray: string[] = [],
+) => {
   const { userInfo } = useAuth()
   const routes = useRoutes()
   const { pathname } = useLocation()
@@ -18,7 +21,7 @@ export const useNavigation = (navigation: PortalNavigationItem) => {
           filterNavigationTree({
             item: navItem,
             routes,
-            dynamicRouteArray: [],
+            dynamicRouteArray,
             currentLocationPath: pathname,
           }),
         ),
@@ -26,7 +29,7 @@ export const useNavigation = (navigation: PortalNavigationItem) => {
     }
 
     return undefined
-  }, [userInfo, navigation, routes, pathname])
+  }, [userInfo, navigation, routes, pathname, dynamicRouteArray])
 
   return filteredNavigation
 }
