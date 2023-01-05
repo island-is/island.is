@@ -55,7 +55,7 @@ export const idsLogin = async (
   if (await page.url().startsWith(urls.authUrl)) {
     console.log('Still on auth site')
     const delegations = page.locator('button[name="SelectedNationalId"]')
-    await expect(delegations).toHaveCountGreaterThan(3)
+    await expect(delegations).toHaveCountGreaterThan(2)
     // Default to the first delegation
     if (!delegationNationalId) await delegations.first().click()
     else

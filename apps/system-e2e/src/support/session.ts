@@ -95,9 +95,11 @@ export async function session({
   phoneNumber,
   authUrl,
   idsLoginOn,
+  delegation,
   storageState = `${homeUrl}-${phoneNumber}`,
 }: {
   browser: Browser
+  delegation?: string,
   storageState?: string
   homeUrl: string
   phoneNumber: string
