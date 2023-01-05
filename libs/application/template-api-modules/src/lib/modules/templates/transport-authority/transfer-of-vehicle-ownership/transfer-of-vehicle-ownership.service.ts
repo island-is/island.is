@@ -43,7 +43,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
   }
 
-  async getInsuranceCompanyList({ auth }: TemplateApiModuleActionProps) {
+  async getInsuranceCompanyList() {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()
   }
 

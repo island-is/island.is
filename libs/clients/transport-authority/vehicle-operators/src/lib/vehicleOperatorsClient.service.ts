@@ -28,6 +28,9 @@ export class VehicleOperatorsClient {
     }))
   }
 
+  // Note: When calling this endpoint we should make sure that the person that
+  // created the application (and chose the new operators), is the current owner
+  // of the vehicle (since the API does not do any such validation)
   public async saveOperators(
     auth: User,
     permno: string,

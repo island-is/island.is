@@ -18,6 +18,7 @@ import {
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import {
@@ -37,6 +38,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
   ) {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
   }
@@ -207,8 +209,14 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as ChangeOperatorOfVehicleAnswers
-    // // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
-    if (answers?.owner?.nationalId !== application.applicant) {
+    const permno = answers?.pickVehicle?.plate
+
+    // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
+    const currentOwner = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
+      auth,
+      permno,
+    )
+    if (currentOwner?.ownerSsn !== application.applicant) {
       throw new TemplateApiError(
         {
           title: applicationCheck.submitApplication.sellerNotValid,
@@ -218,7 +226,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const permno = answers?.pickVehicle?.plate
     const mainOperatorNationalId = answers?.mainOperator?.nationalId
     const newOperators = answers?.operators.map((operator) => ({
       // startDate: operator.startDate, //TODOx waiting for field to be added to schema
