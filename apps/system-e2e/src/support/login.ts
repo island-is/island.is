@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test'
 import { urls } from './urls'
+import { sleep } from './utils'
 
 export type CognitoCreds = {
   username: string
@@ -30,13 +31,14 @@ export const cognitoLogin = async (
   await passwordInput.selectText()
   await passwordInput.type(password)
   await cognito.locator('input[name="signInSubmitButton"]:visible').click()
-  await page.waitForURL(new RegExp(`${home}|${authUrl}`))
+  await page.waitForURL(new RegExp(`${home}|${authUrl}/delegation`))
 }
 
 export const idsLogin = async (
   page: Page,
   phoneNumber: string,
   home: string,
+  delegationNationalId?: string,
 ) => {
   await page.waitForURL(`${urls.authUrl}/**`, { timeout: 15000 })
   const input = await page.locator('#phoneUserIdentifier')
@@ -45,6 +47,22 @@ export const idsLogin = async (
   const btn = page.locator('button[id="submitPhoneNumber"]')
   await expect(btn).toBeEnabled()
   await btn.click()
+  await page.waitForURL(new RegExp(`${home}|${urls.authUrl}/delegation`), {
+    waitUntil: 'domcontentloaded',
+  })
+
+  // Handle delegation on login
+  if (await page.url().startsWith(urls.authUrl)) {
+    console.log('Still on auth site')
+    const delegations = page.locator('button[name="SelectedNationalId"]')
+    await expect(delegations).toHaveCountGreaterThan(3)
+    // Default to the first delegation
+    if (!delegationNationalId) await delegations.first().click()
+    else
+      await delegations
+        .locator(`[value="${delegationNationalId.replace('-', '')}"]`)
+        .click()
+  }
   await page.waitForURL(new RegExp(`${home}`), {
     waitUntil: 'domcontentloaded',
   })
