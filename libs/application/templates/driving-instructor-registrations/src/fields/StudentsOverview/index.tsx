@@ -159,12 +159,9 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                   })
                 ) : (
                   <T.Row>
-                    <T.Data>
+                    <T.Data colSpan={4}>
                       {formatMessage(m.studentsOverviewNoStudentFound)}
                     </T.Data>
-                    <T.Data></T.Data>
-                    <T.Data></T.Data>
-                    <T.Data></T.Data>
                   </T.Row>
                 )}
               </T.Body>
