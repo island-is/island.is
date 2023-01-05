@@ -49,18 +49,19 @@ export const filterNavigationTree = ({
   item.enabled = routeItem?.enabled
 
   // Makes dynamic item visible in navigation after dynamicArray hook is run
-  const solidPath = Array.isArray(routeItem?.path)
-    ? routeItem?.path[0]
-    : routeItem?.path
-  const hideDynamicPath =
-    routeItem?.dynamic && solidPath && !dynamicRouteArray?.includes(solidPath)
+  if (routeItem?.dynamic) {
+    const solidPath = Array.isArray(routeItem?.path)
+      ? routeItem?.path[0]
+      : routeItem?.path
 
-  // Hides item from navigation
-  if (routeItem?.navHide) {
-    item.navHide = routeItem.navHide
+    const showDynamicPath =
+      routeItem?.dynamic && solidPath && dynamicRouteArray?.includes(solidPath)
+
+    item.navHide = !showDynamicPath
   }
+  // Hides item from navigation
 
-  item.navHide = item.navHide || !!hideDynamicPath
+  item.navHide = routeItem?.navHide || !!item.navHide
 
   if (currentLocationPath) {
     if (item.path) {
