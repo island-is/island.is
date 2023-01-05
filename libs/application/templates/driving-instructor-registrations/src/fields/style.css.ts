@@ -53,3 +53,8 @@ export const hideRow = style({
     },
   },
 })
+
+export const tableStyles = {
+  paddingLeft: '14px',
+  paddingRight: '14px',
+}

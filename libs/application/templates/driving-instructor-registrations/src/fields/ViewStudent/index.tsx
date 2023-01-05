@@ -37,13 +37,13 @@ import Skeleton from './Skeleton'
 interface Props {
   application: Application
   studentNationalId: string
-  setShowTable: React.Dispatch<React.SetStateAction<boolean>>
+  setShowStudentOverview: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ViewStudent = ({
   application,
   studentNationalId,
-  setShowTable,
+  setShowStudentOverview,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -103,8 +103,8 @@ const ViewStudent = ({
   }, [studentDataResponse])
 
   const goBack = useCallback(() => {
-    setShowTable(true)
-  }, [setShowTable])
+    setShowStudentOverview(true)
+  }, [setShowStudentOverview])
 
   const resetFields = (message?: string) => {
     refetchStudent().then(() => {
@@ -358,19 +358,22 @@ const ViewStudent = ({
               </Text>
             </GridColumn>
             <GridColumn span={'12/12'}>
-              <T.Table>
+              <T.Table box={{ overflow: 'hidden' }}>
                 <T.Head>
                   <T.Row>
-                    <T.HeadData>
-                      {formatMessage(m.viewStudentTableHeaderCol1)}
+                    <T.HeadData style={styles.tableStyles}>
+                      {'Dags.'}
                     </T.HeadData>
-                    <T.HeadData>
-                      {formatMessage(m.viewStudentTableHeaderCol2)}
+                    <T.HeadData style={styles.tableStyles}>
+                      {'Kennari'}
                     </T.HeadData>
-                    <T.HeadData box={{ textAlign: 'center' }}>
-                      {formatMessage(m.viewStudentTableHeaderCol3)}
+                    <T.HeadData style={styles.tableStyles}>
+                      {'Mínútur'}
                     </T.HeadData>
-                    <T.HeadData></T.HeadData>
+                    <T.HeadData
+                      style={styles.tableStyles}
+                      box={{ textAlign: 'center' }}
+                    ></T.HeadData>
                   </T.Row>
                 </T.Head>
                 <T.Body>
@@ -391,30 +394,40 @@ const ViewStudent = ({
 
                         return (
                           <T.Row key={key}>
-                            <T.Data box={{ className: bgr }}>
+                            <T.Data
+                              style={styles.tableStyles}
+                              box={{ className: bgr }}
+                            >
                               {format(
                                 new Date(entry.registerDate),
                                 'dd.MM.yyyy',
                               )}
                             </T.Data>
-                            <T.Data box={{ className: bgr }}>
+                            <T.Data
+                              style={styles.tableStyles}
+                              box={{ className: bgr }}
+                            >
                               {entry.teacherName}
                             </T.Data>
                             <T.Data
-                              box={{ className: bgr, textAlign: 'center' }}
+                              style={styles.tableStyles}
+                              box={{ className: bgr, textAlign: ['center', 'left'] }}
                             >
                               {entry.lessonTime}
                             </T.Data>
-                            <T.Data box={{ className: bgr }}>
+                            <T.Data
+                              style={styles.tableStyles}
+                              box={{ className: bgr, textAlign: 'center' }}
+                            >
                               {entry.teacherNationalId === userNationalId && (
-                                <Box display={'flex'}>
+                                <Box>
                                   <Button
                                     variant="text"
                                     size="small"
                                     icon={
                                       editingRegistration &&
                                       editingRegistration.id === entry.id
-                                        ? 'close'
+                                        ? 'checkmark'
                                         : undefined
                                     }
                                     onClick={() => {
@@ -425,11 +438,10 @@ const ViewStudent = ({
                                       setMinutes(entry.lessonTime)
                                       setDate(entry.registerDate)
                                     }}
-                                  >
-                                    {formatMessage(
-                                      m.viewStudentEditRegistration,
-                                    )}
-                                  </Button>
+                                  >{editingRegistration &&
+                                    editingRegistration.id === entry.id
+                                      ? ''
+                                      : 'Breyta'}</Button>
                                   {newRegId &&
                                     entry.id === newRegId &&
                                     !loadingStudentsBook && (

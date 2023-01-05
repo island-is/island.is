@@ -10,12 +10,12 @@ import { InputController } from '@island.is/shared/form-fields'
 
 interface FindStudentsModalProps {
   application?: Application
-  setShowTable: React.Dispatch<React.SetStateAction<boolean>>
+  setShowStudentOverview: React.Dispatch<React.SetStateAction<boolean>>
   setStudentId: React.Dispatch<React.SetStateAction<string>>
 }
 
 const FindStudentModal = ({
-  setShowTable,
+  setShowStudentOverview,
   setStudentId,
 }: FindStudentsModalProps) => {
   const { formatMessage } = useLocale()
@@ -42,11 +42,11 @@ const FindStudentModal = ({
 
   const viewStudent = useCallback(
     (id) => {
-      setShowTable(false)
+      setShowStudentOverview(false)
       setStudentId(id)
     },
 
-    [setShowTable, setStudentId],
+    [setShowStudentOverview, setStudentId],
   )
 
   useEffect(() => {
