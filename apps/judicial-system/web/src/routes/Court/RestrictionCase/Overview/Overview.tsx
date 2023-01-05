@@ -215,12 +215,14 @@ export const JudgeOverview: React.FC = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              email: workingCase.defenderEmail,
-              sessionArrangement: workingCase.sessionArrangements,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                email: workingCase.defenderEmail,
+                sessionArrangement: workingCase.sessionArrangements,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         <Box marginBottom={5}>

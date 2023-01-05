@@ -77,11 +77,11 @@ export const useS3UploadV2 = (caseId: string) => {
   >(DeleteFileMutationDocument)
 
   const upload = useCallback(
-    (
+    async (
       files: Array<[File, string]>,
       updateFile: (file: UploadFile, newId?: string) => void,
-      category: CaseFileCategory,
-      policeCaseNumber: string,
+      category?: CaseFileCategory,
+      policeCaseNumber?: string,
     ) => {
       files.forEach(async ([file, id]) => {
         try {
@@ -94,11 +94,13 @@ export const useS3UploadV2 = (caseId: string) => {
               },
             },
           })
+
           if (!data.data?.createPresignedPost.fields?.key) {
             throw Error('failed to get presigned post')
           }
 
           const presignedPost = data.data.createPresignedPost
+
           await uploadToS3(file, presignedPost, (percent) => {
             updateFile({
               id,
@@ -115,8 +117,8 @@ export const useS3UploadV2 = (caseId: string) => {
                 type: file.type,
                 key: presignedPost.fields.key,
                 size: file.size,
-                category: category,
-                policeCaseNumber: policeCaseNumber,
+                ...(category && { category }),
+                ...(policeCaseNumber && { policeCaseNumber }),
               },
             },
           })
@@ -147,7 +149,7 @@ export const useS3UploadV2 = (caseId: string) => {
   )
 
   const remove = useCallback(
-    (fileId) => {
+    (fileId: string) => {
       return deleteFileMutation({
         variables: {
           input: {
