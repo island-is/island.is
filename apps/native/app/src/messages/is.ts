@@ -230,6 +230,7 @@ export const is = {
   'familyDetail.natreg.birthPlace': 'Fæðingarstaður',
   'familyDetail.natreg.legalResidence': 'Lögheimili',
   'familyDetail.natreg.gender': 'Kyn',
+  'familyDetail.emptyListDescription': 'Því miður skiluðu sér engin gögn',
 
   // wallet
   'wallet.screenTitle': 'Skírteini',

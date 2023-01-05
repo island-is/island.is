@@ -29,6 +29,7 @@ const {
 
 const FamilyMember = React.memo(({ item }: { item: any }) => {
   const theme = useTheme()
+
   return (
     <View style={{ paddingHorizontal: 16 }}>
       <TouchableHighlight
@@ -36,7 +37,7 @@ const FamilyMember = React.memo(({ item }: { item: any }) => {
         style={{ marginBottom: 16, borderRadius: 16 }}
         onPress={() => {
           navigateTo(`/family/${item.type}/${item.nationalId}`, {
-            nationalId: item?.nationalId,
+            item: item,
           })
         }}
       >

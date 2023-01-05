@@ -291,6 +291,7 @@ export const en: TranslatedMessages = {
   'familyDetail.natreg.birthPlace': 'Birthplace',
   'familyDetail.natreg.legalResidence': 'Legal domicile',
   'familyDetail.natreg.gender': 'Gender',
+  'familyDetail.emptyListDescription': 'No data was found',
 
   // applications screen
   'applications.title': 'Applications',

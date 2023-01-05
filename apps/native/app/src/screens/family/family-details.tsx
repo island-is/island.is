@@ -1,14 +1,12 @@
 import React from 'react'
 import { useIntl } from 'react-intl';
-import { ScrollView, View, SafeAreaView } from "react-native";
+import { ScrollView, View, SafeAreaView, Image } from "react-native";
 import { testIDs } from '../../utils/test-ids'
 import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
-import { Input, InputRow, NavigationBarSheet, Typography } from '@island.is/island-ui-native';
+import { EmptyList, Input, InputRow, NavigationBarSheet, Typography } from '@island.is/island-ui-native';
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options';
-import { useQuery } from '@apollo/client';
-import { client } from '../../graphql/client'
-import { NATIONAL_REGISTRY_FAMILY_DETAIL } from '../../graphql/queries/get-national-registry-family-detail';
 import { formatNationalId } from '../profile/tab-personal-info';
+import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 
 const {
   getNavigationOptions,
@@ -19,21 +17,31 @@ const {
   },
 }))
 
-export const FamilyDetailScreen: NavigationFunctionComponent<{ nationalId: string, type: string }> = ({ componentId, nationalId, type }) => {
+export const FamilyDetailScreen: NavigationFunctionComponent<{ item: any, type: string }> = ({ componentId, item, type }) => {
   useNavigationOptions(componentId)
-
-  const { data, loading, error } = useQuery(NATIONAL_REGISTRY_FAMILY_DETAIL,
-    {
-    client,
-    fetchPolicy: 'cache-first',
-    variables: {
-      input: { familyMemberNationalId: nationalId },
-    },
-  })
-
   const intl = useIntl()
-  const isError = !!error;
-  const item = data?.nationalRegistryFamilyDetail || {};
+
+  if (!item) {
+    return (
+      <View style={{ flex: 1 }}>
+        <NavigationBarSheet
+        componentId={componentId}
+        title={intl.formatMessage({ id: 'familyDetail.title' })}
+        onClosePress={() => Navigation.dismissModal(componentId)}
+        style={{ marginHorizontal: 16 }}
+      />
+        <EmptyList
+          title={intl.formatMessage({ id: 'family.emptyListTitle' })}
+          description={intl.formatMessage({
+            id: 'familyDetail.emptyListDescription',
+          })}
+          image={
+            <Image source={illustrationSrc} height={196} width={261} />
+          }
+        />
+      </View>
+    )
+  }
 
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
@@ -43,69 +51,63 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{ nationalId: strin
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
       />
-    <ScrollView style={{ flex: 1 }} >
-      <SafeAreaView>
-        <View style={{ paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16 }}>
-          <Typography>{intl.formatMessage({ id: 'familyDetail.description' })}</Typography>
-        </View>
-        <InputRow>
-          <Input
-            loading={loading}
-            error={isError}
-            label={intl.formatMessage({ id: 'familyDetail.natreg.displayName' })}
-            value={item?.fullName}
-            size="big"
-          />
-        </InputRow>
+      <ScrollView style={{ flex: 1 }} >
+        <SafeAreaView>
+          <View style={{ paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16 }}>
+            <Typography>{intl.formatMessage({ id: 'familyDetail.description' })}</Typography>
+          </View>
+          <InputRow>
+            <Input
+              label={intl.formatMessage({ id: 'familyDetail.natreg.displayName' })}
+              value={item?.name || item?.displayName}
+              size="big"
+            />
+          </InputRow>
 
-        <InputRow>
-          <Input
-            loading={loading}
-            error={isError}
-            label={intl.formatMessage({ id: 'familyDetail.natreg.familyRelation' })}
-            value={intl.formatMessage({ id: 'familyDetail.natreg.familyRelationValue'}, {type})}
-          />
-        </InputRow>
-        <InputRow>
-          <Input
-            loading={loading}
-            error={isError}
-            label={intl.formatMessage({ id: 'familyDetail.natreg.nationalId' })}
-            value={formatNationalId(item?.nationalId)}
-          />
-          <Input
-            loading={loading}
-            error={isError}
-            label={intl.formatMessage({ id: 'familyDetail.natreg.citizenship' })}
-            value={item?.nationality}
-          />
-        </InputRow>
-        <InputRow>
-          <Input
-            loading={loading}
-            error={isError}
-            label={intl.formatMessage({ id: 'familyDetail.natreg.legalResidence' })}
-            value={item?.legalResidence}
-          />
-        </InputRow>
+          <InputRow>
+            <Input
+              label={intl.formatMessage({ id: 'familyDetail.natreg.familyRelation' })}
+              value={intl.formatMessage({ id: 'familyDetail.natreg.familyRelationValue'}, {type})}
+            />
+          </InputRow>
+          <InputRow>
+            <Input
+              label={intl.formatMessage({ id: 'familyDetail.natreg.nationalId' })}
+              value={formatNationalId(item?.nationalId)}
+            />
+            {item?.nationality ? (
+              <Input
+                label={intl.formatMessage({ id: 'familyDetail.natreg.citizenship' })}
+                value={item?.nationality}
+              />) : null
+            }
+          </InputRow>
+          {item?.legalResidence ? (
+            <InputRow>
+              <Input
+                label={intl.formatMessage({ id: 'familyDetail.natreg.legalResidence' })}
+                value={item?.legalResidence}
+              />
+            </InputRow> ) : null
+          }
 
-        <InputRow>
-          <Input
-            loading={loading}
-            error={isError}
-            label={intl.formatMessage({ id: 'familyDetail.natreg.gender' })}
-            value={item?.genderDisplay}
-          />
-          <Input
-            loading={loading}
-            error={isError}
-            label={intl.formatMessage({ id: 'familyDetail.natreg.birthPlace' })}
-            value={item?.birthplace}
-          />
-        </InputRow>
+          <InputRow>
+          {item?.genderDisplay ?
+            <Input
+              label={intl.formatMessage({ id: 'familyDetail.natreg.gender' })}
+              value={item?.genderDisplay}
+            /> : null
+          }
+          {item?.birthplace ?
+            <Input
+              label={intl.formatMessage({ id: 'familyDetail.natreg.birthPlace' })}
+              value={item?.birthplace}
+            /> : null
+          }
+          </InputRow>
 
-      </SafeAreaView>
-    </ScrollView>
+        </SafeAreaView>
+      </ScrollView>
     </View>
   );
 }
