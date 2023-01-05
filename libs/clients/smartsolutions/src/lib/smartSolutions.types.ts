@@ -1,81 +1,35 @@
-import { Pass, PassTemplate } from '../../gen/schema'
+import { Pass } from '../../gen/schema'
 
-export interface VerifyPassResult {
-  valid: boolean
-  data?: string
-  name?: string
-  nationalId?: string
-  photo?: string
-  error?: PkPassVerifyError
-}
+export type ParsedApiResponse<T> =
+  | { data: T; error?: never }
+  | { data?: never; error: ServiceError }
 
-export interface VerifyPassResponse {
-  valid: boolean
-  data?: {
-    updateStatusOnPassWithDynamicBarcode: Pass
-  }
-  errors?: {
-    message: string
-    path: string
-  }[]
-}
+export type FetchResponse =
+  /** Returns data if fetch executed */
+  | { apiResponse: ApiResponse; error?: never }
+  /** Returns an error if the function failed */
+  | { apiResponse?: never; error: ServiceError }
 
-export interface ListPassesResponse {
-  data?: {
-    passes?: ListPassesDTO
-  }
-}
-
-export interface PassTemplatesDTO {
-  data: Array<PassTemplate>
-}
-
-export interface ListPassesDTO {
-  data: Array<Pass>
-}
-
-export interface ListTemplatesResponse {
-  data?: PassTemplate[]
-  message?: string
-  status?: number
-}
-export interface PassTemplateDTO {
-  passTemplate: {
-    id: string
-    name: string
-  }
-}
-
-export interface UpsertPkPassResponse {
-  data: {
-    upsertPass: Pass
-  }
-  message?: string
-  status?: number
-  // If the payload is invalid, smart solutions returns a 200 ok with an errors field.
-  errors?: {
-    message: string
-    path: string
-  }[]
-}
-
-export interface PkPassVerifyError {
-  /**
-   * HTTP status code from the service.
-   * Needed while `status` was always the same, use `serviceError.status` for
-   * error reported by API.
-   */
-  statusCode: number
-  serviceError?: PkPassServiceErrorResponse
-}
-
-export interface PkPassServiceErrorResponse {
-  message?: string
-  status?: PkPassServiceVerifyPassStatusCode
+export type ApiResponse = {
   data?: unknown
+  errors?: {
+    message: string
+    path: string
+  }[]
 }
 
-export type PkPassServiceVerifyPassStatusCode =
+export interface ServiceError {
+  /** Custom error code pertaining to the external service, or http status */
+  code: ServiceErrorCode | number
+  /** Custom message */
+  message?: string
+  /** Optional data */
+  data?: string
+}
+/** VERIFY ACTION CODES 1-10 *
+ *  SERVICE CODES 10+ *
+ * HTTP CODES 100+ */
+export type ServiceErrorCode =
   /** License OK */
   | 1
   /** License expired */
@@ -84,5 +38,54 @@ export type PkPassServiceVerifyPassStatusCode =
   | 3
   /** Request contains some field errors */
   | 4
-  /** Unknown error */
+  /** Missing PassTemplateId */
+  | 10
+  /** Fetch failed */
+  | 11
+  /** JSON parse failed */
+  | 12
+  /** External service error */
+  | 13
+  /** Incomplete service response */
+  | 14
+  /** Request contains some field errors */
+  | 15
+  /** Generic error code / Unknown */
   | 99
+
+export type Result<ResultType, ErrorType = ServiceError> =
+  | {
+      ok: true
+      data: ResultType
+    }
+  | {
+      ok: false
+      error: ErrorType
+    }
+
+export interface VerifyPassData {
+  valid: boolean
+  pass?: Pass
+}
+
+export interface ListPassesResponseData {
+  passes?: {
+    data: Array<Pass>
+  }
+}
+
+export interface VerifyPassResponseData {
+  updateStatusOnPassWithDynamicBarcode?: Pass
+}
+
+export interface UpsertPassResponseData {
+  passes?: {
+    data: Array<Pass>
+  }
+}
+
+export interface ListTemplatesResponseData {
+  passes?: {
+    data: Array<Pass>
+  }
+}

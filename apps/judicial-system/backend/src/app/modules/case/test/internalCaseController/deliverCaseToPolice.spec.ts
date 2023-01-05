@@ -71,7 +71,6 @@ describe('InternalCaseController - Deliver case to police', () => {
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)
-      console.log(then)
     })
 
     it('should generate the court record string', async () => {
