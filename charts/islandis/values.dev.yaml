@@ -1453,7 +1453,6 @@ samradsgatt:
   env:
     BASEPATH: '/samradsgatt'
     ENVIRONMENT: 'dev'
-    NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
