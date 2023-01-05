@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useEffect } from 'react'
+import { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {

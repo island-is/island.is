@@ -359,7 +359,7 @@ export class SyslumennService {
       },
     })
     if (res.length > 0) {
-      const ret = {
+      return {
         propertyNumber: propertyNumber,
         defaultAddress: {
           display: res[0].heiti,
@@ -372,7 +372,6 @@ export class SyslumennService {
           ],
         },
       }
-      return ret
     } else {
       throw new Error()
     }

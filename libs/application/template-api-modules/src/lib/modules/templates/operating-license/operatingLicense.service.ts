@@ -120,11 +120,14 @@ export class OperatingLicenseService extends BaseTemplateApiService {
             statusCode: 404,
           })
     }
-    const lang = currentUserLocale === 'is' ? 'IS' : 'EN'
+    const financeServiceLangMap = {
+      is: 'IS',
+      en: 'EN',
+    }
 
     const response = await this.financeService.getDebtLessCertificate(
       auth.nationalId,
-      lang,
+      financeServiceLangMap[currentUserLocale] ?? 'is',
       auth,
     )
 
@@ -200,7 +203,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     }
 
     try {
-      console.log('here')
       const uploadDataName = 'rekstrarleyfi1.0'
       const uploadDataId = 'rekstrarleyfi1.0'
       const info = getValueViaPath(application.answers, 'info') as Info

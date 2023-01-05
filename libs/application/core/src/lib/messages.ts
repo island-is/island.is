@@ -400,7 +400,7 @@ export const coreErrorMessages = defineMessages({
   },
   vehiclesEmptyListDefault: {
     id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
-    defaultMessage: 'Ekki fannst nein ökutæki',
+    defaultMessage: 'Ekki fundust nein ökutæki',
     description: 'Did not find any vehicles',
   },
   dataCollectionCriminalRecordErrorTitle: {

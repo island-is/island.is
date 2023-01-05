@@ -168,13 +168,13 @@ export const m = defineMessages({
   operationCategoryResturantTwo: {
     id: 'ol.application:applicationInfo.operationCategoryResturant:Two',
     defaultMessage:
-      'Umfangslítið áfengisveitingastaðir þar sem starfsemin er ekki til þess fallin að valda ónæði í nágrenninu , svo sem með háværri tónlist, og staðir sem kalla ekki á mikið eftirlit og/eða löggæslu.',
+      'Umfangslitlir áfengisveitingastaðir þar sem starfsemin er ekki til þess fallin að valda ónæði í nágrenninu , svo sem með háværri tónlist, og staðir sem kalla ekki á mikið eftirlit og/eða löggæslu.',
     description: 'Some description',
   },
   operationCategoryResturantThree: {
     id: 'ol.application:applicationInfo.operationCategoryResturant:Three',
     defaultMessage:
-      'Umfangsmikill áfengisveitingastaðir, svo sem þar sem leikin er hávær tónlist, og staðir sem kalla á meira eftirlit og/eða löggæslu.',
+      'Umfangsmiklir áfengisveitingastaðir, svo sem þar sem leikin er hávær tónlist, og staðir sem kalla á meira eftirlit og/eða löggæslu.',
     description: 'Some description',
   },
   operationCategoryHotelTwo: {
@@ -385,7 +385,7 @@ export const m = defineMessages({
   temporaryLicenseDescription: {
     id: 'ol.application:otherInfo.temporaryLicenseDescription',
     defaultMessage:
-      'Athuga sýslumaður hefur einungis heimild til að gefa út bráðabirgðaleyfi ef nýr aðili tekur við rekstri er leyfi var fyrir og kæmi þá til skoðunar gefa það út með sömu skilmálum og giltu um hið fyrra leyfi.',
+      'Athugið að sýslumaður hefur einungis heimild til að gefa út bráðabirgðaleyfi ef nýr aðili tekur við rekstri er leyfi var fyrir og kæmi þá til skoðunar gefa það út með sömu skilmálum og giltu um hið fyrra leyfi.',
     description: 'Some description',
   },
   temporaryLicenseCheck: {
@@ -402,7 +402,7 @@ export const m = defineMessages({
   debtClaimCheck: {
     id: 'ol.application:otherInfo.debtClaimCheck',
     defaultMessage:
-      'Ég lýsi því yfir að skuldastaða umsækjanda og forsvarsmanns vegna skatta, opinberra gjalda eða iðgjalda í lífeyrissjóð nemur samanlegt ekki hærri fjárhæð en 1.000.000 kr.',
+      'Ég lýsi því yfir að skuldastaða umsækjanda og forsvarsmanns vegna skatta, opinberra gjalda eða iðgjalda í lífeyrissjóð nemur samanlagt ekki hærri fjárhæð en 1.000.000 kr.',
     description: 'Some description',
   },
   otherTextPlaceholder: {
