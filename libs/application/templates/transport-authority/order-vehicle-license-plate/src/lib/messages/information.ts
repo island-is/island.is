@@ -41,49 +41,6 @@ export const information = {
         description: 'Pick vehicle placeholder',
       },
     }),
-    plateReason: defineMessages({
-      sectionTitle: {
-        id: 'ta.ovlp.application:information.labels.plateReason.sectionTitle',
-        defaultMessage: 'Ástæða',
-        description: 'Plate size section title',
-      },
-      title: {
-        id: 'ta.ovlp.application:information.labels.plateReason.title',
-        defaultMessage: 'Ástæða pöntunar',
-        description: 'Plate size title',
-      },
-      subTitle: {
-        id: 'ta.ovlp.application:information.labels.plateReason.subTitle',
-        defaultMessage:
-          'Vinsamlegast tilgreindu ástæðu pöntunar skráningarmerkis',
-        description: 'Plate size sub title',
-      },
-      newOptionTitle: {
-        id: 'ta.ovlp.application:information.labels.plateReason.newOptionTitle',
-        defaultMessage: 'Nýtt skráningarmerki/endurnýjun á skráningarmerki',
-        description: 'New option title',
-      },
-      newOptionSubTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateReason.newOptionSubTitle',
-        defaultMessage:
-          'Athugið að skila þarf inn eldra skráningarmerki ef um endurnýjun er að ræða.',
-        description: 'New option sub title',
-      },
-      lostOptionTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateReason.lostOptionTitle',
-        defaultMessage: 'Glatað skráningarmerki',
-        description: 'Lost option title',
-      },
-      lostOptionSubTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateReason.lostOptionSubTitle',
-        defaultMessage:
-          'Ég staðfesti hér með að skráningarmerki hefur glatast. Ef það finnst verður því skilað til Samgöngustofu eða á skoðunarstöð.',
-        description: 'Lost option sub title',
-      },
-    }),
     plateSize: defineMessages({
       sectionTitle: {
         id: 'ta.ovlp.application:information.labels.plateSize.sectionTitle',
@@ -139,6 +96,19 @@ export const information = {
         id: 'ta.ovlp.application:information.labels.plateDelivery.title',
         defaultMessage: 'Afhending merkis',
         description: 'Plate delivery title',
+      },
+      warningLostPlateTitle: {
+        id:
+          'ta.ovlp.application:information.labels.plateDelivery.warningLostPlateTitle',
+        defaultMessage: 'ATH. Glatað skráningarmerki',
+        description: 'Plate delivery warning lost plate title',
+      },
+      warningLostPlateSubTitle: {
+        id:
+          'ta.ovlp.application:information.labels.plateDelivery.warningLostPlateSubTitle',
+        defaultMessage:
+          'Ef skráningarmerki hefur glatast en fundist skal því skilað til Samgöngustofu eða á skoðunarstöð.',
+        description: 'Plate delivery warning lost plate sub title',
       },
       subTitle: {
         id: 'ta.ovlp.application:information.labels.plateDelivery.subTitle',
