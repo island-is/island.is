@@ -60,3 +60,15 @@ export interface ReviewSectionProps {
   reviewer?: ReviewerProps[]
   messageValue?: string
 }
+
+export type InsuranceCompany = {
+  code?: string | null
+  name?: string | null
+}
+
+export type VehiclesCurrentVehicle = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+}

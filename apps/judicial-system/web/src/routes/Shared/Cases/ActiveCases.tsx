@@ -43,17 +43,10 @@ interface Props {
   onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
-  setActiveCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>
 }
 
 const ActiveCases: React.FC<Props> = (props) => {
-  const {
-    cases,
-    onRowClick,
-    isDeletingCase,
-    onDeleteCase,
-    setActiveCases,
-  } = props
+  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
 
@@ -406,21 +399,14 @@ const ActiveCases: React.FC<Props> = (props) => {
                     size="small"
                     loading={isDeletingCase}
                     onClick={async (evt) => {
-                      if (onDeleteCase && setActiveCases) {
+                      if (onDeleteCase) {
                         evt.stopPropagation()
 
                         await onDeleteCase(cases[i])
 
-                        controls
-                          .start('isNotDeleting')
-                          .then(() => {
-                            setRequestToRemoveIndex(undefined)
-                          })
-                          .then(() => {
-                            setActiveCases(
-                              cases.filter((c: Case) => c !== cases[i]),
-                            )
-                          })
+                        controls.start('isNotDeleting').then(() => {
+                          setRequestToRemoveIndex(undefined)
+                        })
                       }
                     }}
                   >

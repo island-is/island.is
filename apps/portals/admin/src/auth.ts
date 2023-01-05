@@ -1,9 +1,5 @@
 import { configure, configureMock } from '@island.is/auth/react'
-import {
-  AdminPortalScope,
-  AuthScope,
-  UserProfileScope,
-} from '@island.is/auth/scopes'
+import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
 
 import environment from './environments/environment'
 
@@ -25,8 +21,7 @@ if (userMocked) {
     scope: [
       'openid',
       'profile',
-      UserProfileScope.read,
-      AuthScope.delegations,
+      AdminPortalScope.delegations,
       AdminPortalScope.airDiscountScheme,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,

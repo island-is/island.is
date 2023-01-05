@@ -7,8 +7,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  NationalRegistryUserApi,
-  UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
@@ -20,8 +18,15 @@ import { application } from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../types'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+  CurrentVehiclesApi,
+  InsuranceCompaniesApi,
+} from '../dataProviders'
 
-const pruneInDaysATen = (application: Application, days: number) => {
+const pruneInDaysAtTen = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
   const pruneDate = new Date(date.toUTCString())
@@ -57,6 +62,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -75,7 +83,13 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SamgongustofaPaymentCatalogApi,
+                CurrentVehiclesApi,
+                InsuranceCompaniesApi,
+              ],
             },
           ],
         },
@@ -135,12 +149,15 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysATen(application, 8),
+              pruneInDaysAtTen(application, 8),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
           onEntry: defineTemplateApi({
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
           }),
           roles: [
             {

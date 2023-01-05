@@ -489,14 +489,6 @@ export const notifications = {
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir sakborning',
     },
-    // TODO: Remove defenderAssigned
-    defenderAssigned: {
-      id:
-        'judicial.system.backend:notifications.defender_revoked_email.defender_assigned',
-      defaultMessage: 'Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
-      description:
-        'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
-    },
     defenderAssignedV2: {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defender_assigned_v2',
@@ -528,6 +520,7 @@ export const notifications = {
     },
   }),
   modified: defineMessages({
+    // TODO: Remove subject
     subject: {
       id: 'judicial.system.backend:notifications.modified.subject',
       defaultMessage:
@@ -535,12 +528,27 @@ export const notifications = {
       description:
         'Notaður sem titill á tölvupósti vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem {courtCaseNumber} er málsnúmer dómstóls.',
     },
+    subjectV2: {
+      id: 'judicial.system.backend:notifications.modified.subject_V2',
+      defaultMessage:
+        '{caseType, select, ADMISSION_TO_FACILITY {Vistunarmál} TRAVEL_BAN {Farbann} other {Gæsluvarðhaldsmál}} {courtCaseNumber}',
+      description:
+        'Notaður sem titill á tölvupósti vegna breytingar á lengd gæslu/einangrunar/farbanns/vistunar þar sem {courtCaseNumber} er málsnúmer dómstóls.',
+    },
+    // TODO: Remove html
     html: {
       id: 'judicial.system.backend:notifications.modified.html',
       defaultMessage:
         '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}} í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}: {validToDate}.',
       description:
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/vistunar þar sem ekki var úrskurðað í einangrun.',
+    },
+    htmlV2: {
+      id: 'judicial.system.backend:notifications.modified.html_v2',
+      defaultMessage:
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} í máli {courtCaseNumber}. Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Ný lokadagsetning: {validToDate}.',
+      description:
+        'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/farbanns/vistunar þar sem ekki var úrskurðað í einangrun.',
     },
     isolationHtml: {
       id: 'judicial.system.backend:notifications.modified.isolation_html',
@@ -564,6 +572,23 @@ export const notifications = {
       defaultMessage:
         '{court} hefur skipað þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
+    },
+  }),
+  defendantsNotUpdatedAtCourt: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.defendants_not_updated_at_court.subject',
+      defaultMessage: 'Skráning varnaraðila/verjenda í máli {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og dómritara þegar ekki tekst að skrá varnaraðila/verjendur á mál.',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.defendants_not_updated_at_court.body',
+      defaultMessage:
+        'Ekki tókst að skrá varnaraðila/verjendur í máli {courtCaseNumber} í Auði. Yfirfara þarf málið í Auði og skrá rétta aðila áður en því er lokað.',
+      description:
+        'Texti í pósti til dómara og dómritara þegar ekki tekst að skrá varnaraðila/verjendur á mál.',
     },
   }),
 }

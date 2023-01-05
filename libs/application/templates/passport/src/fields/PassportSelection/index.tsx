@@ -1,17 +1,28 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
+  TagVariant,
 } from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
-import { IdentityDocument } from '../../lib/constants'
 import { m } from '../../lib/messages'
+import {
+  IdentityDocument,
+  IdentityDocumentChild,
+  IdentityDocumentData,
+} from '../../lib/constants'
+
+export type Tag = {
+  label: string
+  variant?: TagVariant | undefined
+  outlined?: boolean | undefined
+}
 
 export const PassportSelection: FC<FieldBaseProps> = ({
   field,
@@ -26,9 +37,51 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
-  const identityDocument = application.externalData.identityDocument
-    .data as IdentityDocument
-  const identityDocumentNumber = identityDocument?.number
+  const identityDocumentData = application.externalData.identityDocument
+    .data as IdentityDocumentData
+
+  const tag = (identityDocument: IdentityDocument) => {
+    const today = new Date()
+    const expirationDate = new Date(identityDocument?.expirationDate)
+    const todayPlus6Months = new Date(
+      new Date().setMonth(new Date().getMonth() + 6),
+    )
+
+    let tagObject = {} as Tag
+
+    if (!identityDocument) {
+      tagObject = {
+        label: formatMessage(m.noPassport),
+        variant: 'blue',
+        outlined: true,
+      }
+    } else if (today > expirationDate) {
+      tagObject = {
+        label: formatMessage(m.expiredTag),
+        variant: 'red',
+        outlined: true,
+      }
+    } else if (todayPlus6Months > expirationDate) {
+      tagObject = {
+        label:
+          formatMessage(m.validTag) +
+          ' ' +
+          (identityDocument
+            ? format(new Date(expirationDate), 'dd/MM/yy')
+            : ''),
+        variant: 'red',
+        outlined: true,
+      }
+    } else if (todayPlus6Months < expirationDate) {
+      tagObject = {
+        label: formatMessage(m.validTag) + ' ' + expirationDate.getFullYear(),
+        variant: 'mint',
+        outlined: true,
+      }
+    }
+
+    return tagObject
+  }
 
   return (
     <Box>
@@ -48,19 +101,17 @@ export const PassportSelection: FC<FieldBaseProps> = ({
               label: (application.externalData.nationalRegistry.data as any)
                 ?.fullName,
               value: '1',
-              subLabel:
-                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
-              tag: {
-                variant: 'red',
-                label:
-                  formatMessage(m.validTag) +
+              subLabel: identityDocumentData.userPassport
+                ? formatMessage(m.passportNumber) +
                   ' ' +
-                  format(
-                    new Date(identityDocument?.expirationDate),
-                    'dd/MM/yy',
-                  ),
-                outlined: true,
-              },
+                  identityDocumentData.userPassport?.subType +
+                  identityDocumentData?.userPassport?.number
+                : '',
+              tag: tag(identityDocumentData.userPassport),
+              disabled:
+                tag(identityDocumentData.userPassport).label ===
+                  m.orderedTag.defaultMessage ||
+                tag(identityDocumentData.userPassport).variant === 'mint',
             },
           ],
           onSelect: () => {
@@ -68,7 +119,11 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           },
         }}
       />
-      <Text variant="h3">{formatMessage(m.children)}</Text>
+      {identityDocumentData.childPassports.length > 0 && (
+        <Text variant="h3" marginTop={2}>
+          {formatMessage(m.children)}
+        </Text>
+      )}
       <RadioFormField
         error={fieldErros}
         application={application}
@@ -81,52 +136,26 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           children: undefined,
           backgroundColor: 'white',
           defaultValue: '',
-          options: [
-            {
-              label: 'Barn 1',
-              subLabel:
-                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
-              tag: {
-                variant: 'red',
-                outlined: true,
-                label: formatMessage(m.expiredTag),
-              },
-              value: '1',
+          options: identityDocumentData.childPassports.map(
+            (child: IdentityDocumentChild) => {
+              return {
+                label: child.childName,
+                value: child.childNationalId,
+                subLabel: child.passports?.length
+                  ? formatMessage(m.passportNumber) +
+                    ' ' +
+                    child.passports[0].subType +
+                    child.passports[0].number
+                  : '',
+                tag: child.passports ? tag(child.passports?.[0]) : undefined,
+                disabled: child.passports
+                  ? tag(child.passports?.[0]).label ===
+                      m.orderedTag.defaultMessage ||
+                    tag(child.passports?.[0]).variant === 'mint'
+                  : false,
+              }
             },
-            {
-              label: 'Barn 2',
-              value: '2',
-              tag: {
-                variant: 'blue',
-                outlined: true,
-                label: formatMessage(m.noPassport),
-              },
-            },
-            {
-              label: 'Barn 3',
-              subLabel:
-                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
-              value: '3',
-              tag: {
-                variant: 'blue',
-                outlined: true,
-                label: formatMessage(m.orderedTag),
-              },
-              disabled: true,
-            },
-            {
-              label: 'Barn 4',
-              subLabel:
-                formatMessage(m.passportNumber) + ' ' + identityDocumentNumber,
-              value: '4',
-              tag: {
-                variant: 'mint',
-                outlined: true,
-                label: formatMessage(m.validTag) + ' 2025',
-              },
-              disabled: true,
-            },
-          ],
+          ),
           onSelect: () => {
             setValue(userPassportRadio, '')
           },

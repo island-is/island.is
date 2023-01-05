@@ -27,9 +27,9 @@ import { useUpdateAuthDelegationMutation } from './AccessForm.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 import {
   m,
-  useModules,
   formatPlausiblePathToParams,
   usePortalMeta,
+  useRoutes,
 } from '@island.is/portals/core'
 
 type AccessFormProps = {
@@ -45,7 +45,7 @@ export const AccessForm = ({
 }: AccessFormProps) => {
   const { formatMessage } = useLocale()
   const { basePath } = usePortalMeta()
-  const { routes } = useModules()
+  const routes = useRoutes()
   const { delegationId } = useParams<{
     delegationId: string
   }>()

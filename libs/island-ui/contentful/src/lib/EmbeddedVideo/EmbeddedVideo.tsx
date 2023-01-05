@@ -69,7 +69,13 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
       const regExp = /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
       const match = item.href.match(regExp)
 
-      const youtubeId = match && match[7].length === 11 ? match[7] : false
+      let youtubeId: string | undefined = undefined
+
+      if (match) {
+        let id = match[7]
+        if (id.startsWith('/')) id = id.slice(1)
+        if (id.length === 11) youtubeId = id
+      }
 
       if (youtubeId) {
         setEmbedUrl(`https://www.youtube.com/embed/${youtubeId}`)

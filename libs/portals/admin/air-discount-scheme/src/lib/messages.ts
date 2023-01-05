@@ -9,4 +9,8 @@ export const m = defineMessages({
     id: 'admin-portal.air-discount-scheme:overview',
     defaultMessage: 'Yfirlit',
   },
+  createDiscount: {
+    id: 'admin-portal.air-discount-scheme:createDiscount',
+    defaultMessage: 'Handvirkir kóðar',
+  },
 })
