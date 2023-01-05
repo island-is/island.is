@@ -1,5 +1,4 @@
-import { PropertyDetail } from '@island.is/api/domains/assets'
-import { MortgageCertificateValidation } from '@island.is/clients/syslumenn'
+import { MortgageCertificateValidation, PropertyDetail } from '@island.is/clients/syslumenn'
 
 export interface Address {
   streetAddress: string

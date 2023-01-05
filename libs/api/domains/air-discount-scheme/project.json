@@ -44,5 +44,5 @@
       }
     }
   },
-  "tags": ["lib:api"]
+  "tags": ["lib:api", "scope:api"]
 }

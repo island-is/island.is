@@ -30,5 +30,5 @@
       }
     }
   },
-  "tags": ["lib:nest"]
+  "tags": ["lib:nest", "scope:nest"]
 }

@@ -213,3 +213,22 @@ interface EstateCommon {
 export interface EstateInfo extends EstateCommon {
   addressOfDeceased: string
 }
+
+// Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
+export interface PropertyDetail {
+  defaultAddress?: PropertyLocation
+  propertyNumber?: string
+  unitsOfUse?: UnitsOfUseModel
+}
+
+interface PropertyLocation {
+  display?: string
+}
+
+interface UnitsOfUseModel {
+   unitsOfUse?: UnitsOfUse[]
+}
+
+interface UnitsOfUse {
+  explanation?: string
+}

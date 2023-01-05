@@ -112,5 +112,5 @@
     },
     "docker-express": {}
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }

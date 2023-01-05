@@ -85,5 +85,5 @@
     },
     "docker-next": {}
   },
-  "tags": []
+  "tags": ["lib:react-next", "scope:react-next"]
 }

@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/api/domains/payment"]
     }
   },
-  "tags": ["lib:api"]
+  "tags": ["lib:api", "scope:api"]
 }

@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/api/domains/documents"]
     }
   },
-  "tags": ["lib:api"]
+  "tags": ["lib:api", "scope:api"]
 }
