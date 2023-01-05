@@ -5,4 +5,8 @@ bootstrap({
   name: 'samradsgatt',
   appDir: 'apps/samradsgatt',
   proxyConfig,
+  externalEndpointDependencies: (nextConfig) => {
+    const { graphqlEndpoint } = nextConfig.serverRuntimeConfig
+    return [graphqlEndpoint]
+  },
 })

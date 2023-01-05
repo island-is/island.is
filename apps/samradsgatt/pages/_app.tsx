@@ -5,6 +5,7 @@ import Errorpage from './404'
 function CustomApp({ Component, pageProps }: AppProps) {
   if (pageProps.pageError) {
     const { error } = pageProps.pageError
+    console.log('page error:', pageProps.pageError)
     console.log('page error:', error)
     return <Errorpage />
   }
