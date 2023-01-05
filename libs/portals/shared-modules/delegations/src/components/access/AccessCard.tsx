@@ -17,10 +17,11 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMemo } from 'react'
 import { m as coreMessages } from '@island.is/portals/core'
+import uniqBy from 'lodash/uniqBy'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
-import { AuthDelegationType } from '@island.is/api/schema'
+import { AuthApiScope, AuthDelegationType } from '@island.is/api/schema'
 import {
   AuthCustomDelegation,
   AuthCustomDelegationIncoming,
@@ -29,6 +30,26 @@ import {
 
 const isDateExpired = (date?: string | null) =>
   date ? new Date(date) < new Date() : false
+
+const getTagName = (apiScope: AuthApiScope) => {
+  if (apiScope?.group) {
+    return apiScope?.group.displayName
+  }
+
+  return apiScope.displayName
+}
+
+const getTags = (delegation: AuthCustomDelegation) =>
+  sortBy(
+    uniqBy(
+      delegation.scopes?.map((scope) => ({
+        name: scope?.apiScope ? getTagName(scope?.apiScope) : scope.displayName,
+        isExpired: isDateExpired(scope.validTo),
+      })),
+      'name',
+    ),
+    'name',
+  )
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
@@ -45,13 +66,9 @@ export const AccessCard = ({
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const tags = sortBy(
-    delegation.scopes?.map((scope) => ({
-      name: scope?.apiScope?.displayName || scope.displayName,
-      isExpired: isDateExpired(scope.validTo),
-    })),
-    'name',
-  )
+
+  const tags = useMemo(() => getTags(delegation), [delegation])
+
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
   const href = `${DelegationPaths.Delegations}/${delegation.id}`
