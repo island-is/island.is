@@ -43,14 +43,17 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
     const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
     if (!chargeItemCode) {
       throw new Error('chargeItemCode missing in request')
     }
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
+      SYSLUMADUR_NATIONAL_ID,
       [chargeItemCode],
     )
     // last chance to validate before the user receives a dummy
@@ -69,7 +72,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     orderId?: string
   }> {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

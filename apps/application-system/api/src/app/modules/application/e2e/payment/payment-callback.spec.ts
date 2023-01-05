@@ -1,8 +1,8 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
-import { setup } from '../../../../../test/setup'
-import { AppModule } from '../../../app.module'
+import { setup } from '../../../../../../test/setup'
+import { AppModule } from '../../../../app.module'
 
 let app: INestApplication
 

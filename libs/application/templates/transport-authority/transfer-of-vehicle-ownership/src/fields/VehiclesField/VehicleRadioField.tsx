@@ -71,9 +71,7 @@ export const VehicleRadioField: FC<
 
     for (const [index, vehicle] of vehicles.entries()) {
       const disabled =
-        !vehicle.isDebtLess ||
-        !!vehicle.updatelocks?.length ||
-        !!vehicle.ownerChangeErrorMessages?.length
+        !vehicle.isDebtLess || !!vehicle.ownerChangeErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
@@ -103,21 +101,6 @@ export const VehicleRadioField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!vehicle.updatelocks?.length &&
-                          vehicle.updatelocks?.map((lock) => {
-                            const message = formatMessage(
-                              getValueViaPath(
-                                applicationCheck.locks,
-                                lock.lockNo || '',
-                              ),
-                            )
-                            const fallbackMessage =
-                              formatMessage(applicationCheck.locks['0']) +
-                              ' - ' +
-                              lock.lockNo
-
-                            return <Bullet>{message || fallbackMessage}</Bullet>
-                          })}
                         {!!vehicle.ownerChangeErrorMessages?.length &&
                           vehicle.ownerChangeErrorMessages?.map((error) => {
                             const message = formatMessage(
@@ -128,7 +111,10 @@ export const VehicleRadioField: FC<
                             )
                             const defaultMessage = error.defaultMessage
                             const fallbackMessage =
-                              formatMessage(applicationCheck.validation['0']) +
+                              formatMessage(
+                                applicationCheck.validation
+                                  .fallbackErrorMessage,
+                              ) +
                               ' - ' +
                               error.errorNo
 
