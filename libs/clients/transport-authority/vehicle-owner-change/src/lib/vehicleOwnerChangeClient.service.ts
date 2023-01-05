@@ -52,14 +52,29 @@ export class VehicleOwnerChangeClient {
     }
 
     const warnSeverityError = 'E'
-    errorList = errorList.filter((x) => x.warnSever === warnSeverityError)
+    const warnSeverityLock = 'L'
+    errorList = errorList.filter(
+      (x) =>
+        x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock,
+    )
 
     return {
       hasError: errorList.length > 0,
-      errorMessages: errorList.map((item) => ({
-        errorNo: item.warningSerialNumber,
-        defaultMessage: item.errorMess,
-      })),
+      errorMessages: errorList.map((item) => {
+        let errorNo = item.warningSerialNumber?.toString()
+
+        // Note: For vehicle locks, we need to do some special parsing since
+        // the error number (warningSerialNumber) is always -1 for locks,
+        // but the number is included in the errorMess field (value before the first space)
+        if (item.warnSever === warnSeverityLock) {
+          errorNo = item.errorMess?.split(' ')[0]
+        }
+
+        return {
+          errorNo: (item.warnSever || '_') + errorNo,
+          defaultMessage: item.errorMess,
+        }
+      }),
     }
   }
 
@@ -118,14 +133,29 @@ export class VehicleOwnerChangeClient {
     }
 
     const warnSeverityError = 'E'
-    errorList = errorList.filter((x) => x.warnSever === warnSeverityError)
+    const warnSeverityLock = 'L'
+    errorList = errorList.filter(
+      (x) =>
+        x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock,
+    )
 
     return {
       hasError: errorList.length > 0,
-      errorMessages: errorList.map((item) => ({
-        errorNo: item.warningSerialNumber,
-        defaultMessage: item.errorMess,
-      })),
+      errorMessages: errorList.map((item) => {
+        let errorNo = item.warningSerialNumber?.toString()
+
+        // Note: For vehicle locks, we need to do some special parsing since
+        // the error number (warningSerialNumber) is always -1 for locks,
+        // but the number is included in the errorMess field (value before the first space)
+        if (item.warnSever === warnSeverityLock) {
+          errorNo = item.errorMess?.split(' ')[0]
+        }
+
+        return {
+          errorNo: (item.warnSever || '_') + errorNo,
+          defaultMessage: item.errorMess,
+        }
+      }),
     }
   }
 

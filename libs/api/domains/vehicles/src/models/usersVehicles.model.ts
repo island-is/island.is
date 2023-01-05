@@ -83,7 +83,7 @@ export class VehiclesVehicle {
   nextInspection?: NextInspection
 
   @Field({ nullable: true })
-  deregistrationDate?: string
+  deregistrationDate?: Date
 
   @Field({ nullable: true, defaultValue: null })
   operatorNumber?: number
