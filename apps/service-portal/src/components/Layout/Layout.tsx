@@ -12,8 +12,6 @@ import {
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.css'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
-import useRoutes from '../../hooks/useRoutes/useRoutes'
-import { useModules } from '../../hooks/useModules/useModules'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
@@ -26,8 +24,6 @@ import { useAlertBanners } from '@island.is/service-portal/graphql'
 import { useMeasure } from 'react-use'
 
 const Layout: FC = ({ children }) => {
-  useRoutes()
-  useModules()
   useNamespaces(['service.portal', 'global'])
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
