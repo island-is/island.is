@@ -9,7 +9,7 @@ export async function getStaticProps(context) {
   }
 }
 export const Index: NextPage = () => {
-  return <div>Index page</div>
+  return <div>Home</div>
 }
 
 export default Index

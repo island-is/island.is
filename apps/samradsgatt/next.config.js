@@ -4,6 +4,6 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 
 /** @type {import('next').NextConfig} */
-const nextConfig = { presets: ['next/babel'], assetPrefix: '.' }
+const nextConfig = { presets: ['next/babel'], assetPrefix: '/samradsgatt' }
 
 module.exports = withNx(withVanillaExtract(nextConfig))
