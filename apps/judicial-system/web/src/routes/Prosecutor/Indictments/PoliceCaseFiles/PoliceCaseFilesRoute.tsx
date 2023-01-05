@@ -9,6 +9,7 @@ import React, {
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
+import _isEqual from 'lodash/isEqual'
 
 import {
   FormContentContainer,
@@ -75,7 +76,7 @@ const UploadFilesToPoliceCase: React.FC<{
 
   useEffect(() => {
     const isUploading = displayFiles.some((file) => file.status === 'uploading')
-    setAllUploaded(isUploading)
+    setAllUploaded(!isUploading)
   }, [setAllUploaded, displayFiles])
 
   const setSingleFile = useCallback(
@@ -257,6 +258,23 @@ const PoliceCaseFilesRoute = () => {
     ),
   )
 
+  useEffect(() => {
+    if (!_isEqual(workingCase.policeCaseNumbers, Object.keys(allUploaded))) {
+      setAllUploaded(
+        workingCase.policeCaseNumbers.reduce(
+          (acc, policeCaseNumber) => ({
+            ...acc,
+            [policeCaseNumber]:
+              allUploaded[policeCaseNumber] === undefined
+                ? true
+                : allUploaded[policeCaseNumber],
+          }),
+          {},
+        ),
+      )
+    }
+  }, [allUploaded, workingCase.policeCaseNumbers])
+
   const setAllUploadedForPoliceCaseNumber = useCallback(
     (number: string) => (value: boolean) => {
       setAllUploaded((previous) => ({ ...previous, [number]: value }))
@@ -264,7 +282,7 @@ const PoliceCaseFilesRoute = () => {
     [setAllUploaded],
   )
 
-  const stepIsValid = !Object.values(allUploaded).some((v) => v)
+  const stepIsValid = !Object.values(allUploaded).some((v) => !v)
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
