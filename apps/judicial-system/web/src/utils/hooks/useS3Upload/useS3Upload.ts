@@ -70,7 +70,7 @@ const uploadToS3 = (
   return promise
 }
 
-export const useS3UploadV2 = (caseId: string) => {
+export const useS3Upload = (caseId: string) => {
   const { formatMessage } = useIntl()
   const [createPresignedMutation] = useMutation<
     CreatePresignedPostMutationMutation,
@@ -230,4 +230,4 @@ export const useS3UploadV2 = (caseId: string) => {
   return { upload, uploadPoliceCaseFile, remove }
 }
 
-export default useS3UploadV2
+export default useS3Upload

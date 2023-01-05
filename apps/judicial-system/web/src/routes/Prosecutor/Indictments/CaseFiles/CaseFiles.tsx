@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 import { uuid } from 'uuidv4'
@@ -27,7 +33,6 @@ import {
 import {
   TUploadFile,
   useS3Upload,
-  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -43,15 +48,23 @@ const CaseFiles: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
+  const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const { formatMessage } = useIntl()
-  const { allFilesUploaded } = useS3Upload(workingCase)
-  const { upload, remove } = useS3UploadV2(workingCase.id)
+  const { upload, remove } = useS3Upload(workingCase.id)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
       setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
     }
   }, [workingCase.caseFiles])
+
+  useMemo(() => {
+    setAllFilesUploaded(
+      displayFiles.every(
+        (file) => file.status === 'done' || file.status === 'error',
+      ),
+    )
+  }, [displayFiles, setAllFilesUploaded])
 
   const stepIsValid = allFilesUploaded
   const handleNavigationTo = useCallback(

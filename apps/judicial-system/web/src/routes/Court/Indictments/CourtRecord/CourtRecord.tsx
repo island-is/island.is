@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 import { uuid } from 'uuidv4'
@@ -30,7 +36,6 @@ import {
   TUploadFile,
   useCase,
   useS3Upload,
-  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseFileCategory,
@@ -53,18 +58,26 @@ const CourtRecord: React.FC = () => {
   } = useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
+  const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const { allFilesUploaded } = useS3Upload(workingCase)
-  const { upload, remove } = useS3UploadV2(workingCase.id)
+  const { upload, remove } = useS3Upload(workingCase.id)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
       setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
     }
   }, [workingCase.caseFiles])
+
+  useMemo(() => {
+    setAllFilesUploaded(
+      displayFiles.every(
+        (file) => file.status === 'done' || file.status === 'error',
+      ),
+    )
+  }, [displayFiles, setAllFilesUploaded])
 
   const setSingleFile = useCallback(
     (displayFile: TUploadFile, newId?: string) => {

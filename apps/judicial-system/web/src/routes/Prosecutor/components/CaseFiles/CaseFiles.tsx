@@ -28,7 +28,7 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import {
   useCase,
   useDeb,
-  useS3UploadV2,
+  useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Box,
@@ -99,7 +99,7 @@ export const CaseFiles: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { upload, uploadPoliceCaseFile, remove } = useS3UploadV2(workingCase.id)
+  const { upload, uploadPoliceCaseFile, remove } = useS3Upload(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
