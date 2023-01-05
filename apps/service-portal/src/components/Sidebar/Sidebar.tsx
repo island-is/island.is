@@ -1,12 +1,10 @@
-import React, { FC, useEffect, useState } from 'react'
-import { Box, Stack, Logo, Icon } from '@island.is/island-ui/core'
-import { ActionType } from '../../store/actions'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import React, { useState } from 'react'
+import { Box, Stack, Logo } from '@island.is/island-ui/core'
+import {
+  ServicePortalPath,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { useStore } from '../../store/stateProvider'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
-import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
@@ -22,7 +20,7 @@ interface Props {
 }
 
 export const Sidebar = ({ position }: Props) => {
-  const navigation = useNavigation(MAIN_NAVIGATION)
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   //const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(false) //useState(sidebarState === 'closed')
   // const { width } = useWindowSize()

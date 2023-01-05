@@ -55,20 +55,22 @@ const filterNavigationTree = ({
 
   // Maps the enabled status to the nav item if provided
   item.enabled = routeItem?.enabled
-  // Makes dynamic item visible in navigation after dynamicArray hook is run
-  const solidPath = Array.isArray(routeItem?.path)
-    ? routeItem?.path[0]
-    : routeItem?.path
-  const hideDynamicPath =
-    routeItem?.dynamic && solidPath && !dymamicRouteArray?.includes(solidPath)
 
-  // Hides item from navigation
+  // Makes dynamic item visible in navigation after dynamicArray hook is run
+  if (routeItem?.dynamic) {
+    const solidPath = Array.isArray(routeItem?.path)
+      ? routeItem?.path[0]
+      : routeItem?.path
+
+    const showDynamicPath =
+      routeItem?.dynamic && solidPath && dymamicRouteArray?.includes(solidPath)
+
+    item.navHide = !showDynamicPath
+  }
 
   if (routeItem?.navHide) {
     item.navHide = routeItem.navHide
   }
-
-  item.navHide = item.navHide || !!hideDynamicPath
 
   if (currentLocationPath) {
     if (item.path) {
@@ -87,7 +89,10 @@ const filterNavigationTree = ({
   return included || onlyDescendantsIncluded
 }
 
-export const useNavigation = (navigation: PortalNavigationItem) => {
+export const useNavigation = (
+  navigation: PortalNavigationItem,
+  dymamicRouteArray: string[] = [],
+) => {
   const { userInfo } = useAuth()
   const routes = useRoutes()
   const { pathname } = useLocation()
@@ -101,7 +106,7 @@ export const useNavigation = (navigation: PortalNavigationItem) => {
             item: navItem,
             routes,
             userInfo,
-            dymamicRouteArray: [],
+            dymamicRouteArray,
             currentLocationPath: pathname,
           }),
         ),
@@ -109,7 +114,7 @@ export const useNavigation = (navigation: PortalNavigationItem) => {
     }
 
     return undefined
-  }, [userInfo, navigation, routes, pathname])
+  }, [userInfo, navigation, routes, pathname, dymamicRouteArray])
 
   return filteredNavigation
 }

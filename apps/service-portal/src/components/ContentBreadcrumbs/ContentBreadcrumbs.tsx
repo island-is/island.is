@@ -7,11 +7,13 @@ import {
   BreadcrumbsDeprecated as Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import {
+  ServicePortalNavigationItem,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 
 import { isDefined } from '@island.is/shared/utils'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { useNavigation } from '@island.is/portals/core'
 
 interface ContentBreadcrumb {
   name: string | MessageDescriptor
@@ -41,7 +43,7 @@ const parseNavItemName = (
  * match as the Breadcrumbs to render.
  */
 const ContentBreadcrumbs: FC = () => {
-  const navigation = useNavigation(MAIN_NAVIGATION)
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const location = useLocation()
   const { formatMessage } = useLocale()
   let items: ContentBreadcrumb[] = []

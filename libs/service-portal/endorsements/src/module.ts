@@ -9,6 +9,7 @@ export const petitionsModule: PortalModule = {
   name: 'Almennir undirskriftalistar',
   featureFlag: Features.servicePortalPetitionsModule,
   widgets: () => [],
+  enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
       {

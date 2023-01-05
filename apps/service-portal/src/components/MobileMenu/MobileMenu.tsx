@@ -1,7 +1,9 @@
 import React, { ReactElement, useRef } from 'react'
 import { Box, Stack } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import { useNavigation } from '@island.is/portals/core'
+import {
+  ServicePortalPath,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
@@ -21,7 +23,7 @@ const MobileMenu = ({ position }: Props): ReactElement | null => {
   const ref = useRef(null)
   const [{ mobileMenuState }, dispatch] = useStore()
   const { signOut } = useAuth()
-  const mainNav = useNavigation(MAIN_NAVIGATION)
+  const mainNav = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 

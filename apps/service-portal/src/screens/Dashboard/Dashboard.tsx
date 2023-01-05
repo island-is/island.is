@@ -13,6 +13,7 @@ import { useLocale } from '@island.is/localization'
 import {
   PlausiblePageviewDetail,
   ServicePortalPath,
+  useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import Greeting from '../../components/Greeting/Greeting'
 import * as styles from './Dashboard.css'
@@ -25,7 +26,7 @@ import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 export const Dashboard: FC<{}> = () => {
   const { userInfo } = useAuth()
   const location = useLocation()
-  const mainNav = useNavigation(MAIN_NAVIGATION)
+  const mainNav = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md

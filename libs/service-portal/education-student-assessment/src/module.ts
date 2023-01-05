@@ -7,6 +7,7 @@ import { m } from '@island.is/service-portal/core'
 export const educationStudentAssessmentModule: PortalModule = {
   name: 'Samræmd könnunarpróf',
   widgets: () => [],
+  enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
       name: m.educationStudentAssessment,
