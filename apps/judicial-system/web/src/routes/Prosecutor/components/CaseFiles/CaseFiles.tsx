@@ -28,7 +28,6 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import {
   useCase,
   useDeb,
-  useS3Upload,
   useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -100,8 +99,7 @@ export const CaseFiles: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { addFileToCase, uploadPoliceCaseFile } = useS3Upload(workingCase)
-  const { upload, remove } = useS3UploadV2(workingCase.id)
+  const { upload, uploadPoliceCaseFile, remove } = useS3UploadV2(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -226,19 +224,15 @@ export const CaseFiles: React.FC = () => {
     setIsUploading(true)
 
     filesToUpload.forEach(async (f, index) => {
-      const { key, size } = await uploadPoliceCaseFile(f.id, f.name)
-
       const fileToUpload = {
         id: f.id,
         type: 'application/pdf',
         name: f.name,
         status: 'done',
         state: CaseFileState.STORED_IN_RVG,
-        key,
-        size,
       } as UploadFile
 
-      await addFileToCase(fileToUpload, () => setSingleFile(fileToUpload, f.id))
+      await uploadPoliceCaseFile(fileToUpload)
 
       setFilesInRVG([fileToUpload, ...filesInRVG])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
@@ -247,13 +241,7 @@ export const CaseFiles: React.FC = () => {
         setIsUploading(false)
       }
     })
-  }, [
-    addFileToCase,
-    filesInRVG,
-    policeCaseFileList,
-    setSingleFile,
-    uploadPoliceCaseFile,
-  ])
+  }, [filesInRVG, policeCaseFileList, uploadPoliceCaseFile])
 
   const handleRemove = useCallback(
     async (file: UploadFile) => {

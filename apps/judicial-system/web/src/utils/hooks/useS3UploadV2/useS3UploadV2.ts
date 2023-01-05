@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import { useMutation } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
-import { UploadFile } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import {
   CreateFileMutationDocument,
@@ -15,6 +16,8 @@ import {
   DeleteFileMutationMutationVariables,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UploadPoliceCaseFileMutation } from '@island.is/judicial-system-web/graphql'
+import { errors } from '@island.is/judicial-system-web/messages'
 
 export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
@@ -68,6 +71,7 @@ const uploadToS3 = (
 }
 
 export const useS3UploadV2 = (caseId: string) => {
+  const { formatMessage } = useIntl()
   const [createPresignedMutation] = useMutation<
     CreatePresignedPostMutationMutation,
     CreatePresignedPostMutationMutationVariables
@@ -76,6 +80,9 @@ export const useS3UploadV2 = (caseId: string) => {
     CreateFileMutationMutation,
     CreateFileMutationMutationVariables
   >(CreateFileMutationDocument)
+  const [uploadPoliceCaseFileMutation] = useMutation(
+    UploadPoliceCaseFileMutation,
+  )
   const [deleteFileMutation] = useMutation<
     DeleteFileMutationMutation,
     DeleteFileMutationMutationVariables
@@ -156,6 +163,53 @@ export const useS3UploadV2 = (caseId: string) => {
     [createPresignedMutation, caseId, addFileToCaseMutation],
   )
 
+  const uploadPoliceCaseFile = useCallback(
+    async (file: TUploadFile) => {
+      try {
+        const {
+          data: uploadPoliceCaseFileData,
+        } = await uploadPoliceCaseFileMutation({
+          variables: {
+            input: {
+              caseId,
+              id: file.id,
+              name: file.name,
+            },
+          },
+        })
+
+        if (!uploadPoliceCaseFileData.uploadPoliceCaseFile) {
+          throw Error('failed to upload police case file')
+        }
+
+        const data2 = await addFileToCaseMutation({
+          variables: {
+            input: {
+              caseId,
+              type: 'application/pdf',
+              key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
+              size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
+            },
+          },
+        })
+
+        if (!data2.data?.createFile.id) {
+          throw Error('failed to add file to case')
+        }
+
+        return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+      } catch (e) {
+        toast.error(formatMessage(errors.failedUploadFile))
+      }
+    },
+    [
+      addFileToCaseMutation,
+      caseId,
+      formatMessage,
+      uploadPoliceCaseFileMutation,
+    ],
+  )
+
   const remove = useCallback(
     (fileId: string) => {
       return deleteFileMutation({
@@ -173,7 +227,7 @@ export const useS3UploadV2 = (caseId: string) => {
     [deleteFileMutation, caseId],
   )
 
-  return { upload, remove }
+  return { upload, uploadPoliceCaseFile, remove }
 }
 
 export default useS3UploadV2

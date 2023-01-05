@@ -2,14 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 
 import { UploadFile } from '@island.is/island-ui/core'
-import {
-  CreateFileMutation,
-  UploadPoliceCaseFileMutation,
-} from '@island.is/judicial-system-web/graphql'
-import {
-  Case,
-  UploadPoliceCaseFileResponse,
-} from '@island.is/judicial-system/types'
+import { CreateFileMutation } from '@island.is/judicial-system-web/graphql'
+import { Case } from '@island.is/judicial-system/types'
 
 import { TUploadFile } from '../useS3UploadV2/useS3UploadV2'
 
@@ -35,34 +29,7 @@ export const useS3Upload = (workingCase: Case) => {
     )
   }, [files])
 
-  const [uploadPoliceCaseFileMutation] = useMutation(
-    UploadPoliceCaseFileMutation,
-  )
   const [createFileMutation] = useMutation(CreateFileMutation)
-
-  // File upload spesific functions
-  const uploadPoliceCaseFile = async (
-    id: string,
-    name: string,
-  ): Promise<UploadPoliceCaseFileResponse> => {
-    try {
-      const {
-        data: uploadPoliceCaseFileData,
-      } = await uploadPoliceCaseFileMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            id: id,
-            name: name,
-          },
-        },
-      })
-
-      return uploadPoliceCaseFileData?.uploadPoliceCaseFile
-    } catch (error) {
-      return { key: '', size: -1 }
-    }
-  }
 
   // Utils
   /**
@@ -108,7 +75,6 @@ export const useS3Upload = (workingCase: Case) => {
 
   return {
     allFilesUploaded,
-    uploadPoliceCaseFile,
     addFileToCase,
   }
 }
