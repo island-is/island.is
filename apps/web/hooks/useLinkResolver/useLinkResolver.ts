@@ -155,8 +155,8 @@ export const routesTemplate = {
     en: '',
   },
   login: {
-    is: '/minarsidur',
-    en: '/minarsidur',
+    is: '/innskraning',
+    en: '/en/login',
   },
   serviceweb: {
     is: '/adstod',
