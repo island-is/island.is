@@ -36,9 +36,7 @@ export class UpdateLicenseRequest {
   readonly expiryDate!: string
 
   @ApiPropertyOptional({ description: 'Data to be updated' })
-  //Should we type the payload? Maybe Partial<Something or other>
-  // Should we validate in client service (firearm, adr, etc...)
-  // dont think its possible here, too variable
+  //will be validated in a specific service later! we do not care whats in here as of now
   readonly payload?: unknown
 }
 export class UpdateLicenseResponse extends OmitType(UpdateLicenseRequest, [
