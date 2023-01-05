@@ -54,9 +54,8 @@ export const filterNavigationTree = ({
     : routeItem?.path
   const hideDynamicPath =
     routeItem?.dynamic && solidPath && !dynamicRouteArray?.includes(solidPath)
-  console.log('hideDynamicPath', hideDynamicPath)
-  // Hides item from navigation
 
+  // Hides item from navigation
   if (routeItem?.navHide) {
     item.navHide = routeItem.navHide
   }
