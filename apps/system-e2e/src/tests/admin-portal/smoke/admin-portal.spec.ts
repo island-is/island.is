@@ -10,7 +10,6 @@ test.describe('Admin portal', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'service-portal-afrika.json',
       homeUrl: `/stjornbord`,
       phoneNumber: '0103019',
       idsLoginOn: true,

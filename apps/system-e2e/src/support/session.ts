@@ -6,7 +6,7 @@ import { urls } from './urls'
 
 export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
-  mkdirSync(sessionsPath)
+  mkdirSync(sessionsPath, { recursive: true })
 }
 
 /**
