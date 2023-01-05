@@ -68,9 +68,7 @@ const filterNavigationTree = ({
     item.navHide = !showDynamicPath
   }
 
-  if (routeItem?.navHide) {
-    item.navHide = routeItem.navHide
-  }
+  item.navHide = routeItem?.navHide || !!item.navHide
 
   if (currentLocationPath) {
     if (item.path) {
