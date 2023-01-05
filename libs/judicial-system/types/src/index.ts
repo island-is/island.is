@@ -70,6 +70,7 @@ export {
 } from './lib/case'
 export type {
   Case,
+  CaseList,
   CrimeScene,
   CrimeSceneMap,
   IndictmentSubtypeMap,
