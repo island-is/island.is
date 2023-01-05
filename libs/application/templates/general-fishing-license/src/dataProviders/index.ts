@@ -9,7 +9,7 @@ const FISKISTOFA_NATIONAL_ID = '6608922069'
 export const DepartmentOfFisheriesPaymentCatalogApi = PaymentCatalogApi.configure(
   {
     params: {
-      orginizationId: FISKISTOFA_NATIONAL_ID,
+      organizationId: FISKISTOFA_NATIONAL_ID,
     },
     externalDataId: 'feeInfoProvider',
   },
