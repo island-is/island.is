@@ -16,10 +16,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
-export interface TUploadFile extends UploadFile {
-  category?: CaseFileCategory
-  policeCaseNumber?: string
-}
+import { TUploadFile } from '../useS3UploadV2/useS3UploadV2'
 
 export const useS3Upload = (workingCase: Case) => {
   const [files, setFiles] = useState<TUploadFile[]>([])

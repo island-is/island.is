@@ -16,6 +16,11 @@ import {
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+export interface TUploadFile extends UploadFile {
+  category?: CaseFileCategory
+  policeCaseNumber?: string
+}
+
 const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
   const formData = new FormData()
   Object.keys(presignedPost.fields).forEach((key) =>
@@ -79,7 +84,7 @@ export const useS3UploadV2 = (caseId: string) => {
   const upload = useCallback(
     async (
       files: Array<[File, string]>,
-      updateFile: (file: UploadFile, newId?: string) => void,
+      updateFile: (file: TUploadFile, newId?: string) => void,
       category?: CaseFileCategory,
       policeCaseNumber?: string,
     ) => {
@@ -107,6 +112,7 @@ export const useS3UploadV2 = (caseId: string) => {
               name: file.name,
               percent,
               status: 'uploading',
+              category,
             })
           })
 
@@ -132,6 +138,7 @@ export const useS3UploadV2 = (caseId: string) => {
               name: file.name,
               percent: 100,
               status: 'done',
+              category,
               // We need to set the id so we are able to delete the file later
             },
             data2.data.createFile.id,
