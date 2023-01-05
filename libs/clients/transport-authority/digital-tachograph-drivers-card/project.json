@@ -1,0 +1,45 @@
+{
+  "root": "libs/clients/transport-authority/digital-tachograph-drivers-card",
+  "sourceRoot": "libs/clients/transport-authority/digital-tachograph-drivers-card/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/transport-authority/digital-tachograph-drivers-card/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/transport-authority/digital-tachograph-drivers-card"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/transport-authority/digital-tachograph-drivers-card/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Okuritar-V1 -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/transport-authority/digital-tachograph-drivers-card"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/transport-authority/digital-tachograph-drivers-card/gen/fetch -i libs/clients/transport-authority/digital-tachograph-drivers-card/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

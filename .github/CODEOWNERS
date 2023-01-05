@@ -30,7 +30,6 @@
 /libs/cms/                                                                                          @island-is/juni @island-is/stefna
 /libs/api/domains/endorsement-system                                                                @island-is/juni
 /libs/api/domains/icelandic-names-registry/                                                         @island-is/juni
-/libs/clients/payment/                                                                              @island-is/juni
 /libs/clients/rsk/                                                                                  @island-is/juni
 /libs/clients/zendesk/                                                                              @island-is/juni
 /libs/icelandic-names-registry/                                                                     @island-is/juni
@@ -48,7 +47,6 @@
 /libs/application/templates/driving-license/                                                        @island-is/juni
 /libs/application/templates/driving-assessment-approval/                                            @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission         @island-is/juni
-/apps/application-system/api/src/app/modules/payment                                                @island-is/juni
 /libs/api/domains/driving-license/                                                                  @island-is/juni
 /libs/api/domains/education/                                                                        @island-is/juni
 /libs/application/templates/estate/                                                                 @island-is/juni
@@ -158,6 +156,7 @@
 /libs/shared/form-fields/                                                                           @island-is/sendiradid @island-is/island-ui
 
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
+/libs/api/domains/payment/                                                                          @island-is/sendiradid-applications    
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                             @island-is/stefna
@@ -221,6 +220,7 @@
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
 
 /libs/clients/charge-fjs-v2/                                                                        @island-is/origo
+/libs/clients/vehicle-service-fjs-v1/                                                               @island-is/origo
 
 /libs/application/templates/transport-authority/                                                    @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/               @island-is/origo
