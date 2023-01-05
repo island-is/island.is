@@ -43,8 +43,9 @@ const Overview: React.FC = () => {
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
 
-  const caseHasBeenSentToCourt =
-    workingCase.state !== CaseState.NEW && workingCase.state !== CaseState.DRAFT
+  const caseHasBeenReceivedByCourt =
+    workingCase.courtCaseNumber !== undefined &&
+    workingCase.courtCaseNumber !== null
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
@@ -59,7 +60,7 @@ const Overview: React.FC = () => {
       workingCase={workingCase}
       activeSection={Sections.PROSECUTOR}
       activeSubSection={
-        caseHasBeenSentToCourt
+        caseHasBeenReceivedByCourt
           ? undefined
           : IndictmentsProsecutorSubsections.OVERVIEW
       }
@@ -84,16 +85,16 @@ const Overview: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={
-            caseHasBeenSentToCourt
+            caseHasBeenReceivedByCourt
               ? constants.CASES_ROUTE
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,
           })}
-          hideNextButton={caseHasBeenSentToCourt}
+          hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
-            caseHasBeenSentToCourt
+            caseHasBeenReceivedByCourt
               ? formatMessage(strings.overview.caseSendToCourt)
               : undefined
           }
