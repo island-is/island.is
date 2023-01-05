@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { Item } from '@island.is/clients/payment'
+import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 
@@ -18,10 +18,13 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
+    // Performing organization ID
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
     // This is where you'd pick and validate that you are going to create a charge for a
     // particular charge item code. Note that creating these charges creates an actual "krafa"
     // with FJS
-    const chargeItemCode = getValueViaPath<Item['chargeItemCode']>(
+    const chargeItemCode = getValueViaPath<CatalogItem['chargeItemCode']>(
       answers,
       'userSelectedChargeItemCode',
     )
@@ -31,8 +34,9 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
     }
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
+      SYSLUMADUR_NATIONAL_ID,
       [chargeItemCode],
     )
 
@@ -49,7 +53,7 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

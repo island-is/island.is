@@ -10,6 +10,7 @@ import {
 export const educationDegreeModule: ServicePortalModule = {
   name: 'Prófgráður',
   widgets: () => [],
+  enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
       name: m.educationDegree,
