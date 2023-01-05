@@ -10,6 +10,8 @@ import {
 import { ConfigModule } from '@nestjs/config'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { AuditModule } from '@island.is/nest/audit'
+import { environment } from '../../../../environments'
 
 @Module({
   imports: [
@@ -17,6 +19,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
     LoggingModule,
     ApplicationChargeModule,
     ApplicationFilesModule,
+    AuditModule.forRoot(environment.audit),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [signingModuleConfig, ApplicationFilesConfig, FileStorageConfig],

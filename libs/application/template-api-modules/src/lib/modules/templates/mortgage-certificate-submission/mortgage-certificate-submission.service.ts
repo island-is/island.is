@@ -36,9 +36,12 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         id,
+        SYSLUMADUR_NATIONAL_ID,
         [ChargeItemCode.MORTGAGE_CERTIFICATE],
       )
       return result
@@ -60,7 +63,7 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 
