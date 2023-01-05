@@ -1,3 +1,4 @@
+import { NextPage } from 'next'
 import React from 'react'
 
 export async function getStaticProps(context) {
@@ -7,7 +8,7 @@ export async function getStaticProps(context) {
     props: {},
   }
 }
-export const Index = () => {
+export const Index: NextPage = () => {
   return <div>Index page</div>
 }
 

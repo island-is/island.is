@@ -2,6 +2,7 @@ import { AppProps } from 'next/app'
 import Head from 'next/head'
 import '../styles/styles.css'
 import Errorpage from './404'
+
 function CustomApp({ Component, pageProps }: AppProps) {
   if (pageProps.pageError) {
     const { error } = pageProps.pageError
