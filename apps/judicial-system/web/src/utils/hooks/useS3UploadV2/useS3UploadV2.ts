@@ -148,6 +148,7 @@ export const useS3UploadV2 = (caseId: string) => {
             id: id,
             name: file.name,
             status: 'error',
+            category,
           })
         }
       })

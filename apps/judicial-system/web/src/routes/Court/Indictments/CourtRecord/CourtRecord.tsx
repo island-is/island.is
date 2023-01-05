@@ -57,7 +57,7 @@ const CourtRecord: React.FC = () => {
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const { handleRetry, allFilesUploaded } = useS3Upload(workingCase)
+  const { allFilesUploaded } = useS3Upload(workingCase)
   const { upload, remove } = useS3UploadV2(workingCase.id)
 
   useEffect(() => {
@@ -141,6 +141,30 @@ const CourtRecord: React.FC = () => {
       }
     },
     [formatMessage, remove, setWorkingCase],
+  )
+
+  const handleRetry = useCallback(
+    (file: TUploadFile) => {
+      setSingleFile({
+        name: file.name,
+        id: file.id,
+        percent: 1,
+        status: 'uploading',
+        type: file.type,
+        category: file.category,
+      })
+      upload(
+        [
+          [
+            { name: file.name, type: file.type ?? '' } as File,
+            file.id ?? file.name,
+          ],
+        ],
+        setSingleFile,
+        file.category,
+      )
+    },
+    [setSingleFile, upload],
   )
 
   return (

@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import { uuid } from 'uuidv4'
 
 import {
   ProsecutorCaseInfo,
@@ -29,11 +30,10 @@ import {
   useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { uuid } from 'uuidv4'
 
 const CaseFiles: React.FC = () => {
   const {
@@ -44,7 +44,7 @@ const CaseFiles: React.FC = () => {
   } = useContext(FormContext)
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const { handleRetry, allFilesUploaded } = useS3Upload(workingCase)
+  const { allFilesUploaded } = useS3Upload(workingCase)
   const { upload, remove } = useS3UploadV2(workingCase.id)
 
   useEffect(() => {
@@ -118,6 +118,30 @@ const CaseFiles: React.FC = () => {
       }
     },
     [formatMessage, remove, setWorkingCase],
+  )
+
+  const handleRetry = useCallback(
+    (file: TUploadFile) => {
+      setSingleFile({
+        name: file.name,
+        id: file.id,
+        percent: 1,
+        status: 'uploading',
+        type: file.type,
+        category: file.category,
+      })
+      upload(
+        [
+          [
+            { name: file.name, type: file.type ?? '' } as File,
+            file.id ?? file.name,
+          ],
+        ],
+        setSingleFile,
+        file.category,
+      )
+    },
+    [setSingleFile, upload],
   )
 
   return (
