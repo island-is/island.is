@@ -1,5 +1,4 @@
 export interface CreateChargeResult {
+  id: string
   paymentUrl: string
-  user4: string
-  receptionID: string
 }
