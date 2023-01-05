@@ -23,8 +23,8 @@ import {
   Configuration,
   FetchParams,
   RequestContext,
-  AuthenticateApi,
-  AuthenticateRequest,
+  AuthenticateUserApi,
+  CredentialsData,
   CreateCaseApi,
   CreateDocumentApi,
   CreateThingbokApi,
@@ -75,11 +75,11 @@ function stripResult(str: string): string {
 }
 
 interface CourtsCredentials {
-  [key: string]: AuthenticateRequest
+  [key: string]: CredentialsData
 }
 
 interface ConnectionState {
-  credentials: AuthenticateRequest
+  credentials: CredentialsData
   authenticationToken: string
 
   // The service has a 'logged in' state per court id and at most one in-progress
@@ -120,7 +120,7 @@ export abstract class CourtClientService {
 
 @Injectable()
 export class CourtClientServiceImplementation implements CourtClientService {
-  private readonly authenticateApi: AuthenticateApi
+  private readonly authenticateUserApi: AuthenticateUserApi
   private readonly createCaseApi: CreateCaseApi
   private readonly createDocumentApi: CreateDocumentApi
   private readonly createThingbokApi: CreateThingbokApi
@@ -161,7 +161,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
           throw {
             status: res.status,
-            message: res.statusText,
+            message: await res.text(),
           }
         }),
       basePath,
@@ -169,7 +169,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
       middleware,
     })
 
-    this.authenticateApi = new AuthenticateApi(providerConfiguration)
+    this.authenticateUserApi = new AuthenticateUserApi(providerConfiguration)
     this.createCaseApi = new CreateCaseApi(providerConfiguration)
     this.createDocumentApi = new CreateDocumentApi(providerConfiguration)
     this.createThingbokApi = new CreateThingbokApi(providerConfiguration)
@@ -218,8 +218,8 @@ export class CourtClientServiceImplementation implements CourtClientService {
       return connectionState.loginPromise
     }
 
-    connectionState.loginPromise = this.authenticateApi
-      .authenticate(connectionState.credentials)
+    connectionState.loginPromise = this.authenticateUserApi
+      .authenticateUser({ credentials: connectionState.credentials })
       .then((res) => {
         // Reset the error counter
         connectionState.errorCount = 0
@@ -228,16 +228,10 @@ export class CourtClientServiceImplementation implements CourtClientService {
         connectionState.authenticationToken = stripResult(res)
       })
       .catch((reason) => {
-        // The error may contain username and password in plain text
-        const maskedDetail = reason.message?.replace(
-          /&password=.*? /,
-          '&password=xxxxx ',
-        )
-
         throw new BadGatewayException({
           ...reason,
           message: 'Unable to log into the court service',
-          detail: maskedDetail,
+          detail: reason.message,
         })
       })
       .finally(() => (connectionState.loginPromise = undefined))

@@ -71,7 +71,7 @@ export const Insurance: FC<FieldBaseProps & ReviewScreenProps> = ({
       if (!res.data) {
         setErrorMessage(formatMessage(error.couldNotUpdateApplication))
       } else {
-        setInsurance(selectedValue.label as string)
+        setInsurance(selectedValue.value as string)
         setErrorMessage(undefined)
         setStep && setStep('overview')
       }

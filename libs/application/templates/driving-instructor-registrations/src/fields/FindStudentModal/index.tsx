@@ -7,6 +7,7 @@ import * as styles from '../style.css'
 import { FindStudentQuery } from '../../graphql/queries'
 import { useQuery } from '@apollo/client'
 import { InputController } from '@island.is/shared/form-fields'
+import * as kennitala from 'kennitala'
 
 interface FindStudentsModalProps {
   application?: Application
@@ -88,7 +89,7 @@ const FindStudentModal = ({
           }
           className={styles.modalStyle}
         >
-          <Box padding={10} style={{ background: 'white' }}>
+          <Box padding={[5, 5, 10]} style={{ background: 'white' }}>
             <Text variant="h1">
               {formatMessage(m.studentsOverviewOtherStudentIdModalTitle)}
             </Text>
@@ -124,6 +125,7 @@ const FindStudentModal = ({
               <Button
                 variant="primary"
                 loading={findingStudent}
+                disabled={!kennitala.isValid(studentNationalId)}
                 onClick={() => {
                   setIsSearching(true)
                 }}

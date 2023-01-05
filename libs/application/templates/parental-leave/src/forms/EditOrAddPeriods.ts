@@ -97,7 +97,7 @@ export const EditOrAddPeriods: Form = buildForm({
                   id: 'useLength',
                   title: parentalLeaveFormMessages.duration.title,
                   description: parentalLeaveFormMessages.duration.description,
-                  defaultValue: NO_ANSWER,
+                  defaultValue: YES,
                   options: [
                     {
                       label: parentalLeaveFormMessages.duration.monthsOption,
