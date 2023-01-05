@@ -266,7 +266,6 @@ export const useS3Upload = (workingCase: Case) => {
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    handleS3Upload,
     handleRetry,
   }
 }
