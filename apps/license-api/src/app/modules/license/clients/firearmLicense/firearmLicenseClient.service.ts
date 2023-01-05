@@ -11,14 +11,20 @@ export class FirearmLicenseClientService implements GenericLicenseClient {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async delete() {
-    this.logger.debug('in delete for firearm license')
+  async revoke() {
+    this.logger.debug('in revoke for firearm license')
     const templates = await this.smartApi.listTemplates()
     return JSON.stringify(templates)
   }
 
   async update() {
     this.logger.debug('in update for firearm license')
+    const templates = await this.smartApi.listTemplates()
+    return JSON.stringify(templates)
+  }
+
+  async verify() {
+    this.logger.debug('in verify for firearm license')
     const templates = await this.smartApi.listTemplates()
     return JSON.stringify(templates)
   }

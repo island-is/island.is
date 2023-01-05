@@ -11,7 +11,7 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async delete() {
+  async revoke() {
     this.logger.debug('in delete for Disability license')
     const templates = await this.smartApi.listTemplates()
     return JSON.stringify(templates)
@@ -19,6 +19,12 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
 
   async update() {
     this.logger.debug('in update for Disability license')
+    const templates = await this.smartApi.listTemplates()
+    return JSON.stringify(templates)
+  }
+
+  async verify() {
+    this.logger.debug('in verify for Disability license')
     const templates = await this.smartApi.listTemplates()
     return JSON.stringify(templates)
   }

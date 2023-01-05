@@ -1,3 +1,5 @@
+import { LicenseError } from './dto'
+
 export enum LicenseUpdateType {
   PUSH = 'push',
   PULL = 'pull',
@@ -21,7 +23,18 @@ export enum LicenseId {
  */
 export interface GenericLicenseClient {
   update: () => Promise<string | null>
-  delete: () => Promise<string | null>
+  revoke: () => Promise<string | null>
+  verify: () => Promise<string | null>
 }
 
 export const CLIENT_FACTORY = 'client-factory'
+
+export type ServiceResponse<T> =
+  | {
+      ok: true
+      data: T
+    }
+  | {
+      ok: false
+      error: LicenseError
+    }

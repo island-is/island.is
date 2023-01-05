@@ -1,34 +1,91 @@
-import { Body, Controller, Delete, Put } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
 import { LicenseService } from './license.service'
 import {
-  ApiNoContentResponse,
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
-import { DeleteLicenseDto, UpdateLicenseDto } from './dto/license.dto'
+import {
+  UpdateLicenseResponse,
+  LicenseError,
+  UpdateLicenseRequest,
+  RevokeLicenseResponse,
+  RevokeLicenseRequest,
+  VerifyLicenseRequest,
+  VerifyLicenseResponse,
+} from './dto'
 
-@Controller('license-api')
+@Controller()
 @ApiTags('license-api')
 @Audit()
 export class LicenseController {
   constructor(private readonly licenseService: LicenseService) {}
 
-  @ApiOkResponse({ description: 'Update successful for at least one license' })
-  @ApiNoContentResponse({
-    description: 'Update successful for a single license',
+  @ApiOkResponse({
+    description: 'Update successful for license',
+    type: UpdateLicenseResponse,
   })
+  @ApiBadRequestResponse({
+    description: 'Invalid request body, details in body',
+    type: LicenseError,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: 'License not found' })
-  @Put()
-  async put(@Body() data: UpdateLicenseDto): Promise<string> {
-    return this.licenseService.updateLicense(data)
+  @ApiInternalServerErrorResponse({
+    description: 'Server error',
+    type: LicenseError,
+  })
+  @Post('/update')
+  async update(
+    @Body() data: UpdateLicenseRequest,
+  ): Promise<UpdateLicenseResponse> {
+    const response = await this.licenseService.updateLicense(data)
+
+    if (!response.ok) {
+      throw new BadRequestException(response.error)
+    }
+    return { ...response.data }
   }
-  @ApiNoContentResponse({ description: 'License entry deleted' })
+  @ApiOkResponse({
+    description: 'License successfully revoked',
+    type: RevokeLicenseResponse,
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid request body, details in body',
+    type: LicenseError,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: 'License not found' })
-  @Delete()
-  async delete(@Body() data: DeleteLicenseDto) {
-    this.licenseService.deleteLicense(data)
+  @ApiInternalServerErrorResponse({
+    description: 'Server error',
+    type: LicenseError,
+  })
+  @Post('/revoke')
+  async revoke(@Body() data: RevokeLicenseRequest) {
+    this.licenseService.revokeLicense(data)
+    return
+  }
+  @ApiOkResponse({
+    description: 'License successfully verified',
+    type: VerifyLicenseResponse,
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid request body, details in body',
+    type: LicenseError,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: 'License not found' })
+  @ApiInternalServerErrorResponse({
+    description: 'Server error',
+    type: LicenseError,
+  })
+  @Post('/verify')
+  async verify(@Body() data: VerifyLicenseRequest) {
+    this.licenseService.verifyLicense(data)
     return
   }
 }
