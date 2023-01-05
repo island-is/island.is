@@ -6,6 +6,8 @@ import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
+
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
     getCustomerTapControl {
@@ -31,9 +33,7 @@ export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
  * Returns an active navigation that matches all defined module routes
  */
 export const useDynamicRoutes = () => {
-  const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<
-    ServicePortalPath[]
-  >([])
+  const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<string[]>([])
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [
     drivingLessonsFlagEnabled,
@@ -58,15 +58,13 @@ export const useDynamicRoutes = () => {
   )
 
   useEffect(() => {
+    const dynamicPathArray = []
+
     /**
      * service-portal/finance
      * Tabs control for finance routes. Transactions, claims, tax, finance schedule.
      */
     const tabData = data?.getCustomerTapControl
-
-    const licenseBookData = licenseBook?.drivingLicenseBookUserBook
-
-    const dynamicPathArray = []
 
     if (tabData?.RecordsTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceTransactions)
@@ -81,13 +79,24 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(ServicePortalPath.FinanceSchedule)
     }
 
+    /**
+     * service-portal/vehicles
+     * Tabs control for driving lessons.
+     */
+    const licenseBookData = licenseBook?.drivingLicenseBookUserBook
     if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
       dynamicPathArray.push(ServicePortalPath.TransportVehiclesDrivingLessons)
     }
+
+    // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
   }, [data, licenseBook])
 
   return { activeDynamicRoutes, loading: loading && licenseBookLoading }
 }
 
-export default useDynamicRoutes
+export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
+  const { activeDynamicRoutes } = useDynamicRoutes()
+  const navigation = useNavigation(nav, activeDynamicRoutes)
+  return navigation
+}

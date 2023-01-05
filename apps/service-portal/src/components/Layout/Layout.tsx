@@ -9,8 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
-import useRoutes from '../../hooks/useRoutes/useRoutes'
-import { useModules } from '../../hooks/useModules/useModules'
 import {
   m,
   ServicePortalNavigationItem,
@@ -19,6 +17,9 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocation, matchPath } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import MobileMenu from '../MobileMenu/MobileMenu'
+import { RemoveScroll } from 'react-remove-scroll'
+import cn from 'classnames'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
 import {
   GET_ORGANIZATIONS_QUERY,
@@ -27,7 +28,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import { useMeasure } from 'react-use'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useQuery } from '@apollo/client'
 import SidebarLayout from './SidebarLayout'
 import Sticky from '../Sticky/Sticky'
@@ -36,15 +36,15 @@ import Sidemenu from '../Sidemenu/Sidemenu'
 import { useStore } from '../../store/stateProvider'
 import * as styles from './Layout.css'
 import GoBack from '../GoBack/GoBack'
+import { useDynamicRoutesWithNavigation } from '@island.is/service-portal/core'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 const Layout: FC = ({ children }) => {
-  useRoutes()
-  useModules()
   useNamespaces(['service.portal', 'global'])
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const { formatMessage } = useLocale()
-  const navigation = useNavigation()
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const [isDashboard, setIsDashboard] = useState(true)
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
@@ -86,7 +86,7 @@ const Layout: FC = ({ children }) => {
     }
   }
 
-  const parent = findParent(navigation[0]?.children)
+  const parent = findParent(navigation?.children)
 
   if (parent !== undefined) {
     parent.children

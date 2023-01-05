@@ -274,8 +274,7 @@ export const SignedVerdictOverview: React.FC = () => {
         user.role,
       ) ||
         user.institution?.type === InstitutionType.PRISON_ADMIN) &&
-      (workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.ADMISSION_TO_FACILITY)
+      isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
 
@@ -554,7 +553,7 @@ export const SignedVerdictOverview: React.FC = () => {
           <Box marginBottom={5}>
             <AlertMessage
               type="info"
-              title={formatMessage(m.sections.modifyDatesInfo.titleV2, {
+              title={formatMessage(m.sections.modifyDatesInfo.titleV3, {
                 caseType: workingCase.type,
               })}
               message={

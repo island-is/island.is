@@ -79,6 +79,7 @@ export const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
+    policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
   })
 
   // Used in exported indicators

@@ -36,6 +36,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
     const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
       answers,
       'applicationFor',
@@ -45,8 +47,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
+      SYSLUMADUR_NATIONAL_ID,
       [chargeItemCode],
     )
 
@@ -66,7 +69,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const nationalId = application.applicant
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

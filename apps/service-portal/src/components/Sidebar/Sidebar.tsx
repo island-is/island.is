@@ -1,27 +1,27 @@
-import React, { FC, useEffect, useState } from 'react'
-import { Box, Stack, Logo, Icon } from '@island.is/island-ui/core'
-import { ActionType } from '../../store/actions'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import React, { useState } from 'react'
+import { Box, Stack, Logo } from '@island.is/island-ui/core'
+import {
+  ServicePortalPath,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { useStore } from '../../store/stateProvider'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 import ModuleNavigation from './ModuleNavigation'
 import NavItem from './NavItem/NavItem'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
 import cn from 'classnames'
 import * as styles from './Sidebar.css'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 interface Props {
   position: number
 }
 
 export const Sidebar = ({ position }: Props) => {
-  const navigation = useNavigation()
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
+  //const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(false) //useState(sidebarState === 'closed')
   const { signOut } = useAuth()
 
@@ -59,23 +59,20 @@ export const Sidebar = ({ position }: Props) => {
         paddingTop={5}
         height="full"
       >
-        {navigation.map((rootItem, rootIndex) => (
-          <Stack space={1} key={rootIndex}>
-            {rootItem.children?.map(
-              (navRoot, index) =>
-                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
-                !navRoot.navHide && (
-                  <ModuleNavigation
-                    key={index}
-                    nav={navRoot}
-                    badge={
-                      navRoot.subscribesTo === 'documents' && unreadCounter > 0
-                    }
-                  />
-                ),
-            )}
-          </Stack>
-        ))}
+        <Stack space={1}>
+          {navigation?.children?.map(
+            (rootItem, rootIndex) =>
+              !rootItem.navHide && (
+                <ModuleNavigation
+                  key={rootIndex}
+                  nav={rootItem}
+                  badge={
+                    rootItem.subscribesTo === 'documents' && unreadCounter > 0
+                  }
+                />
+              ),
+          )}
+        </Stack>
 
         <Box marginTop={1} background="white" width="full">
           <NavItem
