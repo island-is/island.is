@@ -22,7 +22,7 @@ const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
 
 export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
-    orginizationId: SAMGONGUSTOFA_NATIONAL_ID,
+    organizationId: SAMGONGUSTOFA_NATIONAL_ID,
   },
   externalDataId: 'payment',
 })
