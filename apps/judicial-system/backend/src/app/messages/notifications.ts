@@ -520,6 +520,7 @@ export const notifications = {
     },
   }),
   modified: defineMessages({
+    // TODO: Remove subject
     subject: {
       id: 'judicial.system.backend:notifications.modified.subject',
       defaultMessage:
@@ -527,12 +528,27 @@ export const notifications = {
       description:
         'Notaður sem titill á tölvupósti vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem {courtCaseNumber} er málsnúmer dómstóls.',
     },
+    subjectV2: {
+      id: 'judicial.system.backend:notifications.modified.subject_V2',
+      defaultMessage:
+        '{caseType, select, ADMISSION_TO_FACILITY {Vistunarmál} TRAVEL_BAN {Farbann} other {Gæsluvarðhaldsmál}} {courtCaseNumber}',
+      description:
+        'Notaður sem titill á tölvupósti vegna breytingar á lengd gæslu/einangrunar/farbanns/vistunar þar sem {courtCaseNumber} er málsnúmer dómstóls.',
+    },
+    // TODO: Remove html
     html: {
       id: 'judicial.system.backend:notifications.modified.html',
       defaultMessage:
         '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}} í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}: {validToDate}.',
       description:
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/vistunar þar sem ekki var úrskurðað í einangrun.',
+    },
+    htmlV2: {
+      id: 'judicial.system.backend:notifications.modified.html_v2',
+      defaultMessage:
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} í máli {courtCaseNumber}. Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Ný lokadagsetning: {validToDate}.',
+      description:
+        'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/farbanns/vistunar þar sem ekki var úrskurðað í einangrun.',
     },
     isolationHtml: {
       id: 'judicial.system.backend:notifications.modified.isolation_html',
