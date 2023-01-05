@@ -4,7 +4,7 @@ import { join } from 'path'
 import { cognitoLogin, idsLogin } from './login'
 import { urls } from './urls'
 
-const sessionsPath = join(__dirname, 'tmp-sessions')
+export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
   mkdirSync(sessionsPath)
 }
