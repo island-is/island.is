@@ -11,7 +11,6 @@ import {
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
 import { Discount as DiscountModel } from '../models/discount.model'
-import { FlightLeg } from '../models/flightLeg.model'
 
 @Injectable()
 export class DiscountService {
@@ -96,47 +95,7 @@ export class DiscountService {
       }
     }
 
-    for (const discount of discounts) {
-      discount.flightLegs = await this.getFlightLegsByNationalId(
-        auth,
-        discount.nationalId,
-      )
-    }
-
     return discounts
-  }
-
-  async getFlightLegsByNationalId(
-    auth: User,
-    nationalId: string,
-  ): Promise<FlightLeg[]> {
-    const getFlightsResponse = await this.getADSWithAuth(auth)
-      .privateFlightUserControllerGetUserFlights({ nationalId })
-      .catch((e) => {
-        this.handle4xx(e)
-      })
-
-    if (!getFlightsResponse) {
-      return []
-    }
-    const flightLegs: FlightLeg[] = []
-
-    getFlightsResponse.forEach((flight) => {
-      if (flight?.flightLegs) {
-        for (const flightLeg of flight.flightLegs) {
-          flightLegs.push({
-            ...flightLeg,
-            flight: {
-              bookingDate: flight.bookingDate,
-              id: flight.id,
-            },
-            travel: `${flightLeg.origin} - ${flightLeg.destination}`,
-          })
-        }
-      }
-    })
-
-    return flightLegs
   }
 
   private async getDiscount(

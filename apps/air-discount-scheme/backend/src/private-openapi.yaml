@@ -304,6 +304,23 @@ paths:
         - Users
       security:
         - bearer: []
+  /api/private/users/userAndRelativesFlights:
+    get:
+      operationId: PrivateFlightUserController_getUserAndRelativesFlights
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flight'
+      tags:
+        - Users
+      security:
+        - bearer: []
   /api/private/users/{nationalId}/relations:
     get:
       operationId: PrivateUserController_getUserRelations
