@@ -201,6 +201,7 @@
 /libs/auth-api-lib/                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                              @island-is/fuglar @island-is/aranja
 /libs/application/templates/european-health-insurance-card/                                         @island-is/fuglar
+/libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/    @island-is/fuglar
 
 /apps/services/auth/personal-representative/                                                        @island-is/programm @island-is/aranja
 /apps/services/auth/personal-representative-public/                                                 @island-is/programm @island-is/aranja
