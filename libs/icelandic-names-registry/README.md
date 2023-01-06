@@ -1,1 +1,1 @@
-# icelandic-names-registry
+# Icelandic Names Registry

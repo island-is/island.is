@@ -1,1 +1,1 @@
-# financial-aid
+# Financial Aid
