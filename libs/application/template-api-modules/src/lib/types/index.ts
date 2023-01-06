@@ -39,7 +39,6 @@ export interface BaseTemplateAPIModuleConfig {
   generalPetition: {
     endorsementsApiBasePath: string
   }
-  paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
   applicationService: Type<BaseTemplateApiApplicationService>
