@@ -307,15 +307,11 @@ export const Labor = new XroadConf({
 
 export const PaymentSchedule = new XroadConf({
   env: {
-    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: {
-      dev: 'IS-DEV/GOV/10021/FJS-Public',
-      staging: 'IS-DEV/GOV/10021/FJS-Public',
-      prod: 'IS/GOV/5402697509/FJS-Public',
+    XROAD_PAYMENT_SCHEDULE_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1',
     },
-  },
-  secrets: {
-    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
-    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
   },
 })
 
