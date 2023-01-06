@@ -5,15 +5,13 @@ import { IntlProvider } from 'react-intl'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import { MockedAuthenticator } from '@island.is/auth/react'
-import {
-  PortalModule,
-  PortalNavigationItem,
-  PortalProvider,
-  useSingleNavigationItem,
-} from '@island.is/portals/core'
+
 import { defaultLanguage } from '@island.is/shared/constants'
 
 import { testCases } from '../../test/useSingleNavigationItem-test-cases'
+import { PortalProvider } from '../components/PortalProvider'
+import { PortalModule, PortalNavigationItem } from '../types/portalCore'
+import { useSingleNavigationItem } from './useSingleNavigationItem'
 
 describe('useSingleNavigationItem hook', () => {
   describe.each(Object.keys(testCases))('%s', (testCaseName) => {
@@ -30,8 +28,9 @@ describe('useSingleNavigationItem hook', () => {
       <ApolloProvider client={new ApolloClient({ cache: new InMemoryCache() })}>
         <IntlProvider
           locale={defaultLanguage}
-          // Ignoring error because we don't need translations for tests
-          onError={() => {}}
+          onError={() => {
+            // Ignoring error because we don't need translations for tests
+          }}
         >
           <MockedAuthenticator user={{ profile: { name: 'Peter' } }}>
             <Router>

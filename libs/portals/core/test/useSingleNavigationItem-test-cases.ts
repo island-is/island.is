@@ -1,4 +1,4 @@
-import { PortalModule, PortalNavigationItem } from '@island.is/portals/core'
+import { PortalModule, PortalNavigationItem } from '../src/types/portalCore'
 
 type TestPortalModule = Pick<PortalModule, 'name' | 'enabled' | 'routes'>
 
