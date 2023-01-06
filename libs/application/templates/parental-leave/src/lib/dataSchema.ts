@@ -72,22 +72,36 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
-    params: errorMessages.employerNationalRegistryId,
+  employment: z.object({
+    employers: z.array(
+      z.object({
+        name: z.object({
+          label: z.string(),
+          nationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
+            params: errorMessages.employerNationalRegistryId,
+          }),
+        }),
+        phoneNumber: z
+          .string()
+          .refine(
+            (p) => {
+              const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+              if (phoneNumber) return phoneNumber.isValid()
+              else return true
+            },
+            { params: errorMessages.phoneNumber },
+          )
+          .optional(),
+        email: z.string().email(),
+        ratio: z.string().refine((value) => {
+          const intValue = parseInt(value)
+          return intValue >= 0 && intValue <= 100
+        }),
+      }),
+    ),
+    isReceivingUnemploymentBenefits: z.enum([YES, NO]),
+    unemploymentBenefits: z.string().min(1),
   }),
-  employerPhoneNumber: z
-    .string()
-    .refine(
-      (p) => {
-        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        if (phoneNumber) return phoneNumber.isValid()
-        else return true
-      },
-      { params: errorMessages.phoneNumber },
-    )
-    .optional(),
-  isRecivingUnemploymentBenefits: z.enum([YES, NO]),
-  unemploymentBenefits: z.string().min(1),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
