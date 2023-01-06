@@ -33,30 +33,46 @@ export class MessageService {
       region: config.region,
     })
 
-    // TODO: Make more robust, by retrying
-    this.sqs
-      .send(new GetQueueUrlCommand({ QueueName: this.config.queueName }))
-      .then((data) => {
-        this.logger.info('Message queue is ready')
+    this.connectToQueue()
+  }
 
-        this._queueUrl = data.QueueUrl
-      })
-      .catch((err) => {
-        if (config.production) {
-          this.logger.error('Failed to connect to message queue', { err })
-        }
+  private async connectToQueue(): Promise<void> {
+    this._queueUrl = undefined
 
-        this.sqs
-          .send(new CreateQueueCommand({ QueueName: this.config.queueName }))
-          .then((data) => {
-            this.logger.info('Message queue is ready')
+    while (!this._queueUrl) {
+      await this.sqs
+        .send(new GetQueueUrlCommand({ QueueName: this.config.queueName }))
+        .then((data) => {
+          this.logger.info('Message queue is ready')
 
-            this._queueUrl = data.QueueUrl
-          })
-          .catch((err) => {
-            this.logger.error('Failed to create message queue', { err })
-          })
-      })
+          this._queueUrl = data.QueueUrl
+        })
+        .catch(async (err) => {
+          if (this.config.production) {
+            this.logger.error('Failed to connect to message queue', { err })
+          } else {
+            await this.sqs
+              .send(
+                new CreateQueueCommand({ QueueName: this.config.queueName }),
+              )
+              .then((data) => {
+                this.logger.info('Message queue is ready')
+
+                this._queueUrl = data.QueueUrl
+              })
+              .catch((err) => {
+                this.logger.error('Failed to create message queue', { err })
+              })
+          }
+        })
+
+      if (!this._queueUrl) {
+        // Wait a bit before trying again
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.config.waitTimeSeconds * 1000),
+        )
+      }
+    }
   }
 
   private get queueUrl(): string {
@@ -162,6 +178,11 @@ export class MessageService {
           this.logger.error('Failed to send message to queue', { data })
         }
       })
+      .catch((err) => {
+        this.connectToQueue()
+
+        throw err
+      })
   }
 
   async sendMessagesToQueue(messages: CaseMessage[]): Promise<void> {
@@ -186,6 +207,11 @@ export class MessageService {
             this.logger.error('Failed to send messages to queue', { data })
           }
         })
+        .catch((err) => {
+          this.connectToQueue()
+
+          throw err
+        })
     }
   }
 
@@ -206,6 +232,11 @@ export class MessageService {
             await this.handleMessage(callback, message)
           }
         }
+      })
+      .catch((err) => {
+        this.connectToQueue()
+
+        throw err
       })
   }
 }
