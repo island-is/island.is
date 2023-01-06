@@ -3,16 +3,13 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
-import {
-  servicePortalMasterNavigation,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import {
   ApplicationErrorBoundary,
   PortalProvider,
+  Modules,
 } from '@island.is/portals/core'
 
 import { environment } from '../environments'
@@ -20,11 +17,10 @@ import { StateProvider } from '../store/stateProvider'
 import * as store from '../store/store'
 import Dashboard from '../screens/Dashboard/Dashboard'
 import Layout from '../components/Layout/Layout'
-import Modules from '../screens/Modules/Modules'
-import { GlobalModules } from '../components/GlobalModules/GlobalModules'
 import { UserProfileLocale } from '@island.is/shared/components'
 import * as styles from './App.css'
-import { modules } from '../store/modules'
+import { modules } from '../lib/modules'
+import { ServicePortalPaths } from '../lib/paths'
 
 export const App = () => {
   return (
@@ -36,28 +32,26 @@ export const App = () => {
         >
           <LocaleProvider locale={defaultLanguage} messages={{}}>
             <ApplicationErrorBoundary>
-              <Router basename={ServicePortalPath.MinarSidurPath}>
+              <Router basename={ServicePortalPaths.Base}>
                 <Authenticator>
                   <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
                     <PortalProvider
-                      modules={Object.values(modules)}
+                      modules={modules}
                       meta={{
-                        basePath: ServicePortalPath.MinarSidurPath,
-                        masterNav: servicePortalMasterNavigation[0],
+                        basePath: ServicePortalPaths.Base,
                         portalType: 'my-pages',
                       }}
                     >
                       <UserProfileLocale />
                       <Layout>
                         <Switch>
-                          <Route exact path={ServicePortalPath.MinarSidurRoot}>
+                          <Route exact path={ServicePortalPaths.Root}>
                             <Dashboard />
                           </Route>
                           <Route>
                             <Modules />
                           </Route>
                         </Switch>
-                        <GlobalModules />
                       </Layout>
                     </PortalProvider>
                   </FeatureFlagProvider>

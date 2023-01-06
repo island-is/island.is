@@ -143,6 +143,14 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   component: 'OtherParent',
                   id: 'otherParentObj.chooseOtherParent',
+                  // childInputIds: [
+                  //   'transferRights',
+                  //   'otherParentRightOfAccess',
+                  //   'requestRights.isRequestingRights',
+                  //   'requestRights.requestDays',
+                  //   'giveRights.isGivingRights',
+                  //   'giveRights.giveDays',
+                  // ],
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                 }),
                 buildTextField({
@@ -183,6 +191,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 })?.otherParentObj?.chooseOtherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
+              defaultValue: YES,
               options: [
                 {
                   label: parentalLeaveFormMessages.rightOfAccess.yesOption,
@@ -501,7 +510,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   title:
                     parentalLeaveFormMessages.employer
                       .isRecivingUnemploymentBenefitsTitle,
-                  description: '',
+                  description:
+                    parentalLeaveFormMessages.employer
+                      .isRecivingUnemploymentBenefitsDescription,
                   condition: (answers) =>
                     (answers as {
                       employer: {
@@ -1004,7 +1015,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'useLength',
                   title: getDurationTitle,
                   description: parentalLeaveFormMessages.duration.description,
-                  defaultValue: NO_ANSWER,
+                  defaultValue: YES,
                   options: [
                     {
                       label: parentalLeaveFormMessages.duration.monthsOption,

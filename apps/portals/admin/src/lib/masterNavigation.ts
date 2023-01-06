@@ -6,16 +6,25 @@ import {
 import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
 import { AdminPortalPaths } from './paths'
 
-export const masterNavigation: PortalNavigationItem = {
+export const rootNavigationItem: PortalNavigationItem = {
   name: coreMessages.overview,
   systemRoute: true,
   path: AdminPortalPaths.Root,
   icon: {
     icon: 'home',
   },
+}
+
+export const TOP_NAVIGATION: PortalNavigationItem = {
+  ...rootNavigationItem,
   children: [
     // Loftbrú
     airDiscountSchemeNavigation,
+  ],
+}
+export const BOTTOM_NAVIGATION: PortalNavigationItem = {
+  ...rootNavigationItem,
+  children: [
     // Aðgangsstýring umboð
     delegationsNavigation,
   ],

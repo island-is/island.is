@@ -1,1 +1,2 @@
-export * from './insuranceCompany.model'
+export * from './ownerChangeValidation.model'
+export * from './checkTachoNetExists.model'

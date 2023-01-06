@@ -44,7 +44,7 @@ const initialState: Case = {
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumbers: [],
-  defendants: [{ id: '' } as Defendant],
+  defendants: [{ id: '', noNationalId: false } as Defendant],
   defendantWaivesRightToCounsel: false,
 }
 
@@ -79,6 +79,7 @@ export const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
+    policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
   })
 
   // Used in exported indicators

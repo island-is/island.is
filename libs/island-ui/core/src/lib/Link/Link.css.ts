@@ -71,3 +71,7 @@ export const colors = styleVariants({
     },
   },
 })
+
+export const pointer = style({
+  cursor: 'pointer',
+})

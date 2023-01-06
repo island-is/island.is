@@ -6,6 +6,7 @@ export const GetChildrenIdentityDocumentQuery = gql`
   query GetChildrenIdentityDocumentQuery {
     getIdentityDocumentChildren {
       childNationalId
+      childName
       passports {
         ...identityDocumentFragment
       }

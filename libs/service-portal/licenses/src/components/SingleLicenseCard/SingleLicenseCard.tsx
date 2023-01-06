@@ -83,14 +83,14 @@ export const SingleLicenseCard = ({
             marginBottom={1}
           >
             {secondaryTag ? (
-              <Box paddingRight={1} paddingTop={[1, 0]}>
+              <Box paddingRight={1} paddingTop={[1, 1, 1, 0]}>
                 <Tag disabled variant={secondaryTag.color}>
                   {secondaryTag.text}
                 </Tag>
               </Box>
             ) : null}
             {tag.text ? (
-              <Box paddingTop={secondaryTag ? [1, 1, 0] : undefined}>
+              <Box paddingTop={[1, 1, 1, 0]}>
                 <Tag disabled variant={tag.color}>
                   {tag.text}
                 </Tag>

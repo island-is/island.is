@@ -307,15 +307,11 @@ export const Labor = new XroadConf({
 
 export const PaymentSchedule = new XroadConf({
   env: {
-    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: {
-      dev: 'IS-DEV/GOV/10021/FJS-Public',
-      staging: 'IS-DEV/GOV/10021/FJS-Public',
-      prod: 'IS/GOV/5402697509/FJS-Public',
+    XROAD_PAYMENT_SCHEDULE_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1',
     },
-  },
-  secrets: {
-    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
-    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
   },
 })
 
@@ -433,6 +429,11 @@ export const TransportAuthority = new XroadConf({
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1',
     },
+    XROAD_VEHICLE_INFOLOCKS_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+    },
     XROAD_VEHICLE_OPERATORS_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
@@ -448,6 +449,11 @@ export const TransportAuthority = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1',
+    },
+    XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1',
     },
   },
 })

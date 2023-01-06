@@ -6,11 +6,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { ActorDelegationsService } from './services/actorDelegations.service'
-import { ApiScopeServiceV1 } from './services-v1/apiScope.service'
-import { ApiScopeServiceV2 } from './services-v2/apiScope.service'
 import { DomainService } from './services/domain.service'
-import { MeDelegationsServiceV1 } from './services-v1/meDelegations.service'
-import { MeDelegationsServiceV2 } from './services-v2/meDelegations.service'
 import {
   ApiScopeResolver,
   DelegationResolver,
@@ -38,11 +34,7 @@ import { CmsModule } from '@island.is/cms'
     DomainService,
     ActorDelegationsService,
     MeDelegationsService,
-    MeDelegationsServiceV1,
-    MeDelegationsServiceV2,
     ApiScopeService,
-    ApiScopeServiceV1,
-    ApiScopeServiceV2,
     ApiScopeLoader,
     DomainLoader,
     CmsModule,

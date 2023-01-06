@@ -39,3 +39,13 @@ export interface NewestOwnerChange {
   insuranceCompanyCode: string
   insuranceCompanyName?: string | null
 }
+
+export interface OwnerChangeValidation {
+  hasError: boolean
+  errorMessages?: Array<OwnerChangeValidationMessage> | null
+}
+
+export interface OwnerChangeValidationMessage {
+  errorNo?: string | null
+  defaultMessage?: string | null
+}
