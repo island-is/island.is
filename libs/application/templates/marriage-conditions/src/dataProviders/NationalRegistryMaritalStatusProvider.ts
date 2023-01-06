@@ -65,11 +65,11 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
           reason: `Applicant marital status ${maritalStatus} not applicable`,
         })
       })
-      .catch(() => {
+      .catch((error) => {
         if (useFakeData) {
           return this.handleFakeData(fakeData)
         }
-        return Promise.reject({})
+        return Promise.reject({reason: `graphql error in ${this.type}: ${JSON.stringify(error)}`})
       })
   }
 
