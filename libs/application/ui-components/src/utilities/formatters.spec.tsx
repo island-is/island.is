@@ -43,7 +43,7 @@ describe('formatters', () => {
       const phoneNumber = '999-9999'
       const expectedPhoneNumber = '999-9999'
       // assert
-      expect(formatBankInfo(phoneNumber)).toBe(expectedPhoneNumber)
+      expect(formatPhoneNumber(phoneNumber)).toBe(expectedPhoneNumber)
     })
 
     it('should format phone number if it comes as 7 characters length string', async () => {
@@ -67,7 +67,7 @@ describe('formatters', () => {
       const phoneNumber = '99999-99-9999'
       const expectedPhoneNumber = '99999-99-9999'
       // assert
-      expect(formatBankInfo(phoneNumber)).toBe(expectedPhoneNumber)
+      expect(formatPhoneNumber(phoneNumber)).toBe(expectedPhoneNumber)
     })
   })
 })

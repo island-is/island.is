@@ -1,7 +1,9 @@
+import { UserProfile } from '@island.is/application/types'
+
 export interface ApplicantInformationInterface {
   externalData: {
     // new dataprovider
-    identityRegistry: {
+    identity: {
       data: {
         name: 'string'
         nationalId: 'string'
@@ -23,6 +25,9 @@ export interface ApplicantInformationInterface {
           city: 'string'
         }
       }
+    }
+    userProfile: {
+      data: UserProfile
     }
   }
 }

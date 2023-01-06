@@ -1,5 +1,4 @@
 import { DynamicModule, Module } from '@nestjs/common'
-import { Base64 } from 'js-base64'
 import { Configuration, DefaultApi } from '../gen/fetch'
 import { PaymentScheduleServiceOptions } from './types'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -22,6 +21,7 @@ export class PaymentScheduleClientModule {
                   name: 'clients-payment-schedule',
                   treat400ResponsesAsErrors: true,
                   logErrorResponseBody: true,
+                  timeout: 90000,
                 }),
                 basePath: baseURL,
                 headers: {

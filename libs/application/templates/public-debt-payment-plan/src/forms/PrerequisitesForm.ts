@@ -22,10 +22,9 @@ import { Logo } from '../assets'
 import { application, info, section, externalData } from '../lib/messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { NO, YES } from '../shared/constants'
-import { PaymentPlanExternalData } from '../types'
-import { Application } from '@island.is/api/schema'
 import { isApplicantCompany, isApplicantPerson } from '../lib/paymentPlanUtils'
 import { PaymentPlanPrerequisitesApi } from '../dataProviders'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -118,8 +117,7 @@ export const PrerequisitesForm: Form = buildForm({
       id: 'info',
       title: section.info,
       children: [
-        buildMultiField({
-          id: 'applicantSection',
+        applicantInformationMultiField({
           title: (formValue) =>
             isApplicantCompany(formValue)
               ? info.general.companyPageTitle
@@ -128,99 +126,6 @@ export const PrerequisitesForm: Form = buildForm({
             isApplicantCompany(formValue)
               ? info.general.companyPageDescription
               : info.general.pageDescription,
-          children: [
-            buildTextField({
-              id: 'applicant.name',
-              title: (formValue) =>
-                isApplicantCompany(formValue)
-                  ? info.labels.companyName
-                  : info.labels.name,
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) => {
-                return (
-                  (application.externalData as PaymentPlanExternalData)
-                    ?.identity?.data?.name ?? ''
-                )
-              },
-            }),
-            buildTextField({
-              id: 'applicant.nationalId',
-              title: info.labels.nationalId,
-              format: '######-####',
-              width: 'half',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)?.identity
-                  ?.data?.nationalId ?? '',
-            }),
-            buildTextField({
-              id: 'applicant.address',
-              title: info.labels.address,
-              width: 'half',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)?.identity
-                  ?.data?.address?.streetAddress ?? '',
-            }),
-            buildTextField({
-              id: 'applicant.postalCode',
-              title: info.labels.postalCode,
-              width: 'half',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)?.identity
-                  ?.data?.address?.postalCode ?? '',
-            }),
-            buildTextField({
-              id: 'applicant.city',
-              title: info.labels.city,
-              width: 'half',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)?.identity
-                  ?.data?.address?.city ?? '',
-            }),
-            buildTextField({
-              id: 'applicant.email',
-              title: info.labels.email,
-              width: 'half',
-              variant: 'email',
-              backgroundColor: 'blue',
-              required: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.userProfile?.data?.email,
-            }),
-            buildTextField({
-              id: 'applicant.phoneNumber',
-              title: info.labels.tel,
-              format: '###-####',
-              width: 'half',
-              variant: 'tel',
-              backgroundColor: 'blue',
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.userProfile?.data?.mobilePhoneNumber,
-            }),
-            buildSubmitField({
-              id: 'toDraft',
-              title: externalData.labels.externalDataSuccessSubmitFieldTitle,
-              refetchApplicationAfterSubmit: true,
-              placement: 'footer',
-              actions: [
-                {
-                  event: 'SUBMIT',
-                  name: externalData.labels.externalDataSuccessSubmitFieldTitle,
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
         }),
         buildDescriptionField({
           id: 'unused',
