@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -16,6 +21,7 @@ import {
   UpdateLicenseResponse,
   RevokeLicenseResponse,
   LicenseError,
+  VerifyLicenseResponse,
 } from './dto'
 
 @Injectable()
@@ -67,26 +73,22 @@ export class LicenseService {
     return { ok: true, data: inputData }
   }
 
-  async verifyLicense(inputData: VerifyLicenseRequest) {
+  async verifyLicense(
+    inputData: VerifyLicenseRequest,
+  ): Promise<VerifyLicenseResponse> {
     const service = await this.clientFactory(inputData.licenseId)
 
-    /**
-     * VALIDATE PAYLOAD
-     * Need to validate the incoming string, supposed to be PDF417 barcode scanner data!
-     */
+    const verifyData = await service.verify(inputData.barcodeData)
 
-    const valid = false
-    if (!valid) {
-      const error: LicenseError = {
-        code: '1?',
-        message: 'Invalid payload',
-      }
-      return {
-        ok: false,
-        error,
-      }
+    if (verifyData.ok) {
+      return { valid: verifyData.data.valid }
     }
 
-    return { ok: true, data: inputData }
+    const code = verifyData.error.code
+    // code < 10 means malformed request
+    if (code < 10) {
+      throw new BadRequestException(verifyData.error.message)
+    }
+    throw new InternalServerErrorException(verifyData.error.message)
   }
 }

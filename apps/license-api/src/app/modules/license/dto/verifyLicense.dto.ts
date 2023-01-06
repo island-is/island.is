@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LicenseId } from '../license.types'
-import { IsEnum, IsJSON } from 'class-validator'
+import { IsBoolean, IsEnum, IsJSON } from 'class-validator'
 import { IsNationalId } from '@island.is/nest/validators'
 
 export class VerifyLicenseRequest {
@@ -21,4 +21,8 @@ export class VerifyLicenseRequest {
   readonly barcodeData!: string
 }
 
-export class VerifyLicenseResponse extends VerifyLicenseRequest {}
+export class VerifyLicenseResponse {
+  @ApiProperty({ description: 'Is the license verified?' })
+  @IsBoolean()
+  readonly valid!: boolean
+}

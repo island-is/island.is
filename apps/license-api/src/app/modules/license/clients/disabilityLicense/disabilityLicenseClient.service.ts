@@ -23,9 +23,15 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     return JSON.stringify(templates)
   }
 
-  async verify() {
-    this.logger.debug('in verify for Disability license')
-    const templates = await this.smartApi.listTemplates()
-    return JSON.stringify(templates)
+  /** We need to verify the pk pass AND the license itself! */
+  async verify(inputData: string) {
+    this.logger.debug('in verify for Firearm license')
+    const { code, date } = JSON.parse(inputData)
+
+    return await this.smartApi.verifyPkPass({ code, date })
+
+    //TODO: Verify license when endpoints are ready
+    //const verifyLicenseResult = await this.service.verify(nationalId?)
+    //return JSON.stringify(templates)
   }
 }

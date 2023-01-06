@@ -8,6 +8,7 @@ import {
   RevokeLicenseResponse,
   RevokeLicenseRequest,
   VerifyLicenseRequest,
+  VerifyLicenseResponse,
 } from './dto'
 import { ApiTags } from '@nestjs/swagger'
 
@@ -56,12 +57,12 @@ export class LicenseController {
     relevant institution are compared. If everything adds up, the license is verified.`,
     response: {
       status: 200,
-      type: RevokeLicenseResponse,
+      type: VerifyLicenseResponse,
     },
   })
   @Post('/verify')
   async verify(@Body() data: VerifyLicenseRequest) {
-    this.licenseService.verifyLicense(data)
-    return
+    const response = await this.licenseService.verifyLicense(data)
+    return response
   }
 }
