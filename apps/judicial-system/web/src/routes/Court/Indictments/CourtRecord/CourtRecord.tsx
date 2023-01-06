@@ -35,6 +35,7 @@ import {
   CaseTransition,
 } from '@island.is/judicial-system/types'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
@@ -117,6 +118,7 @@ const CourtRecord: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.COURT_RECORD,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(m.inputFieldLabel)}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
@@ -132,6 +134,7 @@ const CourtRecord: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.RULING,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(m.inputFieldLabel)}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>

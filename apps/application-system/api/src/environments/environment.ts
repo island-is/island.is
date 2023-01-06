@@ -51,15 +51,6 @@ const devConfig = {
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
     },
-    paymentScheduleConfig: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-      xRoadProviderId:
-        process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
-        'IS-DEV/GOV/10021/FJS-Public',
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.PAYMENT_SCHEDULE_USER,
-      password: process.env.PAYMENT_SCHEDULE_PASSWORD,
-    },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
       xRoadProviderId:
@@ -144,13 +135,6 @@ const prodConfig = {
     },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-    },
-    paymentScheduleConfig: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.PAYMENT_SCHEDULE_USER,
-      password: process.env.PAYMENT_SCHEDULE_PASSWORD,
     },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
