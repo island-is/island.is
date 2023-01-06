@@ -107,7 +107,7 @@ export class DelegationResourcesService {
     domainName: string,
     language?: string,
     direction?: DelegationDirection,
-  ): Promise<ApiScopeTreeDTO[]> {
+  ): Promise<ApiScopeListDTO[]> {
     const scopes = await this.findScopesInternal({
       user,
       domainName,

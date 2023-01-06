@@ -6,8 +6,9 @@ export type Info = {
 }
 
 export enum OPERATION_CATEGORY {
-  ONE = '1',
   TWO = '2',
+  THREE = '3',
+  FOUR = '4',
 }
 
 export enum APPLICATION_TYPES {
@@ -17,14 +18,10 @@ export enum APPLICATION_TYPES {
 
 export type Operation = {
   operation: APPLICATION_TYPES
-  hotel: {
-    category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
-    type: string
-  }
-  resturant: {
-    category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
-    type: string
-  }
+  category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+  typeHotel?: string
+  typeResturant?: string[]
+  willServe?: string
 }
 
 export enum CATEGORIES {

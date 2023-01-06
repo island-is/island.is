@@ -182,6 +182,9 @@
       "@island.is/application/api/files": [
         "libs/application/api/files/src/index.ts"
       ],
+      "@island.is/application/api/payment": [
+        "libs/application/api/payment/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/messages": [
         "libs/application/core/src/lib/messages.ts"
@@ -428,7 +431,6 @@
         "libs/clients/national-registry/v2/src/index.ts"
       ],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
-      "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
@@ -647,9 +649,6 @@
       ],
       "@island.is/service-portal/regulations-admin": [
         "libs/service-portal/regulations-admin/src/index.ts"
-      ],
-      "@island.is/service-portal/settings/access-control": [
-        "libs/service-portal/settings/access-control/src/index.ts"
       ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
