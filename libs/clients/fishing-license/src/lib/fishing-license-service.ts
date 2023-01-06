@@ -40,9 +40,9 @@ export class FishingLicenseService {
           fishingLicenses:
             ship.veidileyfi?.map((v) => ({
               code:
-                v.kodi === '1'
+                v.kodi === '32'
                   ? FishingLicenseCodeType.catchMark
-                  : v.kodi === '32'
+                  : v.kodi === '1'
                   ? FishingLicenseCodeType.hookCatchLimit
                   : FishingLicenseCodeType.unknown,
               name: v.nafn ?? '',
