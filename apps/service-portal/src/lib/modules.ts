@@ -14,6 +14,7 @@ import { informationModule } from '@island.is/service-portal/information'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { vehiclesModule } from '@island.is/service-portal/vehicles'
+import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 
 /**
  * NOTE:
@@ -30,6 +31,7 @@ export const modules: PortalModule[] = [
   educationCareerModule,
   educationLicenseModule,
   educationStudentAssessmentModule,
+  delegationsModule,
   financeModule,
   icelandicNamesRegistryModule,
   informationModule,
