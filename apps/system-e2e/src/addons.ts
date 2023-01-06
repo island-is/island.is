@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test'
+import { sleep } from './support/utils'
 
 expect.extend({
   async toHaveCountGreaterThan(
@@ -15,6 +16,7 @@ expect.extend({
       count = await received.count()
       if (Date.now() > initialTime + options.timeout)
         return { message: () => 'Timeout', pass: false }
+      await sleep(options.sleepTime)
     }
     return {
       message: () => `Found ${count} elements`,
