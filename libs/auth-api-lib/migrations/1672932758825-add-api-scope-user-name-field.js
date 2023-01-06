@@ -2,15 +2,28 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return Promise.all([
-      queryInterface.addColumn('api_scope_user', 'name', {
-        type: Sequelize.STRING,
-        allowNull: true,
-      }),
-    ])
+    return queryInterface.sequelize.transaction((transaction) =>
+      Promise.all([
+        queryInterface.addColumn(
+          'api_scope_user',
+          'name',
+          {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
+          { transaction },
+        ),
+      ]),
+    )
   },
 
   down: (queryInterface) => {
-    return Promise.all([queryInterface.removeColumn('api_scope_user', 'name')])
+    return queryInterface.sequelize.transaction((transaction) =>
+      Promise.all([
+        queryInterface.removeColumn('api_scope_user', 'name', {
+          transaction,
+        }),
+      ]),
+    )
   },
 }
