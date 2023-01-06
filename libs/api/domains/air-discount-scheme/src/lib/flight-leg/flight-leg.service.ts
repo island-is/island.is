@@ -6,7 +6,8 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { FlightLeg } from '../models/flightLeg.model'
+import { Flight as TFlight } from '@island.is/air-discount-scheme/types'
+
 
 @Injectable()
 export class FlightLegService {
@@ -38,11 +39,11 @@ export class FlightLegService {
     )
   }
 
-  async getThisYearsFlightLegs(auth: User): Promise<FlightLeg[]> {
+  async getThisYearsUserAndRelationsFlightLegs(
+    auth: User,
+  ): Promise<TFlight[]> {
     const getFlightsResponse = await this.getADSWithAuth(auth)
-      .privateFlightUserControllerGetUserFlights({
-        nationalId: auth.nationalId,
-      })
+      .privateFlightUserControllerGetUserAndRelationsFlights()
       .catch((e) => {
         this.handle4xx(e)
       })
@@ -50,23 +51,9 @@ export class FlightLegService {
     if (!getFlightsResponse) {
       return []
     }
-    const flightLegs: FlightLeg[] = []
 
-    getFlightsResponse.forEach((flight) => {
-      if (flight?.flightLegs) {
-        for (const flightLeg of flight.flightLegs) {
-          flightLegs.push({
-            ...flightLeg,
-            flight: {
-              bookingDate: flight.bookingDate,
-              id: flight.id,
-            },
-            travel: `${flightLeg.origin} - ${flightLeg.destination}`,
-          })
-        }
-      }
-    })
-
-    return flightLegs
+    // Type assertion from string unions becoming simply 'string' type 
+    // in the openapi definition
+    return getFlightsResponse as TFlight[]
   }
 }

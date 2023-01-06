@@ -11,16 +11,20 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { FlightLegService } from './flight-leg.service'
 import { FlightLeg } from '../models/flightLeg.model'
+import { Flight } from '../models/flight.model'
+import { Flight as TFlight } from '@island.is/air-discount-scheme/types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
-@Resolver(() => [FlightLeg])
+@Resolver(() => [Flight])
 export class FlightLegResolver {
   constructor(private flightLegService: FlightLegService) {}
 
-  @Query(() => [FlightLeg], { name: 'airDiscountSchemeUserFlightLegs' })
-  async getFlightLegs(@CurrentUser() user: User): Promise<FlightLeg[]> {
-    return this.flightLegService.getThisYearsFlightLegs(user)
+  @Query(() => [Flight], {
+    name: 'airDiscountSchemeUserAndRelationsFlightLegs',
+  })
+  async getFlightLegs(@CurrentUser() user: User): Promise<TFlight[]> {
+    return this.flightLegService.getThisYearsUserAndRelationsFlightLegs(user)
   }
 }

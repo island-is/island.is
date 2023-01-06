@@ -325,8 +325,9 @@ export class FlightService {
       ...(await this.nationalRegistryService.getRelations(authUser)),
     ]
     const flights: Flight[] = []
-    for (const relation in relations) {
-      flights.push(...(await this.findThisYearsFlightsByNationalId(relation)))
+    for (const relation of relations) {
+      const relationFlights = await this.findThisYearsFlightsByNationalId(relation)
+      flights.push(...relationFlights)
     }
     return flights
   }

@@ -304,9 +304,9 @@ paths:
         - Users
       security:
         - bearer: []
-  /api/private/users/userAndRelativesFlights:
+  /api/private/users/userAndRelationsFlights:
     get:
-      operationId: PrivateFlightUserController_getUserAndRelativesFlights
+      operationId: PrivateFlightUserController_getUserAndRelationsFlights
       parameters: []
       responses:
         '200':

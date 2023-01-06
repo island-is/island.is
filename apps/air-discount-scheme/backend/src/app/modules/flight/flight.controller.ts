@@ -396,10 +396,10 @@ export class PrivateFlightUserController {
     )
   }
 
-  @Get('users/userAndRelativesFlights')
+  @Get('users/userAndRelationsFlights')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   @ApiOkResponse({ type: [Flight] })
-  async getUserAndRelativesFlights(
+  async getUserAndRelationsFlights(
     @CurrentUser() authUser: AuthUser,
   ): Promise<Flight[]> {
     return this.flightService.findThisYearsFlightsForUserAndRelations(authUser)
