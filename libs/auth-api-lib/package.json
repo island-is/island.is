@@ -18,5 +18,9 @@
     "sequelize-typescript": "2.1.3",
     "uuidv4": "6.0.8",
     "zod": "3.19.1"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "4.0.1",
+    "@types/lodash": "4.14.160"
   }
 }

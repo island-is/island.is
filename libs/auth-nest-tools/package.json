@@ -13,5 +13,9 @@
     "jwks-rsa": "1.10.1",
     "passport-jwt": "4.0.0",
     "rxjs": "7.0.0"
+  },
+  "devDependencies": {
+    "@types/isomorphic-fetch": "0.0.35",
+    "@types/passport-jwt": "3.0.3"
   }
 }

@@ -31,5 +31,13 @@
     "winston": "3.7.2",
     "xml2js": "0.4.23",
     "zod": "3.19.1"
+  },
+  "devDependencies": {
+    "@types/cache-manager": "3.4.0",
+    "@types/cache-manager-ioredis": "2.0.1",
+    "@types/http-cache-semantics": "4.0.1",
+    "@types/isomorphic-fetch": "0.0.35",
+    "@types/node-fetch": "2.6.2",
+    "@types/opossum": "4.1.1"
   }
 }

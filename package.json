@@ -470,6 +470,8 @@
     "apps/judicial-system/web",
     "apps/skilavottord/web",
     "apps/web",
-    "libs/*"
+    "apps/api",
+    "libs/*",
+    "apps/services/*"
   ]
 }

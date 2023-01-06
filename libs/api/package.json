@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "libs-api",
   "packageManager": "yarn@3.2.3",
   "dependencies": {
     "@azure/msal-node": "1.14.4",
@@ -29,6 +29,7 @@
     "node-fetch": "2.6.7",
     "nodemailer": "6.7.2",
     "qs": "6.10.3",
+    "reflect-metadata": "0.1.13",
     "rxjs": "7.0.0",
     "ts-dedent": "2.0.0",
     "uuidv4": "6.0.8",
