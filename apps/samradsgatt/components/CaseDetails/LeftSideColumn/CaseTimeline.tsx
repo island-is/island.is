@@ -1,8 +1,8 @@
 import {
   Box,
   Text,
-  FormStepper,
-  FormStepperThemes,
+  // FormStepper,
+  // FormStepperThemes,
 } from '@island.is/island-ui/core'
 
 const CaseTimeline = () => {
@@ -11,6 +11,9 @@ const CaseTimeline = () => {
       <Text variant="h3" color="blue400">
         {'Tímalína máls'}
       </Text>
+
+      {/* 
+      Commented out because FormStepper is depricated      
       <FormStepper
         theme={FormStepperThemes.PURPLE}
         sections={[
@@ -40,7 +43,7 @@ const CaseTimeline = () => {
           },
         ]}
         activeSection={2}
-      />
+      /> */}
     </Box>
   )
 }
