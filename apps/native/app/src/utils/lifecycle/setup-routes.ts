@@ -263,6 +263,33 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/walletpassport/:passId', async ({ passId, fromId, toId, ...rest }: any) => {
+    selectTab(1)
+    await Navigation.popToRoot(StackRegistry.WalletStack)
+    Navigation.push(StackRegistry.WalletStack, {
+      component: {
+        name: ComponentRegistry.WalletPassportScreen,
+        passProps: {
+          id: passId,
+          ...rest
+        },
+        options: {
+          animations: {
+            push: {
+              sharedElementTransitions: [
+                {
+                  fromId,
+                  toId,
+                  interpolation: { type: 'spring' },
+                },
+              ],
+            },
+          },
+        },
+      },
+    })
+  })
+
   addRoute('/license-scanner', async () => {
     Navigation.showModal({
       stack: {

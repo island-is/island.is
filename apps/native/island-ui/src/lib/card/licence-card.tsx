@@ -137,11 +137,11 @@ const LicenseCardPresets = {
     backgroundImage: BackgroundVinnuvelar,
     backgroundColor: '#C5E6AF',
   },
-  GeneralPassport: {
+  PASSPORT: {
     title: 'Almennt vegabréf',
     logo: LogoRegistersIceland,
     backgroundImage: BackgroundPassport,
-    backgroundColor: '#CDD1E6',
+    backgroundColor: '#fff',
   },
   FirearmLicense: {
     title: 'Skotvopnaleyfi',
@@ -166,7 +166,7 @@ const LicenseCardPresets = {
     logo: DisabilityLicenseLogo,
     backgroundImage: DisabilityLicenseBg,
     backgroundColor: '#C5D5C8',
-  }
+  },
 }
 
 export type LicenseCardType = keyof typeof LicenseCardPresets
@@ -193,7 +193,7 @@ export function LicenceCard({
 
   return (
     <Host nativeID={nativeID} style={style}>
-      <BackgroundImage source={backgroundImage} color={backgroundColor} />
+      <BackgroundImage source={backgroundImage} color={backgroundColor} resizeMode="cover" />
       <Content>
         <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
           {title}
@@ -210,7 +210,10 @@ export function LicenceCard({
         )}
         {date && (
           <TimeStamp color={textColor}>
-            {intl.formatMessage({ id: 'walletPass.lastUpdate' })}
+            {type === 'PASSPORT' ?
+              intl.formatMessage({ id: 'walletPass.expirationDate' }) :
+              intl.formatMessage({ id: 'walletPass.lastUpdate' })
+            }
             {': '}
             <FormattedDate
               value={date}

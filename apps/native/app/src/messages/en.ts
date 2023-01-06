@@ -136,7 +136,7 @@ export const en: TranslatedMessages = {
   'home.notifications': 'Notifications',
   'home.welcomeText': 'Hi',
   'home.onboardingModule.card1':
-    'This first version of the Ísland.is app allows you to access electronic documents and certificates from the public sector, receive notifications and see the status of your applications.',
+    'Now you can see information about vehicles, assets and your family in the app in addition to documents and licenses.',
   'home.onboardingModule.card2':
     'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
   'home.onboardingModule.card3':
@@ -169,6 +169,19 @@ export const en: TranslatedMessages = {
   // wallet pass
   'walletPass.screenTitle': 'Pass',
   'walletPass.lastUpdate': 'Last updated',
+  'walletPass.expirationDate': 'Expiration date',
+
+  // wallet passport
+  'walletPassport.screenTitle': 'Passport',
+  'walletPassport.infoTitle': 'Remember the passport!',
+  'walletPassport.infoDescription': 'This summary is not valid as a travel document.',
+  'walletPassport.warningTitle': 'Expires within 6 months',
+  'walletPassport.warningDescription': 'Note that your passport will expire within the next 6 months.',
+  'walletPassport.displayName': 'Name',
+  'walletPassport.number': 'Number',
+  'walletPassport.issuingDate': 'Date issued',
+  'walletPassport.expirationDate': 'Expiration date',
+  'walletPassport.mrzName': 'Machine-readable name',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
@@ -291,7 +304,6 @@ export const en: TranslatedMessages = {
   'familyDetail.natreg.birthPlace': 'Birthplace',
   'familyDetail.natreg.legalResidence': 'Legal domicile',
   'familyDetail.natreg.gender': 'Gender',
-  'familyDetail.emptyListDescription': 'No data was found',
 
   // applications screen
   'applications.title': 'Applications',

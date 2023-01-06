@@ -18,6 +18,7 @@ export const ComponentRegistry = {
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
   WalletScreen: `${prefix}.screens.Wallet`,
   WalletPassScreen: `${prefix}.screens.WalletPass`,
+  WalletPassportScreen: `${prefix}.screens.WalletPassport`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
   NotificationDetailScreen: `${prefix}.screens.NotificationDetail`,

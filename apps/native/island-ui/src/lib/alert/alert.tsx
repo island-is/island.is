@@ -13,7 +13,7 @@ import close from '../../assets/alert/close.png'
 import info from '../../assets/alert/info-alert.png'
 import check from '../../assets/icons/check.png'
 import error from '../../assets/icons/error.png'
-import warning from '../../assets/icons/warning.png'
+import warning from '../../assets/alert/warning.png'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
@@ -21,6 +21,7 @@ export type AlertType = 'error' | 'info' | 'success' | 'warning'
 
 interface AlertProps {
   type: AlertType
+  title?: string
   message?: string
   style?: any
   onClose?(): void
@@ -28,11 +29,13 @@ interface AlertProps {
   visible?: boolean
   hideIcon?: boolean
   sharedAnimatedValue?: any
+  hasBorder?: boolean
 }
 
 interface HostProps {
   backgroundColor: Colors
   borderColor: Colors
+  hasBorder?: boolean
 }
 
 type VariantStyle = {
@@ -54,6 +57,16 @@ const darkBackgroundColor = (color: string, colors: any) => {
 
 const Host = styled(Animated.View)<HostProps>`
   padding: 20px 18px;
+  border-width: ${({ hasBorder }) => hasBorder ? '1px' : 0};
+  border-style: solid;
+  border-color: ${dynamicColor((props) => ({
+    light: props.theme.color[props.borderColor],
+    dark: darkBackgroundColor(
+      props.theme.color[props.borderColor],
+      props.theme.color,
+    ),
+  }))};
+  border-radius: ${({ hasBorder }) => hasBorder ? '8px' : 0};
   background-color: ${dynamicColor((props) => ({
     light: props.theme.color[props.backgroundColor],
     dark: darkBackgroundColor(
@@ -66,6 +79,16 @@ const Host = styled(Animated.View)<HostProps>`
 const Icon = styled.View`
   align-items: center;
   justify-content: center;
+  align-self: flex-start;
+`
+
+const Title = styled.Text`
+  ${font({
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: '600',
+  })}
+  margin-bottom: 4px;
 `
 
 const Message = styled.Text`
@@ -109,6 +132,7 @@ const variantStyles: VariantStyles = {
 }
 
 export function Alert({
+  title,
   message,
   type,
   hideIcon = false,
@@ -116,6 +140,7 @@ export function Alert({
   onClose,
   onClosed,
   sharedAnimatedValue,
+  hasBorder,
   ...rest
 }: AlertProps) {
   const [hidden, setHidden] = useState<boolean>()
@@ -151,6 +176,7 @@ export function Alert({
         onLayout={(e) => setHeight(e.nativeEvent.layout.height)}
         backgroundColor={variant.background}
         borderColor={variant.borderColor}
+        hasBorder={hasBorder}
         {...rest}
       >
         <SafeAreaView style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -158,12 +184,13 @@ export function Alert({
             <Icon>
               <Image
                 source={variant.icon}
-                style={{ width: 19, height: 19, marginRight: 19 }}
+                style={{ width: 32, height: 32, marginRight: 16 }}
               />
             </Icon>
           )}
           {message && (
             <Content>
+              {title && <Title>{title}</Title>}
               <Message>{message}</Message>
             </Content>
           )}

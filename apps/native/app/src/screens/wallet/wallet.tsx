@@ -5,44 +5,41 @@ import {
   LicenceCard,
   LicenseCardType,
   Skeleton,
-  TopLine,
+  TopLine
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
-  Image,
-  View,
-  Platform,
+  Image, Platform,
   RefreshControl,
   SafeAreaView,
-  TouchableHighlight,
+  TouchableHighlight, View
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
-import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import {
-  GenericUserLicenseStatus,
-  IGenericUserLicense,
+  IGenericUserLicense
 } from '../../graphql/fragments/license.fragment'
+import { GET_IDENTITY_DOCUMENT_QUERY } from '../../graphql/queries/get-identity-document.query'
+import { GenericLicenseType } from '../../graphql/queries/get-license.query'
 import {
   ListGenericLicensesResponse,
-  LIST_GENERIC_LICENSES_QUERY,
+  LIST_GENERIC_LICENSES_QUERY
 } from '../../graphql/queries/list-licenses.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateTo } from '../../lib/deep-linking'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseStatus, LicenseType } from '../../types/license-type'
+import { ButtonRegistry } from '../../utils/component-registry'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
-import { ButtonRegistry } from '../../utils/component-registry'
-import { GenericLicenseType } from '../../graphql/queries/get-license.query'
 
 const {
   useNavigationOptions,
@@ -91,8 +88,45 @@ const {
   },
 )
 
-const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
+const WalletItem = React.memo(({ item }: { item: IGenericUserLicense | any }) => {
   let cardHeight = 140
+
+  // Passport card
+  if (item.__typename === 'IdentityDocumentModel') {
+    const isInvalid = item?.status?.toLowerCase() === 'invalid'
+    return (
+      <View
+        style={{ paddingHorizontal: 16 }}
+        onLayout={(e) => {
+          cardHeight = Math.round(e.nativeEvent.layout.height)
+        }}
+      >
+        <TouchableHighlight
+          style={{ marginBottom: 16, borderRadius: 16 }}
+          onPress={() => {
+            navigateTo(`/walletpassport/${item?.number}`, {
+              fromId: `license-${LicenseType.PASSPORT}_source`,
+              toId: `license-${LicenseType.PASSPORT}_destination`,
+              cardHeight: cardHeight,
+            })
+          }}
+        >
+          <SafeAreaView>
+            <LicenceCard
+              nativeID={`license-${LicenseType.PASSPORT}_source`}
+              type={LicenseType.PASSPORT}
+              date={new Date(item?.expirationDate)}
+              status={
+                isInvalid
+                  ? LicenseStatus.NOT_VALID
+                  : LicenseStatus.VALID
+              }
+            />
+          </SafeAreaView>
+        </TouchableHighlight>
+      </View>
+    )
+  }
 
   return (
     <View
@@ -104,18 +138,18 @@ const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
       <TouchableHighlight
         style={{ marginBottom: 16, borderRadius: 16 }}
         onPress={() => {
-          navigateTo(`/wallet/${item.license.type}`, {
+          navigateTo(`/wallet/${item?.license?.type}`, {
             item,
-            fromId: `license-${item.license.type}_source`,
-            toId: `license-${item.license.type}_destination`,
+            fromId: `license-${item?.license?.type}_source`,
+            toId: `license-${item?.license?.type}_destination`,
             cardHeight: cardHeight,
           })
         }}
       >
         <SafeAreaView>
           <LicenceCard
-            nativeID={`license-${item.license.type}_source`}
-            type={item.license.type as LicenseCardType}
+            nativeID={`license-${item?.license?.type }_source`}
+            type={item?.license?.type as LicenseCardType}
             date={new Date(Number(item.fetch.updated))}
             status={
               !item?.payload?.metadata?.expired
@@ -153,6 +187,11 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       }
     },
   )
+
+  const { data: identityDocumentData } = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {client, fetchPolicy: 'network-only'})
+
+  const passportData = identityDocumentData?.getIdentityDocument ?? [];
+
   const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
@@ -268,7 +307,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
 
   const keyExtractor = useCallback(
-    (item: any) => item?.license?.type ?? item?.id,
+    (item: any) => item?.license?.type ?? item?.id ?? item?.number,
     [],
   )
 
@@ -279,7 +318,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   }))
   const alertItems = [{ id: '99', type: 'alert' }]
 
-  const isEmpty = licenseItems.length === 0
+  const isEmpty = licenseItems?.length === 0 && passportData?.length === 0;
 
   return (
     <>
@@ -308,7 +347,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             ? skeletonItems
             : isEmpty
             ? emptyItems
-            : [...alertItems, ...licenseItems]
+            : [...alertItems, ...licenseItems, ...passportData]
         }
         keyExtractor={keyExtractor}
         renderItem={renderItem}

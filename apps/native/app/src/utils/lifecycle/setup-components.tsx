@@ -34,6 +34,7 @@ import { EditEmailScreen } from '../../screens/profile/edit-email'
 import { EditPhoneScreen } from '../../screens/profile/edit-phone'
 import { EditBankInfoScreen } from '../../screens/profile/edit-bank-info'
 import { EditConfirmScreen } from '../../screens/profile/edit-confirm'
+import { WalletPassportScreen } from '../../screens/wallet-passport/wallet-passport'
 
 export function registerAllComponents() {
   // dev only
@@ -53,6 +54,7 @@ export function registerAllComponents() {
   registerComponent(CR.ApplicationsScreen, ApplicationsScreen)
   registerComponent(CR.AppLockScreen, AppLockScreen)
   registerComponent(CR.WalletPassScreen, WalletPassScreen)
+  registerComponent(CR.WalletPassportScreen, WalletPassportScreen)
   registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
   registerComponent(CR.NotificationsScreen, NotificationsScreen)
   registerComponent(CR.NotificationDetailScreen, NotificationDetailScreen)

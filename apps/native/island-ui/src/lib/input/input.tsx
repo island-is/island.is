@@ -4,12 +4,12 @@ import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 import { Skeleton } from '../skeleton/skeleton'
 
-const Host = styled.SafeAreaView<{ noBorder: boolean }>`
+const Host = styled.SafeAreaView<{ noBorder: boolean, borderDark?: boolean }>`
   flex: 1;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(
-    ({ theme, noBorder }) => ({
-      light: noBorder ? 'transparent' : theme.color.blue100,
+    ({ theme, noBorder, borderDark }) => ({
+      light: noBorder ? 'transparent' : borderDark ? theme.color.blue200 : theme.color.blue100,
       dark: noBorder ? 'transparent' : theme.shades.dark.shade200,
     }),
     true,
@@ -48,6 +48,7 @@ interface InputProps {
   noBorder?: boolean
   size?: 'normal' | 'big'
   isCompact?: boolean;
+  borderDark?: boolean;
 }
 
 export function Input({
@@ -59,10 +60,11 @@ export function Input({
   noBorder = false,
   size = 'normal',
   isCompact = false,
+  borderDark = false,
 }: InputProps) {
   const tvalue = value !== undefined && typeof(value) === 'string' && value.trim();
   return (
-    <Host noBorder={noBorder}>
+    <Host noBorder={noBorder} borderDark={borderDark}>
       <Content isCompact={isCompact}>
         <Label>{label}</Label>
         {loading || error ? (

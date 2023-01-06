@@ -134,7 +134,7 @@ export const is = {
   'home.notifications': 'Tilkynningar',
   'home.welcomeText': 'Hæ',
   'home.onboardingModule.card1':
-    'Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna.',
+    'Nú sérð þú upplýsingar um ökutæki, fasteignir og fjölskyldu þína í appinu til viðbótar við skjöl og skírteini.',
   'home.onboardingModule.card2':
     'Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera.',
   'home.onboardingModule.card3':
@@ -230,7 +230,6 @@ export const is = {
   'familyDetail.natreg.birthPlace': 'Fæðingarstaður',
   'familyDetail.natreg.legalResidence': 'Lögheimili',
   'familyDetail.natreg.gender': 'Kyn',
-  'familyDetail.emptyListDescription': 'Því miður skiluðu sér engin gögn',
 
   // wallet
   'wallet.screenTitle': 'Skírteini',
@@ -244,6 +243,19 @@ export const is = {
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
   'walletPass.lastUpdate': 'Síðast uppfært',
+  'walletPass.expirationDate': 'Gildir til',
+
+  // wallet passport
+  'walletPassport.screenTitle': 'Vefabréf',
+  'walletPassport.infoTitle': 'Mundu eftir vegabréfinu!',
+  'walletPassport.infoDescription': 'Þetta yfirlit gildir ekki sem ferðaskilríki.',
+  'walletPassport.warningTitle': 'Rennur út innan 6 mánaða',
+  'walletPassport.warningDescription': 'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
+  'walletPassport.displayName': 'Nafn einstaklings',
+  'walletPassport.number': 'Númer vefabréfs',
+  'walletPassport.issuingDate': 'Útgáfudagur',
+  'walletPassport.expirationDate': 'Lokadagur',
+  'walletPassport.mrzName': 'Nafn á tölvulesanlegu formi',
 
   // license scanner
   'licenseScanner.title': 'Skilríkjaskanni',

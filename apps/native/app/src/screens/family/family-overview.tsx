@@ -37,7 +37,7 @@ const FamilyMember = React.memo(({ item }: { item: any }) => {
         style={{ marginBottom: 16, borderRadius: 16 }}
         onPress={() => {
           navigateTo(`/family/${item.type}/${item.nationalId}`, {
-            item: item,
+            id: item?.nationalId
           })
         }}
       >
@@ -62,7 +62,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({ componentId 
   const loadingTimeout = useRef<number>()
 
 
-  const familyRes = useQuery(FAMILY_QUERY, { client, fetchPolicy: 'cache-first' })
+  const familyRes = useQuery(FAMILY_QUERY, { client, fetchPolicy: 'network-only' })
   const { nationalRegistryUser, nationalRegistryChildren = [] } = familyRes?.data || {}
 
   const listOfPeople = [
