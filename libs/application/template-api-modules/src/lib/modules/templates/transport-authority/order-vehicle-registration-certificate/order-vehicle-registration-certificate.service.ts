@@ -20,12 +20,18 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
+      const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
+
       const chargeItemCodes = getChargeItemCodes()
 
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         application.id,
+        SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
+        [{ name: 'vehicle', value: answers?.vehicle?.plate }],
       )
       return result
     } catch (exeption) {
@@ -49,7 +55,7 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

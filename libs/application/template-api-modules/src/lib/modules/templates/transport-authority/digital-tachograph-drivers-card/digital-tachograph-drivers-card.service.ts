@@ -105,13 +105,16 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
       const chargeItemCodes = getChargeItemCodes(
         application.answers as DigitalTachographDriversCardAnswers,
       )
 
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         application.id,
+        SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
       )
       return result
@@ -136,7 +139,7 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

@@ -28,6 +28,7 @@ import {
   useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
@@ -97,6 +98,7 @@ const CaseFiles: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.COVER_LETTER,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
@@ -115,6 +117,7 @@ const CaseFiles: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.INDICTMENT,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
@@ -133,6 +136,7 @@ const CaseFiles: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
@@ -150,6 +154,7 @@ const CaseFiles: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
@@ -169,6 +174,7 @@ const CaseFiles: React.FC = () => {
                 file.category === CaseFileCategory.CASE_FILE &&
                 !file.policeCaseNumber,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>

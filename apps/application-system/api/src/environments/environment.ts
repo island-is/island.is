@@ -48,32 +48,8 @@ const devConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    paymentOptions: {
-      arkBaseUrl: process.env.ARK_BASE_URL,
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-      xRoadClientId:
-        process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      xRoadProviderId:
-        process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
-      callbackAdditionUrl:
-        process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL ?? '/',
-      callbackBaseUrl:
-        process.env.XROAD_PAYMENT_BASE_CALLBACK_URL ??
-        'https://localhost:3333/applications/',
-      username: process.env.XROAD_PAYMENT_USER,
-      password: process.env.XROAD_PAYMENT_PASSWORD,
-    },
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
-    },
-    paymentScheduleConfig: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-      xRoadProviderId:
-        process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
-        'IS-DEV/GOV/10021/FJS-Public',
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.PAYMENT_SCHEDULE_USER,
-      password: process.env.PAYMENT_SCHEDULE_PASSWORD,
     },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
@@ -157,25 +133,8 @@ const prodConfig = {
         xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
       },
     },
-    paymentOptions: {
-      arkBaseUrl: process.env.ARK_BASE_URL,
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
-      callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
-      callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
-      username: process.env.XROAD_PAYMENT_USER,
-      password: process.env.XROAD_PAYMENT_PASSWORD,
-    },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-    },
-    paymentScheduleConfig: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.PAYMENT_SCHEDULE_USER,
-      password: process.env.PAYMENT_SCHEDULE_PASSWORD,
     },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
