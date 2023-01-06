@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
+  ApiScopeListDTO,
   ApiScopeTreeDTO,
   DelegationDirection,
   DelegationResourcesService,
@@ -16,11 +17,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { delegationScopes } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 import type {
   DocumentationParamOptions,
@@ -49,8 +45,7 @@ const direction: DocumentationQueryOptions = {
   },
 }
 
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.outgoingDelegationsV2)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(...delegationScopes)
 @ApiSecurity('ias')
 @ApiTags('domains')
@@ -155,14 +150,14 @@ export class DomainsController {
         direction,
       },
     },
-    response: { status: 200, type: [ApiScopeTreeDTO] },
+    response: { status: 200, type: [ApiScopeListDTO] },
   })
   async findScopes(
     @CurrentUser() user: User,
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
-  ): Promise<ApiScopeTreeDTO[]> {
+  ): Promise<ApiScopeListDTO[]> {
     return this.resourceService.findScopes(
       user,
       domainName,
