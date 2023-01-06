@@ -3,6 +3,13 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 import { ApiScopeUserAccessDTO } from './api-scope-user-access.dto'
 
 export class ApiScopeUserDTO {
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: 'Jane Doe',
+  })
+  name!: string
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty({

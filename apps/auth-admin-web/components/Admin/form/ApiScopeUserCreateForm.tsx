@@ -60,33 +60,32 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const create = async (data: ApiScopeUserDTO): Promise<void> => {
+    let response: ApiScopeUser | undefined = undefined
+
     if (isEditing) {
-      const response = await AccessService.update(
-        props.apiScopeUser.nationalId,
-        data,
-      )
-      if (response) {
-        pushEvent(response)
-      }
+      response = await AccessService.update(props.apiScopeUser.nationalId, data)
     } else {
-      const response = await AccessService.create(data)
-      if (response) {
-        pushEvent(response)
-      }
+      response = await AccessService.create(data)
+    }
+
+    if (response) {
+      pushEvent(response)
     }
   }
 
-  const save = async (data: FormOutput) => {
+  const save = async ({ apiScopeUser }: FormOutput) => {
     const user = new ApiScopeUserDTO()
-    user.nationalId = data.apiScopeUser.nationalId
-    user.email = data.apiScopeUser.email
+    user.nationalId = apiScopeUser.nationalId
+    user.email = apiScopeUser.email
+    user.name = apiScopeUser.name
 
     for (let i = 0; i < activeScopes.length; i++) {
       user.userAccess.push({
-        nationalId: data.apiScopeUser.nationalId,
+        nationalId: apiScopeUser.nationalId,
         scope: activeScopes[i],
       })
     }
+
     await create(user)
   }
 
@@ -116,6 +115,34 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-scope-user-create-form__container__fields">
+                <div className="api-scope-user-create-form__container__field">
+                  <label
+                    className="api-scope-user-create-form__label"
+                    htmlFor="name"
+                  >
+                    {localization.fields['name'].label}
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    name="apiScopeUser.name"
+                    ref={register({
+                      minLength: 1,
+                      validate: (value) => value.trim().length > 1,
+                    })}
+                    defaultValue={user.name}
+                    className="api-scope-user-create-form__input"
+                    placeholder={localization.fields['name'].placeholder}
+                    title={localization.fields['name'].helpText}
+                  />
+                  <HelpBox helpText={localization.fields['name'].helpText} />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="apiScopeUser.name"
+                    message={localization.fields['name'].errorMessage}
+                  />
+                </div>
                 <div className="api-scope-user-create-form__container__field">
                   <label
                     className="api-scope-user-create-form__label"
@@ -193,7 +220,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                           className="api-scope-user-create-form__label"
                           htmlFor={scope.name}
                         >
-                          {scope.name}
+                          {scope.displayName}
                         </label>
 
                         <input

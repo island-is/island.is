@@ -37,6 +37,16 @@ export class ApiScopeUser extends Model<
     defaultValue: true,
   })
   @ApiProperty({
+    example: 'Jane Doe',
+  })
+  name!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: true,
+  })
+  @ApiProperty({
     example: 'something@domain.com',
   })
   email!: string

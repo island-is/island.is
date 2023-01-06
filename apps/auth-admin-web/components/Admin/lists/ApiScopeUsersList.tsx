@@ -100,12 +100,6 @@ const ApiScopeUsersList: React.FC = () => {
               </div>
               <form onSubmit={search}>
                 <div className="api-scope-users-list__container__options__search">
-                  <label
-                    htmlFor="search"
-                    className="api-scope-users-list__label"
-                  >
-                    {localization.search.label}
-                  </label>
                   <input
                     id="search"
                     className="api-scope-users-list__input__search"
@@ -126,15 +120,17 @@ const ApiScopeUsersList: React.FC = () => {
               <table className="api-scope-users-list__table">
                 <thead>
                   <tr>
+                    <th>{localization.columns['name'].headerText}</th>
                     <th>{localization.columns['nationalId'].headerText}</th>
                     <th>{localization.columns['email'].headerText}</th>
-                    <th colSpan={2}></th>
+                    <th colSpan={2} />
                   </tr>
                 </thead>
                 <tbody>
                   {adminAccess.map((apiScopeUser: ApiScopeUser) => {
                     return (
                       <tr key={apiScopeUser.nationalId}>
+                        <td>{apiScopeUser.name}</td>
                         <td>{apiScopeUser.nationalId}</td>
                         <td>{apiScopeUser.email}</td>
                         <td className="api-scope-users-list__table__button">

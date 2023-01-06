@@ -65,7 +65,13 @@ export class ResourceAccessService {
         limit: count,
         offset: offset,
         distinct: true,
-        where: { nationalId: searchString },
+        where: {
+          [Op.or]: ['nationalId', 'name', 'email'].map((key) => ({
+            [key]: {
+              [Op.like]: `%${searchString.toLowerCase()}%`,
+            },
+          })),
+        },
         order: ['nationalId'],
       })
     } else {
