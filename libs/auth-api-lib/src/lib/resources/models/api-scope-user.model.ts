@@ -33,8 +33,7 @@ export class ApiScopeUser extends Model<
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: true,
+    allowNull: true,
   })
   @ApiProperty({
     example: 'Jane Doe',
@@ -44,7 +43,6 @@ export class ApiScopeUser extends Model<
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: true,
   })
   @ApiProperty({
     example: 'something@domain.com',
