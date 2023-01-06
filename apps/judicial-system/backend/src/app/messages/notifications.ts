@@ -264,7 +264,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.case_completed.prosecutor_body',
       defaultMessage:
-        'Dómari hefur staðfestur dóm í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        'Dómari hefur staðfest dóm í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til sækjanda vegna staðfests dóms',
     },
@@ -473,6 +473,14 @@ export const notifications = {
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir að krafa sé afturkölluð',
     },
+    revokedIndictment: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.revoked_indictment',
+      defaultMessage:
+        'Ákæra sem taka átti fyrir hjá {courtText} {courtDateText}, hefur verið afturkölluð.',
+      description:
+        'Texti í pósti til verjanda/talsmanns sem tilgreinir að ákæra sé afturkölluð',
+    },
     defendant: {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defendant',
@@ -481,10 +489,10 @@ export const notifications = {
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir sakborning',
     },
-    defenderAssigned: {
+    defenderAssignedV2: {
       id:
-        'judicial.system.backend:notifications.defender_revoked_email.defender_assigned',
-      defaultMessage: 'Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+        'judicial.system.backend:notifications.defender_revoked_email.defender_assigned_v2',
+      defaultMessage: 'Dómstóllinn hafði skráð þig sem verjanda í málinu.',
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
     },
@@ -501,10 +509,18 @@ export const notifications = {
       defaultMessage:
         'Krafa um {caseType, select, CUSTODY {gæsluvarðhald} TRAVEL_BAN {farbann} ADMISSION_TO_FACILITY {vistun} other {rannsóknarheimild}} afturkölluð',
       description:
-        'Fyrirsögn í pósti til verjanda/talsmanns /egar krafa er afturkölluð',
+        'Fyrirsögn í pósti til verjanda/talsmanns þegar krafa er afturkölluð',
+    },
+    indictmentSubject: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.indictment_subject',
+      defaultMessage: 'Ákæra afturkölluð',
+      description:
+        'Fyrirsögn í pósti til verjanda/talsmanns þegar ákæra er afturkölluð',
     },
   }),
   modified: defineMessages({
+    // TODO: Remove subject
     subject: {
       id: 'judicial.system.backend:notifications.modified.subject',
       defaultMessage:
@@ -512,12 +528,27 @@ export const notifications = {
       description:
         'Notaður sem titill á tölvupósti vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem {courtCaseNumber} er málsnúmer dómstóls.',
     },
+    subjectV2: {
+      id: 'judicial.system.backend:notifications.modified.subject_V2',
+      defaultMessage:
+        '{caseType, select, ADMISSION_TO_FACILITY {Vistunarmál} TRAVEL_BAN {Farbann} other {Gæsluvarðhaldsmál}} {courtCaseNumber}',
+      description:
+        'Notaður sem titill á tölvupósti vegna breytingar á lengd gæslu/einangrunar/farbanns/vistunar þar sem {courtCaseNumber} er málsnúmer dómstóls.',
+    },
+    // TODO: Remove html
     html: {
       id: 'judicial.system.backend:notifications.modified.html',
       defaultMessage:
         '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}} í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}: {validToDate}.',
       description:
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/vistunar þar sem ekki var úrskurðað í einangrun.',
+    },
+    htmlV2: {
+      id: 'judicial.system.backend:notifications.modified.html_v2',
+      defaultMessage:
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} í máli {courtCaseNumber}. Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Ný lokadagsetning: {validToDate}.',
+      description:
+        'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/farbanns/vistunar þar sem ekki var úrskurðað í einangrun.',
     },
     isolationHtml: {
       id: 'judicial.system.backend:notifications.modified.isolation_html',
@@ -535,19 +566,29 @@ export const notifications = {
       description:
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
     },
-    // TODO: REMOVE body
-    body: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.body',
-      defaultMessage:
-        '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.',
-      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
-    },
     bodyV2: {
       id:
         'judicial.system.backend:notifications.defender_assigned_email.body_v2',
       defaultMessage:
         '{court} hefur skipað þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
+    },
+  }),
+  defendantsNotUpdatedAtCourt: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.defendants_not_updated_at_court.subject',
+      defaultMessage: 'Skráning varnaraðila/verjenda í máli {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og dómritara þegar ekki tekst að skrá varnaraðila/verjendur á mál.',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.defendants_not_updated_at_court.body',
+      defaultMessage:
+        'Ekki tókst að skrá varnaraðila/verjendur í máli {courtCaseNumber} í Auði. Yfirfara þarf málið í Auði og skrá rétta aðila áður en því er lokað.',
+      description:
+        'Texti í pósti til dómara og dómritara þegar ekki tekst að skrá varnaraðila/verjendur á mál.',
     },
   }),
 }

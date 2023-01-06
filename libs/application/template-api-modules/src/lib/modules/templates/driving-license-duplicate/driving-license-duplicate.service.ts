@@ -25,13 +25,16 @@ export class DrivingLicenseDuplicateService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
     // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
     const chargeItemCode = 'AY110'
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
-      chargeItemCode,
+      SYSLUMADUR_NATIONAL_ID,
+      [chargeItemCode],
     )
 
     // last chance to validate before the user receives a dummy
@@ -52,7 +55,7 @@ export class DrivingLicenseDuplicateService {
     const { answers } = application
     const nationalId = application.applicant
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

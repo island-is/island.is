@@ -6,13 +6,14 @@ import {
   MessageType,
   MessageService,
   CaseFileMessage,
+  PoliceCaseMessage,
+  DefendantMessage,
+  UserMessage,
 } from '@island.is/judicial-system/message'
-import type { Message } from '@island.is/judicial-system/message'
+import type { CaseMessage } from '@island.is/judicial-system/message'
+import { NotificationType } from '@island.is/judicial-system/types'
 
-import { CaseDeliveryService } from './caseDelivery.service'
-import { ProsecutorDocumentsDeliveryService } from './prosecutorDocumentsDelivery.service'
 import { InternalDeliveryService } from './internalDelivery.service'
-import { RulingNotificationService } from './rulingNotification.service'
 import { appModuleConfig } from './app.config'
 
 @Injectable()
@@ -22,31 +23,54 @@ export class MessageHandlerService implements OnModuleDestroy {
 
   constructor(
     private readonly messageService: MessageService,
-    private readonly caseDeliveryService: CaseDeliveryService,
-    private readonly prosecutorDocumentsDeliveryService: ProsecutorDocumentsDeliveryService,
     private readonly internalDeliveryService: InternalDeliveryService,
-    private readonly rulingNotificationService: RulingNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async handleMessage(message: Message): Promise<boolean> {
+  async handleMessage(message: CaseMessage): Promise<boolean> {
     this.logger.debug('Handling message', { msg: message })
 
     let handled = false
 
     switch (message.type) {
-      case MessageType.CASE_CONNECTED_TO_COURT_CASE:
-        handled = await this.prosecutorDocumentsDeliveryService.deliverProsecutorDocuments(
-          message.caseId,
-        )
-        break
-      case MessageType.CASE_COMPLETED:
-        handled = await this.caseDeliveryService.deliverCase(message.caseId)
-        break
-      case MessageType.DELIVER_CASE_FILE_TO_COURT:
+      case MessageType.DELIVER_PROSECUTOR_TO_COURT: {
+        const userMessage = message as UserMessage
         handled = await this.internalDeliveryService.deliver(
           message.caseId,
-          `file/${(message as CaseFileMessage).caseFileId}/deliverToCourt`,
+          `deliverProsecutorToCourt`,
+          { userId: userMessage.userId },
+        )
+        break
+      }
+      case MessageType.DELIVER_DEFENDANT_TO_COURT: {
+        const defendantMessage: DefendantMessage = message as DefendantMessage
+        handled = await this.internalDeliveryService.deliver(
+          defendantMessage.caseId,
+          `defendant/${defendantMessage.defendantId}/deliverToCourt`,
+          { userId: defendantMessage.userId },
+        )
+        break
+      }
+      case MessageType.DELIVER_CASE_FILE_TO_COURT: {
+        const caseFileMessage = message as CaseFileMessage
+        handled = await this.internalDeliveryService.deliver(
+          caseFileMessage.caseId,
+          `file/${caseFileMessage.caseFileId}/deliverToCourt`,
+        )
+        break
+      }
+      case MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT: {
+        const policeCaseMessage = message as PoliceCaseMessage
+        handled = await this.internalDeliveryService.deliver(
+          policeCaseMessage.caseId,
+          `deliverCaseFilesRecordToCourt/${policeCaseMessage.policeCaseNumber}`,
+        )
+        break
+      }
+      case MessageType.DELIVER_REQUEST_TO_COURT:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'deliverRequestToCourt',
         )
         break
       case MessageType.DELIVER_COURT_RECORD_TO_COURT:
@@ -61,9 +85,39 @@ export class MessageHandlerService implements OnModuleDestroy {
           'deliverSignedRulingToCourt',
         )
         break
-      case MessageType.SEND_RULING_NOTIFICATION:
-        handled = await this.rulingNotificationService.sendRulingNotification(
+      case MessageType.DELIVER_CASE_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
           message.caseId,
+          'deliverCaseToPolice',
+        )
+        break
+      case MessageType.ARCHIVE_CASE_FILE: {
+        const caseFileMessage = message as CaseFileMessage
+        handled = await this.internalDeliveryService.deliver(
+          caseFileMessage.caseId,
+          `file/${caseFileMessage.caseFileId}/archive`,
+        )
+        break
+      }
+      case MessageType.SEND_HEADS_UP_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.HEADS_UP },
+        )
+        break
+      case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+        )
+        break
+      case MessageType.SEND_RULING_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.RULING },
         )
         break
       default:
@@ -86,7 +140,7 @@ export class MessageHandlerService implements OnModuleDestroy {
       this.logger.debug('Checking for messages')
 
       await this.messageService
-        .receiveMessagesFromQueue(async (message: Message) => {
+        .receiveMessagesFromQueue(async (message: CaseMessage) => {
           return await this.handleMessage(message)
         })
         .catch(async (error) => {

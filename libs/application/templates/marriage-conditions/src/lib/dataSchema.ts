@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import { YES, NO, CeremonyPlaces } from './constants'
+import { YES, NO } from './constants'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 import { m } from './messages'
 
@@ -40,55 +40,66 @@ export const dataSchema = z.object({
   ceremony: z
     .object({
       hasDate: z.string(),
-      withDate: z
+      date: z.string(),
+      period: z
         .object({
-          date: z.string(),
-          ceremonyPlace: z.string(),
-          office: z.string(),
-          society: z.string(),
-        })
-        .partial()
-        .refine(({ date }) => !!date, {
-          message: coreErrorMessages.defaultError.defaultMessage,
-          path: ['date'],
-        })
-        .refine(({ ceremonyPlace }) => !!ceremonyPlace, {
-          message: coreErrorMessages.defaultError.defaultMessage,
-          path: ['ceremonyPlace'],
+          dateFrom: z.string().optional(),
+          dateTo: z.string().optional(),
         })
         .refine(
-          ({ ceremonyPlace, office }) =>
-            ceremonyPlace === CeremonyPlaces.office ? !!office : true,
-          {
-            message: coreErrorMessages.defaultError.defaultMessage,
-            path: ['office'],
-          },
-        )
-        .refine(
-          ({ ceremonyPlace, society }) =>
-            ceremonyPlace === CeremonyPlaces.society ? !!society : true,
-          {
-            message: coreErrorMessages.defaultError.defaultMessage,
-            path: ['society'],
-          },
-        ),
-      withPeriod: z
-        .object({
-          dateFrom: z.string(),
-          dateTil: z.string(),
-        })
-        .refine(
-          ({ dateFrom, dateTil }) => new Date(dateFrom) <= new Date(dateTil),
+          ({ dateFrom, dateTo }) =>
+            dateFrom && dateTo ? dateFrom <= dateTo : true,
           {
             message: m.tilBeforeFrom.defaultMessage,
-            path: ['dateTil'],
+            path: ['dateTo'],
           },
         ),
+      place: z.object({
+        ceremonyPlace: z.string().optional(),
+        office: z.string().optional(),
+        society: z.string().optional(),
+      }),
     })
     .partial()
+    .refine(
+      ({ hasDate, period, date }) =>
+        hasDate === YES
+          ? (!!period?.dateFrom || !period?.dateFrom) &&
+            (!!period?.dateTo || !period?.dateTo) &&
+            !!date
+          : true,
+      {
+        message: coreErrorMessages.defaultError.defaultMessage,
+        path: ['date'],
+      },
+    )
+    .refine(
+      ({ hasDate, period, date }) =>
+        hasDate === NO
+          ? (!!date || !date) && !!period?.dateFrom && !!period.dateTo
+          : true,
+      {
+        message: coreErrorMessages.defaultError.defaultMessage,
+        path: ['period', 'dateFrom'],
+      },
+    )
+    .refine(
+      ({ hasDate, period, date }) =>
+        hasDate === NO
+          ? (!!date || !date) && !!period?.dateFrom && !!period.dateTo
+          : true,
+      {
+        message: coreErrorMessages.defaultError.defaultMessage,
+        path: ['period', 'dateTo'],
+      },
+    )
     .refine(({ hasDate }) => !!hasDate, {
       message: coreErrorMessages.defaultError.defaultMessage,
       path: ['hasDate'],
+    })
+    .refine(({ place }) => !!place?.ceremonyPlace, {
+      message: coreErrorMessages.defaultError.defaultMessage,
+      path: ['place', 'ceremonyPlace'],
     }),
   //spouse's part of the application
   spouseApprove: z.array(z.enum([YES, NO])).nonempty(),

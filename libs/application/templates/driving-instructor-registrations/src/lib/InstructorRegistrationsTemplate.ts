@@ -6,6 +6,9 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  HasTeachingRightsApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -32,17 +35,18 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
           actionCard: {
             title: m.applicationTitle,
           },
+          status: 'inprogress',
           progress: 0.33,
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.INSTRUCTOR,
@@ -57,10 +61,14 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              api: [HasTeachingRightsApi, NationalRegistryUserApi],
               delete: true,
               write: {
                 answers: ['approveExternalData'],
-                externalData: ['teachingRights', 'nationalRegistry'],
+                externalData: [
+                  HasTeachingRightsApi.externalDataId,
+                  NationalRegistryUserApi.externalDataId,
+                ],
               },
             },
           ],

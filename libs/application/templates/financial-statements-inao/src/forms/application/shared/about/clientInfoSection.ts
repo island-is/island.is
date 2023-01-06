@@ -19,7 +19,14 @@ export const clientInfoSection = buildSection({
     buildMultiField({
       id: 'about',
       title: m.info,
-      description: m.reviewContact,
+      description: (application: Application) => {
+        const answers = application.answers
+        const externalData = application.externalData
+        const userType = getCurrentUserType(answers, externalData)
+        return userType === FSIUSERTYPE.INDIVIDUAL
+          ? m.reviewInfo
+          : m.reviewContact
+      },
       children: [
         buildCustomField({
           id: 'OperatingYear',
@@ -61,7 +68,7 @@ export const clientInfoSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
+            const nationalRegistry = application.externalData.identity
               .data as User
             return nationalRegistry.name
           },
@@ -98,6 +105,11 @@ export const clientInfoSection = buildSection({
               .data as UserProfile
             return userProfile.mobilePhoneNumber
           },
+        }),
+        buildCustomField({
+          id: 'delegation check',
+          component: 'DelegationCheck',
+          title: '',
         }),
       ],
     }),

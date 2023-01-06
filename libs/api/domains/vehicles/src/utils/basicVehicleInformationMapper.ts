@@ -167,6 +167,7 @@ export const basicVehicleInformationMapper = (
           endDate: operator.enddate,
         }
       }) || undefined,
+    isOutOfCommission: data.vehiclestatus === 'Úr umferð',
   }
 
   return response

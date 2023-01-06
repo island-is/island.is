@@ -1,5 +1,4 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
-import { devices } from '@playwright/test'
 import './addons'
 /**
  * Read environment variables from file.
@@ -35,7 +34,10 @@ const config: PlaywrightTestConfig = {
         ['line'],
         [
           'playwright-tesults-reporter',
-          { 'tesults-target': process.env.TESULTS_TOKEN },
+          {
+            'tesults-target': process.env.TESULTS_TOKEN,
+            'tesults-build-name': process.env.COMMIT_INFO ?? 'unknown',
+          },
         ],
         ['html', { open: 'never' }],
       ]
@@ -105,7 +107,7 @@ const config: PlaywrightTestConfig = {
   // ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  outputDir: 'test-results/',
+  outputDir: 'dist/test-results/',
 
   /* Run your local dev server before starting the tests */
   // webServer: {

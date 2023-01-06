@@ -10,7 +10,6 @@ import {
   InputError,
   Text,
 } from '@island.is/island-ui/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { getErrorViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -25,7 +24,10 @@ import {
 } from '../Shared'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import BottomBar from '../../components/BottomBar'
-import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
+import {
+  starterColumnStyle,
+  sectionColumn,
+} from '../Shared/styles/overviewStyles.css'
 import { CapitalNumberOverview } from '../Shared/CapitalNumberOverview'
 
 export const PartyOverview = ({
@@ -72,11 +74,11 @@ export const PartyOverview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersIncomeAndExpenses)}
+            {formatMessage(m.expensesIncome)}
           </Text>
         </Box>
         <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.income)}
@@ -127,7 +129,7 @@ export const PartyOverview = ({
             />
           </GridColumn>
 
-          <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.expenses)}
@@ -157,7 +159,7 @@ export const PartyOverview = ({
       <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.keyNumbersDebt)}
+            {formatMessage(m.propertiesAndDebts)}
           </Text>
         </Box>
 

@@ -9,11 +9,13 @@ import {
   CaseAppealDecision,
   InstitutionType,
 } from '@island.is/judicial-system/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import {
+  BlueBox,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type { Case } from '@island.is/judicial-system/types'
 
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
@@ -76,9 +78,9 @@ const AppealSection: React.FC<Props> = (props) => {
                 signedVerdictOverview.sections.appeal.defendantAppealed,
                 {
                   courtEndTime: `${formatDate(
-                    workingCase.rulingDate,
+                    workingCase.courtEndTime,
                     'PP',
-                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
+                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
                 },
               )}
               fluid

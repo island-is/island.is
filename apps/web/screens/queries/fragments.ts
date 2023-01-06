@@ -604,6 +604,9 @@ export const slices = gql`
     id
     title
     powerBiEmbedProps
+    workspaceId
+    reportId
+    owner
   }
 
   fragment TableSliceFields on TableSlice {
@@ -684,7 +687,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-export const nestedAccordionAndFaqListFields = `
+const nestedContainerFields = `
   ... on AccordionSlice {
     ...AccordionSliceFields
     accordionItems {
@@ -707,4 +710,28 @@ export const nestedAccordionAndFaqListFields = `
       publishDate
     }
   }
+  ... on TabSection {
+    ...TabSectionFields 
+    tabs {
+      tabTitle
+      contentTitle
+      image {
+        ...ImageFields
+      }
+      body {
+        ...AllSlices
+      }
+    }
+  }
+`
+
+export const nestedFields = `
+  ... on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+      ${nestedContainerFields}
+    }
+  }
+  ${nestedContainerFields}
 `

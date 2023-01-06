@@ -83,7 +83,7 @@ class ApplicationServiceMock {
 }
 
 class ApplicationChargeServiceMock {
-  async deleteCharge(application: Pick<Application, 'id' | 'externalData'>) {
+  async deleteCharge(application: Pick<Application, 'id'>) {
     // do nothing
   }
 }

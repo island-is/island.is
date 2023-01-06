@@ -8,7 +8,7 @@ import {
   DocumentCategory,
   DocumentDetails,
 } from '@island.is/api/schema'
-import { getAccessToken } from '@island.is/auth/react'
+import { User } from '@island.is/shared/types'
 import {
   Box,
   GridColumn,
@@ -30,16 +30,22 @@ interface Props {
   documentLine: Document
   img?: string
   documentCategories?: DocumentCategory[]
+  userInfo?: User
 }
 
 const GET_DOCUMENT_BY_ID = gql`
-  query getAnnualStatusDocumentQuery($input: GetDocumentInput!) {
+  query getDocumentInboxLineQuery($input: GetDocumentInput!) {
     getDocument(input: $input) {
       html
     }
   }
 `
-const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
+const DocumentLine: FC<Props> = ({
+  documentLine,
+  img,
+  documentCategories,
+  userInfo,
+}) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
   const { formatMessage } = useLocale()
@@ -77,7 +83,8 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
       const documentIdInput = document.createElement('input')
       const tokenInput = document.createElement('input')
 
-      const token = await getAccessToken()
+      const token = userInfo?.access_token
+
       if (!token) return
 
       form.appendChild(documentIdInput)
@@ -127,7 +134,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
         [styles.unopened]: !documentLine.opened,
       })}
       // Check if data is already fetched, if so go straight to download/display
-      onClick={() => {
+      onClick={async () => {
         if (getFileByIdData && !loading) {
           onClickHandler()
         } else {

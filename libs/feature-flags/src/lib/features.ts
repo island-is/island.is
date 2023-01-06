@@ -1,4 +1,5 @@
 export enum Features {
+  testing = 'do-not-remove-for-testing-only',
   // Integrate auth-api with user-profile-api.
   userProfileClaims = 'shouldAuthApiReturnUserProfileClaims',
 
@@ -45,10 +46,8 @@ export enum Features {
   servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
-  servicePortalAssetsApiV2Enabled = 'servicePortalAssetsApiV2Enabled',
-  outgoingDelegationsV1 = 'outgoingdelegationsv1',
-  outgoingDelegationsV2 = 'outgoingdelegationsv2',
-  incomingDelegationsV2 = 'incomingdelegationsv2',
+
+  applicationTemplatePublicDeptPaymentPlanAllowDelegation = 'applicationTemplatePublicDeptPaymentPlanAllowDelegation',
 }
 
 export enum ServerSideFeature {

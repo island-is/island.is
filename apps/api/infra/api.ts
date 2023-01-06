@@ -20,6 +20,10 @@ import {
   Vehicles,
   AdrAndMachine,
   Firearm,
+  DisabilityLicense,
+  VehicleServiceFjsV1,
+  TransportAuthority,
+  ChargeFjsV2,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -30,6 +34,7 @@ export const serviceSetup = (services: {
   icelandicNameRegistryBackend: ServiceBuilder<'icelandic-names-registry-backend'>
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -43,6 +48,9 @@ export const serviceSetup = (services: {
       ),
       ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
+      ),
+      AIR_DISCOUNT_SCHEME_BACKEND_URL: ref(
+        (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
@@ -108,6 +116,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
+      AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
       SYSLUMENN_TIMEOUT: '40000',
@@ -146,10 +155,12 @@ export const serviceSetup = (services: {
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
       ELECTRONIC_REGISTRATION_STATISTICS_API_URL: {
-        dev: 'https://gw-api-staging.skra.is/business/tolfraedi',
-        staging: 'https://gw-api-staging.skra.is/business/tolfraedi',
-        prod: 'https://gw-api.skra.is/business/tolfraedi',
+        dev: 'https://api-staging.thinglysing.is/business/tolfraedi',
+        staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
+        prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      NO_UPDATE_NOTIFIER: 'true',
+      FISKISTOFA_ZENTER_CLIENT_ID: '1114',
     })
 
     .secrets({
@@ -208,10 +219,26 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
       FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL',
       FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD',
+      FISKISTOFA_ZENTER_CLIENT_PASSWORD:
+        '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD',
+      FISKISTOFA_API_URL: '/k8s/api/FISKISTOFA_API_URL',
+      FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET:
+        '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET',
+      FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL:
+        '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL',
+      FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID:
+        '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID',
+      FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE:
+        '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE',
+      FISKISTOFA_POWERBI_CLIENT_ID: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_ID',
+      FISKISTOFA_POWERBI_CLIENT_SECRET:
+        '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
+      FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
     })
     .xroad(
       AdrAndMachine,
       Firearm,
+      DisabilityLicense,
       Base,
       Client,
       HealthInsurance,
@@ -230,6 +257,9 @@ export const serviceSetup = (services: {
       MunicipalitiesFinancialAid,
       Vehicles,
       Passports,
+      VehicleServiceFjsV1,
+      TransportAuthority,
+      ChargeFjsV2,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

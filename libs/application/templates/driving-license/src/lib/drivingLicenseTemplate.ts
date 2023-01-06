@@ -8,10 +8,20 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
+  defineTemplateApi,
+  JuristictionApi,
+  CurrentLicenseApi,
+  DrivingAssessmentApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  PaymentCatalogApi,
+  QualityPhotoApi,
+  TeachersApi,
+  ExistingApplicationApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { Events, States, Roles } from './constants'
+import { Events, States, Roles, SYSLUMADUR_NATIONAL_ID } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
@@ -37,6 +47,7 @@ const template: ApplicationTemplate<
         meta: {
           name: m.applicationForDrivingLicense.defaultMessage,
           progress: 0.2,
+          status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -61,6 +72,27 @@ const template: ApplicationTemplate<
               },
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                TeachersApi,
+                UserProfileApi,
+                PaymentCatalogApi.configure({
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
+                  externalDataId: 'payment',
+                }),
+                CurrentLicenseApi,
+                DrivingAssessmentApi,
+                JuristictionApi,
+                QualityPhotoApi,
+                ExistingApplicationApi.configure({
+                  params: {
+                    states: [States.PAYMENT, States.DRAFT],
+                    where: {
+                      applicant: 'applicant',
+                    },
+                  },
+                }),
+              ],
             },
           ],
         },
@@ -75,6 +107,7 @@ const template: ApplicationTemplate<
           actionCard: {
             description: m.actionCardDraft,
           },
+          status: 'draft',
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -111,14 +144,15 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
             description: m.actionCardPayment,
           },
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -146,10 +180,11 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
+          status: 'completed',
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -158,11 +193,11 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DECLINED]: {
         meta: {
           name: 'Declined',
+          status: 'rejected',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -174,7 +209,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

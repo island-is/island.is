@@ -4,7 +4,7 @@ import {
   buildValidationError,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Status, FormerInsurance, Applicant } from '../types'
+import { Status, FormerInsurance } from '../types'
 import { NO, YES, StatusTypes } from '../shared'
 import {
   requireConfirmationOfResidency,
@@ -46,11 +46,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       entitlementReason,
     } = formerInsurance
 
-    const applicant = getValueViaPath(
-      application.answers,
-      'applicant',
-    ) as Applicant
-
     const citizenship = getValueViaPath(
       application.answers,
       'citizenship',
@@ -61,13 +56,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       const field = `${FORMER_INSURANCE}.registration`
       const buildError = buildValidationError(field)
       return buildError('You must select one of the above', field)
-    }
-
-    /* Check that country is not empty */
-    if (!country) {
-      const field = `${FORMER_INSURANCE}.country`
-      const buildError = buildValidationError(field)
-      return buildError('Please select a country', field)
     }
 
     if (!requireWaitingPeriod(country, citizenship)) {

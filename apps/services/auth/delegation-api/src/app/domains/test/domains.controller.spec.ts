@@ -11,7 +11,7 @@ import {
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
-import { accessTestCases } from '../../../../test/access-test-cases'
+import { accessOutgoingTestCases } from '../../../../test/access-outgoing-test-cases'
 import {
   createCurrentUser,
   createNationalId,
@@ -21,15 +21,14 @@ import shuffle from 'lodash/shuffle'
 
 describe('DomainsController', () => {
   describe('withAuth', () => {
-    describe.each(Object.keys(accessTestCases))(
-      'with test case: %s',
+    describe.each(Object.keys(accessOutgoingTestCases))(
+      'with outgoing access test case: %s',
       (caseName) => {
-        const testCase = accessTestCases[caseName]
-        const expectedDomains = testCase.expectedDomains ?? testCase.expected
-        const validDomains = expectedDomains.map((domain) => domain.name)
+        const testCase = accessOutgoingTestCases[caseName]
+        const validDomains = testCase.expected.map((domain) => domain.name)
         const invalidDomains = differenceWith(
           testCase.domains,
-          expectedDomains,
+          testCase.expected,
           (a, b) => a.name === b.name,
         ).map((domain) => domain.name)
         let app: TestApp
@@ -68,14 +67,12 @@ describe('DomainsController', () => {
 
         it('GET /domains returns expected domains', async () => {
           // Arrange
-          const expected = expectedDomains.map(({ name }) => ({
+          const expected = testCase.expected.map(({ name }) => ({
             name,
           }))
 
           // Act
-          const res = await server.get(
-            `/v1/domains?direction=${testCase.direction}`,
-          )
+          const res = await server.get(`/v1/domains?direction=outgoing`)
 
           // Assert
           expect(res.status).toEqual(200)
@@ -88,7 +85,7 @@ describe('DomainsController', () => {
             'GET /domains/%s returns expected domains',
             async (domainName) => {
               // Arrange
-              const domain = expectedDomains.find(
+              const domain = testCase.expected.find(
                 (domain) => domain.name === domainName,
               )
               assert(domain)
@@ -107,7 +104,7 @@ describe('DomainsController', () => {
             'GET /domains/%s/scopes returns expected scopes',
             async (domainName) => {
               // Arrange
-              const domain = expectedDomains.find(
+              const domain = testCase.expected.find(
                 (domain) => domain.name === domainName,
               )
               assert(domain)
@@ -115,7 +112,7 @@ describe('DomainsController', () => {
 
               // Act
               const res = await server.get(
-                `/v1/domains/${domainName}/scopes?direction=${testCase.direction}`,
+                `/v1/domains/${domainName}/scopes?direction=outgoing`,
               )
 
               // Assert
@@ -129,7 +126,7 @@ describe('DomainsController', () => {
             'GET /domains/%s/scope-tree returns expected scopes',
             async (domainName) => {
               // Arrange
-              const domain = expectedDomains.find(
+              const domain = testCase.expected.find(
                 (domain) => domain.name === domainName,
               )
               assert(domain)
@@ -137,7 +134,7 @@ describe('DomainsController', () => {
 
               // Act
               const res = await server.get(
-                `/v1/domains/${domainName}/scope-tree?direction=${testCase.direction}`,
+                `/v1/domains/${domainName}/scope-tree?direction=outgoing`,
               )
 
               // Assert
@@ -154,7 +151,7 @@ describe('DomainsController', () => {
             async (domainName) => {
               // Act
               const res = await server.get(
-                `/v1/domains/${domainName}/scope-tree?direction=${testCase.direction}`,
+                `/v1/domains/${domainName}/scope-tree?direction=outgoing`,
               )
 
               // Assert
@@ -168,7 +165,7 @@ describe('DomainsController', () => {
             async (domainName) => {
               // Act
               const res = await server.get(
-                `/v1/domains/${domainName}/scopes?direction=${testCase.direction}`,
+                `/v1/domains/${domainName}/scopes?direction=outgoing`,
               )
 
               // Assert

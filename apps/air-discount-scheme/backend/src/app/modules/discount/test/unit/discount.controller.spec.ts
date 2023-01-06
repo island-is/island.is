@@ -3,12 +3,14 @@ import { Test } from '@nestjs/testing'
 import { DiscountService } from '../../discount.service'
 import { Discount } from '../../discount.model'
 import {
+  PrivateDiscountAdminController,
   PrivateDiscountController,
   PublicDiscountController,
 } from '../../discount.controller'
 import { NationalRegistryService } from '../../../nationalRegistry'
 import { FlightService } from '../../../flight'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import { UserService } from '../../../user/user.service'
 import {
   NationalRegistryClientConfig,
@@ -21,13 +23,14 @@ import { createTestUser } from '../../../../../../test/createTestUser'
 
 const auth: AuthUser = {
   nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  scope: [AirDiscountSchemeScope.default],
   authorization: '',
   client: '',
 }
 
 describe('DiscountController', () => {
   let privateDiscountController: PrivateDiscountController
+  let privateDiscountAdminController: PrivateDiscountAdminController
   let publicDiscountController: PublicDiscountController
   let discountService: DiscountService
   let nationalRegistryService: NationalRegistryService
@@ -44,6 +47,7 @@ describe('DiscountController', () => {
       ],
       providers: [
         PrivateDiscountController,
+        PrivateDiscountAdminController,
         PublicDiscountController,
         UserService,
         {
@@ -59,6 +63,7 @@ describe('DiscountController', () => {
             getDiscountByNationalId: () => ({}),
             createDiscountCode: () => ({}),
             getDiscountByDiscountCode: () => ({}),
+            createExplicitDiscountCode: () => ({}),
           })),
         },
         {
@@ -71,23 +76,20 @@ describe('DiscountController', () => {
           provide: FlightService,
           useClass: jest.fn(() => ({
             countThisYearsConnectedFlightsByNationalId: () => 0,
-            findThisYearsConnectableFlightsByNationalId: () => 0,
+            findThisYearsConnectableFlightsByNationalId: () => [],
           })),
         },
       ],
     }).compile()
 
-    publicDiscountController = moduleRef.get<PublicDiscountController>(
-      PublicDiscountController,
+    publicDiscountController = moduleRef.get(PublicDiscountController)
+    privateDiscountController = moduleRef.get(PrivateDiscountController)
+    privateDiscountAdminController = moduleRef.get(
+      PrivateDiscountAdminController,
     )
-    privateDiscountController = moduleRef.get<PrivateDiscountController>(
-      PrivateDiscountController,
-    )
-    discountService = moduleRef.get<DiscountService>(DiscountService)
-    nationalRegistryService = moduleRef.get<NationalRegistryService>(
-      NationalRegistryService,
-    )
-    userService = moduleRef.get<UserService>(UserService)
+    discountService = moduleRef.get(DiscountService)
+    nationalRegistryService = moduleRef.get(NationalRegistryService)
+    userService = moduleRef.get(UserService)
   })
 
   describe('getCurrentDiscountByNationalId', () => {
@@ -138,7 +140,7 @@ describe('DiscountController', () => {
       expect(createDiscountCodeSpy).toHaveBeenCalledWith(
         testUser,
         nationalId,
-        0,
+        [],
       )
       expect(result).toEqual(discount)
     })
@@ -210,6 +212,44 @@ describe('DiscountController', () => {
           message: `Discount code is invalid`,
         })
       }
+    })
+  })
+
+  describe('createExplicitDiscountCode', () => {
+    it('should return discount', async () => {
+      const nationalId = '1010302399'
+      const discountCode = 'ABCDEFG'
+      const postalcode = 600
+      const comment = 'This is a comment'
+      const discount = new Discount(
+        createTestUser(),
+        discountCode,
+        [],
+        nationalId,
+        0,
+      )
+      const createExplicitDiscountCodeSpy = jest
+        .spyOn(discountService, 'createExplicitDiscountCode')
+        .mockImplementation(() => Promise.resolve(discount))
+
+      const result = await privateDiscountAdminController.createExplicitDiscountCode(
+        {
+          comment,
+          nationalId,
+          postalcode,
+        },
+        auth,
+      )
+
+      expect(createExplicitDiscountCodeSpy).toHaveBeenCalledWith(
+        auth,
+        nationalId,
+        postalcode,
+        auth.nationalId,
+        comment,
+        [],
+      )
+      expect(result).toEqual(discount)
     })
   })
 })

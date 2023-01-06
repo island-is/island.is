@@ -8,8 +8,9 @@ import {
   Inline,
   Link,
 } from '@island.is/island-ui/core'
+import { webRichText } from '@island.is/web/utils/richText'
 import { FooterItem } from '@island.is/web/graphql/schema'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
 import { SpanType } from '@island.is/island-ui/core/types'
 import * as styles from './HeilbrigdisstofnunNordurlandsFooter.css'
@@ -47,7 +48,7 @@ export const HeilbrigdisstofnunNordurlandsFooter = ({
               </Text>
             )}
 
-            {richText(item.content as SliceType[], {
+            {webRichText(item.content as SliceType[], {
               renderNode: {
                 [BLOCKS.PARAGRAPH]: (_node, children) => (
                   <Text

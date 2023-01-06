@@ -1,7 +1,7 @@
 import { FilterProps } from '@island.is/island-ui/core'
 
 export const filterProps = (clearFilter: () => void) => {
-  let prop: FilterProps = {
+  const prop: FilterProps = {
     labelClear: 'Hreinsa',
     labelClearAll: 'Hreinsa allar síur',
     labelOpen: 'Opna',

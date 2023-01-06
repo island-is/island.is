@@ -122,7 +122,7 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
                 <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
                 <Text>
                   {format(
-                    new Date((answers.ceremony as Ceremony).withDate.date),
+                    new Date((answers.ceremony as Ceremony).date),
                     'dd. MMMM, yyyy',
                     { locale: is },
                   ).toLowerCase()}
@@ -132,12 +132,12 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
             <Box display="flex">
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
-                {(answers.ceremony as Ceremony).withDate.ceremonyPlace ===
+                {(answers.ceremony as Ceremony).place.ceremonyPlace ===
                 CeremonyPlaces.office ? (
-                  <Text>{(answers.ceremony as Ceremony).withDate.office}</Text>
-                ) : (answers.ceremony as Ceremony).withDate.ceremonyPlace ===
+                  <Text>{(answers.ceremony as Ceremony).place.office}</Text>
+                ) : (answers.ceremony as Ceremony).place.ceremonyPlace ===
                   CeremonyPlaces.society ? (
-                  <Text>{(answers.ceremony as Ceremony).withDate.society}</Text>
+                  <Text>{(answers.ceremony as Ceremony).place.society}</Text>
                 ) : (
                   <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
                 )}
@@ -149,13 +149,13 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
             <Text variant="h4">{formatMessage(m.ceremonyPeriod)}</Text>
             <Text variant="default">
               {format(
-                new Date((answers.ceremony as Ceremony).withPeriod.dateFrom),
+                new Date((answers.ceremony as Ceremony).period.dateFrom),
                 'dd. MMMM, yyyy',
                 { locale: is },
               ).toLowerCase() +
                 ' - ' +
                 format(
-                  new Date((answers.ceremony as Ceremony).withPeriod.dateTil),
+                  new Date((answers.ceremony as Ceremony).period.dateTo),
                   'dd. MMMM, yyyy',
                   { locale: is },
                 ).toLowerCase()}

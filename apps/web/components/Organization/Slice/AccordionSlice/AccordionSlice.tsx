@@ -8,11 +8,13 @@ import {
   BoxProps,
   Text,
 } from '@island.is/island-ui/core'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import {
   AccordionSlice as AccordionSliceSchema,
   Html,
 } from '@island.is/web/graphql/schema'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
 import * as styles from './AccordionSlice.css'
 
 const headingLevels = ['h2', 'h3', 'h4', 'h5'] as const
@@ -69,13 +71,7 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                 startExpanded={slice.accordionItems.length === 1}
               >
                 <Box className={styles.accordionBox}>
-                  {richText(item.content as SliceType[], {
-                    renderComponent: {
-                      AccordionSlice: (slice) => (
-                        <AccordionSlice slice={slice} />
-                      ),
-                    },
-                  })}
+                  {webRichText(item.content)}
                 </Box>
               </AccordionCard>
             </Box>
@@ -91,15 +87,7 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                   labelUse={childHeading}
                   startExpanded={slice.accordionItems.length === 1}
                 >
-                  <Text>
-                    {richText(item.content as SliceType[], {
-                      renderComponent: {
-                        AccordionSlice: (slice) => (
-                          <AccordionSlice slice={slice} />
-                        ),
-                      },
-                    })}
-                  </Text>
+                  <Text>{webRichText(item.content as SliceType[])}</Text>
                 </AccordionItem>
               ))}
             </Accordion>
@@ -121,7 +109,9 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                     !!item.link?.url &&
                     window.open(
                       item.link.url,
-                      item.link.url.includes('://') ? '_blank' : '_self',
+                      shouldLinkOpenInNewWindow(item.link.url)
+                        ? '_blank'
+                        : '_self',
                     ),
                 }}
               />

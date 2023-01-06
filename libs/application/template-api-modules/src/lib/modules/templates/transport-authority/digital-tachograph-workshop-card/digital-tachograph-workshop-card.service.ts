@@ -14,10 +14,13 @@ export class DigitalTachographWorkshopCardService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        SAMGONGUSTOFA_NATIONAL_ID,
+        [ChargeItemCode.TRANSPORT_AUTHORITY_XXX],
       )
       return result
     } catch (exeption) {
@@ -38,7 +41,7 @@ export class DigitalTachographWorkshopCardService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

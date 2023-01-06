@@ -16,6 +16,8 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
 }
 
+export const minutesSelection = [30, 45, 60, 90]
+
 export const minutesOfDriving = [
   {
     label: '30',

@@ -1,5 +1,5 @@
 import { BLOCKS } from '@contentful/rich-text-types'
-import { SliceType, richText } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -11,6 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './LandskjorstjornFooter.css'
 
@@ -29,12 +30,14 @@ export const LandskjorstjornFooter = ({
       <GridContainer>
         <GridRow>
           <GridColumn>
-            <img
-              width={120}
-              height={78}
-              src="https://images.ctfassets.net/8k0h54kbe6bj/2JJGzQKfinGLSL7TnrEZij/b34ed413149e28a1c6e2f39582ad7035/landskjorstjorn-logo.png"
-              alt=""
-            />
+            <Box marginLeft={5}>
+              <img
+                width={80}
+                height={78}
+                src="https://images.ctfassets.net/8k0h54kbe6bj/60DIqBGQ8ejcpEak0bSrak/9481d5d92bcf9b2ea5f2efe3fee952f7/Landskjorstjorn-logo-hvitt.svg"
+                alt=""
+              />
+            </Box>
           </GridColumn>
           {footerItems[0] && (
             <GridColumn>
@@ -42,7 +45,7 @@ export const LandskjorstjornFooter = ({
                 <Text variant="h2" color="white">
                   <Hyphen>{footerItems[0].title}</Hyphen>
                 </Text>
-                {richText(footerItems[0].content as SliceType[], {
+                {webRichText(footerItems[0].content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
                       <Text
@@ -84,7 +87,7 @@ export const LandskjorstjornFooter = ({
                     </Text>
                   )}
                 </Box>
-                {richText(item.content as SliceType[], {
+                {webRichText(item.content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
                       <Text color="white" variant="medium" marginBottom={2}>

@@ -1,9 +1,11 @@
 #!/usr/bin/env ts-node
 import yargs from 'yargs'
-import { featureSpecificServiceDef } from '../infra/src/dsl/serialize-to-yaml'
-import { Charts } from '../infra/src/uber-charts/all-charts'
+import { Charts, Deployments } from '../infra/src/uber-charts/all-charts'
 import { execSync } from 'child_process'
 import { branchNameToFeatureName } from './_common'
+import { prepareServicesForEnv } from '../infra/src/dsl/processing/rendering-pipeline'
+import { Envs } from '../infra/src/environments'
+import { renderers } from '../infra/src/dsl/upstream-dependencies'
 
 const argv = yargs(process.argv.slice(2))
   .options({
@@ -48,16 +50,20 @@ void (async function () {
     throw Error(`Service with name ${serviceName} not found in chart ${chart}`)
   }
 
-  if (argv.argv['feature-branch-name']) {
-    const featureName = branchNameToFeatureName(
-      argv.argv['feature-branch-name'],
-    )
-    featureSpecificServiceDef(featureName, target)
-  }
-  const targetService = target[0]
-  targetService.serviceDef.postgres
+  const featureBranchName = argv.argv['feature-branch-name']
+  const out = prepareServicesForEnv({
+    env: {
+      ...Envs[Deployments[chart]['dev']],
+      feature: typeof featureBranchName
+        ? branchNameToFeatureName(featureBranchName)
+        : undefined,
+    },
+    outputFormat: renderers.helm,
+    services: target[0],
+  })
+  const targetService = out[0]
   execSync(
-    `${__dirname}/_run-aws-eks-commands.js restart-service --namespace ${targetService.serviceDef.namespace} --service web-${targetService.serviceDef.name}  --cluster ${argv.argv.cluster}`,
+    `${__dirname}/_run-aws-eks-commands.js restart-service --namespace ${targetService.namespace} --service web-${targetService.name}  --cluster ${argv.argv.cluster}`,
     { stdio: 'inherit' },
   )
 })()

@@ -143,8 +143,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
 
   return (
     <BlueBox>
-      <Box marginBottom={2} display="flex" justifyContent="flexEnd">
-        {onDelete && (
+      {onDelete && (
+        <Box marginBottom={2} display="flex" justifyContent="flexEnd">
           <Button
             onClick={() => onDelete(defendant)}
             colorScheme="destructive"
@@ -154,8 +154,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
           >
             {formatMessage(strings.defendantInfo.delete)}
           </Button>
-        )}
-      </Box>
+        </Box>
+      )}
       <Box marginBottom={2}>
         <Checkbox
           name={`noNationalId-${Math.random()}`}

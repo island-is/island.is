@@ -9,9 +9,6 @@ import {
 
 import { HealthController } from './health.controller'
 import { MessageHandlerService } from './messageHandler.service'
-import { CaseDeliveryService } from './caseDelivery.service'
-import { ProsecutorDocumentsDeliveryService } from './prosecutorDocumentsDelivery.service'
-import { RulingNotificationService } from './rulingNotification.service'
 import { InternalDeliveryService } from './internalDelivery.service'
 import { appModuleConfig } from './app.config'
 
@@ -25,12 +22,6 @@ import { appModuleConfig } from './app.config'
     }),
   ],
   controllers: [HealthController],
-  providers: [
-    CaseDeliveryService,
-    ProsecutorDocumentsDeliveryService,
-    InternalDeliveryService,
-    RulingNotificationService,
-    MessageHandlerService,
-  ],
+  providers: [InternalDeliveryService, MessageHandlerService],
 })
 export class AppModule {}

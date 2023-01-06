@@ -7,10 +7,4 @@ export const overview = defineMessages({
     description:
       'Notaður sem titill á síðu á Yfirlit ákæru skrefi í dómaraflæði.',
   },
-  caseFilesTitle: {
-    id: 'judicial.system.core:court_indictments_overview.case_files_title',
-    defaultMessage: 'Skjöl málsins',
-    description:
-      'Notaður sem undirtitill á skjölum málsins í ákæru yfirliti í dómaraflæði',
-  },
 })

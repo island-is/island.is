@@ -31,8 +31,8 @@
       "options": {
         "commands": [
           "yarn schemas",
-          "yarn dev-services services-user-profile",
-          "yarn dev-services services-search-indexer",
+          "yarn nx run services-user-profile:dev-services",
+          "yarn nx run services-search-indexer:dev-services",
           "npx nx run services-user-profile:migrate"
         ],
         "parallel": false

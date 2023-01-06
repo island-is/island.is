@@ -11,9 +11,10 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
-import { minutesOfDriving } from '../../lib/constants'
+import { minutesOfDriving, minutesSelection } from '../../lib/constants'
 import format from 'date-fns/format'
 import * as styles from '../style.css'
 import cn from 'classnames'
@@ -36,19 +37,20 @@ import Skeleton from './Skeleton'
 interface Props {
   application: Application
   studentNationalId: string
-  setShowTable: React.Dispatch<React.SetStateAction<boolean>>
+  setShowStudentOverview: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ViewStudent = ({
   application,
   studentNationalId,
-  setShowTable,
+  setShowStudentOverview,
 }: Props) => {
   const { formatMessage } = useLocale()
 
   const {
     data: studentDataResponse,
     loading: loadingStudentsBook,
+    error,
     refetch: refetchStudent,
   } = useQuery(ViewSingleStudentQuery, {
     variables: {
@@ -69,7 +71,8 @@ const ViewStudent = ({
     EditDrivingLesson,
   )
 
-  const [minutes, setMinutes] = useState(30)
+  const [minutesInputActive, setMinutesInputActive] = useState(false)
+  const [minutes, setMinutes] = useState<number>(0)
   const [date, setDate] = useState<string>('')
   const [newRegId, setNewRegId] = useState<undefined | string>(undefined)
   const [editingRegistration, setEditingRegistration] = useState<
@@ -78,7 +81,11 @@ const ViewStudent = ({
   const [dateError, setDateError] = useState(false)
   const [student, setStudent] = useState<
     undefined | DrivingLicenseBookStudentOverview
-  >(studentDataResponse ? studentDataResponse.drivingLicenseBookStudent : {})
+  >(
+    studentDataResponse
+      ? studentDataResponse.drivingLicenseBookStudentForTeacher
+      : {},
+  )
 
   const userNationalId = (application.externalData.nationalRegistry?.data as {
     nationalId?: string
@@ -89,13 +96,15 @@ const ViewStudent = ({
 
   useEffect(() => {
     setStudent(
-      studentDataResponse ? studentDataResponse.drivingLicenseBookStudent : {},
+      studentDataResponse
+        ? studentDataResponse.drivingLicenseBookStudentForTeacher
+        : {},
     )
   }, [studentDataResponse])
 
   const goBack = useCallback(() => {
-    setShowTable(true)
-  }, [setShowTable])
+    setShowStudentOverview(true)
+  }, [setShowStudentOverview])
 
   const resetFields = (message?: string) => {
     refetchStudent().then(() => {
@@ -107,7 +116,7 @@ const ViewStudent = ({
 
       setEditingRegistration(undefined)
       setDate('')
-      setMinutes(30)
+      setMinutes(0)
     })
   }
 
@@ -180,7 +189,10 @@ const ViewStudent = ({
 
   return (
     <GridContainer>
-      {student && Object.entries(student).length > 0 ? (
+      {!error &&
+      !loadingStudentsBook &&
+      student &&
+      Object.entries(student).length > 0 ? (
         <>
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
@@ -207,9 +219,12 @@ const ViewStudent = ({
                 {formatMessage(m.viewStudentCompleteSchools)}
               </Text>
               {student.book?.drivingSchoolExams?.map((school, key) => {
+                const datePostfix = school.examDate
+                  ? `- ${school.examDate}`
+                  : ''
                 return (
                   <Text key={key} variant="default">
-                    {school.schoolTypeName}
+                    {`${school.schoolTypeName}${datePostfix}`}
                   </Text>
                 )
               })}
@@ -246,7 +261,7 @@ const ViewStudent = ({
                     name={'options-' + index}
                     label={item.label}
                     value={item.value}
-                    checked={item.value === minutes}
+                    checked={item.value === minutes && !minutesInputActive}
                     onChange={() => {
                       setMinutes(item.value)
                     }}
@@ -261,13 +276,13 @@ const ViewStudent = ({
                 type="number"
                 name="mínútur"
                 value={
-                  minutes === 30 ||
-                  minutes === 45 ||
-                  minutes === 60 ||
-                  minutes === 90
+                  (minutesSelection.includes(minutes) && !minutesInputActive) ||
+                  minutes === 0
                     ? ''
                     : minutes
                 }
+                onFocus={() => setMinutesInputActive(true)}
+                onBlur={() => setMinutesInputActive(false)}
                 placeholder="0"
                 onChange={(input) => {
                   setMinutes(Number.parseInt(input.target.value, 10))
@@ -343,19 +358,22 @@ const ViewStudent = ({
               </Text>
             </GridColumn>
             <GridColumn span={'12/12'}>
-              <T.Table>
+              <T.Table box={{ overflow: 'hidden' }}>
                 <T.Head>
                   <T.Row>
-                    <T.HeadData>
+                    <T.HeadData style={styles.tableStyles}>
                       {formatMessage(m.viewStudentTableHeaderCol1)}
                     </T.HeadData>
-                    <T.HeadData>
+                    <T.HeadData style={styles.tableStyles}>
                       {formatMessage(m.viewStudentTableHeaderCol2)}
                     </T.HeadData>
-                    <T.HeadData box={{ textAlign: 'center' }}>
+                    <T.HeadData style={styles.tableStyles}>
                       {formatMessage(m.viewStudentTableHeaderCol3)}
                     </T.HeadData>
-                    <T.HeadData></T.HeadData>
+                    <T.HeadData
+                      style={styles.tableStyles}
+                      box={{ textAlign: 'center' }}
+                    ></T.HeadData>
                   </T.Row>
                 </T.Head>
                 <T.Body>
@@ -376,30 +394,43 @@ const ViewStudent = ({
 
                         return (
                           <T.Row key={key}>
-                            <T.Data box={{ className: bgr }}>
+                            <T.Data
+                              style={styles.tableStyles}
+                              box={{ className: bgr }}
+                            >
                               {format(
                                 new Date(entry.registerDate),
                                 'dd.MM.yyyy',
                               )}
                             </T.Data>
-                            <T.Data box={{ className: bgr }}>
+                            <T.Data
+                              style={styles.tableStyles}
+                              box={{ className: bgr }}
+                            >
                               {entry.teacherName}
                             </T.Data>
                             <T.Data
-                              box={{ className: bgr, textAlign: 'center' }}
+                              style={styles.tableStyles}
+                              box={{
+                                className: bgr,
+                                textAlign: ['center', 'left'],
+                              }}
                             >
                               {entry.lessonTime}
                             </T.Data>
-                            <T.Data box={{ className: bgr }}>
+                            <T.Data
+                              style={styles.tableStyles}
+                              box={{ className: bgr, textAlign: 'center' }}
+                            >
                               {entry.teacherNationalId === userNationalId && (
-                                <Box display={'flex'}>
+                                <Box>
                                   <Button
                                     variant="text"
                                     size="small"
                                     icon={
                                       editingRegistration &&
                                       editingRegistration.id === entry.id
-                                        ? 'close'
+                                        ? 'checkmark'
                                         : undefined
                                     }
                                     onClick={() => {
@@ -411,9 +442,12 @@ const ViewStudent = ({
                                       setDate(entry.registerDate)
                                     }}
                                   >
-                                    {formatMessage(
-                                      m.viewStudentEditRegistration,
-                                    )}
+                                    {editingRegistration &&
+                                    editingRegistration.id === entry.id
+                                      ? ''
+                                      : formatMessage(
+                                          m.viewStudentEditRegistration,
+                                        )}
                                   </Button>
                                   {newRegId &&
                                     entry.id === newRegId &&
@@ -440,6 +474,24 @@ const ViewStudent = ({
             </GridColumn>
           </GridRow>
 
+          <GridRow>
+            <GridColumn>
+              <Button variant="ghost" preTextIcon="arrowBack" onClick={goBack}>
+                {formatMessage(m.viewStudentGoBackToOverviewButton)}
+              </Button>
+            </GridColumn>
+          </GridRow>
+        </>
+      ) : error ? (
+        <>
+          <GridRow marginBottom={8}>
+            <GridColumn>
+              <AlertMessage
+                type="error"
+                message={formatMessage(m.errorOnGettingStudentTitle)}
+              />
+            </GridColumn>
+          </GridRow>
           <GridRow>
             <GridColumn>
               <Button variant="ghost" preTextIcon="arrowBack" onClick={goBack}>

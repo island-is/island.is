@@ -270,6 +270,7 @@ export const transformApplicationToParentalLeaveDTO = (
     bank,
     applicationType,
     isRecivingUnemploymentBenefits,
+    multipleBirths,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -318,6 +319,10 @@ export const transformApplicationToParentalLeaveDTO = (
     rightsCode: getRightsCode(application),
     attachments,
     testData,
+    noOfChildren:
+      multipleBirths && multipleBirths > 1
+        ? multipleBirths.toString()
+        : undefined,
   }
 }
 

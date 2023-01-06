@@ -14,7 +14,6 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
-  PowerBiSlice as PowerBiSliceSchema,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -27,7 +26,7 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
@@ -35,18 +34,16 @@ import {
   OrganizationWrapper,
   SliceDropdown,
   Form,
-  OneColumnTextSlice,
-  PowerBiSlice,
-  AccordionSlice,
-  TableSlice,
-  EmailSignup,
+  Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 import { Locale } from 'locale'
 
 interface SubPageProps {
@@ -90,7 +87,12 @@ const SubPage: Screen<SubPageProps> = ({
   namespace,
   locale,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -101,10 +103,10 @@ const SubPage: Screen<SubPageProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === pathWithoutHash ||
+        primaryLink?.url === pathWithoutHash ||
         childrenLinks.some((link) => link.url === pathWithoutHash),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -117,6 +119,7 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <OrganizationWrapper
       showExternalLinks={true}
+      showReadSpeaker={false}
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       fullWidthContent={true}
@@ -155,11 +158,18 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    <Box marginBottom={2}>
+                    <Box className="rs_read" marginBottom={2}>
                       <Text variant="h1" as="h1">
                         {subpage.title}
                       </Text>
                     </Box>
+                    {isWebReaderEnabledForOrganizationPages && (
+                      <Webreader
+                        marginTop={0}
+                        readId={null}
+                        readClass="rs_read"
+                      />
+                    )}
                   </GridColumn>
                 </GridRow>
                 {subpage.showTableOfContents && (
@@ -168,7 +178,7 @@ const SubPage: Screen<SubPageProps> = ({
                     title={n('navigationTitle', 'Efnisyfirlit')}
                   />
                 )}
-                <GridRow>
+                <GridRow className="rs_read">
                   <GridColumn
                     span={[
                       '12/12',
@@ -176,24 +186,17 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    {richText(subpage.description as SliceType[], {
-                      renderComponent: {
-                        Form: (slice) => (
-                          <Form form={slice} namespace={namespace} />
-                        ),
-                        OneColumnText: (slice) => (
-                          <OneColumnTextSlice slice={slice} />
-                        ),
-                        PowerBiSlice: (slice: PowerBiSliceSchema) => (
-                          <PowerBiSlice slice={slice} />
-                        ),
-                        AccordionSlice: (slice) => (
-                          <AccordionSlice slice={slice} />
-                        ),
-                        TableSlice: (slice) => <TableSlice slice={slice} />,
-                        EmailSignup: (slice) => <EmailSignup slice={slice} />,
+                    {webRichText(
+                      subpage.description as SliceType[],
+                      {
+                        renderComponent: {
+                          Form: (slice) => (
+                            <Form form={slice} namespace={namespace} />
+                          ),
+                        },
                       },
-                    })}
+                      activeLocale,
+                    )}
                   </GridColumn>
                   {subpage.links.length > 0 && (
                     <GridColumn

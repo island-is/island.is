@@ -18,9 +18,11 @@ import {
   Form,
   FormModes,
   FormValue,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
-import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
+import { OnBehalf } from '../lib/dataSchema'
 import {
   application,
   complaint,
@@ -40,7 +42,7 @@ const noOption = { value: NO, label: sharedFields.no }
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
   title: application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',
@@ -54,14 +56,12 @@ export const ComplaintForm: Form = buildForm({
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: externalData.labels.nationalRegistryTitle,
               subTitle: externalData.labels.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
             }),
@@ -86,6 +86,7 @@ export const ComplaintForm: Form = buildForm({
                   title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField(
@@ -125,6 +126,7 @@ export const ComplaintForm: Form = buildForm({
                   title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField(
@@ -171,6 +173,7 @@ export const ComplaintForm: Form = buildForm({
                   title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField(
@@ -215,6 +218,7 @@ export const ComplaintForm: Form = buildForm({
                   title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField(
@@ -283,6 +287,7 @@ export const ComplaintForm: Form = buildForm({
                     },
                   ],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField({

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -17,54 +17,80 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { AlertMessage, Box, InputFileUpload } from '@island.is/island-ui/core'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import {
+  AlertMessage,
+  Box,
+  InputFileUpload,
+  toast,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import {
   useCase,
   useS3Upload,
+  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseFileCategory,
   CaseTransition,
 } from '@island.is/judicial-system/types'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
 
-enum ModalTypes {
-  NONE,
-  SUBMIT_CASE,
-}
-
 const CourtRecord: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
-  const [modalVisible, setModalVisible] = useState<ModalTypes>(ModalTypes.NONE)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const {
-    files,
-    handleS3Upload,
-    handleRemoveFromS3,
-    handleRetry,
-    allFilesUploaded,
-  } = useS3Upload(workingCase)
+  const { files, handleS3Upload, handleRetry, allFilesUploaded } = useS3Upload(
+    workingCase,
+  )
+  const { remove } = useS3UploadV2(workingCase.id)
 
-  const handleNextButtonClick = async () => {
-    const transitionSuccessful = await transitionCase(
-      workingCase,
-      CaseTransition.ACCEPT,
-    )
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      const transitionSuccessful = await transitionCase(
+        workingCase,
+        CaseTransition.ACCEPT,
+      )
 
-    if (transitionSuccessful) {
-      setModalVisible(ModalTypes.SUBMIT_CASE)
-    } else {
-      // TODO: Handle error
-    }
-  }
+      if (transitionSuccessful) {
+        setNavigateTo(destination)
+      } else {
+        toast.error(formatMessage(errors.transitionCase))
+      }
+    },
+    [transitionCase, workingCase, formatMessage],
+  )
+
+  const handleRemoveFile = useCallback(
+    async (file: UploadFile) => {
+      try {
+        if (file.id) {
+          await remove(file.id)
+          setWorkingCase((prev) => ({
+            ...prev,
+            caseFiles: prev.caseFiles?.filter(
+              (caseFile) => caseFile.id !== file.id,
+            ),
+          }))
+        }
+      } catch {
+        toast.error(formatMessage(errors.general))
+      }
+    },
+    [formatMessage, remove, setWorkingCase],
+  )
 
   return (
     <PageLayout
@@ -73,6 +99,8 @@ const CourtRecord: React.FC = () => {
       activeSubSection={IndictmentsCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={allFilesUploaded}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.courtRecord)} />
       <FormContentContainer>
@@ -90,12 +118,13 @@ const CourtRecord: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.COURT_RECORD,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(m.inputFieldLabel)}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.COURT_RECORD)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemoveFile}
             onRetry={handleRetry}
           />
         </Box>
@@ -105,12 +134,13 @@ const CourtRecord: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.RULING,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(m.inputFieldLabel)}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.RULING)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemoveFile}
             onRetry={handleRetry}
           />
         </Box>
@@ -118,23 +148,22 @@ const CourtRecord: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)
+          }
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(m.nextButtonText)}
         />
       </FormContentContainer>
-      {modalVisible === ModalTypes.SUBMIT_CASE && (
+      {navigateTo !== undefined && (
         <Modal
           title={formatMessage(m.modalTitle)}
           text={formatMessage(m.modalText)}
           onPrimaryButtonClick={() => {
-            router.push(
-              `${constants.CASES_ROUTE}`, // TODO: Add next url when it is ready
-            )
+            router.push(`${navigateTo}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(core.closeModal)}
-          isPrimaryButtonLoading={false}
         />
       )}
     </PageLayout>
