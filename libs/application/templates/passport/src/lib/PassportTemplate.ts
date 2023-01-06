@@ -1,3 +1,4 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -6,16 +7,25 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
+  MockProviderApi,
+  NationalRegistryUserApi,
+  PaymentCatalogApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
+import { IdentityDocumentApi } from '../dataProviders'
 import { m } from '../lib/messages'
 import {
   ApiActions,
   Events,
+  IdentityDocumentProviderMock,
   Roles,
   sixtyDays,
   States,
+  SYSLUMADUR_NATIONAL_ID,
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -46,9 +56,9 @@ const PassportTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.33,
           lifecycle: pruneAfter(twoDays),
-          onExit: {
-            apiModuleAction: ApiActions.checkForDiscount,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.checkForDiscount,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -70,6 +80,16 @@ const PassportTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                PaymentCatalogApi.configure({
+                  externalDataId: 'payment',
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
+                }),
+                IdentityDocumentApi,
+                DistrictsApi,
+              ],
             },
           ],
         },
@@ -87,9 +107,9 @@ const PassportTemplate: ApplicationTemplate<
           },
           progress: 0.7,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -118,9 +138,9 @@ const PassportTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.9,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.assignParentB,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.assignParentB,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -143,6 +163,16 @@ const PassportTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                PaymentCatalogApi.configure({
+                  externalDataId: 'payment',
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
+                }),
+                IdentityDocumentApi,
+                DistrictsApi,
+              ],
             },
           ],
         },
@@ -161,9 +191,9 @@ const PassportTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitPassportApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitPassportApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -200,12 +230,16 @@ const PassportTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToParentB: assign((context) => {
+        const parentB = getValueViaPath<string>(
+          context.application.answers,
+          'childsPersonalInfo.guardian2.nationalId',
+        )
+
         return {
           ...context,
           application: {
             ...context.application,
-            // Assigning Gervimaður Útlönd for testing
-            assignees: ['0101307789'],
+            assignees: parentB ? [parentB] : [],
           },
         }
       }),

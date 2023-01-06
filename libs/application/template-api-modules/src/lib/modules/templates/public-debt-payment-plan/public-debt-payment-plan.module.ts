@@ -11,6 +11,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan.service'
 
 import { PaymentScheduleClientModule } from '@island.is/clients/payment-schedule'
+import { PrerequisitesService } from './paymentPlanPrerequisites.service'
 
 export class PublicDebtPaymentPlanTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -18,9 +19,9 @@ export class PublicDebtPaymentPlanTemplateModule {
       module: PublicDebtPaymentPlanTemplateModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        PaymentScheduleClientModule.register(config.paymentScheduleConfig),
+        PaymentScheduleClientModule,
       ],
-      providers: [PublicDebtPaymentPlanTemplateService],
+      providers: [PublicDebtPaymentPlanTemplateService, PrerequisitesService],
       exports: [PublicDebtPaymentPlanTemplateService],
     }
   }

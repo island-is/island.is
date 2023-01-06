@@ -70,4 +70,11 @@ export class Institution extends Model {
   })
   @ApiProperty()
   policeCaseNumberPrefix?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  nationalId?: string
 }

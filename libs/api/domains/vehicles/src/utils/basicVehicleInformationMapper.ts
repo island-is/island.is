@@ -167,7 +167,6 @@ export const basicVehicleInformationMapper = (
           endDate: operator.enddate,
         }
       }) || undefined,
-    isStolen: data.stolens ? data.stolens.length > 0 : false,
     isOutOfCommission: data.vehiclestatus === 'Úr umferð',
   }
 

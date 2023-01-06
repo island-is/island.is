@@ -36,6 +36,7 @@ import { UserService } from '../user/user.service'
 import { AuthGuard } from '../common'
 import { GetUserByDiscountCodeParams } from '../user/dto'
 import { AirlineUser } from '../user/user.model'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 @ApiTags('Users')
 @Controller('api/public')
@@ -62,13 +63,18 @@ export class PublicDiscountController {
 
     // Constructor masks nationalId
     const airlineUser = new AirlineUser(discount.user, discount.user.fund)
+
+    // TODO: remove once addressed externally
+    if (airlineUser.gender === 'x') {
+      airlineUser.gender = 'hvk'
+    }
     return airlineUser
   }
 }
 
 @ApiTags('Users')
 @Controller('api/private')
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@Scopes(AirDiscountSchemeScope.default)
 @UseGuards(IdsUserGuard, ScopesGuard)
 export class PrivateDiscountController {
   constructor(
@@ -115,11 +121,24 @@ export class PrivateDiscountController {
       unConnectedFlights,
     )
   }
+}
 
-  @ApiExcludeEndpoint()
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
-  @UseGuards(IdsUserGuard)
+@ApiTags('Admin')
+@Controller('api/private')
+@Scopes(AirDiscountSchemeScope.admin)
+@UseGuards(IdsUserGuard, ScopesGuard)
+export class PrivateDiscountAdminController {
+  constructor(
+    private readonly discountService: DiscountService,
+    @Inject(forwardRef(() => FlightService))
+    private readonly flightService: FlightService,
+  ) {}
+
   @Post('users/createExplicitDiscountCode')
+  @ApiOkResponse({ type: Discount })
+  @ApiBearerAuth()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @Scopes(AirDiscountSchemeScope.admin)
   async createExplicitDiscountCode(
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,

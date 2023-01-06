@@ -13,6 +13,7 @@ export class ApiScope {
   public userClaims?: ApiScopeUserClaim[]
   required!: boolean
   emphasize!: boolean
+  grantToAuthenticatedUser!: boolean
   grantToLegalGuardians!: boolean
   grantToProcuringHolders!: boolean
   grantToPersonalRepresentatives!: boolean

@@ -231,4 +231,26 @@ describe('UserMenu', () => {
     // Assert
     expect(switchUser).toHaveBeenCalled()
   })
+
+  it('hides language switcher', async () => {
+    // Arrange
+    renderAuthenticated(<UserMenu showLanguageSwitcher={false} />, { user: {} })
+
+    // Assert
+    const languageSelector = await screen.queryByTestId(
+      'language-switcher-button',
+    )
+    expect(languageSelector).toBeNull()
+  })
+
+  it('user button shows icon only in mobile and not name', async () => {
+    // Act
+    renderAuthenticated(<UserMenu iconOnlyMobile />, {
+      user: { profile: { name: 'John' } },
+    })
+
+    // Assert
+    const button = await screen.getAllByRole('button')[0]
+    expect(button).not.toHaveTextContent('John')
+  })
 })

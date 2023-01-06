@@ -15,7 +15,7 @@ import {
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
-import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
+import { DeliverResponse } from '../../models/deliver.response'
 import { SendNotificationDto } from '../../dto/sendNotification.dto'
 import { notificationModuleConfig } from '../../notification.config'
 import { Notification } from '../../models/notification.model'
@@ -23,7 +23,7 @@ import { Notification } from '../../models/notification.model'
 jest.mock('../../../factories')
 
 interface Then {
-  result: SendNotificationResponse
+  result: DeliverResponse
   error: Error
 }
 
@@ -99,7 +99,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Dómur í máli 007-2022-07',
-          html: `Dómari hefur staðfestur dóm í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Dómari hefur staðfest dóm í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })

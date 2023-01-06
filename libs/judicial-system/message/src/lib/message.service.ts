@@ -16,7 +16,7 @@ import type { Logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { messageModuleConfig } from './message.config'
-import { Message } from './message'
+import { CaseMessage } from './message'
 
 @Injectable()
 export class MessageService {
@@ -105,10 +105,10 @@ export class MessageService {
   }
 
   private async handleMessage(
-    callback: (message: Message) => Promise<boolean>,
+    callback: (message: CaseMessage) => Promise<boolean>,
     sqsMessage: SqsMessage,
   ): Promise<void> {
-    const message: Message = JSON.parse(sqsMessage.Body ?? '')
+    const message: CaseMessage = JSON.parse(sqsMessage.Body ?? '')
 
     // The maximum delay is 900 seconds, but we want to be able to wait much longer
     const now = Date.now()
@@ -149,7 +149,7 @@ export class MessageService {
     })
   }
 
-  async sendMessageToQueue(message: Message): Promise<void> {
+  async sendMessageToQueue(message: CaseMessage): Promise<void> {
     return this.sqs
       .send(
         new SendMessageCommand({
@@ -164,26 +164,33 @@ export class MessageService {
       })
   }
 
-  async sendMessagesToQueue(messages: Message[]): Promise<void> {
-    return this.sqs
-      .send(
-        new SendMessageBatchCommand({
-          QueueUrl: this.queueUrl,
-          Entries: messages.map((message, index) => ({
-            MessageBody: JSON.stringify(message),
-            Id: index.toString(),
-          })),
-        }),
-      )
-      .then((data) => {
-        if (data.Failed && data.Failed.length > 0) {
-          this.logger.error('Failed to send messages to queue', { data })
-        }
-      })
+  async sendMessagesToQueue(messages: CaseMessage[]): Promise<void> {
+    const MAX_BATCH_SIZE = 10
+
+    for (let i = 0; i < messages.length; i += MAX_BATCH_SIZE) {
+      const numSentNow = Math.min(messages.length - i, MAX_BATCH_SIZE)
+      const messagesToSend = messages.slice(i, i + numSentNow)
+
+      await this.sqs
+        .send(
+          new SendMessageBatchCommand({
+            QueueUrl: this.queueUrl,
+            Entries: messagesToSend.map((message, index) => ({
+              MessageBody: JSON.stringify(message),
+              Id: index.toString(),
+            })),
+          }),
+        )
+        .then((data) => {
+          if (data.Failed && data.Failed.length > 0) {
+            this.logger.error('Failed to send messages to queue', { data })
+          }
+        })
+    }
   }
 
   async receiveMessagesFromQueue(
-    callback: (message: Message) => Promise<boolean>,
+    callback: (message: CaseMessage) => Promise<boolean>,
   ): Promise<void> {
     return this.sqs
       .send(

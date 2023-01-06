@@ -6,12 +6,26 @@ import {
   Application,
   DefaultEvents,
   ApplicationRole,
+  defineTemplateApi,
+  PaymentCatalogApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
-import { Roles, States, Events, ApiActions } from './constants'
+import {
+  Roles,
+  States,
+  Events,
+  ApiActions,
+  SYSLUMADUR_NATIONAL_ID,
+} from './constants'
 import { m } from './messages'
-import { Features } from '@island.is/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '../types/schema'
+import {
+  getApplicationFeatureFlags,
+  OperatingLicenseFeatureFlags,
+} from './getApplicationFeatureFlags'
+import { CriminalRecordApi, NoDebtCertificateApi } from '../dataProviders'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -46,10 +60,20 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/draft/index').then((val) =>
-                  Promise.resolve(val.Draft),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+                return import('../forms/draft/index').then((val) =>
+                  Promise.resolve(
+                    val.getApplication({
+                      allowFakeData:
+                        featureFlags[OperatingLicenseFeatureFlags.ALLOW_FAKE],
+                    }),
+                  ),
+                )
+              },
+
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -59,6 +83,15 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                PaymentCatalogApi.configure({
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
+                  externalDataId: 'payment',
+                }),
+                UserProfileApi,
+                CriminalRecordApi,
+                NoDebtCertificateApi,
+              ],
             },
           ],
         },
@@ -75,9 +108,9 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           },
           progress: 0.9,
           lifecycle: pruneAfter(thirtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -103,9 +136,9 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.submitOperatingLicenseApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitOperatingLicenseApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

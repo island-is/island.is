@@ -18,11 +18,13 @@ import {
   createApplication,
 } from '@island.is/testing/fixtures'
 import { S3 } from 'aws-sdk'
+import type { Locale } from '@island.is/shared/types'
 
 import get from 'lodash/get'
 import set from 'lodash/set'
 import { S3Service } from './attachments/s3.service'
 import { SmsService } from '@island.is/nova-sms'
+import { PaymentService } from '@island.is/application/api/payment'
 const nationalId = '1234564321'
 let id = 0
 
@@ -88,6 +90,10 @@ describe('AccidentNotificationService', () => {
         {
           provide: ConfigService,
           useValue: {},
+        },
+        {
+          provide: PaymentService,
+          useValue: {}, //not used
         },
         {
           provide: EmailService,
@@ -206,6 +212,7 @@ describe('AccidentNotificationService', () => {
       const props = {
         application,
         auth: user,
+        currentUserLocale: 'is' as Locale,
       }
 
       jest

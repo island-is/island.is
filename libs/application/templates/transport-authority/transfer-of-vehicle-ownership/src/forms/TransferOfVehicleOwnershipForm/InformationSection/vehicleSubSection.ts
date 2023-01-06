@@ -1,4 +1,4 @@
-import { Application, VehiclesCurrentVehicle } from '@island.is/api/schema'
+import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
@@ -6,6 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
+import { VehiclesCurrentVehicle } from '../../../types'
 import { getSelectedVehicle } from '../../../utils'
 
 export const vehicleSubSection = buildSubSection({
@@ -49,6 +50,7 @@ export const vehicleSubSection = buildSubSection({
           id: 'vehicle.salePrice',
           title: information.labels.vehicle.salePrice,
           width: 'full',
+          variant: 'currency',
         }),
         buildDateField({
           id: 'vehicle.date',

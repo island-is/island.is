@@ -5,8 +5,8 @@ import { BadRequestException } from '@nestjs/common'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { createCaseFilesRecord } from '../../../../formatters'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
+import { Case } from '../../models/case.model'
 
 jest.mock('../../../../formatters/caseFilesRecordPdf')
 
@@ -54,7 +54,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     }
   })
 
-  describe('deliver case files record for %s case to court', () => {
+  describe('case files record delivered', () => {
     const caseId = uuid()
     const policeCaseNumber = uuid()
     const courtId = uuid()
