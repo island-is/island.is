@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { VehiclesUpdatelocks } from './getVehicleDetail.model'
 
 @ObjectType()
 export class VehiclesCurrentVehicleWithOwnerchangeChecks {
@@ -18,9 +17,6 @@ export class VehiclesCurrentVehicleWithOwnerchangeChecks {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 
-  @Field(() => [VehiclesUpdatelocks], { nullable: true })
-  updatelocks?: VehiclesUpdatelocks[]
-
   @Field(() => [OwnerChangeVehicleValidationMessage], { nullable: true })
   ownerChangeErrorMessages?: OwnerChangeVehicleValidationMessage[] | null
 }
@@ -28,7 +24,7 @@ export class VehiclesCurrentVehicleWithOwnerchangeChecks {
 @ObjectType()
 export class OwnerChangeVehicleValidationMessage {
   @Field(() => String, { nullable: true })
-  errorNo?: number | null
+  errorNo?: string | null
 
   @Field(() => String, { nullable: true })
   defaultMessage?: string | null
@@ -38,9 +34,6 @@ export class OwnerChangeVehicleValidationMessage {
 export class VehicleOwnerchangeChecksByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
-
-  @Field(() => [VehiclesUpdatelocks], { nullable: true })
-  updatelocks?: VehiclesUpdatelocks[]
 
   @Field(() => [OwnerChangeVehicleValidationMessage], { nullable: true })
   ownerChangeErrorMessages?: OwnerChangeVehicleValidationMessage[] | null
