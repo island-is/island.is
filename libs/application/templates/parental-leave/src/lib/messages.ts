@@ -1257,6 +1257,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Each registered employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to all registered employers. The recipients will get access to  the application, but will only be able to see the timing arrangements. If any registered employers reject the timing arrangement, you will need to change your application.'
     },
+    registration: {
+      id: 'pl.application:employer.registration',
+      defaultMessage: 'Skráning vinnuveitanda',
+      description: 'Register an employer',
+    },
     name: {
       id: 'pl.application:employer.name',
       defaultMessage: 'Nafn vinnuveitanda',
@@ -1292,13 +1297,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Staðfestu netfang vinnuveitanda',
       description: 'Confirm employer email',
     },
-    isRecivingUnemploymentBenefitsTitle: {
-      id: 'pl.application:employer.isRecivingUnemploymentBenefits',
+    isReceivingUnemploymentBenefitsTitle: {
+      id: 'pl.application:employer.isReceivingUnemploymentBenefits',
       defaultMessage: 'Ertu að þiggja bætur?',
       description: 'Are you receiving benefits?',
     },
-    isRecivingUnemploymentBenefitsDescription: {
-      id: 'pl.application:employer.isRecivingUnemploymentBenefitsDesc',
+    isReceivingUnemploymentBenefitsDescription: {
+      id: 'pl.application:employer.isReceivingUnemploymentBenefitsDesc',
       defaultMessage:
         'Bótaþegar sem þiggja bætur frá stéttarfélagi eða sjúkradagpeninga þurfa að skila inn staðfestingu ef við á.',
       description:

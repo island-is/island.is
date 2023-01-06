@@ -6,7 +6,10 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 
 interface EmployeeRow {
-  name: string;
+  name: {
+    label: string;
+    nationalId: string;
+  };
   email: string;
   phoneNumber: string;
   ratio: string;
@@ -16,7 +19,8 @@ const EmployersOverview: FC<RepeaterProps> = ({
   application,
   expandRepeater
 }) => {
-  const employers: EmployeeRow[] | undefined = getValueViaPath(application.answers, 'employers');
+  const employers: EmployeeRow[] | undefined = getValueViaPath(application.answers, 'employment.employers');
+  console.log(employers);
   const { formatMessage } = useLocale();
 
   return (
@@ -27,6 +31,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
       <T.Table>
         <T.Head>
           <T.Row>
+            <T.HeadData>Kennitala</T.HeadData>
             <T.HeadData>Nafn</T.HeadData>
             <T.HeadData>Netfang</T.HeadData>
             <T.HeadData>Símanúmer</T.HeadData>
@@ -36,7 +41,8 @@ const EmployersOverview: FC<RepeaterProps> = ({
         <T.Body>
           {employers?.map(e => (
             <T.Row key={e.email}>
-              <T.Data>{e.name}</T.Data>
+              <T.Data>{e.name?.nationalId}</T.Data>
+              <T.Data>{e.name?.label}</T.Data>
               <T.Data>{e.email}</T.Data>
               <T.Data>{e.phoneNumber}</T.Data>
               <T.Data>{e.ratio}%</T.Data>
