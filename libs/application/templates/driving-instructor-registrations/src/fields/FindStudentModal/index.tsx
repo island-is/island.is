@@ -11,12 +11,12 @@ import * as kennitala from 'kennitala'
 
 interface FindStudentsModalProps {
   application?: Application
-  setShowTable: React.Dispatch<React.SetStateAction<boolean>>
+  setShowStudentOverview: React.Dispatch<React.SetStateAction<boolean>>
   setStudentId: React.Dispatch<React.SetStateAction<string>>
 }
 
 const FindStudentModal = ({
-  setShowTable,
+  setShowStudentOverview,
   setStudentId,
 }: FindStudentsModalProps) => {
   const { formatMessage } = useLocale()
@@ -43,11 +43,11 @@ const FindStudentModal = ({
 
   const viewStudent = useCallback(
     (id) => {
-      setShowTable(false)
+      setShowStudentOverview(false)
       setStudentId(id)
     },
 
-    [setShowTable, setStudentId],
+    [setShowStudentOverview, setStudentId],
   )
 
   useEffect(() => {
@@ -81,6 +81,7 @@ const FindStudentModal = ({
               <Button
                 size="small"
                 variant="text"
+                preTextIcon="pencil"
                 onClick={() => setIsModalOpen(true)}
               >
                 {formatMessage(m.studentsOverviewRegisterHoursForOtherStudent)}
@@ -130,7 +131,7 @@ const FindStudentModal = ({
                   setIsSearching(true)
                 }}
               >
-                {formatMessage(m.studentsOverviewRegisterHoursButton)}
+                {formatMessage(m.studentsOverviewOtherStudentRegisterButton)}
               </Button>
             </Box>
           </Box>
