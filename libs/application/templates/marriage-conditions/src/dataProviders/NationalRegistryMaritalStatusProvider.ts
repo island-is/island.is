@@ -27,6 +27,7 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
     const query = `
     query NationalRegistryUserQuery {
       nationalRegistryUserV2 {
+        fullName
         spouse {
           name
           nationalId
