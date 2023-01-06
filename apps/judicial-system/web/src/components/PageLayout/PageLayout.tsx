@@ -84,13 +84,18 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
       isComplete={activeSection ? index < activeSection : false}
       subSections={section.children.map((subSection, index) =>
         subSection.href && activeSubSection && activeSubSection > index ? (
-          <LinkV2 href={subSection.href} underline="small">
+          <LinkV2
+            href={subSection.href}
+            underline="small"
+            key={`${subSection.name}-${index}`}
+          >
             <SubsectionChild isActive={index === activeSubSection}>
               {subSection.name}
             </SubsectionChild>
           </LinkV2>
         ) : subSection.onClick ? (
           <Box
+            key={`${subSection.name}-${index}`}
             component="button"
             onClick={subSection.onClick}
             className={cn(
@@ -103,7 +108,10 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
             </SubsectionChild>
           </Box>
         ) : (
-          <SubsectionChild isActive={index === activeSubSection}>
+          <SubsectionChild
+            key={`${subSection.name}-${index}`}
+            isActive={index === activeSubSection}
+          >
             {subSection.name}
           </SubsectionChild>
         ),
@@ -207,6 +215,7 @@ const PageLayout: React.FC<PageProps> = ({
                   <FormStepperV2
                     sections={sections.map((section, index) => (
                       <DisplaySection
+                        key={`${section.name}-${index}`}
                         section={section}
                         index={index}
                         activeSection={activeSection}

@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { SmsModule } from '@island.is/nova-sms'
 import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
+import { MessageModule } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../environments'
 import {
@@ -24,6 +25,7 @@ import { InternalNotificationController } from './internalNotification.controlle
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
     CmsTranslationsModule,
+    MessageModule,
     forwardRef(() => CaseModule),
     forwardRef(() => UserModule),
     forwardRef(() => CourtModule),

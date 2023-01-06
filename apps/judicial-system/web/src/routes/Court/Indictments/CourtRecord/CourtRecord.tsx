@@ -23,36 +23,39 @@ import {
   Box,
   InputFileUpload,
   toast,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   useCase,
   useS3Upload,
+  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseFileCategory,
   CaseTransition,
 } from '@island.is/judicial-system/types'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
 
 const CourtRecord: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const {
-    files,
-    handleS3Upload,
-    handleRemoveFromS3,
-    handleRetry,
-    allFilesUploaded,
-  } = useS3Upload(workingCase)
+  const { files, handleS3Upload, handleRetry, allFilesUploaded } = useS3Upload(
+    workingCase,
+  )
+  const { remove } = useS3UploadV2(workingCase.id)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
@@ -68,6 +71,25 @@ const CourtRecord: React.FC = () => {
       }
     },
     [transitionCase, workingCase, formatMessage],
+  )
+
+  const handleRemoveFile = useCallback(
+    async (file: UploadFile) => {
+      try {
+        if (file.id) {
+          await remove(file.id)
+          setWorkingCase((prev) => ({
+            ...prev,
+            caseFiles: prev.caseFiles?.filter(
+              (caseFile) => caseFile.id !== file.id,
+            ),
+          }))
+        }
+      } catch {
+        toast.error(formatMessage(errors.general))
+      }
+    },
+    [formatMessage, remove, setWorkingCase],
   )
 
   return (
@@ -96,12 +118,13 @@ const CourtRecord: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.COURT_RECORD,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(m.inputFieldLabel)}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.COURT_RECORD)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemoveFile}
             onRetry={handleRetry}
           />
         </Box>
@@ -111,12 +134,13 @@ const CourtRecord: React.FC = () => {
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.RULING,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(m.inputFieldLabel)}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.RULING)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemoveFile}
             onRetry={handleRetry}
           />
         </Box>

@@ -56,7 +56,6 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { OtherParent } from '../fields'
 
 export function getExpectedDateOfBirth(
   application: Application,
