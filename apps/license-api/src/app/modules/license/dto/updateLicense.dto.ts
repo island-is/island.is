@@ -1,19 +1,13 @@
 import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger'
-import {
-  IsEnum,
-  IsDateString,
-  IsISO8601,
-  Validate,
-  Length,
-} from 'class-validator'
+import { IsEnum, IsISO8601 } from 'class-validator'
 import { LicenseId, LicenseUpdateType, LicenseStatus } from '../license.types'
-import { ValidNationalId } from '../validation/validNationalId'
+import { IsNationalId } from '@island.is/nest/validators'
 
 export class UpdateLicenseRequest {
   @ApiProperty({
     description: 'Valid Icelandic national id, exactly 10 numbers as a string',
   })
-  @Validate(ValidNationalId, { message: 'Invalid national id' })
+  @IsNationalId({ message: 'Invalid national id' })
   readonly nationalId!: string
 
   @ApiProperty({

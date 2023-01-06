@@ -41,7 +41,7 @@ export class LicenseService {
       const valid = false
       if (!valid) {
         const error: LicenseError = {
-          code: '1?',
+          code: '1',
           message: 'Invalid payload',
         }
         return {

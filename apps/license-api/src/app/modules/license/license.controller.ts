@@ -1,23 +1,15 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
 import { LicenseService } from './license.service'
-import {
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
 import {
   UpdateLicenseResponse,
-  LicenseError,
   UpdateLicenseRequest,
   RevokeLicenseResponse,
   RevokeLicenseRequest,
   VerifyLicenseRequest,
-  VerifyLicenseResponse,
 } from './dto'
+import { ApiTags } from '@nestjs/swagger'
 
 @Controller()
 @ApiTags('license-api')
@@ -25,19 +17,14 @@ import {
 export class LicenseController {
   constructor(private readonly licenseService: LicenseService) {}
 
-  @ApiOkResponse({
-    description: 'Update successful for license',
-    type: UpdateLicenseResponse,
-  })
-  @ApiBadRequestResponse({
-    description: 'Invalid request body, details in body',
-    type: LicenseError,
-  })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotFoundResponse({ description: 'License not found' })
-  @ApiInternalServerErrorResponse({
-    description: 'Server error',
-    type: LicenseError,
+  @Documentation({
+    description: `The endpoint updates a single license. The method of update is according to the LicenseUpdateType parameter
+    If Push: The license is updated with the data provided in the payload. If Pull: The license data is pulled and used to update
+    the digital license`,
+    response: {
+      status: 200,
+      type: UpdateLicenseResponse,
+    },
   })
   @Post('/update')
   async update(
@@ -46,24 +33,17 @@ export class LicenseController {
     const response = await this.licenseService.updateLicense(data)
 
     if (!response.ok) {
-      throw new BadRequestException(response.error)
+      throw new BadRequestException(response.error, 'Invalid payload')
     }
     return { ...response.data }
   }
 
-  @ApiOkResponse({
-    description: 'License successfully revoked',
-    type: RevokeLicenseResponse,
-  })
-  @ApiBadRequestResponse({
-    description: 'Invalid request body, details in body',
-    type: LicenseError,
-  })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotFoundResponse({ description: 'License not found' })
-  @ApiInternalServerErrorResponse({
-    description: 'Server error',
-    type: LicenseError,
+  @Documentation({
+    description: `This endpoint revokes a license `,
+    response: {
+      status: 200,
+      type: RevokeLicenseResponse,
+    },
   })
   @Post('/revoke')
   async revoke(@Body() data: RevokeLicenseRequest) {
@@ -71,19 +51,13 @@ export class LicenseController {
     return
   }
 
-  @ApiOkResponse({
-    description: 'License successfully verified',
-    type: VerifyLicenseResponse,
-  })
-  @ApiBadRequestResponse({
-    description: 'Invalid request body, details in body',
-    type: LicenseError,
-  })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotFoundResponse({ description: 'License not found' })
-  @ApiInternalServerErrorResponse({
-    description: 'Server error',
-    type: LicenseError,
+  @Documentation({
+    description: `This endpoint verifies a license. Which means that the digital license and the actual license held by the
+    relevant institution are compared. If everything adds up, the license is verified.`,
+    response: {
+      status: 200,
+      type: RevokeLicenseResponse,
+    },
   })
   @Post('/verify')
   async verify(@Body() data: VerifyLicenseRequest) {

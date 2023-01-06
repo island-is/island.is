@@ -9,11 +9,13 @@ import { LoggingModule } from '@island.is/logging'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { FirearmLicenseClientConfig } from './modules/license'
 import { DisabilityLicenseClientConfig } from './modules/license/clients/disabilityLicense/disabilityLicenseClient.config'
+import { ProblemModule } from '@island.is/nest/problem'
 
 @Module({
   imports: [
     AuthModule.register(environment.auth),
     AuditModule.forRoot(environment.audit),
+    ProblemModule,
     LoggingModule,
     ConfigModule.forRoot({
       isGlobal: true,
