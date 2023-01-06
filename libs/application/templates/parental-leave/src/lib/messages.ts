@@ -1247,18 +1247,25 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     title: {
       id: 'pl.application:employer.title',
-      defaultMessage: 'Hver er vinnuveitandi þinn?',
-      description: 'Who is your employer?',
+      defaultMessage: 'Vinnuveitendur',
+      description: 'Employers',
     },
     description: {
       id: 'pl.application:employer.description',
       defaultMessage:
-        'Vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofsins (ef þú hefur marga vinnuveitendur skal velja hæsta starfshlutfall). ' +
-        'Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitanda. ' +
-        ' Viðtakandi fær aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs.' +
-        'Ef vinnuveitandi hafnar tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
+        'Hver og einn skráður vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofs. Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitenda. Viðtakendur fá aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs. Ef einhver skráðra vinnuveitenda hafna tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
       description:
-        'Your employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to your employer. The recipient will get access to the application, but will only be able to see the timing arrangement. If your employer rejects the timing arrangement, you will need to change your application.',
+        'Each registered employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to all registered employers. The recipients will get access to  the application, but will only be able to see the timing arrangements. If any registered employers reject the timing arrangement, you will need to change your application.'
+    },
+    name: {
+      id: 'pl.application:employer.name',
+      defaultMessage: 'Nafn vinnuveitanda',
+      description: 'Employer name',
+    },
+    nameSearchPlaceholder: {
+      id: 'pl.application:employer.nameSearchPlaceholder',
+      defaultMessage: 'Leitaðu eftir vinnuveitanda',
+      description: 'Search for an employer',
     },
     email: {
       id: 'pl.application:employer.email',
@@ -1267,8 +1274,18 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     phoneNumber: {
       id: 'pl.application:employer.phone.number',
-      defaultMessage: 'Farsími vinnuveitanda (mælum með skráningu)',
-      description: 'Employer’s mobile phone (we recommend registration)',
+      defaultMessage: 'Símanúmer vinnuveitanda',
+      description: 'Employer’s phone number',
+    },
+    ratio: {
+      id: 'pl.application:employer.ratio',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Employment ratio',
+    },
+    ratioPlaceholder: {
+      id: 'pl.application:employer.ratioPlaceholder',
+      defaultMessage: 'Veldu starfshlutfall',
+      description: 'Select an employment ratio',
     },
     emailConfirm: {
       id: 'pl.application:employer.email.confirm',
@@ -1292,6 +1309,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Hvaðan ertu að þiggja bætur?`,
       description: 'Where are you receiving benefits from?',
     },
+    addEmployer: {
+      id: 'pl.application:employer.add',
+      defaultMessage: 'Bæta við vinnuveitanda',
+      description: 'Add an employer',
+    }
   }),
 
   selfEmployed: defineMessages({

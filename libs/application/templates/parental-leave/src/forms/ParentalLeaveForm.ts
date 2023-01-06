@@ -2,6 +2,7 @@ import addDays from 'date-fns/addDays'
 
 import {
   buildAsyncSelectField,
+  buildCompanySearchField,
   buildCustomField,
   buildDateField,
   buildFileUploadField,
@@ -487,26 +488,25 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           condition: (answers) => {
             const { applicationType } = getApplicationAnswers(answers)
-
             return applicationType === PARENTAL_LEAVE
           },
-          id: 'employer',
+          id: 'employment',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
             buildMultiField({
-              id: 'employer.isSelfEmployed.benefits',
+              id: 'employment.isSelfEmployed.benefits',
               title: '',
               children: [
                 buildCustomField({
                   component: 'SelfEmployed',
-                  id: 'employer.isSelfEmployed',
+                  id: 'employment.isSelfEmployed',
                   title: parentalLeaveFormMessages.selfEmployed.title,
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,
                 }),
                 buildCustomField({
                   component: 'UnEmploymentBenefits',
-                  id: 'isRecivingUnemploymentBenefits',
+                  id: 'employment.isRecivingUnemploymentBenefits',
                   title:
                     parentalLeaveFormMessages.employer
                       .isRecivingUnemploymentBenefitsTitle,
@@ -521,7 +521,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     })?.employer?.isSelfEmployed === NO,
                 }),
                 buildSelectField({
-                  id: 'unemploymentBenefits',
+                  id: 'employment.unemploymentBenefits',
                   title:
                     parentalLeaveFormMessages.employer.unemploymentBenefits,
                   options: [
@@ -549,10 +549,9 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
-            buildMultiField({
-              id: 'employer.information',
+            buildRepeater({
+              id: 'employers',
               title: parentalLeaveFormMessages.employer.title,
-              description: parentalLeaveFormMessages.employer.description,
               condition: (answers) => {
                 const isRecivingUnemploymentBenefits =
                   (answers as {
@@ -567,21 +566,40 @@ export const ParentalLeaveForm: Form = buildForm({
 
                 return isRecivingUnemploymentBenefits && isNotSelfEmployed
               },
+              component: 'EmployersOverview',
               children: [
-                buildTextField({
-                  title: parentalLeaveFormMessages.employer.email,
-                  width: 'full',
-                  id: 'employer.email',
-                }),
-                buildTextField({
-                  title: parentalLeaveFormMessages.employer.phoneNumber,
-                  width: 'full',
-                  id: 'employerPhoneNumber',
-                  variant: 'tel',
-                  format: '###-####',
-                  placeholder: '000-0000',
-                }),
-              ],
+                buildMultiField({
+                  id: '',
+                  title: '',
+                  children: [
+                    buildCompanySearchField({
+                      id: 'name',
+                      title: parentalLeaveFormMessages.employer.name,
+                      placeholder: parentalLeaveFormMessages.employer.nameSearchPlaceholder
+                    }),
+                    buildTextField({
+                      id: 'email',
+                      title: parentalLeaveFormMessages.employer.email
+                    }),
+                    buildTextField({
+                      id: 'phoneNumber',
+                      variant: 'tel',
+                      format: '###-####',
+                      placeholder: '000-0000',
+                      title: parentalLeaveFormMessages.employer.phoneNumber
+                    }),
+                    buildSelectField({
+                      id: 'ratio',
+                      title: parentalLeaveFormMessages.employer.ratio,
+                      placeholder: parentalLeaveFormMessages.employer.ratioPlaceholder,
+                      options: Array(10).fill(undefined).map((_, idx) => ({
+                          value: `${10 * (idx + 1)}`,
+                          label: `${10 * (idx + 1)}%`
+                      }))
+                    })
+                  ]
+                })
+              ]
             }),
           ],
         }),
