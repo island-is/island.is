@@ -58,7 +58,6 @@ const CourtRecord: React.FC = () => {
   } = useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
-  const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
@@ -71,13 +70,11 @@ const CourtRecord: React.FC = () => {
     }
   }, [workingCase.caseFiles])
 
-  useMemo(() => {
-    setAllFilesUploaded(
-      displayFiles.every(
-        (file) => file.status === 'done' || file.status === 'error',
-      ),
+  const allFilesUploaded = useMemo(() => {
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
     )
-  }, [displayFiles, setAllFilesUploaded])
+  }, [displayFiles])
 
   const setSingleFile = useCallback(
     (displayFile: TUploadFile, newId?: string) => {

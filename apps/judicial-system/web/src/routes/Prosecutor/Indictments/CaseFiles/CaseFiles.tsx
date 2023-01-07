@@ -48,7 +48,6 @@ const CaseFiles: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
-  const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const { formatMessage } = useIntl()
   const { upload, remove } = useS3Upload(workingCase.id)
 
@@ -58,13 +57,11 @@ const CaseFiles: React.FC = () => {
     }
   }, [workingCase.caseFiles])
 
-  useMemo(() => {
-    setAllFilesUploaded(
-      displayFiles.every(
-        (file) => file.status === 'done' || file.status === 'error',
-      ),
+  const allFilesUploaded = useMemo(() => {
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
     )
-  }, [displayFiles, setAllFilesUploaded])
+  }, [displayFiles])
 
   const stepIsValid = allFilesUploaded
   const handleNavigationTo = useCallback(
