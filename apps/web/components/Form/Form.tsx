@@ -21,6 +21,7 @@ import {
   GenericFormMutationVariables,
   Mutation,
   MutationCreateUploadUrlArgs,
+  PresignedPost,
 } from '@island.is/web/graphql/schema'
 import { CREATE_UPLOAD_URL } from '@island.is/application/graphql'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
@@ -28,11 +29,13 @@ import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import * as styles from './Form.css'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 
 enum FormFieldType {
   CHECKBOXES = 'checkboxes',
   EMAIL = 'email',
   ACCEPT_TERMS = 'acceptTerms',
+  FILE = 'file',
 }
 
 interface FormFieldProps {
@@ -191,120 +194,7 @@ export const FormField = ({
           })}
         </Stack>
       )
-    case 'file':
-      return <FileUploadField />
   }
-}
-
-const FileUploadField = () => {
-  const [fileList, setFileList] = useState<UploadFile[]>([])
-
-  const [createUploadUrl] = useMutation<Mutation, MutationCreateUploadUrlArgs>(
-    CREATE_UPLOAD_URL,
-  )
-
-  const onChange = async (files: File[]) => {
-    setFileList(files)
-
-    const filesToUpload = [...files]
-
-    const presignedPostResponses = await Promise.all(
-      filesToUpload.map((file) =>
-        createUploadUrl({
-          variables: {
-            filename: file.name,
-          },
-        }),
-      ),
-    )
-
-    let i = 0
-
-    for (const presignedPostResponse of presignedPostResponses) {
-      const file = filesToUpload[i++]
-      const request = new XMLHttpRequest()
-      request.withCredentials = true
-      request.responseType = 'json'
-
-      request.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-          // setFileList((list) =>
-          //   list.map((f) => {
-          //     if (f.key !== (file as UploadFile)?.key) return f
-          //     return {
-          //       ...f,
-          //       percent: (event.loaded / event.total) * 100,
-          //       status: 'uploading',
-          //     }
-          //   }),
-          // )
-        }
-      })
-
-      request.upload.addEventListener('error', () => {
-        // setFileList((list) =>
-        //   list.map((f) => {
-        //     if (f.key !== (file as UploadFile)?.key) return f
-        //     return {
-        //       ...f,
-        //       percent: 0,
-        //       status: 'error',
-        //     }
-        //   }),
-        // )
-      })
-
-      request.addEventListener('load', (e) => {
-        console.log('LOAD', e)
-        console.log(request)
-        const requestStatus = request.status
-        const requestResponse = request.response
-        console.log(requestResponse)
-        // setFileList((list) =>
-        //   list.map((f) => {
-        //     if (f.key !== (file as UploadFile)?.key) return f
-        //     if (requestStatus >= 200 && requestStatus < 300) {
-        //       return {
-        //         ...f,
-        //         status: 'done',
-        //       }
-        //     }
-        //     return {
-        //       ...f,
-        //       percent: 0,
-        //       status: 'error',
-        //     }
-        //   }),
-        // )
-      })
-
-      const { url, fields } = presignedPostResponse.data.createUploadUrl
-
-      request.open('PUT', url)
-
-      const formData = new FormData()
-      Object.keys(fields).forEach((key) => formData.append(key, fields[key]))
-      formData.append('file', file)
-
-      request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
-
-      request.send(formData)
-    }
-  }
-
-  return (
-    <InputFileUpload
-      fileList={fileList}
-      onRemove={(fileToRemove) => {
-        console.log(fileToRemove.key)
-        console.log(fileList.map((f) => f.key))
-        setFileList((list) =>
-          list.filter((file) => file.key !== fileToRemove.key),
-        )
-      }}
-      onChange={onChange}
-    />
-  )
 }
 
 type ErrorData = {
@@ -325,12 +215,25 @@ export const Form = ({ form, namespace }: FormProps) => {
         ]),
     ),
   )
+  const [fileList, setFileList] = useState<Record<string, UploadFile[]>>(() =>
+    Object.fromEntries(
+      form.fields
+        .filter((field) => field.type === FormFieldType.FILE)
+        .map((field) => [slugify(field.title), []]),
+    ),
+  )
   const [errors, setErrors] = useState<ErrorData[]>([])
+  const [isSubmitting, setSubmitting] = useState<boolean>(false)
+  const [submitError, setSubmitError] = useState<boolean>(false)
 
   const [submit, { data: result, loading, error }] = useMutation<
     GenericFormMutation,
     GenericFormMutationVariables
   >(GENERIC_FORM_MUTATION)
+
+  const [createUploadUrl] = useMutation<Mutation, MutationCreateUploadUrlArgs>(
+    CREATE_UPLOAD_URL,
+  )
 
   const onChange = (field, value) => {
     setData({ ...data, [field]: String(value) })
@@ -396,7 +299,16 @@ export const Form = ({ form, namespace }: FormProps) => {
           }
         }
 
-        // TODO: handle file
+        if (
+          field.type === FormFieldType.FILE &&
+          field.required &&
+          fileList[slug].length === 0
+        ) {
+          return {
+            field: slug,
+            error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+          }
+        }
 
         return null
       })
@@ -407,7 +319,7 @@ export const Form = ({ form, namespace }: FormProps) => {
     return !err.length
   }
 
-  const formatBody = () => {
+  const formatBody = (data) => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
         .map((field) => {
@@ -427,6 +339,12 @@ export const Form = ({ form, namespace }: FormProps) => {
               .map(([k, v]) => `${k}: ${v === 'true' ? 'Já' : 'Nei'}`)
               .join('\n\t')}\n\n`
           }
+          if (field.type === FormFieldType.FILE) {
+            const json: string[] = JSON.parse(value || '[]')
+            return `${field.title}\nSvar: ${
+              json.join(', ') ?? 'Ekkert svar'
+            }\n\n`
+          }
 
           return `${field.title}\nSvar: ${value ?? 'Ekkert svar'}\n\n`
         })
@@ -440,43 +358,146 @@ export const Form = ({ form, namespace }: FormProps) => {
     return data[slugify(form.recipientFormFieldDecider.title)]
   }
 
-  const onSubmit = async () => {
-    const valid = validate()
+  const uploadFile = async (
+    file: UploadFile,
+    response: PresignedPost,
+    fieldSlug: string,
+  ) => {
+    return new Promise((resolve, reject) => {
+      const request = new XMLHttpRequest()
+      request.withCredentials = true
+      request.responseType = 'json'
 
-    console.log(valid)
+      request.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          file.percent = (event.loaded / event.total) * 100
+          file.status = 'uploading'
 
-    if (valid) {
-      // TODO: upload the attachments to AWS and get a link that'll be appended to the email message
+          setFileList({
+            ...fileList,
+            [fieldSlug]: [
+              ...fileList[fieldSlug].filter((f) => f.key !== file.key),
+              file,
+            ],
+          })
+        }
+      })
 
-      // if there are any attachments then go over them all and create an upload url for each of them
-      const responses = await Promise.all([
-        createUploadUrl({
-          variables: {
-            filename: 'test.png',
-          },
-        }),
-      ])
+      request.upload.addEventListener('error', () => {
+        file.percent = 0
+        file.status = 'error'
 
-      for (const response of responses) {
-        console.log(response.data.url)
+        setFileList({
+          ...fileList,
+          [fieldSlug]: [
+            ...fileList[fieldSlug].filter((f) => f.key !== file.key),
+            file,
+          ],
+        })
+        reject()
+      })
+
+      request.open('POST', response.url)
+
+      const formData = new FormData()
+      Object.keys(response.fields).forEach((key) =>
+        formData.append(key, response.fields[key]),
+      )
+      formData.append('file', file as File)
+
+      request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
+
+      request.onload = () => {
+        resolve(request.response)
+      }
+      request.onerror = () => {
+        reject()
       }
 
-      submit({
-        variables: {
-          input: {
-            id: form.id,
-            name: data['name'],
-            email: data['email'],
-            message: formatBody(),
-            recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
+      request.send(formData)
+    })
+  }
+
+  const onSubmit = async () => {
+    setSubmitting(true)
+
+    const valid = validate()
+
+    try {
+      if (valid) {
+        const files = await Promise.all(
+          form.fields
+            .filter((field) => field.type === FormFieldType.FILE)
+            .map((field) => {
+              return new Promise((resolve, reject) => {
+                Promise.all(
+                  fileList[slugify(field.title)].map((file) => {
+                    return new Promise((resolve, reject) => {
+                      createUploadUrl({
+                        variables: {
+                          filename: file.name,
+                        },
+                      })
+                        .then((response) =>
+                          uploadFile(
+                            file,
+                            response.data.createUploadUrl,
+                            slugify(field.title),
+                          ).then(() =>
+                            resolve(response.data.createUploadUrl.fields.key),
+                          ),
+                        )
+                        .catch(() => reject())
+                    })
+                  }),
+                )
+                  .then((fileNames) =>
+                    resolve([slugify(field.title), fileNames]),
+                  )
+                  .catch(() => reject())
+              })
+            }),
+        )
+
+        const _data = {
+          ...data,
+          ...Object.fromEntries(
+            form.fields
+              .filter((field) => field.type === FormFieldType.FILE)
+              .map((field) => [
+                slugify(field.title),
+                JSON.stringify(
+                  (files as string[][]).find(
+                    (file) => file[0] === slugify(field.title),
+                  )[1],
+                ),
+              ]),
+          ),
+        }
+        setData(_data)
+
+        submit({
+          variables: {
+            input: {
+              id: form.id,
+              name: data['name'],
+              email: data['email'],
+              message: formatBody(_data),
+              files: files.map((f) => f[1]).flat(),
+              recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
+            },
           },
-        },
-      })
+        }).then(() => {
+          setSubmitting(false)
+        })
+      }
+    } catch (e) {
+      setSubmitError(true)
     }
   }
 
   const success = !!result?.genericForm?.sent
-  const failure = result?.genericForm?.sent === false || !!error
+  const failure = result?.genericForm?.sent === false || !!error || submitError
 
   return (
     <Box background="blue100" paddingY={8} paddingX={12} borderRadius="large">
@@ -540,35 +561,67 @@ export const Form = ({ form, namespace }: FormProps) => {
             {form.questionsHeadingText}
           </Text>
           <Stack space={4}>
-            {form.fields.map((field) => {
-              const slug = slugify(field.title)
-              return (
-                <FormField
-                  key={field.id}
-                  field={field}
-                  slug={slug}
-                  value={data[slug] ?? ''}
-                  error={errors.find((error) => error.field === slug)?.error}
-                  onChange={(key, value) => {
-                    if (field.type === FormFieldType.CHECKBOXES) {
-                      const prevFieldData = data[slug]
-                      if (prevFieldData) {
-                        const json = JSON.parse(prevFieldData)
-                        json[key] =
-                          json[key] === 'false' || !json[key] ? 'true' : 'false'
-                        onChange(slug, JSON.stringify(json))
+            {form.fields
+              .filter((field) => field.type !== FormFieldType.FILE)
+              .map((field) => {
+                const slug = slugify(field.title)
+                return (
+                  <FormField
+                    key={field.id}
+                    field={field}
+                    slug={slug}
+                    value={data[slug] ?? ''}
+                    error={errors.find((error) => error.field === slug)?.error}
+                    onChange={(key, value) => {
+                      if (field.type === FormFieldType.CHECKBOXES) {
+                        const prevFieldData = data[slug]
+                        if (prevFieldData) {
+                          const json = JSON.parse(prevFieldData)
+                          json[key] =
+                            json[key] === 'false' || !json[key]
+                              ? 'true'
+                              : 'false'
+                          onChange(slug, JSON.stringify(json))
+                        } else {
+                          onChange(slug, JSON.stringify({ [key]: 'true' }))
+                        }
                       } else {
-                        onChange(slug, JSON.stringify({ [key]: 'true' }))
+                        onChange(key, value)
                       }
-                    } else {
-                      onChange(key, value)
+                    }}
+                  />
+                )
+              })}
+            {form.fields
+              .filter((field) => field.type === FormFieldType.FILE)
+              .map((field) => {
+                const slug = slugify(field.title)
+                return (
+                  <InputFileUpload
+                    header={field.title}
+                    description={field.placeholder}
+                    buttonLabel={n('formSelectFiles', 'Veldu skrár')}
+                    accept={Object.values(fileExtensionWhitelist)}
+                    fileList={fileList[slug]}
+                    errorMessage={
+                      errors.find((error) => error.field === slug)?.error
                     }
-                  }}
-                />
-              )
-            })}
+                    onChange={(files) =>
+                      setFileList({ ...fileList, [slug]: files })
+                    }
+                    onRemove={(file) =>
+                      setFileList({
+                        ...fileList,
+                        [slug]: fileList[slug].filter(
+                          (f) => f.key !== file.key,
+                        ),
+                      })
+                    }
+                  />
+                )
+              })}
             <Box display="flex" justifyContent="flexEnd">
-              <Button onClick={() => onSubmit()} loading={loading}>
+              <Button onClick={() => onSubmit()} loading={isSubmitting}>
                 {n('formSend', 'Senda')}
               </Button>
             </Box>
