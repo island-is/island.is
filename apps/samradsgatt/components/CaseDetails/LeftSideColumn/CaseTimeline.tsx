@@ -1,8 +1,10 @@
 import {
   Box,
+  FormStepperV2,
   Text,
+  Section,
   // FormStepper,
-  // FormStepperThemes,
+  FormStepperThemes,
 } from '@island.is/island-ui/core'
 
 const CaseTimeline = () => {
@@ -11,39 +13,43 @@ const CaseTimeline = () => {
       <Text variant="h3" color="blue400">
         {'Tímalína máls'}
       </Text>
-
-      {/* 
-      Commented out because FormStepper is depricated      
-      <FormStepper
-        theme={FormStepperThemes.PURPLE}
+      <FormStepperV2
         sections={[
-          {
-            name: 'Samráð fyrirhugað',
-          },
-          {
-            name: 'Til umsagnar',
-            children: [
-              {
-                type: 'SUB_SECTION',
-                name: '#Dagsetning',
-              },
-            ],
-          },
-          {
-            name: 'Niðurstöður í vinnslu',
-            children: [
-              {
-                type: 'SUB_SECTION',
-                name: '#Dagsetning',
-              },
-            ],
-          },
-          {
-            name: 'Niðurstöður birtar',
-          },
+          // eslint-disable-next-line react/jsx-key
+          <Section
+            key={0}
+            isComplete
+            section="Samráð fyrirhugað"
+            theme={FormStepperThemes.PURPLE}
+            sectionIndex={0}
+          />,
+
+          <Section
+            key={1}
+            isComplete
+            section="Til umsagnar"
+            theme={FormStepperThemes.PURPLE}
+            sectionIndex={1}
+            subSections={[<Text key="sub1">Dagsetning</Text>]} // TODO: change to fontsize 16
+          />,
+          <Section
+            key={2}
+            isComplete
+            section="Niðurstöður í vinnslu"
+            theme={FormStepperThemes.PURPLE}
+            sectionIndex={2}
+            isActive
+            subSections={[<Text key="sub1">Dagsetning</Text>]} // TODO: change to fontsize 16
+          />,
+          <Section
+            key={3}
+            isComplete
+            section="Niðurstöður birtar"
+            theme={FormStepperThemes.PURPLE}
+            sectionIndex={3}
+          />,
         ]}
-        activeSection={2}
-      /> */}
+      />
     </Box>
   )
 }
