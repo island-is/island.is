@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/application/graphql"]
     }
   },
-  "tags": []
+  "tags": ["lib:react", "scope:react"]
 }

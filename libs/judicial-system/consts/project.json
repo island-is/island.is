@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/judicial-system/consts"]
     }
   },
-  "tags": []
+  "tags": ["scope:js", "lib:js"]
 }

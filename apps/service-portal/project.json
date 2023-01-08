@@ -105,5 +105,5 @@
     },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:portals-mypages"]
 }

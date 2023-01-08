@@ -35,5 +35,6 @@
         ]
       }
     }
-  }
+  },
+  "tags": ["lib:nest", "scope:nest"]
 }

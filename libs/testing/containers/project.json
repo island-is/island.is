@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": ["lib:js"]
+  "tags": ["lib:js", "scope:js"]
 }

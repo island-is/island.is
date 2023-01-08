@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/content-search-indexer"]
     }
   },
-  "tags": ["lib:nest"]
+  "tags": ["lib:nest", "scope:nest"]
 }
