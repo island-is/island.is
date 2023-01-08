@@ -20,6 +20,7 @@ import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsA
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
 import { GenericFormInput } from './dto/genericForm.input'
 import { environment } from './environments/environment'
+import { FileStorageService } from '@island.is/file-storage'
 
 type SendEmailInput =
   | ContactUsInput
@@ -32,6 +33,7 @@ export class CommunicationsService {
     private readonly emailService: EmailService,
     private readonly zendeskService: ZendeskService,
     private readonly cmsContentfulService: CmsContentfulService,
+    private readonly fileStorageService: FileStorageService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -148,6 +150,13 @@ export class CommunicationsService {
       recipient = emailConfig[key]
     }
 
+    const attachments = await Promise.all(input.files?.map(async (file) => {
+      return {
+        filename: file,
+        href: await this.fileStorageService.generateSignedUrl(this.fileStorageService.getObjectUrl(file))
+      }
+    }) ?? [])
+
     const emailOptions = {
       from: {
         name: input.name,
@@ -160,6 +169,7 @@ export class CommunicationsService {
       to: recipient,
       subject: `Island.is form: ${form.title}`,
       text: input.message,
+      attachments
     }
 
     try {
