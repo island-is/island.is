@@ -1,3 +1,4 @@
+import React from 'react'
 import { GridColumn, GridRow, GridContainer } from '@island.is/island-ui/core'
 import LeftSideColumn from '../../components/CaseDetails/LeftSideColumn/LeftSideColumn'
 import MainColumn from '../../components/CaseDetails/MainColumn/MainColumn'
