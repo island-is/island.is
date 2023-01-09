@@ -19,7 +19,6 @@ import { useLocation, matchPath } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { RemoveScroll } from 'react-remove-scroll'
-import cn from 'classnames'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
 import {
   GET_ORGANIZATIONS_QUERY,
@@ -33,7 +32,6 @@ import SidebarLayout from './SidebarLayout'
 import Sticky from '../Sticky/Sticky'
 import { Link as ReactLink } from 'react-router-dom'
 import Sidemenu from '../Sidemenu/Sidemenu'
-import { useStore } from '../../store/stateProvider'
 import * as styles from './Layout.css'
 import GoBack from '../GoBack/GoBack'
 import { useDynamicRoutesWithNavigation } from '@island.is/service-portal/core'
@@ -41,6 +39,7 @@ import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const { formatMessage } = useLocale()
@@ -52,7 +51,6 @@ const Layout: FC = ({ children }) => {
     banner.servicePortalPaths?.includes('*'),
   )
   const subNavItems: NavigationItem[] = []
-  const [{ mobileMenuState }] = useStore()
 
   const findParent = (navigation?: ServicePortalNavigationItem[]) => {
     // finnur active parent flokk
@@ -132,13 +130,17 @@ const Layout: FC = ({ children }) => {
 
   return (
     <>
-      <div className={mobileMenuState === 'open' ? styles.overlay : undefined}>
+      <div className={mobileMenuOpen ? styles.overlay : undefined}>
         <AuthOverlay />
         <ToastContainer useKeyframeStyles={false} />
         {globalBanners.length > 0 && (
           <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
         )}
-        <Header position={height ? height : 0} />
+        <Header
+          setMobileMenuOpen={(set: boolean) => setMobileMenuOpen(set)}
+          mobileMenuOpen={mobileMenuOpen}
+          position={height ? height : 0}
+        />
         {!isDashboard && (
           <SidebarLayout
             isSticky={false}

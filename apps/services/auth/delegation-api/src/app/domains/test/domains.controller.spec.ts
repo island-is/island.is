@@ -10,7 +10,6 @@ import {
   setupWithoutPermission,
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
-import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { accessOutgoingTestCases } from '../../../../test/access-outgoing-test-cases'
 import {
   createCurrentUser,
@@ -18,6 +17,8 @@ import {
 } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 import shuffle from 'lodash/shuffle'
+import { FixtureFactory } from '@island.is/services/auth/testing'
+import faker from 'faker'
 
 describe('DomainsController', () => {
   describe('withAuth', () => {
@@ -379,7 +380,7 @@ describe('DomainsController', () => {
         return endpoint
       }
       const factory = new FixtureFactory(app)
-      const domain = await factory.createDomain()
+      const domain = await factory.createDomain({ name: faker.random.word() })
       return endpoint.replace(':domain', encodeURIComponent(domain.name))
     }
 

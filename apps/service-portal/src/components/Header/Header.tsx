@@ -9,27 +9,45 @@ import {
 import * as styles from './Header.css'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { UserMenu } from '@island.is/shared/components'
-import { useStore } from '../../store/stateProvider'
-import { ActionType } from '../../store/actions'
+import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 
 interface Props {
   position: number
+  mobileMenuOpen: boolean
+  setMobileMenuOpen: (set: boolean) => void
 }
-export const Header = ({ position }: Props) => {
+export const Header = ({
+  position,
+  mobileMenuOpen,
+  setMobileMenuOpen,
+}: Props) => {
   const { formatMessage } = useLocale()
-  const [{ mobileMenuState }, dispatch] = useStore()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { userInfo: user } = useAuth()
 
-  const handleMobileMenuTriggerClick = () =>
-    dispatch({
-      type: ActionType.SetMobileMenuState,
-      payload: mobileMenuState === 'open' ? 'closed' : 'open',
-    })
+  const closeButton = (userMenu: boolean) => {
+    return (
+      <FocusableBox
+        display="flex"
+        alignItems="center"
+        component="button"
+        onClick={
+          userMenu
+            ? () => setUserMenuOpen(false)
+            : () => setMobileMenuOpen(false)
+        }
+        padding={1}
+        borderRadius="circle"
+        background="blue100"
+        className={styles.closeButton}
+      >
+        <Icon icon="close" color="blue400" />
+      </FocusableBox>
+    )
+  }
 
   return (
     <div className={styles.placeholder}>
@@ -78,13 +96,39 @@ export const Header = ({ position }: Props) => {
                   setUserMenuOpen={setUserMenuOpen}
                   userMenuOpen={userMenuOpen}
                 />
-                <Box marginLeft={[1, 1, 2]}>
-                  <Button
-                    variant="utility"
-                    icon="menu"
-                    onClick={handleMobileMenuTriggerClick}
-                  ></Button>
-                </Box>
+
+                {userMenuOpen && (
+                  <Hidden above="md">
+                    <Box display="flex" flexDirection="row" alignItems="center">
+                      {user && <UserLanguageSwitcher user={user} />}
+                      {closeButton(true)}
+                    </Box>
+                  </Hidden>
+                )}
+                {!userMenuOpen && (
+                  <Hidden above="sm">
+                    {!mobileMenuOpen ? (
+                      <Box marginLeft={[1, 2]}>
+                        <Button
+                          variant="utility"
+                          icon="menu"
+                          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        >
+                          {formatMessage(m.menu)}
+                        </Button>
+                      </Box>
+                    ) : (
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        alignItems="center"
+                      >
+                        {user && <UserLanguageSwitcher user={user} />}
+                        {closeButton(false)}
+                      </Box>
+                    )}
+                  </Hidden>
+                )}
               </Box>
             </Hidden>
           </Box>
