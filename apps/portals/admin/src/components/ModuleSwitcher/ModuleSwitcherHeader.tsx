@@ -34,7 +34,7 @@ export const ModuleSwitcherHeader = ({
           )}
         </Text>
       </div>
-      {isStaticSwitcher && (
+      {!isStaticSwitcher && (
         <Box
           display="flex"
           alignItems="center"
