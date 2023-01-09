@@ -5,6 +5,7 @@ import {
   Button,
   Logo,
   FocusableBox,
+  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.css'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -16,29 +17,21 @@ import { useAuth } from '@island.is/auth/react'
 
 interface Props {
   position: number
-  mobileMenuOpen: boolean
-  setMobileMenuOpen: (set: boolean) => void
+  sideMenuOpen: boolean
+  setSideMenuOpen: (set: boolean) => void
 }
-export const Header = ({
-  position,
-  mobileMenuOpen,
-  setMobileMenuOpen,
-}: Props) => {
+export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const { formatMessage } = useLocale()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { userInfo: user } = useAuth()
 
-  const closeButton = (userMenu: boolean) => {
+  const closeButton = () => {
     return (
       <FocusableBox
         display="flex"
         alignItems="center"
         component="button"
-        onClick={
-          userMenu
-            ? () => setUserMenuOpen(false)
-            : () => setMobileMenuOpen(false)
-        }
+        onClick={() => setSideMenuOpen(false)}
         padding={1}
         borderRadius="circle"
         background="blue100"
@@ -59,7 +52,6 @@ export const Header = ({
             justifyContent="spaceBetween"
             alignItems="center"
             width="full"
-            background="white"
             paddingX={3}
           >
             <Link to={ServicePortalPath.MinarSidurRoot}>
@@ -82,7 +74,7 @@ export const Header = ({
                 <Box marginRight={[1, 1, 2]}>
                   <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
                     <Button
-                      variant="utility"
+                      variant="ghost"
                       size="small"
                       icon="mail"
                       iconType="outline"
@@ -101,33 +93,26 @@ export const Header = ({
                   <Hidden above="md">
                     <Box display="flex" flexDirection="row" alignItems="center">
                       {user && <UserLanguageSwitcher user={user} />}
-                      {closeButton(true)}
+                      {closeButton()}
                     </Box>
                   </Hidden>
                 )}
-                {!userMenuOpen && (
-                  <Hidden above="sm">
-                    {!mobileMenuOpen ? (
-                      <Box marginLeft={[1, 2]}>
-                        <Button
-                          variant="utility"
-                          icon="menu"
-                          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        >
-                          {formatMessage(m.menu)}
-                        </Button>
-                      </Box>
-                    ) : (
-                      <Box
-                        display="flex"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        {user && <UserLanguageSwitcher user={user} />}
-                        {closeButton(false)}
-                      </Box>
-                    )}
-                  </Hidden>
+
+                {!sideMenuOpen ? (
+                  <Box marginLeft={[1, 2]}>
+                    <Button
+                      variant="utility"
+                      icon="menu"
+                      onClick={() => setSideMenuOpen(true)}
+                    >
+                      {formatMessage(m.menu)}
+                    </Button>
+                  </Box>
+                ) : (
+                  <Box display="flex" flexDirection="row" alignItems="center">
+                    {user && <UserLanguageSwitcher user={user} />}
+                    {closeButton()}
+                  </Box>
                 )}
               </Box>
             </Hidden>

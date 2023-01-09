@@ -39,7 +39,7 @@ import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const { formatMessage } = useLocale()
@@ -130,15 +130,15 @@ const Layout: FC = ({ children }) => {
 
   return (
     <>
-      <div className={mobileMenuOpen ? styles.overlay : undefined}>
+      <div className={sideMenuOpen ? styles.overlay : undefined}>
         <AuthOverlay />
         <ToastContainer useKeyframeStyles={false} />
         {globalBanners.length > 0 && (
           <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
         )}
         <Header
-          setMobileMenuOpen={(set: boolean) => setMobileMenuOpen(set)}
-          mobileMenuOpen={mobileMenuOpen}
+          setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
+          sideMenuOpen={sideMenuOpen}
           position={height ? height : 0}
         />
         {!isDashboard && (
@@ -223,7 +223,11 @@ const Layout: FC = ({ children }) => {
         )}
       </div>
 
-      <Sidemenu position={height} />
+      <Sidemenu
+        position={height}
+        setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
+        sideMenuOpen={sideMenuOpen}
+      />
     </>
   )
 }

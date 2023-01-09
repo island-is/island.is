@@ -1,8 +1,6 @@
 import React, { ReactElement, useRef } from 'react'
 import { Box, Divider, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { ActionType } from '../../store/actions'
-import { useStore } from '../../store/stateProvider'
 import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
@@ -14,21 +12,19 @@ import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 interface Props {
   position: number
+  setSideMenuOpen: (status: boolean) => void
+  sideMenuOpen: boolean
 }
-const Sidemenu = ({ position }: Props): ReactElement | null => {
+const Sidemenu = ({
+  position,
+  setSideMenuOpen,
+  sideMenuOpen,
+}: Props): ReactElement | null => {
   const ref = useRef(null)
-  const [{ mobileMenuState }, dispatch] = useStore()
   const navigation = useNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
-  const { userInfo: user } = useAuth()
 
-  const handleLinkClick = () =>
-    dispatch({
-      type: ActionType.SetMobileMenuState,
-      payload: 'closed',
-    })
-
-  if (mobileMenuState === 'closed') return null
+  if (!sideMenuOpen) return null
 
   return (
     <Box
@@ -40,18 +36,16 @@ const Sidemenu = ({ position }: Props): ReactElement | null => {
     >
       <Box
         display="flex"
-        justifyContent="spaceBetween"
+        justifyContent="flexEnd"
         paddingY={6}
         paddingLeft={10}
         paddingRight={6}
         background="blue100"
       >
-        {user && <UserLanguageSwitcher user={user} />}
-
         <button
           className={styles.closeButton}
-          onClick={handleLinkClick}
           aria-label={formatMessage(sharedMessages.close)}
+          onClick={() => setSideMenuOpen(false)}
         >
           <Icon icon="close" color="blue400" />
         </button>
@@ -80,10 +74,43 @@ const Sidemenu = ({ position }: Props): ReactElement | null => {
                     !navRoot.navHide && (
                       <Link
                         to={navRoot.path ?? '/'}
-                        onClick={handleLinkClick}
-                        key={`sidemenu-item-${index}`}
+                        key={`sidemenu-key-item-${index}`}
+                        onClick={() => setSideMenuOpen(false)}
                       >
                         <Text variant="h3" color="blue600">
+                          {formatMessage(navRoot.name)}
+                        </Text>
+                      </Link>
+                    ),
+                )}
+            </Stack>
+          </Box>
+        </Box>
+        <Box paddingLeft={10} paddingRight={6}>
+          <Text
+            color="blue600"
+            fontWeight="semiBold"
+            variant="small"
+            marginTop={4}
+            marginBottom={2}
+          >
+            {formatMessage(sharedMessages.myCategories)}
+          </Text>
+          <Divider weight="blue300" />
+          <Box marginTop={4}>
+            <Stack space={2}>
+              {navigation?.children
+                ?.filter((item) => !item.isKeyitem && !item.navHide)
+                .map(
+                  (navRoot, index) =>
+                    navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                    !navRoot.navHide && (
+                      <Link
+                        to={navRoot.path ?? '/'}
+                        key={`sidemenu-item-${index}`}
+                        onClick={() => setSideMenuOpen(false)}
+                      >
+                        <Text color="blue600">
                           {formatMessage(navRoot.name)}
                         </Text>
                       </Link>

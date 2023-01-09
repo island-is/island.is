@@ -43,4 +43,9 @@ export const sharedMessages = defineMessages({
     description: 'Label to close a dropdown, dialog or pop-up.',
     defaultMessage: 'Loka',
   },
+  myCategories: {
+    id: 'global:my-categories',
+    description: 'My categories for dashboard and sidemenu.',
+    defaultMessage: 'Mínir flokkar',
+  },
 })

@@ -10,4 +10,5 @@ export const documentsNavigation: PortalNavigationItem = {
   },
   subscribesTo: 'documents',
   description: m.documentsDescription,
+  isKeyitem: true,
 }

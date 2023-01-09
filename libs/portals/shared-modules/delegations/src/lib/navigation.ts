@@ -34,4 +34,5 @@ export const delegationsNavigation: PortalNavigationItem = {
       navHide: true,
     },
   ],
+  isKeyitem: true,
 }

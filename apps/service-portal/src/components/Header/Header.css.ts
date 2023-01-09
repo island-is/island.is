@@ -15,7 +15,7 @@ export const header = style({
   maxWidth: theme.breakpoints.xl,
   height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
   margin: '0 auto',
-  backgroundColor: theme.color.white,
+  backgroundColor: theme.color.blue100,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_LG,

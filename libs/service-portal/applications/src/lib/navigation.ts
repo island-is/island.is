@@ -23,4 +23,5 @@ export const applicationsNavigation: PortalNavigationItem = {
     },
   ],
   description: m.applicationsDescription,
+  isKeyitem: true,
 }

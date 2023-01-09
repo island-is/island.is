@@ -19,7 +19,6 @@ import {
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import Greeting from '../../components/Greeting/Greeting'
-import { useStore } from '../../store/stateProvider'
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
@@ -49,10 +48,10 @@ export const Dashboard: FC<{}> = () => {
     {
       return navigation?.children
         ?.filter((item) => (keyItem ? item.isKeyitem : !item.isKeyitem))
+        .filter((item) => !item.navHide)
         .map(
           (navRoot, index) =>
-            navRoot.path !== ServicePortalPath.MinarSidurRoot &&
-            !navRoot.navHide && (
+            navRoot.path !== ServicePortalPath.MinarSidurRoot && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
                 offset={index % 3 === 0 ? ['0', '0', '0', '1/12'] : '0'}
@@ -105,7 +104,7 @@ export const Dashboard: FC<{}> = () => {
           <GridRow>{displayCards(true)}</GridRow>
         </GridContainer>
       </Box>
-      <Box background="blue100" paddingTop={6}>
+      <Box paddingTop={6}>
         <GridContainer>
           <GridRow>
             <GridColumn offset={['0', '0', '0', '1/12']}>
