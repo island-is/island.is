@@ -231,7 +231,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const mainOperatorNationalId = answers?.mainOperator?.nationalId
     const newOperators = answers?.operators.map((operator) => ({
-      // startDate: operator.startDate, //TODOx waiting for field to be added to schema
+      startDate: new Date(),
       ssn: operator.nationalId,
       isMainOperator:
         answers.operators.length > 1
@@ -239,7 +239,24 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    await this.vehicleOperatorsClient.saveOperators(auth, permno, newOperators)
+    const oldOperators = answers?.oldOperators?.filter(
+      (operator) => operator.wasRemoved === 'false',
+    )
+    const newOldOperators = oldOperators.map((oldOperator) => ({
+      startDate: oldOperator.startDate
+        ? new Date(oldOperator.startDate)
+        : new Date(),
+      ssn: oldOperator.nationalId,
+      isMainOperator:
+        answers.operators.length > 1
+          ? oldOperator.nationalId === mainOperatorNationalId
+          : true,
+    }))
+
+    await this.vehicleOperatorsClient.saveOperators(auth, permno, [
+      ...newOperators,
+      ...newOldOperators,
+    ])
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 

@@ -69,7 +69,7 @@ export const VehicleSelectField: FC<
   )
 
   const getVehicleDetails = useLazyVehicleDetails()
-
+  // TODO: Add operator query once Samgöngustofa has finished it
   const getVehicleDetailsCallback = useCallback(
     async ({ permno }: GetVehicleDetailInput) => {
       const { data } = await getVehicleDetails({
@@ -103,7 +103,8 @@ export const VehicleSelectField: FC<
             !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
             !!response?.vehicleOwnerchangeChecksByPermno
               ?.ownerChangeErrorMessages?.length
-          setPlate(disabled ? '' : currentVehicle.permno || '')
+          // setPlate(disabled ? '' : currentVehicle.permno || '')
+          setPlate(currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
           setType(currentVehicle.make || undefined)
           setIsLoading(false)

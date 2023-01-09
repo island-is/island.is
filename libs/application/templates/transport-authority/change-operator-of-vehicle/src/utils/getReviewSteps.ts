@@ -50,8 +50,8 @@ export const getReviewSteps = (application: Application) => {
         ? review.step.tagText.received
         : review.step.tagText.pendingApproval,
       tagVariant: !ownerCoOwnerNotApproved ? 'mint' : 'purple',
-      title: review.step.title.sellerCoOwner,
-      description: review.step.description.sellerCoOwner,
+      title: review.step.title.coOwner,
+      description: review.step.description.coOwner,
       visible: ownerCoOwner.length > 0,
       reviewer: ownerCoOwner.map((reviewer) => {
         return {
@@ -67,8 +67,8 @@ export const getReviewSteps = (application: Application) => {
         ? review.step.tagText.received
         : review.step.tagText.pendingApproval,
       tagVariant: !operatorNotApproved ? 'mint' : 'purple',
-      title: review.step.title.buyerOperator,
-      description: review.step.description.buyerOperator,
+      title: review.step.title.operator,
+      description: review.step.description.operator,
       visible: operators.length > 0,
       reviewer: operators.map((reviewer) => {
         return {

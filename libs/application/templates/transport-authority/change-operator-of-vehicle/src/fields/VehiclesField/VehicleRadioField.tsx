@@ -48,6 +48,7 @@ export const VehicleRadioField: FC<
       | undefined,
   )
 
+  // TODO: Add operator query once Samgöngustofa has finished it
   const { data, loading } = useQuery(
     gql`
       ${GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS}
@@ -76,8 +77,8 @@ export const VehicleRadioField: FC<
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      const disabled =
-        !vehicle.isDebtLess || !!vehicle.ownerChangeErrorMessages?.length
+      const disabled = false
+      //   !vehicle.isDebtLess || !!vehicle.ownerChangeErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (

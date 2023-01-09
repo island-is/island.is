@@ -68,7 +68,7 @@ export const review = {
     title: defineMessages({
       transferOfVehicle: {
         id: 'ta.cov.application:review.step.title.transferOfVehicle',
-        defaultMessage: 'Skráning eigendaskipta á ökutæki {variable}',
+        defaultMessage: 'Skráning umráðamanns á ökutæki {variable}',
         description:
           'Transfer of vehicle title in status step part of review process',
       },
@@ -77,25 +77,14 @@ export const review = {
         defaultMessage: 'Greiðsla móttekin',
         description: 'Payment title in status step part of review process',
       },
-      sellerCoOwner: {
-        id: 'ta.cov.application:review.step.title.sellerCoOwner',
-        defaultMessage: 'Samþykki meðeiganda seljanda',
-        description:
-          'Seller coowner title in status step part of review process',
-      },
-      buyer: {
-        id: 'ta.cov.application:review.step.title.buyer',
-        defaultMessage: 'Samþykki kaupanda',
-        description: 'Buyer title in status step part of review process',
-      },
-      buyerCoOwner: {
-        id: 'ta.cov.application:review.step.title.buyerCoOwner',
+      coOwner: {
+        id: 'ta.cov.application:review.step.title.coOwner',
         defaultMessage: 'Samþykki meðeiganda',
         description:
           'Buyer coowner title in status step part of review process',
       },
-      buyerOperator: {
-        id: 'ta.cov.application:review.step.title.buyerOperator',
+      operator: {
+        id: 'ta.cov.application:review.step.title.operator',
         defaultMessage: 'Samþykki umráðarmanns',
         description:
           'Buyer operator title in status step part of review process',
@@ -105,7 +94,7 @@ export const review = {
       transferOfVehicle: {
         id: 'ta.cov.application:review.step.description.transferOfVehicle',
         defaultMessage:
-          'Tilkynning um eigendaskiptu hefur borist til Samgöngustofu',
+          'Tilkynning um skráningu hefur borist til Samgöngustofu',
         description:
           'Transfer of vehicle description in status step part of review process',
       },
@@ -115,30 +104,17 @@ export const review = {
         description:
           'Payment description in status step part of review process',
       },
-      sellerCoOwner: {
-        id: 'ta.cov.application:review.step.description.sellerCoOwner',
+      coOwner: {
+        id: 'ta.cov.application:review.step.description.coOwner',
         defaultMessage:
-          'Beðið er eftir að meðeigandi/ur seljanda staðfesti eigendaskiptin',
-        description:
-          'Seller coowner description in status step part of review process',
-      },
-      buyer: {
-        id: 'ta.cov.application:review.step.description.buyer',
-        defaultMessage:
-          'Beðið er eftir að nýr eigandi staðfesti eigendaskiptin',
-        description: 'Buyer description in status step part of review process',
-      },
-      buyerCoOwner: {
-        id: 'ta.cov.application:review.step.description.buyerCoOwner',
-        defaultMessage:
-          'Beðið er eftir að meðeigandi/ur kaupanda staðfesti eigendaskiptin',
+          'Beðið er eftir að meðeigandi bifreiðar samþykki skráningu meðeiganda',
         description:
           'Buyer coowner description in status step part of review process',
       },
-      buyerOperator: {
-        id: 'ta.cov.application:review.step.description.buyerOperator',
+      operator: {
+        id: 'ta.cov.application:review.step.description.operator',
         defaultMessage:
-          'Beðið er eftir að umráðamaður/menn kaupanda staðfesti eigendaskiptin',
+          'Beðið er eftir að umráðamaður bifreiðar samþykki skráninguna',
         description:
           'Buyer operator description in status step part of review process',
       },

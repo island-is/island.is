@@ -35,8 +35,13 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(payment.paymentChargeOverview.forPayment)}
         </Text>
-        {items.map((item) => (
-          <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+        {items.map((item, index) => (
+          <Box
+            paddingTop={1}
+            display="flex"
+            justifyContent="spaceBetween"
+            key={`payment-charge-${index}`}
+          >
             <Text>{item?.chargeItemName}</Text>
             <Text>{formatIsk(item?.priceAmount || 0)}</Text>
           </Box>

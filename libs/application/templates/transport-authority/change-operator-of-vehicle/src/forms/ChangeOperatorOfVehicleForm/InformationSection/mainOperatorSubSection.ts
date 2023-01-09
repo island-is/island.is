@@ -42,7 +42,12 @@ export const mainOperatorSubSection = buildSubSection({
               'operators',
               [],
             ) as OperatorInformation[]
-            return operators.map((operator) => {
+            const oldOperators = getValueViaPath(
+              application.answers,
+              'oldOperators',
+              [],
+            ) as OldOperatorInformation[]
+            return [...operators, ...oldOperators].map((operator) => {
               return {
                 value: operator.nationalId,
                 label: `${operator.name} - ${operator.nationalId}`,
