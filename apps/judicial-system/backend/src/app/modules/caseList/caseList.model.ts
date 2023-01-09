@@ -12,7 +12,6 @@ import {
 import {
   CaseAppealDecision,
   CaseDecision,
-  CaseListEntry as TCaseListEntry,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'

@@ -166,7 +166,10 @@ export const Cases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [any, any] = useMemo(() => {
+  const [allActiveCases, allPastCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(() => {
     if (!resCases) {
       return [[], []]
     }
@@ -175,7 +178,7 @@ export const Cases: React.FC = () => {
       return c.state !== CaseState.DELETED
     })
 
-    return partition(casesWithoutDeleted, (c: Case) => {
+    return partition(casesWithoutDeleted, (c: CaseListEntry) => {
       if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
         return false
       } else if (isPrisonAdminUser || isPrisonUser) {
