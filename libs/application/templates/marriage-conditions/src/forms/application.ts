@@ -22,8 +22,8 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   DistrictsApi,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
-import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import { Individual } from '../types'
 import { m } from '../lib/messages'
@@ -144,7 +144,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
+                        .nationalRegistry.data as NationalRegistryIndividual
                       return nationalRegistry.fullName ?? ''
                     },
                   }),
@@ -230,7 +230,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
+                        .nationalRegistry.data as NationalRegistryIndividual
                       return nationalRegistry.address?.streetAddress
                     },
                   }),
@@ -242,8 +242,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.citizenship.code
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry?.citizenship?.code
                     },
                   }),
                   buildTextField({

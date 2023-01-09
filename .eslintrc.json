@@ -22,7 +22,8 @@
                   "lib:api",
                   "lib:nest",
                   "lib:node",
-                  "lib:js"
+                  "lib:js",
+                  "lib:client"
                 ]
               },
               {
@@ -73,7 +74,8 @@
                   "lib:react",
                   "lib:react-spa",
                   "lib:dom",
-                  "lib:js"
+                  "lib:js",
+                  "lib:client"
                 ]
               },
               {
@@ -99,12 +101,16 @@
                 "onlyDependOnLibsWithTags": ["lib:react", "lib:dom", "lib:js"]
               },
               {
+                "sourceTag": "scope:client",
+                "onlyDependOnLibsWithTags": ["lib:client", "lib:nest"]
+              },
+              {
                 "sourceTag": "scope:dom",
                 "onlyDependOnLibsWithTags": ["lib:dom", "lib:js"]
               },
               {
                 "sourceTag": "scope:nest",
-                "onlyDependOnLibsWithTags": ["lib:nest", "lib:node", "lib:js"]
+                "onlyDependOnLibsWithTags": ["lib:nest", "lib:node", "lib:js", "lib:client"]
               },
               {
                 "sourceTag": "scope:node",

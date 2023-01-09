@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/application/ui-fields"]
     }
   },
-  "tags": ["lib:react", "react"]
+  "tags": ["lib:as-shared", "scope:as-shared"]
 }

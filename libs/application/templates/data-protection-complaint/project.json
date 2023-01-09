@@ -29,5 +29,5 @@
       ]
     }
   },
-  "tags": []
+  "tags": ["scope:as-shared", "lib:as-shared"]
 }

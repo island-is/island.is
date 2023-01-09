@@ -13,6 +13,7 @@ import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 
 import AmazonS3URI from 'amazon-s3-uri'
@@ -115,16 +116,16 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       },
     ]
     const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+      ?.data as NationalRegistryIndividual
 
     const person: Person = {
       name: nationalRegistryData?.fullName,
       ssn: nationalRegistryData?.nationalId,
       phoneNumber: application.answers.phone as string,
       email: application.answers.email as string,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: nationalRegistryData?.address?.streetAddress || "",
+      postalCode: nationalRegistryData?.address?.postalCode || "",
+      city: nationalRegistryData?.address?.locality || "",
       signed: true,
       type: PersonType.Plaintiff,
     }

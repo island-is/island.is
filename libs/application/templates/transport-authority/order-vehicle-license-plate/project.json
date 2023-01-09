@@ -2,7 +2,7 @@
   "root": "libs/application/templates/transport-authority/order-vehicle-license-plate",
   "sourceRoot": "libs/application/templates/transport-authority/order-vehicle-license-plate/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:as-shared", "lib:as-shared"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
