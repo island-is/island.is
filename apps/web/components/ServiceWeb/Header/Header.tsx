@@ -35,6 +35,7 @@ interface HeaderProps {
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
+const minarsidurLink = '/minarsidur/'
 
 export const Header = ({
   title = '',
@@ -138,7 +139,7 @@ export const Header = ({
 
                         <Hidden below="sm">
                           <Box marginLeft={marginLeft}>
-                            <Link {...linkResolver('login')} skipTab>
+                            <a tabIndex={-1} href={minarsidurLink}>
                               <Button
                                 colorScheme={dark ? 'default' : 'negative'}
                                 variant="utility"
@@ -147,7 +148,7 @@ export const Header = ({
                               >
                                 {t?.login ?? 'Login'}
                               </Button>
-                            </Link>
+                            </a>
                           </Box>
                         </Hidden>
                         <Box marginLeft={marginLeft}>

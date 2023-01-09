@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import { useMutation } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
-import { UploadFile } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import {
   CreateFileMutationDocument,
@@ -15,6 +16,13 @@ import {
   DeleteFileMutationMutationVariables,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UploadPoliceCaseFileMutation } from '@island.is/judicial-system-web/graphql'
+import { errors } from '@island.is/judicial-system-web/messages'
+
+export interface TUploadFile extends UploadFile {
+  category?: CaseFileCategory
+  policeCaseNumber?: string
+}
 
 const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
   const formData = new FormData()
@@ -62,7 +70,8 @@ const uploadToS3 = (
   return promise
 }
 
-export const useS3UploadV2 = (caseId: string) => {
+export const useS3Upload = (caseId: string) => {
+  const { formatMessage } = useIntl()
   const [createPresignedMutation] = useMutation<
     CreatePresignedPostMutationMutation,
     CreatePresignedPostMutationMutationVariables
@@ -71,6 +80,9 @@ export const useS3UploadV2 = (caseId: string) => {
     CreateFileMutationMutation,
     CreateFileMutationMutationVariables
   >(CreateFileMutationDocument)
+  const [uploadPoliceCaseFileMutation] = useMutation(
+    UploadPoliceCaseFileMutation,
+  )
   const [deleteFileMutation] = useMutation<
     DeleteFileMutationMutation,
     DeleteFileMutationMutationVariables
@@ -79,7 +91,7 @@ export const useS3UploadV2 = (caseId: string) => {
   const upload = useCallback(
     async (
       files: Array<[File, string]>,
-      updateFile: (file: UploadFile, newId?: string) => void,
+      updateFile: (file: TUploadFile, newId?: string) => void,
       category?: CaseFileCategory,
       policeCaseNumber?: string,
     ) => {
@@ -107,6 +119,7 @@ export const useS3UploadV2 = (caseId: string) => {
               name: file.name,
               percent,
               status: 'uploading',
+              category,
             })
           })
 
@@ -132,6 +145,7 @@ export const useS3UploadV2 = (caseId: string) => {
               name: file.name,
               percent: 100,
               status: 'done',
+              category,
               // We need to set the id so we are able to delete the file later
             },
             data2.data.createFile.id,
@@ -141,11 +155,59 @@ export const useS3UploadV2 = (caseId: string) => {
             id: id,
             name: file.name,
             status: 'error',
+            category,
           })
         }
       })
     },
     [createPresignedMutation, caseId, addFileToCaseMutation],
+  )
+
+  const uploadPoliceCaseFile = useCallback(
+    async (file: TUploadFile) => {
+      try {
+        const {
+          data: uploadPoliceCaseFileData,
+        } = await uploadPoliceCaseFileMutation({
+          variables: {
+            input: {
+              caseId,
+              id: file.id,
+              name: file.name,
+            },
+          },
+        })
+
+        if (!uploadPoliceCaseFileData.uploadPoliceCaseFile) {
+          throw Error('failed to upload police case file')
+        }
+
+        const data2 = await addFileToCaseMutation({
+          variables: {
+            input: {
+              caseId,
+              type: 'application/pdf',
+              key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
+              size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
+            },
+          },
+        })
+
+        if (!data2.data?.createFile.id) {
+          throw Error('failed to add file to case')
+        }
+
+        return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+      } catch (e) {
+        toast.error(formatMessage(errors.failedUploadFile))
+      }
+    },
+    [
+      addFileToCaseMutation,
+      caseId,
+      formatMessage,
+      uploadPoliceCaseFileMutation,
+    ],
   )
 
   const remove = useCallback(
@@ -165,7 +227,7 @@ export const useS3UploadV2 = (caseId: string) => {
     [deleteFileMutation, caseId],
   )
 
-  return { upload, remove }
+  return { upload, uploadPoliceCaseFile, remove }
 }
 
-export default useS3UploadV2
+export default useS3Upload
