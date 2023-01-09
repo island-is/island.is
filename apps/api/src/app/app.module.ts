@@ -90,6 +90,7 @@ import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegatio
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -234,13 +235,7 @@ const autoSchemaFile = environment.production
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule,
-    PaymentScheduleModule.register({
-      xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentSchedule.password!,
-      username: environment.paymentSchedule.username!,
-    }),
+    PaymentScheduleModule,
     ProblemModule,
     CriminalRecordModule.register({
       clientConfig: {
@@ -289,6 +284,7 @@ const autoSchemaFile = environment.production
         ChargeFjsV2ClientConfig,
         DisabilityLicenseClientConfig,
         ZenterSignupConfig,
+        PaymentScheduleClientConfig,
       ],
     }),
   ],

@@ -19,7 +19,7 @@ export class PublicDebtPaymentPlanTemplateModule {
       module: PublicDebtPaymentPlanTemplateModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        PaymentScheduleClientModule.register(config.paymentScheduleConfig),
+        PaymentScheduleClientModule,
       ],
       providers: [PublicDebtPaymentPlanTemplateService, PrerequisitesService],
       exports: [PublicDebtPaymentPlanTemplateService],
