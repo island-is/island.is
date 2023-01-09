@@ -1,4 +1,7 @@
-import { ApplicationWithAttachments } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  PaymentCatalogItem,
+} from '@island.is/application/types'
 import { OperatingLicenseAnswers } from '@island.is/application/templates/operating-license/types'
 import {
   APPLICATION_TYPES,
@@ -12,20 +15,24 @@ import { getValueViaPath } from '@island.is/application/core'
 
 export const getExtraData = (application: ApplicationWithAttachments) => {
   const answers: OperatingLicenseAnswers = application.answers as OperatingLicenseAnswers
-  const charge = getValueViaPath(
+  const chargeItems = getValueViaPath<PaymentCatalogItem[]>(
     application.externalData,
-    'payment.data.priceAmount',
-  ) as string
+    'payment.data',
+  )
+  const { chargeItemCode } = answers
+  const charge =
+    chargeItems
+      ?.find((item) => item.chargeItemCode === chargeItemCode)
+      ?.priceAmount.toString() || ''
   const isHotel = answers.applicationInfo.operation === APPLICATION_TYPES.HOTEL
-  const category = isHotel
-    ? getHotelCategory(answers.applicationInfo.hotel?.category)
-    : answers.applicationInfo.resturant?.category === OPERATION_CATEGORY.ONE
-    ? 'Flokkur II'
-    : 'Flokkur III'
+  const category = getHotelCategory(answers.applicationInfo.category)
 
   const type: { [key: string]: string } = isHotel
-    ? { tegundGististadar: answers.applicationInfo.hotel?.type || '' }
-    : { tegundVeitingastadar: answers.applicationInfo.resturant?.type || '' }
+    ? { tegundGististadar: answers.applicationInfo.typeHotel || '' }
+    : {
+        tegundVeitingastadar:
+          JSON.stringify(answers.applicationInfo.typeResturant) || '',
+      }
 
   const extraData: { [key: string]: string } = {
     kallast: answers.info.operationName,
@@ -64,16 +71,38 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
           ),
         }
       : {}),
-    rymi: JSON.stringify(
-      answers.properties.map((property: Property) => ({
-        stadur: property.address,
-        fasteignanumer: property.propertyNumber,
-        rymisnumer: property.spaceNumber,
-        hamarksfjoldiGesta: property.customerCount,
-      })),
+    gistirymi: JSON.stringify(
+      [answers.properties.stay as Property[]].map((selection: Property[]) =>
+        selection?.map((property: Property) => ({
+          stadur: property.address,
+          fasteignanumer: property.propertyNumber,
+          rymisnumer: property.spaceNumber,
+          hamarksfjoldiGesta: property.customerCount,
+        })),
+      ),
     ),
-    bradabirgdarleyfi: answers.temporaryLicense.includes(YES) ? 'Já' : 'Nei',
-    skuldastada: answers.debtClaim.includes(YES) ? 'Já' : 'Nei',
+    veitingarymi: JSON.stringify(
+      [answers.properties.dining as Property[]].map((selection: Property[]) =>
+        selection?.map((property: Property) => ({
+          stadur: property.address,
+          fasteignanumer: property.propertyNumber,
+          rymisnumer: property.spaceNumber,
+          hamarksfjoldiGesta: property.customerCount,
+        })),
+      ),
+    ),
+    utirymi: JSON.stringify(
+      [answers.properties.outside as Property[]].map((selection: Property[]) =>
+        selection?.map((property: Property) => ({
+          stadur: property.address,
+          fasteignanumer: property.propertyNumber,
+          rymisnumer: property.spaceNumber,
+          hamarksfjoldiGesta: property.customerCount,
+        })),
+      ),
+    ),
+    bradabirgdarleyfi: answers.temporaryLicense?.includes(YES) ? 'Já' : 'Nei',
+    skuldastada: answers.debtClaim?.includes(YES) ? 'Já' : 'Nei',
     annad: answers.otherInfoText || '',
     vskNr: answers.info.vskNr,
     upphaed: charge,
@@ -81,15 +110,16 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
   return extraData
 }
 
-const getHotelCategory = (category?: OPERATION_CATEGORY[]) => {
-  if (!category) {
-    return CATEGORIES.HOTEL
-  } else if (category.includes(OPERATION_CATEGORY.TWO)) {
-    return CATEGORIES.HOTEL_ALCOHOL
-  } else if (category.includes(OPERATION_CATEGORY.ONE)) {
-    return CATEGORIES.HOTEL_FOOD
-  } else {
-    return CATEGORIES.HOTEL
+const getHotelCategory = (category?: OPERATION_CATEGORY) => {
+  switch (category) {
+    case OPERATION_CATEGORY.TWO:
+      return CATEGORIES.HOTEL
+    case OPERATION_CATEGORY.THREE:
+      return CATEGORIES.HOTEL_FOOD
+    case OPERATION_CATEGORY.FOUR:
+      return CATEGORIES.HOTEL_ALCOHOL
+    default:
+      return CATEGORIES.HOTEL
   }
 }
 const getHoursMinutes = (value: string) => {
@@ -105,14 +135,16 @@ const formatOpeningHours = (value?: string) => {
   }
   const { hours, minutes } = getHoursMinutes(value)
 
-  return `${hours}:${minutes}`
+  return `${hours > 10 ? hours : '0' + hours}:${
+    minutes > 10 ? minutes : '0' + minutes
+  }`
 }
 
 export const displayOpeningHours = (answers: any) => {
   return (
     (answers.applicationInfo as Operation)?.operation ===
       APPLICATION_TYPES.RESTURANT ||
-    (answers.applicationInfo as Operation)?.hotel?.category?.includes(
+    !(answers.applicationInfo as Operation)?.category?.includes(
       OPERATION_CATEGORY.TWO,
     ) ||
     false
