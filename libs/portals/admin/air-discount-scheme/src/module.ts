@@ -11,7 +11,6 @@ const CreateDiscount = lazy(() =>
 
 export const airDiscountSchemeAdminModule: PortalModule = {
   name: m.airDiscountScheme,
-  widgets: () => [],
   layout: 'full',
   routes: ({ userInfo }) => [
     {

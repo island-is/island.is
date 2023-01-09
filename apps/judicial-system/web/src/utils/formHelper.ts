@@ -6,11 +6,11 @@ import type {
   CaseFile,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { UploadFile } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import * as validations from './validate'
+import { TUploadFile } from './hooks'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -341,7 +341,7 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
   return key
 }
 
-export const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
+export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   name: file.name,
   type: file.type,
   id: file.id,
@@ -349,4 +349,5 @@ export const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
   status: 'done',
   percent: 100,
   size: file.size,
+  category: file.category,
 })
