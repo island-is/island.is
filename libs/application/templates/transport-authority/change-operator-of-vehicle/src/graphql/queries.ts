@@ -29,3 +29,31 @@ export const IDENTITY_QUERY = `
     }
   }
 `
+
+export const GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS = `
+  query GetCurrentVehiclesWithOwnerchangeChecks($input: GetCurrentVehiclesInput!) {
+    currentVehiclesWithOwnerchangeChecks(input: $input) {
+      permno
+      make
+      color
+      role
+      isDebtLess
+      ownerChangeErrorMessages {
+        errorNo
+        defaultMessage
+      }
+    }
+  } 
+`
+
+export const GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO = `
+  query GetVehicleOwnerchangeChecksByPermno($permno: String!) {
+    vehicleOwnerchangeChecksByPermno(permno: $permno) {
+      isDebtLess
+      ownerChangeErrorMessages {
+        errorNo
+        defaultMessage
+      }
+    }
+  } 
+`
