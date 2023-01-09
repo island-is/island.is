@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/application/ui-fields"]
     }
   },
-  "tags": []
+  "tags": ["lib:react", "react"]
 }

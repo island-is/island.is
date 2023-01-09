@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:as-api", "lib:as-api"]
 }

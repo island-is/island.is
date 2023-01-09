@@ -46,6 +46,37 @@
                 ]
               },
               {
+                "sourceTag": "scope:as-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:as-api",
+                  "lib:as-shared",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:as-form",
+                "onlyDependOnLibsWithTags": [
+                  "lib:as-shared",
+                  "lib:as-form",
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:as-shared",
+                "onlyDependOnLibsWithTags": [
+                  "lib:as-shared",
+                  "lib:react",
+                  "lib:react-spa",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
                 "sourceTag": "scope:react-spa",
                 "onlyDependOnLibsWithTags": [
                   "lib:react-spa",

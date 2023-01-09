@@ -173,5 +173,5 @@
       }
     }
   },
-  "tags": ["lib:nest"]
+  "tags": ["lib:as-api", "scope:as-api"]
 }

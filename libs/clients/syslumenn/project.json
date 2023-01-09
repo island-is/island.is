@@ -36,5 +36,5 @@
       }
     }
   },
-  "tags": ["lib:nest", "scope:nest"]
+  "tags": ["lib:nest", "lib:as-shared", "scope:nest", "TODO:splitUp"]
 }

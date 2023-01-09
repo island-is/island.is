@@ -3,8 +3,8 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/types'
+import { FamilyMember } from '../libs/familyMember.type'
 
-import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 export class FamilyInformationProvider extends BasicDataProvider {
   type = 'FamilyInformationProvider'

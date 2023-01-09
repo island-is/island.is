@@ -108,5 +108,5 @@
     },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:as-form"]
 }

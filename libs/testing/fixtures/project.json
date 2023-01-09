@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": ["lib:nest", "scope:nest"]
+  "tags": ["lib:nest", "scope:nest", "lib:as-shared"]
 }
