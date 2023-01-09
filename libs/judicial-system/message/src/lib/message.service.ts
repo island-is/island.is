@@ -165,21 +165,28 @@ export class MessageService {
   }
 
   async sendMessagesToQueue(messages: CaseMessage[]): Promise<void> {
-    return this.sqs
-      .send(
-        new SendMessageBatchCommand({
-          QueueUrl: this.queueUrl,
-          Entries: messages.map((message, index) => ({
-            MessageBody: JSON.stringify(message),
-            Id: index.toString(),
-          })),
-        }),
-      )
-      .then((data) => {
-        if (data.Failed && data.Failed.length > 0) {
-          this.logger.error('Failed to send messages to queue', { data })
-        }
-      })
+    const MAX_BATCH_SIZE = 10
+
+    for (let i = 0; i < messages.length; i += MAX_BATCH_SIZE) {
+      const numSentNow = Math.min(messages.length - i, MAX_BATCH_SIZE)
+      const messagesToSend = messages.slice(i, i + numSentNow)
+
+      await this.sqs
+        .send(
+          new SendMessageBatchCommand({
+            QueueUrl: this.queueUrl,
+            Entries: messagesToSend.map((message, index) => ({
+              MessageBody: JSON.stringify(message),
+              Id: index.toString(),
+            })),
+          }),
+        )
+        .then((data) => {
+          if (data.Failed && data.Failed.length > 0) {
+            this.logger.error('Failed to send messages to queue', { data })
+          }
+        })
+    }
   }
 
   async receiveMessagesFromQueue(

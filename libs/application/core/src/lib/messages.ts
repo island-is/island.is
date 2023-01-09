@@ -400,8 +400,47 @@ export const coreErrorMessages = defineMessages({
   },
   vehiclesEmptyListDefault: {
     id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
-    defaultMessage: 'Ekki fannst nein ökutæki',
+    defaultMessage: 'Ekki fundust nein ökutæki',
     description: 'Did not find any vehicles',
+  },
+  dataCollectionCriminalRecordErrorTitle: {
+    id: 'ol.application:missingCriominalRecordTitle',
+    defaultMessage: 'Skilyrði um hreina sakaskrá er ekki uppfyllt',
+    description: '',
+  },
+  dataCollectionCriminalRecordTitle: {
+    id: 'ol.application:dataCollection.criminalRecordTitle',
+    defaultMessage: 'Sakaskrá ríkisins',
+    description: 'Some description',
+  },
+  missingCertificateTitle: {
+    id: 'ndc.application:missingCertificateTitle',
+    defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
+    description: '',
+  },
+  missingCertificateSummary: {
+    id: 'ndc.application:missingCertificateSummary',
+    defaultMessage:
+      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
+    description: '',
+  },
+  drivingLicenseMissingValidCategory: {
+    id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
+    defaultMessage:
+      'Þú ert ekki með nauðsynleg ökuréttindi til að sækja um þessa umsókn',
+    description:
+      'You do not have enough driving permission to apply for this application',
+  },
+  nationalRegistryLegalDomicileNotIceland: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',
+    defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
+    description: 'You do not have a domicile in Iceland',
+  },
+  nationalRegistryBirthplaceMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryBirthplaceMissing',
+    defaultMessage: 'Náði ekki að sækja fæðingarstað',
+    description: 'Not able to fetch birthplace',
   },
 })
 

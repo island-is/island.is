@@ -15,17 +15,12 @@ import {
   getValueViaPath,
   buildDateField,
 } from '@island.is/application/core'
-import {
-  Form,
-  FormModes,
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
+import { Form, FormModes, UserProfileApi } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { ChildrenApi } from '../dataProviders'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
   isEligibleForParentalLeave,
   getSelectedChild,
@@ -299,7 +294,7 @@ export const PrerequisitesForm: Form = buildForm({
                       .userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  provider: NationalRegistryUserApi,
+                  provider: GetPersonInformation,
                   title:
                     parentalLeaveFormMessages.shared.familyInformationTitle,
                   subTitle:
