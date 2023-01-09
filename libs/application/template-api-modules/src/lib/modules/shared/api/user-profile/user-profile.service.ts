@@ -39,7 +39,7 @@ export class UserProfileService extends BaseTemplateApiService {
         if (isRunningOnEnvironment('local')) {
           return {
             email: 'mockEmail@island.is',
-            mobilePhoneNumber: '+354-999999',
+            mobilePhoneNumber: '+354-9999999',
           }
         }
         throw error
