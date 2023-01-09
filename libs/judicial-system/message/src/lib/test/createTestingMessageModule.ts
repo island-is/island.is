@@ -54,5 +54,10 @@ export const createTestingMessageModule = async () => {
 
   const messageService = messageModule.get<MessageService>(MessageService)
 
+  // Initiate queue connection
+  await messageService
+    .receiveMessagesFromQueue(async () => true)
+    .catch(() => true)
+
   return { setSendMocks, queueUrl, sqs, messageService }
 }
