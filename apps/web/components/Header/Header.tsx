@@ -21,10 +21,12 @@ import { FixedNav, SearchInput } from '@island.is/web/components'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
+import { LayoutProps } from '@island.is/web/layouts/main'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
+  languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
   megaMenuData
 }
 
@@ -35,6 +37,7 @@ export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
   megaMenuData,
+  languageToggleQueryParams,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
@@ -126,7 +129,10 @@ export const Header: FC<HeaderProps> = ({
                       marginLeft={marginLeft}
                       display={['none', 'none', 'none', 'block']}
                     >
-                      <LanguageToggler buttonColorScheme={buttonColorScheme} />
+                      <LanguageToggler
+                        buttonColorScheme={buttonColorScheme}
+                        queryParams={languageToggleQueryParams}
+                      />
                     </Box>
                     <Box marginLeft={marginLeft}>
                       <Menu
