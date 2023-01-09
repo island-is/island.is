@@ -103,9 +103,10 @@ const ApiScopeUsersList: React.FC = () => {
                   <input
                     id="search"
                     className="api-scope-users-list__input__search"
+                    placeholder={localization.buttons['search'].helpText}
                     value={searchString}
                     onChange={handleSearchChange}
-                  ></input>
+                  />
                   <button
                     type="submit"
                     className="api-scope-users-list__button__search"

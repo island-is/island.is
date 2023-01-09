@@ -220,7 +220,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                           className="api-scope-user-create-form__label"
                           htmlFor={scope.name}
                         >
-                          {scope.displayName}
+                          {scope.displayName} <i>({scope.name})</i>
                         </label>
 
                         <input

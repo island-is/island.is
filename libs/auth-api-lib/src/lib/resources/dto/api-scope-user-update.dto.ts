@@ -8,14 +8,14 @@ export class ApiScopeUserUpdateDTO {
   @ApiProperty({
     example: 'Jane Doe',
   })
-  name!: string
+  name?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty({
     example: 'something@gmail.com',
   })
-  email!: string
+  email?: string
 
   @IsNotEmpty()
   @ApiProperty({
