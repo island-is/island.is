@@ -10,28 +10,15 @@ import { PortalNavigationItem } from '../types/portalCore'
  *  - If the filtered navigation results in multiple children items, null is returned.
  *  - If the filtered navigation results in no child item, null is returned.
  *
- * Example usage:
- *    const navItem = useSingleNavigationItem(TOP_NAVIGATION, BOTTOM_NAVIGATION)
+ * @example Usage
+ * const navItem = useSingleNavigationItem(TOP_NAVIGATION, BOTTOM_NAVIGATION)
+ * const hasSingleItemAccess = !!navItem
  *
- *    if (navItem) {
- *      // user has only access to single module
- *      return // something specific for single module
- *    }
- *
- *    // user has access to multiple modules
- *    return (
- *      // something for multiple modules
- *    )
- *
- * or:
- *    const navItem = useSingleNavigationItem(TOP_NAVIGATION, BOTTOM_NAVIGATION)
- *    const hasSingleItemAccess = !!navItem
- *
- *    return hasSingleItemAccess ? (
- *      // something specific for single module
- *    ) : (
- *      // something for multiple modules
- *    )
+ * return hasSingleItemAccess ? (
+ *   // something specific for single module
+ * ) : (
+ *   // something for multiple modules
+ * )
  *
  * @param navigationTrees
  */
