@@ -33,12 +33,12 @@ export class ApiScopeUser extends Model<
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty({
     example: 'Jane Doe',
   })
-  name!: string
+  name?: string
 
   @Column({
     type: DataType.STRING,
