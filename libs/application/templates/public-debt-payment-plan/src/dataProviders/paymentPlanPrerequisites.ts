@@ -134,7 +134,8 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     if (
       paymentScheduleConditions.maxDebt ||
       !paymentScheduleConditions.taxReturns ||
-      !paymentScheduleConditions.vatReturns || // !paymentScheduleConditions.citReturns || TODO: Ask if we should include this check (corporate income tax)
+      !paymentScheduleConditions.vatReturns ||
+      !paymentScheduleConditions.citReturns ||
       !paymentScheduleConditions.accommodationTaxReturns ||
       !paymentScheduleConditions.withholdingTaxReturns ||
       paymentScheduleConditions.collectionActions ||

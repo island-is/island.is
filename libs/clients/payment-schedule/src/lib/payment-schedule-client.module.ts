@@ -22,6 +22,7 @@ export class PaymentScheduleClientModule {
                   name: 'clients-payment-schedule',
                   treat400ResponsesAsErrors: true,
                   logErrorResponseBody: true,
+                  timeout: 30000,
                 }),
                 basePath: baseURL,
                 headers: {
