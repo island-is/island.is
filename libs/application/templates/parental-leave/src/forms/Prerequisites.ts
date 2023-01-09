@@ -14,11 +14,7 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import {
-  Form,
-  FormModes,
-  UserProfileApi,
-} from '@island.is/application/types'
+import { Form, FormModes, UserProfileApi } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'

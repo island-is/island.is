@@ -7,5 +7,5 @@ export const ChildrenApi = defineTemplateApi({
 
 export const GetPersonInformation = defineTemplateApi({
   action: 'getPerson',
-  externalDataId: 'person'
+  externalDataId: 'person',
 })
