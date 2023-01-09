@@ -80,7 +80,7 @@ export const heirs = buildSection({
                         (answers.publicCharges as any)?.total) +
                       ((answers.businessAssets as any)?.total -
                         (answers.businessDebts as any)?.total) -
-                      200.0,
+                      200000,
                   ),
                 ),
             }),
@@ -98,10 +98,14 @@ export const heirs = buildSection({
           description:
             'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004',
           children: [
+            buildDescriptionField({
+              id: 'heirs.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
-                id: 'inventory',
+                id: 'heirs.data',
                 doesNotRequireAnswer: true,
                 component: 'TextFieldsRepeater',
               },

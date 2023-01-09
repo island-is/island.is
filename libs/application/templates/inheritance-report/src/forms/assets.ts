@@ -77,6 +77,10 @@ export const assets = buildSection({
               description: m.inventoryDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'inventory.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
@@ -125,6 +129,10 @@ export const assets = buildSection({
               description: m.estateBankInfoDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'bankAccounts.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
@@ -169,6 +177,10 @@ export const assets = buildSection({
               description: m.claimsDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'claims.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
@@ -211,6 +223,10 @@ export const assets = buildSection({
               title: m.stocksTitle,
               description: m.stocksDescription,
               titleVariant: 'h3',
+            }),
+            buildDescriptionField({
+              id: 'stocks.total',
+              title: '',
             }),
             buildCustomField(
               {
@@ -271,6 +287,10 @@ export const assets = buildSection({
               description: m.moneyDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'money.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
@@ -314,6 +334,10 @@ export const assets = buildSection({
               title: m.otherAssetsTitle,
               description: m.otherAssetsDescription,
               titleVariant: 'h3',
+            }),
+            buildDescriptionField({
+              id: 'otherAssets.total',
+              title: '',
             }),
             buildCustomField(
               {
