@@ -1,7 +1,9 @@
 import React, { ReactElement, useRef } from 'react'
 import { Box, Stack } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
+import {
+  ServicePortalPath,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
@@ -12,6 +14,7 @@ import NavItem from '../Sidebar/NavItem/NavItem'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/service-portal/constants'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 interface Props {
   position: number
 }
@@ -20,7 +23,7 @@ const MobileMenu = ({ position }: Props): ReactElement | null => {
   const ref = useRef(null)
   const [{ mobileMenuState }, dispatch] = useStore()
   const { signOut } = useAuth()
-  const navigation = useNavigation()
+  const mainNav = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 
@@ -48,10 +51,10 @@ const MobileMenu = ({ position }: Props): ReactElement | null => {
       justifyContent="spaceBetween"
       style={{ top: topPosition, maxHeight: `calc(100vh - ${topPosition})` }}
     >
-      {navigation.map((rootItem, rootIndex) => (
+      {[mainNav].map((rootItem, rootIndex) => (
         <Box key={rootIndex} paddingX={0} marginTop={3}>
           <Stack space={2}>
-            {rootItem.children?.map(
+            {rootItem?.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot &&
                 !navRoot.navHide && (

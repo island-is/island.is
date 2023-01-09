@@ -113,4 +113,12 @@ export const messages = defineMessages({
     er meðal annars að finna upplýsingar um fasteigna- og brunabótamat,
     stærðir, byggingarár, byggingarefni, notkun og auðkennisnúmer eigna.`,
   },
+  size: {
+    id: 'sp.assets:size',
+    defaultMessage: 'Stærð',
+  },
+  buildYear: {
+    id: 'sp.assets:build-year',
+    defaultMessage: 'Byggingarár',
+  },
 })

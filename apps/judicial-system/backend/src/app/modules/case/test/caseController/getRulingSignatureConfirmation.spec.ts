@@ -6,6 +6,7 @@ import { ForbiddenException } from '@nestjs/common'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   User,
 } from '@island.is/judicial-system/types'
 import { MessageType, MessageService } from '@island.is/judicial-system/message'
@@ -130,6 +131,43 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
         { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
         { type: MessageType.DELIVER_CASE_FILE_TO_COURT, caseId, caseFileId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
+      ])
+      expect(then.result).toEqual({ documentSigned: true })
+    })
+  })
+
+  describe('successful completion of LÖKE case', () => {
+    const userId = uuid()
+    const user = { id: userId } as User
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      judgeId: userId,
+    } as Case
+    const documentToken = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(theCase)
+
+      then = await givenWhenThen(caseId, user, theCase, documentToken)
+    })
+
+    it('should set the ruling date', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        { rulingDate: expect.any(Date) },
+        { where: { id: caseId }, transaction },
+      )
+    })
+
+    it('should return success', () => {
+      expect(mockAwsS3Service.putObject).toHaveBeenCalled()
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
         { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
         { type: MessageType.DELIVER_CASE_TO_POLICE, caseId },
       ])

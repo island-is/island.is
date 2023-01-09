@@ -7,9 +7,6 @@ import {
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
-import { ApiScope } from '../models'
-import { ScopeTreeNode } from '../models/scopeTreeNode.model'
-import { ApiScopesInput } from '../dto/apiScopes.input'
 
 export interface MeDelegationsServiceInterface {
   getDelegations(user: User, input: DelegationsInput): Promise<DelegationDTO[]>
@@ -35,15 +32,6 @@ export interface MeDelegationsServiceInterface {
     user: User,
     input: PatchDelegationInput,
   ): Promise<DelegationDTO>
-}
-
-export interface ApiScopeServiceInterface {
-  getApiScopes(user: User, input: ApiScopesInput): Promise<ApiScope[]>
-
-  getScopeTree(
-    user: User,
-    input: ApiScopesInput,
-  ): Promise<Array<typeof ScopeTreeNode>>
 }
 
 export interface DelegationScopeDTO {
