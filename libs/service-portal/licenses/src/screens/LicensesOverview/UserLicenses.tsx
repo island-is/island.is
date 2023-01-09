@@ -15,9 +15,9 @@ import {
 } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import {
-  getPathFromProviderId,
   getPathFromType,
   getTitleAndLogo,
+  getPathFromProviderId,
 } from '../../utils/dataMapper'
 
 import LicenseCards from '../../components/LicenseCards/LicenseCards'

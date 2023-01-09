@@ -441,6 +441,22 @@ enum LicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
 }
+enum LicenseTypePath {
+  okurettindi = 'okurettindi',
+  skotvopnaleyfi = 'skotvopnaleyfi',
+  adrrettindi = 'adrrettindi',
+  vinnuvelarettindi = 'vinnuvelarettindi',
+}
+enum LicenseProviderId {
+  NationalPoliceCommissioner = 'NationalPoliceCommissioner',
+  EnvironmentAgency = 'EnvironmentAgency',
+  AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
+}
+enum LicenseProviderPath {
+  vinnueftirlitid = 'vinnueftirlitid',
+  umhverfisstofnun = 'umhverfisstofnun',
+  rikislogreglustjori = 'rikislogreglustjori',
+}
 
 export const getLicenseDetailHeading = (type: string) => {
   switch (type) {
@@ -498,13 +514,6 @@ export const getTitleAndLogo = (type: string) => {
   }
 }
 
-enum LicenseTypePath {
-  okurettindi = 'okurettindi',
-  skotvopnaleyfi = 'skotvopnaleyfi',
-  adrrettindi = 'adrrettindi',
-  vinnuvelarettindi = 'vinnuvelarettindi',
-}
-
 export const getPathFromType = (type: string) => {
   switch (type) {
     case LicenseType.AdrLicense:
@@ -541,6 +550,22 @@ export const getTypeFromPath = (path: string) => {
       break
     default:
       return undefined
+      break
+  }
+}
+export const getPathFromProviderId = (id: string) => {
+  switch (id) {
+    case LicenseProviderId.AdministrationOfOccupationalSafetyAndHealth:
+      return LicenseProviderPath.vinnueftirlitid
+      break
+    case LicenseProviderId.EnvironmentAgency:
+      return LicenseProviderPath.umhverfisstofnun
+      break
+    case LicenseProviderId.NationalPoliceCommissioner:
+      return LicenseProviderPath.rikislogreglustjori
+      break
+    default:
+      return ''
       break
   }
 }

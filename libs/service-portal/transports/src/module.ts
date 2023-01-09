@@ -4,8 +4,8 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { VehiclePaths } from './lib/paths'
 
-export const vehiclesModule: PortalModule = {
-  name: 'Ökutæki',
+export const transportsModule: PortalModule = {
+  name: 'Farartæki',
   widgets: () => [],
   routes: ({ userInfo }) => [
     {

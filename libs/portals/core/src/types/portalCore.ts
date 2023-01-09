@@ -60,6 +60,16 @@ export interface PortalNavigationItem {
    * Service provider
    */
   serviceProvider?: string
+
+  /**
+   * Parent
+   */
+  parent?: PortalNavigationItem
+
+  /**
+   * Key Item for Stafrænt Ísland
+   */
+  isKeyitem?: boolean
 }
 
 /**

@@ -14,7 +14,7 @@ import { informationModule } from '@island.is/service-portal/information'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
-import { vehiclesModule } from '@island.is/service-portal/vehicles'
+import { transportsModule } from '@island.is/service-portal/transports'
 
 /**
  * NOTE:
@@ -38,6 +38,6 @@ export const modules: PortalModule[] = [
   informationModule,
   personalInformationModule,
   petitionsModule,
-  vehiclesModule,
+  transportsModule,
   licensesModule,
 ]

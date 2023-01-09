@@ -13,7 +13,7 @@ import {
 } from '@island.is/service-portal/information'
 import { licenseNavigation } from '@island.is/service-portal/licenses'
 import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
-import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
+import { transportsNavigation } from '@island.is/service-portal/transports'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
 import { accessControlNavigation } from '@island.is/service-portal/settings/access-control'
 
@@ -44,7 +44,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     assetsNavigation,
     icelandicNamesRegistryNavigation,
     financeNavigation,
-    vehiclesNavigation,
+    transportsNavigation,
     delegationsNavigation,
   ],
 }

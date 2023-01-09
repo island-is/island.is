@@ -2,7 +2,7 @@ import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/service-portal/core'
 import { VehiclePaths } from './paths'
 
-export const vehiclesNavigation: PortalNavigationItem = {
+export const transportsNavigation: PortalNavigationItem = {
   name: m.vehicles,
   path: VehiclePaths.AssetsMyVehicles,
   icon: {
