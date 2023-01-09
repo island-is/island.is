@@ -12,6 +12,7 @@ export interface Config {
   bundleId: string
   datadogClientToken: string
   sentryDsn: string
+  configCat: string
   constants: any
   env: typeof env
 }
@@ -51,6 +52,7 @@ export const config: Config = {
     }) || 'is.island.app',
   datadogClientToken: env.DATADOG_CLIENT_TOKEN,
   sentryDsn: env.SENTRY_DSN,
+  configCat: env.CONFIGCAT_CLIENT_TOKEN,
   constants: ConstantsRest,
   env,
 }

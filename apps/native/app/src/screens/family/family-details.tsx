@@ -1,15 +1,14 @@
-import React from 'react'
 import { useQuery } from "@apollo/client";
-import { client } from '../../graphql/client'
+import { Input, InputRow, NavigationBarSheet, Typography } from '@island.is/island-ui-native';
+import React from 'react';
 import { useIntl } from 'react-intl';
-import { ScrollView, View, SafeAreaView, Image } from "react-native";
-import { testIDs } from '../../utils/test-ids'
+import { SafeAreaView, ScrollView, View } from "react-native";
 import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
-import { EmptyList, Input, InputRow, NavigationBarSheet, Typography } from '@island.is/island-ui-native';
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options';
-import { formatNationalId } from '../profile/tab-personal-info';
-import illustrationSrc from '../../assets/illustrations/hero_spring.png'
+import { client } from '../../graphql/client';
 import { FAMILY_QUERY } from '../../graphql/queries/list-family-query';
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options';
+import { testIDs } from '../../utils/test-ids';
+import { formatNationalId } from '../profile/tab-personal-info';
 
 const {
   getNavigationOptions,
@@ -20,7 +19,7 @@ const {
   },
 }))
 
-export const FamilyDetailScreen: NavigationFunctionComponent<{ id: string, type: string }> = ({ componentId, id, item, type }) => {
+export const FamilyDetailScreen: NavigationFunctionComponent<{ id: string, type: string }> = ({ componentId, id, type }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
 

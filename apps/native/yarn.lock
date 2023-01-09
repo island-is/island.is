@@ -3525,6 +3525,21 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
+configcat-common@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/configcat-common/-/configcat-common-7.0.1.tgz#2c239cc7c63c2138e0b4361e5201015b1bfd7120"
+  integrity sha512-9SxX4/6NzK1l+2iDWLyr/0tsli/eKzSJhBIepptF+GPy/7CprnA0coQz8fF8Gx1IF3wBZsJg0vRaC3LtNa0vRg==
+  dependencies:
+    tslib "^2.4.1"
+
+configcat-js@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/configcat-js/-/configcat-js-7.0.0.tgz#4b1fb10a660ef91e528f426b6d01c51cfdd8159e"
+  integrity sha512-ECVS5rV4wzU+r+81Fc1Rho1pvbSMpZXUKpO/Ei0Ms+Qmo21U8x1NVMWF0hIplHmDdEsCtEIa5AgXVceDURGAuA==
+  dependencies:
+    configcat-common "^7.0.1"
+    tslib "^2.4.1"
+
 configstore@^5.0.0:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/configstore/-/configstore-5.0.1.tgz#d365021b5df4b98cdd187d6a3b0e3f6a7cc5ed96"
@@ -7959,6 +7974,11 @@ tslib@^2.0.1, tslib@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.2.0.tgz#fb2c475977e35e241311ede2693cee1ec6698f5c"
   integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
+
+tslib@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.1.tgz#0d0bfbaac2880b91e22df0768e55be9753a5b17e"
+  integrity sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==
 
 tslib@~2.1.0:
   version "2.1.0"

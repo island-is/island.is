@@ -40,6 +40,11 @@ import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import * as configcat from "configcat-js";
+import { config } from '../../utils/config'
+import { useAuthStore } from '../../stores/auth-store'
+import { FeatureFlagClient, useFeatureFlagClient } from '../../contexts/feature-flag-provider'
+
 
 const {
   useNavigationOptions,
@@ -190,8 +195,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const { data: identityDocumentData } = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {client, fetchPolicy: 'network-only'})
 
-  const passportData = identityDocumentData?.getIdentityDocument ?? [];
-
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
@@ -199,6 +203,24 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const loadingTimeout = useRef<number>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
+  const [showPassport, setShowPassport] = useState<boolean>(false);
+
+  const passportData = showPassport ? identityDocumentData?.getIdentityDocument ?? [] : [];
+
+  useEffect(() => {
+    const isPassportFlagEnabled = async () => {
+      const isPassEnabled = Boolean(
+        await featureFlagClient.getValue(
+          `isPassportEnabled`,
+          false,
+        ),
+      )
+
+      setShowPassport(isPassEnabled)
+    }
+    isPassportFlagEnabled()
+
+  }, [])
 
   useActiveTabItemPress(1, () => {
     flatListRef.current?.scrollToOffset({

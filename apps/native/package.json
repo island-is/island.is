@@ -29,6 +29,7 @@
     "@zxing/text-encoding": "0.9.0",
     "base45-js": "1.0.2",
     "cbor": "8.0.2",
+    "configcat-js": "7.0.0",
     "cose-js": "0.7.0",
     "expo-barcode-scanner": "10.2.2",
     "expo-camera": "11.2.2",
