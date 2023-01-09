@@ -1,10 +1,11 @@
-import { ApiScopeGroup } from '@island.is/auth-api-lib'
+import { ApiScopeGroupDTO } from '@island.is/auth-api-lib'
 import faker from 'faker'
+import { CreateApiScope } from './types'
 
-export type CreateApiScopeGroup = Pick<
-  ApiScopeGroup,
-  'id' | 'name' | 'displayName' | 'description' | 'order' | 'domainName'
->
+export type CreateApiScopeGroup = Partial<ApiScopeGroupDTO> & {
+  id?: string
+  apiScopes?: CreateApiScope[]
+}
 
 export type CreateApiScopeGroupOptions = Partial<CreateApiScopeGroup> &
   Pick<CreateApiScopeGroup, 'domainName'>
