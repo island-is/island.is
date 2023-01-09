@@ -44,17 +44,18 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const chargeItemCodes = getChargeItemCodes(
-        application.answers as OrderVehicleLicensePlateAnswers,
-      )
-
       const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
+      const answers = application.answers as OrderVehicleLicensePlateAnswers
+
+      const chargeItemCodes = getChargeItemCodes(answers)
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
         SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
+        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
       return result
     } catch (exeption) {

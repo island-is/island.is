@@ -45,21 +45,22 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const chargeItemCodes = getChargeItemCodes(
-        application.answers as ChangeCoOwnerOfVehicleAnswers,
-      )
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
+      const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+
+      const chargeItemCodes = getChargeItemCodes(answers)
 
       if (chargeItemCodes?.length <= 0) {
         throw new Error('Það var hvorki bætt við né eytt meðeiganda')
       }
 
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
-        id,
+        application.id,
         SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
+        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
       return result
     } catch (exeption) {
@@ -88,7 +89,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
     if (!payment?.fulfilled) {

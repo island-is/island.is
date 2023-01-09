@@ -77,6 +77,13 @@ export class PaymentService {
   }
 
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
+    //TODOx disable payment validation while on feature deploy
+    return {
+      fulfilled: true,
+      paymentUrl: '',
+    }
+
+    /*
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
     if (!foundPayment) {
       throw new NotFoundException(
@@ -112,6 +119,7 @@ export class PaymentService {
         callbackUrl,
       ),
     }
+    */
   }
 
   public makePaymentUrl(docNum: string): string {
