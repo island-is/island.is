@@ -88,7 +88,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
     if (!payment?.fulfilled) {
