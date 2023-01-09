@@ -386,9 +386,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.marketValue,
               value: ({ answers }) =>
-                formatCurrency(
-                  String((answers.totalAmounts as any).inventoryTotal),
-                ),
+                formatCurrency(String((answers.inventory as any).total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -401,9 +399,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.banksBalance,
               value: ({ answers }) =>
-                formatCurrency(
-                  String((answers.totalAmounts as any).bankAccountsTotal),
-                ),
+                formatCurrency(String((answers.bankAccounts as any).total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -416,9 +412,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.totalValue,
               value: ({ answers }) =>
-                formatCurrency(
-                  String((answers.totalAmounts as any).claimsTotal),
-                ),
+                formatCurrency(String((answers.claims as any).total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -431,9 +425,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.totalValue,
               value: ({ answers }) =>
-                formatCurrency(
-                  String((answers.totalAmounts as any).stocksTotal),
-                ),
+                formatCurrency(String((answers.stocks as any).total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -446,9 +438,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.totalValue,
               value: ({ answers }) =>
-                formatCurrency(
-                  String((answers.totalAmounts as any).moneyTotal),
-                ),
+                formatCurrency(String((answers.money as any).total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -461,9 +451,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: 'Matsverð annarra eigna samtals á dánardegi',
               value: ({ answers }) =>
-                formatCurrency(
-                  String((answers.totalAmounts as any).otherAssetsTotal),
-                ),
+                formatCurrency(String((answers.otherAssets as any).total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -478,10 +466,12 @@ export const assets = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    Object.values(answers.totalAmounts as any).reduce(
-                      (a: any, o: any) => (a = a + o),
-                      0,
-                    ),
+                    (answers.otherAssets as any).total +
+                      (answers.money as any).total +
+                      (answers.stocks as any).total +
+                      (answers.claims as any).total +
+                      (answers.bankAccounts as any).total +
+                      (answers.inventory as any).total,
                   ),
                 ),
             }),
