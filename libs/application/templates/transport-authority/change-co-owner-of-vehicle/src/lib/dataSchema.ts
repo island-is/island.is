@@ -2,6 +2,9 @@ import { z } from 'zod'
 
 export const ChangeCoOwnerOfVehicleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  pickVehicle: z.object({
+    plate: z.string(),
+  }),
   vehicle: z.object({
     plate: z.string(),
   }),

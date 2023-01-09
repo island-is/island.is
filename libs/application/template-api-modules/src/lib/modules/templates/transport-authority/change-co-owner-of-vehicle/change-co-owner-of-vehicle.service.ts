@@ -220,7 +220,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const permno = answers?.vehicle?.plate
+    const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
     const newCoOwners = answers?.coOwners

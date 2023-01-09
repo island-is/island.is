@@ -109,7 +109,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     }
 
     await this.vehiclePlateOrderingClient.orderPlates(auth, {
-      permno: answers?.vehicle?.plate,
+      permno: answers?.pickVehicle?.plate,
       frontType: answers?.plateSize?.frontPlateSize,
       rearType: answers?.plateSize?.rearPlateSize,
       deliveryStationType: deliveryStationType,

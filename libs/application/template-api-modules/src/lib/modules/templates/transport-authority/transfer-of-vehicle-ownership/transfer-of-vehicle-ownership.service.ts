@@ -71,7 +71,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       auth,
       {
-        permno: answers?.vehicle?.plate,
+        permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
           email: answers?.seller?.email,
@@ -402,7 +402,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
 
     await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
-      permno: answers?.vehicle?.plate,
+      permno: answers?.pickVehicle?.plate,
       seller: {
         ssn: answers?.seller?.nationalId,
         email: answers?.seller?.email,

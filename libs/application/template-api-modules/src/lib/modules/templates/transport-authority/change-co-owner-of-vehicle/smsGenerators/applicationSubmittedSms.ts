@@ -13,7 +13,7 @@ export const generateApplicationSubmittedSms: ApplicationSubmittedSms = (
   recipient,
 ) => {
   const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
-  const permno = answers?.vehicle?.plate
+  const permno = answers?.pickVehicle?.plate
 
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
   if (!permno) throw new Error('Permno was undefined')
