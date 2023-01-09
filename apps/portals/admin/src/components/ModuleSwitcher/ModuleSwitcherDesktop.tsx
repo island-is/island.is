@@ -3,7 +3,10 @@ import { Menu, MenuButton, useMenuState } from 'reakit/Menu'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/admin/core'
-import { useSingleNavigationItem } from '@island.is/portals/core'
+import {
+  SingleNavigationItemStatus,
+  useSingleNavigationItem,
+} from '@island.is/portals/core'
 
 import { BOTTOM_NAVIGATION, TOP_NAVIGATION } from '../../lib/masterNavigation'
 import { ModuleSwitcherHeader } from './ModuleSwitcherHeader'
@@ -17,15 +20,13 @@ export const ModuleSwitcherDesktop = () => {
     unstable_offset: [0, -60],
   })
   const { formatMessage } = useLocale()
-  const hasSingleModuleAccess = !!useSingleNavigationItem(
-    TOP_NAVIGATION,
-    BOTTOM_NAVIGATION,
-  )
+  const { status } = useSingleNavigationItem(TOP_NAVIGATION, BOTTOM_NAVIGATION)
+  const isStaticSwitcher = status !== SingleNavigationItemStatus.MULTIPLE_ITEMS
 
   return (
     <div className={styles.container}>
-      {hasSingleModuleAccess ? (
-        <ModuleSwitcherHeader />
+      {isStaticSwitcher ? (
+        <ModuleSwitcherHeader isStaticSwitcher />
       ) : (
         <>
           <MenuButton
