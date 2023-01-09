@@ -25,7 +25,6 @@ type Props = {
 
 export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   field,
-  application,
 }) => {
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
@@ -109,7 +108,6 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       type={field.type}
                       onChange={(e) => {
                         setIndex(fieldIndex)
-
                         if (field.id === 'rateOfExchange') {
                           setRateOfExchange(Number(e.target.value))
                         } else if (field.id === 'faceValue') {
