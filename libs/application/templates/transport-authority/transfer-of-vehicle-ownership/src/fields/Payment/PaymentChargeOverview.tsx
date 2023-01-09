@@ -2,16 +2,13 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
-import { TransferOfVehicleOwnership } from '../../lib/dataSchema'
 import { payment } from '../../lib/messages'
 import { formatIsk, getChargeItemCodes } from '../../utils'
 
 export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
-  const chargeItemCodes = getChargeItemCodes(
-    application.answers as TransferOfVehicleOwnership,
-  )
+  const chargeItemCodes = getChargeItemCodes()
   const { externalData } = application
   const allItems = externalData?.payment?.data as [
     {
@@ -36,7 +33,12 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
           {formatMessage(payment.paymentChargeOverview.forPayment)}
         </Text>
         {items.map((item) => (
-          <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+          <Box
+            paddingTop={1}
+            key={item.chargeItemCode}
+            display="flex"
+            justifyContent="spaceBetween"
+          >
             <Text>{item?.chargeItemName}</Text>
             <Text>{formatIsk(item?.priceAmount || 0)}</Text>
           </Box>

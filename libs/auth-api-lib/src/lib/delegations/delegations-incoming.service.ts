@@ -1,5 +1,4 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -61,15 +60,6 @@ export class DelegationsIncomingService {
     domainName?: string,
     otherUser?: string,
   ): Promise<DelegationDTO[]> {
-    const feature = await this.featureFlagService.getValue(
-      Features.incomingDelegationsV2,
-      false,
-      user,
-    )
-    if (!feature) {
-      return []
-    }
-
     if (user.actor) {
       throw new BadRequestException(
         'Only supported when the subject is the authenticated user.',

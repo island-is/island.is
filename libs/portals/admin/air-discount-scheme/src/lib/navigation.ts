@@ -8,4 +8,5 @@ export const airDiscountSchemeNavigation: PortalNavigationItem = {
   icon: {
     icon: 'settings',
   },
+  description: m.airDiscountSchemeDescription,
 }
