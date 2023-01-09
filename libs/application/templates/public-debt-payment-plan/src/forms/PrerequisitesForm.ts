@@ -20,6 +20,7 @@ import { NO, YES } from '../shared/constants'
 import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
 import { isApplicantCompany, isApplicantPerson } from '../lib/paymentPlanUtils'
+import { removeCountryCode } from '@island.is/application/ui-components'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -202,9 +203,13 @@ export const PrerequisitesForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               backgroundColor: 'blue',
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.userProfile?.data?.mobilePhoneNumber,
+              defaultValue: (application: Application) => {
+                const number = removeCountryCode(
+                  application.externalData?.userProfile?.data
+                    ?.mobilePhoneNumber ?? '',
+                )
+                return number
+              },
             }),
             buildSubmitField({
               id: 'toDraft',
