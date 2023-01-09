@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import format from 'date-fns/format'
 
 import {
   CaseType,
@@ -8,11 +9,14 @@ import {
 import { caseTypes } from '@island.is/judicial-system/formatters'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+import { randomDate } from '../../../../test'
+import { nowFactory } from '../../../../factories'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { CourtDocumentFolder, CourtService } from '../../../court'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
 
+jest.mock('../../../../factories/date.factory')
 jest.mock('../../../../formatters/requestPdf')
 
 interface Then {
@@ -23,10 +27,14 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver requst to court', () => {
+  const now = randomDate()
+
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    const mockNowFactory = nowFactory as jest.Mock
+    mockNowFactory.mockReturnValue(now)
     const mockGet = getRequestPdfAsBuffer as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
@@ -83,8 +91,8 @@ describe('InternalCaseController - Deliver requst to court', () => {
           courtId,
           courtCaseNumber,
           CourtDocumentFolder.REQUEST_DOCUMENTS,
-          `Krafa um ${caseTypes[type]}`,
-          `Krafa um ${caseTypes[type]}.pdf`,
+          `Krafa um ${caseTypes[type]} ${format(now, 'yyyy-MM-dd HH:mm')}`,
+          `Krafa um ${caseTypes[type]} ${format(now, 'yyyy-MM-dd HH:mm')}.pdf`,
           'application/pdf',
           pdf,
         )

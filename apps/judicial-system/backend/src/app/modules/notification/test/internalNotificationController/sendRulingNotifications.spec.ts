@@ -99,7 +99,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Dómur í máli 007-2022-07',
-          html: `Dómari hefur staðfestur dóm í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Dómari hefur staðfest dóm í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })

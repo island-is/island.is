@@ -53,6 +53,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
@@ -356,6 +357,7 @@ export const CaseFiles: React.FC = () => {
           <ContentBlock>
             <InputFileUpload
               name="fileUpload"
+              accept={Object.values(fileExtensionWhitelist)}
               fileList={filesInRVG}
               header={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}

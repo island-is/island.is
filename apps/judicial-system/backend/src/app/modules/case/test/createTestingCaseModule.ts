@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 
 import { getModelToken } from '@nestjs/sequelize'
@@ -10,7 +9,6 @@ import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
-import { EmailService } from '@island.is/email-service'
 import { MessageService } from '@island.is/judicial-system/message'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
@@ -32,7 +30,6 @@ import { CaseController } from '../case.controller'
 import { InternalCaseController } from '../internalCase.controller'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
-jest.mock('@island.is/email-service')
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
 jest.mock('../../police/police.service')
@@ -66,10 +63,6 @@ export const createTestingCaseModule = async () => {
       EventService,
       SigningService,
       DefendantService,
-      {
-        provide: EmailService,
-        useValue: { sendEmail: jest.fn(async () => uuid()) },
-      },
       {
         provide: IntlService,
         useValue: {
