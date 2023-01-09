@@ -31,6 +31,7 @@ interface HeaderProps {
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
+const minarsidurLink = '/minarsidur/'
 
 export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
@@ -98,7 +99,7 @@ export const Header: FC<HeaderProps> = ({
 
                     <Hidden below="lg">
                       <Box marginLeft={marginLeft}>
-                        <Link {...linkResolver('login')} skipTab>
+                        <a tabIndex={-1} href={minarsidurLink}>
                           <Button
                             colorScheme={buttonColorScheme}
                             variant="utility"
@@ -107,20 +108,20 @@ export const Header: FC<HeaderProps> = ({
                           >
                             {t.login}
                           </Button>
-                        </Link>
+                        </a>
                       </Box>
                     </Hidden>
 
                     <Hidden above="md">
                       <Box marginLeft={marginLeft}>
-                        <Link {...linkResolver('login')} skipTab>
+                        <a tabIndex={-1} href={minarsidurLink}>
                           <Button
                             colorScheme={buttonColorScheme}
                             variant="utility"
                             icon="person"
                             as="span"
                           />
-                        </Link>
+                        </a>
                       </Box>
                     </Hidden>
 
