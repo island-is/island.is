@@ -178,7 +178,7 @@ export const Cases: React.FC = () => {
       return c.state !== CaseState.DELETED
     })
 
-    return partition(casesWithoutDeleted, (c: CaseListEntry) => {
+    return partition(casesWithoutDeleted, (c) => {
       if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
         return false
       } else if (isPrisonAdminUser || isPrisonUser) {
