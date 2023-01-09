@@ -655,4 +655,11 @@ export const m = defineMessages({
     defaultMessage: 'Tilgreinið kennitölu ef um einstakling er að ræða',
     description: '',
   },
+
+  // Done
+  doneTitle: {
+    id: 'ir.application:doneTitle',
+    defaultMessage: 'Erfðafjárskýrsla móttekin',
+    description: '',
+  },
 })

@@ -67,7 +67,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
       },
       [States.done]: {
         meta: {
-          name: 'Approved',
+          name: 'Done',
           status: 'approved',
           progress: 1,
           lifecycle: EphemeralStateLifeCycle,
@@ -75,8 +75,8 @@ const InheritanceReportTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/form').then((val) =>
-                  Promise.resolve(val.form),
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
                 ),
               read: 'all',
             },

@@ -5,9 +5,11 @@ import {
   buildKeyValueField,
   buildMultiField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
 
@@ -160,6 +162,18 @@ export const heirs = buildSection({
               id: 'temp1',
               title: '',
               space: 'gutter',
+            }),
+            buildSubmitField({
+              id: 'inheritanceReport.submit',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Senda inn skýrslu',
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),
