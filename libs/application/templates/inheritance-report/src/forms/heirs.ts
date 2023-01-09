@@ -29,7 +29,24 @@ export const heirs = buildSection({
           children: [
             buildKeyValueField({
               label: 'Hrein eign',
-              value: '1.200.000 kr.',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String(
+                    (answers.otherAssets as any)?.total +
+                      (answers.money as any)?.total +
+                      (answers.stocks as any)?.total +
+                      (answers.claims as any)?.total +
+                      (answers.bankAccounts as any)?.total +
+                      (answers.inventory as any)?.total +
+                      1200000 +
+                      1200000 -
+                      (Number(answers.funeralCostAmount) +
+                        (answers.domesticAndForeignDebts as any)?.total +
+                        (answers.publicCharges as any)?.total) +
+                      ((answers.businessAssets as any)?.total -
+                        (answers.businessDebts as any)?.total),
+                  ),
+                ),
             }),
             buildDescriptionField({
               id: 'space',
@@ -47,7 +64,25 @@ export const heirs = buildSection({
             }),
             buildKeyValueField({
               label: 'Hrein eign til skiptis',
-              value: '1.000.000 kr.',
+              value: ({ answers }) =>
+                formatCurrency(
+                  String(
+                    (answers.otherAssets as any)?.total +
+                      (answers.money as any)?.total +
+                      (answers.stocks as any)?.total +
+                      (answers.claims as any)?.total +
+                      (answers.bankAccounts as any)?.total +
+                      (answers.inventory as any)?.total +
+                      1200000 +
+                      1200000 -
+                      (Number(answers.funeralCostAmount) +
+                        (answers.domesticAndForeignDebts as any)?.total +
+                        (answers.publicCharges as any)?.total) +
+                      ((answers.businessAssets as any)?.total -
+                        (answers.businessDebts as any)?.total) -
+                      200.0,
+                  ),
+                ),
             }),
           ],
         }),

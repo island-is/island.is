@@ -29,10 +29,14 @@ export const business = buildSection({
               description: m.businessAssetsDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'businessAssets.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
-                id: 'businessAssets',
+                id: 'businessAssets.data',
                 doesNotRequireAnswer: true,
                 component: 'TextFieldsRepeater',
               },
@@ -75,10 +79,14 @@ export const business = buildSection({
               description: m.businessDebtsDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'businessDebts.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
-                id: 'businessDebts',
+                id: 'businessDebts.data',
                 doesNotRequireAnswer: true,
                 component: 'TextFieldsRepeater',
               },
@@ -130,7 +138,7 @@ export const business = buildSection({
             buildKeyValueField({
               label: m.totalAmount,
               value: ({ answers }) =>
-                formatCurrency(String(answers.funeralCostAmount)),
+                formatCurrency(String((answers.businessAssets as any).total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -143,7 +151,7 @@ export const business = buildSection({
             buildKeyValueField({
               label: m.totalAmount,
               value: ({ answers }) =>
-                formatCurrency(String(answers.funeralCostAmount)),
+                formatCurrency(String((answers.businessDebts as any).total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -156,7 +164,12 @@ export const business = buildSection({
             buildKeyValueField({
               label: m.totalAmount,
               value: ({ answers }) =>
-                formatCurrency(String(answers.funeralCostAmount)),
+                formatCurrency(
+                  String(
+                    (answers.businessAssets as any).total -
+                      (answers.businessDebts as any).total,
+                  ),
+                ),
             }),
           ],
         }),

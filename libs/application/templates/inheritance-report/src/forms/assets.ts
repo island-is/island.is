@@ -80,7 +80,7 @@ export const assets = buildSection({
             buildCustomField(
               {
                 title: '',
-                id: 'inventory',
+                id: 'inventory.data',
                 doesNotRequireAnswer: true,
                 component: 'TextFieldsRepeater',
               },
@@ -128,7 +128,7 @@ export const assets = buildSection({
             buildCustomField(
               {
                 title: '',
-                id: 'bankAccounts',
+                id: 'bankAccounts.data',
                 component: 'TextFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
@@ -172,7 +172,7 @@ export const assets = buildSection({
             buildCustomField(
               {
                 title: '',
-                id: 'claims',
+                id: 'claims.data',
                 component: 'TextFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
@@ -215,7 +215,7 @@ export const assets = buildSection({
             buildCustomField(
               {
                 title: '',
-                id: 'stocks',
+                id: 'stocks.data',
                 component: 'TextFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
@@ -274,7 +274,7 @@ export const assets = buildSection({
             buildCustomField(
               {
                 title: '',
-                id: 'money',
+                id: 'money.data',
                 component: 'TextFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
@@ -284,6 +284,7 @@ export const assets = buildSection({
                     title: m.moneyTitle.defaultMessage,
                     id: 'moneyValue',
                     currency: true,
+                    width: 'full',
                   },
                 ],
                 repeaterButtonText: m.addMoney.defaultMessage,
@@ -291,6 +292,10 @@ export const assets = buildSection({
                 sumField: 'moneyValue',
               },
             ),
+            buildDescriptionField({
+              id: 'money.total',
+              title: '',
+            }),
           ],
         }),
       ],
@@ -313,7 +318,7 @@ export const assets = buildSection({
             buildCustomField(
               {
                 title: '',
-                id: 'otherAssets',
+                id: 'otherAssets.data',
                 component: 'TextFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
@@ -386,7 +391,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.marketValue,
               value: ({ answers }) =>
-                formatCurrency(String((answers.inventory as any).total)),
+                formatCurrency(String((answers.inventory as any)?.total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -399,7 +404,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.banksBalance,
               value: ({ answers }) =>
-                formatCurrency(String((answers.bankAccounts as any).total)),
+                formatCurrency(String((answers.bankAccounts as any)?.total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -412,7 +417,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.totalValue,
               value: ({ answers }) =>
-                formatCurrency(String((answers.claims as any).total)),
+                formatCurrency(String((answers.claims as any)?.total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -425,7 +430,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.totalValue,
               value: ({ answers }) =>
-                formatCurrency(String((answers.stocks as any).total)),
+                formatCurrency(String((answers.stocks as any)?.total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -438,7 +443,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: m.totalValue,
               value: ({ answers }) =>
-                formatCurrency(String((answers.money as any).total)),
+                formatCurrency(String((answers.money as any)?.total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -451,7 +456,7 @@ export const assets = buildSection({
             buildKeyValueField({
               label: 'Matsverð annarra eigna samtals á dánardegi',
               value: ({ answers }) =>
-                formatCurrency(String((answers.otherAssets as any).total)),
+                formatCurrency(String((answers.otherAssets as any)?.total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -463,17 +468,19 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.total,
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(
-                    (answers.otherAssets as any).total +
-                      (answers.money as any).total +
-                      (answers.stocks as any).total +
-                      (answers.claims as any).total +
-                      (answers.bankAccounts as any).total +
-                      (answers.inventory as any).total,
-                  ),
-                ),
+              value: ({ answers }) => {
+                const total =
+                  (answers.otherAssets as any)?.total +
+                  (answers.money as any)?.total +
+                  (answers.stocks as any)?.total +
+                  (answers.claims as any)?.total +
+                  (answers.bankAccounts as any)?.total +
+                  (answers.inventory as any)?.total +
+                  1200000 +
+                  1200000
+
+                return formatCurrency(String(total))
+              },
             }),
           ],
         }),

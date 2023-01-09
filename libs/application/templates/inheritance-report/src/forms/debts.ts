@@ -54,10 +54,14 @@ export const debts = buildSection({
               description: m.domesticAndForeignDebtsDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'domesticAndForeignDebts.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
-                id: 'domesticAndForeignDebts',
+                id: 'domesticAndForeignDebts.data',
                 component: 'TextFieldsRepeater',
               },
               {
@@ -101,10 +105,14 @@ export const debts = buildSection({
               description: m.publicChargesDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'publicCharges.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
-                id: 'publicCharges',
+                id: 'publicCharges.data',
                 component: 'TextFieldsRepeater',
               },
               {
@@ -112,7 +120,7 @@ export const debts = buildSection({
                   {
                     title: m.amount.defaultMessage,
                     id: 'publicChargesAmount',
-                    width: 'half',
+                    width: 'full',
                   },
                 ],
                 repeaterButtonText:
@@ -149,7 +157,7 @@ export const debts = buildSection({
             }),
             buildDividerField({}),
             buildDescriptionField({
-              id: 'overviewDebts',
+              id: 'overviewDomesticAndForeignDebts',
               title: m.debtsTitle,
               titleVariant: 'h3',
               marginBottom: 'gutter',
@@ -159,14 +167,12 @@ export const debts = buildSection({
               label: m.totalAmount,
               value: ({ answers }) =>
                 formatCurrency(
-                  String(
-                    (answers.totalAmounts as any)?.domesticAndForeignDebtsTotal,
-                  ),
+                  String((answers.domesticAndForeignDebts as any)?.total),
                 ),
             }),
             buildDividerField({}),
             buildDescriptionField({
-              id: 'publicCharges',
+              id: 'overviewPublicCharges',
               title: m.publicChargesTitle,
               titleVariant: 'h3',
               marginBottom: 'gutter',
@@ -175,8 +181,25 @@ export const debts = buildSection({
             buildKeyValueField({
               label: m.totalAmount,
               value: ({ answers }) =>
+                formatCurrency(String((answers.publicCharges as any)?.total)),
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewAllDebtsWorth',
+              title: m.totalValueOfDebts,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.totalAmount,
+              value: ({ answers }) =>
                 formatCurrency(
-                  String((answers.totalAmounts as any)?.publicChargesTotal),
+                  String(
+                    Number(answers.funeralCostAmount) +
+                      (answers.domesticAndForeignDebts as any)?.total +
+                      (answers.publicCharges as any)?.total,
+                  ),
                 ),
             }),
           ],

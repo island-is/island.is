@@ -31,7 +31,6 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   application,
   field,
 }) => {
-  console.log(application.answers)
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
@@ -88,14 +87,14 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   }
 
   useEffect(() => {
-    setValue(`${id}.total`, total)
-  }, [total])
+    const addTotal = id.replace('data', 'total')
+    setValue(addTotal, total)
+  }, [id, total, setValue])
 
   return (
     <Box>
       {fields.map((repeaterField, index) => {
         const fieldIndex = `${id}[${index}]`
-
         return (
           <Box
             position="relative"

@@ -584,6 +584,11 @@ export const m = defineMessages({
     defaultMessage: 'Gjald',
     description: '',
   },
+  totalValueOfDebts: {
+    id: 'ir.application:totalValueOfDebts',
+    defaultMessage: 'Samtals virði eigna',
+    description: '',
+  },
 
   // DebtsOverview
   totalAmount: {
