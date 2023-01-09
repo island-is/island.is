@@ -243,7 +243,7 @@ export interface Case {
   crimeScenes?: CrimeSceneMap
 }
 
-export type CaseList = Pick<Case, 'id' | 'type'>
+export type CaseListEntry = Pick<Case, 'id' | 'courtDate'>
 
 export type CreateCase = Pick<
   Case,

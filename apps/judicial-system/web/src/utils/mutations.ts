@@ -17,43 +17,15 @@ export const CasesQuery = gql`
     cases {
       id
       created
-      modified
-      type
-      indictmentSubtypes
-      state
+      courtDate
       policeCaseNumbers
+      state
+      type
       defendants {
         id
         nationalId
         name
         noNationalId
-      }
-      validToDate
-      decision
-      isValidToDateInThePast
-      courtCaseNumber
-      courtDate
-      rulingDate
-      courtEndTime
-      accusedAppealDecision
-      prosecutorAppealDecision
-      accusedPostponedAppealDate
-      prosecutorPostponedAppealDate
-      parentCase {
-        id
-      }
-      initialRulingDate
-      judge {
-        id
-      }
-      prosecutor {
-        id
-      }
-      creatingProsecutor {
-        id
-      }
-      registrar {
-        id
       }
     }
   }

@@ -79,12 +79,15 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+import { CaseListService } from '../caseList/caseList.service'
+import { CaseListEntry } from '../caseList/caseList.model'
 
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
+    private readonly caseListService: CaseListService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -265,10 +268,10 @@ export class CaseController {
     isArray: true,
     description: 'Gets all existing cases',
   })
-  getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
+  getAll(@CurrentHttpUser() user: User): Promise<CaseListEntry[]> {
     this.logger.debug('Getting all cases')
 
-    return this.caseService.getAll(user)
+    return this.caseListService.getAll(user)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)

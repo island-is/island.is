@@ -1,15 +1,12 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import type {
-  CaseList as TCaseList,
+  CaseListEntry as TCaseListEntry,
   CaseType,
 } from '@island.is/judicial-system/types'
 
 @ObjectType()
-export class CaseList implements TCaseList {
+export class CaseListEntry implements TCaseListEntry {
   @Field(() => ID)
   readonly id!: string
-
-  @Field(() => String)
-  readonly type!: CaseType
 }
