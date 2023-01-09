@@ -90,13 +90,13 @@ export const review = {
       },
       buyerCoOwner: {
         id: 'ta.cov.application:review.step.title.buyerCoOwner',
-        defaultMessage: 'Samþykki meðeiganda kaupanda',
+        defaultMessage: 'Samþykki meðeiganda',
         description:
           'Buyer coowner title in status step part of review process',
       },
       buyerOperator: {
         id: 'ta.cov.application:review.step.title.buyerOperator',
-        defaultMessage: 'Samþykki umráðarmanns kaupanda',
+        defaultMessage: 'Samþykki umráðarmanns',
         description:
           'Buyer operator title in status step part of review process',
       },

@@ -63,6 +63,7 @@ export const ownerSubSection = buildSubSection({
           id: 'ownerCoOwner',
           title: '',
           component: 'CoOwner',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

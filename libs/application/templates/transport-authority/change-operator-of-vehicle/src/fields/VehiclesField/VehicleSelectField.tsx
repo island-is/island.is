@@ -47,6 +47,11 @@ export const VehicleSelectField: FC<
       | string
       | undefined,
   )
+  const [type, setType] = useState<string | undefined>(
+    getValueViaPath(application.answers, 'pickVehicle.type', undefined) as
+      | string
+      | undefined,
+  )
 
   const onChange = (option: Option) => {
     const currentVehicle = currentVehicleList[parseInt(option.value, 10)]
@@ -60,6 +65,7 @@ export const VehicleSelectField: FC<
       })
       setPlate(currentVehicle.permno)
       setColor(currentVehicle.color || undefined)
+      setType(currentVehicle.make || undefined)
       setIsLoading(false)
     }
   }
@@ -105,6 +111,12 @@ export const VehicleSelectField: FC<
         value={color}
         ref={register({ required: true })}
         name="pickVehicle.color"
+      />
+      <input
+        type="hidden"
+        value={type}
+        ref={register({ required: true })}
+        name="pickVehicle.type"
       />
     </Box>
   )

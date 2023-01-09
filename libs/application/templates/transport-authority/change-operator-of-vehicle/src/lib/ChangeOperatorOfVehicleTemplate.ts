@@ -174,11 +174,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: [
-                  'sellerCoOwner',
-                  'buyerCoOwnerAndOperator',
-                  'rejecter',
-                ],
+                answers: ['ownerCoOwner', 'operators', 'rejecter'],
               },
               read: 'all',
             },

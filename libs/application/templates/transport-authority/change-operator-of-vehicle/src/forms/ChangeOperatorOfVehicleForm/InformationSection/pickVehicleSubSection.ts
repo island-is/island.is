@@ -18,6 +18,7 @@ export const pickVehicleSubSection = buildSubSection({
           id: 'pickVehicle',
           component: 'VehiclesField',
           title: '',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

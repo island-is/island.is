@@ -5,9 +5,17 @@ export const GET_VEHICLE_INFORMATION = `
         nationalId
         owner
       }
+    }
+  }
+`
+
+export const GET_OPERATOR_INFO = `
+  query GetVehiclesDetail($input: GetVehicleDetailInput!) {
+    vehiclesDetail(input: $input) {
       operators {
         nationalId
         name
+        startDate
       }
     }
   }

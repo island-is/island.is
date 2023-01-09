@@ -5,7 +5,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { OperatorField } from '../../../shared'
+import { OperatorInformation, OldOperatorInformation } from '../../../shared'
 
 export const mainOperatorSubSection = buildSubSection({
   id: 'buyerMainOperator',
@@ -15,8 +15,17 @@ export const mainOperatorSubSection = buildSubSection({
       formValue,
       'operators',
       [],
-    ) as OperatorField[]
-    return operators.length > 1
+    ) as OperatorInformation[]
+    const oldOperators = getValueViaPath(
+      formValue,
+      'oldOperators',
+      [],
+    ) as OldOperatorInformation[]
+    return (
+      operators.length +
+        oldOperators?.filter((x) => x.wasRemoved === 'false').length >
+      1
+    )
   },
   children: [
     buildMultiField({
@@ -32,7 +41,7 @@ export const mainOperatorSubSection = buildSubSection({
               application.answers,
               'operators',
               [],
-            ) as OperatorField[]
+            ) as OperatorInformation[]
             return operators.map((operator) => {
               return {
                 value: operator.nationalId,

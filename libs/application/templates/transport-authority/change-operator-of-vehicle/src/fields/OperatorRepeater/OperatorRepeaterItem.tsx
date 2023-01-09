@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
-import { ArrayField, useFormContext } from 'react-hook-form'
+import { ArrayField } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import { OperatorInformation } from '../../shared'
@@ -20,7 +20,7 @@ interface Props {
   index: number
   rowLocation: number
   repeaterField: Partial<ArrayField<OperatorInformation, 'id'>>
-  handleRemove: (index: number, wasAdded?: string) => void
+  handleRemove: (index: number) => void
 }
 
 export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
@@ -32,25 +32,20 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   ...props
 }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
-  const wasAddedField = `${fieldIndex}.wasAdded`
 
   return (
     <Box position="relative" key={repeaterField.id} marginBottom={4}>
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
-          {formatMessage(information.labels.operator.operatorTitle)}{' '}
+          {formatMessage(information.labels.operator.operatorTempTitle)}{' '}
           {rowLocation}
         </Text>
         <Box>
-          <Button
-            variant="text"
-            onClick={handleRemove.bind(null, index, repeaterField.wasAdded)}
-          >
+          <Button variant="text" onClick={handleRemove.bind(null, index)}>
             {formatMessage(information.labels.operator.remove)}
           </Button>
         </Box>
@@ -92,12 +87,6 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
             }
           />
         </GridColumn>
-        <input
-          type="hidden"
-          value={`${repeaterField.wasAdded}`}
-          ref={register({ required: true })}
-          name={wasAddedField}
-        />
       </GridRow>
     </Box>
   )

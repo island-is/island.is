@@ -4,8 +4,10 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 export const getChargeItemCodes = (
   answers: ChangeOperatorOfVehicle,
 ): Array<string> => {
-  const operatorWasAdded = !!answers.operators?.find((x) => x.wasAdded)
-  const operatorWasRemoved = !!answers.removed?.wasRemoved
+  const operatorWasAdded = answers.operators?.length > 0
+  const operatorWasRemoved = !!answers.oldOperators?.find(
+    (x) => x.wasRemoved === 'true',
+  )
 
   const result = []
 

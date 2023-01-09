@@ -3,6 +3,7 @@ import {
   OperatorInformationSchema,
   RejecterSchema,
   UserInformationSchema,
+  OldOperatorInformationSchema,
 } from '../lib/dataSchema'
 import { MessageDescriptor } from '@formatjs/intl'
 import { TagVariant } from '@island.is/island-ui/core'
@@ -41,3 +42,6 @@ export type ReviewState = 'states' | 'overview' | 'conclusion'
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>
 export type OperatorInformation = z.TypeOf<typeof OperatorInformationSchema>
 export type Rejecter = z.TypeOf<typeof RejecterSchema>
+export type OldOperatorInformation = z.TypeOf<
+  typeof OldOperatorInformationSchema
+>
