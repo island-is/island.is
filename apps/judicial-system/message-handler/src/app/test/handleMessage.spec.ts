@@ -44,6 +44,7 @@ describe('MessageHandlerService - Handle message', () => {
       const messageHandlerService = new MessageHandlerService(
         (undefined as unknown) as MessageService,
         new InternalDeliveryService(config, logger),
+        config,
         logger,
       )
       const then = {} as Then
