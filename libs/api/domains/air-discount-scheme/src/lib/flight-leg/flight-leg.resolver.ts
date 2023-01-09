@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Info, Query, Resolver } from '@nestjs/graphql'
+import { Info, Query, Resolver } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -12,7 +12,6 @@ import { Audit } from '@island.is/nest/audit'
 import { FlightLegService } from './flight-leg.service'
 import { FlightLeg } from '../models/flightLeg.model'
 import { detectGraphqlDepthFromInfo } from '../utils/detect-graphql-depth'
-import { repeat } from 'lodash'
 import { GraphQLError, GraphQLResolveInfo } from 'graphql'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
