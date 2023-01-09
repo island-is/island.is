@@ -1,14 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import {
-  Box,
-  FocusableBox,
-  Icon,
-  IconMapIcon,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, useActiveModule, useNavigation } from '@island.is/portals/core'
 
@@ -70,7 +63,11 @@ export const ModuleSwitcherItems = ({
             size="small"
           />
           <Box marginLeft={3}>
-            <Text color={color} variant={mobile ? 'h3' : 'medium'}>
+            <Text
+              color={color}
+              variant={mobile ? 'h3' : 'medium'}
+              fontWeight={!mobile && active ? 'semiBold' : undefined}
+            >
               {label}
             </Text>
           </Box>

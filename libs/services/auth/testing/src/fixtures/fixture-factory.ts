@@ -10,6 +10,8 @@ import {
   ApiScopeGroup,
   ApiScopeUser,
   ApiScopeUserAccess,
+  Client,
+  ClientAllowedScope,
   Delegation,
   DelegationScope,
   Domain,
@@ -17,12 +19,13 @@ import {
 } from '@island.is/auth-api-lib'
 import {
   CreateApiScope,
-  CreateApiScopeGroup,
   CreateApiScopeUserAccess,
   CreateCustomDelegation,
-  CreateDomain,
 } from './types'
 import startOfDay from 'date-fns/startOfDay'
+import { CreateDomain } from './domain.fixture'
+import { CreateApiScopeGroup } from './apiScopeGroup.fixture'
+import { CreateClient } from './client.fixture'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -36,7 +39,7 @@ export class FixtureFactory {
     description,
     nationalId,
     apiScopes = [],
-  }: CreateDomain = {}): Promise<Domain> {
+  }: CreateDomain): Promise<Domain> {
     const domain = await this.get(Domain).create({
       name: name ?? faker.random.word(),
       description: description ?? faker.lorem.sentence(),
@@ -50,12 +53,22 @@ export class FixtureFactory {
     return domain
   }
 
+  async createClient(client: CreateClient): Promise<Client> {
+    return this.get(Client).create(client)
+  }
+
+  async createClientAllowedScope(
+    scope: Partial<ClientAllowedScope>,
+  ): Promise<ClientAllowedScope> {
+    return this.get(ClientAllowedScope).create(scope)
+  }
+
   async createApiScope({
     domainName,
     ...apiScope
   }: CreateApiScope = {}): Promise<ApiScope> {
     if (!domainName) {
-      domainName = (await this.createDomain()).name
+      domainName = (await this.createDomain({ name: faker.random.word() })).name
     }
     return this.get(ApiScope).create({
       enabled: apiScope.enabled ?? true,
@@ -87,7 +100,7 @@ export class FixtureFactory {
     ...data
   }: CreateApiScopeGroup = {}): Promise<ApiScopeGroup> {
     if (!domainName) {
-      domainName = (await this.createDomain()).name
+      domainName = (await this.createDomain({ name: faker.random.word() })).name
     }
     const group = await this.get(ApiScopeGroup).create({
       id: data.id ?? faker.datatype.uuid(),

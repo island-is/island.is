@@ -10,11 +10,11 @@ import {
 import {
   expectMatchingDelegations,
   findExpectedDelegationModels,
+  FixtureFactory,
 } from '@island.is/services/auth/testing'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
-import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { setupWithAuth } from '../../../../test/setup'
 import {
   testCompanyActorNationalId,

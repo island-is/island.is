@@ -397,11 +397,18 @@ export class CaseService {
             caseFileId: caseFile.id,
           })) ?? []
 
-      messages.push(
-        ...deliverCaseFileToCourtMessages,
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId: theCase.id },
-        { type: MessageType.DELIVER_CASE_TO_POLICE, caseId: theCase.id },
-      )
+      messages.push(...deliverCaseFileToCourtMessages, {
+        type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+        caseId: theCase.id,
+      })
+
+      // Case created from LOKE
+      if (theCase.origin === CaseOrigin.LOKE) {
+        messages.push({
+          type: MessageType.DELIVER_CASE_TO_POLICE,
+          caseId: theCase.id,
+        })
+      }
     }
 
     return this.messageService.sendMessagesToQueue(messages)

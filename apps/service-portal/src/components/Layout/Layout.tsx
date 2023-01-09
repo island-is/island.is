@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
 import {
@@ -16,18 +16,16 @@ import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
-import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
-import cn from 'classnames'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
 import { useAlertBanners } from '@island.is/service-portal/graphql'
 import { useMeasure } from 'react-use'
 
 const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
-  const [{ mobileMenuState, sidebarState }] = useStore()
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
   const globalBanners = banners.filter((banner) =>
@@ -41,25 +39,27 @@ const Layout: FC = ({ children }) => {
       {globalBanners.length > 0 && (
         <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
       )}
-      <Header position={height ? height : 0} />
+      <Header
+        setMobileMenuOpen={(set: boolean) => setMobileMenuOpen(set)}
+        mobileMenuOpen={mobileMenuOpen}
+        position={height ? height : 0}
+      />
       {/* // counter intuitive, the scroll blocks all scrolling aside from the component that is wrapped */}
       <Hidden print>
-        <RemoveScroll enabled={mobileMenuState === 'open'}>
+        <RemoveScroll enabled={mobileMenuOpen}>
           <Hidden above="sm">
-            <MobileMenu position={height ? height : 0} />
+            <MobileMenu
+              position={height ? height : 0}
+              mobileMenuOpen={mobileMenuOpen}
+              setMobileMenuOpen={() => setMobileMenuOpen(false)}
+            />
           </Hidden>
         </RemoveScroll>
         <Hidden below="md">
           <Sidebar position={height ? height : 0} />
         </Hidden>
       </Hidden>
-      <Box
-        className={cn(
-          styles.layoutWrapper,
-          sidebarState === 'closed' && styles.layoutWrapperWide,
-        )}
-        paddingBottom={7}
-      >
+      <Box className={styles.layoutWrapper} paddingBottom={7}>
         <Box as="main" component="main" style={{ marginTop: height }}>
           <GridContainer className={styles.layoutContainer}>
             <GridRow>
