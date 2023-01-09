@@ -6,6 +6,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { Controller, Get, Inject, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import {
@@ -25,7 +26,8 @@ import { CaseListService } from './caseList.service'
 export class CaseListController {
   constructor(
     private readonly caseListService: CaseListService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -44,7 +46,7 @@ export class CaseListController {
     description: 'Gets all existing cases',
   })
   getAll(@CurrentHttpUser() user: User): Promise<CaseListEntry[]> {
-    // this.logger.debug('Getting all cases')
+    this.logger.debug('Getting all cases')
 
     return this.caseListService.getAll(user)
   }
