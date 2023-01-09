@@ -21,7 +21,6 @@ import {
 } from '../models/getCurrentVehicles.model'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
-import { getVehicleOwnerchangeUpdatelocks } from '../utils/updatelocks'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'vehicles-service'
@@ -157,14 +156,6 @@ export class VehiclesService {
           vehicle.permno || '',
         )
 
-        // Get updatelocks
-        const vehicleDetails = await this.getVehicleDetail(auth, {
-          permno: vehicle.permno || '',
-        })
-        const updatelocks = getVehicleOwnerchangeUpdatelocks(
-          vehicleDetails?.updatelocks,
-        )
-
         // Get owner change validation
         // Note: Will just use today's date, since we dont have the purchase date at this point
         const today = new Date()
@@ -179,9 +170,7 @@ export class VehiclesService {
           make: vehicle.make || undefined,
           color: vehicle.color || undefined,
           role: vehicle.role || undefined,
-          isStolen: vehicle.stolen,
           isDebtLess: debtStatus.isDebtLess,
-          updatelocks: updatelocks,
           ownerChangeErrorMessages: ownerChangeValidation?.hasError
             ? ownerChangeValidation.errorMessages
             : null,
@@ -216,14 +205,6 @@ export class VehiclesService {
       permno,
     )
 
-    // Get updatelocks
-    const vehicleDetails = await this.getVehicleDetail(auth, {
-      permno: permno,
-    })
-    const updatelocks = getVehicleOwnerchangeUpdatelocks(
-      vehicleDetails?.updatelocks,
-    )
-
     // Get owner change validation
     // Note: Will just use today's date, since we dont have the purchase date at this point
     const today = new Date()
@@ -235,7 +216,6 @@ export class VehiclesService {
 
     return {
       isDebtLess: debtStatus.isDebtLess,
-      updatelocks: updatelocks,
       ownerChangeErrorMessages: ownerChangeValidation?.hasError
         ? ownerChangeValidation.errorMessages
         : null,

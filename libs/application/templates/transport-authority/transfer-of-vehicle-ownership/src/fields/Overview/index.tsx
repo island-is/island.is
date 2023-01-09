@@ -211,12 +211,14 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
                         const message = formatMessage(
                           getValueViaPath(
                             applicationCheck.validation,
-                            error?.errorNo?.toString() || '',
+                            error?.errorNo || '',
                           ),
                         )
                         const defaultMessage = error.defaultMessage
                         const fallbackMessage =
-                          formatMessage(applicationCheck.validation['0']) +
+                          formatMessage(
+                            applicationCheck.validation.fallbackErrorMessage,
+                          ) +
                           ' - ' +
                           error?.errorNo
 

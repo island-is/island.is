@@ -42,20 +42,11 @@ import {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
+import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
-import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
-
-const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
-  name: file.name,
-  type: file.type,
-  id: file.id,
-  key: file.key,
-  status: 'done',
-  percent: 100,
-  size: file.size,
-})
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
@@ -160,14 +151,16 @@ const UploadFilesToPoliceCase: React.FC<{
   const onRemove = useCallback(
     async (file: UploadFile) => {
       try {
-        const response = await remove(file.id)
-        if (!response.data?.deleteFile.success) {
-          throw new Error(`Failed to delete file: ${file.id}`)
-        }
+        if (file.id) {
+          const response = await remove(file.id)
+          if (!response.data?.deleteFile.success) {
+            throw new Error(`Failed to delete file: ${file.id}`)
+          }
 
-        setDisplayFiles((previous) => {
-          return previous.filter((f) => f.id !== file.id)
-        })
+          setDisplayFiles((previous) => {
+            return previous.filter((f) => f.id !== file.id)
+          })
+        }
       } catch (e) {
         toast.error(formatMessage(errorMessages.failedDeleteFile))
       }
@@ -179,7 +172,9 @@ const UploadFilesToPoliceCase: React.FC<{
     <InputFileUpload
       name="fileUpload"
       fileList={displayFiles}
+      accept="application/pdf"
       header={formatMessage(m.inputFileUpload.header)}
+      description={formatMessage(m.inputFileUpload.description)}
       buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
       onChange={onChange}
       onRemove={onRemove}

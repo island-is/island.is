@@ -43,7 +43,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
   }
 
-  async getInsuranceCompanyList({ auth }: TemplateApiModuleActionProps) {
+  async getInsuranceCompanyList() {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()
   }
 
@@ -411,7 +411,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         ssn: answers?.buyer?.nationalId,
         email: answers?.buyer?.email,
       },
-      // Note: API throws error if timestamp is 00:00:00, so we will use noon
       dateOfPurchase: new Date(answers?.vehicle?.date),
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
       insuranceCompanyCode: answers?.insurance?.value,

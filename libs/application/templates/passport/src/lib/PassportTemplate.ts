@@ -1,3 +1,4 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -15,6 +16,7 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
+import { IdentityDocumentApi } from '../dataProviders'
 import { m } from '../lib/messages'
 import {
   ApiActions,
@@ -85,10 +87,7 @@ const PassportTemplate: ApplicationTemplate<
                   externalDataId: 'payment',
                   params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
                 }),
-                MockProviderApi.configure({
-                  externalDataId: 'identityDocument',
-                  params: IdentityDocumentProviderMock,
-                }),
+                IdentityDocumentApi,
                 DistrictsApi,
               ],
             },
@@ -171,10 +170,7 @@ const PassportTemplate: ApplicationTemplate<
                   externalDataId: 'payment',
                   params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
                 }),
-                MockProviderApi.configure({
-                  externalDataId: 'identityDocument',
-                  params: IdentityDocumentProviderMock,
-                }),
+                IdentityDocumentApi,
                 DistrictsApi,
               ],
             },
@@ -234,12 +230,16 @@ const PassportTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToParentB: assign((context) => {
+        const parentB = getValueViaPath<string>(
+          context.application.answers,
+          'childsPersonalInfo.guardian2.nationalId',
+        )
+
         return {
           ...context,
           application: {
             ...context.application,
-            // Assigning Gervimaður Útlönd for testing
-            assignees: ['0101307789'],
+            assignees: parentB ? [parentB] : [],
           },
         }
       }),

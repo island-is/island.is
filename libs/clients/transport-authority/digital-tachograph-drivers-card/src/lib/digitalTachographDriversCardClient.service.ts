@@ -89,7 +89,7 @@ export class DigitalTachographDriversCardClient {
     auth: User,
     request: DriversCardApplicationRequest,
   ): Promise<void> {
-    const result = await this.driversCardApiWithAuth(auth).v1DrivercardsPost({
+    await this.driversCardApiWithAuth(auth).v1DrivercardsPost({
       driverCardApplicationRequest: {
         personIdNumber: request.ssn,
         fullName: request.fullName,

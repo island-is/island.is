@@ -1,6 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { lookup } from 'dns'
 import { ReturnTypeMessage } from '../../gen/fetch'
 import { OwnerChangeApi } from '../../gen/fetch/apis'
 import {
@@ -42,7 +41,7 @@ export class VehicleOwnerChangeClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, becuase if ownerchange results in error,
+      // Note: We need to wrap in try-catch to get the error messages, because if ownerchange results in error,
       // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
       // that is of the same class as 200 result schema
       if (e?.problem?.Errors) {
@@ -53,14 +52,29 @@ export class VehicleOwnerChangeClient {
     }
 
     const warnSeverityError = 'E'
-    errorList = errorList.filter((x) => x.warnSever === warnSeverityError)
+    const warnSeverityLock = 'L'
+    errorList = errorList.filter(
+      (x) =>
+        x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock,
+    )
 
     return {
       hasError: errorList.length > 0,
-      errorMessages: errorList.map((item) => ({
-        errorNo: item.warningSerialNumber,
-        defaultMessage: item.errorMess,
-      })),
+      errorMessages: errorList.map((item) => {
+        let errorNo = item.warningSerialNumber?.toString()
+
+        // Note: For vehicle locks, we need to do some special parsing since
+        // the error number (warningSerialNumber) is always -1 for locks,
+        // but the number is included in the errorMess field (value before the first space)
+        if (item.warnSever === warnSeverityLock) {
+          errorNo = item.errorMess?.split(' ')[0]
+        }
+
+        return {
+          errorNo: (item.warnSever || '_') + errorNo,
+          defaultMessage: item.errorMess,
+        }
+      }),
     }
   }
 
@@ -81,6 +95,7 @@ export class VehicleOwnerChangeClient {
         insuranceCompanyCode = dummyInsuranceCompanyCode
       }
 
+      // Note: API throws error if timestamp is 00:00:00, so we will use noon
       const purchaseDate = getDateAtNoon(ownerChange.dateOfPurchase)
 
       // Note: we have manually changed this endpoint to void, since the messages we want only
@@ -107,7 +122,7 @@ export class VehicleOwnerChangeClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, becuase if ownerchange results in error,
+      // Note: We need to wrap in try-catch to get the error messages, because if ownerchange results in error,
       // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
       // that is of the same class as 200 result schema
       if (e?.problem?.Errors) {
@@ -118,14 +133,29 @@ export class VehicleOwnerChangeClient {
     }
 
     const warnSeverityError = 'E'
-    errorList = errorList.filter((x) => x.warnSever === warnSeverityError)
+    const warnSeverityLock = 'L'
+    errorList = errorList.filter(
+      (x) =>
+        x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock,
+    )
 
     return {
       hasError: errorList.length > 0,
-      errorMessages: errorList.map((item) => ({
-        errorNo: item.warningSerialNumber,
-        defaultMessage: item.errorMess,
-      })),
+      errorMessages: errorList.map((item) => {
+        let errorNo = item.warningSerialNumber?.toString()
+
+        // Note: For vehicle locks, we need to do some special parsing since
+        // the error number (warningSerialNumber) is always -1 for locks,
+        // but the number is included in the errorMess field (value before the first space)
+        if (item.warnSever === warnSeverityLock) {
+          errorNo = item.errorMess?.split(' ')[0]
+        }
+
+        return {
+          errorNo: (item.warnSever || '_') + errorNo,
+          defaultMessage: item.errorMess,
+        }
+      }),
     }
   }
 
@@ -159,6 +189,7 @@ export class VehicleOwnerChangeClient {
   ): Promise<void> {
     const useGroup = '000'
 
+    // Note: API throws error if timestamp is 00:00:00, so we will use noon
     const purchaseDate = getDateAtNoon(ownerChange.dateOfPurchase)
 
     await this.ownerchangeApiWithAuth(auth).rootPost({

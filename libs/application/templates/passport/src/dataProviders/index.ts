@@ -1,3 +1,4 @@
+import { defineTemplateApi } from '@island.is/application/types'
 export {
   NationalRegistryUserApi,
   UserProfileApi,
@@ -5,3 +6,7 @@ export {
   MockProviderApi,
   DistrictsApi,
 } from '@island.is/application/types'
+
+export const IdentityDocumentApi = defineTemplateApi({
+  action: 'identityDocument',
+})

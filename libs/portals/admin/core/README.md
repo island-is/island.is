@@ -2,7 +2,11 @@
 
 # Portals Admin Core
 
-This library was generated with [Nx](https://nx.dev).
+Library containing core functionality, components and other utilities for the Portals Admin application.
+
+## Extracting strings
+
+Run `yarn nx run portals/admin/core:extract-strings` to extract messages in this library and push to Contentful.
 
 ## Running unit tests
 

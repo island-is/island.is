@@ -32,13 +32,13 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     super('DrivingLicenseShared')
   }
 
-  private async hasTeachingRights(nationalId: string): Promise<Boolean> {
+  private async hasTeachingRights(nationalId: string): Promise<boolean> {
     return await this.drivingLicenseService.getIsTeacher({ nationalId })
   }
 
   async getHasTeachingRights({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Boolean> {
+  }: TemplateApiModuleActionProps): Promise<boolean> {
     const teachingRights = await this.hasTeachingRights(auth.nationalId)
     if (teachingRights) {
       return true
@@ -55,7 +55,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
   async getisEmployee({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Boolean> {
+  }: TemplateApiModuleActionProps): Promise<boolean> {
     const isEmployee = await this.drivingLicenseBookService.isSchoolStaff(auth)
     if (isEmployee) {
       return isEmployee
@@ -150,6 +150,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       currentLicense: categoryB ? categoryB.name : null,
       healthRemarks: drivingLicense?.healthRemarks,
       categories: drivingLicense?.categories,
+      id: drivingLicense?.id,
+      birthCountry: drivingLicense?.birthCountry,
     }
   }
 

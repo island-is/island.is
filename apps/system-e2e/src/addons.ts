@@ -1,4 +1,4 @@
-import { expect, Locator } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
@@ -24,5 +24,21 @@ expect.extend({
       message: () => (count > value ? 'passed' : 'failed'),
       pass: count > value,
     }
+  },
+  async toBeApplication(received: string | Page, ofType = '\\w+') {
+    const url: string = typeof received == 'string' ? received : received.url()
+    const protocol = 'https?://'
+    const host = '[^/]+'
+    const applicationType = ofType // e.g. p-merki, okuskoli
+    const applicationId = '(/(\\w|-)*)?'
+    const applicationRegExp = new RegExp(
+      `^${protocol}${host}/umsoknir/${applicationType}${applicationId}$`,
+    )
+    const pass = !!applicationRegExp.test(url)
+    const message = () =>
+      `Current page is ${pass ? '' : '*not* '}an application
+       Pattern ${applicationRegExp}
+       URL is  ${url}`
+    return { message, pass }
   },
 })

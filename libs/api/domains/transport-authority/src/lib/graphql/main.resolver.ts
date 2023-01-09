@@ -7,8 +7,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { TransportAuthorityApi } from '../transportAuthority.service'
-import { CheckTachoNetInput, OwnerChangeAnswers } from './dto'
-import { CheckTachoNetExists, OwnerChangeValidation } from './models'
+import { OwnerChangeAnswers, CheckTachoNetInput } from './dto'
+import { OwnerChangeValidation, CheckTachoNetExists } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
