@@ -116,6 +116,15 @@ export class PoliceService {
           throw reason
         }
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the file was not found
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+            detail: reason.message,
+          })
+        }
+
         this.eventService.postErrorEvent(
           'Failed to get police case file',
           {
@@ -127,15 +136,6 @@ export class PoliceService {
           },
           reason,
         )
-
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the file was not found
-          throw new NotFoundException({
-            ...reason,
-            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
-            detail: reason.message,
-          })
-        }
 
         throw new BadGatewayException({
           ...reason,
@@ -175,7 +175,7 @@ export class PoliceService {
         const reason = await res.text()
 
         // The police system does not provide a structured error response.
-        // When police case does not exist, a stack trace is returned.
+        // When a police case does not exist, a stack trace is returned.
         throw new NotFoundException({
           message: `Police case for case ${caseId} does not exist`,
           detail: reason,
@@ -184,6 +184,15 @@ export class PoliceService {
       .catch((reason) => {
         if (reason instanceof NotFoundException) {
           throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case for case ${caseId} does not exist`,
+            detail: reason.message,
+          })
         }
 
         this.eventService.postErrorEvent(
@@ -195,11 +204,6 @@ export class PoliceService {
           },
           reason,
         )
-
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case has no files
-          return []
-        }
 
         throw new BadGatewayException({
           ...reason,
@@ -264,8 +268,11 @@ export class PoliceService {
         throw response
       })
       .catch((reason) => {
-        // Do not spam the logs with errors
-        if (!(reason instanceof ServiceUnavailableException)) {
+        if (reason instanceof ServiceUnavailableException) {
+          // Do not spam the logs with errors
+          // Act as if the case was updated
+          return true
+        } else {
           this.logger.error(`Failed to update police case ${caseId}`, {
             reason,
           })

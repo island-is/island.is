@@ -252,10 +252,11 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
         selectedDate={crimeScene?.date}
         dateOnly={true}
         onChange={(date, valid) => {
-          if (date && valid)
+          if (date && valid) {
             updatePoliceCases(index, {
               crimeScene: { ...crimeScene, date: date },
             })
+          }
         }}
       />
     </BlueBox>
