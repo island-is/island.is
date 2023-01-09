@@ -124,6 +124,7 @@ export class CmsResolver {
   getContentSlug(
     @Args('input') input: GetContentSlugInput,
   ): Promise<ContentSlug | null> {
+    console.log('Test')
     return this.cmsContentfulService.getContentSlug(input)
   }
 
