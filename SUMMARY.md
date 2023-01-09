@@ -108,6 +108,7 @@
   - [Admin Portal](apps/portals/admin/README.md)
 - [Reference Backend](apps/reference-backend/README.md)
 - [Reference Next App](apps/reference-next-app/README.md)
+- [Samráðsgáttin](apps/samradsgatt/README.md)
 - [Service Portal](apps/service-portal/README.md)
 - [Services](apps/services/README.md)
   - [Auth](apps/services/auth/README.md)

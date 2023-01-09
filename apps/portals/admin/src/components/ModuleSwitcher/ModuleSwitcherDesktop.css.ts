@@ -10,7 +10,6 @@ export const container = style({
   height: theme.headerHeight.large,
   marginLeft: theme.spacing[5],
   boxShadow: `inset 1px 0 0 0 ${theme.color.blue200}, inset -1px 0 0 0 ${theme.color.blue200}`,
-  cursor: 'pointer',
 })
 
 export const menuButton = style({
