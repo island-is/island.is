@@ -25,7 +25,6 @@ export class FeatureFlagService {
   }
 
   private getFeatureFlagUser(user: User): FeatureFlagUser {
-    console.log('getting user for feature flags ' + user.nationalId)
     const attributes: Record<string, string> = {}
     if (user.nationalId) {
       attributes.subjectType = kennitala.isCompany(user.nationalId)
