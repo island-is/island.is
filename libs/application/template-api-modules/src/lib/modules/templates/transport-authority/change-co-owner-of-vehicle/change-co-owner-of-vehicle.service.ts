@@ -57,7 +57,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
-        id,
+        application.id,
         SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
       )
@@ -88,7 +88,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
     if (!payment?.fulfilled) {
