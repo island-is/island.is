@@ -236,7 +236,7 @@ export const signedVerdictOverview = {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.travel_ban_success_text',
         defaultMessage:
-          'Farbann til {date}. Tilkynning verður send á ábyrgðaraðila málsins hjá héraðsdómstól.',
+          'Farbann til {date}. Tilkynning verður send á ábyrgðaraðila málsins hjá {courtOrProsecutor}.',
         description:
           'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
       },
