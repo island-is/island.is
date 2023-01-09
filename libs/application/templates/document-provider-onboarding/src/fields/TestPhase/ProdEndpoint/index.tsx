@@ -140,7 +140,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   getErrorViaPath(
                     errors,
                     'productionEndPointObject.prodEndPoint',
-                  ) !== ''
+                  ) !== undefined
                 }
                 errorMessage={formatText(
                   m.prodEndpointInputErrorMessage,

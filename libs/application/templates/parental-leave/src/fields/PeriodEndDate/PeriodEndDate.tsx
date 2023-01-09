@@ -35,16 +35,8 @@ export const PeriodEndDate: FC<
   const { formatMessage } = useLocale()
   const { title, props } = field
   const currentIndex = extractRepeaterIndexFromField(field)
-  const error =
-    getErrorViaPath(
-      errors as FieldErrors<FieldValues>,
-      `periods[${currentIndex}].endDate.message`,
-    ) ??
-    getErrorViaPath(
-      errors as FieldErrors<FieldValues>,
-      `periods[${currentIndex}].endDate`,
-    )
   const fieldId = `periods[${currentIndex}].endDate`
+  const error = getErrorViaPath(errors as FieldErrors<FieldValues>, fieldId)
 
   useEffect(() => {
     if (currentIndex < 0) {

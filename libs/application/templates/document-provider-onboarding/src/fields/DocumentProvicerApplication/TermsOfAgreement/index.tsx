@@ -72,8 +72,8 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 name="termsOfAgreement.userTerms"
                 hasError={
                   errors &&
-                  getErrorViaPath(errors, 'termsOfAgreement.userTerms') ===
-                    'false'
+                  getErrorViaPath(errors, 'termsOfAgreement.userTerms') !==
+                    undefined
                 }
                 errorMessage={formatText(
                   m.termsUserAgreementRequiredMessage,

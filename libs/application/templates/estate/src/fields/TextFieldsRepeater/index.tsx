@@ -9,7 +9,7 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import { Answers, AssetFormField } from '../../types'
+import { Answers } from '../../types'
 import * as styles from '../styles.css'
 
 type Props = {
