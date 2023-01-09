@@ -7,7 +7,7 @@ import { OperatorInformation } from '../shared'
 export const getReviewSteps = (application: Application) => {
   const vehiclePlate = getValueViaPath(
     application.answers,
-    'vehicle.plate',
+    'pickVehicle.plate',
     '',
   ) as string
 

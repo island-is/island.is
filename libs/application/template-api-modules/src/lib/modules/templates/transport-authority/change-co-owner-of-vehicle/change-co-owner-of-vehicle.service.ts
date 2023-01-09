@@ -53,9 +53,12 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         throw new Error('Það var hvorki bætt við né eytt meðeiganda')
       }
 
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
-        application.id,
+        auth,
+        id,
+        SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
       )
       return result
@@ -196,7 +199,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 
@@ -220,7 +223,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const permno = answers?.vehicle?.plate
+    const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
     const newCoOwners = answers?.coOwners

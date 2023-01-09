@@ -48,9 +48,12 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
         application.answers as OrderVehicleLicensePlateAnswers,
       )
 
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         application.id,
+        SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
       )
       return result
@@ -75,7 +78,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 
@@ -109,7 +112,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     }
 
     await this.vehiclePlateOrderingClient.orderPlates(auth, {
-      permno: answers?.vehicle?.plate,
+      permno: answers?.pickVehicle?.plate,
       frontType: answers?.plateSize?.frontPlateSize,
       rearType: answers?.plateSize?.rearPlateSize,
       deliveryStationType: deliveryStationType,

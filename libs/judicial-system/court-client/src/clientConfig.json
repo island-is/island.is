@@ -71,7 +71,7 @@
     },
     "/AuthenticateUser": {
       "post": {
-        "tags": ["Authenticate"],
+        "tags": ["AuthenticateUser"],
         "summary": "Authenticate with username and password. Returns authenticationToken that is used when calling other API methods.",
         "operationId": "AuthenticateUser",
         "requestBody": {

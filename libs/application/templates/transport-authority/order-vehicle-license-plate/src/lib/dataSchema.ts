@@ -6,15 +6,10 @@ export const OrderVehicleLicensePlateSchema = z.object({
   pickVehicle: z.object({
     vehicle: z.string().optional(),
     plate: z.string().min(1),
-    plateTypeFront: z.string().optional(),
-    plateTypeRear: z.string().optional(),
   }),
   vehicle: z.object({
     plate: z.string(),
     type: z.string(),
-  }),
-  plateReason: z.object({
-    reason: z.enum(['new', 'lost']),
   }),
   plateSize: z.object({
     frontPlateSize: z.string(),

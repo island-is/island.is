@@ -14,7 +14,7 @@ export const generateRequestReviewSms: RequestReviewSms = (
   recipient,
 ) => {
   const answers = application.answers as ChangeOperatorOfVehicleAnswers
-  const permno = answers?.vehicle?.plate
+  const permno = answers?.pickVehicle?.plate
 
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
   if (!permno) throw new Error('Permno was undefined')

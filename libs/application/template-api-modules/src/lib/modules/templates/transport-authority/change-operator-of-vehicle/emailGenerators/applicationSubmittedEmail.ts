@@ -19,7 +19,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
     options: { email, clientLocationOrigin },
   } = props
   const answers = application.answers as ChangeOperatorOfVehicleAnswers
-  const permno = answers?.vehicle?.plate
+  const permno = answers?.pickVehicle?.plate
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
   if (!permno) throw new Error('Permno was undefined')
