@@ -42,7 +42,7 @@ import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
@@ -56,7 +56,7 @@ const UploadFilesToPoliceCase: React.FC<{
   caseFiles: CaseFile[]
 }> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles }) => {
   const { formatMessage } = useIntl()
-  const { upload, remove } = useS3UploadV2(caseId)
+  const { upload, remove } = useS3Upload(caseId)
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
     caseFiles.map(mapCaseFileToUploadFile),

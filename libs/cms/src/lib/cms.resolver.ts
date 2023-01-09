@@ -92,6 +92,8 @@ import { FeaturedArticles } from './models/featuredArticles.model'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { TabSection } from './models/tabSection.model'
+import { GenericTag } from './models/genericTag.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 
 const { cacheTime } = environment
 
@@ -523,6 +525,14 @@ export class CmsResolver {
     @Args('input') input: GetTabSectionInput,
   ): Promise<TabSection | null> {
     return this.cmsContentfulService.getTabSection(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => GenericTag, { nullable: true })
+  getGenericTagBySlug(
+    @Args('input') input: GetGenericTagBySlugInput,
+  ): Promise<GenericTag | null> {
+    return this.cmsContentfulService.getGenericTagBySlug(input)
   }
 }
 
