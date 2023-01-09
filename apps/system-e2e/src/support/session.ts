@@ -114,10 +114,12 @@ export async function session({
   delegation?: string
   storageState?: string
 }) {
-  // Browser context storage, keyed by user/phonenumber
+  // Browser context storage
+  // default: sessions/phone x delegation/url
   const storageStatePath = join(
     sessionsPath,
-    storageState ?? `${homeUrl}-${phoneNumber}-${delegation}`,
+    storageState ??
+      `sessions/${phoneNumber}x${delegation ?? phoneNumber}/${homeUrl}`,
   )
   const context = existsSync(storageStatePath)
     ? await browser.newContext({ storageState: storageStatePath })
