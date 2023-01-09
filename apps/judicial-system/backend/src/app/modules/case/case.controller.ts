@@ -79,14 +79,12 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
-import { CaseListService } from '../caseList/caseList.service'
 
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
-    private readonly caseListService: CaseListService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
