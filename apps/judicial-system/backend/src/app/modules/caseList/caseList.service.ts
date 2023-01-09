@@ -17,43 +17,43 @@ import { CaseListEntry } from './caseList.model'
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
-  { model: Institution, as: 'court' },
-  {
-    model: User,
-    as: 'creatingProsecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'prosecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  { model: Institution, as: 'sharedWithProsecutorsOffice' },
-  {
-    model: User,
-    as: 'judge',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'registrar',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'courtRecordSignatory',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  { model: Case, as: 'parentCase' },
-  { model: Case, as: 'childCase' },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    where: {
-      state: { [Op.not]: CaseFileState.DELETED },
-    },
-  },
+  // { model: Institution, as: 'court' },
+  // {
+  //   model: User,
+  //   as: 'creatingProsecutor',
+  //   include: [{ model: Institution, as: 'institution' }],
+  // },
+  // {
+  //   model: User,
+  //   as: 'prosecutor',
+  //   include: [{ model: Institution, as: 'institution' }],
+  // },
+  // { model: Institution, as: 'sharedWithProsecutorsOffice' },
+  // {
+  //   model: User,
+  //   as: 'judge',
+  //   include: [{ model: Institution, as: 'institution' }],
+  // },
+  // {
+  //   model: User,
+  //   as: 'registrar',
+  //   include: [{ model: Institution, as: 'institution' }],
+  // },
+  // {
+  //   model: User,
+  //   as: 'courtRecordSignatory',
+  //   include: [{ model: Institution, as: 'institution' }],
+  // },
+  // { model: Case, as: 'parentCase' },
+  // { model: Case, as: 'childCase' },
+  // {
+  //   model: CaseFile,
+  //   as: 'caseFiles',
+  //   required: false,
+  //   where: {
+  //     state: { [Op.not]: CaseFileState.DELETED },
+  //   },
+  // },
 ]
 
 export const order: OrderItem[] = [
@@ -69,12 +69,9 @@ export class CaseListService {
   ) {}
 
   getAll(user: TUser): Promise<CaseListEntry[]> {
-    console.log(
-      'CaseListService.getAll()!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',
-    )
     return this.caseListEntryModel.findAll({
-      // include,
-      // order,
+      include,
+      order,
       where: getCasesQueryFilter(user),
     })
   }

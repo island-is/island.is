@@ -27,6 +27,18 @@ export const CasesQuery = gql`
         name
         noNationalId
       }
+      courtCaseNumber
+      decision
+      validToDate
+      isValidToDateInThePast
+      courtDate
+      initialRulingDate
+      rulingDate
+      courtEndTime
+      prosecutorAppealDecision
+      accusedAppealDecision
+      prosecutorPostponedAppealDate
+      accusedPostponedAppealDate
     }
   }
 `
