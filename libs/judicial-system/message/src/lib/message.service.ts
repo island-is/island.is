@@ -21,6 +21,7 @@ import { CaseMessage } from './message'
 @Injectable()
 export class MessageService {
   private readonly sqs: SQSClient
+  private connecting = false
   private _queueUrl: string | undefined
 
   constructor(
@@ -32,20 +33,24 @@ export class MessageService {
       endpoint: config.endpoint,
       region: config.region,
     })
-
-    this.connectToQueue()
   }
 
   private async connectToQueue(): Promise<void> {
+    if (this.connecting) {
+      return
+    }
+
+    this.connecting = true
     this._queueUrl = undefined
 
-    while (!this._queueUrl) {
+    while (this.connecting) {
       await this.sqs
         .send(new GetQueueUrlCommand({ QueueName: this.config.queueName }))
         .then((data) => {
           this.logger.info('Message queue is ready')
 
           this._queueUrl = data.QueueUrl
+          this.connecting = false
         })
         .catch(async (err) => {
           if (this.config.production) {
@@ -59,6 +64,7 @@ export class MessageService {
                 this.logger.info('Message queue is ready')
 
                 this._queueUrl = data.QueueUrl
+                this.connecting = false
               })
               .catch((err) => {
                 this.logger.error('Failed to create message queue', { err })
@@ -66,7 +72,7 @@ export class MessageService {
           }
         })
 
-      if (!this._queueUrl) {
+      if (this.connecting) {
         // Wait a bit before trying again
         await new Promise((resolve) =>
           setTimeout(resolve, this.config.waitTimeSeconds * 1000),
@@ -79,6 +85,8 @@ export class MessageService {
     if (this._queueUrl) {
       return this._queueUrl
     }
+
+    this.connectToQueue()
 
     throw new ServiceUnavailableException('Message queue is not ready')
   }
