@@ -31,7 +31,7 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
         application.id,
         SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.vehicle?.plate }],
+        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
       return result
     } catch (exeption) {
