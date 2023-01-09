@@ -5,11 +5,11 @@ import { FormText } from '@island.is/application/types'
 import { applicantInformation } from './messages'
 import { ApplicantInformationInterface } from './types'
 
-export const applicantInformationMultiField = (data?: {
+export const applicantInformationMultiField = (data: {
   title?: FormText
   description?: FormText
 }) => {
-  const { title, description } = { title: '', description: '' }
+  const { title, description } = data
   return buildMultiField({
     id: 'applicant',
     title: title ?? applicantInformation.general.title,
