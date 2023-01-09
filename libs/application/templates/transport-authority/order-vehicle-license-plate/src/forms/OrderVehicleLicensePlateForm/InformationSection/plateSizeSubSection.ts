@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { Application } from '@island.is/api/schema'
 import { VehiclesCurrentVehicle, PlateType } from '../../../types'
 import {
@@ -8,6 +7,7 @@ import {
   buildDescriptionField,
   buildRadioField,
   getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedVehicle } from '../../../utils'
@@ -55,82 +55,10 @@ export const plateSizeSubSection = buildSubSection({
             return vehicle?.make
           },
         }),
-        buildDescriptionField({
-          id: 'plateSize.frontPlateSize.subtitle',
-          title: information.labels.plateSize.frontPlateSubtitle,
-          titleVariant: 'h5',
-          space: 3,
-        }),
-        buildRadioField({
+        buildCustomField({
+          id: 'plateSize',
+          component: 'PickPlateSize',
           title: '',
-          id: 'plateSize.frontPlateSize',
-          options: (application) => {
-            const { formatMessage } = useLocale()
-
-            const plateTypeList = application.externalData.plateTypeList
-              .data as PlateType[]
-
-            const currentPlateType = getValueViaPath(
-              application.answers,
-              'pickVehicle.plateTypeFront',
-              '',
-            ) as string
-
-            return plateTypeList
-              .filter((x) => x.code === currentPlateType)
-              ?.map((x) => ({
-                value: x.code || '',
-                label:
-                  formatMessage(
-                    information.labels.plateSize.plateSizeOptionTitle,
-                    {
-                      name: x.name,
-                      height: x.plateHeight,
-                      width: x.plateWidth,
-                    },
-                  ) || '',
-              }))
-          },
-          width: 'half',
-          largeButtons: true,
-        }),
-        buildDescriptionField({
-          id: 'plateSize.rearPlateSize.subtitle',
-          title: information.labels.plateSize.rearPlateSubtitle,
-          titleVariant: 'h5',
-          space: 3,
-        }),
-        buildRadioField({
-          title: '',
-          id: 'plateSize.rearPlateSize',
-          options: (application) => {
-            const { formatMessage } = useLocale()
-
-            const plateTypeList = application.externalData.plateTypeList
-              .data as PlateType[]
-
-            const currentPlateType = getValueViaPath(
-              application.answers,
-              'pickVehicle.plateTypeRear',
-              '',
-            ) as string
-
-            return plateTypeList
-              .filter((x) => x.code === currentPlateType)
-              ?.map((x) => ({
-                value: x.code || '',
-                label: formatMessage(
-                  information.labels.plateSize.plateSizeOptionTitle,
-                  {
-                    name: x.name,
-                    height: x.plateHeight,
-                    width: x.plateWidth,
-                  },
-                ),
-              }))
-          },
-          width: 'half',
-          largeButtons: true,
         }),
       ],
     }),

@@ -76,8 +76,8 @@ export const information = {
       rearPlateSubtitle: {
         id:
           'ta.ovlp.application:information.labels.plateSize.rearPlateSubtitle',
-        defaultMessage: 'Veldu stærð merkis að framan',
-        description: 'Plate size front plate sub title',
+        defaultMessage: 'Veldu stærð merkis að aftan',
+        description: 'Plate size rear plate sub title',
       },
       plateSizeOptionTitle: {
         id:
