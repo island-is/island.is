@@ -25,6 +25,7 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
 import { PaymentModuleConfig } from '@island.is/application/api/payment'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PassportsClientConfig } from '@island.is/clients/passports'
+import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { PassportsClientConfig } from '@island.is/clients/passports'
         PaymentModuleConfig,
         ChargeFjsV2ClientConfig,
         PassportsClientConfig,
+        PaymentScheduleClientConfig,
       ],
     }),
   ],

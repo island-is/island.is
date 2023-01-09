@@ -12,9 +12,9 @@ import { petitionsModule } from '@island.is/service-portal/endorsements'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
 import { informationModule } from '@island.is/service-portal/information'
 import { licensesModule } from '@island.is/service-portal/licenses'
-import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { vehiclesModule } from '@island.is/service-portal/vehicles'
+import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 
 /**
  * NOTE:
@@ -22,9 +22,7 @@ import { vehiclesModule } from '@island.is/service-portal/vehicles'
  * or if they are ready for beta testing. Modules that are ready
  * for beta testing should be feature flagged.
  */
-
 export const modules: PortalModule[] = [
-  accessControlModule,
   applicationsModule,
   assetsModule,
   documentProviderModule,
@@ -33,6 +31,7 @@ export const modules: PortalModule[] = [
   educationCareerModule,
   educationLicenseModule,
   educationStudentAssessmentModule,
+  delegationsModule,
   financeModule,
   icelandicNamesRegistryModule,
   informationModule,
