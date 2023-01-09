@@ -11,7 +11,6 @@ const CaseTimeline = () => {
       <Text variant="h3" color="blue400">
         {'Tímalína máls'}
       </Text>
-
       {/* 
       Commented out because FormStepper is depricated      
       <FormStepper
