@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEnum } from 'class-validator'
+import { IsBoolean, IsEnum } from 'class-validator'
 import { LicenseId } from '../license.types'
 import { IsNationalId } from '@island.is/nest/validators'
 
@@ -17,4 +17,8 @@ export class RevokeLicenseRequest {
   readonly licenseId!: LicenseId
 }
 
-export class RevokeLicenseResponse extends RevokeLicenseRequest {}
+export class RevokeLicenseResponse {
+  @ApiProperty({ description: 'Has the license been revoked?' })
+  @IsBoolean()
+  readonly revokeSuccess!: boolean
+}

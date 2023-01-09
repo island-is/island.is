@@ -11,16 +11,15 @@ export class FirearmLicenseClientService implements GenericLicenseClient {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async revoke() {
-    this.logger.debug('in revoke for firearm license')
-    const templates = await this.smartApi.listTemplates()
-    return JSON.stringify(templates)
-  }
-
   async update() {
     this.logger.debug('in update for firearm license')
     const templates = await this.smartApi.listTemplates()
     return JSON.stringify(templates)
+  }
+
+  async revoke(queryId: string) {
+    this.logger.debug('in revoke for Firearm license')
+    return await this.smartApi.voidPkPass(queryId)
   }
 
   /** We need to verify the pk pass AND the license itself! */

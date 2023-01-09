@@ -19,9 +19,9 @@ import {
   RevokeLicenseRequest,
   VerifyLicenseRequest,
   UpdateLicenseResponse,
-  RevokeLicenseResponse,
   LicenseError,
   VerifyLicenseResponse,
+  RevokeLicenseResponse,
 } from './dto'
 
 @Injectable()
@@ -66,11 +66,20 @@ export class LicenseService {
 
   async revokeLicense(
     inputData: RevokeLicenseRequest,
-  ): Promise<ServiceResponse<RevokeLicenseResponse>> {
+  ): Promise<RevokeLicenseResponse> {
     const service = await this.clientFactory(inputData.licenseId)
-    const revokeCall = await service.revoke()
-    this.logger.debug(revokeCall)
-    return { ok: true, data: inputData }
+    const revokeData = await service.revoke(inputData.nationalId)
+
+    if (revokeData.ok) {
+      return { revokeSuccess: revokeData.data.voidSuccess }
+    }
+
+    const code = revokeData.error.code
+    // code < 10 means malformed request
+    if (code < 10) {
+      throw new BadRequestException(revokeData.error.message)
+    }
+    throw new InternalServerErrorException(revokeData.error.message)
   }
 
   async verifyLicense(

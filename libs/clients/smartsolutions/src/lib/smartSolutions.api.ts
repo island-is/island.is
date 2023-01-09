@@ -10,6 +10,7 @@ import {
   VerifyPassResponseData,
   VerifyPassData,
   ParsedApiResponse,
+  VoidPassData,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
@@ -96,7 +97,6 @@ export class SmartSolutionsApi {
         },
       }
     }
-
     let json: unknown
     try {
       json = await res.json()
@@ -432,6 +432,84 @@ export class SmartSolutionsApi {
       }
     }
     return response
+  }
+
+  async voidPkPass(queryId: string): Promise<Result<VoidPassData>> {
+    const existingPasses = await this.listPkPasses(queryId)
+
+    if (!existingPasses.ok) {
+      return {
+        ok: false,
+        error: existingPasses.error,
+      }
+    }
+
+    const activePass = existingPasses.data.find(
+      (p) => p.status === PassStatus.Active,
+    )
+
+    if (!activePass) {
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No active pass for user, nothing to revoke',
+        },
+      }
+    }
+
+    this.logger.debug('Active pass found for user, preparing to void')
+
+    const voidPkPassMutation = `
+      mutation VoidPass($id: String!) {
+        voidPass(id: $id)
+      }
+    `
+
+    const graphql = JSON.stringify({
+      query: voidPkPassMutation,
+      variables: {
+        id: activePass.id,
+      },
+    })
+
+    const response = await this.fetchData(graphql)
+
+    if (response.apiResponse) {
+      const parsedApiRes = this.parseApiResponse<{ success: boolean }>(
+        response.apiResponse,
+      )
+
+      if (parsedApiRes.error) {
+        return {
+          ok: false,
+          error: parsedApiRes.error,
+        }
+      }
+
+      //sweet success
+      return {
+        ok: true,
+        data: {
+          voidSuccess: parsedApiRes.data.success,
+        },
+      }
+    }
+
+    if (response.error) {
+      return {
+        ok: false,
+        error: response.error,
+      }
+    }
+
+    return {
+      ok: false,
+      error: {
+        code: 99,
+        message: 'Unknown error',
+      },
+    }
   }
 
   async listTemplates(): Promise<Result<Array<PassTemplate>>> {

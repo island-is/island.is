@@ -40,7 +40,7 @@ export class LicenseController {
   }
 
   @Documentation({
-    description: `This endpoint revokes a license `,
+    description: `This endpoint revokes a license`,
     response: {
       status: 200,
       type: RevokeLicenseResponse,
@@ -48,8 +48,8 @@ export class LicenseController {
   })
   @Post('/revoke')
   async revoke(@Body() data: RevokeLicenseRequest) {
-    this.licenseService.revokeLicense(data)
-    return
+    const response = await this.licenseService.revokeLicense(data)
+    return response
   }
 
   @Documentation({

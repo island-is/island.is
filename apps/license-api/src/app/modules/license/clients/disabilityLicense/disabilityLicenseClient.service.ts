@@ -11,16 +11,15 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async revoke() {
-    this.logger.debug('in delete for Disability license')
-    const templates = await this.smartApi.listTemplates()
-    return JSON.stringify(templates)
-  }
-
   async update() {
     this.logger.debug('in update for Disability license')
     const templates = await this.smartApi.listTemplates()
     return JSON.stringify(templates)
+  }
+
+  async revoke(queryId: string) {
+    this.logger.debug('in revoke for Disability license')
+    return await this.smartApi.voidPkPass(queryId)
   }
 
   /** We need to verify the pk pass AND the license itself! */

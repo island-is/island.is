@@ -3,6 +3,7 @@ import {
   Result,
   ServiceError,
   VerifyPassData,
+  VoidPassData,
 } from '@island.is/clients/smartsolutions'
 
 export enum LicenseUpdateType {
@@ -27,7 +28,7 @@ export enum LicenseId {
  */
 export interface GenericLicenseClient {
   update: () => Promise<string | null>
-  revoke: () => Promise<string | null>
+  revoke: (queryId: string) => Promise<Result<VoidPassData>>
   verify: (inputData: string) => Promise<Result<VerifyPassData>>
 }
 

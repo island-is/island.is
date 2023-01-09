@@ -68,6 +68,10 @@ export interface VerifyPassData {
   pass?: Pass
 }
 
+export interface VoidPassData {
+  voidSuccess: boolean
+}
+
 export interface ListPassesResponseData {
   passes?: {
     data: Array<Pass>
