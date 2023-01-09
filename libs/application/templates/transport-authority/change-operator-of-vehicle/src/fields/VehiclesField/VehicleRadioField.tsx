@@ -28,11 +28,17 @@ export const VehicleRadioField: FC<
       | string
       | undefined,
   )
+  const [type, setType] = useState<string | undefined>(
+    getValueViaPath(application.answers, 'pickVehicle.type', undefined) as
+      | string
+      | undefined,
+  )
 
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
     setPlate(currentVehicle.permno || '')
     setColor(currentVehicle.color || undefined)
+    setType(currentVehicle.make || undefined)
   }
 
   const vehicleOptions = (vehicles: VehiclesCurrentVehicle[]) => {
@@ -78,6 +84,12 @@ export const VehicleRadioField: FC<
         value={color}
         ref={register({ required: true })}
         name="pickVehicle.color"
+      />
+      <input
+        type="hidden"
+        value={type}
+        ref={register({ required: true })}
+        name="pickVehicle.type"
       />
     </div>
   )

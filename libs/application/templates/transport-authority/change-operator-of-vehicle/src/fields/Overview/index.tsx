@@ -36,7 +36,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
       return
     },
   })
-
+  const [loading, setLoading] = useState<boolean>(false)
   const onBackButtonClick = () => {
     setStep && setStep('states')
   }
@@ -44,6 +44,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     setRejectModalVisibility(true)
   }
   const onApproveButtonClick = async () => {
+    setLoading(true)
     const res = await submitApplication({
       variables: {
         input: {
@@ -55,7 +56,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
         },
       },
     })
-
+    setLoading(false)
     if (res?.data) {
       setStep && setStep('conclusion')
     }
@@ -92,7 +93,11 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
                   </Button>
                 </Box>
                 <Box marginLeft={3}>
-                  <Button icon="checkmark" onClick={onApproveButtonClick}>
+                  <Button
+                    icon="checkmark"
+                    onClick={onApproveButtonClick}
+                    loading={loading}
+                  >
                     {formatMessage(review.buttons.approve)}
                   </Button>
                 </Box>

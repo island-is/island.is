@@ -1,7 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
 import { OperatorInformation } from '../../shared'
@@ -9,8 +9,6 @@ import { OperatorRepeaterItem } from './OperatorRepeaterItem'
 
 export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
-  const { application } = props
-  console.log(application)
   const { setValue } = useFormContext()
   const { fields, append, remove } = useFieldArray<OperatorInformation>({
     name: 'operators',
@@ -22,15 +20,17 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
       nationalId: operator?.nationalId || '',
       email: operator?.email || '',
       phone: operator?.phone || '',
-      wasAdded: operator ? 'false' : 'true',
     })
 
-  const handleRemove = (index: number, wasAdded?: string) => {
+  const handleRemove = (index: number) => {
     remove(index)
-    if (wasAdded === 'false') {
-      setValue('removed.wasRemoved', true)
-    }
   }
+
+  useEffect(() => {
+    if (fields.length === 0) {
+      setValue('operators', [])
+    }
+  }, [fields, setValue])
 
   return (
     <Box>
