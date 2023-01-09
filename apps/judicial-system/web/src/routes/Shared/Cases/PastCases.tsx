@@ -7,6 +7,7 @@ import { Box, Text, Tag } from '@island.is/island-ui/core'
 import {
   CaseAppealDecision,
   CaseDecision,
+  CaseListEntry,
   CaseState,
   CaseType,
   Defendant,
@@ -36,7 +37,7 @@ import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
 
 interface Props {
-  cases: Case[]
+  cases: CaseListEntry[]
   onRowClick: (id: string) => void
   isHighCourtUser: boolean
 }
@@ -99,7 +100,7 @@ const PastCases: React.FC<Props> = (props) => {
     const prColumns = [
       {
         Header: formatMessage(m.pastRequests.table.headers.caseNumber),
-        accessor: 'courtCaseNumber' as keyof Case,
+        accessor: 'courtCaseNumber' as keyof CaseListEntry,
         Cell: (row: {
           row: {
             original: { courtCaseNumber: string; policeCaseNumbers: string[] }
@@ -123,7 +124,7 @@ const PastCases: React.FC<Props> = (props) => {
       },
       {
         Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-        accessor: 'accusedName' as keyof Case,
+        accessor: 'accusedName' as keyof CaseListEntry,
         Cell: (row: {
           row: { original: { accusedName: string; defendants: Defendant[] } }
         }) => {
@@ -151,7 +152,7 @@ const PastCases: React.FC<Props> = (props) => {
 
       {
         Header: formatMessage(m.pastRequests.table.headers.type),
-        accessor: 'type' as keyof Case,
+        accessor: 'type' as keyof CaseListEntry,
         Cell: (row: {
           row: {
             original: {
@@ -180,7 +181,7 @@ const PastCases: React.FC<Props> = (props) => {
 
       {
         Header: formatMessage(m.pastRequests.table.headers.state),
-        accessor: 'state' as keyof Case,
+        accessor: 'state' as keyof CaseListEntry,
         disableSortBy: true,
         Cell: (row: {
           row: {
@@ -208,7 +209,7 @@ const PastCases: React.FC<Props> = (props) => {
       },
       {
         Header: formatMessage(m.pastRequests.table.headers.duration),
-        accessor: 'rulingDate' as keyof Case,
+        accessor: 'rulingDate' as keyof CaseListEntry,
         disableSortBy: true,
         Cell: (row: {
           row: {
@@ -240,7 +241,7 @@ const PastCases: React.FC<Props> = (props) => {
 
     const highCourtPrColumns = {
       Header: 'Kært',
-      accessor: 'accusedAppeal' as keyof Case,
+      accessor: 'accusedAppeal' as keyof CaseListEntry,
       disableSortBy: true,
       Cell: (row: {
         row: {
@@ -283,7 +284,7 @@ const PastCases: React.FC<Props> = (props) => {
 
   const pastCasesData = useMemo(
     () =>
-      cases.sort((a: Case, b: Case) =>
+      cases.sort((a: CaseListEntry, b: CaseListEntry) =>
         b['created'].localeCompare(a['created']),
       ),
     [cases],

@@ -80,7 +80,6 @@ import { SignatureConfirmationResponse } from './models/signatureConfirmation.re
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 import { CaseListService } from '../caseList/caseList.service'
-import { CaseListEntry } from '../caseList/caseList.model'
 
 @Controller('api')
 @ApiTags('cases')
@@ -251,27 +250,6 @@ export class CaseController {
     )
 
     return updatedCase ?? theCase
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(
-    prosecutorRule,
-    representativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
-    staffRule,
-  )
-  @Get('cases')
-  @ApiOkResponse({
-    type: Case,
-    isArray: true,
-    description: 'Gets all existing cases',
-  })
-  getAll(@CurrentHttpUser() user: User): Promise<CaseListEntry[]> {
-    this.logger.debug('Getting all cases')
-
-    return this.caseListService.getAll(user)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)

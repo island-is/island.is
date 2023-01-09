@@ -243,7 +243,34 @@ export interface Case {
   crimeScenes?: CrimeSceneMap
 }
 
-export type CaseListEntry = Pick<Case, 'id' | 'courtDate'>
+export type CaseListEntry = Pick<
+  Case,
+  | 'id'
+  | 'courtDate'
+  | 'created'
+  | 'courtDate'
+  | 'policeCaseNumbers'
+  | 'state'
+  | 'type'
+  | 'defendants'
+  | 'courtCaseNumber'
+  | 'decision'
+  | 'validToDate'
+  | 'isValidToDateInThePast'
+  | 'courtDate'
+  | 'initialRulingDate'
+  | 'rulingDate'
+  | 'courtEndTime'
+  | 'prosecutorAppealDecision'
+  | 'accusedAppealDecision'
+  | 'prosecutorPostponedAppealDate'
+  | 'accusedPostponedAppealDate'
+  | 'judge'
+  | 'prosecutor'
+  | 'registrar'
+  | 'creatingProsecutor'
+  | 'parentCase'
+>
 
 export type CreateCase = Pick<
   Case,

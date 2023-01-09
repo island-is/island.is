@@ -13,7 +13,7 @@ export const RulingSignatureConfirmationQuery = gql`
 `
 
 export const CasesQuery = gql`
-  query CasesQuery {
+  query CaseListQuery {
     cases {
       id
       created
@@ -31,7 +31,6 @@ export const CasesQuery = gql`
       decision
       validToDate
       isValidToDateInThePast
-      courtDate
       initialRulingDate
       rulingDate
       courtEndTime
@@ -39,6 +38,21 @@ export const CasesQuery = gql`
       accusedAppealDecision
       prosecutorPostponedAppealDate
       accusedPostponedAppealDate
+      judge {
+        id
+      }
+      prosecutor {
+        id
+      }
+      registrar {
+        id
+      }
+      creatingProsecutor {
+        id
+      }
+      parentCase {
+        id
+      }
     }
   }
 `

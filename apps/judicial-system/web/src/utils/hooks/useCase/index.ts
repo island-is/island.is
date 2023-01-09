@@ -14,6 +14,7 @@ import type {
   RequestSignatureResponse,
   UpdateCase,
   CreateCase,
+  CaseListEntry,
 } from '@island.is/judicial-system/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -271,7 +272,7 @@ const useCase = () => {
 
   const transitionCase = useMemo(
     () => async (
-      workingCase: Case,
+      workingCase: Case | CaseListEntry,
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {

@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript'
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Model,
+  Table,
+} from 'sequelize-typescript'
 
 import {
   CaseAppealDecision,
@@ -10,12 +18,14 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../defendant/models/defendant.model'
+import { User } from '../user'
+import { Case } from '../case'
 
 @Table({
   tableName: 'case',
   timestamps: true,
 })
-export class CaseListEntry extends Model implements TCaseListEntry {
+export class CaseListEntry extends Model {
   @ApiProperty()
   id!: string
 
@@ -190,6 +200,96 @@ export class CaseListEntry extends Model implements TCaseListEntry {
   })
   @ApiProperty()
   accusedPostponedAppealDate?: Date
+
+  /**********
+   * The surrogate key of the judge assigned to the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  judgeId?: string
+
+  /**********
+   * The judge assigned to the case
+   **********/
+  @BelongsTo(() => User, 'judgeId')
+  @ApiProperty({ type: User })
+  judge?: User
+
+  /**********
+   * The surrogate key of the prosecutor assigned to the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  prosecutorId?: string
+
+  /**********
+   * The prosecutor assigned to the case
+   **********/
+  @BelongsTo(() => User, 'prosecutorId')
+  @ApiProperty({ type: User })
+  prosecutor?: User
+
+  /**********
+   * The surrogate key of the registrar assigned to the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  registrarId?: string
+
+  /**********
+   * The registrar assigned to the case
+   **********/
+  @BelongsTo(() => User, 'registrarId')
+  @ApiProperty({ type: User })
+  registrar?: User
+
+  /**********
+   * The surrogate key of the prosecutor that created the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  creatingProsecutorId?: string
+
+  /**********
+   * The prosecutor that created the case
+   **********/
+  @BelongsTo(() => User, 'creatingProsecutorId')
+  @ApiProperty({ type: User })
+  creatingProsecutor?: User
+
+  /**********
+   * The surrogate key of the case's parent case - only used if the case is an extension
+   **********/
+  @ForeignKey(() => Case)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  parentCaseId?: string
+
+  /**********
+   * The case's parent case - only used if the case is an extension
+   **********/
+  @BelongsTo(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  parentCase?: Case
 
   @ApiProperty()
   @Column({

@@ -124,11 +124,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.put(`user/${id}`, updateUser)
   }
 
-  getCases(): Promise<Case[]> {
-    return this.get('cases')
-  }
-
-  getCasesV2(): Promise<CaseListEntry[]> {
+  getCases(): Promise<CaseListEntry[]> {
     return this.get('cases')
   }
 

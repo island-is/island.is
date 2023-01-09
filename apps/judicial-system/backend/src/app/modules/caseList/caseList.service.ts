@@ -18,33 +18,33 @@ import { CaseListEntry } from './caseList.model'
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   // { model: Institution, as: 'court' },
-  // {
-  //   model: User,
-  //   as: 'creatingProsecutor',
-  //   include: [{ model: Institution, as: 'institution' }],
-  // },
-  // {
-  //   model: User,
-  //   as: 'prosecutor',
-  //   include: [{ model: Institution, as: 'institution' }],
-  // },
+  {
+    model: User,
+    as: 'creatingProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
   // { model: Institution, as: 'sharedWithProsecutorsOffice' },
-  // {
-  //   model: User,
-  //   as: 'judge',
-  //   include: [{ model: Institution, as: 'institution' }],
-  // },
-  // {
-  //   model: User,
-  //   as: 'registrar',
-  //   include: [{ model: Institution, as: 'institution' }],
-  // },
+  {
+    model: User,
+    as: 'judge',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
   // {
   //   model: User,
   //   as: 'courtRecordSignatory',
   //   include: [{ model: Institution, as: 'institution' }],
   // },
-  // { model: Case, as: 'parentCase' },
+  { model: Case, as: 'parentCase' },
   // { model: Case, as: 'childCase' },
   // {
   //   model: CaseFile,
