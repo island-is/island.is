@@ -9,18 +9,20 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { DiscountService } from './discount.service'
-import { Discount } from '../models/discount.model'
+import { FlightLegService } from './flight-leg.service'
+import { FlightLeg } from '../models/flightLeg.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
-@Resolver(() => Discount)
-export class DiscountResolver {
-  constructor(private discountService: DiscountService) {}
+@Resolver()
+export class FlightLegResolver {
+  constructor(private flightLegService: FlightLegService) {}
 
-  @Query(() => [Discount], { name: 'airDiscountSchemeDiscounts' })
-  async getDiscount(@CurrentUser() user: User): Promise<Discount[]> {
-    return this.discountService.getCurrentDiscounts(user)
+  @Query(() => [FlightLeg], {
+    name: 'airDiscountSchemeUserAndRelationsFlights',
+  })
+  async getFlightLegs(@CurrentUser() user: User): Promise<FlightLeg[]> {
+    return this.flightLegService.getThisYearsUserAndRelationsFlightLegs(user)
   }
 }
