@@ -349,7 +349,7 @@ export class DrivingLicenseService {
   async getQualitySignature(
     nationalId: User['nationalId'],
   ): Promise<QualitySignatureResult> {
-    this.logger.info('Dummy message')
+    this.logger.info('Dummy message2')
     const hasQualitySignature = await this.drivingLicenseApi.getHasQualitySignature(
       {
         nationalId,
