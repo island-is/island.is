@@ -16,10 +16,11 @@ import {
   SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
-import { PAYMENT_STATUS_QUERY, PaymentStatusData } from './shared.queries'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
+import { S3 } from 'aws-sdk'
+import AmazonS3URI from 'amazon-s3-uri'
 import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
@@ -39,7 +40,9 @@ export class SharedTemplateApiService {
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
     private readonly paymentService: PaymentService,
-  ) {}
+  ) {
+    this.s3 = new S3()
+  }
 
   async createAssignToken(application: Application, expiresIn: number) {
     const token = await this.applicationService.createAssignToken(
