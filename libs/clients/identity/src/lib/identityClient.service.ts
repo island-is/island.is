@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { RskCompanyInfoService } from '@island.is/api/domains/company-registry'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
@@ -14,8 +14,8 @@ type FallbackIdentity = Partial<Omit<Identity, 'nationalId' | 'type'>>
 @Injectable()
 export class IdentityClientService {
   constructor(
-    private nationalRegistryXRoadService: NationalRegistryXRoadService,
-    private rskCompanyInfoService: RskCompanyInfoService,
+    private nationalRegistryXRoadService: NationalRegistryClientService,
+    private rskCompanyInfoService: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 

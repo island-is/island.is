@@ -1,4 +1,3 @@
-import { logger } from '@island.is/logging'
 
 export enum XRoadMemberClass {
   GovernmentInstitution = 'GOV',
@@ -16,19 +15,19 @@ export const createXRoadAPIPath = (
   xRoadMemberAPIPath: string,
 ) => {
   if (!xRoadBasePath) {
-    logger.error('xRoad base path not provided.')
+    console.error('xRoad base path not provided.')
   }
 
   if (!xRoadMemberClass) {
-    logger.error('xRoad member class not provided.')
+    console.error('xRoad member class not provided.')
   }
 
   if (!xRoadMemberCode) {
-    logger.error('xRoad member code not provided.')
+    console.error('xRoad member code not provided.')
   }
 
   if (!xRoadMemberAPIPath) {
-    logger.error('xRoad member API path not provided.')
+    console.error('xRoad member API path not provided.')
   }
 
   return `${xRoadBasePath}/${xRoadMemberClass}/${xRoadMemberCode}${xRoadMemberAPIPath}`

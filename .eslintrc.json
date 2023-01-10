@@ -102,7 +102,7 @@
               },
               {
                 "sourceTag": "scope:client",
-                "onlyDependOnLibsWithTags": ["lib:client", "lib:nest"]
+                "onlyDependOnLibsWithTags": ["lib:client", "lib:nest", "lib:node", "lib:js"]
               },
               {
                 "sourceTag": "scope:dom",
