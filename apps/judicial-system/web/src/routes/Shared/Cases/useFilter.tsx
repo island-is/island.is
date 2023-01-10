@@ -1,5 +1,4 @@
 import {
-  Case,
   CaseListEntry,
   isIndictmentCase,
   isInvestigationCase,
