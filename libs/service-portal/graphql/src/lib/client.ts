@@ -11,7 +11,7 @@ import { authLink } from '@island.is/auth/react'
 
 const uri =
   process.env.NODE_ENV === 'development'
-    ? 'http://localhost:4444/api/graphql'
+    ? 'http://localhost:9456/api/graphql'
     : '/api/graphql'
 
 const httpLink = new HttpLink({

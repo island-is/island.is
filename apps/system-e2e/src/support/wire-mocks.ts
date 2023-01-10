@@ -19,7 +19,7 @@ const defaultMock = (port: number) => {
 }
 
 const mockedServices = {
-  xroad: defaultMock(9545),
+  xroad: defaultMock(9388),
 }
 
 const mb = new Mountebank().withURL(

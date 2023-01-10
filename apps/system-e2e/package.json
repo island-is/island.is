@@ -15,8 +15,10 @@
     "react-intl": "5.13.1",
     "slack-notify": "2.0.3"
   },
-  "scripts": {},
   "volta": {
-    "node": "16.17.0"
+    "node": "18.8.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.20.7"
   }
 }
