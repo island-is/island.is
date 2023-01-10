@@ -12,17 +12,17 @@ const CreateDiscount = lazy(() =>
 export const airDiscountSchemeAdminModule: PortalModule = {
   name: m.airDiscountScheme,
   layout: 'full',
-  routes: ({ userInfo }) => [
+  enabled: ({ userInfo }) =>
+    userInfo.scopes.includes(AdminPortalScope.airDiscountScheme),
+  routes: () => [
     {
       name: m.overview,
       path: AirDiscountSchemePaths.Root,
-      enabled: userInfo.scopes.includes(AdminPortalScope.airDiscountScheme),
       render: () => OverviewScreen,
     },
     {
       name: m.createDiscount,
       path: AirDiscountSchemePaths.CreateDiscount,
-      enabled: userInfo.scopes.includes(AdminPortalScope.airDiscountScheme),
       render: () => CreateDiscount,
     },
   ],

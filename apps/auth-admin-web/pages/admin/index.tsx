@@ -41,7 +41,7 @@ const Index: React.FC = () => {
       return (
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
-            <UsersList></UsersList>
+            <UsersList />
           </AdminTabNav>
         </ContentWrapper>
       )

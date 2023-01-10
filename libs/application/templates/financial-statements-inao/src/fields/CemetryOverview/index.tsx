@@ -27,6 +27,7 @@ import {
 } from '../Shared/styles/overviewStyles.css'
 import BottomBar from '../../components/BottomBar'
 import { CapitalNumberOverview } from '../Shared/CapitalNumberOverview'
+import { BOARDMEMEBER } from '../../lib/constants'
 
 export const CemetryOverview = ({
   application,
@@ -288,7 +289,14 @@ export const CemetryOverview = ({
                 <Box className={columnStyle}>
                   <GridRow>
                     <GridColumn span={['12/12', '6/12']}>
-                      <ValueLine label={m.role} value={careTaker.role} />
+                      <ValueLine
+                        label={m.role}
+                        value={
+                          careTaker.role === BOARDMEMEBER
+                            ? m.cemeteryBoardMember
+                            : m.cemeteryInspector
+                        }
+                      />
                     </GridColumn>
                   </GridRow>
                 </Box>
