@@ -64,7 +64,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
 
   const error =
     getErrorViaPath(errors, `periods.[${currentIndex}].ratio?.message`) ??
-    getErrorViaPath(errors, 'fieldId')
+    getErrorViaPath(errors, fieldId)
 
   const options: SelectOption<string>[] = useMemo(() => {
     const start = parseISO(currentPeriod.startDate)
