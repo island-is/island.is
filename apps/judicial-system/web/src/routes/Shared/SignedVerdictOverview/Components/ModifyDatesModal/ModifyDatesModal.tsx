@@ -96,10 +96,7 @@ const getModificationSuccessText = (
         'dagur,',
         'dagsins',
       )} kl. ${formatDate(modifiedValidToDate?.value, constants.TIME_FORMAT)}`,
-      courtOrProsecutor:
-        userRole === UserRole.PROSECUTOR
-          ? 'héraðsdómstól'
-          : 'saksóknaraembætti',
+      userRole,
     })
   } else if (validToDateAndIsolationToDateAreTheSame) {
     modification = formatMessage(
