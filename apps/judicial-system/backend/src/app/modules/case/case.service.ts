@@ -466,14 +466,6 @@ export class CaseService {
     return originalAncestor
   }
 
-  getAll(user: TUser): Promise<Case[]> {
-    return this.caseModel.findAll({
-      include,
-      order,
-      where: getCasesQueryFilter(user),
-    })
-  }
-
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     this.logger.debug('Creating case', { caseToCreate, user })
     return this.sequelize
