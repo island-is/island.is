@@ -10,16 +10,13 @@ import {
   CLIENT_FACTORY,
   GenericLicenseClient,
   LicenseId,
-  ServiceResponse,
+  LicenseUpdateUnion,
 } from './license.types'
 import {
   UpdateLicenseRequest,
-  PushUpdateLicenseDto,
-  PullUpdateLicenseDto,
   RevokeLicenseRequest,
   VerifyLicenseRequest,
   UpdateLicenseResponse,
-  LicenseError,
   VerifyLicenseResponse,
   RevokeLicenseResponse,
 } from './dto'
@@ -37,31 +34,24 @@ export class LicenseService {
 
   async updateLicense(
     inputData: UpdateLicenseRequest,
-  ): Promise<ServiceResponse<UpdateLicenseResponse>> {
+  ): Promise<UpdateLicenseResponse> {
     const service = await this.clientFactory(inputData.licenseId)
-    let data
-    if (inputData.licenseUpdateType === 'push') {
-      // PUSH
-      data = inputData as PushUpdateLicenseDto
-      //validate payload
-      const valid = false
-      if (!valid) {
-        const error: LicenseError = {
-          code: '1',
-          message: 'Invalid payload',
-        }
-        return {
-          ok: false,
-          error,
-        }
+    const data = LicenseUpdateUnion.parse(inputData)
+    const updateData = await service.update(data)
+
+    if (updateData.ok) {
+      return {
+        updateSuccess: true,
+        data: updateData.data,
       }
-    } else {
-      // PULL
-      data = inputData as PullUpdateLicenseDto
     }
-    const updateCall = await service.update()
-    this.logger.debug(updateCall)
-    return { ok: true, data: inputData }
+
+    const code = updateData.error.code
+    // code < 10 means malformed request
+    if (code < 10) {
+      throw new BadRequestException(updateData.error.message)
+    }
+    throw new InternalServerErrorException(updateData.error.message)
   }
 
   async revokeLicense(

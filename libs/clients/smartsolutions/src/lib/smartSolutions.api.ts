@@ -304,7 +304,7 @@ export class SmartSolutionsApi {
       }
     }
 
-    const createPkPassMutation = `
+    const upsertPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
         upsertPass(data: $inputData) {
           distributionUrl
@@ -315,7 +315,7 @@ export class SmartSolutionsApi {
     `
 
     const graphql = JSON.stringify({
-      query: createPkPassMutation,
+      query: upsertPkPassMutation,
       variables: {
         inputData: {
           passTemplateId: this.config.passTemplateId,

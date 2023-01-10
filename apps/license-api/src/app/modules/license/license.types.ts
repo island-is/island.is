@@ -1,10 +1,11 @@
-import { LicenseError } from './dto'
+import { z } from 'zod'
 import {
+  Pass,
   Result,
-  ServiceError,
   VerifyPassData,
   VoidPassData,
 } from '@island.is/clients/smartsolutions'
+import { LicenseUpdateUnion } from './dto'
 
 export enum LicenseUpdateType {
   PUSH = 'push',
@@ -27,21 +28,14 @@ export enum LicenseId {
  * Only one license per client to start with.
  */
 export interface GenericLicenseClient {
-  update: () => Promise<string | null>
+  update: (inputData: LicenseUpdateUnion) => Promise<Result<Pass | undefined>>
   revoke: (queryId: string) => Promise<Result<VoidPassData>>
   verify: (inputData: string) => Promise<Result<VerifyPassData>>
 }
 
+export const DateSchema = z.preprocess((arg) => {
+  if (typeof arg === 'string') return new Date(arg)
+}, z.date())
+
 export const CLIENT_FACTORY = 'client-factory'
-
-export type PkPassServiceError = ServiceError
-
-export type ServiceResponse<T> =
-  | {
-      ok: true
-      data: T
-    }
-  | {
-      ok: false
-      error: LicenseError
-    }
+export { LicenseUpdateUnion }
