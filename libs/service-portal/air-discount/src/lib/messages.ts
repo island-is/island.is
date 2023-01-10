@@ -5,24 +5,31 @@ export const messages = defineMessages({
     id: 'sp.air-discount:intro-title',
     defaultMessage: 'Lægra fargjald með Loftbrú',
   },
-  // TODO: insert link for notendaskilmálar
-  introDescription: {
-    id: 'sp.air-discount:intro-description',
+  introDescriptionFirst: {
+    id: 'sp.air-discount:intro-description-first',
     defaultMessage:
       'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári, með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið ',
   },
-  introTerms: {
-    id: 'sp.air-discount: intro-terms',
+  introDescriptionLink: {
+    id: 'sp.air-discount: intro-description-link',
     defaultMessage: 'notendaskilmála',
   },
-  introDescription2: {
-    id: 'sp.air-discount:intro-description-2',
+  introDescriptionSecond: {
+    id: 'sp.air-discount:intro-description-second',
     defaultMessage: ' Loftbrúar',
   },
-  discountText: {
-    id: 'sp.air-discount:discount-text',
+  introLink: {
+    id: 'sp.air-discount:intro-link',
     defaultMessage:
-      'Hver afsláttur nemur 40% af flugfargjaldi. Kóðinn virkjar afslátt í bókunarvél félagsins.',
+      'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári, með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið <link>notendaskilmála</link> Loftbrúar.',
+  },
+  discountTextFirst: {
+    id: 'sp.air-discount:discount-text',
+    defaultMessage: 'Hver afsláttur nemur 40% af flugfargjaldi.',
+  },
+  discountTextSecond: {
+    id: 'sp.air-discount:discount-text',
+    defaultMessage: 'Kóðinn virkjar afslátt í bókunarvél félagsins.',
   },
   attention: {
     id: 'sp.air-discount:attention',

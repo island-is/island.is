@@ -16,6 +16,7 @@ import { educationLicenseNavigation } from '@island.is/service-portal/education-
 import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
 import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
+import { airDiscountNavigation } from '@island.is/service-portal/air-discount'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -42,6 +43,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     icelandicNamesRegistryNavigation,
     financeNavigation,
     vehiclesNavigation,
+    airDiscountNavigation,
     delegationsNavigation,
   ],
 }

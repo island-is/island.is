@@ -13,6 +13,9 @@ import { Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
+  Bullet,
+  BulletList,
+  Button,
   GridColumn,
   GridRow,
   Stack,
@@ -42,17 +45,23 @@ const AirDiscountQuery = gql`
           used
           total
         }
+      }
+    }
+  }
+`
+
+const AirDiscountFlightLegsQuery = gql`
+  query AirDiscountFlightLegsQuery {
+    airDiscountSchemeUserAndRelationsFlights {
+      flight {
+        bookingDate
+        user {
+          nationalId
+        }
         flightLegs {
-          id
-          airline
-          cooperation
-          financialState
           travel
-          originalPrice
-          discountPrice
           flight {
             id
-            bookingDate
           }
         }
       }
@@ -69,8 +78,15 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
+  const {
+    data: flightLegData,
+    loading: flightLegLoading,
+    error: flightLegError,
+  } = useQuery<Query>(AirDiscountFlightLegsQuery)
+
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
   const airDiscounts = data?.airDiscountSchemeDiscounts
+  console.log(flightLegData)
 
   console.log(airDiscounts)
   if (error && !loading) {
@@ -104,21 +120,26 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
             </Text>
 
             <Text variant="default" paddingTop={2}>
-              {formatMessage(m.introDescription)}
-              <a href="/">{formatMessage(m.introTerms)}</a>
-              {formatMessage(m.introDescription2)}
+              {formatMessage(m.introLink, {
+                link: (str) => (
+                  <a href="http://island.is">
+                    <Button variant="text">{str}</Button>
+                  </a>
+                ),
+              })}
             </Text>
-            <Text variant="default" paddingTop={2}></Text>
           </GridColumn>
-
+          <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
+            <BulletList>
+              <Bullet>{formatMessage(m.discountTextFirst)}</Bullet>
+              <Bullet>{formatMessage(m.discountTextSecond)}</Bullet>
+            </BulletList>
+          </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
             <ModuleAlertBannerSection />
           </GridColumn>
         </GridRow>
 
-        <Text variant="small" paddingBottom={2}>
-          {formatMessage(m.discountText)}
-        </Text>
         <AlertMessage
           type="warning"
           title={formatMessage(m.attention)}
