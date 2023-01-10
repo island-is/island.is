@@ -7,7 +7,6 @@ import { ApplicationsPaths } from './lib/paths'
 const OverviewScreen = lazy(() => import('./screens/Overview'))
 export const applicationsModule: PortalModule = {
   name: m.applications,
-  widgets: () => [],
   routes: ({ userInfo }) => [
     {
       name: m.applications,
