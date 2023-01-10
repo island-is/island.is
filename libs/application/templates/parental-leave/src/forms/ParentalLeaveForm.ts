@@ -494,19 +494,19 @@ export const ParentalLeaveForm: Form = buildForm({
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
             buildMultiField({
-              id: 'employment.isSelfEmployed.benefits',
+              id: 'isSelfEmployed.benefits',
               title: '',
               children: [
                 buildCustomField({
                   component: 'SelfEmployed',
-                  id: 'employment.isSelfEmployed',
+                  id: 'isSelfEmployed',
                   title: parentalLeaveFormMessages.selfEmployed.title,
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,
                 }),
                 buildCustomField({
                   component: 'UnEmploymentBenefits',
-                  id: 'employment.isReceivingUnemploymentBenefits',
+                  id: 'isReceivingUnemploymentBenefits',
                   title:
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsTitle,
@@ -515,13 +515,11 @@ export const ParentalLeaveForm: Form = buildForm({
                       .isReceivingUnemploymentBenefitsDescription,
                   condition: (answers) =>
                     (answers as {
-                      employment: {
-                        isSelfEmployed: string
-                      }
-                    })?.employment?.isSelfEmployed === NO,
+                      isSelfEmployed: string
+                    })?.isSelfEmployed === NO,
                 }),
                 buildSelectField({
-                  id: 'employment.unemploymentBenefits',
+                  id: 'unemploymentBenefits',
                   title:
                     parentalLeaveFormMessages.employer.unemploymentBenefits,
                   options: [
@@ -544,29 +542,23 @@ export const ParentalLeaveForm: Form = buildForm({
                   ],
                   condition: (answers) =>
                     (answers as {
-                      employment: {
-                        isReceivingUnemploymentBenefits: string
-                      }
-                    })?.employment?.isReceivingUnemploymentBenefits === YES,
+                      isReceivingUnemploymentBenefits: string
+                    })?.isReceivingUnemploymentBenefits === YES,
                 }),
               ],
             }),
             buildRepeater({
-              id: 'employment.employers',
+              id: 'employers',
               title: parentalLeaveFormMessages.employer.title,
               condition: (answers) => {
                 const isReceivingUnemploymentBenefits =
                   (answers as {
-                    employment: {
-                      isReceivingUnemploymentBenefits: YesOrNo
-                    }
-                  })?.employment?.isReceivingUnemploymentBenefits === NO
+                    isReceivingUnemploymentBenefits: YesOrNo
+                  })?.isReceivingUnemploymentBenefits === NO
                 const isNotSelfEmployed =
                   (answers as {
-                    employment: {
-                      isSelfEmployed: string
-                    }
-                  })?.employment?.isSelfEmployed !== YES
+                    isSelfEmployed: string
+                  })?.isSelfEmployed !== YES
 
                 return isReceivingUnemploymentBenefits && isNotSelfEmployed
               },
@@ -580,31 +572,41 @@ export const ParentalLeaveForm: Form = buildForm({
                     buildCompanySearchField({
                       id: 'name',
                       title: parentalLeaveFormMessages.employer.name,
-                      placeholder: parentalLeaveFormMessages.employer.nameSearchPlaceholder
+                      placeholder:
+                        parentalLeaveFormMessages.employer
+                          .nameSearchPlaceholder,
+                      defaultValue: '',
                     }),
                     buildTextField({
                       id: 'email',
-                      title: parentalLeaveFormMessages.employer.email
+                      variant: 'email',
+                      title: parentalLeaveFormMessages.employer.email,
+                      defaultValue: '',
                     }),
                     buildTextField({
                       id: 'phoneNumber',
                       variant: 'tel',
                       format: '###-####',
                       placeholder: '000-0000',
-                      title: parentalLeaveFormMessages.employer.phoneNumber
+                      title: parentalLeaveFormMessages.employer.phoneNumber,
+                      defaultValue: '',
                     }),
                     buildSelectField({
                       id: 'ratio',
                       title: parentalLeaveFormMessages.employer.ratio,
-                      placeholder: parentalLeaveFormMessages.employer.ratioPlaceholder,
-                      options: Array(10).fill(undefined).map((_, idx) => ({
-                          value: `${10 * (idx + 1)}`,
-                          label: `${10 * (idx + 1)}%`
-                      }))
-                    })
-                  ]
-                })
-              ]
+                      placeholder:
+                        parentalLeaveFormMessages.employer.ratioPlaceholder,
+                      defaultValue: '',
+                      options: Array(10)
+                        .fill(undefined)
+                        .map((_, idx, array) => ({
+                          value: `${10 * (array.length - idx)}`,
+                          label: `${10 * (array.length - idx)}%`,
+                        })),
+                    }),
+                  ],
+                }),
+              ],
             }),
           ],
         }),
@@ -622,18 +624,18 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers) => {
                 const isSelfEmployed =
                   (answers as {
-                    employment: {
+                    employer: {
                       isSelfEmployed: string
                     }
-                  })?.employment?.isSelfEmployed === YES
+                  })?.employer?.isSelfEmployed === YES
                 const hasOldSelfEmployedFile =
                   (answers as {
-                    employment: {
+                    employer: {
                       selfEmployed: {
                         file: unknown[]
                       }
                     }
-                  })?.employment?.selfEmployed?.file?.length > 0
+                  })?.employer?.selfEmployed?.file?.length > 0
 
                 return isSelfEmployed && hasOldSelfEmployedFile
               },
@@ -656,18 +658,18 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers) => {
                 const isSelfEmployed =
                   (answers as {
-                    employment: {
+                    employer: {
                       isSelfEmployed: string
                     }
-                  })?.employment?.isSelfEmployed === YES
+                  })?.employer?.isSelfEmployed === YES
                 const hasOldSelfEmployedFile =
                   (answers as {
-                    employment: {
+                    employer: {
                       selfEmployed: {
                         file: unknown[]
                       }
                     }
-                  })?.employment?.selfEmployed?.file?.length > 0
+                  })?.employer?.selfEmployed?.file?.length > 0
 
                 return isSelfEmployed && !hasOldSelfEmployedFile
               },
@@ -707,28 +709,22 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.benefitDescription,
               condition: (answers) => {
-                const isRecivingUnemploymentBenefits =
+                const isReceivingUnemploymentBenefits =
                   (answers as {
-                    employment: {
-                      isReceivingUnemploymentBenefits: YesOrNo
-                    }
-                  })?.employment?.isReceivingUnemploymentBenefits === YES
+                    isReceivingUnemploymentBenefits: YesOrNo
+                  })?.isReceivingUnemploymentBenefits === YES
                 const unemploymentBenefitsFromUnion =
                   (answers as {
-                    employment: {
-                      unemploymentBenefits: string
-                    }
-                  })?.employment?.unemploymentBenefits === UnEmployedBenefitTypes.union
+                    unemploymentBenefits: string
+                  })?.unemploymentBenefits === UnEmployedBenefitTypes.union
                 const unemploymentBenefitsFromXjúkratryggingar =
                   (answers as {
-                    employment: {
-                      unemploymentBenefits: string
-                    }
-                  })?.employment?.unemploymentBenefits ===
+                    unemploymentBenefits: string
+                  })?.unemploymentBenefits ===
                   UnEmployedBenefitTypes.healthInsurance
 
                 return (
-                  isRecivingUnemploymentBenefits &&
+                  isReceivingUnemploymentBenefits &&
                   (unemploymentBenefitsFromUnion ||
                     unemploymentBenefitsFromXjúkratryggingar)
                 )

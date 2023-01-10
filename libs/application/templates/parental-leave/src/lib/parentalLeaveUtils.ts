@@ -56,6 +56,7 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
+import { EmployeeRow } from '../fields/EmployersOverview'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -645,16 +646,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const isSelfEmployed = getValueViaPath(
     answers,
-    'employer.isSelfEmployed',
+    'isSelfEmployed',
   ) as YesOrNo
 
-  let isRecivingUnemploymentBenefits = getValueViaPath(
+  let isReceivingUnemploymentBenefits = getValueViaPath(
     answers,
-    'isRecivingUnemploymentBenefits',
+    'isReceivingUnemploymentBenefits',
   ) as YesOrNo
 
-  if (!isRecivingUnemploymentBenefits)
-    isRecivingUnemploymentBenefits = NO as YesOrNo
+  if (!isReceivingUnemploymentBenefits)
+    isReceivingUnemploymentBenefits = NO as YesOrNo
 
   const unemploymentBenefits = getValueViaPath(
     answers,
@@ -717,17 +718,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
-  const employerEmail = getValueViaPath(answers, 'employer.email') as string
-
-  const employerPhoneNumber = getValueViaPath(
-    answers,
-    'employerPhoneNumber',
-  ) as string
-
-  const employerNationalRegistryId = getValueViaPath(
-    answers,
-    'employerNationalRegistryId',
-  ) as string
+  const employers = getValueViaPath(answers, 'employers') as EmployeeRow[];
 
   const employerReviewerNationalRegistryId = getValueViaPath(
     answers,
@@ -838,9 +829,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     personalUsage,
     spouseUseAsMuchAsPossible,
     spouseUsage,
-    employerEmail,
-    employerPhoneNumber,
-    employerNationalRegistryId,
+    employers,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
@@ -855,7 +844,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods,
     rawPeriods,
     firstPeriodStart,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
     unemploymentBenefits,
   }
 }

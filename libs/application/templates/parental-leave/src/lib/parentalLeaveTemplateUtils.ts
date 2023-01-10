@@ -11,7 +11,7 @@ import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
 
 export function hasEmployer(context: ApplicationContext) {
   const currentApplicationAnswers = context.application.answers as {
-    isRecivingUnemploymentBenefits: typeof YES | typeof NO
+    isReceivingUnemploymentBenefits: typeof YES | typeof NO
     applicationType: {
       option:
         | typeof PARENTAL_LEAVE
@@ -24,11 +24,11 @@ export function hasEmployer(context: ApplicationContext) {
   // Added this check for applications that is in the db already so they can go through to next state
   if (currentApplicationAnswers.applicationType === undefined) {
     if (
-      currentApplicationAnswers.isRecivingUnemploymentBenefits !== undefined
+      currentApplicationAnswers.isReceivingUnemploymentBenefits !== undefined
     ) {
       return (
         currentApplicationAnswers.employer.isSelfEmployed === NO &&
-        currentApplicationAnswers.isRecivingUnemploymentBenefits === NO
+        currentApplicationAnswers.isReceivingUnemploymentBenefits === NO
       )
     }
 
@@ -36,7 +36,7 @@ export function hasEmployer(context: ApplicationContext) {
   } else
     return currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE
       ? currentApplicationAnswers.employer.isSelfEmployed === NO &&
-          currentApplicationAnswers.isRecivingUnemploymentBenefits === NO
+          currentApplicationAnswers.isReceivingUnemploymentBenefits === NO
       : false
 }
 

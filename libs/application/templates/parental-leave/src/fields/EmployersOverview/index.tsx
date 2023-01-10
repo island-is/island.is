@@ -1,8 +1,11 @@
 import { RepeaterProps } from '@island.is/application/types'
 import { FC } from 'react'
 import {
+  AlertMessage,
   Box,
   Button,
+  ContentBlock,
+  Icon,
   Inline,
   Table as T,
   Text,
@@ -11,8 +14,10 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { useDeepCompareEffect } from 'react-use'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { useMutation } from '@apollo/client'
 
-interface EmployeeRow {
+export interface EmployeeRow {
   name: {
     label: string
     nationalId: string
@@ -23,22 +28,52 @@ interface EmployeeRow {
 }
 
 const EmployersOverview: FC<RepeaterProps> = ({
+  error,
   application,
   expandRepeater,
+  setRepeaterItems,
+  setBeforeSubmitCallback,
 }) => {
   const employers: EmployeeRow[] | undefined = getValueViaPath(
     application.answers,
-    'employment.employers',
+    'employers',
   )
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  useDeepCompareEffect(() => {
-    if (!employers || employers.length === 0) {
-      expandRepeater();
+  const onDeleteEmployer = (nationalId: string) => {
+    const reducedEmployers = employers?.filter(
+      (e) => e.name.nationalId !== nationalId,
+    )
+    if (!reducedEmployers) {
+      return
     }
 
-  }, [employers]);
+    updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: { employers: reducedEmployers },
+        },
+        locale,
+      },
+    })
+    setRepeaterItems(reducedEmployers)
+  }
+
+  useDeepCompareEffect(() => {
+    setBeforeSubmitCallback?.(async () => {
+      if (!employers || employers.length === 0) {
+        return [
+          false,
+          formatMessage(parentalLeaveFormMessages.employer.addEmployerError),
+        ]
+      }
+
+      return [true, null]
+    })
+  }, [setBeforeSubmitCallback, employers])
 
   return (
     <Box>
@@ -49,6 +84,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
         <T.Table>
           <T.Head>
             <T.Row>
+              <T.HeadData></T.HeadData>
               <T.HeadData>Kennitala</T.HeadData>
               <T.HeadData>Nafn</T.HeadData>
               <T.HeadData>Netfang</T.HeadData>
@@ -58,7 +94,17 @@ const EmployersOverview: FC<RepeaterProps> = ({
           </T.Head>
           <T.Body>
             {employers?.map((e) => (
-              <T.Row key={e.email}>
+              <T.Row key={`${e.email}${e.name.nationalId}`}>
+                <T.Data>
+                  <Box onClick={() => onDeleteEmployer(e.name.nationalId)}>
+                    <Icon
+                      color="dark200"
+                      icon="removeCircle"
+                      size="medium"
+                      type="outline"
+                    />
+                  </Box>
+                </T.Data>
                 <T.Data>{e.name?.nationalId}</T.Data>
                 <T.Data>{e.name?.label}</T.Data>
                 <T.Data>{e.email}</T.Data>
@@ -76,6 +122,13 @@ const EmployersOverview: FC<RepeaterProps> = ({
           </Button>
         </Inline>
       </Box>
+      {!!error && (
+        <Box marginTop={3}>
+          <ContentBlock>
+            <AlertMessage type="error" title={error} />
+          </ContentBlock>
+        </Box>
+      )}
     </Box>
   )
 }

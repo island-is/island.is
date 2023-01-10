@@ -91,12 +91,12 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const {
     isSelfEmployed,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
   } = useApplicationAnswers(application)
   const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
   const isBeneficiaries = !oldApplication
     ? applicationType === PARENTAL_LEAVE
-      ? isRecivingUnemploymentBenefits === YES
+      ? isReceivingUnemploymentBenefits === YES
       : false
     : false
   const [submitApplication, { loading: loadingSubmit }] = useMutation(

@@ -1318,6 +1318,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employer.add',
       defaultMessage: 'Bæta við vinnuveitanda',
       description: 'Add an employer',
+    },
+    addEmployerError: {
+      id: 'pl.application:employer.add.error',
+      defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
+      description: 'It is required to add at least one employer',
     }
   }),
 
