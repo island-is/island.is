@@ -1,5 +1,7 @@
 comment:
-  layout: 'reach, diff, flags'
+  layout: "reach, diff, flags, files, header, footer, feedback"
+  behavior: default
+github_checks: false
 coverage:
   status:
     project: false

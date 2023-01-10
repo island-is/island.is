@@ -21,7 +21,7 @@ runs:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
     - name: Set Codeconv version numner
       run: |
-        echo "CODECOV_REV=v0.1.18" >> $GITHUB_ENV
+        echo "CODECOV_REV=v0.3.2" >> $GITHUB_ENV
       shell: bash
 
     - name: Setup yarn
