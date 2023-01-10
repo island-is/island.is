@@ -7,7 +7,7 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User as TUser } from '@island.is/air-discount-scheme/types'
-import { FlightLeg } from '../models/flightLeg.model'
+import { FlightLeg, FlightLegWithoutTravel } from '../models/flightLeg.model'
 import { Flight } from '../models/flight.model'
 import { User as FlightUser } from '../models/user.model'
 
@@ -43,7 +43,7 @@ export class FlightLegService {
 
   async getThisYearsUserAndRelationsFlightLegs(
     auth: User,
-  ): Promise<FlightLeg[]> {
+  ): Promise<FlightLegWithoutTravel[]> {
     const flights = await this.getADSWithAuth(auth)
       .privateFlightUserControllerGetUserAndRelationsFlights()
       .catch((e) => {
@@ -55,7 +55,7 @@ export class FlightLegService {
     }
 
     const relations: TUser[] = await this.getUserRelations(auth)
-    const flightLegs: FlightLeg[] = []
+    const flightLegs: FlightLegWithoutTravel[] = []
 
     // The expected return value for the graphql layers has some extra properties
     // We have to maintain circularity as well since the types are circular.
@@ -70,11 +70,12 @@ export class FlightLegService {
       }
 
       // We construct new objects with the expected model properties
+      // TODO: consider removing name from model
       const constructedUser: FlightUser = {
         ...relation,
         name: `${relation.firstName} ${relation.lastName}`,
       }
-      const constructedFlightLegs: FlightLeg[] = []
+      const constructedFlightLegs: FlightLegWithoutTravel[] = []
 
       // UserInfo in flight.userInfo has gender as string in the generated schema
       // but is a string union type, hence the `as Flight` coercion
@@ -87,14 +88,16 @@ export class FlightLegService {
       // We loop through the flightLegs and attach the extra information needed
       // as well as attaching a reference to the new constructed flight
       for (const flightLeg of flight.flightLegs ?? []) {
-        const constructedFlightLeg: FlightLeg = {
+        const constructedFlightLeg: FlightLegWithoutTravel = {
           ...flightLeg,
-          travel: `${flightLeg.origin} - ${flightLeg.destination}`,
           flight: constructedFlight,
         }
 
         // Now we attach the flightLeg to its flight reference
-        constructedFlightLeg.flight.flightLegs.push(constructedFlightLeg)
+        // We assert FlightLeg here since the travel will be resolved
+        constructedFlightLeg.flight.flightLegs.push(
+          constructedFlightLeg as FlightLeg,
+        )
 
         constructedFlightLegs.push(constructedFlightLeg)
       }

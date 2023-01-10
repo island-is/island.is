@@ -28,3 +28,5 @@ export class FlightLeg {
   @Field((_) => Flight)
   flight!: Flight
 }
+
+export type FlightLegWithoutTravel = Omit<FlightLeg, 'travel'>
