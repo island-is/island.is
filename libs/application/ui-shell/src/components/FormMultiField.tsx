@@ -17,7 +17,20 @@ import ConditionHandler from './ConditionHandler'
 import FormField from './FormField'
 import { FieldDef, MultiFieldScreen } from '../types'
 
-const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO]
+const IGNORE_CUSTOM_WIDTH_TYPES: FieldTypes[] = [FieldTypes.RADIO]
+
+const mapWidthToSpan = (width?: string) => {
+  if (width === 'quarter') {
+    return '1/4'
+  }
+  if (width === 'half') {
+    return '1/2'
+  }
+  if (width === 'third') {
+    return '3/4'
+  }
+  return '1/1'
+}
 
 const FormMultiField: FC<{
   application: Application
@@ -73,9 +86,9 @@ const FormMultiField: FC<{
       */}
       <Box component="section" width="full" aria-labelledby={multiField.id} />
       {children.map((field, index) => {
-        const isHalfColumn =
-          !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
-        const span = isHalfColumn ? '1/2' : '1/1'
+        const span = !IGNORE_CUSTOM_WIDTH_TYPES.includes(field.type)
+          ? mapWidthToSpan(field.width)
+          : '1/1'
 
         return (
           <GridColumn

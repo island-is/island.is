@@ -44,6 +44,11 @@ export const applicantInformation = {
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
     },
+    countryCode: {
+      id: 'uiForms.application:applicantInfo.labels.countryCode',
+      defaultMessage: 'Landsnúmer',
+      description: 'Country code',
+    },
   }),
   error: defineMessages({
     phoneNumber: {

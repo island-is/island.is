@@ -18,7 +18,7 @@ export type MaybeWithApplicationAndField<T> =
   | T
   | ((application: Application, field: Field) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
-export type FieldWidth = 'full' | 'half'
+export type FieldWidth = 'full' | 'half' | 'third' | 'quarter'
 export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 export type TextFieldVariant =
   | 'text'

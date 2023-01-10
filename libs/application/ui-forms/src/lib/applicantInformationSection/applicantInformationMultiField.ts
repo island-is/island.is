@@ -1,15 +1,15 @@
 import { buildMultiField, buildTextField } from '@island.is/application/core'
-import { removeCountryCode } from '@island.is/application/ui-components'
 import { FormText } from '@island.is/application/types'
 
 import { applicantInformation } from './messages'
 import { ApplicantInformationInterface } from './types'
 
-export const applicantInformationMultiField = (data: {
+export const applicantInformationMultiField = (data?: {
   title?: FormText
   description?: FormText
 }) => {
-  const { title, description } = data
+  const { title, description } = data ?? {}
+
   return buildMultiField({
     id: 'applicant',
     title: title ?? applicantInformation.general.title,
@@ -79,25 +79,36 @@ export const applicantInformationMultiField = (data: {
       buildTextField({
         id: 'applicant.email',
         title: applicantInformation.labels.email,
-        width: 'half',
         variant: 'email',
+        width: 'full',
         required: true,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.userProfile?.data?.email ?? '',
         maxLength: 100,
       }),
       buildTextField({
-        id: 'applicant.phoneNumber',
-        title: applicantInformation.labels.tel,
-        format: '###-####',
+        id: 'applicant.countryCode',
+        title: applicantInformation.labels.countryCode,
         width: 'half',
         variant: 'tel',
+        defaultValue: (application: ApplicantInformationInterface) =>
+          application.externalData?.userProfile?.data?.mobilePhoneNumber?.split(
+            '-',
+          )[0] ?? '',
+        maxLength: 100,
+      }),
+      buildTextField({
+        id: 'applicant.phoneNumber',
+        title: applicantInformation.labels.tel,
+        format: '+###-###-####',
+        width: 'half',
+        variant: 'tel',
+
         defaultValue: (application: ApplicantInformationInterface) => {
-          const number = removeCountryCode(
-            application.externalData?.userProfile?.data?.mobilePhoneNumber ??
-              '',
-          )
+          const number =
+            application.externalData?.userProfile?.data?.mobilePhoneNumber ?? ''
           return number
+          return number.replace(/(^00354|^\+354|\D)/g, '')
         },
       }),
     ],
