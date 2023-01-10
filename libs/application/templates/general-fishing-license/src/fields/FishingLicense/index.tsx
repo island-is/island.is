@@ -68,14 +68,6 @@ export const FishingLicense: FC<FieldBaseProps> = ({
           justifyContent="spaceBetween"
         >
           <ShipInformation ship={ship} seaworthinessHasColor />
-          <Box>
-            <Tag
-              variant={isExpired || hasDeprivations ? 'disabled' : 'purple'}
-              disabled
-            >
-              {formatMessage(shipSelection.tags.noFishingLicensesFound)}
-            </Tag>
-          </Box>
         </Box>
       </Box>
       <Box>
@@ -98,22 +90,21 @@ export const FishingLicense: FC<FieldBaseProps> = ({
               error={errors && getErrorViaPath(errors, `${field.id}.license`)}
               onSelect={(value) => handleOnSelect(value)}
               options={data?.fishingLicenses
-                ?.filter(({ answer }: FishingLicenseSchema) => answer)
+                ?.filter(
+                  ({ answer, fishingLicenseInfo }: FishingLicenseSchema) =>
+                    answer && fishingLicenseInfo.code !== 'unknown',
+                )
                 .map(({ fishingLicenseInfo }: FishingLicenseSchema) => {
                   return {
                     value: fishingLicenseInfo.code,
                     label:
-                      fishingLicenseInfo.code === 'unknown'
-                        ? fishingLicenseInfo.name
-                        : formatMessage(
-                            fishingLicense.labels[fishingLicenseInfo.code],
-                          ),
+                      fishingLicenseInfo.code === 'catchMark'
+                        ? formatMessage(fishingLicense.labels.catchMark)
+                        : formatMessage(fishingLicense.labels.hookCatchLimit),
                     tooltip:
-                      fishingLicenseInfo.code === 'unknown'
-                        ? ''
-                        : formatMessage(
-                            fishingLicense.tooltips[fishingLicenseInfo.code],
-                          ),
+                      fishingLicenseInfo.code === 'catchMark'
+                        ? formatMessage(fishingLicense.tooltips.catchMark)
+                        : formatMessage(fishingLicense.tooltips.hookCatchLimit),
                   }
                 })}
             />
@@ -132,16 +123,26 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                 return (
                   <Box marginBottom={2} key={fishingLicenseInfo.code}>
                     <FishingLicenseAlertMessage
-                      title={formatMessage(
-                        fishingLicense.warningMessageTitle[
-                          fishingLicenseInfo.code
-                        ],
-                      )}
-                      description={formatMessage(
-                        fishingLicense.warningMessageDescription[
-                          fishingLicenseInfo.code
-                        ],
-                      )}
+                      title={
+                        fishingLicenseInfo.code === 'catchMark'
+                          ? formatMessage(
+                              fishingLicense.warningMessageTitle.catchMark,
+                            )
+                          : formatMessage(
+                              fishingLicense.warningMessageTitle.hookCatchLimit,
+                            )
+                      }
+                      description={
+                        fishingLicenseInfo.code === 'catchMark'
+                          ? formatMessage(
+                              fishingLicense.warningMessageDescription
+                                .catchMark,
+                            )
+                          : formatMessage(
+                              fishingLicense.warningMessageDescription
+                                .hookCatchLimit,
+                            )
+                      }
                       reasons={reasons}
                     />
                   </Box>

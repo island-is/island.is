@@ -1,13 +1,6 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Text,
-  Stack,
-  Tag,
-  Button,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text, Stack, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
 import { ShipInformation, ShipSelectionAlertModal } from '../components'
@@ -15,10 +8,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import format from 'date-fns/format'
 import { shipSelection } from '../../lib/messages'
 import is from 'date-fns/locale/is'
-import {
-  FishingLicenseShip as Ship,
-  FishingLicenseUnfulfilledLicense,
-} from '@island.is/api/schema'
+import { FishingLicenseShip as Ship } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
@@ -36,10 +26,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const [showTitle, setShowTitle] = useState<boolean>(false)
-  const [visibility, setVisibility] = useState<boolean>(false)
-  const [unfulfilledLicenses, setUnfulfilledLicenses] = useState<
-    FishingLicenseUnfulfilledLicense[] | null
-  >(null)
 
   const registrationNumberValue = getValueViaPath(
     application.answers,
@@ -58,15 +44,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const shipOptions = (ships: Ship[]) => {
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
-      if (ship.fishingLicenses.length !== 0) {
-        continue
-      }
-
-      const handleShowAlertModal = () => {
-        setUnfulfilledLicenses(ship.unfulfilledLicenses)
-        setVisibility(true)
-      }
-      const isDisabled = ship.doesNotFulfillFishingLicenses
       const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
       const seaworthinessDate = format(
         parseISO(ship.seaworthiness.validTo),
@@ -84,31 +61,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 ship={ship}
                 seaworthinessHasColor
                 isExpired={isExpired}
-                isDisabled={isDisabled}
               />
-              <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="spaceBetween"
-                alignItems="flexEnd"
-              >
-                <Tag
-                  variant={isExpired || isDisabled ? 'disabled' : 'purple'}
-                  disabled
-                >
-                  {formatMessage(shipSelection.tags.noFishingLicensesFound)}
-                </Tag>
-
-                {ship.unfulfilledLicenses.length > 0 && (
-                  <Box>
-                    <Button variant="text" onClick={handleShowAlertModal}>
-                      {formatMessage(
-                        shipSelection.labels.unfulfilledLicensesButton,
-                      )}
-                    </Button>
-                  </Box>
-                )}
-              </Box>
             </Box>
             {isExpired && (
               <Box marginTop={2}>
@@ -123,7 +76,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
             )}
           </>
         ),
-        disabled: isDisabled || isExpired,
+        disabled: isExpired,
       })
     }
     return options
@@ -172,10 +125,9 @@ export const ShipSelection: FC<FieldBaseProps> = ({
             <ShipInformation ship={ship} />
             <Stack space={1} align="right">
               {ship.fishingLicenses?.map((license) => {
-                if (license.code === 'unknown') return null
                 return (
                   <Tag variant="blue" disabled key={`${license}`}>
-                    {formatMessage(shipSelection.tags[license.code])}
+                    {license.name}
                   </Tag>
                 )
               })}
@@ -187,11 +139,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         type="hidden"
         value={registrationNumber}
         {...register(`${field.id}.registrationNumber`, { required: true })}
-      />
-      <ShipSelectionAlertModal
-        visibility={visibility}
-        setVisibility={setVisibility}
-        unfulfilledLicenses={unfulfilledLicenses}
       />
     </Box>
   )

@@ -19,7 +19,6 @@ import {
   DefaultEvents,
   defineTemplateApi,
   UserProfileApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 
 import {
@@ -52,7 +51,7 @@ import {
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
-import { ChildrenApi } from '../dataProviders'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -129,7 +128,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi, ChildrenApi],
+              api: [UserProfileApi, GetPersonInformation, ChildrenApi],
             },
           ],
         },

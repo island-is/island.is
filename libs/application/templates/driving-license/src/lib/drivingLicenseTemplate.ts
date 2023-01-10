@@ -77,7 +77,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 PaymentCatalogApi.configure({
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
                   externalDataId: 'payment',
                 }),
                 CurrentLicenseApi,
