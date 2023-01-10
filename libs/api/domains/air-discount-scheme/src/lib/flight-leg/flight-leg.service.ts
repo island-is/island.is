@@ -109,7 +109,7 @@ export class FlightLegService {
     const getRelationsResponse = await this.getADSWithAuth(auth)
       .privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
       .catch((e) => {
-        this.handle4xx(e)
+        this.handleError(e)
       })
 
     if (!getRelationsResponse) {
