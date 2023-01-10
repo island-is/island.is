@@ -12,7 +12,6 @@ export const header = style({
   display: 'flex',
   alignItems: 'center',
   width: '100%',
-  maxWidth: theme.breakpoints.xl,
   height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
   margin: '0 auto',
   backgroundColor: theme.color.blue100,

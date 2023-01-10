@@ -10,6 +10,10 @@ export const assetsNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      name: m.myRealEstate,
+      path: AssetsPaths.AssetsRoot,
+    },
+    {
       name: 'id',
       navHide: true,
       path: AssetsPaths.AssetsRealEstateDetail,

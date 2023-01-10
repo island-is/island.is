@@ -35,7 +35,10 @@ import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Layout.css'
 import GoBack from '../GoBack/GoBack'
 import { useDynamicRoutesWithNavigation } from '@island.is/service-portal/core'
-import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import {
+  getNavigationByPath,
+  MAIN_NAVIGATION,
+} from '../../lib/masterNavigation'
 
 const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
@@ -86,14 +89,6 @@ const Layout: FC = ({ children }) => {
 
   const parent = findParent(navigation?.children)
 
-  if (parent !== undefined) {
-    parent.children
-      ?.filter((item) => !item.navHide)
-      ?.map((item: ServicePortalNavigationItem) =>
-        subNavItems.push(mapChildren(item)),
-      )
-  }
-
   useEffect(() => {
     if (
       pathname === ServicePortalPath.MinarSidurPath + '/' ||
@@ -104,6 +99,18 @@ const Layout: FC = ({ children }) => {
       setIsDashboard(false)
     }
   }, [pathname])
+
+  const getNavigation = () => {
+    const navigation = getNavigationByPath(pathname)
+    if (navigation) {
+      navigation.children
+        ?.filter((item) => !item.navHide)
+        ?.map((item: ServicePortalNavigationItem) =>
+          subNavItems.push(mapChildren(item)),
+        )
+    }
+    console.log(navigation)
+  }
 
   const defaultOrg: Organization = {
     email: '',
@@ -127,6 +134,8 @@ const Layout: FC = ({ children }) => {
         (org: Organization) => org.id === parent?.serviceProvider,
       ) ?? defaultOrg
   }
+
+  getNavigation()
 
   return (
     <>
@@ -169,7 +178,7 @@ const Layout: FC = ({ children }) => {
                           )
                         }}
                         baseId={'service-portal-navigation'}
-                        title={formatMessage(m.tableOfContents)}
+                        title={formatMessage(parent?.name ?? m.tableOfContents)}
                         items={subNavItems}
                         expand
                       />

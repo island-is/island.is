@@ -2,7 +2,7 @@ import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
-import { VehiclePaths } from './lib/paths'
+import { TransportPaths } from './lib/paths'
 
 export const transportsModule: PortalModule = {
   name: 'Farartæki',
@@ -10,32 +10,32 @@ export const transportsModule: PortalModule = {
   routes: ({ userInfo }) => [
     {
       name: m.yourVehicles,
-      path: VehiclePaths.AssetsVehicles,
+      path: TransportPaths.AssetsVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
     {
       name: m.yourVehicles,
-      path: VehiclePaths.AssetsMyVehicles,
+      path: TransportPaths.AssetsMyVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
     {
       name: m.vehicles,
-      path: VehiclePaths.AssetsVehiclesDetail,
+      path: TransportPaths.AssetsVehiclesDetail,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/VehicleDetail/VehicleDetail')),
     },
     {
       name: m.vehiclesHistory,
-      path: VehiclePaths.AssetsVehiclesHistory,
+      path: TransportPaths.AssetsVehiclesHistory,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () =>
         lazy(() => import('./screens/VehicleHistory/VehicleHistory')),
     },
     {
       name: m.vehiclesDrivingLessons,
-      path: VehiclePaths.AssetsVehiclesDrivingLessons,
+      path: TransportPaths.AssetsVehiclesDrivingLessons,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       dynamic: true,
       render: () =>
@@ -43,7 +43,7 @@ export const transportsModule: PortalModule = {
     },
     {
       name: m.vehiclesLookup,
-      path: VehiclePaths.AssetsVehiclesLookup,
+      path: TransportPaths.AssetsVehiclesLookup,
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),

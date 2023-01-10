@@ -1,4 +1,4 @@
-export enum VehiclePaths {
+export enum TransportPaths {
   AssetsVehicles = '/okutaeki',
   AssetsMyVehicles = '/okutaeki/min-okutaeki',
   AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',

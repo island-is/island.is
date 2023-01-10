@@ -1,37 +1,37 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/service-portal/core'
-import { VehiclePaths } from './paths'
+import { TransportPaths } from './paths'
 
 export const transportsNavigation: PortalNavigationItem = {
   name: m.vehicles,
-  path: VehiclePaths.AssetsMyVehicles,
+  path: TransportPaths.AssetsMyVehicles,
   icon: {
     icon: 'car',
   },
   children: [
     {
       name: m.myVehicles,
-      path: VehiclePaths.AssetsMyVehicles,
+      path: TransportPaths.AssetsMyVehicles,
       children: [
         {
           // Path param reference
           name: 'id',
           navHide: true,
-          path: VehiclePaths.AssetsVehiclesDetail,
+          path: TransportPaths.AssetsVehiclesDetail,
         },
       ],
     },
     {
       name: m.vehiclesLookup,
-      path: VehiclePaths.AssetsVehiclesLookup,
+      path: TransportPaths.AssetsVehiclesLookup,
     },
     {
       name: m.vehiclesDrivingLessons,
-      path: VehiclePaths.AssetsVehiclesDrivingLessons,
+      path: TransportPaths.AssetsVehiclesDrivingLessons,
     },
     {
       name: m.vehiclesHistory,
-      path: VehiclePaths.AssetsVehiclesHistory,
+      path: TransportPaths.AssetsVehiclesHistory,
     },
   ],
   description: m.vehiclesDescription,

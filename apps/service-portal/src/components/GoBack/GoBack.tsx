@@ -18,7 +18,7 @@ export const GoBack = () => {
         truncate
         onClick={() => history.replace('/')}
       >
-        Til baka
+        Til baka í yfirlit
       </Button>
     </Box>
   )

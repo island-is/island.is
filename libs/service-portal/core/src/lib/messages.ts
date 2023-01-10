@@ -202,6 +202,10 @@ export const m = defineMessages({
     id: 'service.portal:real-estate',
     defaultMessage: 'Fasteignir',
   },
+  myRealEstate: {
+    id: 'service.portal:my-real-estate',
+    defaultMessage: 'Mínar fasteignir',
+  },
   realEstateDescription: {
     id: 'service.portal:real-estate-description',
     defaultMessage: 'Fasteignir þínar og veðbókavottorð',
