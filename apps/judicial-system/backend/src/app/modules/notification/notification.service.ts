@@ -17,6 +17,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   DEFENDER_ROUTE,
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
@@ -70,6 +71,7 @@ import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { notificationModuleConfig } from './notification.config'
 import { Defendant, DefendantService } from '../defendant'
+import { formatCourtIndictmentReadyForCourtEmailNotification } from '../../formatters/formatters'
 
 interface Attachment {
   filename: string
@@ -372,6 +374,31 @@ export class NotificationService {
   private async sendReadyForCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
+    if (isIndictmentCase(theCase.type)) {
+      const email = theCase.court?.notificationEmail
+      const {
+        subject,
+        body,
+      } = formatCourtIndictmentReadyForCourtEmailNotification(
+        this.formatMessage,
+        theCase,
+        `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+      )
+      const recipient = await this.sendEmail(
+        subject,
+        body,
+        theCase.court?.name,
+        email,
+      )
+
+      return this.recordNotification(
+        theCase.id,
+        NotificationType.READY_FOR_COURT,
+        [recipient],
+      )
+    }
+
+    // restriction and investigation cases
     const notification = await this.notificationModel.findOne({
       where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
     })

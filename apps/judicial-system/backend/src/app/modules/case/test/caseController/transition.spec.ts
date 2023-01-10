@@ -186,6 +186,14 @@ describe('CaseController - Transition', () => {
                 },
               ],
             )
+          } else if (
+            isIndictmentCase(type) &&
+            newState === CaseState.SUBMITTED
+          ) {
+            expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
+              type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+              caseId,
+            })
           } else {
             expect(
               mockMessageService.sendMessagesToQueue,
