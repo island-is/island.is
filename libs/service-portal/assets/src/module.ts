@@ -6,7 +6,6 @@ import { AssetsPaths } from './lib/paths'
 
 export const assetsModule: PortalModule = {
   name: 'Fasteignir',
-  widgets: () => [],
   routes: ({ userInfo }) => {
     const routes: PortalRoute[] = [
       {

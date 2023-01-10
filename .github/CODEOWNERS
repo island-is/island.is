@@ -82,8 +82,6 @@
 /libs/clients/middlewares/                                                                          @island-is/aranja
 /libs/portals/shared-modules/delegations                                                            @island-is/aranja
 /libs/portals/admin/core                                                                            @island-is/aranja
-/libs/service-portal/settings/access-control                                                        @island-is/aranja
-
 
 /apps/judicial-system/                                                                              @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                              @island-is/kolibri-justice-league
@@ -188,6 +186,7 @@
 
 /libs/island-ui/                                                                                    @island-is/island-ui
 
+/apps/samradsgatt/                                                                                  @island-is/advania
 /apps/skilavottord/                                                                                 @island-is/deloitte
 /libs/skilavottord/                                                                                 @island-is/deloitte
 /libs/application/templates/parental-leave/                                                         @island-is/deloitte

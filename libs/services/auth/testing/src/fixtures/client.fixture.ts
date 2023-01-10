@@ -10,6 +10,7 @@ export type CreateClient = Pick<
   | 'supportsLegalGuardians'
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
+  | 'requireApiScopes'
 >
 
 const createRandomClient = (): CreateClient => {
@@ -21,6 +22,7 @@ const createRandomClient = (): CreateClient => {
     supportsLegalGuardians: false,
     supportsProcuringHolders: false,
     supportsPersonalRepresentatives: false,
+    requireApiScopes: false,
   }
 }
 

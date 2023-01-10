@@ -2,6 +2,10 @@ import { BreadCrumbItem } from '@island.is/island-ui/core'
 import { HeadWithSocialSharing, NewsList } from '@island.is/web/components'
 import { NewsListSidebar } from '@island.is/web/components'
 import {
+  GetContentSlugQuery,
+  GetContentSlugQueryVariables,
+  GetGenericTagBySlugQuery,
+  GetGenericTagBySlugQueryVariables,
   GetNamespaceQuery,
   GetNewsDatesQuery,
   GetNewsQuery,
@@ -16,17 +20,19 @@ import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { Locale } from 'locale'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import {
+  GET_CONTENT_SLUG,
   GET_NAMESPACE_QUERY,
   GET_NEWS_DATES_QUERY,
   GET_NEWS_QUERY,
 } from '../queries'
+import { GET_GENERIC_TAG_BY_SLUG_QUERY } from '../queries/GenericTag'
 import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
 import { ProjectWrapper } from './components/ProjectWrapper'
 import { getThemeConfig } from './utils'
@@ -225,6 +231,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
         getNews: { items: newsList, total },
       },
     },
+    genericTagResponse,
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
@@ -249,6 +256,20 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
         },
       },
     }),
+    query.tag
+      ? apolloClient.query<
+          GetGenericTagBySlugQuery,
+          GetGenericTagBySlugQueryVariables
+        >({
+          query: GET_GENERIC_TAG_BY_SLUG_QUERY,
+          variables: {
+            input: {
+              lang: locale as Locale,
+              slug: query.tag as string,
+            },
+          },
+        })
+      : null,
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -265,6 +286,37 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
       }),
   ])
 
+  const genericTag = genericTagResponse?.data?.getGenericTagBySlug
+
+  const languageToggleQueryParams: LayoutProps['languageToggleQueryParams'] = {
+    en: {},
+    is: {},
+    [locale as Locale]: genericTag?.slug ? { tag: genericTag.slug } : {},
+  }
+
+  if (genericTag?.id) {
+    const contentSlugResponse = await apolloClient.query<
+      GetContentSlugQuery,
+      GetContentSlugQueryVariables
+    >({
+      query: GET_CONTENT_SLUG,
+      variables: {
+        input: {
+          id: genericTag.id,
+        },
+      },
+    })
+
+    const slugs = contentSlugResponse?.data?.getContentSlug?.slug ?? {
+      en: '',
+      is: '',
+    }
+
+    for (const lang of Object.keys(slugs)) {
+      languageToggleQueryParams[lang as Locale] = { tag: slugs[lang] }
+    }
+  }
+
   return {
     projectPage,
     newsList: projectPage?.newsTag ? newsList : [],
@@ -276,6 +328,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
     selectedPage,
     namespace,
     locale: locale as Locale,
+    languageToggleQueryParams,
     ...getThemeConfig(projectPage?.theme),
   }
 }
