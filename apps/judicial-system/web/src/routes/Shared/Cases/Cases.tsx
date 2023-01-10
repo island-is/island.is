@@ -205,7 +205,7 @@ export const Cases: React.FC = () => {
       caseToDelete.state === CaseState.RECEIVED
     ) {
       await sendNotification(caseToDelete.id, NotificationType.REVOKED)
-      await transitionCase(caseToDelete, CaseTransition.DELETE)
+      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
     }
   }
