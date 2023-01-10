@@ -192,7 +192,10 @@ export class MessageService {
     })
   }
 
-  async sendMessageToQueue(message: CaseMessage, retry = false): Promise<void> {
+  async sendMessageToQueue(
+    message: CaseMessage,
+    isRetry = false,
+  ): Promise<void> {
     const queueUrl = await this.getQueueUrl()
 
     return this.sqs
@@ -210,7 +213,7 @@ export class MessageService {
       .catch((err) => {
         this.connectToQueue()
 
-        if (retry) {
+        if (isRetry) {
           throw err
         }
 
@@ -221,7 +224,7 @@ export class MessageService {
 
   async sendMessagesToQueue(
     messages: CaseMessage[],
-    retry = false,
+    isRetry = false,
   ): Promise<void> {
     const MAX_BATCH_SIZE = 10
 
@@ -246,7 +249,7 @@ export class MessageService {
         .catch((err) => {
           this.connectToQueue()
 
-          if (retry) {
+          if (isRetry) {
             throw err
           }
 
@@ -260,7 +263,7 @@ export class MessageService {
       const numSentNow = Math.min(messages.length - i, MAX_BATCH_SIZE)
       const messagesToSend = messages.slice(i, i + numSentNow)
 
-      await this.sendMessagesToQueue(messagesToSend, retry)
+      await this.sendMessagesToQueue(messagesToSend, isRetry)
     }
   }
 
