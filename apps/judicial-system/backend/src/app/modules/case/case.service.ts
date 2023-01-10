@@ -26,7 +26,6 @@ import {
 import {
   CaseFileCategory,
   CaseFileState,
-  CaseListEntry,
   CaseOrigin,
   CaseState,
   isIndictmentCase,

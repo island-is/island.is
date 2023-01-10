@@ -9,7 +9,6 @@ import type {
 } from '@island.is/judicial-system/types'
 import { Defendant } from '../../defendant'
 import { User } from '../../user'
-import { Case } from '../../case'
 
 @ObjectType()
 export class CaseListEntry implements TCaseListEntry {

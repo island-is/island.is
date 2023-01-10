@@ -9,7 +9,6 @@ import {
 
 import { Defendant } from '../../defendant'
 import { User } from '../../user'
-import { Case } from './case.model'
 
 export class CaseListEntry {
   @ApiProperty()
