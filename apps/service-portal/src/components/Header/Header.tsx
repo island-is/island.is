@@ -12,26 +12,23 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { UserLanguageSwitcher } from '@island.is/shared/components'
 import { useLocale } from '@island.is/localization'
 import { UserMenu } from '@island.is/shared/components'
-import { useStore } from '../../store/stateProvider'
-import { ActionType } from '../../store/actions'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 
 interface Props {
   position: number
+  mobileMenuOpen: boolean
+  setMobileMenuOpen: (set: boolean) => void
 }
-export const Header = ({ position }: Props) => {
+export const Header = ({
+  position,
+  mobileMenuOpen,
+  setMobileMenuOpen,
+}: Props) => {
   const { formatMessage } = useLocale()
-  const [{ mobileMenuState }, dispatch] = useStore()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { userInfo: user } = useAuth()
-
-  const handleMobileMenuTriggerClick = () =>
-    dispatch({
-      type: ActionType.SetMobileMenuState,
-      payload: mobileMenuState === 'open' ? 'closed' : 'open',
-    })
 
   const closeButton = (userMenu: boolean) => {
     return (
@@ -42,7 +39,7 @@ export const Header = ({ position }: Props) => {
         onClick={
           userMenu
             ? () => setUserMenuOpen(false)
-            : () => handleMobileMenuTriggerClick()
+            : () => setMobileMenuOpen(false)
         }
         padding={1}
         borderRadius="circle"
@@ -53,6 +50,7 @@ export const Header = ({ position }: Props) => {
       </FocusableBox>
     )
   }
+
   return (
     <div className={styles.placeholder}>
       {/*  Inline style to dynamicly change position of header because of alert banners */}
@@ -96,12 +94,12 @@ export const Header = ({ position }: Props) => {
                 )}
                 {!userMenuOpen && (
                   <Hidden above="sm">
-                    {mobileMenuState === 'closed' ? (
+                    {!mobileMenuOpen ? (
                       <Box marginLeft={[1, 2]}>
                         <Button
                           variant="utility"
                           icon="menu"
-                          onClick={handleMobileMenuTriggerClick}
+                          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         >
                           {formatMessage(m.menu)}
                         </Button>

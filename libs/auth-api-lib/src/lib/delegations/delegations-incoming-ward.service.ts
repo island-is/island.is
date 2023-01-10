@@ -5,6 +5,7 @@ import {
 } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, Logger } from '@nestjs/common'
+import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { DelegationType } from './types/delegationType'
 
@@ -16,7 +17,21 @@ export class DelegationsIncomingWardService {
     private logger: Logger,
   ) {}
 
-  async findAllIncoming(user: User): Promise<DelegationDTO[]> {
+  async findAllIncoming(
+    user: User,
+    clientAllowedApiScopes?: ApiScopeInfo[],
+    requireApiScopes?: boolean,
+  ): Promise<DelegationDTO[]> {
+    if (
+      requireApiScopes &&
+      clientAllowedApiScopes &&
+      !clientAllowedApiScopes.some(
+        (s) => s.grantToLegalGuardians && !s.isAccessControlled,
+      )
+    ) {
+      return []
+    }
+
     try {
       const response = await this.nationalRegistryClient.getCustodyChildren(
         user,
