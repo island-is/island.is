@@ -4,11 +4,7 @@ import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import { ConfigType } from '@island.is/nest/config'
-import {
-  CaseFileState,
-  CaseState,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { uuidFactory } from '../../../../factories'

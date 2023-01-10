@@ -97,7 +97,7 @@ export async function session({
   idsLoginOn,
 }: {
   browser: Browser
-  storageState: string
+  storageState?: string
   homeUrl: string
   phoneNumber: string
   idsLoginOn:
@@ -109,7 +109,11 @@ export async function session({
       }
   authUrl?: string
 }) {
-  const storageStatePath = join(sessionsPath, storageState)
+  // Browser context storage, keyed by user/phonenumber
+  const storageStatePath = join(
+    sessionsPath,
+    storageState ?? `${homeUrl}-${phoneNumber}`,
+  )
   const context = existsSync(storageStatePath)
     ? await browser.newContext({ storageState: storageStatePath })
     : await browser.newContext()
@@ -131,7 +135,7 @@ export async function session({
   const sessionValidation = await sessionValidationPage.goto(homeUrl, {
     waitUntil: 'networkidle',
   })
-  await expect(sessionValidation!.url()).toMatch(homeUrl)
+  await expect(sessionValidation?.url()).toMatch(homeUrl)
   await sessionValidationPage.context().storageState({ path: storageStatePath })
   await sessionValidationPage.close()
   return context

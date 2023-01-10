@@ -1,9 +1,15 @@
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { FC, useState } from 'react'
-import { Box, Text, Divider, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Divider,
+  Button,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../types'
 import { useLocale } from '@island.is/localization'
-import { overview, review } from '../../lib/messages'
+import { applicationCheck, overview, review } from '../../lib/messages'
 import {
   VehicleSection,
   SellerSection,
@@ -19,8 +25,14 @@ import {
 } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
+import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { getValueViaPath } from '@island.is/application/core'
+import {
+  OwnerChangeAnswers,
+  OwnerChangeValidationMessage,
+} from '@island.is/api/schema'
+import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
+import { TransferOfVehicleOwnershipAnswers } from '../..'
 
 export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
@@ -29,6 +41,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   ...props
 }) => {
   const { application, refetch, insurance = undefined } = props
+  const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const { formatMessage } = useLocale()
 
   const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
@@ -42,6 +55,47 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     },
   })
 
+  const isBuyer =
+    (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
+    reviewerNationalId
+
+  const [validateVehicle, { data, loading }] = useLazyQuery<
+    any,
+    { answers: OwnerChangeAnswers }
+  >(
+    gql`
+      ${VALIDATE_VEHICLE_OWNER_CHANGE}
+    `,
+    {
+      onCompleted: async (data) => {
+        if (!data?.vehicleOwnerChangeValidation?.hasError) {
+          const res = await submitApplication({
+            variables: {
+              input: {
+                id: application.id,
+                event: isLastReviewer(
+                  reviewerNationalId,
+                  application.answers,
+                  coOwnersAndOperators,
+                )
+                  ? DefaultEvents.SUBMIT
+                  : DefaultEvents.APPROVE,
+                answers: getApproveAnswers(
+                  reviewerNationalId,
+                  application.answers,
+                ),
+              },
+            },
+          })
+
+          if (res?.data) {
+            setStep && setStep('conclusion')
+          }
+        }
+      },
+    },
+  )
+
   const onBackButtonClick = () => {
     setStep && setStep('states')
   }
@@ -49,35 +103,66 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     setRejectModalVisibility(true)
   }
   const onApproveButtonClick = async () => {
-    if (
-      (getValueViaPath(
-        application.answers,
-        'buyer.nationalId',
-        '',
-      ) as string) === reviewerNationalId &&
-      !insurance
-    ) {
+    if (isBuyer && !insurance) {
       setNoInsuranceError(true)
     } else {
       setNoInsuranceError(false)
-      const res = await submitApplication({
-        variables: {
-          input: {
-            id: application.id,
-            event: isLastReviewer(
-              reviewerNationalId,
-              application.answers,
-              coOwnersAndOperators,
-            )
-              ? DefaultEvents.SUBMIT
-              : DefaultEvents.APPROVE,
-            answers: getApproveAnswers(reviewerNationalId, application.answers),
+      if (isBuyer) {
+        validateVehicle({
+          variables: {
+            answers: {
+              vehicle: {
+                date: answers?.vehicle?.date,
+                plate: answers?.vehicle?.plate,
+                salePrice: answers?.vehicle?.salePrice,
+              },
+              seller: {
+                email: answers?.seller?.email,
+                nationalId: answers?.seller?.nationalId,
+              },
+              buyer: {
+                email: answers?.buyer?.email,
+                nationalId: answers?.buyer?.nationalId,
+              },
+              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
+                (x) => ({
+                  email: x.email,
+                  nationalId: x.nationalId,
+                  type: x.type,
+                }),
+              ),
+              buyerMainOperator: answers?.buyerMainOperator
+                ? {
+                    nationalId: answers.buyerMainOperator.nationalId,
+                  }
+                : null,
+              insurance: insurance ? { value: insurance } : null,
+            },
           },
-        },
-      })
+        })
+      } else {
+        const res = await submitApplication({
+          variables: {
+            input: {
+              id: application.id,
+              event: isLastReviewer(
+                reviewerNationalId,
+                application.answers,
+                coOwnersAndOperators,
+              )
+                ? DefaultEvents.SUBMIT
+                : DefaultEvents.APPROVE,
+              answers: getApproveAnswers(
+                reviewerNationalId,
+                application.answers,
+              ),
+            },
+          },
+        })
 
-      if (res?.data) {
-        setStep && setStep('conclusion')
+        if (res?.data) {
+          setStep && setStep('conclusion')
+        }
       }
     }
   }
@@ -112,6 +197,46 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           reviewerNationalId={reviewerNationalId}
           noInsuranceError={noInsuranceError}
         />
+        {data?.vehicleOwnerChangeValidation?.hasError &&
+        data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
+          <Box>
+            <AlertMessage
+              type="error"
+              title={formatMessage(applicationCheck.validation.alertTitle)}
+              message={
+                <Box component="span" display="block">
+                  <ul>
+                    {data.vehicleOwnerChangeValidation.errorMessages.map(
+                      (error: OwnerChangeValidationMessage) => {
+                        const message = formatMessage(
+                          getValueViaPath(
+                            applicationCheck.validation,
+                            error?.errorNo || '',
+                          ),
+                        )
+                        const defaultMessage = error.defaultMessage
+                        const fallbackMessage =
+                          formatMessage(
+                            applicationCheck.validation.fallbackErrorMessage,
+                          ) +
+                          ' - ' +
+                          error?.errorNo
+
+                        return (
+                          <li key={error.errorNo}>
+                            <Text variant="small">
+                              {message || defaultMessage || fallbackMessage}
+                            </Text>
+                          </li>
+                        )
+                      },
+                    )}
+                  </ul>
+                </Box>
+              }
+            />
+          </Box>
+        ) : null}
         <Box marginTop={14}>
           <Divider />
           <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
@@ -130,7 +255,11 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
                   </Button>
                 </Box>
                 <Box marginLeft={3}>
-                  <Button icon="checkmark" onClick={onApproveButtonClick}>
+                  <Button
+                    icon="checkmark"
+                    loading={loading}
+                    onClick={onApproveButtonClick}
+                  >
                     {formatMessage(review.buttons.approve)}
                   </Button>
                 </Box>

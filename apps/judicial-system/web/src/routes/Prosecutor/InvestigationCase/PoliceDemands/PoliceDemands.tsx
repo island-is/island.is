@@ -59,9 +59,7 @@ const PoliceDemands: React.FC = () => {
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
-  useDeb(workingCase, 'demands')
-  useDeb(workingCase, 'lawsBroken')
-  useDeb(workingCase, 'legalBasis')
+  useDeb(workingCase, ['demands', 'lawsBroken', 'legalBasis'])
 
   useEffect(() => {
     const courtClaimPrefill: Partial<
@@ -189,7 +187,7 @@ const PoliceDemands: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_THREE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_DEMANDS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}

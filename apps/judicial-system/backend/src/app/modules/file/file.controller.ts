@@ -167,7 +167,7 @@ export class FileController {
     CaseNotCompletedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
