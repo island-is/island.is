@@ -15,20 +15,19 @@ import { m } from '../lib/messages'
 
 export const heirs = buildSection({
   id: 'heirs',
-  title: 'Eign til skipta',
+  title: m.propertyForExchange,
   children: [
     buildSubSection({
-      id: 'heirsAmount',
-      title: 'Eign til skipta og erfingjar',
+      id: 'propertyForExchange',
+      title: m.propertyForExchangeAndHeirs,
       children: [
         buildMultiField({
-          id: 'heirsAmount',
-          title: 'Eign til skipta',
-          description:
-            'Frá dregst búshluti eftirlifandi maka skv. reglum hjúskaparlaga nr. 31/1993 (50% eigna).',
+          id: 'propertyForExchange',
+          title: m.propertyForExchange,
+          description: m.propertyForExchangeDescription,
           children: [
             buildKeyValueField({
-              label: 'Hrein eign',
+              label: m.netProperty,
               value: ({ answers }) =>
                 formatCurrency(
                   String(
@@ -54,7 +53,7 @@ export const heirs = buildSection({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Samtals frádráttur',
+              label: m.totalDeduction,
               value: '200.000 kr.',
             }),
             buildDescriptionField({
@@ -63,7 +62,7 @@ export const heirs = buildSection({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Hrein eign til skiptis',
+              label: m.netPropertyForExchange,
               value: ({ answers }) =>
                 formatCurrency(
                   String(
@@ -90,13 +89,12 @@ export const heirs = buildSection({
     }),
     buildSubSection({
       id: 'heirs',
-      title: 'Erfingjar og skipting',
+      title: m.heirsAndPartition,
       children: [
         buildMultiField({
           id: 'heirs',
-          title: 'Erfingjar og skipting',
-          description:
-            'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004',
+          title: m.heirsAndPartition,
+          description: m.heirsAndPartitionDescription,
           children: [
             buildDescriptionField({
               id: 'heirs.total',
@@ -112,53 +110,53 @@ export const heirs = buildSection({
               {
                 fields: [
                   {
-                    title: m.debtsSsn.defaultMessage,
+                    title: m.heirsNationalId.defaultMessage,
                     id: 'ssn',
                     format: '######-####',
                   },
                   {
-                    title: 'Nafn',
+                    title: m.heirsName.defaultMessage,
                     id: 'creditorName',
                   },
                   {
-                    title: 'Netfang',
+                    title: m.heirsEmail.defaultMessage,
                     id: 'email',
                   },
                   {
-                    title: 'Símanúmer',
+                    title: m.heirsPhone.defaultMessage,
                     id: 'phone',
                   },
                   {
-                    title: 'Tengsl við arfláta',
+                    title: m.heirsRelation.defaultMessage,
                     id: 'relation',
                   },
                   {
-                    title: 'Arfshlutfall',
+                    title: m.heirsInheritanceRate.defaultMessage,
                     id: 'percentage',
                   },
                   {
-                    title: 'Óskattskyldur arfur',
-                    id: 'arfur',
+                    title: m.taxFreeInheritance.defaultMessage,
+                    id: 'taxFreeInheritance',
                     readOnly: true,
                   },
                   {
-                    title: 'Fjárhæð arfshluta',
+                    title: m.inheritanceAmount.defaultMessage,
                     id: 'amount',
                     readOnly: true,
                   },
                   {
-                    title: 'Skattskyldur arfur',
-                    id: 'skattskyldur',
+                    title: m.taxableInheritance.defaultMessage,
+                    id: 'taxableInheritance',
                     readOnly: true,
                   },
                   {
-                    title: 'Erfðafjárskattur',
-                    id: 'Erfðafjárskattur',
+                    title: m.inheritanceTax.defaultMessage,
+                    id: 'inheritanceTax',
                     readOnly: true,
                   },
                 ],
-                repeaterButtonText: 'Bæta við erfingja',
-                repeaterHeaderText: 'Erfingi',
+                repeaterButtonText: m.addHeir.defaultMessage,
+                repeaterHeaderText: m.heir.defaultMessage,
               },
             ),
           ],
@@ -167,18 +165,17 @@ export const heirs = buildSection({
     }),
     buildSubSection({
       id: 'heirsAddintionalInfo',
-      title: 'Athugasemdir erfingja',
+      title: '',
       children: [
         buildMultiField({
           id: 'heirsAdditionalInfo',
-          title: 'Athugasemdir erfingja',
-          description:
-            'Skýringar og athugasemdir erfingja og/eða þeirra sem afhenda fyrirframgreiddan arf',
+          title: m.heirAdditionalInfo,
+          description: m.heirAdditionalInfoDescription,
           children: [
             buildTextField({
               id: 'heirsAdditionalInfo',
-              title: 'Athugasemdir',
-              placeholder: 'Skráðu inn athugasemdir hér',
+              title: m.info,
+              placeholder: m.infoPlaceholder,
               variant: 'textarea',
               rows: 7,
             }),
@@ -193,8 +190,7 @@ export const heirs = buildSection({
         buildMultiField({
           id: 'heirsOverview',
           title: m.overview,
-          description:
-            'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
+          description: m.heirsOverviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -209,7 +205,7 @@ export const heirs = buildSection({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Senda inn skýrslu',
+                  name: m.submitReport,
                   type: 'primary',
                 },
               ],

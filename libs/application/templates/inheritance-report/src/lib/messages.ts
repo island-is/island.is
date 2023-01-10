@@ -660,8 +660,160 @@ export const m = defineMessages({
     defaultMessage: 'Tilgreinið kennitölu ef um einstakling er að ræða',
     description: '',
   },
+  businessOverview: {
+    id: 'ir.application:businessOverview',
+    defaultMessage: 'Yfirlit eigna og skulda í atvinnurekstri',
+    description: '',
+  },
+  businessOverviewDescription: {
+    id: 'ir.application:businessOverviewDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  businessEquity: {
+    id: 'ir.application:businessEquity',
+    defaultMessage: 'Eigið fé í atvinnurekstri',
+    description: '',
+  },
+
+  // Heirs
+  propertyForExchange: {
+    id: 'ir.application:propertyForExchange',
+    defaultMessage: 'Eign til skipta',
+    description: '',
+  },
+  propertyForExchangeDescription: {
+    id: 'ir.application:propertyForExchangeDescription',
+    defaultMessage:
+      'Frá dregst búshluti eftirlifandi maka skv. reglum hjúskaparlaga nr. 31/1993 (50% eigna).',
+    description: '',
+  },
+  propertyForExchangeAndHeirs: {
+    id: 'ir.application:propertyForExchangeAndHeirs',
+    defaultMessage: 'Eign til skipta og erfingjar',
+    description: '',
+  },
+  totalDeduction: {
+    id: 'ir.application:totalDeduction',
+    defaultMessage: 'Samtals frádráttur',
+    description: '',
+  },
+  netProperty: {
+    id: 'ir.application:netProperty',
+    defaultMessage: 'Hrein eign',
+    description: '',
+  },
+  netPropertyForExchange: {
+    id: 'ir.application:netPropertyForExchange',
+    defaultMessage: 'Hrein eign til skiptis',
+    description: '',
+  },
+  heirsAndPartition: {
+    id: 'ir.application:heirsAndPartition',
+    defaultMessage: 'Erfingjar og skipting',
+    description: '',
+  },
+  heirsAndPartitionDescription: {
+    id: 'ir.application:heirsAndPartitionDescription',
+    defaultMessage:
+      'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004',
+    description: '',
+  },
+  heirsName: {
+    id: 'ir.application:heirsName',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  heirsNationalId: {
+    id: 'ir.application:heirsNationalId',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  heirsEmail: {
+    id: 'ir.application:heirsEmail',
+    defaultMessage: 'Netfang',
+    description: '',
+  },
+  heirsPhone: {
+    id: 'ir.application:heirsPhone',
+    defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  heirsRelation: {
+    id: 'ir.application:heirsRelation',
+    defaultMessage: 'Tengsl við arfláta',
+    description: '',
+  },
+  heirsInheritanceRate: {
+    id: 'ir.application:heirsInheritanceRate',
+    defaultMessage: 'Arfshlutfall',
+    description: '',
+  },
+  taxableInheritance: {
+    id: 'ir.application:taxableInheritance',
+    defaultMessage: 'Skattskyldur arfur',
+    description: '',
+  },
+  taxFreeInheritance: {
+    id: 'ir.application:taxFreeInheritance',
+    defaultMessage: 'Óskattskyldur arfur',
+    description: '',
+  },
+  inheritanceAmount: {
+    id: 'ir.application:inheritanceAmount',
+    defaultMessage: 'Fjárhæð arfshluta',
+    description: '',
+  },
+  inheritanceTax: {
+    id: 'ir.application:inheritanceTax',
+    defaultMessage: 'Erfðafjárskattur',
+    description: '',
+  },
+  addHeir: {
+    id: 'ir.application:addHeir',
+    defaultMessage: 'Bæta við erfingja',
+    description: '',
+  },
+  heir: {
+    id: 'ir.application:heir',
+    defaultMessage: 'Erfingi',
+    description: '',
+  },
+  heirAdditionalInfo: {
+    id: 'ir.application:heirAdditionalInfo',
+    defaultMessage: 'Athugasemdir erfingja',
+    description: '',
+  },
+  heirAdditionalInfoDescription: {
+    id: 'ir.application:heirAdditionalInfoDescription',
+    defaultMessage:
+      'Skýringar og athugasemdir erfingja og/eða þeirra sem afhenda fyrirframgreiddan arf',
+    description: '',
+  },
+  info: {
+    id: 'ir.application:info',
+    defaultMessage: 'Athugasemdir',
+    description: '',
+  },
+  infoPlaceholder: {
+    id: 'ir.application:infoPlaceholder',
+    defaultMessage: 'Skráðu inn athugasemdir hér',
+    description: '',
+  },
+  heirsOverviewDescription: {
+    id: 'ir.application:heirsOverviewDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
 
   // Done
+  submitReport: {
+    id: 'ir.application:submitReport',
+    defaultMessage: 'Senda inn skýrslu',
+    description: '',
+  },
   doneTitle: {
     id: 'ir.application:doneTitle',
     defaultMessage: 'Erfðafjárskýrsla móttekin',

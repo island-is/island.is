@@ -123,14 +123,13 @@ export const business = buildSection({
       children: [
         buildMultiField({
           id: 'businessOverview',
-          title: 'Yfirlit eigna og skulda í atvinnurekstri',
-          description:
-            'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
+          title: m.businessOverview,
+          description: m.businessOverviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewBusinessAssets',
-              title: 'Eignir í atvinnurekstri',
+              title: m.businessAssets,
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
@@ -143,7 +142,7 @@ export const business = buildSection({
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewBusinessDebts',
-              title: 'Skuldir í atvinnurekstri',
+              title: m.businessDebts,
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
@@ -156,7 +155,7 @@ export const business = buildSection({
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewBusinessOwnedMoney',
-              title: 'Eigið fé í atvinnurekstri',
+              title: m.businessEquity,
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
