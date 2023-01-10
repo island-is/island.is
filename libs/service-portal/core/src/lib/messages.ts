@@ -417,6 +417,10 @@ export const m = defineMessages({
     id: 'service.portal:educationLicense',
     defaultMessage: 'Starfsleyfi',
   },
+  myEducationLicense: {
+    id: 'service.portal:my-education-license',
+    defaultMessage: 'Mín starfsleyfi',
+  },
   educationLicenseDescription: {
     id: 'service.portal:educationLicense-description',
     defaultMessage: 'Hér munu birtast starfsleyfi sem þú hefur fengið',
@@ -424,6 +428,10 @@ export const m = defineMessages({
   education: {
     id: 'service.portal:education',
     defaultMessage: 'Menntun',
+  },
+  myEducation: {
+    id: 'service.portal:my-education',
+    defaultMessage: 'Mín menntun',
   },
   educationDescription: {
     id: 'service.portal:education-description',
@@ -772,6 +780,10 @@ export const m = defineMessages({
   licenseNavTitle: {
     id: 'service.portal:license-title',
     defaultMessage: 'Skírteini',
+  },
+  myLicenses: {
+    id: 'service.portal:my-licenses',
+    defaultMessage: 'Mín skírteini',
   },
   yourLicenses: {
     id: 'service.portal:your-licenses',

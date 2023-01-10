@@ -106,10 +106,7 @@ export const UserLicenses: FC<Props> = ({
                   )}
                   cta={{
                     label: formatMessage(m.seeDetails),
-                    url: ServicePortalPath.LicensesDetail.replace(
-                      ':provider',
-                      getPathFromProviderId(license.license.provider.id),
-                    ).replace(':type', getPathFromType(license.license.type)),
+                    url: getPathFromType(license.license.type),
                     variant: 'text',
                   }}
                   tag={

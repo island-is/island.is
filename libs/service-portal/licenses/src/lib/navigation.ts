@@ -10,6 +10,10 @@ export const licenseNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      name: m.myLicenses,
+      path: LicensePaths.LicensesRoot,
+    },
+    {
       navHide: true,
       name: m.detailInfo,
       path: LicensePaths.LicensesDetail,

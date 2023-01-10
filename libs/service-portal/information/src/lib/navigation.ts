@@ -9,6 +9,7 @@ export const informationNavigation: PortalNavigationItem = {
   icon: {
     icon: 'person',
   },
+  serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
   children: [
     {
       name: m.detailInfo,
@@ -25,7 +26,6 @@ export const informationNavigation: PortalNavigationItem = {
       navHide: true,
       path: InformationPaths.Child,
     },
-
     {
       // Petitions
       name: m.endorsements,
