@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
 import {
   Box,
   CategoryCard,
@@ -14,21 +13,16 @@ import { useLocale } from '@island.is/localization'
 import {
   PlausiblePageviewDetail,
   ServicePortalPath,
-  ServicePortalWidget,
   m,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import Greeting from '../../components/Greeting/Greeting'
-import { WidgetErrorBoundary } from './WidgetError/WidgetError'
-import WidgetLoading from './WidgetLoading/WidgetLoading'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { useNavigation } from '@island.is/portals/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 export const Dashboard: FC<{}> = () => {
-  const { userInfo } = useAuth()
   const location = useLocation()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
