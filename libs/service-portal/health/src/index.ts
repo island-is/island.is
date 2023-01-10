@@ -9,7 +9,6 @@ import {
 
 export const healthModule: ServicePortalModule = {
   name: 'Heilsa',
-  widgets: () => [],
   routes: ({ userInfo }) => {
     const routes: ServicePortalRoute[] = [
       {

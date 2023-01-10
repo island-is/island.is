@@ -3,11 +3,6 @@ import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 
 import { Domain } from '../models/domain.model'
 import { DomainService } from '../services/domain.service'
@@ -16,12 +11,11 @@ import { OrganizationLogoLoader } from '@island.is/cms'
 import type { LogoUrl, OrganizationLogoDataLoader } from '@island.is/cms'
 import { Loader } from '@island.is/nest/dataloader'
 
-@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => Domain)
 export class DomainResolver {
   constructor(private domain: DomainService) {}
 
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Query(() => [Domain], {
     name: 'authDomains',
   })

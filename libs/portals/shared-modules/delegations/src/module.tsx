@@ -1,6 +1,5 @@
 import { delegationScopes } from '@island.is/auth/scopes'
 import { lazy } from 'react'
-import { Features } from '@island.is/feature-flags'
 
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
@@ -8,8 +7,6 @@ import { m } from './lib/messages'
 
 export const delegationsModule: PortalModule = {
   name: m.accessControl,
-  featureFlag: Features.outgoingDelegationsV2,
-  widgets: () => [],
   enabled({ userInfo }) {
     return delegationScopes.some((scope) => userInfo.scopes.includes(scope))
   },
