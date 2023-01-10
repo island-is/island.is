@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/utils'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
 import { mockApi } from '../../../support/api-tools'
 import { regex as uuidRegex } from 'uuidv4'
@@ -11,8 +11,7 @@ test.describe('P-sign', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'p-sign.json',
-      homeUrl: `${urls.islandisBaseUrl}/umsoknir/p-merki`,
+      homeUrl: `/umsoknir/p-merki`,
       phoneNumber: '0103019',
       idsLoginOn: true,
     })
