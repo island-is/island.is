@@ -20,6 +20,7 @@ export * from './hooks/useSingleNavigationItem'
 export * from './utils/plausible'
 
 // screens
+export * from './screens/AccessDenied'
 export * from './screens/NotFound'
 
 // components

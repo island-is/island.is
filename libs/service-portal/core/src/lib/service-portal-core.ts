@@ -6,7 +6,6 @@ import {
   PortalModuleRenderValue,
   PortalNavigationItem,
   PortalRoute,
-  PortalWidget,
 } from '@island.is/portals/core'
 
 /**
@@ -28,11 +27,6 @@ export type ServicePortalModuleComponent<P = {}> = PortalModuleComponent<P>
  * The render value of a service portal route
  */
 export type ServicePortalModuleRenderValue<P = {}> = PortalModuleRenderValue<P>
-
-/**
- * A widget defined by a service portal module
- */
-export type ServicePortalWidget = PortalWidget
 
 /**
  * A global component provides functionality that
