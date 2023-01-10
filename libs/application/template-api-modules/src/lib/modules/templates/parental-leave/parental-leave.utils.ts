@@ -71,24 +71,6 @@ export const getPersonalAllowance = (
   return Number(usageGetter)
 }
 
-export const getEmployer = (
-  application: Application,
-  isSelfEmployed = false,
-): Employer => {
-  const {
-    applicantEmail,
-    employerEmail,
-    employerNationalRegistryId,
-  } = getApplicationAnswers(application.answers)
-
-  return {
-    email: isSelfEmployed ? applicantEmail : employerEmail,
-    nationalRegistryId: isSelfEmployed
-      ? application.applicant
-      : employerNationalRegistryId,
-  }
-}
-
 export const getPensionFund = (
   application: Application,
   isPrivate = false,
@@ -268,8 +250,9 @@ export const transformApplicationToParentalLeaveDTO = (
     isSelfEmployed,
     union,
     bank,
+    employers,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
     multipleBirths,
   } = getApplicationAnswers(application.answers)
 
@@ -278,8 +261,6 @@ export const transformApplicationToParentalLeaveDTO = (
   )
 
   const { email, phoneNumber } = getApplicantContactInfo(application)
-  const selfEmployed = isSelfEmployed === YES
-  const recivingUnemploymentBenefits = isRecivingUnemploymentBenefits === YES
 
   const testData: string = onlyValidate!.toString()
 
@@ -311,10 +292,10 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
-    employers:
-      applicationType === PARENTAL_LEAVE && !recivingUnemploymentBenefits
-        ? [getEmployer(application, selfEmployed)]
-        : [],
+    employers: employers.map(e => ({
+      email: e.email,
+      nationalRegistryId: e.name.nationalId
+    })),
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,

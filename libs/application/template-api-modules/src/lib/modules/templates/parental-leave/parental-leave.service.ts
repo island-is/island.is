@@ -239,35 +239,52 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async assignEmployer({ application }: TemplateApiModuleActionProps) {
-    const { employerPhoneNumber } = getApplicationAnswers(application.answers)
+  async assignEmployers({ application }: TemplateApiModuleActionProps) {
+    const { employers } = getApplicationAnswers(application.answers)
 
-    const token = await this.sharedTemplateAPIService.createAssignToken(
-      application,
-      SIX_MONTHS_IN_SECONDS_EXPIRES,
-    )
-
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignEmployerApplicationEmail,
-      application,
-      token,
-    )
-
-    // send confirmation sms to employer
-    try {
-      if (employerPhoneNumber) {
-        await this.sharedTemplateAPIService.assignApplicationThroughSms(
-          generateAssignEmployerApplicationSms,
+    await Promise.all(
+      employers.map(async (e) => {
+        const token = await this.sharedTemplateAPIService.createAssignToken(
           application,
+          SIX_MONTHS_IN_SECONDS_EXPIRES,
+        )
+
+        // TODO: Assign the token to this employer, so it can be validated later on.
+
+        const applicationWithEmployerContactInfo = {
+          ...application,
+          answers: {
+            ...application.answers,
+            contact: {
+              email: e.email,
+              phoneNumber: e.phoneNumber,
+            },
+          },
+        }
+
+        await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+          generateAssignEmployerApplicationEmail,
+          applicationWithEmployerContactInfo,
           token,
         )
-      }
-    } catch (e) {
-      this.logger.error(
-        'Failed to send assign SMS notification to Employer in parental leave application',
-        e,
-      )
-    }
+
+        // send confirmation sms to employer
+        try {
+          if (e.phoneNumber) {
+            await this.sharedTemplateAPIService.assignApplicationThroughSms(
+              generateAssignEmployerApplicationSms,
+              applicationWithEmployerContactInfo,
+              token,
+            )
+          }
+        } catch (e) {
+          this.logger.error(
+            `Failed to send assign SMS notification to employer (${e.phoneNumber}) in parental leave application`,
+            e,
+          )
+        }
+      }),
+    )
   }
 
   async getPdf(application: Application, index = 0, fileUpload: string) {
@@ -329,11 +346,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
         if (oldSelfEmployedPdfs?.length) {
           for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
-            const pdf = await this.getPdf(
-              application,
-              i,
-              'employer.selfEmployed.file',
-            )
+            const pdf = await this.getPdf(application, i, 'selfEmployed.file')
 
             attachments.push({
               attachmentType: apiConstants.attachments.selfEmployed,
@@ -387,11 +400,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     const {
-      isRecivingUnemploymentBenefits,
+      isReceivingUnemploymentBenefits,
       unemploymentBenefits,
     } = getApplicationAnswers(application.answers)
     if (
-      isRecivingUnemploymentBenefits === YES &&
+      isReceivingUnemploymentBenefits === YES &&
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
@@ -1124,7 +1137,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
-      isRecivingUnemploymentBenefits,
+      isReceivingUnemploymentBenefits,
       applicationType,
     } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
@@ -1162,7 +1175,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
-          isRecivingUnemploymentBenefits === YES
+          isReceivingUnemploymentBenefits === YES
 
         if (!selfEmployed && !recivingUnemploymentBenefits) {
           // Only needs to send an email if being approved by employer

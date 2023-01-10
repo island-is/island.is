@@ -17,7 +17,7 @@ import { useDeepCompareEffect } from 'react-use'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 
-export interface EmployeeRow {
+export interface EmployerRow {
   name: {
     label: string
     nationalId: string
@@ -34,7 +34,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
   setRepeaterItems,
   setBeforeSubmitCallback,
 }) => {
-  const employers: EmployeeRow[] | undefined = getValueViaPath(
+  const employers: EmployerRow[] | undefined = getValueViaPath(
     application.answers,
     'employers',
   )

@@ -56,7 +56,7 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { EmployeeRow } from '../fields/EmployersOverview'
+import { EmployerRow } from '../fields/EmployersOverview'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -718,7 +718,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
-  const employers = getValueViaPath(answers, 'employers') as EmployeeRow[];
+  const employers = getValueViaPath(answers, 'employers') as EmployerRow[];
 
   const employerReviewerNationalRegistryId = getValueViaPath(
     answers,

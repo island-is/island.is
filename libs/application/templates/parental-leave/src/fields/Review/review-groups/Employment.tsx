@@ -29,7 +29,7 @@ export const Employment = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('employer.isSelfEmployed.benefits')}
+      editAction={() => goToScreen?.('isSelfEmployed.benefits')}
     >
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

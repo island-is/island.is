@@ -20,7 +20,7 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const {
     isSelfEmployed,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
   } = useApplicationAnswers(application)
   const history = useHistory()
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
@@ -29,7 +29,7 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const oldApplication = applicationType === undefined
   const isBeneficiaries = !oldApplication
     ? applicationType === PARENTAL_LEAVE
-      ? isRecivingUnemploymentBenefits === YES
+      ? isReceivingUnemploymentBenefits === YES
       : false
     : false
 

@@ -213,7 +213,7 @@ test.describe('Parental leave', () => {
       findByRole('heading', {
         name: label(
           parentalLeaveFormMessages.employer
-            .isRecivingUnemploymentBenefitsTitle,
+            .isReceivingUnemploymentBenefitsTitle,
         ),
       }),
     ).toBeVisible()
