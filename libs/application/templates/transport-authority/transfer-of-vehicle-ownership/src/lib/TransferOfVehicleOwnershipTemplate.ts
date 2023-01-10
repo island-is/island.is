@@ -12,6 +12,7 @@ import {
 import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import { application } from './messages'
@@ -46,6 +47,13 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.TransferOfVehicleOwnership.translation,
   ],
   dataSchema: TransferOfVehicleOwnershipSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.transportAuthorityTransferOfVehicleOwnershipDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityTransferOfVehicleOwnership,
   stateMachineConfig: {
     initial: States.DRAFT,
