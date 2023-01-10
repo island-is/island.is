@@ -22,7 +22,6 @@ import { LimitedAccessCaseController } from './limitedAccessCase.controller'
 import { CaseService } from './case.service'
 import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseService } from './limitedAccessCase.service'
-import { CaseListModule } from '../caseList/caseList.module'
 
 @Module({
   imports: [
@@ -36,7 +35,6 @@ import { CaseListModule } from '../caseList/caseList.module'
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
-    forwardRef(() => CaseListModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
   providers: [CaseService, InternalCaseService, LimitedAccessCaseService],

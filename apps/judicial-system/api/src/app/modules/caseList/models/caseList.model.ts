@@ -79,6 +79,6 @@ export class CaseListEntry implements TCaseListEntry {
   @Field(() => User, { nullable: true })
   readonly registrar?: User
 
-  @Field(() => Case, { nullable: true })
-  readonly parentCase?: Case
+  @Field({ nullable: true })
+  readonly parentCaseId?: string
 }

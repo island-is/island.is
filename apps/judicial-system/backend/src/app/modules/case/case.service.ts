@@ -26,6 +26,7 @@ import {
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseListEntry,
   CaseOrigin,
   CaseState,
   isIndictmentCase,
@@ -95,6 +96,30 @@ export const include: Includeable[] = [
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
     },
+  },
+]
+
+export const caseListInclude: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
+  {
+    model: User,
+    as: 'creatingProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'judge',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 
@@ -464,6 +489,14 @@ export class CaseService {
     }
 
     return originalAncestor
+  }
+
+  getAll(user: TUser): Promise<Case[]> {
+    return this.caseModel.findAll({
+      include: caseListInclude,
+      order,
+      where: getCasesQueryFilter(user),
+    })
   }
 
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {

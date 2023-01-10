@@ -306,7 +306,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                     <Text as="span">
                       {displayCaseType(formatMessage, c.type, c.decision)}
                     </Text>
-                    {c.parentCase && (
+                    {c.parentCaseId && (
                       <Text as="span" variant="small" color="dark400">
                         Framlenging
                       </Text>

@@ -158,7 +158,7 @@ const PastCases: React.FC<Props> = (props) => {
             original: {
               type: CaseType
               decision: CaseDecision
-              parentCase: Case
+              parentCaseId: string
             }
           }
         }) => {
@@ -169,7 +169,7 @@ const PastCases: React.FC<Props> = (props) => {
               <Box component="span" display="block">
                 {displayCaseType(formatMessage, thisRow.type, thisRow.decision)}
               </Box>
-              {row.row.original.parentCase && (
+              {row.row.original.parentCaseId && (
                 <Text as="span" variant="small">
                   Framlenging
                 </Text>

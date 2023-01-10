@@ -50,9 +50,7 @@ export const CasesQuery = gql`
       creatingProsecutor {
         id
       }
-      parentCase {
-        id
-      }
+      parentCaseId
     }
   }
 `
