@@ -6,7 +6,7 @@ export class GetCurrentVehiclesInput {
   showOwned!: boolean
 
   @Field()
-  showCoowned!: boolean
+  showCoOwned!: boolean
 
   @Field()
   showOperated!: boolean

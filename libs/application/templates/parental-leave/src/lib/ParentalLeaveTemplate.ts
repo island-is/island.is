@@ -19,7 +19,6 @@ import {
   DefaultEvents,
   defineTemplateApi,
   UserProfileApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 
 import {
@@ -35,6 +34,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   TransferRightsOption,
+  SINGLE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -51,7 +51,7 @@ import {
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
-import { ChildrenApi } from '../dataProviders'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -128,7 +128,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi, ChildrenApi],
+              api: [UserProfileApi, GetPersonInformation, ChildrenApi],
             },
           ],
         },
@@ -139,6 +139,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         entry: 'clearAssignees',
         exit: [
+          'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
           'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
           'setUnionValuesIfUseUnionIsNO',
@@ -980,6 +981,27 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         unset(answers, 'tempPeriods')
 
+        return context
+      }),
+      clearOtherParentDataIfSelectedNo: assign((context) => {
+        const { application } = context
+        const { otherParent } = getApplicationAnswers(application.answers)
+        if (otherParent === NO || otherParent === SINGLE) {
+          unset(application.answers, 'otherParentEmail')
+          unset(application.answers, 'otherParentPhoneNumber')
+          unset(application.answers, 'requestRights')
+          unset(application.answers, 'giveRights')
+          unset(application.answers, 'transferRights')
+          unset(application.answers, 'personalAllowanceFromSpouse')
+          unset(application.answers, 'otherParentRightOfAccess')
+          // set(application.answers, 'otherParentEmail', undefined)
+          // set(application.answers, 'otherParentPhoneNumber', '')
+          // set(application.answers, 'requestRights.isRequestingRights', NO)
+          // set(application.answers, 'requestRights.requestDays', '0')
+          // set(application.answers, 'giveRights.giveDays', '0')
+          // set(application.answers, 'giveRights.isGivingRights', NO)
+          // set(application.answers, 'transferRights', TransferRightsOption.NONE)
+        }
         return context
       }),
       setOtherParentIdIfSelectedSpouse: assign((context) => {

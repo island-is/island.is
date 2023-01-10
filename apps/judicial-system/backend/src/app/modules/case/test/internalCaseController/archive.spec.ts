@@ -4,11 +4,7 @@ import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import { ConfigType } from '@island.is/nest/config'
-import {
-  CaseFileState,
-  CaseState,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { uuidFactory } from '../../../../factories'
@@ -83,14 +79,7 @@ describe('InternalCaseController - Archive', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include: [
           { model: Defendant, as: 'defendants' },
-          {
-            model: CaseFile,
-            as: 'caseFiles',
-            required: false,
-            where: {
-              state: { [Op.not]: CaseFileState.DELETED },
-            },
-          },
+          { model: CaseFile, as: 'caseFiles' },
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
@@ -330,6 +319,7 @@ describe('InternalCaseController - Archive', () => {
           prosecutorAppealAnnouncement: '',
           caseModifiedExplanation: '',
           caseResentExplanation: '',
+          crimeScenes: null,
           isArchived: true,
         },
         { where: { id: caseId }, transaction },

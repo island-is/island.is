@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/utils'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
 import { helpers } from '../../../support/locator-helpers'
 
@@ -27,7 +27,7 @@ test.describe('Service portal', () => {
     // Arrange
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
+    await page.goto('/minarsidur?locale=is')
 
     // Act
     await page.locator('data-testid=user-menu >> visible=true').click()

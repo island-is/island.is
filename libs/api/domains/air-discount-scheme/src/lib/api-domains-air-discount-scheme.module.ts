@@ -4,8 +4,12 @@ import { AirDiscountSchemeClientModule } from '@island.is/clients/air-discount-s
 
 import { DiscountResolver } from './discount/discount.resolver'
 import { DiscountService } from './discount/discount.service'
+import { DiscountAdminResolver } from './discount-admin/discount-admin.resolver'
+import { DiscountAdminService } from './discount-admin/discount-admin.service'
 import { FlightLegAdminResolver } from './flight-leg-admin/flight-leg-admin.resolver'
 import { FlightLegAdminService } from './flight-leg-admin/flight-leg-admin.service'
+import { FlightLegResolver } from './flight-leg/flight-leg.resolver'
+import { FlightLegService } from './flight-leg/flight-leg.service'
 
 @Module({
   providers: [
@@ -13,6 +17,10 @@ import { FlightLegAdminService } from './flight-leg-admin/flight-leg-admin.servi
     DiscountService,
     FlightLegAdminResolver,
     FlightLegAdminService,
+    FlightLegResolver,
+    FlightLegService,
+    DiscountAdminResolver,
+    DiscountAdminService,
   ],
   imports: [AirDiscountSchemeClientModule, AuthModule],
   exports: [],

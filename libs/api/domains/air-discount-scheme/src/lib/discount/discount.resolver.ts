@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Query } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -15,11 +15,12 @@ import { Discount } from '../models/discount.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
+@Resolver(() => Discount)
 export class DiscountResolver {
   constructor(private discountService: DiscountService) {}
 
   @Query(() => [Discount], { name: 'airDiscountSchemeDiscounts' })
-  async getDiscount(@CurrentUser() user: User) {
+  async getDiscount(@CurrentUser() user: User): Promise<Discount[]> {
     return this.discountService.getCurrentDiscounts(user)
   }
 }

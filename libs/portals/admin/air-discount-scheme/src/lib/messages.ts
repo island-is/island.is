@@ -5,8 +5,16 @@ export const m = defineMessages({
     id: 'admin-portal.air-discount-scheme:name',
     defaultMessage: 'Loftbrú',
   },
+  airDiscountSchemeDescription: {
+    id: 'admin-portal.air-discount-scheme:name',
+    defaultMessage: 'Tölfræðigögn og umsjá Loftbrúar',
+  },
   overview: {
     id: 'admin-portal.air-discount-scheme:overview',
     defaultMessage: 'Yfirlit',
+  },
+  createDiscount: {
+    id: 'admin-portal.air-discount-scheme:createDiscount',
+    defaultMessage: 'Handvirkir kóðar',
   },
 })

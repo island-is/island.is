@@ -13,17 +13,20 @@ import {
   SkeletonLoader,
   Button,
 } from '@island.is/island-ui/core'
-import { Filters, Panel, Summary, Modal } from './components'
+import { useHistory } from 'react-router-dom'
+import { Filters, Panel, Summary } from './components'
 import { isCSVAvailable, downloadCSV } from './utils'
 import {
   useConfirmInvoiceMutation,
   useFlightLegsQuery,
 } from './Overview.generated'
 import { FlightLegsFilters } from './types'
+import Modal from '../../components/Modal/Modal'
 
 const TODAY = new Date()
 
 const Overview = () => {
+  const history = useHistory()
   const [showModal, setModal] = useState(false)
   const [filters, setFilters] = useState<FlightLegsFilters>({
     nationalId: '',
@@ -52,6 +55,7 @@ const Overview = () => {
     postalCode: filters.postalCode
       ? parseInt(filters.postalCode.toString())
       : undefined,
+    isExplicit: Boolean(filters.isExplicit),
   }
   const [
     confirmInvoice,
@@ -138,6 +142,16 @@ const Overview = () => {
                   >
                     Gjaldfæra / Endurgreiða
                   </Box>
+                </Button>
+              </Box>
+              <Box paddingTop={3}>
+                <Button
+                  fluid
+                  variant="ghost"
+                  colorScheme="destructive"
+                  onClick={() => history.push('/loftbru/handvirkir-kodar')}
+                >
+                  Handvirkir kóðar
                 </Button>
               </Box>
             </Box>
