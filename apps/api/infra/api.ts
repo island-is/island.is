@@ -24,6 +24,7 @@ import {
   DisabilityLicense,
   VehicleServiceFjsV1,
   TransportAuthority,
+  ChargeFjsV2,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -262,6 +263,7 @@ export const serviceSetup = (services: {
       Passports,
       VehicleServiceFjsV1,
       TransportAuthority,
+      ChargeFjsV2,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

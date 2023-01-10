@@ -387,6 +387,61 @@ export const coreErrorMessages = defineMessages({
       'Vinsamlega hafðu samband við Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
     description: 'Driving License provider no teaching rights error',
   },
+  vehiclesEmptyListOwner: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListOwner',
+    defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
+    description: 'You do not have any vehicles where you are the main owner',
+  },
+  vehiclesEmptyListOwnerOrCoOwner: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListOwnerOrCoOwner',
+    defaultMessage:
+      'Þú átt engin ökutæki þar sem þú ert aðaleigandi eða meðeigandi',
+    description: 'You do not have any vehicles where you are the main owner',
+  },
+  vehiclesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein ökutæki',
+    description: 'Did not find any vehicles',
+  },
+  dataCollectionCriminalRecordErrorTitle: {
+    id: 'ol.application:missingCriominalRecordTitle',
+    defaultMessage: 'Skilyrði um hreina sakaskrá er ekki uppfyllt',
+    description: '',
+  },
+  dataCollectionCriminalRecordTitle: {
+    id: 'ol.application:dataCollection.criminalRecordTitle',
+    defaultMessage: 'Sakaskrá ríkisins',
+    description: 'Some description',
+  },
+  missingCertificateTitle: {
+    id: 'ndc.application:missingCertificateTitle',
+    defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
+    description: '',
+  },
+  missingCertificateSummary: {
+    id: 'ndc.application:missingCertificateSummary',
+    defaultMessage:
+      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
+    description: '',
+  },
+  drivingLicenseMissingValidCategory: {
+    id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
+    defaultMessage:
+      'Þú ert ekki með nauðsynleg ökuréttindi til að sækja um þessa umsókn',
+    description:
+      'You do not have enough driving permission to apply for this application',
+  },
+  nationalRegistryLegalDomicileNotIceland: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',
+    defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
+    description: 'You do not have a domicile in Iceland',
+  },
+  nationalRegistryBirthplaceMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryBirthplaceMissing',
+    defaultMessage: 'Náði ekki að sækja fæðingarstað',
+    description: 'Not able to fetch birthplace',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { User } from '../user'
 import { CourtService } from '../court'
@@ -131,10 +131,11 @@ export class DefendantService {
       !defendant.nationalId ||
       defendant.nationalId.replace('-', '').length !== 10
     ) {
-      await this.messageService.sendMessageToQueue({
-        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
-        caseId: theCase.id,
-      })
+      // TODO: Uncomment when we are ready to send notifications
+      // await this.messageService.sendMessageToQueue({
+      //   type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+      //   caseId: theCase.id,
+      // })
 
       return { delivered: true }
     }

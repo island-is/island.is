@@ -21,6 +21,7 @@ import { CaseMessage } from './message'
 @Injectable()
 export class MessageService {
   private readonly sqs: SQSClient
+  private connecting = false
   private _queueUrl: string | undefined
 
   constructor(
@@ -32,37 +33,60 @@ export class MessageService {
       endpoint: config.endpoint,
       region: config.region,
     })
+  }
 
-    // TODO: Make more robust, by retrying
-    this.sqs
-      .send(new GetQueueUrlCommand({ QueueName: this.config.queueName }))
-      .then((data) => {
-        this.logger.info('Message queue is ready')
+  private async connectToQueue(): Promise<void> {
+    if (this.connecting) {
+      return
+    }
 
-        this._queueUrl = data.QueueUrl
-      })
-      .catch((err) => {
-        if (config.production) {
-          this.logger.error('Failed to connect to message queue', { err })
-        }
+    this.connecting = true
+    this._queueUrl = undefined
 
-        this.sqs
-          .send(new CreateQueueCommand({ QueueName: this.config.queueName }))
-          .then((data) => {
-            this.logger.info('Message queue is ready')
+    while (this.connecting) {
+      await this.sqs
+        .send(new GetQueueUrlCommand({ QueueName: this.config.queueName }))
+        .then((data) => {
+          this.logger.info('Message queue is ready')
 
-            this._queueUrl = data.QueueUrl
-          })
-          .catch((err) => {
-            this.logger.error('Failed to create message queue', { err })
-          })
-      })
+          this._queueUrl = data.QueueUrl
+          this.connecting = false
+        })
+        .catch(async (err) => {
+          if (this.config.production) {
+            this.logger.error('Failed to connect to message queue', { err })
+          } else {
+            await this.sqs
+              .send(
+                new CreateQueueCommand({ QueueName: this.config.queueName }),
+              )
+              .then((data) => {
+                this.logger.info('Message queue is ready')
+
+                this._queueUrl = data.QueueUrl
+                this.connecting = false
+              })
+              .catch((err) => {
+                this.logger.error('Failed to create message queue', { err })
+              })
+          }
+        })
+
+      if (this.connecting) {
+        // Wait a bit before trying again
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.config.waitTimeSeconds * 1000),
+        )
+      }
+    }
   }
 
   private get queueUrl(): string {
     if (this._queueUrl) {
       return this._queueUrl
     }
+
+    this.connectToQueue()
 
     throw new ServiceUnavailableException('Message queue is not ready')
   }
@@ -162,24 +186,41 @@ export class MessageService {
           this.logger.error('Failed to send message to queue', { data })
         }
       })
+      .catch((err) => {
+        this.connectToQueue()
+
+        throw err
+      })
   }
 
   async sendMessagesToQueue(messages: CaseMessage[]): Promise<void> {
-    return this.sqs
-      .send(
-        new SendMessageBatchCommand({
-          QueueUrl: this.queueUrl,
-          Entries: messages.map((message, index) => ({
-            MessageBody: JSON.stringify(message),
-            Id: index.toString(),
-          })),
-        }),
-      )
-      .then((data) => {
-        if (data.Failed && data.Failed.length > 0) {
-          this.logger.error('Failed to send messages to queue', { data })
-        }
-      })
+    const MAX_BATCH_SIZE = 10
+
+    for (let i = 0; i < messages.length; i += MAX_BATCH_SIZE) {
+      const numSentNow = Math.min(messages.length - i, MAX_BATCH_SIZE)
+      const messagesToSend = messages.slice(i, i + numSentNow)
+
+      await this.sqs
+        .send(
+          new SendMessageBatchCommand({
+            QueueUrl: this.queueUrl,
+            Entries: messagesToSend.map((message, index) => ({
+              MessageBody: JSON.stringify(message),
+              Id: index.toString(),
+            })),
+          }),
+        )
+        .then((data) => {
+          if (data.Failed && data.Failed.length > 0) {
+            this.logger.error('Failed to send messages to queue', { data })
+          }
+        })
+        .catch((err) => {
+          this.connectToQueue()
+
+          throw err
+        })
+    }
   }
 
   async receiveMessagesFromQueue(
@@ -199,6 +240,11 @@ export class MessageService {
             await this.handleMessage(callback, message)
           }
         }
+      })
+      .catch((err) => {
+        this.connectToQueue()
+
+        throw err
       })
   }
 }

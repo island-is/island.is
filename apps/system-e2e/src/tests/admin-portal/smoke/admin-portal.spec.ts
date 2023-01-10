@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/utils'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
 import { helpers } from '../../../support/locator-helpers'
 
@@ -10,8 +10,7 @@ test.describe('Admin portal', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'service-portal-afrika.json',
-      homeUrl: `${urls.islandisBaseUrl}/stjornbord`,
+      homeUrl: `/stjornbord`,
       phoneNumber: '0103019',
       idsLoginOn: true,
     })
