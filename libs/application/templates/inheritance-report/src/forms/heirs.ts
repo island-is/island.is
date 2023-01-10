@@ -54,7 +54,14 @@ export const heirs = buildSection({
             }),
             buildKeyValueField({
               label: m.totalDeduction,
-              value: '200.000 kr.',
+              value: '',
+            }),
+            buildTextField({
+              id: 'totalDeduction',
+              title: '',
+              width: 'half',
+              variant: 'currency',
+              defaultValue: '0',
             }),
             buildDescriptionField({
               id: 'space1',
@@ -79,7 +86,7 @@ export const heirs = buildSection({
                         (answers.publicCharges as any)?.total) +
                       ((answers.businessAssets as any)?.total -
                         (answers.businessDebts as any)?.total) -
-                      200000,
+                      Number(answers.totalDeduction ?? '0'),
                   ),
                 ),
             }),
