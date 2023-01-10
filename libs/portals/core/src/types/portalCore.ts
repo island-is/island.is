@@ -119,25 +119,6 @@ export interface PortalRoute {
   render?: (props: PortalModuleProps) => PortalModuleRenderValue
 }
 
-/**
- * A widget defined by a  portal module
- */
-export type PortalWidget = {
-  /**
-   * Describes the name of this widget, displayed on the dashboard above it fx.
-   */
-  name: MessageDescriptor | string
-  /**
-   * Weight determines how widgets are sorted on the dashboard.
-   * The lower the weight, the higher up it is
-   */
-  weight: number
-  /**
-   * The render value of this widget
-   */
-  render: (props: PortalModuleProps) => PortalModuleRenderValue
-}
-
 export type PortalType = 'admin' | 'my-pages'
 
 /**
@@ -160,11 +141,6 @@ export interface PortalModule {
    * The title of this module
    */
   name: MessageDescriptor | string
-  /**
-   * An optional render value of widgets that should
-   * be displayed on the dashboard
-   */
-  widgets: (props: PortalModuleProps) => PortalWidget[]
   /**
    * The routes defined by this module.
    * The  portal shell will define these as routes

@@ -4,8 +4,6 @@ import {
   ServicePortalPath,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
-import { ActionType } from '../../store/actions'
-import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.css'
 import { useListDocuments } from '@island.is/service-portal/graphql'
@@ -17,23 +15,22 @@ import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/service-portal/const
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 interface Props {
   position: number
+  mobileMenuOpen: boolean
+  setMobileMenuOpen: () => void
 }
 
-const MobileMenu = ({ position }: Props): ReactElement | null => {
+const MobileMenu = ({
+  position,
+  mobileMenuOpen,
+  setMobileMenuOpen,
+}: Props): ReactElement | null => {
   const ref = useRef(null)
-  const [{ mobileMenuState }, dispatch] = useStore()
   const { signOut } = useAuth()
   const mainNav = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 
-  const handleLinkClick = () =>
-    dispatch({
-      type: ActionType.SetMobileMenuState,
-      payload: 'closed',
-    })
-
-  if (mobileMenuState === 'closed') return null
+  if (!mobileMenuOpen) return null
 
   const topPosition = position + SERVICE_PORTAL_HEADER_HEIGHT_SM
   // Inline style to dynamicly change position of header because of alert banners
@@ -61,7 +58,7 @@ const MobileMenu = ({ position }: Props): ReactElement | null => {
                   <ModuleNavigation
                     key={index}
                     nav={navRoot}
-                    onItemClick={handleLinkClick}
+                    onItemClick={setMobileMenuOpen}
                     badge={
                       navRoot.subscribesTo === 'documents' && unreadCounter > 0
                     }

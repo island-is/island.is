@@ -1,5 +1,3 @@
-import format from 'date-fns/format'
-
 import {
   Inject,
   Injectable,
@@ -37,12 +35,10 @@ import {
   Recipient,
 } from '@island.is/judicial-system/types'
 import {
-  caseTypes,
   formatDate,
   formatDefenderRoute,
 } from '@island.is/judicial-system/formatters'
 
-import { nowFactory } from '../../factories'
 import {
   formatProsecutorCourtDateEmailNotification,
   formatCourtHeadsUpSmsNotification,
@@ -54,7 +50,6 @@ import {
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
-  getRequestPdfAsBuffer,
   getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
@@ -65,9 +60,9 @@ import {
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
 } from '../../formatters'
-import { courtUpload, notifications } from '../../messages'
+import { notifications } from '../../messages'
 import { Case } from '../case'
-import { CourtDocumentFolder, CourtService } from '../court'
+import { CourtService } from '../court'
 import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
@@ -228,7 +223,7 @@ export class NotificationService {
     type: NotificationType,
     recipients: Recipient[],
   ): Promise<SendNotificationResponse> {
-    const notification = await this.notificationModel.create({
+    await this.notificationModel.create({
       caseId,
       type,
       recipients: recipients,
@@ -239,41 +234,6 @@ export class NotificationService {
         (sent, recipient) => sent || recipient.success,
         false as boolean,
       ),
-      notification,
-    }
-  }
-
-  private async uploadRequestPdfToCourt(
-    theCase: Case,
-    user: User,
-  ): Promise<void> {
-    try {
-      const requestPdf = await getRequestPdfAsBuffer(
-        theCase,
-        this.formatMessage,
-      )
-
-      const fileName = this.formatMessage(courtUpload.request, {
-        caseType: caseTypes[theCase.type],
-        date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
-      })
-
-      await this.courtService.createDocument(
-        theCase.id,
-        theCase.courtId,
-        theCase.courtCaseNumber,
-        CourtDocumentFolder.REQUEST_DOCUMENTS,
-        fileName,
-        `${fileName}.pdf`,
-        'application/pdf',
-        requestPdf,
-        user,
-      )
-    } catch (error) {
-      this.logger.error(
-        `Failed to upload request pdf to court for case ${theCase.id}`,
-        { error },
-      )
     }
   }
 
@@ -368,7 +328,7 @@ export class NotificationService {
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
-  private sendResubmittedToCourtEmailToDefender(
+  private sendResubmittedToCourtEmailNotificationToDefender(
     theCase: Case,
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
@@ -411,14 +371,7 @@ export class NotificationService {
 
   private async sendReadyForCourtNotifications(
     theCase: Case,
-    user?: User,
   ): Promise<SendNotificationResponse> {
-    if (!user) {
-      throw new InternalServerErrorException(
-        'User is required for ready for court notifications',
-      )
-    }
-
     const notification = await this.notificationModel.findOne({
       where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
     })
@@ -426,12 +379,6 @@ export class NotificationService {
     const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
     ]
-
-    // TODO: Find a better place for this
-    if (theCase.state === CaseState.RECEIVED) {
-      // No need to wait
-      this.uploadRequestPdfToCourt(theCase, user)
-    }
 
     if (notification) {
       if (theCase.state === CaseState.RECEIVED) {
@@ -452,7 +399,9 @@ export class NotificationService {
           theCase.defenderEmail &&
           defenderCourtDateNotificationSent
         ) {
-          promises.push(this.sendResubmittedToCourtEmailToDefender(theCase))
+          promises.push(
+            this.sendResubmittedToCourtEmailNotificationToDefender(theCase),
+          )
         }
       }
 
@@ -1378,6 +1327,37 @@ export class NotificationService {
     )
   }
 
+  /* Messages */
+
+  private async addMessagesForHeadsUpNotificationToQueue(
+    theCase: Case,
+  ): Promise<void> {
+    this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+      caseId: theCase.id,
+    })
+  }
+
+  private async addMessagesForReadyForCourtNotificationToQueue(
+    theCase: Case,
+  ): Promise<void> {
+    const messages = [
+      {
+        type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+        caseId: theCase.id,
+      },
+    ]
+
+    if (theCase.state === CaseState.RECEIVED) {
+      messages.push({
+        type: MessageType.DELIVER_REQUEST_TO_COURT,
+        caseId: theCase.id,
+      })
+    }
+
+    this.messageService.sendMessagesToQueue(messages)
+  }
+
   /* API */
 
   async getAllCaseNotifications(theCase: Case): Promise<Notification[]> {
@@ -1398,7 +1378,7 @@ export class NotificationService {
       case NotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(theCase)
       case NotificationType.READY_FOR_COURT:
-        return this.sendReadyForCourtNotifications(theCase, user)
+        return this.sendReadyForCourtNotifications(theCase)
       case NotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
@@ -1420,10 +1400,27 @@ export class NotificationService {
     }
   }
 
-  async addMessagesForHeadsUpNotificationToQueue(theCase: Case): Promise<void> {
-    this.messageService.sendMessageToQueue({
-      type: MessageType.SEND_HEADS_UP_NOTIFICATION,
-      caseId: theCase.id,
-    })
+  async addMessagesForNotificationToQueue(
+    theCase: Case,
+    notification: SendNotificationDto,
+  ): Promise<SendNotificationResponse> {
+    try {
+      switch (notification.type) {
+        case NotificationType.HEADS_UP:
+          await this.addMessagesForHeadsUpNotificationToQueue(theCase)
+          break
+        case NotificationType.READY_FOR_COURT:
+          await this.addMessagesForReadyForCourtNotificationToQueue(theCase)
+          break
+        default:
+          throw new InternalServerErrorException(
+            `Invalid notification type ${notification.type}`,
+          )
+      }
+
+      return { notificationSent: true }
+    } catch (error) {
+      return { notificationSent: false }
+    }
   }
 }
