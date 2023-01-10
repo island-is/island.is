@@ -1332,7 +1332,7 @@ export class NotificationService {
   private async addMessagesForHeadsUpNotificationToQueue(
     theCase: Case,
   ): Promise<void> {
-    this.messageService.sendMessageToQueue({
+    return this.messageService.sendMessageToQueue({
       type: MessageType.SEND_HEADS_UP_NOTIFICATION,
       caseId: theCase.id,
     })
@@ -1355,7 +1355,7 @@ export class NotificationService {
       })
     }
 
-    this.messageService.sendMessagesToQueue(messages)
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   /* API */
