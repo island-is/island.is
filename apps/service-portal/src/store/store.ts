@@ -1,13 +1,7 @@
-import {
-  ServicePortalModule,
-  ServicePortalRoute,
-} from '@island.is/service-portal/core'
-import { modules, ModuleKeys } from './modules'
+import { ServicePortalRoute } from '@island.is/service-portal/core'
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
 
 export interface StoreState {
-  modules: Record<ModuleKeys, ServicePortalModule>
-  modulesPending: boolean
   navigationState: AsyncActionState
   notificationMenuState: MenuState
   sidebarState: MenuState
@@ -17,8 +11,6 @@ export interface StoreState {
 }
 
 export const initialState: StoreState = {
-  modules,
-  modulesPending: true,
   navigationState: 'passive',
   sidebarState: 'open',
   notificationMenuState: 'closed',
@@ -49,12 +41,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         routes: action.payload,
-      }
-    case ActionType.SetModulesList:
-      return {
-        ...state,
-        modules: action.payload,
-        modulesPending: false,
       }
     case ActionType.SetSidebarMenuState:
       return {

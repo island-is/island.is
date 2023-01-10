@@ -157,16 +157,17 @@ export const FishingLicense: FC<FieldBaseProps> = ({
               error={errors && getErrorViaPath(errors, `${field.id}.license`)}
               onSelect={(value) => handleOnSelect(value)}
               options={data?.fishingLicenses
-                ?.filter(({ answer }: FishingLicenseSchema) => answer)
+                ?.filter(
+                  ({ answer, fishingLicenseInfo }: FishingLicenseSchema) =>
+                    answer && fishingLicenseInfo.code !== 'unknown',
+                )
                 .map(({ fishingLicenseInfo }: FishingLicenseSchema) => {
                   return {
                     value: fishingLicenseInfo.code,
                     label:
-                      fishingLicenseInfo.code === 'unknown'
-                        ? fishingLicenseInfo.name
-                        : formatMessage(
-                            fishingLicense.labels[fishingLicenseInfo.code],
-                          ),
+                      fishingLicenseInfo.code === 'catchMark'
+                        ? formatMessage(fishingLicense.labels.catchMark)
+                        : formatMessage(fishingLicense.labels.hookCatchLimit),
                     tooltip:
                       fishingLicenseInfo.code !== 'hookCatchLimit' &&
                       fishingLicenseInfo.code !== 'catchMark'

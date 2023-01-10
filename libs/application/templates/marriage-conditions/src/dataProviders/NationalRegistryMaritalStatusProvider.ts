@@ -27,6 +27,7 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
     const query = `
     query NationalRegistryUserQuery {
       nationalRegistryUserV2 {
+        fullName
         spouse {
           name
           nationalId
@@ -64,11 +65,13 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
           reason: `Applicant marital status ${maritalStatus} not applicable`,
         })
       })
-      .catch(() => {
+      .catch((error) => {
         if (useFakeData) {
           return this.handleFakeData(fakeData)
         }
-        return Promise.reject({})
+        return Promise.reject({
+          reason: `graphql error in ${this.type}: ${JSON.stringify(error)}`,
+        })
       })
   }
 

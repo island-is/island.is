@@ -48,8 +48,6 @@ export class FishingLicenseService {
               name: v.nafn ?? '',
               chargeType: v.vorunumerfjs ?? '',
             })) ?? [],
-          doesNotFulfillFishingLicenses: false,
-          unfulfilledLicenses: [],
         })) ?? []
       )
     } catch (error) {

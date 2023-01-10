@@ -3,7 +3,6 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
-import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
 import { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
@@ -37,11 +36,9 @@ export interface BaseTemplateAPIModuleConfig {
   criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
-  paymentOptions: PaymentServiceOptions
   generalPetition: {
     endorsementsApiBasePath: string
   }
-  paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
   applicationService: Type<BaseTemplateApiApplicationService>

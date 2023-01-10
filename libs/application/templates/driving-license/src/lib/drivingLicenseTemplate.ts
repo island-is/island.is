@@ -18,7 +18,6 @@ import {
   QualityPhotoApi,
   TeachersApi,
   ExistingApplicationApi,
-  Answer,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
@@ -78,7 +77,8 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 PaymentCatalogApi.configure({
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
+                  externalDataId: 'payment',
                 }),
                 CurrentLicenseApi,
                 DrivingAssessmentApi,

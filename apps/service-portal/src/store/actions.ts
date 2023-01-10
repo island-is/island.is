@@ -1,8 +1,4 @@
-import {
-  ServicePortalRoute,
-  ServicePortalModule,
-} from '@island.is/service-portal/core'
-import { ModuleKeys } from './modules'
+import { ServicePortalRoute } from '@island.is/service-portal/core'
 
 export type MenuState = 'open' | 'closed'
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
@@ -16,7 +12,6 @@ export enum ActionType {
   SetUserMenuState = 'setUserMenuState',
   SetRoutesFulfilled = 'setRoutesFulfilled',
   SetSidebarMenuState = 'setSidebarMenuState',
-  SetModulesList = 'setModulesList',
 }
 
 export type Action =
@@ -37,10 +32,6 @@ export type Action =
   | {
       type: ActionType.SetRoutesFulfilled
       payload: ServicePortalRoute[]
-    }
-  | {
-      type: ActionType.SetModulesList
-      payload: Record<ModuleKeys, ServicePortalModule>
     }
   | {
       type: ActionType.SetSidebarMenuState

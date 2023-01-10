@@ -40,13 +40,13 @@ export type FishingLicenseInfo = {
 }
 
 export enum FishingLicenseCodeType {
-  hookCatchLimit = '1', // Almennt aflamarksveiðileyfi
+  catchMark = '1', // Almennt krókaflamarksveiðileyfi
   fishWithDanishSeine = '8', // Dragnótaveiðileyfi
 
   greyslepp = '11', // TODO naming -  Grásleppuveiðileyfi
   northIceOceanCod = '25', // TODO naming - Norðuríshafsþorskveiðileyfi í norskri lögsögu
 
-  catchMark = '32', // Almennt krókaflamarksveiðileyfi
+  hookCatchLimit = '32', // Almennt aflamarksveiðileyfi
   lumpfish = '36', // Rauðmagaveiðileyfi
   costalFisheries = '37', // Strandveiðileyfi
 

@@ -26,6 +26,8 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
   }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
+    const FISKISTOFA_NATIONAL_ID = '6608922069'
+
     const answers = application.answers as GeneralFishingLicenseAnswers
     const chargeItemCode = getValueViaPath(
       answers,
@@ -38,8 +40,9 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
     }
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       application.id,
+      FISKISTOFA_NATIONAL_ID,
       [chargeItemCode],
     )
 
@@ -55,7 +58,7 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 
