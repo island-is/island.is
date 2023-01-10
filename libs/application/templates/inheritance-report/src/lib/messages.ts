@@ -678,6 +678,11 @@ export const m = defineMessages({
   },
 
   // Heirs
+  spousesShare: {
+    id: 'ir.application:spousesShare',
+    defaultMessage: 'Búshluti eftirlifandi maka',
+    description: '',
+  },
   propertyForExchange: {
     id: 'ir.application:propertyForExchange',
     defaultMessage: 'Eign til skipta',

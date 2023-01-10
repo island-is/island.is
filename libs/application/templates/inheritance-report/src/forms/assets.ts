@@ -312,10 +312,6 @@ export const assets = buildSection({
                 sumField: 'moneyValue',
               },
             ),
-            buildDescriptionField({
-              id: 'money.total',
-              title: '',
-            }),
           ],
         }),
       ],

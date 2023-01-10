@@ -27,8 +27,8 @@ const InheritanceReportTemplate: ApplicationTemplate<
   name: m.applicationName,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
-  featureFlag: Features.estateApplication,
-  allowMultipleApplicationsInDraft: true,
+  featureFlag: Features.inheritanceReport,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.draft,
     states: {

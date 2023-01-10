@@ -18,13 +18,32 @@ export const heirs = buildSection({
   title: m.propertyForExchange,
   children: [
     buildSubSection({
+      id: 'spouse',
+      title: m.spousesShare,
+      children: [
+        buildMultiField({
+          id: 'spouseRate',
+          title: m.spousesShare,
+          description: m.propertyForExchangeDescription,
+          children: [
+            buildTextField({
+              id: 'totalDeduction',
+              title: m.totalDeduction,
+              width: 'half',
+              variant: 'currency',
+              defaultValue: '0',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSubSection({
       id: 'propertyForExchange',
       title: m.propertyForExchangeAndHeirs,
       children: [
         buildMultiField({
           id: 'propertyForExchange',
           title: m.propertyForExchange,
-          description: m.propertyForExchangeDescription,
           children: [
             buildKeyValueField({
               label: m.netProperty,
@@ -54,14 +73,8 @@ export const heirs = buildSection({
             }),
             buildKeyValueField({
               label: m.totalDeduction,
-              value: '',
-            }),
-            buildTextField({
-              id: 'totalDeduction',
-              title: '',
-              width: 'half',
-              variant: 'currency',
-              defaultValue: '0',
+              value: ({ answers }) =>
+                formatCurrency(String(Number(answers.totalDeduction ?? '0'))),
             }),
             buildDescriptionField({
               id: 'space1',
@@ -172,7 +185,7 @@ export const heirs = buildSection({
     }),
     buildSubSection({
       id: 'heirsAddintionalInfo',
-      title: '',
+      title: m.heirAdditionalInfo,
       children: [
         buildMultiField({
           id: 'heirsAdditionalInfo',
