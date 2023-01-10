@@ -10,6 +10,7 @@ import {
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
+import { useDeepCompareEffect } from 'react-use'
 
 interface EmployeeRow {
   name: {
@@ -29,8 +30,15 @@ const EmployersOverview: FC<RepeaterProps> = ({
     application.answers,
     'employment.employers',
   )
-  console.log(employers)
+
   const { formatMessage } = useLocale()
+
+  useDeepCompareEffect(() => {
+    if (!employers || employers.length === 0) {
+      expandRepeater();
+    }
+
+  }, [employers]);
 
   return (
     <Box>

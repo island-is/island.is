@@ -575,6 +575,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildMultiField({
                   id: '',
                   title: parentalLeaveFormMessages.employer.registration,
+                  isPartOfRepeater: true,
                   children: [
                     buildCompanySearchField({
                       id: 'name',
