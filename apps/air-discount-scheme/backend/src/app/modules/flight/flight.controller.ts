@@ -50,7 +50,13 @@ import { Discount } from '../discount/discount.model'
 import { AuthGuard } from '../common'
 import type { HttpRequest } from '../../app.types'
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -346,7 +352,7 @@ export class PublicFlightController {
 @Controller('api/private')
 @ApiTags('Admin')
 @ApiBearerAuth()
-export class PrivateFlightController {
+export class PrivateFlightAdminController {
   constructor(private readonly flightService: FlightService) {}
 
   @Get('flights')
@@ -371,6 +377,15 @@ export class PrivateFlightController {
     flightLegs = await this.flightService.finalizeCreditsAndDebits(flightLegs)
     return flightLegs
   }
+}
+
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AirDiscountSchemeScope.default)
+@Controller('api/private')
+@ApiTags('Users')
+@ApiBearerAuth()
+export class PrivateFlightUserController {
+  constructor(private readonly flightService: FlightService) {}
 
   @Get('users/:nationalId/flights')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
@@ -379,5 +394,14 @@ export class PrivateFlightController {
     return this.flightService.findThisYearsFlightsByNationalId(
       params.nationalId,
     )
+  }
+
+  @Get('users/userAndRelationsFlights')
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
+  async getUserAndRelationsFlights(
+    @CurrentUser() authUser: AuthUser,
+  ): Promise<Flight[]> {
+    return this.flightService.findThisYearsFlightsForUserAndRelations(authUser)
   }
 }
