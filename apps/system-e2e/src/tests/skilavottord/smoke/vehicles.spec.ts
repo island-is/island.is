@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { AuthUrl, getEnvironmentBaseUrl, urls } from '../../../support/utils'
+import { AuthUrl, getEnvironmentBaseUrl, urls } from '../../../support/urls'
 import { session } from '../../../support/session'
 
 test.use({ baseURL: urls.islandisBaseUrl })
