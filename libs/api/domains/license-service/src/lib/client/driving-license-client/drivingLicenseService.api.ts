@@ -277,7 +277,7 @@ export class GenericDrivingLicenseApi
       this.notifyPkPassCreated(nationalId)
     }
 
-    return pkPassUrl;
+    return pkPassUrl
   }
 
   async getPkPassUrl(user: User): Promise<string | null> {
