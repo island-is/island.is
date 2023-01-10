@@ -15,7 +15,7 @@ import {
 
 import { BackendApi } from '../../data-sources'
 import { CaseListEntry } from './models/caseList.model'
-import { CasesInterceptor } from '../case/interceptors/cases.interceptor'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => [CaseListEntry])
@@ -27,7 +27,7 @@ export class CaseListResolver {
   ) {}
 
   @Query(() => [CaseListEntry], { nullable: true })
-  @UseInterceptors(CasesInterceptor)
+  @UseInterceptors(CaseListInterceptor)
   cases(
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
