@@ -26,6 +26,7 @@ export class MessageProcessorService {
     }
   }
 
+  
   async convertToNotification(
     message: CreateNotificationDto,
     profile: UserProfile,
@@ -60,5 +61,16 @@ export class MessageProcessorService {
         }
       }
     }
+  }
+
+  async getNotificationTypes(
+  ): Promise<string[]> {
+    const t = await this.intlService.useIntl(
+      ['user-notification.messages'], "is"
+      // profile.locale ?? 'is',
+    )
+    console.log("🚀 ~ file: messageProcessor.service.ts:72 ~ MessageProcessorService ~ t", t)
+   
+   return ["asdf","asdf"]
   }
 }

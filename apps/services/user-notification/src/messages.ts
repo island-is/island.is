@@ -18,12 +18,12 @@ export default {
     [MessageTypes.TestMessage]: defineMessages({
       title: {
         id: 'user-notification.messages:test-message-title',
-        description: 'title desc',
+        description: 'title desc...',
         defaultMessage: 'test-message-title',
       },
       body: {
         id: 'user-notification.messages:test-message-body',
-        description: 'body desc',
+        description: 'body desc...',
         defaultMessage: 'test-message-body',
       },
     }),
