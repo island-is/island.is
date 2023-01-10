@@ -9,7 +9,6 @@ import {
 
 export const eligibilityModule: ServicePortalModule = {
   name: 'Mín réttindi',
-  widgets: () => [],
   routes: ({ userInfo }) => [
     {
       name: m.eligibility,
