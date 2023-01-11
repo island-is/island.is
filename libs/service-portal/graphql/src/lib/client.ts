@@ -1,17 +1,20 @@
 import fetch from 'cross-fetch'
 import {
   ApolloClient,
-  InMemoryCache,
-  HttpLink,
   ApolloLink,
+  HttpLink,
+  InMemoryCache,
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { authLink } from '@island.is/auth/react'
+import { getStaticEnv } from '@island.is/shared/utils'
 
 const uri =
-  process.env.NODE_ENV === 'development'
+  getStaticEnv('PROD_MODE') === 'true'
     ? 'http://localhost:9456/api/graphql'
+    : process.env.NODE_ENV === 'development'
+    ? 'http://localhost:4444/api/graphql'
     : '/api/graphql'
 
 const httpLink = new HttpLink({

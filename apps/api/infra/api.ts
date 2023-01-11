@@ -161,10 +161,15 @@ export const serviceSetup = (services: {
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
+      SOFFIA_SOAP_URL: {
+        dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
+        staging: ref((h) => h.svc('https://soffiaprufa.skra.is')),
+        prod: ref((h) => h.svc('https://soffia.skra.is')),
+        local: ref((h) => h.svc('https://localhost:8443')),
+      },
     })
 
     .secrets({
-      SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
       DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL',
       DOCUMENT_PROVIDER_BASE_PATH_TEST:

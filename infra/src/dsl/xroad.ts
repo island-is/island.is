@@ -40,6 +40,7 @@ export const Base = new XroadConf({
       ),
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
+      local: ref((h) => `${h.svc('http://localhost:8081')}/r1/IS-DEV`),
     },
     XROAD_TLS_BASE_PATH: {
       dev: 'https://securityserver.dev01.devland.is',
