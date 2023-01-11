@@ -52,7 +52,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                   if (license.code === 'unknown') return null
                   return (
                     <Tag variant="blue" disabled key={`${license}`}>
-                      {formatMessage(shipSelection.tags[license.code])}
+                      {license.name}
                     </Tag>
                   )
                 })}
