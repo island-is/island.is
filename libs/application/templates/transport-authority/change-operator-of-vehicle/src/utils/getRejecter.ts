@@ -18,6 +18,7 @@ export const getRejecter = (reviewerNationalId: string, answers: FormValue) => {
       plate,
       name: ownerCoOwner.name,
       nationalId: ownerCoOwner.nationalId,
+      type: 'coOwner',
     } as Rejecter
   }
 
@@ -34,6 +35,7 @@ export const getRejecter = (reviewerNationalId: string, answers: FormValue) => {
       plate,
       name: operator.name,
       nationalId: operator.nationalId,
+      type: 'operator',
     } as Rejecter
   }
 

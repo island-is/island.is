@@ -81,17 +81,17 @@ export const conclusion = {
   rejected: defineMessages({
     alertMessage: {
       id: 'ta.cov.application:conclusion.rejected.alertMessage',
-      defaultMessage: 'Bæta við meðeiganda á ökutæki - Umsókn afturkölluð!',
+      defaultMessage: 'Bæta við umráðamann - Umsókn afturkölluð!',
       description: 'Conclusion rejected alert message',
     },
     firstText: {
       id: 'ta.cov.application:conclusion.rejected.firstText',
-      defaultMessage: `Beiðni um breytingu meðeiganda á ökutækinu {plate} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
+      defaultMessage: `Beiðni um bæta við umráðamanni á {plate} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
       description: 'Conclusion rejected first text',
     },
     secondText: {
       id: 'ta.cov.application:conclusion.rejected.secondText',
-      defaultMessage: `Til þess að skrá breytingu meðeiganda á ökutæki rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.`,
+      defaultMessage: `Til þess að bæta við umráðamann rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.`,
       description: 'Conclusion rejected second text',
     },
     thirdText: {
@@ -99,19 +99,14 @@ export const conclusion = {
       defaultMessage: `Vinsamlegast hafið samband við Þjónustuver Samgöngustofu, afgreidsla@samgongustofa.is, ef nánari upplýsinga er þörf.`,
       description: 'Conclusion rejected third text',
     },
-    buyer: {
-      id: 'ta.cov.application:conclusion.rejected.buyer',
-      defaultMessage: `eigandi`,
-      description: 'Buyer label',
-    },
-    buyerCoOwner: {
+    coOwner: {
       id: 'ta.cov.application:conclusion.rejected.buyerCoOwner',
-      defaultMessage: `meðeigandi eiganda`,
+      defaultMessage: `meðeigandi`,
       description: 'Buyer coowner label',
     },
     operator: {
       id: 'ta.cov.application:conclusion.rejected.operator',
-      defaultMessage: `umboðsmaður`,
+      defaultMessage: `umráðamaður`,
       description: 'Operator label',
     },
     startNewApplication: {

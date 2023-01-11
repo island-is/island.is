@@ -37,13 +37,25 @@ const pruneInDaysAtTen = (application: Application, days: number) => {
   return pruneDate // Time left of the day + 6 more days
 }
 
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const plate = getValueViaPath(
+    application.answers,
+    'pickVehicle.plate',
+    undefined,
+  ) as string | undefined
+  return {
+    name: m.name,
+    value: plate ? `- ${plate}` : '',
+  }
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE,
-  name: m.name,
+  name: determineMessageFromApplicationAnswers,
   institution: m.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.ChangeOperatorOfVehicle.translation,
@@ -135,7 +147,7 @@ const template: ApplicationTemplate<
       [States.REVIEW]: {
         entry: 'assignUsers',
         meta: {
-          name: 'Tilkynning um eigendaskipti að ökutæki',
+          name: 'Breyting umráðamanns á ökutæki',
           status: 'inprogress',
           actionCard: {
             tag: {
@@ -182,11 +194,46 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.REVIEW },
-          // [DefaultEvents.REJECT]: { target: States.REJECTED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
       // TODOx rejected state
+      [States.REJECTED]: {
+        meta: {
+          name: 'Rejected',
+          status: 'rejected',
+          progress: 1,
+          lifecycle: pruneAfterDays(3 * 30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.rejectApplication,
+          }),
+          actionCard: {
+            tag: {
+              label: application.actionCardRejected,
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.REVIEWER,
+              formLoader: () =>
+                import('../forms/Rejected').then((module) =>
+                  Promise.resolve(module.Rejected),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

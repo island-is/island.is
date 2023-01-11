@@ -12,6 +12,7 @@ export enum States {
   DRAFT = 'draft',
   PAYMENT = 'payment',
   REVIEW = 'review',
+  REJECTED = 'rejected',
   COMPLETED = 'completed',
 }
 
