@@ -92,6 +92,14 @@ export class FishingLicenseService {
               directions: x.leidbeining ?? '',
             })) ?? [],
           attachmentInfo: l.serhaefdarSpurningarGogn?.vidhengiLysing,
+          dateRestriction: {
+            dateFrom:
+              l.serhaefdarSpurningarGogn?.umbedinGildistakaTakmorkun
+                ?.dagsetningFra || null,
+            dateTo:
+              l.serhaefdarSpurningarGogn?.umbedinGildistakaTakmorkun
+                ?.dagsetningTil || null,
+          },
           areas:
             l.serhaefdarSpurningarGogn?.veidisvaediValmoguleikar?.map((o) => ({
               key: o.lykill,
