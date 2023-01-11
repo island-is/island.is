@@ -41,14 +41,14 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
       title: e.applicants.sectionLabel,
       children: [
         buildMultiField({
-          id: 'constraints',
+          id: 'applicants',
           title: e.applicants.sectionTitle,
           description: e.applicants.sectionDescription,
           children: [
             buildCustomField({
-              id: 'constraints',
+              id: 'applicants',
               title: '',
-              component: 'Constraints',
+              component: 'Applicants',
             }),
           ],
         }),
@@ -60,14 +60,14 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
       title: e.temp.sectionLabel,
       children: [
         buildMultiField({
-          id: 'constraints2',
+          id: 'temp',
           title: e.temp.sectionTitle,
           description: e.temp.sectionDescription,
           children: [
             buildCustomField({
-              id: 'constraints2',
+              id: 'temp',
               title: '',
-              component: 'Constraints',
+              component: 'TempScreen',
             }),
           ],
         }),
