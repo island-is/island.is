@@ -5,6 +5,8 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseState,
+  CaseTransition,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -126,6 +128,32 @@ describe('CaseController - Update', () => {
 
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
+    })
+  })
+
+  describe('transitions', () => {
+    const caseToUpdate = { courtCaseNumber: 'R-0000/0000' } as UpdateCaseDto
+    const updatedCase = {
+      ...theCase,
+      ...caseToUpdate,
+      state: CaseState.SUBMITTED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+    })
+
+    it('should transition the case from SUBMITTED to RECEIVED when courtCaseNumber is updated', async () => {
+      const { caseController } = await createTestingCaseModule()
+      expect(caseController.transition).toHaveBeenCalledWith(
+        theCase.id,
+        user,
+        theCase,
+        {
+          transaction: CaseTransition.RECEIVE,
+        },
+      )
     })
   })
 

@@ -81,7 +81,6 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
-import { NotificationService } from '../notification/notification.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -188,14 +187,14 @@ export class CaseController {
       user,
     ) as Promise<Case>
 
-    const transition = this.transition(caseId, user, theCase, {
-      transition: CaseTransition.RECEIVE,
-    })
-
     return Promise.all([
       update,
       ...(caseToUpdate.courtCaseNumber && theCase.state === CaseState.SUBMITTED
-        ? [transition]
+        ? [
+            this.transition(caseId, user, theCase, {
+              transition: CaseTransition.RECEIVE,
+            }),
+          ]
         : []),
     ]).then((values) => values[0])
   }
