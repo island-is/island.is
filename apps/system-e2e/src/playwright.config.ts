@@ -1,12 +1,6 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import './addons'
-import { urls } from './support/urls'
-
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
+import { urls, isRunningLocally } from './support/urls'
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -53,7 +47,7 @@ const config: PlaywrightTestConfig = {
     baseURL: urls.islandisBaseUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retain-on-failure',
+    trace: isRunningLocally? 'on' : 'retain-on-failure',
   },
 
   /* Configure projects for major browsers */
