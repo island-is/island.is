@@ -1,11 +1,9 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack, Tag } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
 import { ShipInformation } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
-import { shipSelection } from '../../lib/messages'
 import { FishingLicenseShip as Ship } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 import { FishingLicenseEnum } from '../../types'
@@ -21,7 +19,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   field,
   errors,
 }) => {
-  const { formatMessage } = useLocale()
   const { register, setValue } = useFormContext()
 
   const registrationNumberValue = getValueViaPath(
