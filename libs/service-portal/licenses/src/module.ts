@@ -7,7 +7,6 @@ import { defineMessage } from 'react-intl'
 
 export const licensesModule: PortalModule = {
   name: m.licenseNavTitle,
-  widgets: () => [],
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {

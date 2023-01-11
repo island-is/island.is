@@ -8,7 +8,6 @@ import { m } from './lib/messages'
 export const documentProviderModule: PortalModule = {
   name: m.rootName,
   featureFlag: Features.servicePortalDocumentProviderModule,
-  widgets: () => [],
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
