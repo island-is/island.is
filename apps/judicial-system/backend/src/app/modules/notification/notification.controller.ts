@@ -79,9 +79,11 @@ export class NotificationController {
     )
 
     if (
-      [NotificationType.HEADS_UP, NotificationType.READY_FOR_COURT].includes(
-        notification.type,
-      )
+      [
+        NotificationType.HEADS_UP,
+        NotificationType.READY_FOR_COURT,
+        NotificationType.RECEIVED_BY_COURT,
+      ].includes(notification.type)
     ) {
       return this.notificationService.addMessagesForNotificationToQueue(
         theCase,
