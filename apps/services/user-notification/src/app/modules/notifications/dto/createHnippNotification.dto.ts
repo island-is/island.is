@@ -16,7 +16,6 @@ export class createHnippNotificationDto {
 
   @IsArray()
   @ApiProperty({example:["arg1","arg2"]})
-  @IsOptional()
   args!: [string] | []
 
 }
