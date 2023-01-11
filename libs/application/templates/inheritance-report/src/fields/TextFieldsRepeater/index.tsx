@@ -23,6 +23,7 @@ type Props = {
       repeaterButtonText: string
       repeaterHeaderText: string
       sumField: string
+      fromExternalData?: string
     }
   }
 }
@@ -35,6 +36,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
+
   const { setValue } = useFormContext()
   const answersValues = getValueViaPath(
     application.answers,
@@ -74,6 +76,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   }
 
   const handleAddRepeaterFields = () => {
+    console.log('her?')
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
@@ -87,6 +90,16 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   }
 
   useEffect(() => {
+    if (props.fromExternalData && fields.length === 0) {
+      append(
+        (application.externalData.syslumennOnEntry?.data as any).estate[
+          props.fromExternalData
+        ],
+      )
+    }
+  }, [props, fields, append])
+
+  useEffect(() => {
     const addTotal = id.replace('data', 'total')
     setValue(addTotal, total)
   }, [id, total, setValue])
@@ -96,12 +109,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
       {fields.map((repeaterField, index) => {
         const fieldIndex = `${id}[${index}]`
         return (
-          <Box
-            position="relative"
-            key={repeaterField.id}
-            marginTop={3}
-            hidden={repeaterField.initial || repeaterField?.dummy}
-          >
+          <Box position="relative" key={repeaterField.id} marginTop={3}>
             <Box>
               <Text variant="h4" marginBottom={2}>
                 {props.repeaterHeaderText + ' ' + (index + 1)}

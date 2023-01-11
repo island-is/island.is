@@ -29,11 +29,34 @@ export const assets = buildSection({
               description: m.realEstateDescription,
               titleVariant: 'h3',
             }),
-            buildCustomField({
-              title: '',
-              id: 'estate.assets',
-              component: 'RealEstateRepeater',
-            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'estate.assets',
+                doesNotRequireAnswer: true,
+                component: 'TextFieldsRepeater',
+              },
+              {
+                fields: [
+                  {
+                    title: 'Fastanúmer',
+                    id: 'assetNumber',
+                  },
+                  {
+                    title: 'Lögheimili',
+                    id: 'description',
+                  },
+                  {
+                    title: 'Fasteignamat á dánardegi',
+                    id: 'propertyValuation',
+                  },
+                ],
+                repeaterButtonText: m.addInventory.defaultMessage,
+                repeaterHeaderText: m.inventoryTitle.defaultMessage,
+                fromExternalData: 'assets',
+                sumField: 'propertyValuation',
+              },
+            ),
           ],
         }),
       ],
@@ -53,11 +76,38 @@ export const assets = buildSection({
               description: m.vehiclesDescription,
               titleVariant: 'h3',
             }),
-            buildCustomField({
+            buildDescriptionField({
+              id: 'vehicles.total',
               title: '',
-              id: 'estate.vehicles',
-              component: 'VehiclesRepeater',
             }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'estate.vehicles',
+                doesNotRequireAnswer: true,
+                component: 'TextFieldsRepeater',
+              },
+              {
+                fields: [
+                  {
+                    title: 'Fastanúmer',
+                    id: 'assetNumber',
+                  },
+                  {
+                    title: 'Tegund',
+                    id: 'description',
+                  },
+                  {
+                    title: 'Markaðsverð á dánardegi',
+                    id: 'propertyValuation',
+                  },
+                ],
+                repeaterButtonText: m.addInventory.defaultMessage,
+                repeaterHeaderText: m.inventoryTitle.defaultMessage,
+                fromExternalData: 'vehicles',
+                sumField: 'propertyValuation',
+              },
+            ),
           ],
         }),
       ],
@@ -72,7 +122,7 @@ export const assets = buildSection({
           description: m.propertiesDescription,
           children: [
             buildDescriptionField({
-              id: 'membersOfEstateTitle',
+              id: 'inventoryTitle',
               title: m.inventoryTitle,
               description: m.inventoryDescription,
               titleVariant: 'h3',
