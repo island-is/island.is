@@ -12,7 +12,7 @@ import { DelegationsIncomingRepresentativeService } from './delegations-incoming
 import { DelegationType } from './types/delegationType'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
 import { ApiScope } from '../resources/models/api-scope.model'
-import { Op } from 'sequelize'
+import { WhereOptions } from 'sequelize'
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 
 type ClientDelegationInfo = Pick<
@@ -101,10 +101,14 @@ export class DelegationsIncomingService {
   async findAllAvailable(
     user: User,
     delegationTypes?: DelegationType[],
+    requestedScopes?: string[],
   ): Promise<MergedDelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
 
-    const clientAllowedApiScopes = await this.getClientAllowedApiScopes(user)
+    const clientAllowedApiScopes = await this.getClientAllowedApiScopes(
+      user,
+      requestedScopes,
+    )
 
     const delegationPromises = []
 
@@ -226,23 +230,30 @@ export class DelegationsIncomingService {
     })
   }
 
-  private async getClientAllowedApiScopes(user: User): Promise<ApiScopeInfo[]> {
+  private async getClientAllowedApiScopes(
+    user: User,
+    requestedScopes?: string[],
+  ): Promise<ApiScopeInfo[]> {
     if (!user) return []
+
+    const whereOptions: WhereOptions = {
+      clientId: user.client,
+    }
+
+    if (requestedScopes) {
+      whereOptions.scopeName = requestedScopes
+    }
 
     const clientAllowedScopes = (
       await this.clientAllowedScopeModel.findAll({
-        where: {
-          clientId: user.client,
-        },
+        where: whereOptions,
       })
     ).map((s) => s.scopeName)
 
     return await this.apiScopeModel.findAll({
       where: {
-        [Op.and]: [
-          { name: { [Op.in]: clientAllowedScopes.map((s) => s) } },
-          { enabled: true },
-        ],
+        name: clientAllowedScopes,
+        enabled: true,
       },
       attributes: [
         'name',
