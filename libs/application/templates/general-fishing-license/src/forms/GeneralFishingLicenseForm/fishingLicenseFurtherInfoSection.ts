@@ -92,11 +92,14 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           doesNotRequireAnswer: true,
           condition: (formValue) => !hasAreaSelection(formValue),
         }),
-        buildDateField({
+        // Custom field for date, needs to be a custom field
+        // So that dynamic date limitations from the API can be respected
+        buildCustomField({
           id: DATE_FIELD_ID,
           title: fishingLicenseFurtherInformation.labels.date,
-          minDate: new Date(),
-          placeholder: fishingLicenseFurtherInformation.placeholders.date,
+          description:
+            fishingLicenseFurtherInformation.fieldInformation.attachments,
+          component: 'DateWithContraintsSelection',
           condition: (formValue) => !hasAreaSelection(formValue),
         }),
         // Custom field to replace file upload section title
