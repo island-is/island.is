@@ -33,7 +33,6 @@ import {
   indictmentCases,
   investigationCases,
   isIndictmentCase,
-  NotificationType,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
