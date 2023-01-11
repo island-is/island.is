@@ -49,6 +49,9 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
       }, 0)
     : 0
 
+  const [rateOfExchange, setRateOfExchange] = useState(0)
+  const [faceValue, setFaceValue] = useState(0)
+  const [index, setIndex] = useState('0')
   const [total, setTotal] = useState(
     answersValues?.length ? answersValuesTotal : 0,
   )
@@ -98,6 +101,10 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
       )
     }
   }, [props, fields, append])
+
+  useEffect(() => {
+    setValue(`${index}.value`, String(faceValue * rateOfExchange))
+  }, [faceValue, rateOfExchange, setValue])
 
   useEffect(() => {
     const addTotal = id.replace('data', 'total')
@@ -157,14 +164,21 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       type={field.type}
                       textarea={field.variant}
                       rows={field.rows}
-                      onChange={(e) =>
-                        props.sumField === field.id
-                          ? getTheTotalOfTheValues(
-                              currencyStringToNumber(e.target.value),
-                              index,
-                            )
-                          : ''
-                      }
+                      onChange={(e) => {
+                        setIndex(fieldIndex)
+                        if (field.id === 'rateOfExchange') {
+                          setRateOfExchange(Number(e.target.value))
+                        } else if (field.id === 'faceValue') {
+                          setFaceValue(Number(e.target.value))
+                        }
+
+                        if (props.sumField === field.id) {
+                          getTheTotalOfTheValues(
+                            currencyStringToNumber(e.target.value),
+                            index,
+                          )
+                        }
+                      }}
                     />
                   </GridColumn>
                 )
