@@ -575,13 +575,11 @@ export const ParentalLeaveForm: Form = buildForm({
                       placeholder:
                         parentalLeaveFormMessages.employer
                           .nameSearchPlaceholder,
-                      defaultValue: '',
                     }),
                     buildTextField({
                       id: 'email',
                       variant: 'email',
                       title: parentalLeaveFormMessages.employer.email,
-                      defaultValue: '',
                     }),
                     buildTextField({
                       id: 'phoneNumber',
@@ -589,14 +587,12 @@ export const ParentalLeaveForm: Form = buildForm({
                       format: '###-####',
                       placeholder: '000-0000',
                       title: parentalLeaveFormMessages.employer.phoneNumber,
-                      defaultValue: '',
                     }),
                     buildSelectField({
                       id: 'ratio',
                       title: parentalLeaveFormMessages.employer.ratio,
                       placeholder:
                         parentalLeaveFormMessages.employer.ratioPlaceholder,
-                      defaultValue: '',
                       options: Array(10)
                         .fill(undefined)
                         .map((_, idx, array) => ({
@@ -615,7 +611,7 @@ export const ParentalLeaveForm: Form = buildForm({
           title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
           children: [
             buildFileUploadField({
-              id: 'employer.selfEmployed.file',
+              id: 'selfEmployed.file',
               title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
               description:
                 parentalLeaveFormMessages.selfEmployed.attachmentDescription,

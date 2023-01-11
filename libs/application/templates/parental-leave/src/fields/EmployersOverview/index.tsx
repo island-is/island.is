@@ -5,9 +5,7 @@ import {
   Box,
   Button,
   ContentBlock,
-  Icon,
   Inline,
-  Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../lib/messages'
@@ -16,16 +14,8 @@ import { useLocale } from '@island.is/localization'
 import { useDeepCompareEffect } from 'react-use'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
-
-export interface EmployerRow {
-  name: {
-    label: string
-    nationalId: string
-  }
-  email: string
-  phoneNumber: string
-  ratio: string
-}
+import { EmployerRow } from '../../types'
+import { EmployersTable } from '../components/EmployersTable'
 
 const EmployersOverview: FC<RepeaterProps> = ({
   error,
@@ -81,39 +71,11 @@ const EmployersOverview: FC<RepeaterProps> = ({
         {parentalLeaveFormMessages.employer.description.defaultMessage}
       </Text>
       <Box paddingTop={5} paddingBottom={5}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData></T.HeadData>
-              <T.HeadData>Kennitala</T.HeadData>
-              <T.HeadData>Nafn</T.HeadData>
-              <T.HeadData>Netfang</T.HeadData>
-              <T.HeadData>Símanúmer</T.HeadData>
-              <T.HeadData>Hlutfall</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {employers?.map((e) => (
-              <T.Row key={`${e.email}${e.name.nationalId}`}>
-                <T.Data>
-                  <Box onClick={() => onDeleteEmployer(e.name.nationalId)}>
-                    <Icon
-                      color="dark200"
-                      icon="removeCircle"
-                      size="medium"
-                      type="outline"
-                    />
-                  </Box>
-                </T.Data>
-                <T.Data>{e.name?.nationalId}</T.Data>
-                <T.Data>{e.name?.label}</T.Data>
-                <T.Data>{e.email}</T.Data>
-                <T.Data>{e.phoneNumber}</T.Data>
-                <T.Data>{e.ratio}%</T.Data>
-              </T.Row>
-            ))}
-          </T.Body>
-        </T.Table>
+        <EmployersTable
+          employers={employers}
+          editable
+          onDeleteEmployer={onDeleteEmployer}
+        />
       </Box>
       <Box alignItems="center">
         <Inline space={1} alignY="center">

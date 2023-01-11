@@ -145,3 +145,13 @@ export interface PregnancyStatusAndRightsResults {
   hasRights: boolean
   hasActivePregnancy: boolean
 }
+
+export interface EmployerRow {
+  name: {
+    label: string
+    nationalId: string
+  }
+  email: string
+  phoneNumber: string
+  ratio: string
+}

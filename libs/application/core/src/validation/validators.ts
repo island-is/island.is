@@ -20,7 +20,7 @@ function populateError(
   formatMessage: FormatMessage,
 ) {
   let errorObject = {}
-  error.forEach((element) => {
+  error?.forEach((element) => {
     const defaultZodError = element.message === 'Invalid input'
     const path = pathToError || element.path
     let message = formatMessage(coreErrorMessages.defaultError)

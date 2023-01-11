@@ -341,7 +341,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       } else {
         const oldSelfEmployedPdfs = (await getValueViaPath(
           application.answers,
-          'employer.selfEmployed.file',
+          'selfEmployed.file',
         )) as unknown[]
 
         if (oldSelfEmployedPdfs?.length) {

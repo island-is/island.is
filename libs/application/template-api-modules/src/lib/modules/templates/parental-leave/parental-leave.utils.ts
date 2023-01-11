@@ -5,7 +5,6 @@ import get from 'lodash/get'
 import {
   ParentalLeave,
   Period,
-  Employer,
   Union,
   PensionFund,
   Attachment,
@@ -247,12 +246,10 @@ export const transformApplicationToParentalLeaveDTO = (
   }
 
   const {
-    isSelfEmployed,
     union,
     bank,
     employers,
     applicationType,
-    isReceivingUnemploymentBenefits,
     multipleBirths,
   } = getApplicationAnswers(application.answers)
 

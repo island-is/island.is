@@ -46,6 +46,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
   PregnancyStatusAndRightsResults,
+  EmployerRow,
 } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
@@ -56,7 +57,6 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { EmployerRow } from '../fields/EmployersOverview'
 
 export function getExpectedDateOfBirth(
   application: Application,
