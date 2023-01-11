@@ -220,7 +220,10 @@ export class NotificationsController {
     const locale = "en" //'is-IS' // enum en
     // formatArgs
     const template = await this.getTemplate(message.templateId, locale)
-    // formatObject
+    
+    
+    
+    // formatObject  FUNCTION
     const notification = {
       messageType: "bogus", ///  phase me out .................
       title: template.notificationTitle,
@@ -229,6 +232,10 @@ export class NotificationsController {
       category: template.category,
       appURI: template.clickAction  //`${this.appProtocol}://inbox/${message.documentId}`,
     }
+
+    
+
+    // FCM format
     return {
       notification: {
         title: notification.title,
