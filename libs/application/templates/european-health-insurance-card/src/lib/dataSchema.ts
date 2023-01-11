@@ -1,7 +1,15 @@
 import { z } from 'zod'
 
+export const contactSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email().nonempty(),
+  phoneNumber: z.string().min(1),
+})
+
 export const dataSchema = z.object({
   applicant: z.object({
-    email: z.string().email().nonempty(),
+    hasLogin: z.boolean().optional(),
   }),
+
+  contact: contactSchema,
 })
