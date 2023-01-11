@@ -29,7 +29,7 @@ export class DiscountService {
     )
   }
 
-  private discountIsValid(discount: TDiscount): boolean {
+  discountIsValid(discount: TDiscount): boolean {
     const TWO_HOURS = 7200
     if (discount.expiresIn <= TWO_HOURS) {
       return false
@@ -39,7 +39,7 @@ export class DiscountService {
     return credit >= 1
   }
 
-  private processDiscount(discount: TDiscount): TDiscount {
+  processDiscount(discount: TDiscount): TDiscount {
     if (!this.discountIsValid(discount)) {
       discount.discountCode = ''
     }
