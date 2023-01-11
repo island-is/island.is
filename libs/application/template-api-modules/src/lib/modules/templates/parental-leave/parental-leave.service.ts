@@ -110,6 +110,12 @@ export class ParentalLeaveService {
     }
   }
 
+  // Check whether phoneNumber is GSM
+  checkIfPhoneNumberIsGSM(phoneNumber: string) {
+    const phoneNumberStartStr = ['6', '7', '8']
+    return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
+  }
+
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
     const { otherParentPhoneNumber } = getApplicationAnswers(
       application.answers,
@@ -121,7 +127,10 @@ export class ParentalLeaveService {
     )
 
     try {
-      if (otherParentPhoneNumber) {
+      if (
+        otherParentPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(otherParentPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -152,7 +161,10 @@ export class ParentalLeaveService {
     )
 
     try {
-      if (applicantPhoneNumber) {
+      if (
+        applicantPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -184,7 +196,10 @@ export class ParentalLeaveService {
     )
 
     try {
-      if (applicantPhoneNumber) {
+      if (
+        applicantPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -221,7 +236,10 @@ export class ParentalLeaveService {
 
     // send confirmation sms to employer
     try {
-      if (employerPhoneNumber) {
+      if (
+        employerPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(employerPhoneNumber)
+      ) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
           application,
