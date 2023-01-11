@@ -23,3 +23,5 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
 }
+
+export const Skattleysismörk = 5757759

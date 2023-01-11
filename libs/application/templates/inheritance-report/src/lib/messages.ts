@@ -752,7 +752,7 @@ export const m = defineMessages({
   },
   heirsInheritanceRate: {
     id: 'ir.application:heirsInheritanceRate',
-    defaultMessage: 'Arfshlutfall',
+    defaultMessage: 'Arfshlutfall (%)',
     description: '',
   },
   taxableInheritance: {

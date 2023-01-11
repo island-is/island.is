@@ -6,9 +6,11 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
+import { Application } from '@island.is/api/schema'
 
 export const assets = buildSection({
   id: 'estateProperties',
@@ -535,16 +537,27 @@ export const assets = buildSection({
                 formatCurrency(String((answers.otherAssets as any)?.total)),
             }),
             buildDividerField({}),
-            buildDescriptionField({
+            /*buildDescriptionField({
               id: 'overviewAllAssetsWorth',
               title: m.totalValueOfAssets,
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
+            }),*/
+            buildDescriptionField({
+              width: 'half',
+              id: 'half_space',
+              title: '',
             }),
-            buildKeyValueField({
-              label: m.total,
-              value: ({ answers }) => {
+            buildTextField({
+              id: 'assetsTotal',
+              title: 'Samtals alls',
+              readOnly: true,
+              width: 'half',
+              variant: 'currency',
+              rightAlign: true,
+              backgroundColor: 'white',
+              defaultValue: ({ answers }: Application) => {
                 const total =
                   (answers.otherAssets as any)?.total +
                   (answers.money as any)?.total +
@@ -555,7 +568,7 @@ export const assets = buildSection({
                   (answers.realEstate as any)?.total +
                   (answers.vehicles as any)?.total
 
-                return formatCurrency(String(total))
+                return total
               },
             }),
           ],
