@@ -8,9 +8,10 @@ import {
   DefaultEvents,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
+import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -34,8 +35,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
-  name: 'temp name',
-  institution: 'temp institution name',
+  name: e.application.applicationName,
+  institution: e.application.institutionName,
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
