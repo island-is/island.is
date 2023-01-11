@@ -17,6 +17,7 @@ import {
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import * as userProfile from '@island.is/clients/user-profile'
+import { NotificationsService } from './notifications.service'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import * as userProfile from '@island.is/clients/user-profile'
   ],
   controllers: [NotificationsController],
   providers: [
+    NotificationsService,
     NotificationDispatchService,
     NotificationsWorkerService,
     MessageProcessorService,

@@ -19,11 +19,8 @@ export class MessageProcessorService {
   ) {}
 
   shouldSendNotification(type: MessageTypes, profile: UserProfile): boolean {
-    switch (type) {
-      case MessageTypes.NewDocumentMessage:
-      case MessageTypes.TestMessage:
-        return profile.documentNotifications
-    }
+    // documentNotifications is now the global switch for all notifications
+    return profile.documentNotifications
   }
 
   
@@ -31,6 +28,14 @@ export class MessageProcessorService {
     message: CreateNotificationDto,
     profile: UserProfile,
   ): Promise<Notification> {
+
+    // get template on selected language - map user profile locale to other
+    // formatArsg
+    // formatObject
+    // return object
+
+
+
     const t = await this.intlService.useIntl(
       ['user-notification.messages'],
       profile.locale ?? 'is',
@@ -63,14 +68,5 @@ export class MessageProcessorService {
     }
   }
 
-  async getNotificationTypes(
-  ): Promise<string[]> {
-    const t = await this.intlService.useIntl(
-      ['user-notification.messages'], "is"
-      // profile.locale ?? 'is',
-    )
-    console.log("🚀 ~ file: messageProcessor.service.ts:72 ~ MessageProcessorService ~ t", t)
-   
-   return ["asdf","asdf"]
-  }
+  
 }

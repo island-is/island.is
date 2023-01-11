@@ -4,10 +4,11 @@ import {
   Get,
   BadRequestException,
   CACHE_MANAGER,
+  Param,
+  Query,
+  CacheTTL,
   UseInterceptors,
   CacheInterceptor,
-  CacheTTL,
-  Param,
 } from '@nestjs/common'
 import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
@@ -15,8 +16,6 @@ import {
   ApiBody,
   ApiExtraModels,
   getSchemaPath,
-  ApiParam,
-  ApiOperation,
 } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -25,14 +24,15 @@ import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
 
 import { IntlService } from '@island.is/cms-translations'
-import { ViewTemplateDto } from './dto/viewTemplate.dto'
 import { createHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 
 import { Cache } from 'cache-manager'
+import { NotificationsService } from './notifications.service'
 
-import { ContentfulRepository } from '@island.is/cms'
+import { Notification } from './types'
+
 
 // move logic to service
 // getEntry ... id ?
@@ -43,16 +43,18 @@ import { ContentfulRepository } from '@island.is/cms'
 // match fix legacy stuff
 // cleanup
 
-const HNIPP_TEMPLATES_KEY = 'hnippTemplates'
 
+const CACHE_TTL = 60 // 1 minute
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService,
-    private intlService: IntlService,
+    // private intlService: IntlService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly notificationsService: NotificationsService,
+    
   ) {}
 
   @ApiBody({
@@ -67,66 +69,15 @@ export class NotificationsController {
   async createNotification(
     @Body() body: CreateNotificationDto,
   ): Promise<CreateNotificationResponse> {
-    // return to initial state
-    const id = await this.queue.add(body)
-    this.logger.info('Message queued', { messageId: id, ...body })
-    return { id }
+    // redirecting legacy hnipp to new hnipp setup
+    return this.createHnippNotification({
+      recipient: body.recipient,
+      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+      args: [body.organization, body.documentId],
+    })
   }
 
-  // MOVE TO UTILS ?
-  async getContentfulHnippTemplateEntries(): Promise<any> {
-    // check cache
-    const caches_templates = await this.cacheManager.get(HNIPP_TEMPLATES_KEY)
-    if (caches_templates) {
-      return caches_templates
-    }
-
-    let results = await fetch(
-      'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
-      {
-        method: 'POST',
-
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + process.env.CONTENTFUL_DELIVERY_KEY,
-        },
-
-        body: JSON.stringify({
-          query: ` {
-            hnippTemplateCollection(locale: "is-IS") {
-              items {
-                templateId
-                notificationTitle
-                notificationBody
-                notificationDataCopy
-                clickAction
-                category
-                args
-              }
-            }
-          }
-          `,
-        }),
-      },
-    )
-
-    // temp check for cache
-    let templates = await results.json()
-    templates.data.hnippTemplateCollection.items.forEach(
-      (item: { date: Date }) => {
-        item.date = new Date()
-      },
-    )
-
-    // add to cache
-    const res = await this.cacheManager.set(
-      HNIPP_TEMPLATES_KEY,
-      templates.data.hnippTemplateCollection.items,
-      30, // update me
-    )
-
-    return templates.data.hnippTemplateCollection.items
-  }
+  
 
   @Documentation({
     description: 'Fetches all templates',
@@ -134,14 +85,22 @@ export class NotificationsController {
     includeNoContentResponse: true,
     response: { status: 200, type: [HnippTemplate] },
     request: {
-      query: {},
-      params: {},
+      query: {
+        locale: {
+          required: false,
+          type: 'string',
+        },
+      },
     },
   })
+  @CacheTTL(CACHE_TTL)
+  @UseInterceptors(CacheInterceptor)
   @Get('/templates')
-  async getTemplates(): Promise<HnippTemplate[]> {
+  async getTemplates(
+    @Query('locale') locale: string = 'is-IS',
+  ): Promise<HnippTemplate[]> {
     try {
-      return await this.getContentfulHnippTemplateEntries()
+      return await this.notificationsService.getContentfulHnippTemplateEntries(locale)
     } catch {
       throw new BadRequestException('Error fetching templates')
     }
@@ -153,21 +112,29 @@ export class NotificationsController {
     includeNoContentResponse: true,
     response: { status: 200, type: HnippTemplate },
     request: {
-      query: {},
+      query: {
+        locale: {
+          required: false,
+          type: 'string',
+        },
+      },
       params: {
         templateId: {
           type: 'string',
-          description: 'templateId',
+          description: 'ID of the template',
         },
       },
     },
   })
+  @CacheTTL(CACHE_TTL)
+  @UseInterceptors(CacheInterceptor)
   @Get('/template/:templateId')
   async getTemplate(
     @Param('templateId')
     templateId: string,
+    @Query('locale') locale: string = 'is-IS',
   ): Promise<HnippTemplate> {
-    const templates = await this.getTemplates()
+    const templates = await this.getTemplates(locale)
     try {
       for (const template of templates) {
         if (template.templateId == templateId) {
@@ -243,11 +210,57 @@ export class NotificationsController {
   //   }
   // }
 
+  
+
+  async convertToNotification(
+    message: createHnippNotificationDto,
+  ): Promise<any> { //Notification
+
+    // get template on selected language - map user profile locale to other
+    const locale = "en" //'is-IS' // enum en
+    // formatArgs
+    const template = await this.getTemplate(message.templateId, locale)
+    // formatObject
+    const notification = {
+      messageType: "bogus", ///  phase me out .................
+      title: template.notificationTitle,
+      body: template.notificationBody,
+      dataCopy: template.notificationDataCopy,
+      category: template.category,
+      appURI: template.clickAction  //`${this.appProtocol}://inbox/${message.documentId}`,
+    }
+    return {
+      notification: {
+        title: notification.title,
+        body: notification.body,
+      },
+      apns: {
+        payload: {
+          aps: {
+            category: notification.category,
+          },
+        },
+      },
+      data: {
+        ...(notification.appURI && { url: notification.appURI }), // what is this doing ? tha () && part ?
+      },
+    }
+    // also test FCM objects
+    
+  }
+
+
+  // write tests for 0,1,2,3,4 args messages
+  // tjekka gamla shape með messagetype
+  // tjekks fyrir öll published templates
+
   @Post('/create-notification')
   async createHnippNotification(
     @Body() body: createHnippNotificationDto,
   ): Promise<any> {
+    // check for template
     const template = await this.getTemplate(body.templateId)
+    // check for args
     if (template.args?.length != body.args.length) {
       throw new BadRequestException(
         "Number of arguments doesn't match - template requires " +
@@ -257,20 +270,11 @@ export class NotificationsController {
           ' were provided',
       )
     }
+    // add to queue
+    return this.convertToNotification(body)
+    return {body, template}
     const id = await this.queue.add(body)
-    this.logger.info('Message queued extended', { messageId: id, ...body })
+    this.logger.info('Message queued ...', { messageId: id, ...body })
     return { id }
-  }
-
-  // #############################################################################################
-
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(5) // override TTL to 30 seconds
-  @Get('/stuff')
-  async stuff(): Promise<any> {
-    const contentfulRespository = new ContentfulRepository()
-    return await contentfulRespository.getLocalizedEntries('is-IS', {
-      content_type: 'hnippTemplate',
-    })
   }
 }
