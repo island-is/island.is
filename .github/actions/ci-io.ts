@@ -88,7 +88,15 @@ export class LocalRunner implements GitActionStatus {
         )
         printAffected = spawnSync(
           `npx`,
-          [`nx`, `print-affected`, `--select=projects`, '--all'],
+          [
+            `nx`,
+            `print-affected`,
+            `--select=projects`,
+            '--all',
+            ...chunk(changedFiles, 20).map(
+              (chunk) => `--files=${chunk.join(',')}`,
+            ),
+          ],
           {
             encoding: 'utf-8',
             cwd: git.cwd,
