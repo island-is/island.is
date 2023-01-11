@@ -19,6 +19,7 @@ import { FileService } from '../../../file'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
+import { CaseController } from '../../case.controller'
 
 interface Then {
   result: Case
@@ -54,6 +55,7 @@ describe('CaseController - Update', () => {
   let mockMessageService: MessageService
   let mockUserService: UserService
   let mockFileService: FileService
+  let mockCaseController: CaseController
   let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
@@ -71,6 +73,7 @@ describe('CaseController - Update', () => {
     mockMessageService = messageService
     mockUserService = userService
     mockFileService = fileService
+    mockCaseController = caseController
     mockCaseModel = caseModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -135,8 +138,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should transition the case from SUBMITTED to RECEIVED when courtCaseNumber is updated', async () => {
-      const { caseController } = await createTestingCaseModule()
-      expect(caseController.transition).toHaveBeenCalledWith(
+      expect(mockCaseController.transition).toHaveBeenCalledWith(
         theCase.id,
         user,
         theCase,
