@@ -2,12 +2,12 @@ import { Box, Inline, Link, Stack, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 
-import ApplicantsController from './ApplicantsController'
+import ApplicantsController from './TempController'
 import { FieldBaseProps } from '@island.is/application/types'
 import { institutionApplicationMessages as m } from '../../../../institution-collaboration/src/lib/messages'
 import { useLocale } from '@island.is/localization'
 
-const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
+const Temp: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
   const { answers } = application
@@ -15,14 +15,14 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
   console.log(field)
   console.log(application)
 
-  const getConstraintVal = (constraintId: string) =>
+  const getConstraintVal = (tempId: string) =>
     getValueViaPath(
       answers,
-      `${id}.${constraintId}` as string,
+      `${id}.${tempId}` as string,
       false,
     ) as boolean
 
-  const applicants = [
+  const tempApplicants = [
     { id: 1, name: "Jón" },
     {  id: 2, name: "Pétur" }
   ]
@@ -31,7 +31,7 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
   return (
     <Box>
       <Stack space={2}>
-        {applicants?.map((item) => (
+        {tempApplicants?.map((item) => (
           <ApplicantsController
             id={`${item.id}`}
             checkboxId={`${item.id}`}
@@ -55,4 +55,4 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default Applicants
+export default Temp
