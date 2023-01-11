@@ -27,7 +27,6 @@ import {
 } from '@island.is/dokobit-signing'
 import {
   CaseState,
-  CaseTransition,
   CaseType,
   completedCaseStates,
   indictmentCases,
