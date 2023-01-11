@@ -40,6 +40,10 @@ export const queryFishingLicense = gql`
         directions
       }
       attachmentInfo
+      dateRestriction {
+        dateFrom
+        dateTo
+      }
       areas {
         key
         description

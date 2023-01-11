@@ -7,3 +7,4 @@ export { FishingLicenseFurtherInfoTitleSection } from './FishingLicenseFurtherIn
 export { RailNetAndRoeNetCalculations } from './RailNetAndRoeNetCalculations'
 export { AreaWithDateSelection } from './AreaWithDateSelection'
 export { AttachmentsTitleSection } from './AttachmentsTitleSection'
+export { DateWithContraintsSelection } from './DateWithConstraintsSelection'

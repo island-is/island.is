@@ -20,6 +20,7 @@ import {
   AREA_FIELD_ID,
   ATTACHMENTS_FIELD_ID,
   ATTACHMENT_INFO_FIELD_ID,
+  DATE_CONSTRAINTS_FIELD_ID,
   RAILNET_FIELD_ID,
   ROENET_FIELD_ID,
 } from '../../utils/fields'
@@ -64,6 +65,14 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     setValue(AREAS_FIELD_ID, areas)
   }
 
+  // Updates areas for answer object for current license
+  const handleDateConstraintChange = (
+    dateFrom?: string | null,
+    dateTo?: string | null,
+  ) => {
+    setValue(DATE_CONSTRAINTS_FIELD_ID, { dateFrom, dateTo })
+  }
+
   // Updates attachment info for answer object for current license
   const handleAttatchmentInfoChange = (info: string) => {
     setValue(ATTACHMENT_INFO_FIELD_ID, info)
@@ -92,6 +101,10 @@ export const FishingLicense: FC<FieldBaseProps> = ({
       setChargeType(selectedLicense.fishingLicenseInfo.chargeType)
       handleAreaChange(selectedLicense.areas || [])
       handleAttatchmentInfoChange(selectedLicense.attachmentInfo || '')
+      handleDateConstraintChange(
+        selectedLicense.dateRestriction?.dateFrom || null,
+        selectedLicense.dateRestriction?.dateTo || null,
+      )
     }
   }
 

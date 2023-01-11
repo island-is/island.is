@@ -63,7 +63,10 @@ export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
       setValue(ATTACHMENTS_FIELD_ID, undefined)
     }
     // If attachments should be with current charge type, initialize as empty array
-    if (licenseHasFileUploadField(selectedChargeType)) {
+    if (
+      licenseHasFileUploadField(selectedChargeType) &&
+      getValues(ATTACHMENTS_FIELD_ID) === undefined
+    ) {
       setValue(ATTACHMENTS_FIELD_ID, [])
     }
   }, [])
