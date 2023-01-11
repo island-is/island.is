@@ -350,4 +350,5 @@ export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   percent: 100,
   size: file.size,
   category: file.category,
+  policeCaseNumber: file.policeCaseNumber,
 })
