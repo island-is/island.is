@@ -109,7 +109,7 @@ export const AccessForm = ({
         servicePortalSaveAccessControl(
           formatPlausiblePathToParams({
             path: DelegationPaths.DelegationsGrant,
-            routes: routes.map(({ path }) => path).flat(),
+            routes: routes.map(({ path }) => path),
             basePath,
           }),
         )
