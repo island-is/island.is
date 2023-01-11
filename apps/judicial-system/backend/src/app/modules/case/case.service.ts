@@ -505,7 +505,17 @@ export class CaseService {
   ): Promise<Case | undefined> {
     return this.sequelize
       .transaction(async (transaction) => {
-        const [numberOfAffectedRows] = await this.caseModel.update(update, {
+        const courtCaseNumberAdded =
+          !theCase.courtCaseNumber &&
+          update.courtCaseNumber &&
+          theCase.state === CaseState.SUBMITTED
+
+        const newUpdate = {
+          ...update,
+          ...(courtCaseNumberAdded && { state: CaseState.RECEIVED }),
+        }
+
+        const [numberOfAffectedRows] = await this.caseModel.update(newUpdate, {
           where: { id: theCase.id },
           transaction,
         })
@@ -524,14 +534,14 @@ export class CaseService {
         // Update police case numbers of case files if necessary
         await this.syncPoliceCaseNumbersAndCaseFiles(
           theCase,
-          update,
+          newUpdate,
           transaction,
         )
 
         // Reset case file states if court case number is changed or removed
         if (
           theCase.courtCaseNumber &&
-          update.courtCaseNumber !== theCase.courtCaseNumber
+          newUpdate.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
         }

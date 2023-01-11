@@ -180,22 +180,7 @@ export class CaseController {
       )
     }
 
-    const update = this.caseService.update(
-      theCase,
-      caseToUpdate,
-      user,
-    ) as Promise<Case>
-
-    return Promise.all([
-      update,
-      ...(caseToUpdate.courtCaseNumber && theCase.state === CaseState.SUBMITTED
-        ? [
-            this.transition(caseId, user, theCase, {
-              transition: CaseTransition.RECEIVE,
-            }),
-          ]
-        : []),
-    ]).then((values) => values[0])
+    return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case>
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
