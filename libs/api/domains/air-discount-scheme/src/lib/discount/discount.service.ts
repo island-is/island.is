@@ -29,7 +29,7 @@ export class DiscountService {
     )
   }
 
-  discountIsValid(discount: TDiscount): boolean {
+  private discountIsValid(discount: TDiscount): boolean {
     const TWO_HOURS = 7200
     if (discount.expiresIn <= TWO_HOURS) {
       return false
@@ -37,6 +37,13 @@ export class DiscountService {
 
     const { credit } = discount.user.fund
     return credit >= 1
+  }
+
+  private processDiscount(discount: TDiscount): TDiscount {
+    if (!this.discountIsValid(discount)) {
+      discount.discountCode = ''
+    }
+    return discount
   }
 
   private handleJSONError(e: FetchError) {
@@ -70,7 +77,8 @@ export class DiscountService {
         relation.nationalId,
       )
 
-      if (discount && this.discountIsValid(discount)) {
+      if (discount) {
+        this.processDiscount(discount)
         discounts.push({
           ...discount,
           user: {
@@ -87,7 +95,8 @@ export class DiscountService {
         relation.nationalId,
       )
 
-      if (createdDiscount && this.discountIsValid(createdDiscount)) {
+      if (createdDiscount) {
+        this.processDiscount(createdDiscount)
         discounts.push({
           ...createdDiscount,
           user: { ...relation, name: relation.firstName },
