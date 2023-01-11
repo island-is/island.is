@@ -6,7 +6,6 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  CaseTransition,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -19,7 +18,6 @@ import { FileService } from '../../../file'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { CaseController } from '../../case.controller'
 
 interface Then {
   result: Case
@@ -55,7 +53,6 @@ describe('CaseController - Update', () => {
   let mockMessageService: MessageService
   let mockUserService: UserService
   let mockFileService: FileService
-  let mockCaseController: CaseController
   let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
@@ -73,7 +70,6 @@ describe('CaseController - Update', () => {
     mockMessageService = messageService
     mockUserService = userService
     mockFileService = fileService
-    mockCaseController = caseController
     mockCaseModel = caseModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -115,7 +111,6 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       ...caseToUpdate,
-      state: CaseState.SUBMITTED,
     } as Case
     let then: Then
 
@@ -136,15 +131,25 @@ describe('CaseController - Update', () => {
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
     })
+  })
 
-    it('should transition the case from SUBMITTED to RECEIVED when courtCaseNumber is updated', async () => {
-      expect(mockCaseController.transition).toHaveBeenCalledWith(
-        theCase.id,
-        user,
-        theCase,
+  describe('court case number added', () => {
+    const caseToUpdate = {
+      state: CaseState.SUBMITTED,
+      courtCaseNumber: 'R-2020-1234',
+    } as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should transition the case from SUBMITTED to RECEIVED', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
         {
-          transaction: CaseTransition.RECEIVE,
+          courtCaseNumber: caseToUpdate.courtCaseNumber,
+          state: CaseState.RECEIVED,
         },
+        { where: { id: caseId }, transaction },
       )
     })
   })
