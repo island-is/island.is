@@ -102,7 +102,6 @@ export class FlightLegService {
       flightLegs.push(...constructedFlightLegs)
     }
 
-    this.logger.debug('FLIIIIIIIIIGHT LEGSSSSS', flightLegs)
     return flightLegs
   }
 

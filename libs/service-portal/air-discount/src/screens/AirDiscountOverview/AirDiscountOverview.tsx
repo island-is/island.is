@@ -9,7 +9,7 @@ import {
   CardLoader,
 } from '@island.is/service-portal/core'
 import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { Query, AirDiscountSchemeFlightLeg } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -25,6 +25,7 @@ import {
 import { messages as m } from '../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
 import { ModuleAlertBannerSection } from '@island.is/service-portal/core'
+import UsageTable from '../../components/UsageTable'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
@@ -53,16 +54,11 @@ const AirDiscountQuery = gql`
 const AirDiscountFlightLegsQuery = gql`
   query AirDiscountFlightLegsQuery {
     airDiscountSchemeUserAndRelationsFlights {
+      travel
       flight {
         bookingDate
         user {
-          nationalId
-        }
-        flightLegs {
-          travel
-          flight {
-            id
-          }
+          name
         }
       }
     }
@@ -86,7 +82,9 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
 
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
   const airDiscounts = data?.airDiscountSchemeDiscounts
-  console.log(flightLegData)
+  const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
+
+  console.log(flightLegs)
 
   console.log(airDiscounts)
   if (error && !loading) {
@@ -149,7 +147,7 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
       {loading && <CardLoader />}
       {data && (
         <Box marginBottom={3}>
-          <Text variant="eyebrow" paddingBottom={1} color="purple600">
+          <Text paddingBottom={3} fontWeight="medium">
             {formatMessage(m.myRights)}
           </Text>
           <Stack space={2}>
@@ -174,7 +172,9 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
                     item.user.fund?.credit === 0 ? undefined : item.discountCode
                   }
                   cta={{
-                    label: formatMessage(m.copyCode),
+                    label: isCopied
+                      ? formatMessage(m.copied)
+                      : formatMessage(m.copyCode),
                     onClick: () => copy(item.discountCode),
                     centered: true,
                     icon: isCopied ? 'checkmark' : 'copy',
@@ -186,10 +186,17 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
           </Stack>
         </Box>
       )}
-
       {!loading && !error && airDiscounts?.length === 0 && (
-        <Box marginTop={8}>
+        <Box marginY={8}>
           <EmptyState />
+        </Box>
+      )}
+      {flightLegs && flightLegs.length > 0 && (
+        <Box marginY={3}>
+          <Text paddingBottom={3} fontWeight="medium">
+            {formatMessage(m.airfaresUsage)}
+          </Text>
+          <UsageTable data={flightLegs} />
         </Box>
       )}
     </>

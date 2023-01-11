@@ -55,8 +55,28 @@ export const messages = defineMessages({
     id: 'sp.air-discount:copy-code',
     defaultMessage: 'Afrita kóða',
   },
+  copied: {
+    id: 'sp.air-discount:copied',
+    defaultMessage: 'Afritað',
+  },
   codeCopiedSuccess: {
     id: 'sp.air-discount:code-copied-success',
     defaultMessage: 'Afritun tókst',
+  },
+  airfaresUsage: {
+    id: 'sp.air-discount:airfares-usage',
+    defaultMessage: 'Notkun á núverandi tímabili',
+  },
+  user: {
+    id: 'sp.air-discount:user',
+    defaultMessage: 'Notandi',
+  },
+  flight: {
+    id: 'sp.air-discount:flight',
+    defaultMessage: 'Flugleið',
+  },
+  date: {
+    id: 'sp.air-discount:date',
+    defaultMessage: 'Dagsetning',
   },
 })
