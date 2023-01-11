@@ -76,11 +76,11 @@ const unitsArray = (
             value: unit.fireAssessment ? amountFormat(unit.fireAssessment) : '',
           },
           {
-            title: 'Stærð',
+            title: formatMessage(messages.size),
             value: `${unit.displaySize} m²` || '',
           },
           {
-            title: 'Byggingarár',
+            title: formatMessage(messages.buildYear),
             value: unit.buildYearDisplay || '',
           },
         ],

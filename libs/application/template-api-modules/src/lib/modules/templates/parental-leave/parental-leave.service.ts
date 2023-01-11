@@ -64,6 +64,7 @@ import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ChildrenService } from './children/children.service'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 interface VMSTError {
   type: string
@@ -102,6 +103,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly attachmentBucket: string,
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     private readonly childrenService: ChildrenService,
+    private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -120,6 +122,28 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return this.childrenService.provideChildren(application, auth.nationalId)
   }
 
+  async getPerson({ auth }: TemplateApiModuleActionProps) {
+    const spouse = await this.nationalRegistryApi.getCohabitationInfo(
+      auth.nationalId,
+    )
+    const person = await this.nationalRegistryApi.getIndividual(auth.nationalId)
+
+    if (!person) {
+      return null
+    }
+
+    return (
+      spouse && {
+        spouse: {
+          nationalId: spouse.spouseNationalId,
+          name: spouse.spouseName,
+        },
+        fullname: person.fullName,
+        genderCode: person.genderCode,
+      }
+    )
+  }
+
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
     const { otherParentPhoneNumber } = getApplicationAnswers(
       application.answers,
@@ -130,16 +154,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (otherParentPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+    try {
+      if (otherParentPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateAssignOtherParentApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateAssignOtherParentApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send assigned SMS to otherParent in parental leave application',
+        e,
       )
     }
   }
@@ -154,17 +185,24 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (applicantPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
+    try {
+      if (applicantPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
 
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateOtherParentRejectedApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateOtherParentRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about otherParent rejection in parental leave application',
+        e,
       )
     }
   }
@@ -179,17 +217,24 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (applicantPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
+    try {
+      if (applicantPhoneNumber) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
 
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateEmployerRejectedApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateEmployerRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about Employer rejection in parental leave application',
+        e,
       )
     }
   }
@@ -209,11 +254,18 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     // send confirmation sms to employer
-    if (employerPhoneNumber) {
-      await this.sharedTemplateAPIService.assignApplicationThroughSms(
-        generateAssignEmployerApplicationSms,
-        application,
-        token,
+    try {
+      if (employerPhoneNumber) {
+        await this.sharedTemplateAPIService.assignApplicationThroughSms(
+          generateAssignEmployerApplicationSms,
+          application,
+          token,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send assign SMS notification to Employer in parental leave application',
+        e,
       )
     }
   }
