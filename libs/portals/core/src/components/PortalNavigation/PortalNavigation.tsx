@@ -1,8 +1,9 @@
 import { Navigation, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { useNavigation } from '../../hooks/useNavigation'
+import { PortalNavigationItem } from '../../types/portalCore'
 
 interface PortalNavigationProps {
   navigation: PortalNavigationItem
