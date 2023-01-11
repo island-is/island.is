@@ -29,10 +29,14 @@ export const assets = buildSection({
               description: m.realEstateDescription,
               titleVariant: 'h3',
             }),
+            buildDescriptionField({
+              id: 'realEstate.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
-                id: 'estate.assets',
+                id: 'realEstate.data',
                 doesNotRequireAnswer: true,
                 component: 'TextFieldsRepeater',
               },
@@ -66,7 +70,7 @@ export const assets = buildSection({
       title: m.vehicles,
       children: [
         buildMultiField({
-          id: 'realEstate',
+          id: 'vehicles',
           title: m.propertiesTitle,
           description: m.propertiesDescription,
           children: [
@@ -83,7 +87,7 @@ export const assets = buildSection({
             buildCustomField(
               {
                 title: '',
-                id: 'estate.vehicles',
+                id: 'vehicles.data',
                 doesNotRequireAnswer: true,
                 component: 'TextFieldsRepeater',
               },
@@ -436,7 +440,8 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.realEstateEstimation,
-              value: ({ answers }) => '1.200.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(String((answers.realEstate as any)?.total)),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -448,7 +453,8 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.marketValue,
-              value: ({ answers }) => '1.200.000 kr',
+              value: ({ answers }) =>
+                formatCurrency(String((answers.vehicles as any)?.total)),
             }),
             buildDividerField({}),
             buildDescriptionField({

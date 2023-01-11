@@ -42,6 +42,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     application.answers,
     id,
   ) as Array<object>
+
   const answersValuesTotal = answersValues?.length
     ? answersValues.reduce((a: number, o: any) => {
         return a + Number(o[props.sumField])
@@ -76,7 +77,6 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   }
 
   const handleAddRepeaterFields = () => {
-    console.log('her?')
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
