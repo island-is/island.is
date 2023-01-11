@@ -4,7 +4,7 @@ import LeftSideColumn from '../../components/CaseDetails/LeftSideColumn/LeftSide
 import MainColumn from '../../components/CaseDetails/MainColumn/MainColumn'
 import RightSideColumn from '../../components/CaseDetails/RightSideColumn/RightSideColumn'
 
-const Details = () => {
+const Details: React.FC = () => {
   return (
     <GridContainer>
       <GridRow>
