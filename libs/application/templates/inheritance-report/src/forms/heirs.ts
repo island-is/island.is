@@ -56,8 +56,8 @@ export const heirs = buildSection({
                       (answers.claims as any)?.total +
                       (answers.bankAccounts as any)?.total +
                       (answers.inventory as any)?.total +
-                      1200000 +
-                      1200000 -
+                      (answers.realEstate as any)?.total +
+                      (answers.vehicles as any)?.total -
                       (Number(answers.funeralCostAmount) +
                         (answers.domesticAndForeignDebts as any)?.total +
                         (answers.publicCharges as any)?.total) +
@@ -92,8 +92,8 @@ export const heirs = buildSection({
                       (answers.claims as any)?.total +
                       (answers.bankAccounts as any)?.total +
                       (answers.inventory as any)?.total +
-                      1200000 +
-                      1200000 -
+                      (answers.realEstate as any)?.total +
+                      (answers.vehicles as any)?.total -
                       (Number(answers.funeralCostAmount) +
                         (answers.domesticAndForeignDebts as any)?.total +
                         (answers.publicCharges as any)?.total) +

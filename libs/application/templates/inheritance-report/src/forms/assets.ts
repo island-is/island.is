@@ -552,8 +552,8 @@ export const assets = buildSection({
                   (answers.claims as any)?.total +
                   (answers.bankAccounts as any)?.total +
                   (answers.inventory as any)?.total +
-                  1200000 +
-                  1200000
+                  (answers.realEstate as any)?.total +
+                  (answers.vehicles as any)?.total
 
                 return formatCurrency(String(total))
               },
