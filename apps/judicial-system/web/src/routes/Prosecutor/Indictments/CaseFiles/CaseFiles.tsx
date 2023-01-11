@@ -115,7 +115,6 @@ const CaseFiles: React.FC = () => {
   const handleRemove = useCallback(
     async (file: UploadFile) => {
       try {
-        console.log(file)
         if (file.id) {
           await remove(file.id)
           setDisplayFiles((prev) => {
