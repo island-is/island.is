@@ -11,7 +11,14 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import { NO, MANUAL, ParentalRelations, YES, SINGLE } from '../constants'
+import {
+  NO,
+  YES,
+  MANUAL,
+  SINGLE,
+  SPOUSE,
+  ParentalRelations,
+} from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
@@ -39,6 +46,7 @@ import {
   getAvailableRightsInDays,
   getAvailablePersonalRightsInMonths,
   getAdditionalSingleParentRightsInDays,
+  allowOtherParentToUsePersonalAllowance,
   getAvailablePersonalRightsSingleParentInMonths,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
@@ -1408,5 +1416,26 @@ describe('removeCountryCode', () => {
     const application = buildApplication()
     set(application.externalData, 'userProfile', null)
     expect(removeCountryCode(application)).toEqual(undefined)
+  })
+})
+
+describe('allowOtherParentToUsePersonalAllowance', () => {
+  it('should return true if the otherParent is SPOUSE otherwise false', () => {
+    const application1 = buildApplication({
+      answers: {
+        otherParent: SPOUSE,
+      },
+    })
+    const application2 = buildApplication({
+      answers: {
+        otherParent: '',
+      },
+    })
+    expect(allowOtherParentToUsePersonalAllowance(application1.answers)).toBe(
+      true,
+    )
+    expect(allowOtherParentToUsePersonalAllowance(application2.answers)).toBe(
+      false,
+    )
   })
 })
