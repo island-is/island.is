@@ -27,11 +27,13 @@ import {
 } from '@island.is/dokobit-signing'
 import {
   CaseState,
+  CaseTransition,
   CaseType,
   completedCaseStates,
   indictmentCases,
   investigationCases,
   isIndictmentCase,
+  NotificationType,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -79,6 +81,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+import { NotificationService } from '../notification/notification.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -179,7 +182,22 @@ export class CaseController {
       )
     }
 
-    return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
+    const update = this.caseService.update(
+      theCase,
+      caseToUpdate,
+      user,
+    ) as Promise<Case>
+
+    const transition = this.transition(caseId, user, theCase, {
+      transition: CaseTransition.RECEIVE,
+    })
+
+    return Promise.all([
+      update,
+      ...(caseToUpdate.courtCaseNumber && theCase.state === CaseState.SUBMITTED
+        ? [transition]
+        : []),
+    ]).then((values) => values[0])
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)

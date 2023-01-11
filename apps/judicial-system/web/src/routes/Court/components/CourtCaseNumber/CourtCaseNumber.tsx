@@ -1,7 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseState, isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  isIndictmentCase,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
@@ -24,7 +28,6 @@ interface Props {
   setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
   handleCreateCourtCase: (wc: Case) => void
   isCreatingCourtCase: boolean
-  receiveCase: (wc: Case, courtCaseNumber: string) => void
 }
 
 const CourtCaseNumber: React.FC<Props> = (props) => {
@@ -37,9 +40,8 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
     setCreateCourtCaseSuccess,
     handleCreateCourtCase,
     isCreatingCourtCase,
-    receiveCase,
   } = props
-  const { updateCase } = useCase()
+  const { updateCase, sendNotification } = useCase()
   const { formatMessage } = useIntl()
 
   const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
@@ -61,7 +63,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
 
     await updateCase(id, update)
     if (update.courtCaseNumber) {
-      receiveCase(workingCase, update.courtCaseNumber)
+      sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
     }
   }
 
