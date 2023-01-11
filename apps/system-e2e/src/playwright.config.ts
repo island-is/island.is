@@ -1,5 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import './addons'
+import { urls } from './support/urls'
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -48,7 +50,7 @@ const config: PlaywrightTestConfig = {
     actionTimeout: 15 * 1000,
     navigationTimeout: 30 * 1000,
     /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL: urls.islandisBaseUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',

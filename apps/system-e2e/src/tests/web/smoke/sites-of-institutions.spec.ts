@@ -1,5 +1,5 @@
 import { test } from '@playwright/test'
-import { urls } from '../../../support/utils'
+import { urls } from '../../../support/urls'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

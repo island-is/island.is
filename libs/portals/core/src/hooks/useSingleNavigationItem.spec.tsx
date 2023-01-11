@@ -19,7 +19,6 @@ describe('useSingleNavigationItem hook', () => {
 
     const testModules: PortalModule[] = modules.map((module) => ({
       name: module.name,
-      widgets: () => [],
       enabled: module.enabled,
       routes: module.routes,
     }))

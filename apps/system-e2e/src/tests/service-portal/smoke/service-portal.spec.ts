@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/utils'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
 import { helpers } from '../../../support/locator-helpers'
 

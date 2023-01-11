@@ -6,7 +6,6 @@ import { TransportPaths } from './lib/paths'
 
 export const transportsModule: PortalModule = {
   name: 'Farartæki',
-  widgets: () => [],
   routes: ({ userInfo }) => [
     {
       name: m.yourVehicles,
