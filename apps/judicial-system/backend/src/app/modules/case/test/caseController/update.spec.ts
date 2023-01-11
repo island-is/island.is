@@ -109,7 +109,11 @@ describe('CaseController - Update', () => {
 
   describe('case updated', () => {
     const caseToUpdate = { field1: uuid(), field2: uuid() } as UpdateCaseDto
-    const updatedCase = { ...theCase, ...caseToUpdate } as Case
+    const updatedCase = {
+      ...theCase,
+      ...caseToUpdate,
+      state: CaseState.SUBMITTED,
+    } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -128,20 +132,6 @@ describe('CaseController - Update', () => {
 
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
-    })
-  })
-
-  describe('transitions', () => {
-    const caseToUpdate = { courtCaseNumber: 'R-0000/0000' } as UpdateCaseDto
-    const updatedCase = {
-      ...theCase,
-      ...caseToUpdate,
-      state: CaseState.SUBMITTED,
-    } as Case
-
-    beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
     })
 
     it('should transition the case from SUBMITTED to RECEIVED when courtCaseNumber is updated', async () => {
