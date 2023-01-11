@@ -11,11 +11,7 @@ import { authLink } from '@island.is/auth/react'
 import { getStaticEnv } from '@island.is/shared/utils'
 
 const uri =
-  getStaticEnv('PROD_MODE') === 'true'
-    ? 'http://localhost:9456/api/graphql'
-    : process.env.NODE_ENV === 'development'
-    ? 'http://localhost:4444/api/graphql'
-    : '/api/graphql'
+  getStaticEnv('SI_PUBLIC_GRAPHQL_API') ?? 'http://localhost:4444/api/graphql'
 
 const httpLink = new HttpLink({
   uri: ({ operationName }) => `${uri}?op=${operationName}`,

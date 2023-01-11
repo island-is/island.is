@@ -9,7 +9,7 @@
       "options": {
         "baseHref": "/umsoknir/",
         "outputPath": "dist/apps/application-system/form",
-        "index": "apps/application-system/form/src/index.src.html",
+        "index": "apps/application-system/form/src/index.html",
         "main": "apps/application-system/form/src/main.tsx",
         "polyfills": "apps/application-system/form/src/polyfills.ts",
         "tsConfig": "apps/application-system/form/tsconfig.app.json",
