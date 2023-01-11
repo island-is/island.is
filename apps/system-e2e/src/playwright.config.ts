@@ -47,7 +47,7 @@ const config: PlaywrightTestConfig = {
     baseURL: urls.islandisBaseUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: isRunningLocally? 'on' : 'retain-on-failure',
+    trace: isRunningLocally ? 'on' : 'retain-on-failure',
   },
 
   /* Configure projects for major browsers */
