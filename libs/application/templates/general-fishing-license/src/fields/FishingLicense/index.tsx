@@ -165,9 +165,9 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                   return {
                     value: fishingLicenseInfo.code,
                     label:
-                      fishingLicenseInfo.code === 'catchMark'
-                        ? formatMessage(fishingLicense.labels.catchMark)
-                        : formatMessage(fishingLicense.labels.hookCatchLimit),
+                      formatMessage(
+                        fishingLicense.labels[fishingLicenseInfo.code],
+                      ) || '',
                     tooltip:
                       fishingLicenseInfo.code !== 'hookCatchLimit' &&
                       fishingLicenseInfo.code !== 'catchMark'
