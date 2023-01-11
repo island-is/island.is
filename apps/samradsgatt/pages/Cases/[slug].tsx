@@ -4,7 +4,11 @@ import LeftSideColumn from '../../components/CaseDetails/LeftSideColumn/LeftSide
 import MainColumn from '../../components/CaseDetails/MainColumn/MainColumn'
 import RightSideColumn from '../../components/CaseDetails/RightSideColumn/RightSideColumn'
 
-const Details: React.FC = () => {
+interface DetailsProps {
+  CaseID: string
+}
+
+const Details: React.FC<DetailsProps> = () => {
   return (
     <GridContainer>
       <GridRow>
@@ -21,5 +25,4 @@ const Details: React.FC = () => {
     </GridContainer>
   )
 }
-
 export default Details
