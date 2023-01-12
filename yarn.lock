@@ -15675,7 +15675,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"class-validator@npm:^0.14.0":
+"class-validator@npm:0.14.0":
   version: 0.14.0
   resolution: "class-validator@npm:0.14.0"
   dependencies:
@@ -25389,7 +25389,7 @@ __metadata:
     cache-manager: 3.3.0
     cache-manager-ioredis: 2.1.0
     class-transformer: 0.5.1
-    class-validator: ^0.14.0
+    class-validator: 0.14.0
     classnames: 2.2.6
     configcat-js: 5.4.0
     configcat-node: 6.7.0
