@@ -1,6 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
 
-const RightSideColmn = () => {
+const RightSideColumn = () => {
   return (
     <Box paddingTop={12}>
       <Text variant="h4">{'Efnisyfirlit'}</Text>
@@ -8,4 +8,4 @@ const RightSideColmn = () => {
   )
 }
 
-export default RightSideColmn
+export default RightSideColumn
