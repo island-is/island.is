@@ -60,7 +60,7 @@ export class LicenseService {
         try {
           parsedInputPayload = JSON.parse(inputData.payload)
         } catch (e) {
-          throw new BadRequestException(e)
+          throw new BadRequestException('Unable to parse payload')
         }
         updatePayload = {
           ...updatePayload,
