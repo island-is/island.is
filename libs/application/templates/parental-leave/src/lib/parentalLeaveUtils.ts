@@ -816,33 +816,30 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const additionalDocuments = getValueViaPath(
     answers,
-    'fileUpload.additionalDocuments'
+    'fileUpload.additionalDocuments',
   ) as Files[]
 
   const selfEmployedFiles = getValueViaPath(
     answers,
-    'fileUpload.selfEmployedFile'
+    'fileUpload.selfEmployedFile',
   ) as Files[]
 
   const studentFiles = getValueViaPath(
     answers,
-    'fileUpload.studentFile'
+    'fileUpload.studentFile',
   ) as Files[]
 
   const singleParentFiles = getValueViaPath(
     answers,
-    'fileUpload.singleParent'
+    'fileUpload.singleParent',
   ) as Files[]
 
   const benefitsFiles = getValueViaPath(
     answers,
-    'fileUpload.benefitsFile'
+    'fileUpload.benefitsFile',
   ) as Files[]
 
-  const commonFiles = getValueViaPath(
-    answers,
-    'fileUpload.file'
-  ) as Files[]
+  const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
 
   return {
     applicationType,

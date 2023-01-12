@@ -65,7 +65,7 @@ export enum States {
 
   ADDITIONAL_DOCUMENT_REQUIRED = 'additionalDocumentRequired',
   ADDITIONAL_DOCUMENT_EDITS = 'additionalDocumentEdits',
-  
+
   APPROVED = 'approved',
   CLOSED = 'closed',
 

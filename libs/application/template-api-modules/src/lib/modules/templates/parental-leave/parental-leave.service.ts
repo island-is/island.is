@@ -406,7 +406,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
       benefitsFiles: benefitsPdfs,
-      commonFiles: genericPdfs
+      commonFiles: genericPdfs,
     } = getApplicationAnswers(application.answers)
     if (
       isRecivingUnemploymentBenefits === YES &&
