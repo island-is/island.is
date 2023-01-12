@@ -2,25 +2,25 @@ import fetch, { Response } from 'node-fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
-  UpsertPkPassResponse,
-  PassTemplatesDTO,
-  PkPassServiceErrorResponse,
-  ListPassesDTO,
-  VerifyPassResponse,
-  ListPassesResponse,
-  VerifyPassResult,
-  PkPassServiceVerifyPassStatusCode,
+  Result,
+  ApiResponse,
+  FetchResponse,
+  ServiceError,
+  ListPassesResponseData,
+  VerifyPassResponseData,
+  VerifyPassData,
+  ParsedApiResponse,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
   Pass,
   PassDataInput,
   PassStatus,
-  PassTemplatePageInfo,
+  PassTemplate,
 } from '../../gen/schema'
-import { ErrorMessageToStatusCodeMap } from './utils'
 import { Inject } from '@nestjs/common'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
+import { MapErrorMessageToActionStatusCode } from './utils'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -49,12 +49,109 @@ export class SmartSolutionsApi {
     })
   }
 
-  async listPkPasses(queryId: string): Promise<ListPassesDTO | null> {
-    if (!this.config.passTemplateId) {
-      this.logger.warn('Missing pass template id!', {
+  private async fetchData(query: string): Promise<FetchResponse> {
+    let res: Response | null = null
+    try {
+      res = await this.fetchUrl(query)
+    } catch (e) {
+      this.logger.warn('Unable to fetch data', {
+        exception: e,
         category: LOG_CATEGORY,
       })
-      return null
+    }
+
+    if (!res) {
+      this.logger.warn('Unable to query data, null from fetch', {
+        category: LOG_CATEGORY,
+      })
+
+      return {
+        error: {
+          code: 11,
+          message: 'Service error',
+        },
+      }
+    }
+
+    if (!res.ok) {
+      this.logger.warn('Expected 200 status after fetch', {
+        status: res.status,
+        statusText: res.statusText,
+        category: LOG_CATEGORY,
+      })
+
+      if (!res.status) {
+        this.logger.warn('Expected 200 status', {
+          status: res.status,
+          statusText: res.statusText,
+          category: LOG_CATEGORY,
+        })
+      }
+
+      return {
+        error: {
+          code: res.status,
+          message: res.statusText,
+          data: JSON.stringify(res),
+        },
+      }
+    }
+
+    let json: unknown
+    try {
+      json = await res.json()
+    } catch (e) {
+      this.logger.warn('Unable to parse JSON', {
+        exception: e,
+        category: LOG_CATEGORY,
+      })
+      return {
+        error: {
+          code: 12,
+          message: 'JSON parse failed',
+        },
+      }
+    }
+
+    return { apiResponse: json as ApiResponse }
+  }
+
+  private parseApiResponse<T>(apiRes: ApiResponse): ParsedApiResponse<T> {
+    if (apiRes.errors) {
+      const resError = apiRes.errors[0]
+      const code = MapErrorMessageToActionStatusCode(resError.message)
+      const error = {
+        code,
+        message: resError.message,
+        data: JSON.stringify(resError),
+      } as ServiceError
+
+      return { error }
+    }
+    const data = apiRes.data as T
+
+    //shouldn't happen
+    if (!data) {
+      const error = {
+        code: 13,
+        data: JSON.stringify(apiRes),
+        message: 'Service error',
+      }
+      return { error }
+    }
+
+    return { data }
+  }
+
+  async listPkPasses(queryId: string): Promise<Result<Pass[]>> {
+    if (!this.config.passTemplateId) {
+      return {
+        ok: false,
+        error: {
+          code: 10,
+          message: 'Service error',
+        },
+      }
     }
 
     const listPassesQuery = `
@@ -84,75 +181,54 @@ export class SmartSolutionsApi {
         }
       }
     `
-    let res: Response | null = null
 
     const graphql = JSON.stringify({
       query: listPassesQuery,
       variables: {},
     })
 
-    try {
-      res = await this.fetchUrl(graphql)
-    } catch (e) {
-      this.logger.warn('Unable to retrieve pk passes', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-    }
+    const response = await this.fetchData(graphql)
 
-    if (!res) {
-      this.logger.warn('Unable to get pk passes, null from fetch', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
+    if (response.apiResponse) {
+      const apiRes = this.parseApiResponse<ListPassesResponseData>(
+        response.apiResponse,
+      )
 
-    if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-      try {
-        const json = await res.json()
-        responseErrors.message = json?.message ?? undefined
-        responseErrors.status = json?.status ?? undefined
-        responseErrors.data = json?.data ?? undefined
-      } catch {
-        // noop
+      if (apiRes.error) {
+        return {
+          ok: false,
+          error: apiRes.error,
+        }
       }
 
-      this.logger.warn('Expected 200 status for list pkpasses', {
-        status: res.status,
-        statusText: res.statusText,
-        category: LOG_CATEGORY,
-        ...responseErrors,
-      })
-      return null
-    }
+      /** No error, so return the data. *
+       * If pass = undefined, it means the user currently has no passes */
 
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for pk passes', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      //return null
-    }
-
-    const response = json as ListPassesResponse
-
-    if (response?.data?.passes?.data) {
-      const passesDTO: ListPassesDTO = {
-        data: response.data.passes.data,
+      return {
+        ok: true,
+        data: apiRes.data.passes?.data ?? [],
       }
-      return passesDTO
     }
 
-    return null
+    if (response.error) {
+      return {
+        ok: false,
+        error: response.error,
+      }
+    }
+
+    return {
+      ok: false,
+      error: {
+        code: 99,
+        message: 'Unknown error',
+      },
+    }
   }
 
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
-  ): Promise<VerifyPassResult | null> {
+  ): Promise<Result<VerifyPassData>> {
     const verifyPkPassMutation = `
       mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
         updateStatusOnPassWithDynamicBarcode(dynamicBarcodeData: $dynamicBarcodeData) {
@@ -167,118 +243,67 @@ export class SmartSolutionsApi {
       }
     `
 
-    const body = {
+    const graphql = JSON.stringify({
       query: verifyPkPassMutation,
       variables: {
         dynamicBarcodeData: payload,
       },
-    }
+    })
 
-    let res: Response | null = null
+    const response = await this.fetchData(graphql)
 
-    try {
-      res = await this.fetchUrl(JSON.stringify(body))
-    } catch (e) {
-      this.logger.warn('Unable to verify pk pass', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
+    //If the fetch returned a response from the service
+    if (response.apiResponse) {
+      const parsedApiRes = this.parseApiResponse<VerifyPassResponseData>(
+        response.apiResponse,
+      )
 
-    if (!res) {
-      this.logger.warn('pkpass verification failed, null from fetch', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-    if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-      try {
-        const json = await res.json()
-        responseErrors.message = json?.message ?? undefined
-        responseErrors.data = json?.data ?? undefined
-        responseErrors.status = json?.status ?? undefined
-      } catch {
-        // noop
-      }
-      if (!responseErrors.status) {
-        this.logger.warn('Expected 200 or 400 status for pkpass verification', {
-          status: res.status,
-          statusText: res.statusText,
-          category: LOG_CATEGORY,
-          ...responseErrors,
-        })
+      if (parsedApiRes.error) {
+        return {
+          ok: false,
+          error: parsedApiRes.error,
+        }
       }
 
+      //sweet success
       return {
-        valid: false,
-        error: {
-          statusCode: res.status,
-          serviceError: responseErrors,
+        ok: true,
+        data: {
+          valid: true,
+          pass: parsedApiRes.data.updateStatusOnPassWithDynamicBarcode,
         },
       }
     }
 
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for pkpass verification', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    const response = json as VerifyPassResponse
-    if (!response.errors) {
+    //if the fetch returned a service error, return it
+    if (response.error) {
       return {
-        valid: true,
+        ok: false,
+        error: response.error,
       }
     }
 
-    const resError = response.errors[0]
-    const mappedError =
-      resError.message in ErrorMessageToStatusCodeMap
-        ? (ErrorMessageToStatusCodeMap[
-            resError.message
-          ] as PkPassServiceVerifyPassStatusCode)
-        : (99 as PkPassServiceVerifyPassStatusCode)
-
-    if (mappedError) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-
-      if (!payload.code || !payload.date) {
-        const errorMessage = 'Request contains some field errors'
-
-        responseErrors.message = errorMessage
-        responseErrors.data = JSON.stringify(res) ?? undefined
-        responseErrors.status =
-          (ErrorMessageToStatusCodeMap[
-            errorMessage
-          ] as PkPassServiceVerifyPassStatusCode) ??
-          (99 as PkPassServiceVerifyPassStatusCode)
-      } else {
-        responseErrors.message = resError.message ?? undefined
-        responseErrors.data = JSON.stringify(res) ?? undefined
-        responseErrors.status = mappedError ?? undefined
-      }
-
-      return {
-        valid: false,
-        error: {
-          statusCode: res.status,
-          serviceError: responseErrors,
-        },
-      }
+    //catchall
+    return {
+      ok: false,
+      error: {
+        code: 99,
+        message: 'Unknown error',
+      },
     }
-    return null
   }
 
-  async upsertPkPass(
-    payload: PassDataInput,
-  ): Promise<UpsertPkPassResponse | null> {
+  async upsertPkPass(payload: PassDataInput): Promise<Result<Pass>> {
+    if (!this.config.passTemplateId) {
+      return {
+        ok: false,
+        error: {
+          code: 10,
+          message: 'Service error',
+        },
+      }
+    }
+
     const createPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
         upsertPass(data: $inputData) {
@@ -289,7 +314,7 @@ export class SmartSolutionsApi {
       }
     `
 
-    const body = {
+    const graphql = JSON.stringify({
       query: createPkPassMutation,
       variables: {
         inputData: {
@@ -297,148 +322,119 @@ export class SmartSolutionsApi {
           ...payload,
         },
       },
-    }
+    })
 
-    let res: Response | null = null
+    const response = await this.fetchData(graphql)
 
-    try {
-      res = await this.fetchUrl(JSON.stringify(body))
-    } catch (e) {
-      this.logger.warn('Unable to upsert pkpass', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
+    if (response.apiResponse) {
+      const parsedApiRes = this.parseApiResponse<{ upsertPass: Pass }>(
+        response.apiResponse,
+      )
 
-    if (!res) {
-      this.logger.warn('No pkpass data retrieved, null from fetch', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-      try {
-        const json = await res.json()
-        responseErrors.message = json?.message ?? undefined
-        responseErrors.status = json?.status ?? undefined
-        responseErrors.data = json?.data ?? undefined
-      } catch {
-        // noop
+      if (parsedApiRes.error) {
+        return {
+          ok: false,
+          error: parsedApiRes.error,
+        }
       }
 
-      this.logger.warn('Expected 200 status for pkpass upsert', {
-        status: res.status,
-        statusText: res.statusText,
-        category: LOG_CATEGORY,
-        ...responseErrors,
-      })
-      return null
+      //sweet success
+      return {
+        ok: true,
+        data: parsedApiRes.data.upsertPass,
+      }
     }
 
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for pkpass upsert', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      return null
+    if (response.error) {
+      return {
+        ok: false,
+        error: response.error,
+      }
     }
 
-    const response = json as UpsertPkPassResponse
-
-    if (response) {
-      return response
+    return {
+      ok: false,
+      error: {
+        code: 99,
+        message: 'Unknown error',
+      },
     }
-
-    return null
   }
 
   async generatePkPass(
     payload: PassDataInput,
     nationalId: string,
-  ): Promise<Pass | null> {
+  ): Promise<Result<Pass>> {
     const existingPasses = await this.listPkPasses(nationalId)
 
-    const containsActiveOrUnclaimed =
-      existingPasses?.data &&
+    if (
+      existingPasses?.ok &&
       existingPasses?.data.some(
         (p) =>
           p.status === PassStatus.Active || p.status === PassStatus.Unclaimed,
       )
-
-    if (containsActiveOrUnclaimed) {
-      this.logger.debug(
-        'Some existing passes are currently active or unclaimed',
-      )
+    ) {
       const activePasses = existingPasses?.data.filter(
         (p) => p.status === PassStatus.Active,
       )
       if (activePasses?.length) {
-        this.logger.debug('Active pkpass found')
-        return activePasses[0]
+        return {
+          ok: existingPasses.ok,
+          //return the most recent active pass
+          data: activePasses[0],
+        }
       }
 
-      const unclaimedPasses = existingPasses?.data.filter(
+      const unclaimedPasses = existingPasses?.data?.filter(
         (p) => p.status === PassStatus.Unclaimed,
       )
 
       if (unclaimedPasses?.length) {
-        this.logger.debug('Unclaimed pkpass found')
-        return unclaimedPasses[0]
+        return {
+          ok: existingPasses.ok,
+          //return the most recent unclaimed pass
+          data: unclaimedPasses[0],
+        }
       }
     }
 
-    this.logger.debug('No active pkpass found for user, will create a new one')
+    this.logger.debug('No active pkpass found for user, creating a new one')
 
-    const response = await this.upsertPkPass(payload)
-
-    if (response?.data?.upsertPass) {
-      return response?.data?.upsertPass
-    }
-
-    if (response?.errors) {
-      const firstError = response.errors[0]
-      this.logger.warn('the pkpass service returned some errors', {
-        serviceStatus: response?.status,
-        serviceMessage: firstError.message,
-        category: LOG_CATEGORY,
-      })
-    }
-
-    this.logger.warn(
-      'the pkpass service response did not include a generated pass',
-      {
-        serviceStatus: response?.status,
-        serviceMessage: response?.message,
-        category: LOG_CATEGORY,
-      },
-    )
-
-    return null
+    const pass = await this.upsertPkPass(payload)
+    //const pass = await this.upsertPkPass({})
+    return pass
   }
 
   async generatePkPassQrCode(
     payload: PassDataInput,
     nationalId: string,
-  ): Promise<string | null> {
-    const pkPass = await this.generatePkPass(payload, nationalId)
-    return pkPass?.distributionQRCode ?? null
+  ): Promise<Result<string>> {
+    const response = await this.generatePkPass(payload, nationalId)
+    if (response.ok) {
+      return {
+        ok: true,
+        data: response.data.distributionQRCode,
+      }
+    }
+
+    return response
   }
 
   async generatePkPassUrl(
     payload: PassDataInput,
     nationalId: string,
-  ): Promise<string | null> {
-    const pkPass = await this.generatePkPass(payload, nationalId)
-    return pkPass?.distributionUrl ?? null
+  ): Promise<Result<string>> {
+    const response = await this.generatePkPass(payload, nationalId)
+    if (response.ok) {
+      return {
+        ok: true,
+        data: response.data.distributionUrl,
+      }
+    }
+    return response
   }
 
-  async listTemplates(): Promise<PassTemplatesDTO | null> {
+  async listTemplates(): Promise<Result<Array<PassTemplate>>> {
     const listTemplatesQuery = {
       query: `
         query passTemplateQuery {
@@ -452,64 +448,45 @@ export class SmartSolutionsApi {
       `,
     }
 
-    let res: Response | null = null
+    const graphql = JSON.stringify({
+      query: listTemplatesQuery,
+      variables: {},
+    })
 
-    try {
-      res = await this.fetchUrl(JSON.stringify(listTemplatesQuery))
-    } catch (e) {
-      this.logger.warn('Unable to retrieve pk pass templates', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-    }
+    const response = await this.fetchData(graphql)
 
-    if (!res) {
-      this.logger.warn('Unable to get pkpass templates, null from fetch', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
+    if (response.apiResponse) {
+      const parsedApiRes = this.parseApiResponse<{ data: Array<PassTemplate> }>(
+        response.apiResponse,
+      )
 
-    if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-      try {
-        const json = await res.json()
-        responseErrors.message = json?.message ?? undefined
-        responseErrors.status = json?.status ?? undefined
-        responseErrors.data = json?.data ?? undefined
-      } catch {
-        // noop
+      if (parsedApiRes.error) {
+        return {
+          ok: false,
+          error: parsedApiRes.error,
+        }
       }
 
-      this.logger.warn('Expected 200 status for list templates', {
-        status: res.status,
-        statusText: res.statusText,
-        category: LOG_CATEGORY,
-        ...responseErrors,
-      })
-      return null
-    }
-
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for list templates', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      //return null
-    }
-
-    const response = json as PassTemplatePageInfo
-
-    if (response?.data) {
-      const passTemplatesDto: PassTemplatesDTO = {
-        data: response.data,
+      //sweet success
+      return {
+        ok: true,
+        data: parsedApiRes.data.data,
       }
-      return passTemplatesDto
     }
 
-    return null
+    if (response.error) {
+      return {
+        ok: false,
+        error: response.error,
+      }
+    }
+
+    return {
+      ok: false,
+      error: {
+        code: 99,
+        message: 'Unknown error',
+      },
+    }
   }
 }

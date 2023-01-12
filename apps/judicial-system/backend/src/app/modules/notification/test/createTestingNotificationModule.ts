@@ -10,6 +10,7 @@ import { createTestIntl } from '@island.is/cms-translations/test'
 import { SmsService } from '@island.is/nova-sms'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
@@ -21,6 +22,8 @@ import { Notification } from '../models/notification.model'
 import { NotificationService } from '../notification.service'
 import { NotificationController } from '../notification.controller'
 import { DefendantService } from '../../defendant'
+
+jest.mock('@island.is/judicial-system/message')
 
 const formatMessage = createTestIntl({ onError: jest.fn(), locale: 'is-IS' })
   .formatMessage
@@ -36,6 +39,7 @@ export const createTestingNotificationModule = async () => {
     ],
     controllers: [NotificationController, InternalNotificationController],
     providers: [
+      MessageService,
       {
         provide: CourtService,
         useValue: {
@@ -98,6 +102,7 @@ export const createTestingNotificationModule = async () => {
     .compile()
 
   return {
+    messageService: notificationModule.get<MessageService>(MessageService),
     defendantService: notificationModule.get<DefendantService>(
       DefendantService,
     ),

@@ -23,6 +23,7 @@ import get from 'lodash/get'
 import set from 'lodash/set'
 import { S3Service } from './attachments/s3.service'
 import { SmsService } from '@island.is/nova-sms'
+import { PaymentService } from '@island.is/application/api/payment'
 const nationalId = '1234564321'
 let id = 0
 
@@ -88,6 +89,10 @@ describe('AccidentNotificationService', () => {
         {
           provide: ConfigService,
           useValue: {},
+        },
+        {
+          provide: PaymentService,
+          useValue: {}, //not used
         },
         {
           provide: EmailService,

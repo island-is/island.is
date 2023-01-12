@@ -44,10 +44,10 @@ export const plausiblePageviewDetail = ({
   basePath,
 }: {
   basePath: string
-  path: string | string[]
+  path: string
 }) => {
   const plausible = window && window.plausible
-  const pagePath = isString(path) ? path : path[0]
+  const pagePath = path
   const pageOrigin = window.location.origin
   const absoluteUrl = `${pageOrigin}${basePath}${pagePath}`
 

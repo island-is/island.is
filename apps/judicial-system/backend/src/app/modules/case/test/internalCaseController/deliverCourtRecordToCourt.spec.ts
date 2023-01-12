@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
-import { CourtDocumentFolder, CourtService } from '../../../court'
+import { CourtService } from '../../../court'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -29,8 +29,8 @@ describe('InternalCaseController - Deliver court record to court', () => {
     } = await createTestingCaseModule()
 
     mockCourtService = courtService
-    const mockCreateDocument = mockCourtService.createDocument as jest.Mock
-    mockCreateDocument.mockRejectedValue(new Error('Some error'))
+    const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
+    mockCreateCourtRecord.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
@@ -55,8 +55,8 @@ describe('InternalCaseController - Deliver court record to court', () => {
     beforeEach(async () => {
       const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
       mockGet.mockResolvedValueOnce(pdf)
-      const mockCreateDocument = mockCourtService.createDocument as jest.Mock
-      mockCreateDocument.mockResolvedValueOnce(uuid())
+      const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
+      mockCreateCourtRecord.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(caseId, theCase)
     })
@@ -69,11 +69,10 @@ describe('InternalCaseController - Deliver court record to court', () => {
     })
 
     it('should create a court record at court', async () => {
-      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+      expect(mockCourtService.createCourtRecord).toHaveBeenCalledWith(
         caseId,
         courtId,
         courtCaseNumber,
-        CourtDocumentFolder.COURT_DOCUMENTS,
         `Þingbók ${courtCaseNumber}`,
         `Þingbók ${courtCaseNumber}.pdf`,
         'application/pdf',
