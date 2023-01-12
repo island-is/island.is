@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
+import { Application } from '@island.is/api/schema'
 
 export const debts = buildSection({
   id: 'debts',
@@ -191,16 +192,22 @@ export const debts = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
-            buildKeyValueField({
-              label: m.totalAmount,
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(
-                    Number(answers.funeralCostAmount) +
-                      (answers.domesticAndForeignDebts as any)?.total +
-                      (answers.publicCharges as any)?.total,
-                  ),
-                ),
+            buildTextField({
+              id: 'debtsTotal',
+              title: 'Samtals alls',
+              readOnly: true,
+              width: 'half',
+              variant: 'currency',
+              rightAlign: true,
+              backgroundColor: 'white',
+              defaultValue: ({ answers }: Application) => {
+                const total =
+                  Number(answers.funeralCostAmount) +
+                  (answers.domesticAndForeignDebts as any)?.total +
+                  (answers.publicCharges as any)?.total
+
+                return total
+              },
             }),
           ],
         }),

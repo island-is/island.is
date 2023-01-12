@@ -537,17 +537,12 @@ export const assets = buildSection({
                 formatCurrency(String((answers.otherAssets as any)?.total)),
             }),
             buildDividerField({}),
-            /*buildDescriptionField({
+            buildDescriptionField({
               id: 'overviewAllAssetsWorth',
               title: m.totalValueOfAssets,
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
-            }),*/
-            buildDescriptionField({
-              width: 'half',
-              id: 'half_space',
-              title: '',
             }),
             buildTextField({
               id: 'assetsTotal',

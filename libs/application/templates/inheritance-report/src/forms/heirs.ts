@@ -11,9 +11,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { Skattleysismörk } from '../lib/constants'
 import { m } from '../lib/messages'
-import { currencyStringToNumber } from '../lib/utils/currencyStringToNumber'
 
 export const heirs = buildSection({
   id: 'heirs',
@@ -49,7 +47,14 @@ export const heirs = buildSection({
           children: [
             buildKeyValueField({
               label: m.netProperty,
-              value: ({ answers }) => String(answers.assetsTotal),
+              value: ({ answers }) =>
+                formatCurrency(
+                  String(
+                    Number(answers.assetsTotal) -
+                      Number(answers.debtsTotal) +
+                      Number(answers.businessTotal),
+                  ),
+                ),
             }),
             buildDescriptionField({
               id: 'space',
@@ -71,9 +76,8 @@ export const heirs = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    (currencyStringToNumber(
-                      answers.assetsTotal as any,
-                    ) as number) - Number(answers.totalDeduction ?? '0'),
+                    (answers.assetsTotal as any) -
+                      Number(answers.totalDeduction ?? '0'),
                   ),
                 ),
             }),
@@ -99,7 +103,7 @@ export const heirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: true,
-                component: 'TextFieldsRepeater',
+                component: 'HeirRepeater',
               },
               {
                 fields: [
@@ -123,6 +127,7 @@ export const heirs = buildSection({
                   {
                     title: m.heirsRelation.defaultMessage,
                     id: 'relation',
+                    children: ['Barn', 'Maki'],
                   },
                   {
                     title: m.heirsInheritanceRate.defaultMessage,
@@ -135,7 +140,7 @@ export const heirs = buildSection({
                   },
                   {
                     title: m.inheritanceAmount.defaultMessage,
-                    id: 'amount',
+                    id: 'inheritance',
                     readOnly: true,
                   },
                   {
@@ -151,62 +156,9 @@ export const heirs = buildSection({
                 ],
                 repeaterButtonText: m.addHeir.defaultMessage,
                 repeaterHeaderText: m.heir.defaultMessage,
+                sumField: 'percentage',
               },
             ),
-
-            //Barn , skattleysismörkin eru 5.757.759
-            buildKeyValueField({
-              label: 'Tengsl',
-              value: 'Barn',
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: 'Hlutfall - 50%',
-              value: '50%',
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: 'Óskattskyldur arfur - 50% af 5757759',
-              value: String(Skattleysismörk * 0.5),
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: 'Fjárhæð arfshluta - 50%',
-              width: 'half',
-              value: ({ answers }) =>
-                String(
-                  ((currencyStringToNumber(
-                    answers.assetsTotal as any,
-                  ) as number) -
-                    Number(answers.totalDeduction ?? '0')) *
-                    0.5,
-                ),
-            }),
-            buildKeyValueField({
-              label: 'Skattskyldur arfur',
-              value: ({ answers }) =>
-                String(
-                  (currencyStringToNumber(
-                    answers.assetsTotal as any,
-                  ) as number) *
-                    0.5 -
-                    Skattleysismörk * 0.5,
-                ),
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: 'Erfðafjárskattur - 10% af skattsk.',
-              value: ({ answers }) =>
-                String(
-                  ((currencyStringToNumber(
-                    answers.assetsTotal as any,
-                  ) as number) *
-                    0.5 -
-                    Skattleysismörk * 0.5) *
-                    0.1,
-                ),
-              width: 'half',
-            }),
           ],
         }),
       ],

@@ -6,9 +6,11 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
+import { Application } from '@island.is/api/schema'
 
 export const business = buildSection({
   id: 'business',
@@ -160,15 +162,21 @@ export const business = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
-            buildKeyValueField({
-              label: m.totalAmount,
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(
-                    (answers.businessAssets as any).total -
-                      (answers.businessDebts as any).total,
-                  ),
-                ),
+            buildTextField({
+              id: 'businessTotal',
+              title: 'Samtals alls',
+              readOnly: true,
+              width: 'half',
+              variant: 'currency',
+              rightAlign: true,
+              backgroundColor: 'white',
+              defaultValue: ({ answers }: Application) => {
+                const total =
+                  (answers.businessAssets as any).total -
+                  (answers.businessDebts as any).total
+
+                return total
+              },
             }),
           ],
         }),
