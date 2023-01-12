@@ -103,18 +103,18 @@ export const heirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: true,
-                component: 'HeirRepeater',
+                component: 'TextFieldsRepeater',
               },
               {
                 fields: [
                   {
                     title: m.heirsNationalId.defaultMessage,
-                    id: 'ssn',
+                    id: 'nationalId',
                     format: '######-####',
                   },
                   {
                     title: m.heirsName.defaultMessage,
-                    id: 'creditorName',
+                    id: 'heirsName',
                   },
                   {
                     title: m.heirsEmail.defaultMessage,
@@ -127,11 +127,10 @@ export const heirs = buildSection({
                   {
                     title: m.heirsRelation.defaultMessage,
                     id: 'relation',
-                    children: ['Barn', 'Maki'],
                   },
                   {
                     title: m.heirsInheritanceRate.defaultMessage,
-                    id: 'percentage',
+                    id: 'heirsPercentage',
                   },
                   {
                     title: m.taxFreeInheritance.defaultMessage,
@@ -156,7 +155,7 @@ export const heirs = buildSection({
                 ],
                 repeaterButtonText: m.addHeir.defaultMessage,
                 repeaterHeaderText: m.heir.defaultMessage,
-                sumField: 'percentage',
+                sumField: 'heirsPercentage',
               },
             ),
           ],

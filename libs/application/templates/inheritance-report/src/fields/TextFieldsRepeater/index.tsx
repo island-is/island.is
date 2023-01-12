@@ -15,8 +15,9 @@ import * as styles from '../styles.css'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
+import { Skattleysismörk } from '../../lib/constants'
 
-type Props = {
+type TextRepeaterProps = {
   field: {
     props: {
       fields: Array<object>
@@ -28,10 +29,9 @@ type Props = {
   }
 }
 
-export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
-  application,
-  field,
-}) => {
+export const TextFieldsRepeater: FC<
+  FieldBaseProps<Answers> & TextRepeaterProps
+> = ({ application, field }) => {
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
@@ -43,22 +43,33 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     id,
   ) as Array<object>
 
+  /* ------ Stocks ------ */
+  const [rateOfExchange, setRateOfExchange] = useState(0)
+  const [faceValue, setFaceValue] = useState(0)
+  const [index, setIndex] = useState('0')
+
+  /* ------ Heirs ------ */
+  const [percentage, setPercentage] = useState(0)
+  const [taxFreeInheritance, setTaxFreeInheritance] = useState(0)
+  const [inheritance, setInheritance] = useState(0)
+  const [taxableInheritance, setTaxableInheritance] = useState(0)
+  const [inheritanceTax, setInheritanceTax] = useState(0)
+
+  /* ------ Total ------ */
   const answersValuesTotal = answersValues?.length
     ? answersValues.reduce((a: number, o: any) => {
         return a + Number(o[props.sumField])
       }, 0)
     : 0
 
-  const [rateOfExchange, setRateOfExchange] = useState(0)
-  const [faceValue, setFaceValue] = useState(0)
-  const [index, setIndex] = useState('0')
-  const [total, setTotal] = useState(
-    answersValues?.length ? answersValuesTotal : 0,
-  )
   const [valueArray, setValueArray] = useState<Array<number>>(
     answersValues?.length
       ? answersValues.map((v: any) => Number(v[props.sumField]))
       : [],
+  )
+
+  const [total, setTotal] = useState(
+    answersValues?.length ? answersValuesTotal : 0,
   )
 
   const getTheTotalOfTheValues = (v: any, index: any) => {
@@ -92,6 +103,39 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     append(repeaterFields)
   }
 
+  /* ------ Set total value ------ */
+  useEffect(() => {
+    const addTotal = id.replace('data', 'total')
+    setValue(addTotal, total)
+  }, [id, total, setValue])
+
+  /* ------ Set stocks value ------ */
+  useEffect(() => {
+    setValue(`${index}.value`, String(faceValue * rateOfExchange))
+  }, [faceValue, rateOfExchange, setValue])
+
+  /* ------ Set heirs calculations ------ */
+  useEffect(() => {
+    setTaxFreeInheritance(Skattleysismörk * percentage)
+    setInheritance(15000000 * percentage)
+    setTaxableInheritance(inheritance - taxFreeInheritance)
+    setInheritanceTax((inheritance - taxFreeInheritance) * 0.1)
+
+    setValue(`${index}.taxFreeInheritance`, taxFreeInheritance)
+    setValue(`${index}.inheritance`, inheritance)
+    setValue(`${index}.taxableInheritance`, taxableInheritance)
+    setValue(`${index}.inheritanceTax`, inheritanceTax)
+  }, [
+    index,
+    percentage,
+    taxFreeInheritance,
+    inheritance,
+    taxableInheritance,
+    inheritanceTax,
+    setValue,
+  ])
+
+  /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
     if (props.fromExternalData && fields.length === 0) {
       append(
@@ -101,15 +145,6 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
       )
     }
   }, [props, fields, append])
-
-  useEffect(() => {
-    setValue(`${index}.value`, String(faceValue * rateOfExchange))
-  }, [faceValue, rateOfExchange, setValue])
-
-  useEffect(() => {
-    const addTotal = id.replace('data', 'total')
-    setValue(addTotal, total)
-  }, [id, total, setValue])
 
   return (
     <Box>
@@ -154,7 +189,19 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                     <InputController
                       id={`${fieldIndex}.${field.id}`}
                       name={`${fieldIndex}.${field.id}`}
-                      defaultValue={repeaterField[field.id] || ''}
+                      defaultValue={
+                        repeaterField[field.id]
+                          ? repeaterField[field.id]
+                          : field.id === 'taxFreeInheritance'
+                          ? formatCurrency(String(taxFreeInheritance))
+                          : field.id === 'inheritance'
+                          ? formatCurrency(String(inheritance))
+                          : field.id === 'taxableInheritance'
+                          ? formatCurrency(String(taxableInheritance))
+                          : field.id === 'inheritanceTax'
+                          ? formatCurrency(String(inheritanceTax))
+                          : ''
+                      }
                       format={field.format}
                       label={field.title}
                       placeholder={field.placeholder}
@@ -165,7 +212,12 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       textarea={field.variant}
                       rows={field.rows}
                       onChange={(e) => {
-                        setIndex(fieldIndex)
+                        // heirs
+                        if (field.id === 'heirsPercentage') {
+                          setPercentage(Number(e.target.value) / 100)
+                        }
+
+                        // stocks
                         if (field.id === 'rateOfExchange') {
                           setRateOfExchange(Number(e.target.value))
                         } else if (field.id === 'faceValue') {
@@ -178,6 +230,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                             index,
                           )
                         }
+                        setIndex(fieldIndex)
                       }}
                     />
                   </GridColumn>
@@ -205,8 +258,16 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
               <Input
                 id={`${id}.total`}
                 name={`${id}.total`}
-                value={formatCurrency(String(total))}
-                label={'Samtals'}
+                value={
+                  props.sumField === 'heirsPercentage'
+                    ? String(total) + ' / 100%'
+                    : formatCurrency(String(total))
+                }
+                label={
+                  props.sumField === 'heirsPercentage'
+                    ? 'Samtals arfshlutfall'
+                    : 'Samtals'
+                }
                 backgroundColor={'white'}
                 readOnly={true}
               />
