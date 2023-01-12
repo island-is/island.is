@@ -16,6 +16,8 @@
 /libs/application/                                                                                  @island-is/sendiradid-applications
 /libs/contentful-extensions/                                                                        @island-is/juni
 /libs/service-portal/                                                                               @island-is/hugsmidjan
+/libs/portals/admin/                                                                                @island-is/aranja
+/libs/portals/core/                                                                                 @island-is/aranja @island-is/hugsmidjan
 
 /*                                                                                                  @island-is/core
 /.github/                                                                                           @island-is/core
@@ -78,10 +80,10 @@
 /libs/application/templates/inheritance-report/                                                     @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                 @island-is/juni
 
+/apps/portals/admin/                                                                                @island-is/aranja
 /libs/clients/auth/                                                                                 @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
 /libs/portals/shared-modules/delegations                                                            @island-is/aranja
-/libs/portals/admin/core                                                                            @island-is/aranja
 
 /apps/judicial-system/                                                                              @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                              @island-is/kolibri-justice-league
@@ -156,7 +158,7 @@
 /libs/shared/form-fields/                                                                           @island-is/sendiradid @island-is/island-ui
 
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
-/libs/api/domains/payment/                                                                          @island-is/sendiradid-applications    
+/libs/api/domains/payment/                                                                          @island-is/sendiradid-applications
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                             @island-is/stefna

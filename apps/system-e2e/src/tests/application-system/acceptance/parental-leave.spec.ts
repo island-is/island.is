@@ -5,7 +5,7 @@ import {
   getEnvironmentBaseUrl,
   TestEnvironment,
   urls,
-} from '../../../support/utils'
+} from '../../../support/urls'
 import {
   employerFormMessages,
   parentalLeaveFormMessages,
