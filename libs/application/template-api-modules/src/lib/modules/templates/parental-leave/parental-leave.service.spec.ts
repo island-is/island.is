@@ -526,7 +526,7 @@ describe('ParentalLeaveService', () => {
 
     it('should not send an email if applicant is self employed', async () => {
       const application = createApplication()
-      set(application.answers, 'employer.isSelfEmployed', YES)
+      set(application.answers, 'isSelfEmployed', YES)
 
       const mockedSendEmail = jest.fn()
 

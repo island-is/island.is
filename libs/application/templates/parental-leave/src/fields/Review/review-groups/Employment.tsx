@@ -3,9 +3,8 @@ import {
   Label,
   RadioValue,
   ReviewGroup,
-  formatPhoneNumber,
 } from '@island.is/application/ui-components'
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
 import { NO, YES, parentalLeaveFormMessages } from '../../..'

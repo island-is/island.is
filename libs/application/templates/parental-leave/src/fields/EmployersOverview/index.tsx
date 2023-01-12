@@ -32,7 +32,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
   const { formatMessage, locale } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const onDeleteEmployer = (nationalId: string) => {
+  const onDeleteEmployer = async (nationalId: string) => {
     const reducedEmployers = employers?.filter(
       (e) => e.name.nationalId !== nationalId,
     )
@@ -40,7 +40,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
       return
     }
 
-    updateApplication({
+    await updateApplication({
       variables: {
         input: {
           id: application.id,
@@ -49,7 +49,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
         locale,
       },
     })
-    setRepeaterItems(reducedEmployers)
+    await setRepeaterItems(reducedEmployers)
   }
 
   useDeepCompareEffect(() => {

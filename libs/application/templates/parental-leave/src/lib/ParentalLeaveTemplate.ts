@@ -310,7 +310,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
           onEntry: defineTemplateApi({
-            action: ApiModuleActions.assignEmployer,
+            action: ApiModuleActions.assignEmployers,
             throwOnError: true,
           }),
           roles: [
@@ -702,7 +702,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
           onEntry: defineTemplateApi({
-            action: ApiModuleActions.assignEmployer,
+            action: ApiModuleActions.assignEmployers,
             throwOnError: true,
           }),
           roles: [

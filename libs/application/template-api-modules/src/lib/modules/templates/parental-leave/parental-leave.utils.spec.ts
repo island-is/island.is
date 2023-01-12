@@ -259,7 +259,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(true, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'M-L-GR'
     const result = getRightsCode(base)
@@ -272,7 +272,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(true, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'M-S-GR'
     const result = getRightsCode(base)
@@ -382,7 +382,7 @@ describe('getRightsCode', () => {
       },
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-L-GR'
     const result = getRightsCode(base)
@@ -403,7 +403,7 @@ describe('getRightsCode', () => {
       },
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'FO-S-GR'
     const result = getRightsCode(base)
@@ -465,7 +465,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(false, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-FL-L-GR'
     const result = getRightsCode(base)
@@ -478,7 +478,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(false, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'FO-FL-S-GR'
     const result = getRightsCode(base)
@@ -593,7 +593,7 @@ describe('getRightsCode', () => {
       genderCode: '0',
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-L-GR'
     const result = getRightsCode(base)
@@ -620,7 +620,7 @@ describe('getRightsCode', () => {
       genderCode: '1',
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'F-L-GR'
     const result = getRightsCode(base)

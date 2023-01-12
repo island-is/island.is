@@ -18,7 +18,7 @@ export function hasEmployer(context: ApplicationContext) {
         | typeof PARENTAL_GRANT
         | typeof PARENTAL_GRANT_STUDENTS
     }
-    employer: { isSelfEmployed: typeof YES | typeof NO }
+    isSelfEmployed: typeof YES | typeof NO
   }
 
   // Added this check for applications that is in the db already so they can go through to next state
@@ -27,15 +27,15 @@ export function hasEmployer(context: ApplicationContext) {
       currentApplicationAnswers.isReceivingUnemploymentBenefits !== undefined
     ) {
       return (
-        currentApplicationAnswers.employer.isSelfEmployed === NO &&
+        currentApplicationAnswers.isSelfEmployed === NO &&
         currentApplicationAnswers.isReceivingUnemploymentBenefits === NO
       )
     }
 
-    return currentApplicationAnswers.employer.isSelfEmployed === NO
+    return currentApplicationAnswers.isSelfEmployed === NO
   } else
     return currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE
-      ? currentApplicationAnswers.employer.isSelfEmployed === NO &&
+      ? currentApplicationAnswers.isSelfEmployed === NO &&
           currentApplicationAnswers.isReceivingUnemploymentBenefits === NO
       : false
 }
