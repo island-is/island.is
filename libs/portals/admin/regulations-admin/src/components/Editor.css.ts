@@ -12,10 +12,6 @@ import {
   readOnly,
 } from './EditorInput.css'
 
-// TODO REMOVE THESE TEMP CONSTANTS
-const SERVICE_PORTAL_HEADER_HEIGHT_SM = 80
-const SERVICE_PORTAL_HEADER_HEIGHT_LG = 112
-
 const { color, typography, border } = theme
 
 // ---------------------------------------------------------------------------
@@ -89,7 +85,7 @@ export const classes: EditorClasses = {
 
   toolbar: style({
     position: 'sticky',
-    top: SERVICE_PORTAL_HEADER_HEIGHT_SM - 1,
+    top: theme.headerHeight.small - 1,
     zIndex: 1,
 
     margin: 0,
@@ -98,7 +94,7 @@ export const classes: EditorClasses = {
 
     ...themeUtils.responsiveStyle({
       md: {
-        top: SERVICE_PORTAL_HEADER_HEIGHT_LG - 1,
+        top: theme.headerHeight.large - 1,
       },
     }),
 
