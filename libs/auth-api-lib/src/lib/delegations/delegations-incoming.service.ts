@@ -35,6 +35,12 @@ export type ApiScopeInfo = Pick<
   | 'isAccessControlled'
 >
 
+interface FindAvailableInput {
+  user: User
+  delegationTypes?: DelegationType[]
+  requestedScopes?: string[]
+}
+
 /**
  * Service class for incoming delegations.
  * This class supports domain based delegations.
@@ -98,11 +104,11 @@ export class DelegationsIncomingService {
       )
   }
 
-  async findAllAvailable(
-    user: User,
-    delegationTypes?: DelegationType[],
-    requestedScopes?: string[],
-  ): Promise<MergedDelegationDTO[]> {
+  async findAllAvailable({
+    user,
+    delegationTypes,
+    requestedScopes,
+  }: FindAvailableInput): Promise<MergedDelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
 
     const clientAllowedApiScopes = await this.getClientAllowedApiScopes(

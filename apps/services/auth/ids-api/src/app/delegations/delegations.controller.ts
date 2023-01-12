@@ -58,11 +58,10 @@ export class DelegationsController {
     )
     requestedScopes: Array<string>,
   ): Promise<MergedDelegationDTO[]> {
-    return this.delegationsIncomingService.findAllAvailable(
+    return this.delegationsIncomingService.findAllAvailable({
       user,
-      undefined,
       requestedScopes,
-    )
+    })
   }
 
   @Scopes('@identityserver.api/authentication')
