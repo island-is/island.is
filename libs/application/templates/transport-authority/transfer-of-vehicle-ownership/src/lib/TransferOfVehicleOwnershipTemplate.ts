@@ -277,7 +277,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Approved),
                 ),
               read: 'all',
-              delete: true,
             },
             {
               id: Roles.BUYER,
