@@ -865,17 +865,13 @@ export class NotificationService {
       if (theCase.type === CaseType.CUSTODY) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
       } else if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
-        try {
-          const inCustody = await this.defendantService.isDefendantInActiveCustody(
-            theCase.defendants,
-          )
-          if (
-            inCustody ||
-            (theCase.defendants && theCase.defendants[0]?.noNationalId === true)
-          ) {
-            promises.push(this.sendRulingEmailNotificationToPrison(theCase))
-          }
-        } catch (_error) {
+        const inCustody = await this.defendantService.isDefendantInActiveCustody(
+          theCase.defendants,
+        )
+        if (
+          inCustody ||
+          (theCase.defendants && theCase.defendants[0]?.noNationalId === true)
+        ) {
           promises.push(this.sendRulingEmailNotificationToPrison(theCase))
         }
       }
@@ -929,19 +925,6 @@ export class NotificationService {
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
         })
 
-    const custodyNoticePdf = await getCustodyNoticePdfAsString(
-      theCase,
-      this.formatMessage,
-    )
-
-    const attachments = [
-      {
-        filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
-        content: custodyNoticePdf,
-        encoding: 'binary',
-      },
-    ]
-
     const promises = [
       this.sendEmail(
         subject,
@@ -949,14 +932,35 @@ export class NotificationService {
         'Fangelsismálastofnun',
         this.config.email.prisonAdminEmail,
       ),
-      this.sendEmail(
-        subject,
-        html,
-        'Gæsluvarðhaldsfangelsi',
-        this.config.email.prisonEmail,
-        attachments,
-      ),
     ]
+
+    if (
+      theCase.type === CaseType.CUSTODY ||
+      theCase.type === CaseType.ADMISSION_TO_FACILITY
+    ) {
+      const custodyNoticePdf = await getCustodyNoticePdfAsString(
+        theCase,
+        this.formatMessage,
+      )
+
+      const attachments = [
+        {
+          filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
+          content: custodyNoticePdf,
+          encoding: 'binary',
+        },
+      ]
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          'Gæsluvarðhaldsfangelsi',
+          this.config.email.prisonEmail,
+          attachments,
+        ),
+      )
+    }
 
     if (user.id !== theCase.prosecutorId) {
       promises.push(
@@ -1332,7 +1336,7 @@ export class NotificationService {
   private async addMessagesForHeadsUpNotificationToQueue(
     theCase: Case,
   ): Promise<void> {
-    this.messageService.sendMessageToQueue({
+    return this.messageService.sendMessageToQueue({
       type: MessageType.SEND_HEADS_UP_NOTIFICATION,
       caseId: theCase.id,
     })
@@ -1355,7 +1359,7 @@ export class NotificationService {
       })
     }
 
-    this.messageService.sendMessagesToQueue(messages)
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   /* API */
