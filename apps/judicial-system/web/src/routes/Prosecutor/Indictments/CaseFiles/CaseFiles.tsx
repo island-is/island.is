@@ -42,12 +42,9 @@ import * as constants from '@island.is/judicial-system/consts'
 import * as strings from './CaseFiles.strings'
 
 const CaseFiles: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
   const { upload, remove } = useS3Upload(workingCase.id)
