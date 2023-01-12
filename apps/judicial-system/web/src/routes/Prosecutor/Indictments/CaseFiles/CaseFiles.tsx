@@ -42,12 +42,9 @@ import * as constants from '@island.is/judicial-system/consts'
 import * as strings from './CaseFiles.strings'
 
 const CaseFiles: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
   const { upload, remove } = useS3Upload(workingCase.id)
@@ -117,18 +114,15 @@ const CaseFiles: React.FC = () => {
       try {
         if (file.id) {
           await remove(file.id)
-          setWorkingCase((prev) => ({
-            ...prev,
-            caseFiles: prev.caseFiles?.filter(
-              (caseFile) => caseFile.id !== file.id,
-            ),
-          }))
+          setDisplayFiles((prev) => {
+            return prev.filter((caseFile) => caseFile.id !== file.id)
+          })
         }
       } catch {
         toast.error(formatMessage(errors.general))
       }
     },
-    [formatMessage, remove, setWorkingCase],
+    [formatMessage, remove, setDisplayFiles],
   )
 
   const handleRetry = useCallback(
