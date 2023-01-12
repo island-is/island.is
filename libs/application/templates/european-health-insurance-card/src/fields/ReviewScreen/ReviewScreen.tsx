@@ -23,12 +23,12 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 formatMessage,
               )}
             </Text>
-            <Text>
+            {/* <Text>
               {
                 Object.keys(answers?.constraints).reverse()?.map((item, index) => (
                   <Text>{item}</Text>
                 ))}
-            </Text>
+            </Text> */}
           </Box>
           <Divider />
           <Box>

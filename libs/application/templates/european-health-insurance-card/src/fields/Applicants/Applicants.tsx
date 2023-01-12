@@ -12,8 +12,6 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
 
   const { answers } = application
   const { id } = field
-  console.log(field)
-  console.log(application)
 
   const getConstraintVal = (constraintId: string) =>
     getValueViaPath(
@@ -22,10 +20,12 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
       false,
     ) as boolean
 
+
   const applicants = [
-    { id: 1, name: "Jón" },
-    {  id: 2, name: "Pétur" }
+    { id: "hasLogin", name: "Jón" },
+    { id: 2, name: "Pétur" }
   ]
+  console.log(getValueViaPath<string>(application.answers, '1'))
 
 
   return (
@@ -33,8 +33,8 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
       <Stack space={2}>
         {applicants?.map((item) => (
           <ApplicantsController
-            id={`${item.id}`}
-            checkboxId={`${item.id}`}
+            id={`${item.id}.hasLogin`}
+            checkboxId={`${item.id}.hasLogin`}
             label={formatText(
               item.name,
               application,
@@ -45,7 +45,7 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
               application,
               formatMessage
             )}
-            defaultValue={getConstraintVal(`${item.name}`)}
+            defaultValue={getConstraintVal(`${item.id}.login`)}
             extraText={false}
           />
         ))}
