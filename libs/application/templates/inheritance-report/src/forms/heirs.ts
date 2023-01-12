@@ -76,8 +76,10 @@ export const heirs = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    (answers.assetsTotal as any) -
-                      Number(answers.totalDeduction ?? '0'),
+                    Number(answers.assetsTotal) -
+                      Number(answers.debtsTotal) +
+                      Number(answers.businessTotal) -
+                      Number(answers.totalDeduction),
                   ),
                 ),
             }),

@@ -701,12 +701,12 @@ export const m = defineMessages({
   },
   totalDeduction: {
     id: 'ir.application:totalDeduction',
-    defaultMessage: 'Samtals frádráttur',
+    defaultMessage: 'Samtals frádráttur (búshluti maka)',
     description: '',
   },
   netProperty: {
     id: 'ir.application:netProperty',
-    defaultMessage: 'Hrein eign',
+    defaultMessage: 'Hrein eign (eignir - skuldir + eigið fé í atvinnurekstri)',
     description: '',
   },
   netPropertyForExchange: {
