@@ -538,7 +538,44 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.ADDITIONAL_DOCUMENT_EDITS },
+        },
+      },
+      [States.ADDITIONAL_DOCUMENT_EDITS]: {
+        entry: 'assignToVMST',
+        meta: {
+          status: 'inprogress',
+          name: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          actionCard: {
+            description: statesMessages.additionalDocumentRequiredDescription,
+          },
+          lifecycle: pruneAfterDays(970),
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ParentalLeaveForm').then((val) =>
+                  Promise.resolve(val.ParentalLeaveForm),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT:
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
         },
       },
       // [States.RECEIVED]: {
