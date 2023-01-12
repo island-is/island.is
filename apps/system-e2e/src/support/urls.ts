@@ -54,4 +54,3 @@ const envs: {
 }
 export const env = (process.env.TEST_ENVIRONMENT ?? 'local') as TestEnvironment
 export const urls = envs[env]
-export const isRunningLocally = env == ('local' as TestEnvironment)
