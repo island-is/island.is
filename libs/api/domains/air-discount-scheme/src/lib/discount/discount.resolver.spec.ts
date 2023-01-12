@@ -79,7 +79,7 @@ describe('ApiDomains: DiscountResolver', () => {
           useFactory: () => ({
             // Is there a nicer way to mock a service while keeping some of its methods unchanged?
             getCurrentDiscounts: DiscountService.prototype.getCurrentDiscounts,
-
+            discountIsValid: DiscountService.prototype.discountIsValid,
             getDiscount: jest.fn(
               (user: User, nationalId: string): TDiscount | void => {
                 if (idsForGetDiscount.includes(nationalId)) {
