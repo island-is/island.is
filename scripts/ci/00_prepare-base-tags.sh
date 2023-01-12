@@ -9,7 +9,7 @@ cp -r "$ROOT/.github/actions/dist/." "$tempRepo"
 
 LAST_GOOD_BUILD=$(DEBUG="*,-simple-git" REPO_ROOT="$ROOT" node $tempRepo/main.js)
 if [[ "$LAST_GOOD_BUILD" == "Full rebuild needed" ]]; then
-  BASE="$BASE_SHA"
+  BASE="$1"
   export BASE
   >&2 echo "No successful build, using Base sha '$BASE_SHA'"
 else
