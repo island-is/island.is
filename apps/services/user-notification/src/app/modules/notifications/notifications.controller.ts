@@ -73,9 +73,13 @@ export class NotificationsController {
   async createNotification(
     @Req() req: Request,
   ): Promise<CreateNotificationResponse> {
+    console.log("Got cool message:", req.body)
+    console.log("Validating message...")
     const message = await validateMessage(req.body)
+    console.log("Adding to queue...")
     const id = await this.queue.add(message)
     this.logger.info('Message queued', { messageId: id, ...message })
+    console.log("Returning ID...")
     return { id }
   }
 }

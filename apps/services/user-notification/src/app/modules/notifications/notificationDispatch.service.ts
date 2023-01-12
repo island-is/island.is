@@ -62,8 +62,9 @@ export class NotificationDispatchService {
       })
       return
     } else {
+      const plural = tokens.length > 1
       this.logger.info(
-        `Found user push-notification tokens (${tokens.length})`,
+        `Found ${tokens.length} user push-notification token${plural ? 's' : ''}`,
         { messageId },
       )
     }

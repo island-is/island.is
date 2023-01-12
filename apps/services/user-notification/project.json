@@ -76,6 +76,26 @@
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-notification/tsconfig.app.json apps/services/user-notification/src/buildOpenApi.ts"
       }
     },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets user-notification",
+          "yarn nx run services-user-notification:dev-services"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "./scripts/run-xroad-proxy.sh",
+          "yarn nx run services-user-notification:serve"
+        ],
+        "parallel": true
+      }
+    },
     "docker-express": {}
   },
   "tags": []
