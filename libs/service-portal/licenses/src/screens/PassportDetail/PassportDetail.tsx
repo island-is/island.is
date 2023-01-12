@@ -30,6 +30,7 @@ import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
 import { applyPassport, lostPassport } from '../../lib/constants'
 import { capitalizeEveryWord } from '../../utils/capitalize'
+import { NotFound } from '@island.is/service-portal/core'
 
 const getCurrentPassport = (
   id: string | undefined,
@@ -63,6 +64,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
   const { data: passportData, loading, error } = usePassport()
   const { data: childPassportData } = useChildrenPassport()
 
+
   const passportGender: Gender = {
     F: formatMessage(m.female),
     M: formatMessage(m.male),
@@ -89,20 +91,24 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           />
         </Box>
       )}
-      <Box marginBottom={3}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '5/8', '5/8']}>
-            <Stack space={1}>
-              <Text variant="h3" as="h1" paddingTop={0}>
-                {data?.verboseType || ''}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(m.passportDescription)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      {blockedAccess ? (
+        <NotFound />
+      ) : (
+        <Box marginBottom={3}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '5/8', '5/8']}>
+              <Stack space={1}>
+                <Text variant="h3" as="h1" paddingTop={0}>
+                  {data?.verboseType || ''}
+                </Text>
+                <Text as="p" variant="default">
+                  {formatMessage(m.passportDescription)}
+                </Text>
+              </Stack>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      )}
       {data && (
         <Stack space={2}>
           {licenseExpired || expireWarning || licenseLost ? (
