@@ -105,7 +105,7 @@ export const heirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: true,
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [

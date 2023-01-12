@@ -459,6 +459,11 @@ export const m = defineMessages({
     defaultMessage: 'Eign',
     description: '',
   },
+  otherAssetsTotal: {
+    id: 'ir.application:otherAssetsTotal',
+    defaultMessage: 'Matsverð annarra eigna samtals á dánardegi',
+    description: '',
+  },
 
   // AssetsOverview
   overview: {
@@ -504,7 +509,7 @@ export const m = defineMessages({
   },
   total: {
     id: 'ir.application:total',
-    defaultMessage: 'Samtals alls',
+    defaultMessage: 'Samtals',
     description: '',
   },
 
@@ -549,8 +554,8 @@ export const m = defineMessages({
     defaultMessage: 'Nafn kröfuhafa',
     description: '',
   },
-  debtsSsn: {
-    id: 'ir.application:debtsSsn',
+  creditorsNationalId: {
+    id: 'ir.application:creditorsNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -810,6 +815,11 @@ export const m = defineMessages({
     id: 'ir.application:heirsOverviewDescription',
     defaultMessage:
       'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  totalPercentage: {
+    id: 'ir.application:totalPercentage',
+    defaultMessage: 'Samtals arfshlutfall',
     description: '',
   },
 

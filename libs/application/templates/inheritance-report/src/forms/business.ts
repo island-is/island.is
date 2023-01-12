@@ -40,7 +40,7 @@ export const business = buildSection({
                 title: '',
                 id: 'businessAssets.data',
                 doesNotRequireAnswer: true,
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [
@@ -90,7 +90,7 @@ export const business = buildSection({
                 title: '',
                 id: 'businessDebts.data',
                 doesNotRequireAnswer: true,
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [
@@ -99,8 +99,8 @@ export const business = buildSection({
                     id: 'businessDebt',
                   },
                   {
-                    title: m.debtsSsn.defaultMessage,
-                    id: 'ssn',
+                    title: m.creditorsNationalId.defaultMessage,
+                    id: 'nationalId',
                     format: '######-####',
                   },
                   {
@@ -164,7 +164,7 @@ export const business = buildSection({
             }),
             buildTextField({
               id: 'businessTotal',
-              title: 'Samtals alls',
+              title: m.total,
               readOnly: true,
               width: 'half',
               variant: 'currency',

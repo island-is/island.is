@@ -63,7 +63,7 @@ export const debts = buildSection({
               {
                 title: '',
                 id: 'domesticAndForeignDebts.data',
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [
@@ -72,8 +72,8 @@ export const debts = buildSection({
                     id: 'creditorName',
                   },
                   {
-                    title: m.debtsSsn.defaultMessage,
-                    id: 'ssn',
+                    title: m.creditorsNationalId.defaultMessage,
+                    id: 'nationalId',
                     format: '######-####',
                   },
                   {
@@ -114,7 +114,7 @@ export const debts = buildSection({
               {
                 title: '',
                 id: 'publicCharges.data',
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [
@@ -122,6 +122,7 @@ export const debts = buildSection({
                     title: m.amount.defaultMessage,
                     id: 'publicChargesAmount',
                     width: 'full',
+                    currency: true,
                   },
                 ],
                 repeaterButtonText:

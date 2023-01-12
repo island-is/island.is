@@ -40,7 +40,7 @@ export const assets = buildSection({
                 title: '',
                 id: 'realEstate.data',
                 doesNotRequireAnswer: true,
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [
@@ -91,7 +91,7 @@ export const assets = buildSection({
                 title: '',
                 id: 'vehicles.data',
                 doesNotRequireAnswer: true,
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [
@@ -142,7 +142,7 @@ export const assets = buildSection({
                 title: '',
                 id: 'inventory.data',
                 doesNotRequireAnswer: true,
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [
@@ -193,7 +193,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'bankAccounts.data',
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
               {
@@ -241,7 +241,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'claims.data',
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
               {
@@ -288,7 +288,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'stocks.data',
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
               {
@@ -351,7 +351,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'money.data',
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
               {
@@ -395,7 +395,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'otherAssets.data',
-                component: 'TextFieldsRepeater',
+                component: 'ReportFieldsRepeater',
                 doesNotRequireAnswer: true,
               },
               {
@@ -532,7 +532,7 @@ export const assets = buildSection({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Matsverð annarra eigna samtals á dánardegi',
+              label: m.otherAssetsTotal,
               value: ({ answers }) =>
                 formatCurrency(String((answers.otherAssets as any)?.total)),
             }),
@@ -546,7 +546,7 @@ export const assets = buildSection({
             }),
             buildTextField({
               id: 'assetsTotal',
-              title: 'Samtals alls',
+              title: m.total,
               readOnly: true,
               width: 'half',
               variant: 'currency',

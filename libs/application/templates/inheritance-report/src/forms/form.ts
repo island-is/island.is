@@ -44,7 +44,7 @@ export const form: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckbox,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi, //'EstateNoticeProvider'
+              //provider: TBD,
               title: m.deceasedInfoProviderTitle,
               subTitle: m.deceasedInfoProviderSubtitle,
             }),
@@ -54,7 +54,7 @@ export const form: Form = buildForm({
               subTitle: m.personalInfoProviderSubtitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi, //TBD,
+              //provider: TBD,
               title: m.financialInformationProviderTitle,
               subTitle: m.financialInformationProviderSubtitle,
             }),
@@ -163,7 +163,7 @@ export const form: Form = buildForm({
               width: 'half',
             }),
             buildDescriptionField({
-              id: 'spaceDIF',
+              id: 'space',
               space: 'gutter',
               title: '',
             }),
@@ -188,24 +188,6 @@ export const form: Form = buildForm({
                   : m.deathDateNotRegistered,
               width: 'half',
             }),
-            buildDescriptionField({
-              id: 'space',
-              title: '',
-              space: 'containerGutter',
-            }),
-            /*buildCheckboxField({
-              id: 'undividedEstate',
-              title: '',
-              defaultValue: '',
-              large: false,
-              backgroundColor: 'white',
-              options: [
-                {
-                  value: 'YES',
-                  label: 'Arfleifandi sat í óskiptu búi',
-                },
-              ],
-            }),*/
           ],
         }),
       ],

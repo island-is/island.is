@@ -16,8 +16,10 @@ import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
 import { Skattleysismörk } from '../../lib/constants'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
-type TextRepeaterProps = {
+type RepeaterProps = {
   field: {
     props: {
       fields: Array<object>
@@ -29,8 +31,8 @@ type TextRepeaterProps = {
   }
 }
 
-export const TextFieldsRepeater: FC<
-  FieldBaseProps<Answers> & TextRepeaterProps
+export const ReportFieldsRepeater: FC<
+  FieldBaseProps<Answers> & RepeaterProps
 > = ({ application, field }) => {
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
@@ -38,6 +40,7 @@ export const TextFieldsRepeater: FC<
   })
 
   const { setValue } = useFormContext()
+  const { formatMessage } = useLocale()
   const answersValues = getValueViaPath(
     application.answers,
     id,
@@ -71,24 +74,6 @@ export const TextFieldsRepeater: FC<
   const [total, setTotal] = useState(
     answersValues?.length ? answersValuesTotal : 0,
   )
-
-  const getTheTotalOfTheValues = (v: any, index: any) => {
-    const arr = valueArray
-    if (v === '') {
-      arr.splice(index, 1)
-    } else if (arr[index]) {
-      arr.splice(index, 1, v)
-      setValueArray(arr)
-    } else {
-      arr.push(v)
-      setValueArray(arr)
-    }
-    setTotal(
-      valueArray.length
-        ? valueArray.reduce((a: any, v: any) => (a = a + v))
-        : 0,
-    )
-  }
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
@@ -145,6 +130,24 @@ export const TextFieldsRepeater: FC<
       )
     }
   }, [props, fields, append])
+
+  const calculateTotal = (v: any, index: any) => {
+    const arr = valueArray
+    if (v === '') {
+      arr.splice(index, 1)
+    } else if (arr[index]) {
+      arr.splice(index, 1, v)
+      setValueArray(arr)
+    } else {
+      arr.push(v)
+      setValueArray(arr)
+    }
+    setTotal(
+      valueArray.length
+        ? valueArray.reduce((a: any, v: any) => (a = a + v))
+        : 0,
+    )
+  }
 
   return (
     <Box>
@@ -211,22 +214,23 @@ export const TextFieldsRepeater: FC<
                       type={field.type}
                       textarea={field.variant}
                       rows={field.rows}
-                      onChange={(e) => {
+                      onChange={(elem) => {
                         // heirs
                         if (field.id === 'heirsPercentage') {
-                          setPercentage(Number(e.target.value) / 100)
+                          setPercentage(Number(elem.target.value) / 100)
                         }
 
                         // stocks
                         if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(Number(e.target.value))
+                          setRateOfExchange(Number(elem.target.value))
                         } else if (field.id === 'faceValue') {
-                          setFaceValue(Number(e.target.value))
+                          setFaceValue(Number(elem.target.value))
                         }
 
+                        // total
                         if (props.sumField === field.id) {
-                          getTheTotalOfTheValues(
-                            currencyStringToNumber(e.target.value),
+                          calculateTotal(
+                            currencyStringToNumber(elem.target.value),
                             index,
                           )
                         }
@@ -265,8 +269,8 @@ export const TextFieldsRepeater: FC<
                 }
                 label={
                   props.sumField === 'heirsPercentage'
-                    ? 'Samtals arfshlutfall'
-                    : 'Samtals'
+                    ? formatMessage(m.totalPercentage)
+                    : formatMessage(m.total)
                 }
                 backgroundColor={'white'}
                 readOnly={true}
@@ -279,4 +283,4 @@ export const TextFieldsRepeater: FC<
   )
 }
 
-export default TextFieldsRepeater
+export default ReportFieldsRepeater
