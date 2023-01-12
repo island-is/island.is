@@ -13,7 +13,6 @@ import { PersonalInformationPaths } from './lib/paths'
 
 export const personalInformationModule: PortalModule = {
   name: 'Persónuupplýsingar',
-  widgets: () => [],
   routes: ({ userInfo }) => {
     const routes: PortalRoute[] = [
       {

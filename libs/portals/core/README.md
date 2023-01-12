@@ -28,7 +28,6 @@ This is simpler for admin portal module, create a new module for each self-conta
 ```typescript
 export interface PortalModule {
   name: string
-  widgets: (props: PortalModuleProps) => PortalWidget[]
   routes: (props: PortalModuleProps) => PortalRoute[]
 }
 ```
@@ -36,59 +35,12 @@ export interface PortalModule {
 All libraries are implemented by defining an interface that gets loaded into portals on startup. This interface defines four aspects about the library:
 
 - Name - The name of the library
-- Widgets - A function that return an array of widgets
 - Routes - A function that returns an array of routes
 - Global - A function that returns an array of global components
 
-### Widgets
-
-A widget is a small component rendered on the frontpage that usually gives a small amount of basic info about the libraries functionality and information.
-The widget function receives props of the type **≠PortalModuleProps** that it should use to determine which widgets should be presented in the portal and how they should be rendered.
-
-```typescript
-export interface PortalModuleProps {
-  userInfo: User
-  client: ApolloClient<NormalizedCacheObject>
-}
-```
-
-The userInfo property contains information about the current session and user. Based on which user is logged in and what he has access to, different widgets could be rendered out for the user.
-
-```typescript
-export type PortalWidget = {
-  name: string
-  weight: number
-  render: (props: PortalModuleProps) => PortalModuleRenderValue
-}
-```
-
-The weight property determines where on the frontpage it should be rendered, the lower the weight, the higher up it will be.
-The render returns a lazy loaded component.
-An example of an implementation of a widget property might be something like this:
-
-```typescript
-widgets: ({ userInfo }) => {
-  const applicationWidgets = [
-    {
-      name: 'Applications',
-      weight: 2,
-      render: () => lazy(() => import('./widgets/ApplicationOverview')),
-    },
-  ]
-  const openApplications = getOpenApplicationsForUser(userInfo)
-  if (openApplications.length > 0)
-    applicationWidgets.push({
-      name: 'Open Applications',
-      weight: 1,
-      render: () => lazy(() => import('widgets/OpenApplications')),
-    })
-  return applicationWidgets
-}
-```
-
 ### Routes
 
-Routes function in many of the same ways as widgets but instead of returning an array of widgets they return an array of routes.
+Routes function returns an array of routes.
 
 ```typescript
 export interface PortalModuleProps {
@@ -178,13 +130,6 @@ import { lazy } from 'react'
 
 export const applicationsModule: PortalModule = {
   name: 'Applications',
-  widgets: () => [
-    {
-      name: 'Applications',
-      weight: 0,
-      render: () => lazy(() => import('./Widgets')),
-    },
-  ],
   routes: (userInfo) => {
     const applicationRoutes = [
       {
@@ -198,14 +143,6 @@ export const applicationsModule: PortalModule = {
     return applicationRoutes
   },
 }
-
-// Widgets.tsx
-const ApplicationWidgets: PortalModuleComponent = ({ userInfo }) => (
-  <>
-    <h1>Widgets for {userInfo.profile.name}</h1>
-    <OpenApplications />
-  </>
-)
 
 // ApplicationList.tsx
 const ApplicationList: PortalModuleComponent = ({ userInfo }) => (
