@@ -46,6 +46,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
   PregnancyStatusAndRightsResults,
+  Files,
 } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
@@ -813,6 +814,36 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const firstPeriodStart =
     periods.length > 0 ? periods[0].firstPeriodStart : undefined
 
+  const additionalDocuments = getValueViaPath(
+    answers,
+    'fileUpload.additionalDocuments'
+  ) as Files[]
+
+  const selfEmployedFiles = getValueViaPath(
+    answers,
+    'fileUpload.selfEmployedFile'
+  ) as Files[]
+
+  const studentFiles = getValueViaPath(
+    answers,
+    'fileUpload.studentFile'
+  ) as Files[]
+
+  const singleParentFiles = getValueViaPath(
+    answers,
+    'fileUpload.singleParent'
+  ) as Files[]
+
+  const benefitsFiles = getValueViaPath(
+    answers,
+    'fileUpload.benefitsFile'
+  ) as Files[]
+
+  const commonFiles = getValueViaPath(
+    answers,
+    'fileUpload.file'
+  ) as Files[]
+
   return {
     applicationType,
     hasMultipleBirths,
@@ -857,6 +888,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     firstPeriodStart,
     isRecivingUnemploymentBenefits,
     unemploymentBenefits,
+    additionalDocuments,
+    selfEmployedFiles,
+    studentFiles,
+    singleParentFiles,
+    benefitsFiles,
+    commonFiles,
   }
 }
 

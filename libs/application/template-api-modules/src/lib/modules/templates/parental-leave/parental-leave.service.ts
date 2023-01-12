@@ -318,13 +318,16 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       applicationType,
       otherParent,
+      selfEmployedFiles: selfEmployedPdfs,
+      studentFiles: studentPdfs,
+      singleParentFiles: singleParentPdfs,
     } = getApplicationAnswers(application.answers)
 
     if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
-      const selfEmployedPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.selfEmployedFile',
-      )) as unknown[]
+      // const selfEmployedPdfs = (await getValueViaPath(
+      //   application.answers,
+      //   'fileUpload.selfEmployedFile',
+      // )) as unknown[]
 
       if (selfEmployedPdfs?.length) {
         for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
@@ -361,13 +364,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       }
     } else if (applicationType === PARENTAL_GRANT_STUDENTS) {
-      const stuydentPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.studentFile',
-      )) as unknown[]
+      // const studentPdfs = (await getValueViaPath(
+      //   application.answers,
+      //   'fileUpload.studentFile',
+      // )) as unknown[]
 
-      if (stuydentPdfs?.length) {
-        for (let i = 0; i <= stuydentPdfs.length - 1; i++) {
+      if (studentPdfs?.length) {
+        for (let i = 0; i <= studentPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
             application,
             i,
@@ -383,10 +386,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     if (otherParent === SINGLE) {
-      const singleParentPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.singleParent',
-      )) as unknown[]
+      // const singleParentPdfs = (await getValueViaPath(
+      //   application.answers,
+      //   'fileUpload.singleParent',
+      // )) as unknown[]
 
       if (singleParentPdfs?.length) {
         for (let i = 0; i <= singleParentPdfs.length - 1; i++) {
@@ -407,16 +410,18 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const {
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
+      benefitsFiles: benefitsPdfs,
+      commonFiles: genericPdfs
     } = getApplicationAnswers(application.answers)
     if (
       isRecivingUnemploymentBenefits === YES &&
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
-      const benefitsPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.benefitsFile',
-      )) as unknown[]
+      // const benefitsPdfs = (await getValueViaPath(
+      //   application.answers,
+      //   'fileUpload.benefitsFile',
+      // )) as unknown[]
 
       if (benefitsPdfs?.length) {
         for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
@@ -434,10 +439,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
     }
 
-    const genericPdfs = (await getValueViaPath(
-      application.answers,
-      'fileUpload.file',
-    )) as unknown[]
+    // const genericPdfs = (await getValueViaPath(
+    //   application.answers,
+    //   'fileUpload.file',
+    // )) as unknown[]
 
     if (genericPdfs?.length) {
       for (let i = 0; i <= genericPdfs.length - 1; i++) {

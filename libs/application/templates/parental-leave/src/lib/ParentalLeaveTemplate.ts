@@ -196,7 +196,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_APPROVAL]: {
-        entry: 'assignToOtherParent',
+        entry: ['assignToOtherParent', 'setAdditionalFileSentVariable'],
         exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
@@ -847,7 +847,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: ['assignToVMST', 'removeNullPeriod', 'setAdditionalFileSentVariable'],
         exit: 'clearTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1306,6 +1306,18 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      setAdditionalFileSentVariable: assign((context) => {
+        const { application } = context
+        const answers = application.answers
+        const { additionalDocuments, commonFiles } = getApplicationAnswers(answers)
+
+        // const newAddDocs = additionalDocuments.map(v => ({...v, isSend: true}))
+        // set(answers, 'fileUpload.additionalDocuments', newAddDocs)
+        const newAddDocs = commonFiles.map(v => ({...v, isSend: true}))
+        set(answers, 'fileUpload.file', newAddDocs)
+
+        return context
+      }),
     },
   },
   mapUserToRole(
