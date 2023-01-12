@@ -27,7 +27,7 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   const carColor = getValueViaPath(answers, 'pickVehicle.color', undefined) as
     | string
     | undefined
-  const carPlate = getValueViaPath(answers, 'vehicle.plate', '') as string
+  const carPlate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
   const salePrice = getValueViaPath(answers, 'vehicle.salePrice', '') as string
   const buyerCoOwnerAndOperator = getValueViaPath(
     answers,

@@ -111,9 +111,11 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
         validateVehicle({
           variables: {
             answers: {
+              pickVehicle: {
+                plate: answers?.pickVehicle?.plate,
+              },
               vehicle: {
                 date: answers?.vehicle?.date,
-                plate: answers?.vehicle?.plate,
                 salePrice: answers?.vehicle?.salePrice,
               },
               seller: {
