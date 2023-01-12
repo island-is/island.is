@@ -235,6 +235,7 @@
     "portals-admin": "apps/portals/admin",
     "portals-admin-air-discount-scheme": "libs/portals/admin/air-discount-scheme",
     "portals-admin-core": "libs/portals/admin/core",
+    "portals-admin-regulations-admin": "libs/portals/admin/regulations-admin",
     "portals-core": "libs/portals/core",
     "portals-shared-modules-delegations": "libs/portals/shared-modules/delegations",
     "react-feature-flags": "libs/react/feature-flags",

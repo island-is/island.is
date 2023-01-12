@@ -1,5 +1,6 @@
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 import { airDiscountSchemeAdminModule } from '@island.is/portals/admin/air-discount-scheme'
+import { regulationAdminModule } from '@island.is/portals/admin/regulations-admin'
 import { PortalModule } from '@island.is/portals/core'
 
 /**
@@ -12,4 +13,5 @@ import { PortalModule } from '@island.is/portals/core'
 export const modules: PortalModule[] = [
   delegationsModule,
   airDiscountSchemeAdminModule,
+  regulationAdminModule,
 ]
