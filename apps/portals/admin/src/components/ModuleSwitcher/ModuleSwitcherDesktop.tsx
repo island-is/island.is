@@ -5,6 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/admin/core'
 import {
   SingleNavigationItemStatus,
+  useActiveModule,
   useSingleNavigationItem,
 } from '@island.is/portals/core'
 
@@ -20,11 +21,18 @@ export const ModuleSwitcherDesktop = () => {
     unstable_offset: [0, -60],
   })
   const { formatMessage } = useLocale()
+  const isNotActiveModule = !useActiveModule()
   const { status } = useSingleNavigationItem(TOP_NAVIGATION, BOTTOM_NAVIGATION)
   const isStaticSwitcher = status !== SingleNavigationItemStatus.MULTIPLE_ITEMS
 
   return (
-    <div className={styles.container}>
+    <div
+      className={
+        styles.container[
+          isStaticSwitcher && isNotActiveModule ? 'skipRightBorder' : 'normal'
+        ]
+      }
+    >
       {isStaticSwitcher ? (
         <ModuleSwitcherHeader isStaticSwitcher />
       ) : (
