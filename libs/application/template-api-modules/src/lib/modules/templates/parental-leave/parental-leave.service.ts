@@ -58,6 +58,7 @@ import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
   getRightsCode,
+  checkIfPhoneNumberIsGSM,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
@@ -118,12 +119,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  // Check whether phoneNumber is GSM
-  checkIfPhoneNumberIsGSM(phoneNumber: string) {
-    const phoneNumberStartStr = ['6', '7', '8']
-    return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
-  }
-
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
     return this.childrenService.provideChildren(application, auth.nationalId)
   }
@@ -163,7 +158,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     try {
       if (
         otherParentPhoneNumber &&
-        this.checkIfPhoneNumberIsGSM(otherParentPhoneNumber)
+        checkIfPhoneNumberIsGSM(otherParentPhoneNumber)
       ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
@@ -197,7 +192,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     try {
       if (
         applicantPhoneNumber &&
-        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+        checkIfPhoneNumberIsGSM(applicantPhoneNumber)
       ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
@@ -232,7 +227,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     try {
       if (
         applicantPhoneNumber &&
-        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+        checkIfPhoneNumberIsGSM(applicantPhoneNumber)
       ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
@@ -272,7 +267,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     try {
       if (
         employerPhoneNumber &&
-        this.checkIfPhoneNumberIsGSM(employerPhoneNumber)
+        checkIfPhoneNumberIsGSM(employerPhoneNumber)
       ) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
@@ -1205,6 +1200,52 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         this.logger.error(
           'Failed to send confirmation emails to applicant and employer in parental leave application',
           e,
+        )
+      }
+
+      return response
+    } catch (e) {
+      this.logger.error('Failed to send the parental leave application', e)
+      throw this.parseErrors(e)
+    }
+  }
+
+  async sendAdditonalDocuments({ application }: TemplateApiModuleActionProps) {
+    const { additionalDocuments } = getApplicationAnswers(application.answers)
+    const nationalRegistryId = application.applicant
+    const attachments: Attachment[] = []
+
+    additionalDocuments.forEach(async (val, i) => {
+      const pdf = await this.getPdf(application, i, 'fileUpload.additionalDocuments')
+      attachments.push({
+        attachmentType: apiConstants.attachments.other,
+        attachmentBytes: pdf,
+      })
+    })
+
+    try {
+      const periods = await this.createPeriodsDTO(
+        application,
+        nationalRegistryId,
+      )
+
+      const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
+        application,
+        periods,
+        attachments,
+        false, // put false in testData as this is not dummy request
+      )
+
+      const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
+        {
+          nationalRegistryId,
+          parentalLeave: parentalLeaveDTO,
+        },
+      )
+
+      if (!response.id) {
+        throw new Error(
+          `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
         )
       }
 
