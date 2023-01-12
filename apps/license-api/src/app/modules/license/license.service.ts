@@ -102,7 +102,7 @@ export class LicenseService {
     const revokeData = await service.revoke(inputData.nationalId)
 
     if (revokeData.ok) {
-      return { revokeSuccess: revokeData.data.voidSuccess }
+      return { revokeSuccess: revokeData.data.success }
     }
 
     const code = revokeData.error.code

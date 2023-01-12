@@ -6,11 +6,15 @@ import {
   ApiResponse,
   FetchResponse,
   ServiceError,
-  ListPassesResponseData,
   VerifyPassResponseData,
   VerifyPassData,
-  ParsedApiResponse,
   VoidPassData,
+  LOG_CATEGORY,
+  ListPassesResponseData,
+  VoidPassResponseData,
+  ListTemplatesResponseData,
+  GetPassResponseData,
+  UpsertPassResponseData,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
@@ -26,9 +30,15 @@ import {
   mapPassToPassDataInput,
   mergeInputFields,
 } from './utils'
-
-/** Category to attach each log message to */
-const LOG_CATEGORY = 'smartsolutions'
+import {
+  GET_PASS,
+  LIST_PASSES,
+  LIST_PASS_STATUSES,
+  LIST_TEMPLATES,
+  UPSERT_PASS,
+  VERIFY_PKPASS,
+  VOID_PASS,
+} from './graphql/queries'
 
 export interface SmartSolutionsConfig {
   apiKey: string
@@ -44,21 +54,17 @@ export class SmartSolutionsApi {
     private config: SmartSolutionsConfig,
   ) {}
 
-  private fetchUrl(payload: string): Promise<Response> {
-    return fetch(this.config.apiUrl, {
-      method: 'POST',
-      headers: {
-        'X-API-KEY': this.config.apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: payload,
-    })
-  }
-
-  private async fetchData(query: string): Promise<FetchResponse> {
+  private async fetch(query: string): Promise<FetchResponse> {
     let res: Response | null = null
     try {
-      res = await this.fetchUrl(query)
+      res = await fetch(this.config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'X-API-KEY': this.config.apiKey,
+          'Content-Type': 'application/json',
+        },
+        body: query,
+      })
     } catch (e) {
       this.logger.warn('Unable to fetch data', {
         exception: e,
@@ -121,34 +127,10 @@ export class SmartSolutionsApi {
     return { apiResponse: json as ApiResponse }
   }
 
-  private parseApiResponse<T>(apiRes: ApiResponse): ParsedApiResponse<T> {
-    if (apiRes.errors) {
-      const resError = apiRes.errors[0]
-      const code = MapErrorMessageToActionStatusCode(resError.message)
-      const error = {
-        code,
-        message: resError.message,
-        data: JSON.stringify(resError),
-      } as ServiceError
-
-      return { error }
-    }
-    const data = apiRes.data as T
-
-    //shouldn't happen
-    if (!data) {
-      const error = {
-        code: 13,
-        data: JSON.stringify(apiRes),
-        message: 'Service error',
-      }
-      return { error }
-    }
-
-    return { data }
-  }
-
   private filterExistingPasses(passes: Array<Pass>): Pass | undefined {
+    if (!(passes.length > 0)) {
+      return
+    }
     if (
       passes.some(
         (p) =>
@@ -170,95 +152,39 @@ export class SmartSolutionsApi {
     return
   }
 
-  async getPkPass(query: string, passId: string): Promise<Result<Pass>> {
-    const graphql = JSON.stringify({
-      query,
-      variables: {
-        id: passId,
-      },
-    })
+  private async query<T>(graphql: string): Promise<Result<T>> {
+    const response = await this.fetch(graphql)
 
-    const response = await this.fetchData(graphql)
+    const apiRes = response.apiResponse
+    if (apiRes) {
+      if (apiRes.errors) {
+        const resError = apiRes.errors[0]
+        const code = MapErrorMessageToActionStatusCode(resError.message)
+        const error = {
+          code,
+          message: resError.message,
+          data: JSON.stringify(resError),
+        } as ServiceError
 
-    if (response.apiResponse) {
-      const apiRes = this.parseApiResponse<{ pass: Pass }>(response.apiResponse)
-
-      if (apiRes.error) {
-        return {
-          ok: false,
-          error: apiRes.error,
-        }
+        return { ok: false, error }
       }
+      const data = apiRes.data as T
 
-      /** No error, so return the data. *
-       * If pass = undefined, it means the user currently has no passes */
-
-      return {
-        ok: true,
-        data: apiRes.data.pass,
-      }
-    }
-
-    if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
-    }
-
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
-      },
-    }
-  }
-
-  async fetchPkPasses(query: string): Promise<Result<Pass[]>> {
-    if (!this.config.passTemplateId) {
-      return {
-        ok: false,
-        error: {
-          code: 10,
+      //shouldn't happen
+      if (!data) {
+        const error = {
+          code: 13,
+          data: JSON.stringify(apiRes),
           message: 'Service error',
-        },
-      }
-    }
-
-    const graphql = JSON.stringify({
-      query,
-      variables: {},
-    })
-
-    const response = await this.fetchData(graphql)
-
-    if (response.apiResponse) {
-      const apiRes = this.parseApiResponse<ListPassesResponseData>(
-        response.apiResponse,
-      )
-
-      if (apiRes.error) {
-        return {
-          ok: false,
-          error: apiRes.error,
         }
+        return { ok: false, error }
       }
 
-      /** No error, so return the data. *
-       * If pass = undefined, it means the user currently has no passes */
-
-      return {
-        ok: true,
-        data: apiRes.data.passes?.data ?? [],
-      }
+      return { ok: true, data }
     }
 
     if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
+      return { ok: false, error: response.error }
     }
 
     return {
@@ -273,95 +199,31 @@ export class SmartSolutionsApi {
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
   ): Promise<Result<VerifyPassData>> {
-    //TODO: PULL INTO SEPARATE FOLDER
-    const verifyPkPassMutation = `
-      mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
-        updateStatusOnPassWithDynamicBarcode(dynamicBarcodeData: $dynamicBarcodeData) {
-          status
-          inputFieldValues {
-            passInputField {
-              identifier
-            }
-            value
-          }
-        }
-      }
-    `
-
     const graphql = JSON.stringify({
-      query: verifyPkPassMutation,
+      query: VERIFY_PKPASS,
       variables: {
         dynamicBarcodeData: payload,
       },
     })
 
-    const response = await this.fetchData(graphql)
+    const res = await this.query<VerifyPassResponseData>(graphql)
 
-    //If the fetch returned a response from the service
-    if (response.apiResponse) {
-      const parsedApiRes = this.parseApiResponse<VerifyPassResponseData>(
-        response.apiResponse,
-      )
-
-      if (parsedApiRes.error) {
-        return {
-          ok: false,
-          error: parsedApiRes.error,
-        }
-      }
-
-      //sweet success
+    if (res.ok) {
       return {
         ok: true,
         data: {
           valid: true,
-          pass: parsedApiRes.data.updateStatusOnPassWithDynamicBarcode,
+          pass: res.data.updateStatusOnPassWithDynamicBarcode,
         },
       }
     }
 
-    //if the fetch returned a service error, return it
-    if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
-    }
-
-    //catchall
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
-      },
-    }
+    return res
   }
 
   async upsertPkPass(payload: PassDataInput): Promise<Result<Pass>> {
-    if (!this.config.passTemplateId) {
-      return {
-        ok: false,
-        error: {
-          code: 10,
-          message: 'Service error',
-        },
-      }
-    }
-
-    //TODO: PULL INTO SEPARATE FOLDER
-    const upsertPkPassMutation = `
-      mutation UpsertPass($inputData: PassDataInput!) {
-        upsertPass(data: $inputData) {
-          distributionUrl
-          deliveryPageUrl
-          distributionQRCode
-        }
-      }
-    `
-
     const graphql = JSON.stringify({
-      query: upsertPkPassMutation,
+      query: UPSERT_PASS,
       variables: {
         inputData: {
           passTemplateId: this.config.passTemplateId,
@@ -370,45 +232,16 @@ export class SmartSolutionsApi {
       },
     })
 
-    this.logger.debug(graphql)
+    const res = await this.query<UpsertPassResponseData>(graphql)
 
-    const response = await this.fetchData(graphql)
-
-    //this.logger.debug(JSON.stringify(response))
-
-    if (response.apiResponse) {
-      const parsedApiRes = this.parseApiResponse<{ upsertPass: Pass }>(
-        response.apiResponse,
-      )
-
-      if (parsedApiRes.error) {
-        return {
-          ok: false,
-          error: parsedApiRes.error,
-        }
-      }
-
-      //sweet success
+    if (res.ok) {
       return {
         ok: true,
-        data: parsedApiRes.data.upsertPass,
+        data: res.data.upsertPass,
       }
     }
 
-    if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
-    }
-
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
-      },
-    }
+    return res
   }
 
   /**
@@ -421,31 +254,24 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
+    const listPassesQuery = JSON.stringify({
+      query: LIST_PASS_STATUSES,
+      variables: {
+        queryId: nationalId,
+        passTemplateId: this.config.passTemplateId,
+      },
+    })
     //First, need to find a suitable pass to update
-    //TODO: PULL INTO SEPARATE FOLDER
-    //TODO: DONT STRING INTERPOLATE, USE VARIABLES
-    const listPassesQuery = `
-      query ListPasses {
-        passes(
-          search: { query: "${nationalId}" },
-          passTemplateId: "${this.config.passTemplateId}",
-          order: { column: WHEN_MODIFIED, dir: DESC }
-          ) {
-            data {
-              id
-              status
-            }
-        }
-      }
-    `
-    const listResponse = await this.fetchPkPasses(listPassesQuery)
+    const listResponse = await this.query<ListPassesResponseData>(
+      listPassesQuery,
+    )
 
     if (!listResponse.ok) {
       //if failure, return the response
       return listResponse
     }
 
-    const pass = this.filterExistingPasses(listResponse.data)
+    const pass = this.filterExistingPasses(listResponse.data.passes?.data ?? [])
 
     //check if existing pass was found
     if (!pass) {
@@ -458,67 +284,22 @@ export class SmartSolutionsApi {
       }
     }
 
-    //TODO: PULL INTO SEPARATE FOLDER
     //found a pass, use its id to retrieve the needed pass input data
-    const passInputDataQuery = `
-      query GetPass($id: String!) {
-        pass(id: $id) {
-          alreadyPaid
-          expirationDate
-          expirationDateWithoutTime
-          expirationTime
-          externalIdentifier
-          id
-          inputFieldValues {
-            id
-            value
-            version
-            whenCreated
-            whenModified
-            passInputField {
-              description
-              format
-              id
-              identifier
-              label
-              mandatory
-              type
-              version
-              whenCreated
-              whenModified
-            }
-          }
-          isVoided
-          passBackSide {
-            expirationDate
-            id
-            label
-            orderIndex
-            value
-          }
-          posDistributionCode
-          stampsLeft
-          thumbnail {
-            description
-            filename
-            height
-            id
-            title
-            originalUrl
-            url
-            width
-          }
-        }
-      }
-    `
+    const getPassQuery = JSON.stringify({
+      query: GET_PASS,
+      variables: {
+        id: pass.id,
+      },
+    })
 
-    const findResponse = await this.getPkPass(passInputDataQuery, pass.id)
+    const passRes = await this.query<GetPassResponseData>(getPassQuery)
 
-    if (!findResponse.ok) {
+    if (!passRes.ok) {
       //if failure, return the response
-      return findResponse
+      return passRes
     }
-    const passInputData = mapPassToPassDataInput(findResponse.data)
+
+    const passInputData = mapPassToPassDataInput(passRes.data.pass)
 
     const inputFieldValues = mergeInputFields(
       passInputData.inputFieldValues ?? undefined,
@@ -531,6 +312,7 @@ export class SmartSolutionsApi {
       inputFieldValues,
     }
 
+    //Now we can just call upsert with the correct data
     return await this.upsertPkPass(updatedPassData)
   }
 
@@ -538,72 +320,33 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    //TODO: PULL INTO SEPARATE FOLDER
-    const listPassesQuery = `
-      query ListPasses {
-        passes(
-          search: { query: "${nationalId}" },
-          passTemplateId: "${this.config.passTemplateId}",
-          order: { column: WHEN_MODIFIED, dir: DESC }
-          ) {
-          data {
-            whenCreated
-            whenModified
-            passTemplate {
-                id
-            }
-            distributionUrl
-            distributionQRCode
-            id
-            status
-            inputFieldValues {
-              passInputField {
-                identifier
-              }
-              value
-            }
-          }
-        }
-      }
-    `
-    const existingPasses = await this.fetchPkPasses(listPassesQuery)
+    const listPassesQuery = JSON.stringify({
+      query: LIST_PASSES,
+      variables: {
+        queryId: nationalId,
+        passTemplateId: this.config.passTemplateId,
+      },
+    })
 
-    if (
-      existingPasses?.ok &&
-      existingPasses?.data.some(
-        (p) =>
-          p.status === PassStatus.Active || p.status === PassStatus.Unclaimed,
+    const existingPasses = await this.query<ListPassesResponseData>(
+      listPassesQuery,
+    )
+
+    if (existingPasses.ok) {
+      const existingPass = this.filterExistingPasses(
+        existingPasses.data.passes?.data ?? [],
       )
-    ) {
-      const activePasses = existingPasses?.data.filter(
-        (p) => p.status === PassStatus.Active,
-      )
-      if (activePasses?.length) {
+      if (existingPass) {
         return {
-          ok: existingPasses.ok,
-          //return the most recent active pass
-          data: activePasses[0],
-        }
-      }
-
-      const unclaimedPasses = existingPasses?.data?.filter(
-        (p) => p.status === PassStatus.Unclaimed,
-      )
-
-      if (unclaimedPasses?.length) {
-        return {
-          ok: existingPasses.ok,
-          //return the most recent unclaimed pass
-          data: unclaimedPasses[0],
+          ok: true,
+          data: existingPass,
         }
       }
     }
-
     this.logger.debug('No active pkpass found for user, creating a new one')
 
-    const pass = await this.upsertPkPass(payload)
-    //const pass = await this.upsertPkPass({})
-    return pass
+    //Create the pass
+    return await this.upsertPkPass(payload)
   }
 
   async generatePkPassQrCode(
@@ -636,27 +379,20 @@ export class SmartSolutionsApi {
   }
 
   async voidPkPass(nationalId: string): Promise<Result<VoidPassData>> {
-    //TODO: PULL INTO SEPARATE FOLDER
-    const listPassesQuery = `
-      query ListPasses {
-        passes(
-          search: { query: "${nationalId}" },
-          passTemplateId: "${this.config.passTemplateId}",
-          order: { column: WHEN_MODIFIED, dir: DESC }
-          ) {
-          data {
-            id
-          }
-        }
-      }
-    `
-    const existingPasses = await this.fetchPkPasses(listPassesQuery)
+    const listPassIds = JSON.stringify({
+      query: LIST_PASS_STATUSES,
+      variables: {
+        queryId: nationalId,
+        passTemplateId: this.config.passTemplateId,
+      },
+    })
+    const existingPasses = await this.query<ListPassesResponseData>(listPassIds)
 
     if (!existingPasses.ok) {
       return existingPasses
     }
 
-    const activePass = existingPasses.data.find(
+    const activePass = existingPasses.data.passes?.data.find(
       (p) => p.status === PassStatus.Active,
     )
 
@@ -670,114 +406,40 @@ export class SmartSolutionsApi {
       }
     }
 
-    this.logger.debug('Active pass found for user, preparing to void')
-
-    //TODO: PULL INTO SEPARATE FOLDER
-    const voidPkPassMutation = `
-      mutation VoidPass($id: String!) {
-        voidPass(id: $id)
-      }
-    `
-
-    const graphql = JSON.stringify({
-      query: voidPkPassMutation,
+    const voidPassMutation = JSON.stringify({
+      query: VOID_PASS,
       variables: {
         id: activePass.id,
       },
     })
 
-    const response = await this.fetchData(graphql)
+    const response = await this.query<VoidPassResponseData>(voidPassMutation)
 
-    if (response.apiResponse) {
-      const parsedApiRes = this.parseApiResponse<{ success: boolean }>(
-        response.apiResponse,
-      )
-
-      if (parsedApiRes.error) {
-        return {
-          ok: false,
-          error: parsedApiRes.error,
-        }
-      }
-
-      //sweet success
+    if (response.ok) {
       return {
         ok: true,
-        data: {
-          voidSuccess: parsedApiRes.data.success,
-        },
+        data: { success: response.data.voidPass },
       }
     }
 
-    if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
-    }
-
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
-      },
-    }
+    return response
   }
 
-  async listTemplates(): Promise<Result<Array<PassTemplate>>> {
-    const listTemplatesQuery = {
-      query: `
-        query passTemplateQuery {
-          passTemplates {
-            data {
-              id
-              name
-            }
-          }
-        }
-      `,
-    }
-
+  async listTemplates(): Promise<Result<Array<PassTemplate> | undefined>> {
     const graphql = JSON.stringify({
-      query: listTemplatesQuery,
+      query: LIST_TEMPLATES,
       variables: {},
     })
 
-    const response = await this.fetchData(graphql)
+    const response = await this.query<ListTemplatesResponseData>(graphql)
 
-    if (response.apiResponse) {
-      const parsedApiRes = this.parseApiResponse<{ data: Array<PassTemplate> }>(
-        response.apiResponse,
-      )
-
-      if (parsedApiRes.error) {
-        return {
-          ok: false,
-          error: parsedApiRes.error,
-        }
-      }
-
-      //sweet success
+    if (response.ok) {
       return {
         ok: true,
-        data: parsedApiRes.data.data,
+        data: response.data.passes?.data,
       }
     }
 
-    if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
-    }
-
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
-      },
-    }
+    return response
   }
 }

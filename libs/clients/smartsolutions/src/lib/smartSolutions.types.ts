@@ -1,4 +1,7 @@
-import { Pass } from '../../gen/schema'
+import { Pass, PassTemplate } from '../../gen/schema'
+
+/** Category to attach each log message to */
+export const LOG_CATEGORY = 'smartsolutions'
 
 export type ParsedApiResponse<T> =
   | { data: T; error?: never }
@@ -69,7 +72,7 @@ export interface VerifyPassData {
 }
 
 export interface VoidPassData {
-  voidSuccess: boolean
+  success: boolean
 }
 
 export interface ListPassesResponseData {
@@ -78,18 +81,24 @@ export interface ListPassesResponseData {
   }
 }
 
+export interface GetPassResponseData {
+  pass: Pass
+}
+
 export interface VerifyPassResponseData {
   updateStatusOnPassWithDynamicBarcode?: Pass
 }
 
 export interface UpsertPassResponseData {
-  passes?: {
-    data: Array<Pass>
-  }
+  upsertPass: Pass
 }
 
 export interface ListTemplatesResponseData {
   passes?: {
-    data: Array<Pass>
+    data: Array<PassTemplate>
   }
+}
+
+export interface VoidPassResponseData {
+  voidPass: boolean
 }
