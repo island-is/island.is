@@ -52,8 +52,20 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     'careerHistory',
     undefined,
   ) as string | undefined
+  const careerIndustry = getValueViaPath(
+    application.answers,
+    'careerIndustry',
+    undefined,
+  ) as string | undefined
+
   if (careerHistory === 'no') {
     return m.nameApplicationNeverWorkedBefore
+  }
+  if (careerIndustry) {
+    return {
+      name: m.nameApplicationWithValue,
+      value: `- ${careerIndustry}`,
+    }
   }
   return m.name
 }
