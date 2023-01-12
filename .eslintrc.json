@@ -49,6 +49,7 @@
               {
                 "sourceTag": "scope:as-api",
                 "onlyDependOnLibsWithTags": [
+                  "lib:api",
                   "lib:as-api",
                   "lib:as-shared",
                   "lib:client",
