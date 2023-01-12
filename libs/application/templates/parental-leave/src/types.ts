@@ -154,4 +154,6 @@ export interface EmployerRow {
   email: string
   phoneNumber: string
   ratio: string
+  token: string
+  status: string
 }

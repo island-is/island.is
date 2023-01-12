@@ -16,6 +16,7 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import { EmployerRow } from '../../types'
 import { EmployersTable } from '../components/EmployersTable'
+import { States } from '../../constants'
 
 const EmployersOverview: FC<RepeaterProps> = ({
   error,
@@ -73,7 +74,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
       <Box paddingTop={5} paddingBottom={5}>
         <EmployersTable
           employers={employers}
-          editable
+          editable={application.state === States.DRAFT}
           onDeleteEmployer={onDeleteEmployer}
         />
       </Box>

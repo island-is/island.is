@@ -40,6 +40,7 @@ import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
+  allEmployersHaveApproved,
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
@@ -100,6 +101,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
+    entry: (context, event) => {
+      // TODO: Configure all old answers objects to the new structure
+    },
     states: {
       [States.PREREQUISITES]: {
         exit: [
@@ -361,7 +365,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
               write: {
                 answers: [
-                  'employerNationalRegistryId',
                   'periods',
                   'selectedChild',
                   'payments',
@@ -392,6 +395,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: allEmployersHaveApproved
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },

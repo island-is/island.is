@@ -32,22 +32,6 @@ export const EmployerApproval: Form = buildForm({
       title: employerFormMessages.reviewSection,
       children: [
         buildSubSection({
-          id: 'review.companyNationalRegistryId',
-          title: employerFormMessages.employerNationalRegistryIdSection,
-          children: [
-            buildTextField({
-              id: 'employerNationalRegistryId',
-              title: employerFormMessages.employerNationalRegistryId,
-              description: (application) => ({
-                ...employerFormMessages.employerNationalRegistryIdDescription,
-                values: { nationalId: application.applicant },
-              }),
-              format: '######-####',
-              placeholder: '000000-0000',
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'review.confirmation',
           title: employerFormMessages.confirmationSubSection,
           children: [

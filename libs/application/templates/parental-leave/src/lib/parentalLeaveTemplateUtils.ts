@@ -8,6 +8,14 @@ import {
   PARENTAL_GRANT_STUDENTS,
 } from '../constants'
 import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
+import { EmployerRow } from '../types';
+import { getValueViaPath } from '@island.is/application/core';
+
+export function allEmployersHaveApproved(context: ApplicationContext) {
+  const employers = getValueViaPath<EmployerRow[]>(context.application.answers, 'employers');
+  if (!employers) { return false; }
+  return employers.every(e => e.status === 'APPROVED');
+}
 
 export function hasEmployer(context: ApplicationContext) {
   const currentApplicationAnswers = context.application.answers as {
