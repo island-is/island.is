@@ -25,8 +25,6 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
     { id: "hasLogin", name: "Jón" },
     { id: 2, name: "Pétur" }
   ]
-  console.log(getValueViaPath<string>(application.answers, '1'))
-
 
   return (
     <Box>
