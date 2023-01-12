@@ -48,7 +48,7 @@ export const getAllContentTypesInAscendingOrder = async () => {
     contentTypes.length < contentfulTypesResponse.total
   ) {
     contentfulTypesResponse = await client.contentType.getMany({
-      limit: 1000,
+      limit: 100,
       query: {
         skip: contentTypes.length,
       },
