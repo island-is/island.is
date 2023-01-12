@@ -26,6 +26,7 @@ import { PaymentModuleConfig } from '@island.is/application/api/payment'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
+import { CourtBankruptcyCertClientConfig } from '@island.is/clients/court-bankruptcy-cert'
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule
         ChargeFjsV2ClientConfig,
         PassportsClientConfig,
         PaymentScheduleClientConfig,
+        CourtBankruptcyCertClientConfig,
       ],
     }),
   ],

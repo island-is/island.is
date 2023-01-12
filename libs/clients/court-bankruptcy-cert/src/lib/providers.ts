@@ -10,7 +10,7 @@ import {
   LookupDataGDNJCasesApi,
   ParticipantsApi,
   SearchBankruptcyHistoryApi,
-  UploadStreamApi,
+  // UploadStreamApi,
 } from '../../gen/fetch'
 import { ApiConfig } from './api.config'
 
@@ -25,7 +25,7 @@ export const exportedApis = [
   LookupDataGDNJCasesApi,
   ParticipantsApi,
   SearchBankruptcyHistoryApi,
-  UploadStreamApi,
+  // UploadStreamApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {

@@ -7,6 +7,6 @@ import { exportedApis } from './providers'
 @Module({
   imports: [IdsClientConfig.registerOptional()],
   providers: [ApiConfig, CourtBankruptcyCertService, ...exportedApis],
-  exports: exportedApis,
+  exports: [CourtBankruptcyCertService],
 })
 export class CourtBankruptcyCertClientModule {}

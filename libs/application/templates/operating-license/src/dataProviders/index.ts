@@ -11,3 +11,8 @@ export const NoDebtCertificateApi = defineTemplateApi({
   action: 'debtLessCertificate',
   externalDataId: 'debtStatus',
 })
+
+export const CourtBankruptcyCertApi = defineTemplateApi({
+  action: 'courtBankruptcyCert',
+  externalDataId: 'courtBankruptcyCert',
+})

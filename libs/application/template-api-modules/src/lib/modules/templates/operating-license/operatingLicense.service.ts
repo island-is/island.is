@@ -31,6 +31,7 @@ import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { OperatingLicenseFakeData } from '@island.is/application/templates/operating-license/types'
+import { CourtBankruptcyCertService } from '@island.is/clients/court-bankruptcy-cert'
 
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
@@ -41,6 +42,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
+    private readonly courtBankruptcyCertService: CourtBankruptcyCertService,
   ) {
     super(ApplicationTypes.OPERATING_LCENSE)
     this.s3 = new S3()
@@ -154,6 +156,15 @@ export class OperatingLicenseService extends BaseTemplateApiService {
       )
     }
 
+    return { success: true }
+  }
+
+  async courtBankruptcyCert({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+    const cert = await this.courtBankruptcyCertService.searchBankruptcy(auth)
+    console.log('CERT', cert)
     return { success: true }
   }
 

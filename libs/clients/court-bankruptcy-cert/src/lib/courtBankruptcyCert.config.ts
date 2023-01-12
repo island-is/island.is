@@ -19,7 +19,7 @@ export const CourtBankruptcyCertClientConfig = defineConfig<
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_COURT_BANKRUPTCY_CERT_PATH',
-      'IS-DEV/GOV/10019/Domstolasyslan',
+      'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
     ),
     fetch: {
       timeout: 30000,

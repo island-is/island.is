@@ -376,6 +376,9 @@
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
+      "@island.is/clients/court-bankruptcy-cert": [
+        "libs/clients/court-bankruptcy-cert/src/index.ts"
+      ],
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
       ],

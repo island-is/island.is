@@ -24,7 +24,11 @@ import { subSectionPropertyRepeater } from './subSectionPropertyRepeater'
 import { subSectionOpeningHours } from './subSectionOpeningHours'
 import { subSectionOtherInfo } from './subSectionOtherInfo'
 import { sectionOverview } from './sectionOverview'
-import { CriminalRecordApi, NoDebtCertificateApi } from '../../dataProviders'
+import {
+  CourtBankruptcyCertApi,
+  CriminalRecordApi,
+  NoDebtCertificateApi,
+} from '../../dataProviders'
 import { fakeDataSection } from './fakeDataSection'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
@@ -57,8 +61,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 subTitle: m.dataCollectionDebtStatusSubtitle,
               }),
               buildDataProviderItem({
-                id: 'courtBankruptcyCertificate',
-                type: '',
+                provider: CourtBankruptcyCertApi,
                 title: m.dataCollectionNonBankruptcyDisclosureTitle,
                 subTitle: m.dataCollectionNonBankruptcyDisclosureSubtitle,
               }),

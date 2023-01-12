@@ -23,7 +23,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "curl https://foris.gopro.net/hdrel/justiceportal/openapi3/docs/v1 -H 'Accept: application/json' > src/clientConfig.json"
+          "curl --location --request GET 'http://localhost:8081/r1/IS-DEV/GOV/10019/Domstolasyslan/getOpenAPI?serviceCode=JusticePortal-v1' --header \"X-Road-Client: $XROAD_CLIENT_ID\" > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/court-bankruptcy-cert"

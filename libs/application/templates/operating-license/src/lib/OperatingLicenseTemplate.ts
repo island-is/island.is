@@ -25,7 +25,11 @@ import {
   getApplicationFeatureFlags,
   OperatingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { CriminalRecordApi, NoDebtCertificateApi } from '../dataProviders'
+import {
+  CourtBankruptcyCertApi,
+  CriminalRecordApi,
+  NoDebtCertificateApi,
+} from '../dataProviders'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -91,6 +95,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                 UserProfileApi,
                 CriminalRecordApi,
                 NoDebtCertificateApi,
+                CourtBankruptcyCertApi,
               ],
             },
           ],

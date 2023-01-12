@@ -86,6 +86,11 @@
               "schema": {
                 "$ref": "#/components/schemas/CredentialsData"
               }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialsData"
+              }
             }
           },
           "required": true
@@ -681,14 +686,7 @@
           "content": {
             "application/form-data": {
               "schema": {
-                "required": ["File"],
-                "properties": {
-                  "File": {
-                    "type": "string",
-                    "description": "Upload file",
-                    "format": "binary"
-                  }
-                }
+                "$ref": "#/components/schemas/FileStream"
               }
             }
           },
@@ -716,6 +714,16 @@
   },
   "components": {
     "schemas": {
+      "FileStream": {
+        "required": ["File"],
+        "properties": {
+          "File": {
+            "type": "string",
+            "description": "Upload file",
+            "format": "binary"
+          }
+        }
+      },
       "CredentialsData": {
         "required": ["password", "username"],
         "type": "object",
