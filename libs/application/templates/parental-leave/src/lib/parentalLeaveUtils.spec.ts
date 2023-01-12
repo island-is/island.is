@@ -1419,23 +1419,21 @@ describe('removeCountryCode', () => {
   })
 })
 
-describe('allowOtherParentToUsePersonalAllowance', () => {
-  it('should return true if the otherParent is SPOUSE otherwise false', () => {
-    const application1 = buildApplication({
+test.each([
+  { parentRelation: '', expected: false },
+  { parentRelation: SPOUSE, expected: true },
+  { parentRelation: SINGLE, expected: false },
+  { parentRelation: 'some bogus value', expected: false },
+])(
+  'it should return true if the otherParent is SPOUSE otherwise false',
+  ({ parentRelation, expected }) => {
+    const application = buildApplication({
       answers: {
-        otherParent: SPOUSE,
+        otherParent: parentRelation,
       },
     })
-    const application2 = buildApplication({
-      answers: {
-        otherParent: '',
-      },
-    })
-    expect(allowOtherParentToUsePersonalAllowance(application1.answers)).toBe(
-      true,
+    expect(allowOtherParentToUsePersonalAllowance(application.answers)).toBe(
+      expected,
     )
-    expect(allowOtherParentToUsePersonalAllowance(application2.answers)).toBe(
-      false,
-    )
-  })
-})
+  },
+)
