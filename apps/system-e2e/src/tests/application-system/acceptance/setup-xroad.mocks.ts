@@ -1,16 +1,11 @@
 import { addXroadMock, resetMocks, wildcard } from '../../../support/wire-mocks'
 import { HttpMethod, Response } from '@anev/ts-mountebank'
 import { EinstaklingsupplysingarToJSON } from '../../../../../../libs/clients/national-registry/v2/gen/fetch'
-import {
-  Labor,
-  NationalRegistry,
-  Properties,
-} from '../../../../../../infra/src/dsl/xroad'
+import { Labor, NationalRegistry } from '../../../../../../infra/src/dsl/xroad'
 import { PostParentalLeaveResponseToJSON } from '../../../../../../libs/clients/vmst/gen/fetch'
 import formatISO from 'date-fns/formatISO'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
-import { FasteignSimpleWrapperToJSON } from '../../../../../../libs/clients/assets/gen/fetch'
 
 export async function setupXroadMocks() {
   await resetMocks()
@@ -276,15 +271,6 @@ export async function setupXroadMocks() {
       }),
     ],
     prefixType: 'base-path-with-env',
-  })
-  await addXroadMock({
-    config: Properties,
-    prefix: 'XROAD_PROPERTIES_SERVICE_V2_PATH',
-    prefixType: 'only-base-path',
-    apiPath: '/asdfasdf',
-    response: new Response().withJSONBody(
-      FasteignSimpleWrapperToJSON({ fasteignir: [] }),
-    ),
   })
   await wildcard()
 }

@@ -9,8 +9,7 @@
     "target": "ESNext",
     "module": "commonjs",
     "moduleResolution": "Node",
-    "sourceMap": true,
-    "experimentalDecorators": true
+    "sourceMap": true
   },
   "include": ["src/**/*.ts", "src/**/*.js", "global.d.ts"]
 }
