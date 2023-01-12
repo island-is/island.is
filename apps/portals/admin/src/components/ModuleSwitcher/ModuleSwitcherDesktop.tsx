@@ -21,7 +21,7 @@ export const ModuleSwitcherDesktop = () => {
     unstable_offset: [0, -60],
   })
   const { formatMessage } = useLocale()
-  const isNotActiveModule = !useActiveModule()
+  const activeModule = useActiveModule()
   const { status } = useSingleNavigationItem(TOP_NAVIGATION, BOTTOM_NAVIGATION)
   const isStaticSwitcher = status !== SingleNavigationItemStatus.MULTIPLE_ITEMS
 
@@ -29,7 +29,7 @@ export const ModuleSwitcherDesktop = () => {
     <div
       className={
         styles.container[
-          isStaticSwitcher && isNotActiveModule ? 'skipRightBorder' : 'normal'
+          isStaticSwitcher && !activeModule ? 'skipRightBorder' : 'normal'
         ]
       }
     >

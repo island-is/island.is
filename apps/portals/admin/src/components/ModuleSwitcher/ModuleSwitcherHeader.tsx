@@ -28,11 +28,13 @@ export const ModuleSwitcherHeader = ({
     >
       <div>
         <Text variant="eyebrow">{formatMessage(m.shortTitle)}</Text>
-        <Text>
-          {formatMessage(
-            activeModule ? activeModule.name : rootNavigationItem.name,
-          )}
-        </Text>
+        {(!isStaticSwitcher || activeModule) && (
+          <Text>
+            {formatMessage(
+              activeModule ? activeModule.name : rootNavigationItem.name,
+            )}
+          </Text>
+        )}
       </div>
       {!isStaticSwitcher && (
         <Box
