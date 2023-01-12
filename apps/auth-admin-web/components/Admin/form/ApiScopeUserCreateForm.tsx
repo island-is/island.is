@@ -125,8 +125,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="name"
                     type="text"
-                    name="apiScopeUser.name"
-                    ref={register({
+                    {...register('apiScopeUser.name', {
                       minLength: 1,
                       validate: (value) => value.trim().length > 1,
                     })}

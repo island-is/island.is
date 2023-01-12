@@ -84,7 +84,13 @@ const GrantAccess: PortalModuleComponent = ({ userInfo }) => {
       domainName: selectedOption?.value ?? null,
     },
   })
-  const { handleSubmit, control, errors, watch, reset } = methods
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+    reset,
+  } = methods
 
   useEffect(() => {
     reset({ domainName: selectedOption?.value ?? null })

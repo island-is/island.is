@@ -20,7 +20,6 @@ export type Answer =
   | boolean
   | Array<string | number | boolean | FormValue>
   | FormValue
-  | undefined
 
 export interface FormValue {
   [key: string]: Answer

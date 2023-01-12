@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useForm } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
@@ -9,6 +9,8 @@ import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministra
 import { useCreateAdministrativeContact } from '../../shared/useCreateAdministrativeContact'
 import { ContactInput } from '../../shared/useUpdateTechnicalContact'
 import { CreateContactInput } from '../../shared/useCreateTechnicalContact'
+import { getErrorViaPath } from '@island.is/application/core'
+
 interface Props {
   administrativeContact?: Contact | null
   organisationId: string
@@ -36,7 +38,9 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
     loading: loadingCreate,
   } = useCreateAdministrativeContact(organisationId, organisationNationalId)
 
-  const onSubmit = (data: { administrativeContact: Contact }) => {
+  const onSubmit: SubmitHandler<any> = (data: {
+    administrativeContact: Contact
+  }) => {
     if (data?.administrativeContact && administrativeContact) {
       const input: ContactInput = {
         ...data.administrativeContact,
@@ -73,8 +77,14 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactNamePlaceholder,
             )}
-            hasError={errors.administrativeContact?.name}
-            errorMessage={errors.administrativeContact?.name?.message}
+            hasError={
+              getErrorViaPath(errors, 'administrativeContact.name') !==
+              undefined
+            }
+            errorMessage={getErrorViaPath(
+              errors,
+              'administrativeContact.name.message',
+            )}
           />
           <DocumentProviderInput
             control={control}
@@ -96,8 +106,14 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactEmailPlaceholder,
             )}
-            hasError={errors.administrativeContact?.email}
-            errorMessage={errors.administrativeContact?.email?.message}
+            hasError={
+              getErrorViaPath(errors, 'administrativeContact.email') !==
+              undefined
+            }
+            errorMessage={getErrorViaPath(
+              errors,
+              'administrativeContact.email.message',
+            )}
           />
           <DocumentProviderInput
             control={control}
@@ -135,8 +151,14 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactPhoneNumberPlaceholder,
             )}
-            hasError={errors.administrativeContact?.phoneNumber}
-            errorMessage={errors.administrativeContact?.phoneNumber?.message}
+            hasError={
+              getErrorViaPath(errors, 'administrativeContact.phoneNumber') !==
+              undefined
+            }
+            errorMessage={getErrorViaPath(
+              errors,
+              'administrativeContact.phoneNumber.message',
+            )}
           />
           <Box
             display="flex"

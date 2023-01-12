@@ -25,6 +25,7 @@ import { Locale } from '@island.is/shared/types'
 import BackgroundImage from '../BackgroundImage/BackgroundImage'
 import { Slice as SliceType, richText } from '../..'
 import * as styles from './TellUsAStoryFrom.css'
+import { getErrorViaPath } from '@island.is/application/core'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -148,7 +149,12 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
     setIsTablet(false)
   }, [width])
 
-  const { handleSubmit, register, control, errors } = methods
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors },
+  } = methods
 
   useEffect(() => {
     if (state === 'error') {
@@ -235,7 +241,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                             : null
                         }
                         required
-                        hasError={errors.organization}
+                        hasError={
+                          getErrorViaPath(errors, 'organization') !== undefined
+                        }
                         disabled={
                           Boolean(error || loading) || state === 'submitting'
                         }
@@ -264,7 +272,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                             ? dateOfStoryInputErrorMessage
                             : null
                         }
-                        hasError={errors.dateOfStory}
+                        hasError={
+                          getErrorViaPath(errors, 'dateOfStory') !== undefined
+                        }
                         disabled={state === 'submitting'}
                         handleChange={onChange}
                       />
@@ -323,7 +333,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                       placeholder={subjectPlaceholder}
                       defaultValue=""
                       disabled={state === 'submitting'}
-                      ref={register({
+                      {...register('subject', {
                         required: false,
                       })}
                     />
@@ -335,9 +345,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                       textarea
                       rows={isTablet ? 8 : showIntro ? 14 : 18}
                       required
-                      errorMessage={errors.message?.message}
+                      errorMessage={getErrorViaPath(errors, 'message.message')}
                       disabled={state === 'submitting'}
-                      ref={register({
+                      {...register('message', {
                         required: messageInputErrorMessage,
                       })}
                     />
@@ -357,10 +367,10 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     placeholder={namePlaceholder}
                     defaultValue=""
                     required
-                    errorMessage={errors.name?.message}
+                    errorMessage={getErrorViaPath(errors, 'name.message')}
                     disabled={state === 'submitting'}
-                    ref={register({
-                      required: nameInputErrorMessage,
+                    {...register('name', {
+                      required: true,
                     })}
                   />
                 </GridColumn>
@@ -372,9 +382,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     placeholder={emailPlaceholder}
                     defaultValue=""
                     required
-                    errorMessage={errors.email?.message}
+                    errorMessage={getErrorViaPath(errors, 'email.message')}
                     disabled={state === 'submitting'}
-                    ref={register({
+                    {...register('email', {
                       required: emailInputErrorMessage,
                       pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
