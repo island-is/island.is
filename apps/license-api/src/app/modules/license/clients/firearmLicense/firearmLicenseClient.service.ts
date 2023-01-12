@@ -35,8 +35,6 @@ export class FirearmLicenseClientService implements GenericLicenseClient {
     //need to parse the scanner data
     const { code, date } = JSON.parse(inputData)
 
-    console.log(code)
-
     return await this.smartApi.verifyPkPass({ code, date })
 
     //TODO: Verify license when endpoints are ready
