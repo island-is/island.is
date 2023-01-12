@@ -26,21 +26,22 @@ export type XRoadEnvs<
   T extends XroadSectionConfig
 > = T extends XroadSectionConfig ? keyof T['env'] : never
 
+export const XROAD_BASE_PATH = {
+  dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
+  staging: ref((h) => h.svc('http://securityserver.staging01.devland.is')),
+  prod: 'http://securityserver.island.is',
+  local: ref((h) => h.svc('http://localhost:8081')), // x-road proxy
+}
 export const Base = new XroadConf({
   env: {
-    XROAD_BASE_PATH: {
-      dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
-      staging: 'http://securityserver.staging01.devland.is',
-      prod: 'http://securityserver.island.is',
-      local: ref((h) => h.svc('http://localhost:8081')),
-    },
+    XROAD_BASE_PATH: XROAD_BASE_PATH,
     XROAD_BASE_PATH_WITH_ENV: {
       dev: ref(
         (h) => `${h.svc('http://securityserver.dev01.devland.is')}/r1/IS-DEV`,
       ),
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
-      local: ref((h) => `${h.svc('http://localhost:8081')}/r1/IS-DEV`),
+      local: ref((h) => `${h.svc('http://localhost:8081')}/r1/IS-DEV`), // x-road proxy
     },
     XROAD_TLS_BASE_PATH: {
       dev: 'https://securityserver.dev01.devland.is',
