@@ -17,6 +17,12 @@
         "passWithNoTests": true
       },
       "outputs": ["coverage/libs/cms-translations"]
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/cms-translations/codegen.yml"
+      }
     }
   },
   "tags": []

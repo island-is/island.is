@@ -1,0 +1,22 @@
+schema:
+  - 'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master':
+      method: GET
+      headers:
+        Authorization: 'Bearer ${CONTENTFUL_DELIVERY_KEY}'
+documents: libs/cms-translations/queries/*.graphql
+generates:
+   libs/cms-translations/contentful/client.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-graphql-request
+    config:
+      exportFragmentSpreadSubTypes: true
+      scalars:
+        DateTime: Date
+        JSON: '{ [key: string]: any }'
+      namingConvention:
+        typeNames: change-case#pascalCase
+hooks:
+  afterAllFileWrite:
+    - prettier --write

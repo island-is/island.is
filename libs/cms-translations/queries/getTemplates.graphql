@@ -1,0 +1,13 @@
+query getTemplates($locale: String!){
+    hnippTemplateCollection(locale: $locale) {
+      items {
+        templateId
+        notificationTitle
+        notificationBody
+        notificationDataCopy
+        clickAction
+        category
+        args
+      }
+    }
+  }

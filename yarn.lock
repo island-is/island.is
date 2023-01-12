@@ -4323,6 +4323,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-codegen/typescript-graphql-request@npm:^4.5.8":
+  version: 4.5.8
+  resolution: "@graphql-codegen/typescript-graphql-request@npm:4.5.8"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": ^2.7.2
+    "@graphql-codegen/visitor-plugin-common": 2.13.1
+    auto-bind: ~4.0.0
+    tslib: ~2.4.0
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    graphql-request: ^3.4.0 || ^4.0.0 || ^5.0.0
+    graphql-tag: ^2.0.0
+  checksum: d8bc9a30a3bee10e5a3b9b5137c829a4e846ff8ba452688cdb2459a42aaeec0129bcb43143f976814598b73e70134a07b0637001f952e60e4ca7759027ea9f83
+  languageName: node
+  linkType: hard
+
 "@graphql-codegen/typescript-operations@npm:2.5.3":
   version: 2.5.3
   resolution: "@graphql-codegen/typescript-operations@npm:2.5.3"
@@ -25205,6 +25221,7 @@ __metadata:
     "@graphql-codegen/near-operation-file-preset": ^2.4.4
     "@graphql-codegen/schema-ast": 2.5.1
     "@graphql-codegen/typescript": 2.7.3
+    "@graphql-codegen/typescript-graphql-request": ^4.5.8
     "@graphql-codegen/typescript-operations": 2.5.3
     "@graphql-codegen/typescript-react-apollo": 3.3.3
     "@graphql-codegen/typescript-resolvers": 2.7.3

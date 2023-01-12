@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import memoize from 'memoizee'
 
 import { logger } from '@island.is/logging'
 import { ContentfulRepository } from '@island.is/cms'
 import { Locale } from '@island.is/shared/types'
+import { Sdk } from '../../contentful/client'
 
 export type TranslationsDict = Record<string, string>
 
@@ -40,7 +41,10 @@ const errorHandler = (name: string) => {
 
 @Injectable()
 export class CmsTranslationsService {
-  constructor(private contentfulRepository: ContentfulRepository) {}
+  constructor(
+    private contentfulRepository: ContentfulRepository,
+    @Inject('GRAPHQL_CLIENT') private readonly graphQLClient: Sdk
+    ) {}
 
   getNamespaceMessages = memoize(
     async (namespace: string) => {

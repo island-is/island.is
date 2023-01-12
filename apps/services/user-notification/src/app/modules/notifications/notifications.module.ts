@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { CacheModule, Module } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
 import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
@@ -21,6 +21,7 @@ import { NotificationsService } from './notifications.service'
 
 @Module({
   imports: [
+    CacheModule.register({}),// redis talk to andes look at others - simple basic cache in memory
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({

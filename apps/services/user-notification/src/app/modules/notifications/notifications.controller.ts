@@ -89,6 +89,7 @@ export class NotificationsController {
         locale: {
           required: false,
           type: 'string',
+          example: 'is-IS',
         },
       },
     },
@@ -116,12 +117,14 @@ export class NotificationsController {
         locale: {
           required: false,
           type: 'string',
+          example: 'is-IS',
         },
       },
       params: {
         templateId: {
           type: 'string',
           description: 'ID of the template',
+          example: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
         },
       },
     },
