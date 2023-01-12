@@ -8,7 +8,6 @@ import {
   DataUploadResponse,
   CertificateInfoResponse,
 } from '@island.is/clients/syslumenn'
-import { NationalRegistry } from './types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationTypes,
@@ -173,7 +172,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
 
   private getName(application: Application): string {
     const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+      ?.data as NationalRegistryIndividual
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
 
     return `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.jpeg`
