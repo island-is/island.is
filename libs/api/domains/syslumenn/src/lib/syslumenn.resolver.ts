@@ -6,13 +6,14 @@ import { OperatingLicensesCSV } from './models/operatingLicensesCSV'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { RealEstateAgent } from './models/realEstateAgent'
 import { Lawyer } from './models/lawyer'
-import { PropertyDetail, SyslumennService } from '@island.is/clients/syslumenn'
+import { SyslumennService } from '@island.is/clients/syslumenn'
 import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
 import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
 import { AssetName } from './models/assetName'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 import {
   BypassAuth,
   CurrentUser,

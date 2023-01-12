@@ -56,7 +56,7 @@ export class IdentityClientService {
   private async getCompanyIdentity(
     nationalId: string,
   ): Promise<Identity | null> {
-    const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
+    const company = await this.rskCompanyInfoService.getCompany(
       nationalId,
     )
 
@@ -68,10 +68,10 @@ export class IdentityClientService {
       type: IdentityType.Company,
       name: company.name,
       nationalId: company.nationalId,
-      address: company.companyInfo?.address && {
-        streetAddress: company.companyInfo.address.streetAddress,
-        postalCode: company.companyInfo.address.postalCode,
-        city: company.companyInfo.address.locality,
+      address: company?.address && {
+        streetAddress: company.address.streetAddress,
+        postalCode: company.address.postalCode,
+        city: company.address.locality,
       },
     }
   }
@@ -79,7 +79,7 @@ export class IdentityClientService {
   private async getPersonIdentity(
     nationalId: string,
   ): Promise<Identity | null> {
-    const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+    const person = await this.nationalRegistryXRoadService.getIndividual(
       nationalId,
     )
 
@@ -90,10 +90,10 @@ export class IdentityClientService {
     return {
       nationalId: person.nationalId,
       name: person.fullName,
-      address: person.address && {
-        streetAddress: person.address.streetName,
-        postalCode: person.address.postalCode,
-        city: person.address.city,
+      address: person.legalDomicile && {
+        streetAddress: person.legalDomicile.streetAddress,
+        postalCode: person.legalDomicile.postalCode,
+        city: person.legalDomicile.locality,
       },
       type: IdentityType.Person,
     } as Identity
