@@ -33,6 +33,7 @@ import { NotificationsService } from './notifications.service'
 
 import { Notification } from './types'
 
+// import  { SNSClient } from '@aws-sdk/client-sns'
 
 // move logic to service
 // getEntry ... id ?
