@@ -12,7 +12,7 @@ export default {
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
       'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
+    audience: '@admin.island.is',
   },
   nationalRegistry: {
     baseSoapUrl: process.env.SOFFIA_SOAP_URL ?? 'https://localhost:8443',

@@ -12,6 +12,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -40,7 +41,7 @@ export class DraftRegulationController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Post('draft_regulation')
   @ApiCreatedResponse({
     type: DraftRegulationModel,
@@ -59,7 +60,7 @@ export class DraftRegulationController {
     )
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Put('draft_regulation/:id')
   @Audit<DraftRegulationModel>({
     resources: (DraftRegulation) => DraftRegulation.id,
@@ -89,7 +90,7 @@ export class DraftRegulationController {
     return updatedDraftRegulation
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Delete('draft_regulation/:id')
   @ApiCreatedResponse()
   async delete(
@@ -111,7 +112,7 @@ export class DraftRegulationController {
     )
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Get('draft_regulations')
   @ApiOkResponse({
     type: DraftRegulationModel,
@@ -123,7 +124,9 @@ export class DraftRegulationController {
     @Query('page') page?: number,
   ): Promise<TaskListType> {
     // managers can see all, creators can only see their own
-    const canManage = user.scope.includes('@island.is/regulations:manage')
+    const canManage = user.scope.includes(
+      AdminPortalScope.regulationAdminManage,
+    )
 
     return await this.draftRegulationService.getAll(
       !canManage ? user : undefined,
@@ -131,7 +134,7 @@ export class DraftRegulationController {
     )
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Get('draft_regulations_shipped')
   @ApiOkResponse({
     type: DraftRegulationModel,
@@ -139,14 +142,16 @@ export class DraftRegulationController {
     description: 'Gets all DraftRegulations with status shipped',
   })
   async getAllShipped(@CurrentUser() user: User): Promise<ShippedSummary[]> {
-    const canManage = user.scope.includes('@island.is/regulations:manage')
+    const canManage = user.scope.includes(
+      AdminPortalScope.regulationAdminManage,
+    )
     if (!canManage) {
       return []
     }
     return await this.draftRegulationService.getAllShipped()
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Get('draft_regulation/:id')
   @ApiOkResponse({
     type: DraftRegulationModel,
@@ -165,7 +170,7 @@ export class DraftRegulationController {
     return draftRegulation
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Get('draft_regulation_impacts/:name')
   @ApiOkResponse({
     description: 'Gets all DraftRegulationImpacts by RegName',
