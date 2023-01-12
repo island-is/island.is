@@ -78,10 +78,10 @@ export interface Vehicle {
   operatorStartDate?: Date | null
   /**
    *
-   * @type {String}
+   * @type {Date}
    * @memberof Vehicle
    */
-  operatorEndDate?: string | null
+  operatorEndDate?: Date | null
   /**
    *
    * @type {boolean}

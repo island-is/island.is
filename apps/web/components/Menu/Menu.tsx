@@ -8,7 +8,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 
@@ -27,6 +26,8 @@ interface Props {
   buttonColorScheme?: ButtonTypes['colorScheme']
 }
 
+const minarsidurLink = '/minarsidur/'
+
 export const Menu = ({
   asideTopLinks,
   asideBottomTitle,
@@ -36,7 +37,6 @@ export const Menu = ({
 }: Props) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
-  const { linkResolver } = useLinkResolver()
 
   return (
     <MenuUI
@@ -105,9 +105,9 @@ export const Menu = ({
       }}
       renderMyPagesButton={(button) => {
         return (
-          <Link {...linkResolver('login')} skipTab>
+          <a tabIndex={-1} href={minarsidurLink}>
             {button}
-          </Link>
+          </a>
         )
       }}
       renderLanguageSwitch={(isMobile) => (

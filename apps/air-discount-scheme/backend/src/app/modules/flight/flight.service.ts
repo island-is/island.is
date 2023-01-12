@@ -12,8 +12,12 @@ import {
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
 import { CreateFlightBody, GetFlightLegsBody } from './dto'
-import { NationalRegistryUser } from '../nationalRegistry'
+import {
+  NationalRegistryService,
+  NationalRegistryUser,
+} from '../nationalRegistry'
 import { ExplicitCode } from '../discount/discount.model'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 export const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
@@ -55,6 +59,7 @@ export class FlightService {
     private flightLegModel: typeof FlightLeg,
     @InjectModel(ExplicitCode)
     private explicitModel: typeof ExplicitCode,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   isADSPostalCode(postalcode: number): boolean {
@@ -310,6 +315,23 @@ export class FlightService {
   findThisYearsFlightsByNationalId(nationalId: string): Promise<Flight[]> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
     return this.findFlightsByYearAndNationalId(nationalId, currentYear)
+  }
+
+  async findThisYearsFlightsForUserAndRelations(
+    authUser: AuthUser,
+  ): Promise<Flight[]> {
+    const relations = [
+      authUser.nationalId,
+      ...(await this.nationalRegistryService.getRelations(authUser)),
+    ]
+    const flights: Flight[] = []
+    for (const relation of relations) {
+      const relationFlights = await this.findThisYearsFlightsByNationalId(
+        relation,
+      )
+      flights.push(...relationFlights)
+    }
+    return flights
   }
 
   findFlightsByYearAndNationalId(
