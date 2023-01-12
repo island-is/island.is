@@ -43,8 +43,8 @@ export const conclusion = {
     accordionText: {
       id: 'ta.cov.application:conclusion.default.accordionText',
       defaultMessage: `Nú þurfa umráðamenn og meðeigendur (ef við á) að samþykkja skráninguna. 
-        Það þarf að gerast innan 7 daga. Að því loknu verður breyting meðeiganda á ökutæki skráð. 
-        Ef því verður ekki lokið fyrir þann tíma verður breyting meðeiganda á ökutæki hafnað og seljandi 
+        Það þarf að gerast innan 7 daga. Að því loknu verður skráning umráðamanns af/á ökutæki skráð. 
+        Ef því verður ekki lokið fyrir þann tíma verður breyting umráðamanns á ökutæki hafnað og eigandi 
         fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,
       description: 'Conclusion seller accordion text',
     },
@@ -67,31 +67,31 @@ export const conclusion = {
   review: defineMessages({
     accordionText: {
       id: 'ta.cov.application:conclusion.review.accordionText',
-      defaultMessage: `Breyting meðeiganda á ökutæki verður skráð þegar allir hafa samþykkt. Ef því verður ekki lokið innan 7 daga frá gerð umsóknar verður breyting meðeiganda á ökutæki hafnað og eigandi fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,
+      defaultMessage: `Skráning umráðamanns af/á ökutæki verður skráð þegar allir hafa samþykkt. Ef því verður ekki lokið innan 7 daga frá gerð umsóknar verður skráning umráðamanns af/á ökutæki hafnað og eigandi fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,
       description: 'Conclusion review accordion text',
     },
   }),
   approved: defineMessages({
     accordionText: {
       id: 'ta.cov.application:conclusion.approved.accordionText',
-      defaultMessage: `Nú hafa allir aðilar samþykkt og breyting meðeiganda á ökutæki verið skráð hjá Samgöngustofu.`,
+      defaultMessage: `Nú hafa allir aðilar samþykkt og skráning umráðamanns af/á ökutæki verið skráð hjá Samgöngustofu.`,
       description: 'Conclusion approved accordion text',
     },
   }),
   rejected: defineMessages({
     alertMessage: {
       id: 'ta.cov.application:conclusion.rejected.alertMessage',
-      defaultMessage: 'Bæta við umráðamann - Umsókn afturkölluð!',
+      defaultMessage: 'Skráning umráðamanns - Umsókn afturkölluð!',
       description: 'Conclusion rejected alert message',
     },
     firstText: {
       id: 'ta.cov.application:conclusion.rejected.firstText',
-      defaultMessage: `Beiðni um bæta við umráðamanni á {plate} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
+      defaultMessage: `Beiðni um bæta við/fella niður umráðamanni á {plate} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
       description: 'Conclusion rejected first text',
     },
     secondText: {
       id: 'ta.cov.application:conclusion.rejected.secondText',
-      defaultMessage: `Til þess að bæta við umráðamann rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.`,
+      defaultMessage: `Til þess að bæta við umráðamanni rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.`,
       description: 'Conclusion rejected second text',
     },
     thirdText: {

@@ -36,6 +36,11 @@ export const Rejected: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'confirmation',
+      title: conclusion.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
       id: 'review',
       title: review.general.sectionTitle,
       children: [],

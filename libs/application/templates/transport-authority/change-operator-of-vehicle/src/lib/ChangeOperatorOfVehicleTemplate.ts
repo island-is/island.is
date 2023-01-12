@@ -15,7 +15,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { m } from './messagesx'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
 import { ChangeOperatorOfVehicleSchema } from './dataSchema'
@@ -25,7 +24,7 @@ import {
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
-import { application } from './messages'
+import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 
@@ -44,7 +43,7 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     undefined,
   ) as string | undefined
   return {
-    name: m.name,
+    name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
   }
 }
@@ -56,7 +55,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE,
   name: determineMessageFromApplicationAnswers,
-  institution: m.institutionName,
+  institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.ChangeOperatorOfVehicle.translation,
   ],
@@ -71,7 +70,7 @@ const template: ApplicationTemplate<
           status: 'draft',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -114,7 +113,7 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             tag: {
-              label: application.actionCardPayment,
+              label: applicationMessage.actionCardPayment,
               variant: 'red',
             },
           },
@@ -151,7 +150,7 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -210,7 +209,7 @@ const template: ApplicationTemplate<
           }),
           actionCard: {
             tag: {
-              label: application.actionCardRejected,
+              label: applicationMessage.actionCardRejected,
               variant: 'red',
             },
           },
@@ -245,7 +244,7 @@ const template: ApplicationTemplate<
           }),
           actionCard: {
             tag: {
-              label: application.actionCardDone,
+              label: applicationMessage.actionCardDone,
               variant: 'blueberry',
             },
           },

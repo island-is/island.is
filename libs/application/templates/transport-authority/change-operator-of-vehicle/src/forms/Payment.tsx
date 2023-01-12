@@ -7,8 +7,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { payment } from '../lib/messages'
-import { m } from '../lib/messagesx'
+import { conclusion, payment, externalData } from '../lib/messages'
 
 type CreateChargeData = {
   data: {
@@ -25,7 +24,7 @@ export const Payment: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: m.externalDataSection,
+      title: externalData.dataProvider.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -94,7 +93,7 @@ export const Payment: Form = buildForm({
         buildCustomField({
           id: 'subSectionPaymentPending',
           component: 'PaymentPending',
-          title: m.confirmation,
+          title: conclusion.general.title,
           condition: () => {
             return !!window.document.location.href.match(/\?done$/)
           },
@@ -103,7 +102,7 @@ export const Payment: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: m.confirmation,
+      title: conclusion.general.sectionTitle,
       children: [],
     }),
   ],

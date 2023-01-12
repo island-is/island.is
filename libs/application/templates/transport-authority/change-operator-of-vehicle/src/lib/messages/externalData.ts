@@ -9,7 +9,7 @@ export const externalData = {
     },
     pageTitle: {
       id: 'ta.cov.application:externalData.dataProvider.pageTitle',
-      defaultMessage: 'Tilkynning um eigendaskipti að ökutæki',
+      defaultMessage: 'Bæta við umráðamanni á ökutæki',
       description: `Application's name`,
     },
     subTitle: {
@@ -19,7 +19,7 @@ export const externalData = {
     },
     checkboxLabel: {
       id: 'ta.cov.application:externalData.dataProvider.checkboxLabel',
-      defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
+      defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
       description: 'I understand',
     },
     getDataSuccess: {

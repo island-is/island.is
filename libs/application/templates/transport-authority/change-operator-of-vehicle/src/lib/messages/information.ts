@@ -22,13 +22,13 @@ export const information = {
       },
       title: {
         id: 'ta.cov.application:information.labels.pickVehicle.title',
-        defaultMessage: 'Veldu ökutæki til eigendaskipta',
+        defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle title',
       },
       description: {
         id: 'ta.cov.application:information.labels.pickVehicle.description',
         defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+          'Hér að neðan er listi yfir ökutæki í þinni eigu. Veldu það ökutæki sem þú ætlar að bæta við/fella niður umráðamann á',
         description: 'Pick vehicle description',
       },
       vehicle: {
@@ -71,8 +71,7 @@ export const information = {
       },
       description: {
         id: 'ta.cov.application:information.labels.owner.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        defaultMessage: ' ',
         description: 'Seller description',
       },
       nationalId: {
@@ -97,21 +96,10 @@ export const information = {
       },
     }),
     coOwner: defineMessages({
-      sectionTitle: {
-        id: 'ta.cov.application:information.labels.coOwner.sectionTitle',
-        defaultMessage: 'Meðeigandi',
-        description: 'Co-owner section title',
-      },
       title: {
         id: 'ta.cov.application:information.labels.coOwner.title',
         defaultMessage: 'Meðeigandi',
         description: 'Co-owner title',
-      },
-      description: {
-        id: 'ta.cov.application:information.labels.coOwner.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
-        description: 'CoOwner description',
       },
       nationalId: {
         id: 'ta.cov.application:information.labels.coOwner.nationalId',
@@ -147,8 +135,7 @@ export const information = {
       },
       description: {
         id: 'ta.cov.application:information.labels.operator.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        defaultMessage: '  ',
         description: 'Operator description',
       },
       operatorTitle: {
@@ -210,8 +197,7 @@ export const information = {
       },
       description: {
         id: 'ta.cov.application:information.labels.mainOperator.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
+        defaultMessage: ' ',
         description: 'Main operator description',
       },
       radioFieldLabel: {

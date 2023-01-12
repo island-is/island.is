@@ -48,7 +48,7 @@ export const VehicleRadioField: FC<
       | undefined,
   )
 
-  // TODO: Add operator query once Samgöngustofa has finished it
+  // TODO: Add operator validation query once Samgöngustofa has finished it
   const { data, loading } = useQuery(
     gql`
       ${GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS}

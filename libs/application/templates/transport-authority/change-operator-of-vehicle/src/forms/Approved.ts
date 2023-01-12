@@ -5,7 +5,13 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { information, externalData, payment, review } from '../lib/messages'
+import {
+  information,
+  externalData,
+  payment,
+  review,
+  conclusion,
+} from '../lib/messages'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
@@ -26,6 +32,11 @@ export const Approved: Form = buildForm({
     buildSection({
       id: 'payment',
       title: payment.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: conclusion.general.sectionTitle,
       children: [],
     }),
     buildSection({

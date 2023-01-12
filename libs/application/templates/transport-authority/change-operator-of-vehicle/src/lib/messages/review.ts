@@ -2,21 +2,10 @@ import { defineMessages } from 'react-intl'
 
 export const review = {
   general: defineMessages({
-    title: {
-      id: 'ta.cov.application:review.general.title',
-      defaultMessage: 'Yfirlit eigendaskipta',
-      description: 'Title of overview screen',
-    },
     sectionTitle: {
       id: 'ta.cov.application:review.general.sectionTitle',
       defaultMessage: 'Til samþykktar',
       description: 'Title of overview screen',
-    },
-    description: {
-      id: 'ta.cov.application:review.general.description',
-      defaultMessage:
-        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
-      description: 'Description of overview screen',
     },
     approvedSectionTitle: {
       id: 'ta.cov.application:review.general.approvedSectionTitle',
@@ -100,14 +89,15 @@ export const review = {
       },
       payment: {
         id: 'ta.cov.application:review.step.description.payment',
-        defaultMessage: 'Greitt hefur verið fyrir eigendaskiptin af seljanda',
+        defaultMessage:
+          'Greitt hefur verið fyrir skráningu umráðamanns af eiganda',
         description:
           'Payment description in status step part of review process',
       },
       coOwner: {
         id: 'ta.cov.application:review.step.description.coOwner',
         defaultMessage:
-          'Beðið er eftir að meðeigandi bifreiðar samþykki skráningu meðeiganda',
+          'Beðið er eftir að meðeigandi bifreiðar samþykki skráningu umráðamanns',
         description:
           'Buyer coowner description in status step part of review process',
       },
