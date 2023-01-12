@@ -4,6 +4,7 @@ import {
   environmentId,
 } from '../constants'
 import {
+  CollectionProp,
   ContentTypeProps,
   createClient as createManagementClient,
   PlainClientAPI,
@@ -38,14 +39,28 @@ export const getAllRoles = async () => {
 
 export const getAllContentTypesInAscendingOrder = async () => {
   const client = getContentfulManagementApiClient()
-  const contentfulTypesResponse = await client.contentType.getMany({
-    limit: 1000,
-  })
-  const contentTypes = contentfulTypesResponse.items
+  let contentfulTypesResponse: CollectionProp<ContentTypeProps> | null = null
+
+  const contentTypes: ContentTypeProps[] = []
+
+  while (
+    contentfulTypesResponse === null ||
+    contentTypes.length < contentfulTypesResponse.total
+  ) {
+    contentfulTypesResponse = await client.contentType.getMany({
+      limit: 1000,
+      query: {
+        skip: contentTypes.length,
+      },
+    })
+    for (const type of contentfulTypesResponse.items) contentTypes.push(type)
+  }
+
   contentTypes.sort((a, b) =>
     a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
   )
-  return contentfulTypesResponse.items
+
+  return contentTypes
 }
 
 export const getAllTags = async () => {
