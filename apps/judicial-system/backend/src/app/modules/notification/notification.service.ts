@@ -65,11 +65,11 @@ import { Case } from '../case'
 import { CourtService } from '../court'
 import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
+import { Defendant, DefendantService } from '../defendant'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { notificationModuleConfig } from './notification.config'
-import { Defendant, DefendantService } from '../defendant'
 
 interface Attachment {
   filename: string
