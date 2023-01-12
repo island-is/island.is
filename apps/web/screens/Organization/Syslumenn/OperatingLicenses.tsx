@@ -496,8 +496,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
               {operatingLicense.maximumNumberOfGuests > 0 && (
                 <Text paddingBottom={0}>
                   {n(
-                    'operatingLicensesAlcoholMaximumNumberOfGuests',
-                    'Hámarksfjöldi gesta',
+                    'operatingLicensesMaximumNumberOfAccommodationGuests',
+                    'Hámarksfjöldi gesta í gistingu',
                   )}
                   : {operatingLicense.maximumNumberOfGuests}
                 </Text>
@@ -505,8 +505,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
               {operatingLicense.numberOfDiningGuests > 0 && (
                 <Text paddingBottom={0}>
                   {n(
-                    'operatingLicensesNumberOfDiningGuests',
-                    'Fjöldi gesta í veitingum',
+                    'operatingLicensesMaximumNumberOfDiningGuests',
+                    'Hámarksfjöldi gesta í veitingum',
                   )}
                   : {operatingLicense.numberOfDiningGuests}
                 </Text>
