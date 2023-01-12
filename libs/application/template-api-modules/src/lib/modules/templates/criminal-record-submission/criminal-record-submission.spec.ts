@@ -1,8 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  createCurrentUser,
-  createApplication,
+  createCurrentUser
 } from '@island.is/testing/fixtures'
 import {
   ApplicationStatus,
@@ -22,6 +21,7 @@ import {
 import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { ConfigService } from '@nestjs/config'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import { createApplication } from '@island.is/application/core'
 
 const config = defineConfig({
   name: 'SyslumennApi',

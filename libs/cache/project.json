@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/cache"]
     }
   },
-  "tags": ["lib:nest", "scope:nest"]
+  "tags": ["lib:node", "scope:node"]
 }

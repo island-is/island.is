@@ -47,5 +47,5 @@
     },
     "docker-express": {}
   },
-  "tags": []
+  "tags": ["scope:auth"]
 }

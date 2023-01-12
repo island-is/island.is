@@ -16,10 +16,10 @@ import {
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
-import { InputImageUpload } from '@island.is/application/ui-components'
 
 import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
+import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
 
 type UploadFileAnswer = {
   name: string
@@ -75,7 +75,7 @@ interface FileUploadControllerProps {
   readonly forImageUpload?: boolean
 }
 
-export const FileUploadController: FC<FileUploadControllerProps> = ({
+export const  FileUploadController: FC<FileUploadControllerProps> = ({
   id,
   error,
   application,

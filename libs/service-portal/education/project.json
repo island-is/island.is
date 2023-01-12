@@ -52,5 +52,5 @@
       }
     }
   },
-  "tags": ["lib:react", "scope:react"]
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
 }

@@ -2,7 +2,6 @@ import { Test } from '@nestjs/testing'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   createCurrentUser,
-  createApplication,
 } from '@island.is/testing/fixtures'
 import {
   ApplicationStatus,
@@ -22,6 +21,7 @@ import {
 import { MortgageCertificateService } from '@island.is/api/domains/mortgage-certificate'
 import { ConfigService } from '@nestjs/config'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import { createApplication } from '@island.is/application/core'
 
 const config = defineConfig({
   name: 'SyslumennApi',

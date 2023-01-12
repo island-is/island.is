@@ -51,6 +51,7 @@
                 "onlyDependOnLibsWithTags": [
                   "lib:as-api",
                   "lib:as-shared",
+                  "lib:client",
                   "lib:nest",
                   "lib:node",
                   "lib:js"
@@ -93,8 +94,13 @@
                   "lib:react-next",
                   "lib:react",
                   "lib:dom",
+                  "lib:node",
                   "lib:js"
                 ]
+              },
+              {
+                "sourceTag": "scope:auth",
+                "onlyDependOnLibsWithTags": ["lib:nest", "lib:node", "lib:js", "lib:client", "lib:auth"]
               },
               {
                 "sourceTag": "scope:react",
@@ -119,6 +125,10 @@
               {
                 "sourceTag": "scope:js",
                 "onlyDependOnLibsWithTags": ["lib:js"]
+              },
+              {
+                "sourceTag": "scope:e2e",
+                "onlyDependOnLibsWithTags": ["lib:js", "lib:client", "lib:as-shared"]
               }
             ]
           }

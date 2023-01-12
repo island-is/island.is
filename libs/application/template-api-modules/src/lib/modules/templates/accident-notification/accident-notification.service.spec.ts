@@ -15,11 +15,10 @@ import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
 import {
   createCurrentUser,
-  createApplication,
 } from '@island.is/testing/fixtures'
 import { S3 } from 'aws-sdk'
 import type { Locale } from '@island.is/shared/types'
-
+import { createApplication } from '@island.is/application/core'
 import get from 'lodash/get'
 import set from 'lodash/set'
 import { S3Service } from './attachments/s3.service'

@@ -28,5 +28,5 @@
       }
     }
   },
-  "tags": ["lib:react-spa", "scope:react-spa"]
+  "tags": ["lib:portals-mypages", "scope:portals-mypages", "TODO:RemoveOverrides"]
 }

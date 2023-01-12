@@ -1,5 +1,5 @@
 import * as faker from 'faker'
-import { DefaultStateLifeCycle, buildForm } from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '../../lib/constants'
 import { EventObject } from 'xstate'
 import { z } from 'zod'
 import {
@@ -11,6 +11,7 @@ import {
   ApplicationRole,
   ApplicationTemplate,
 } from '@island.is/application/types'
+import { buildForm } from '../../lib/formBuilders'
 
 export const createApplication = (
   overrides?: Partial<ApplicationWithAttachments>,

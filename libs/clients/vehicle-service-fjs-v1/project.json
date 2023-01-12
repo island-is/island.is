@@ -37,5 +37,5 @@
       }
     }
   },
-  "tags": ["lib:nest", "scope:nest"]
+  "tags": ["lib:client", "scope:client"]
 }

@@ -26,6 +26,6 @@
       }
     }
   },
-  "tags": [],
+  "tags": ["scope:js"],
   "implicitDependencies": ["judicial-system-web"]
 }

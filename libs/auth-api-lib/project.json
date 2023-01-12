@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/auth-api-lib"]
     }
   },
-  "tags": ["lib:nest", "scope:nest"]
+  "tags": ["lib:auth", "scope:auth"]
 }

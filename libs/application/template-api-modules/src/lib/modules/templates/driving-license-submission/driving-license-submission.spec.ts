@@ -2,7 +2,6 @@ import { Test } from '@nestjs/testing'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   createCurrentUser,
-  createApplication,
 } from '@island.is/testing/fixtures'
 
 import {
@@ -19,6 +18,7 @@ import {
 } from '@island.is/email-service'
 import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import { ConfigService } from '@nestjs/config'
+import { createApplication } from '@island.is/application/core'
 
 describe('DrivingLicenseSubmissionService', () => {
   let drivingLicenseSubmissionService: DrivingLicenseSubmissionService

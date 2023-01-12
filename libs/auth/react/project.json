@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": ["lib:react", "scope:react"]
+  "tags": ["lib:react-spa", "scope:react-spa"]
 }
