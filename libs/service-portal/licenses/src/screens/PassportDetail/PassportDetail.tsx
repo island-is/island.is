@@ -58,7 +58,6 @@ const NotifyLostLink = (text: string) => (
 
 const PassportDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
-  const [blockedAccess, setBlockedAccess] = useState(false)
   const { formatMessage, lang } = useLocale()
   const { id }: { id: string | undefined } = useParams()
 
@@ -91,24 +90,20 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           />
         </Box>
       )}
-      {blockedAccess ? (
-        <NotFound />
-      ) : (
-        <Box marginBottom={3}>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '5/8', '5/8']}>
-              <Stack space={1}>
-                <Text variant="h3" as="h1" paddingTop={0}>
-                  {data?.verboseType || ''}
-                </Text>
-                <Text as="p" variant="default">
-                  {formatMessage(m.passportDescription)}
-                </Text>
-              </Stack>
-            </GridColumn>
-          </GridRow>
-        </Box>
-      )}
+      <Box marginBottom={3}>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '5/8', '5/8']}>
+            <Stack space={1}>
+              <Text variant="h3" as="h1" paddingTop={0}>
+                {data?.verboseType || ''}
+              </Text>
+              <Text as="p" variant="default">
+                {formatMessage(m.passportDescription)}
+              </Text>
+            </Stack>
+          </GridColumn>
+        </GridRow>
+      </Box>
       {data && (
         <Stack space={2}>
           {licenseExpired || expireWarning || licenseLost ? (
