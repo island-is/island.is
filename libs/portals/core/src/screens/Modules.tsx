@@ -106,7 +106,7 @@ export const Modules = () => {
       {modules.length > 0 ? (
         <RouteLoader routes={routes} userInfo={userInfo} client={client} />
       ) : (
-        <AccessDenied userInfo={userInfo} client={client} />
+        <AccessDenied />
       )}
     </Box>
   )
