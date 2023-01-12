@@ -11,7 +11,7 @@ LAST_GOOD_BUILD=$(DEBUG="*,-simple-git" REPO_ROOT="$ROOT" node $tempRepo/main.js
 if [[ "$LAST_GOOD_BUILD" == "Full rebuild needed" ]]; then
   BASE="$1"
   export BASE
-  >&2 echo "No successful build, using Base sha '$BASE_SHA'"
+  >&2 echo "No successful build, using Base sha '$1'"
 else
   LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha')
   LAST_GOOD_BUILD_BRANCH=$(echo "$LAST_GOOD_BUILD" | jq -r '.branch')
