@@ -1,5 +1,5 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { GenericLicenseClient, LicenseUpdateUnion } from '../../license.types'
+import { Inject, Injectable } from '@nestjs/common'
+import { GenericLicenseClient } from '../../license.types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -10,9 +10,6 @@ import {
   VerifyPassData,
   VoidPassData,
 } from '@island.is/clients/smartsolutions'
-import { createPkPassDataInput } from './disabilityLicenseMapper'
-import { z } from 'zod'
-import { DisabilityLicenseUpdateData } from './disabilityLicenseClient.types'
 
 @Injectable()
 export class DisabilityLicenseClientService implements GenericLicenseClient {
@@ -22,46 +19,10 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
   ) {}
 
   async update(
-    inputData: LicenseUpdateUnion,
+    inputData: PassDataInput,
+    nationalId: string,
   ): Promise<Result<Pass | undefined>> {
-    this.logger.debug('in update for Disability license')
-
-    let data: LicenseUpdateUnion
-    try {
-      data = LicenseUpdateUnion.parse(inputData)
-    } catch (e) {
-      return {
-        ok: false,
-        error: {
-          code: 4,
-          message: 'Invalid payload',
-        },
-      }
-    }
-
-    if (data.licenseUpdateType === 'push') {
-      /** PUSH - Update actual license and electronic license with provided data
-       * 1. Parse and validate provided data
-       * 2. Map the data to the appropriate types for updating
-       * 3. Update each license with its mapped data
-       */
-      return {
-        ok: true,
-        data: undefined,
-      }
-    } else {
-      /** PULL - Update electronic license with data pulled from the actual license
-       * 1. Fetch data from TR
-       * 2. Parse and validate license data
-       * 3. With good data, update the electronic license with the validated license data!
-       */
-      return {
-        ok: true,
-        data: undefined,
-      }
-    }
-    const parsedData = createPkPassDataInput(inputData)
-    return await this.smartApi.upsertPkPass(parsedData as PassDataInput)
+    return await this.smartApi.updatePkPass(inputData, nationalId)
   }
 
   async revoke(queryId: string): Promise<Result<VoidPassData>> {

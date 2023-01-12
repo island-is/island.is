@@ -7,12 +7,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  CLIENT_FACTORY,
-  GenericLicenseClient,
-  LicenseId,
-  LicenseUpdateUnion,
-} from './license.types'
-import {
   UpdateLicenseRequest,
   RevokeLicenseRequest,
   VerifyLicenseRequest,
@@ -20,6 +14,12 @@ import {
   VerifyLicenseResponse,
   RevokeLicenseResponse,
 } from './dto'
+import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
+import {
+  CLIENT_FACTORY,
+  GenericLicenseClient,
+  LicenseId,
+} from './license.types'
 
 @Injectable()
 export class LicenseService {
@@ -36,10 +36,51 @@ export class LicenseService {
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
     const service = await this.clientFactory(inputData.licenseId)
-    const data = LicenseUpdateUnion.parse(inputData)
-    const updateData = await service.update(data)
 
-    if (updateData.ok) {
+    //SPLIT INTO SEPARATE FUNCTIONS
+    let updateData: Result<Pass | undefined>
+    if (inputData.licenseUpdateType === 'push') {
+      /** PUSH - Update electronic license with provided data
+       * 1. Parse and validate provided data
+       * 2. Map the data to the approriate type
+       * 3. Update the license with the mapped data
+       */
+
+      if (!inputData.expiryDate)
+        throw new BadRequestException(
+          'Invalid request body, missing expiryDate',
+        )
+
+      let updatePayload: PassDataInput = {
+        expirationDate: inputData.expiryDate,
+      }
+
+      if (inputData.payload) {
+        let parsedInputPayload
+        try {
+          parsedInputPayload = JSON.parse(inputData.payload)
+        } catch (e) {
+          throw new BadRequestException(e)
+        }
+        updatePayload = {
+          ...updatePayload,
+          ...parsedInputPayload,
+        }
+      }
+
+      updateData = await service.update(updatePayload, inputData.nationalId)
+    } else {
+      /** PULL - Update electronic license with pulled data from service
+       * 1. Fetch data from TR
+       * 2. Parse and validate license data
+       * 3. With good data, update the electronic license with the validated license data!
+       */
+      updateData = {
+        ok: true,
+        data: undefined,
+      }
+    }
+    if (updateData?.ok) {
       return {
         updateSuccess: true,
         data: updateData.data,

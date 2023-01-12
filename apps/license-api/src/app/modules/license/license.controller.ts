@@ -32,11 +32,7 @@ export class LicenseController {
     @Body() data: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
     const response = await this.licenseService.updateLicense(data)
-
-    if (!response.ok) {
-      throw new BadRequestException(response.error, 'Invalid payload')
-    }
-    return { ...response.data }
+    return response
   }
 
   @Documentation({
