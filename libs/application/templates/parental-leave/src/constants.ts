@@ -78,6 +78,11 @@ export enum States {
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 }
 
+export enum EmployerApprovalStates {
+  APPROVED = 'approved',
+  DECLINED = 'declined'
+}
+
 export enum AnswerValidationConstants {
   EMPLOYER = 'employer',
   FILEUPLOAD = 'fileUpload',

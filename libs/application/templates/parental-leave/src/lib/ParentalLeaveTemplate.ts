@@ -192,7 +192,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.OTHER_PARENT_APPROVAL,
               cond: needsOtherParentApproval,
             },
-            { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
+            { target: States.EMPLOYER_APPROVAL, cond: hasEmployer },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
@@ -261,7 +261,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.APPROVE]: [
             {
-              target: States.EMPLOYER_WAITING_TO_ASSIGN,
+              target: States.EMPLOYER_APPROVAL,
               cond: hasEmployer,
             },
             {
@@ -303,42 +303,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        exit: 'setEmployerReviewerNationalRegistryId',
-        meta: {
-          name: States.EMPLOYER_WAITING_TO_ASSIGN,
-          status: 'inprogress',
-          actionCard: {
-            description: statesMessages.employerWaitingToAssignDescription,
-          },
-          lifecycle: pruneAfterDays(365),
-          progress: 0.4,
-          onEntry: defineTemplateApi({
-            action: ApiModuleActions.assignEmployers,
-            throwOnError: true,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              read: 'all',
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
-          [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
-        },
-      },
       [States.EMPLOYER_APPROVAL]: {
-        entry: 'removeNullPeriod',
-        exit: 'clearAssignees',
+        entry: [
+          'removeNullPeriod',
+          'setEmployerReviewerNationalRegistryId'
+        ],
+        exit: 'clearSessionAssignee',
         meta: {
           name: States.EMPLOYER_APPROVAL,
           status: 'inprogress',
@@ -680,7 +650,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
-              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+              target: States.EMPLOYER_APPROVE_EDITS,
               cond: hasEmployer,
             },
             {
@@ -694,50 +664,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
-      [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'setEmployerReviewerNationalRegistryId',
-        meta: {
-          name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
-          status: 'inprogress',
-          actionCard: {
-            description:
-              statesMessages.employerWaitingToAssignForEditsDescription,
-          },
-          lifecycle: pruneAfterDays(970),
-          progress: 0.5,
-          onEntry: defineTemplateApi({
-            action: ApiModuleActions.assignEmployers,
-            throwOnError: true,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
-                ),
-              read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVE_EDITS },
-          [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
-        },
-      },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: 'clearAssignees',
+        entry: [
+          'assignToVMST',
+          'removeNullPeriod',
+          'setEmployerReviewerNationalRegistryId'
+        ],
+        exit: 'clearSessionAssignee',
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
@@ -1180,12 +1113,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setEmployerReviewerNationalRegistryId: assign((context, event) => {
-        // Only set if employer gets assigned
-        if (event.type !== DefaultEvents.ASSIGN) {
-          return context
-        }
-
+      setEmployerReviewerNationalRegistryId: assign((context) => {
         const { application } = context
         const { answers } = application
 
@@ -1303,6 +1231,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      clearSessionAssignee: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [] // TODO: Filter based on logged in user
+        }
+      })),
       clearAssignees: assign((context) => ({
         ...context,
         application: {
