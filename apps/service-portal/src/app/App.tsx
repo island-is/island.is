@@ -13,8 +13,6 @@ import {
 } from '@island.is/portals/core'
 
 import { environment } from '../environments'
-import { StateProvider } from '../store/stateProvider'
-import * as store from '../store/store'
 import Dashboard from '../screens/Dashboard/Dashboard'
 import Layout from '../components/Layout/Layout'
 import { UserProfileLocale } from '@island.is/shared/components'
@@ -26,40 +24,35 @@ export const App = () => {
   return (
     <div className={styles.page}>
       <ApolloProvider client={client}>
-        <StateProvider
-          initialState={store.initialState}
-          reducer={store.reducer}
-        >
-          <LocaleProvider locale={defaultLanguage} messages={{}}>
-            <ApplicationErrorBoundary>
-              <Router basename={ServicePortalPaths.Base}>
-                <Authenticator>
-                  <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                    <PortalProvider
-                      modules={modules}
-                      meta={{
-                        basePath: ServicePortalPaths.Base,
-                        portalType: 'my-pages',
-                      }}
-                    >
-                      <UserProfileLocale />
-                      <Layout>
-                        <Switch>
-                          <Route exact path={ServicePortalPaths.Root}>
-                            <Dashboard />
-                          </Route>
-                          <Route>
-                            <Modules />
-                          </Route>
-                        </Switch>
-                      </Layout>
-                    </PortalProvider>
-                  </FeatureFlagProvider>
-                </Authenticator>
-              </Router>
-            </ApplicationErrorBoundary>
-          </LocaleProvider>
-        </StateProvider>
+        <LocaleProvider locale={defaultLanguage} messages={{}}>
+          <ApplicationErrorBoundary>
+            <Router basename={ServicePortalPaths.Base}>
+              <Authenticator>
+                <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                  <PortalProvider
+                    modules={modules}
+                    meta={{
+                      basePath: ServicePortalPaths.Base,
+                      portalType: 'my-pages',
+                    }}
+                  >
+                    <UserProfileLocale />
+                    <Layout>
+                      <Switch>
+                        <Route exact path={ServicePortalPaths.Root}>
+                          <Dashboard />
+                        </Route>
+                        <Route>
+                          <Modules />
+                        </Route>
+                      </Switch>
+                    </Layout>
+                  </PortalProvider>
+                </FeatureFlagProvider>
+              </Authenticator>
+            </Router>
+          </ApplicationErrorBoundary>
+        </LocaleProvider>
       </ApolloProvider>
     </div>
   )

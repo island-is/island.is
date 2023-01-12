@@ -12,7 +12,6 @@ const rootName = defineMessage({
 
 export const documentsModule: PortalModule = {
   name: rootName,
-  widgets: () => [],
   routes: ({ userInfo }) => [
     {
       name: rootName,

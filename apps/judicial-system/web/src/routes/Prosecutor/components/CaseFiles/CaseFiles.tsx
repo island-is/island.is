@@ -29,7 +29,6 @@ import {
   useCase,
   useDeb,
   useS3Upload,
-  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Box,
@@ -53,6 +52,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
@@ -100,8 +100,7 @@ export const CaseFiles: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { addFileToCase, uploadPoliceCaseFile } = useS3Upload(workingCase)
-  const { upload, remove } = useS3UploadV2(workingCase.id)
+  const { upload, uploadPoliceCaseFile, remove } = useS3Upload(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -226,19 +225,15 @@ export const CaseFiles: React.FC = () => {
     setIsUploading(true)
 
     filesToUpload.forEach(async (f, index) => {
-      const { key, size } = await uploadPoliceCaseFile(f.id, f.name)
-
       const fileToUpload = {
         id: f.id,
         type: 'application/pdf',
         name: f.name,
         status: 'done',
         state: CaseFileState.STORED_IN_RVG,
-        key,
-        size,
       } as UploadFile
 
-      await addFileToCase(fileToUpload, () => setSingleFile(fileToUpload, f.id))
+      await uploadPoliceCaseFile(fileToUpload)
 
       setFilesInRVG([fileToUpload, ...filesInRVG])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
@@ -247,13 +242,7 @@ export const CaseFiles: React.FC = () => {
         setIsUploading(false)
       }
     })
-  }, [
-    addFileToCase,
-    filesInRVG,
-    policeCaseFileList,
-    setSingleFile,
-    uploadPoliceCaseFile,
-  ])
+  }, [filesInRVG, policeCaseFileList, uploadPoliceCaseFile])
 
   const handleRemove = useCallback(
     async (file: UploadFile) => {
@@ -356,6 +345,7 @@ export const CaseFiles: React.FC = () => {
           <ContentBlock>
             <InputFileUpload
               name="fileUpload"
+              accept={Object.values(fileExtensionWhitelist)}
               fileList={filesInRVG}
               header={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}

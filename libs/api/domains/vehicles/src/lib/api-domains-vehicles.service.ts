@@ -157,12 +157,9 @@ export class VehiclesService {
         )
 
         // Get owner change validation
-        // Note: Will just use today's date, since we dont have the purchase date at this point
-        const today = new Date()
         const ownerChangeValidation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
           auth,
           vehicle.permno || '',
-          today,
         )
 
         return {
@@ -206,12 +203,9 @@ export class VehiclesService {
     )
 
     // Get owner change validation
-    // Note: Will just use today's date, since we dont have the purchase date at this point
-    const today = new Date()
     const ownerChangeValidation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
       auth,
       permno,
-      today,
     )
 
     return {
