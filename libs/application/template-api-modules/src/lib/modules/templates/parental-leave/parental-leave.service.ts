@@ -1144,9 +1144,26 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       isRecivingUnemploymentBenefits,
       applicationType,
+      additionalDocuments,
     } = getApplicationAnswers(application.answers)
+    const { applicationFundId } = getApplicationExternalData(application.externalData)
+
     const nationalRegistryId = application.applicant
-    const attachments = await this.getAttachments(application)
+    let attachments: Attachment[] = []
+  
+    if (applicationFundId || applicationFundId !== '') {
+      if (additionalDocuments){
+        additionalDocuments.forEach(async (val, i) => {
+          const pdf = await this.getPdf(application, i, 'fileUpload.additionalDocuments')
+          attachments.push({
+            attachmentType: apiConstants.attachments.other,
+            attachmentBytes: pdf,
+          })
+        })
+      }
+    } else {
+      attachments = await this.getAttachments(application)
+    }
 
     try {
       const periods = await this.createPeriodsDTO(
@@ -1200,52 +1217,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         this.logger.error(
           'Failed to send confirmation emails to applicant and employer in parental leave application',
           e,
-        )
-      }
-
-      return response
-    } catch (e) {
-      this.logger.error('Failed to send the parental leave application', e)
-      throw this.parseErrors(e)
-    }
-  }
-
-  async sendAdditonalDocuments({ application }: TemplateApiModuleActionProps) {
-    const { additionalDocuments } = getApplicationAnswers(application.answers)
-    const nationalRegistryId = application.applicant
-    const attachments: Attachment[] = []
-
-    additionalDocuments.forEach(async (val, i) => {
-      const pdf = await this.getPdf(application, i, 'fileUpload.additionalDocuments')
-      attachments.push({
-        attachmentType: apiConstants.attachments.other,
-        attachmentBytes: pdf,
-      })
-    })
-
-    try {
-      const periods = await this.createPeriodsDTO(
-        application,
-        nationalRegistryId,
-      )
-
-      const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
-        application,
-        periods,
-        attachments,
-        false, // put false in testData as this is not dummy request
-      )
-
-      const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
-        {
-          nationalRegistryId,
-          parentalLeave: parentalLeaveDTO,
-        },
-      )
-
-      if (!response.id) {
-        throw new Error(
-          `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
         )
       }
 
