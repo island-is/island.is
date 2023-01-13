@@ -9,11 +9,7 @@ import {
   Response,
   Stub,
 } from '@anev/ts-mountebank'
-import {
-  XROAD_BASE_PATH,
-  XroadConf,
-  XRoadEnvs,
-} from '../../../../infra/src/dsl/xroad'
+import { Base, XroadConf, XRoadEnvs } from '../../../../infra/src/dsl/xroad'
 import { getEnvVariables } from '../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { XRoadMemberClass } from '@island.is/shared/utils/server'
 import { serializeValueSource } from '../../../../infra/src/dsl/output-generators/serialization-helpers'
@@ -45,28 +41,35 @@ const getVariableValue = (
   envVar: EnvironmentVariableValue,
   env: TestEnvironment,
 ) => {
-  if (typeof envVar === 'object') {
-    const envValues: { [name in TestEnvironment]: ValueSource } = {
-      local: envVar.local ?? envVar.dev,
-      dev: envVar.dev,
-      staging: envVar.staging,
-      prod: 'no mocking in prod',
+  switch (typeof envVar) {
+    case 'object': {
+      const envValues: { [name in TestEnvironment]: ValueSource } = {
+        local: envVar.local ?? envVar.dev,
+        dev: envVar.dev,
+        staging: envVar.staging,
+        prod: 'no mocking in prod',
+      }
+      const result = envValues[env]
+      if (typeof result === 'string') {
+        throw new Error('Should have been a reference, not a string value')
+      } else {
+        return result
+      }
     }
-    const result = envValues[env]
-    if (typeof result === 'string') {
-      throw new Error('Should have been a reference, not a string value')
-    } else {
-      return result
-    }
-  } else if (typeof envVar === 'function') {
-    return envVar
-  } else {
-    throw new Error('Env variable should have been a reference')
+    case 'function':
+      return envVar
+    default:
+      throw new Error('Env variable should have been a reference')
   }
 }
 
 const mockedServices = {
-  xroad: getServiceMock(getVariableValue(XROAD_BASE_PATH, env)),
+  xroad: getServiceMock(
+    getVariableValue(
+      Base.getEnvVarByName('XROAD_BASE_PATH') ?? 'missing var',
+      env,
+    ),
+  ),
 }
 
 const mb = new Mountebank().withURL(

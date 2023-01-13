@@ -164,7 +164,7 @@ export const serviceSetup = (services: {
       SOFFIA_SOAP_URL: {
         dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
         staging: ref((h) => h.svc('https://soffiaprufa.skra.is')),
-        prod: ref((h) => h.svc('https://soffia.skra.is')),
+        prod: ref((h) => h.svc('https://soffia2.skra.is')),
         local: ref((h) => h.svc('https://localhost:8443')),
       },
     })
