@@ -20,10 +20,12 @@ export * from './hooks/useSingleNavigationItem'
 export * from './utils/plausible'
 
 // screens
+export * from './screens/AccessDenied'
 export * from './screens/NotFound'
 
 // components
 export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'
 export * from './components/LoadingScreen/LoadingScreen'
+export * from './components/PortalNavigation/PortalNavigation'
 export * from './components/PortalProvider'
 export * from './components/IntroHeader'
