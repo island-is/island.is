@@ -116,12 +116,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
         )
       }
 
-      // if (recipientList[i].phone) {
-      //   await this.sharedTemplateAPIService.sendSms(
-      //     () => generateRequestReviewSms(application, recipientList[i]),
-      //     application,
-      //   )
-      // }
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateRequestReviewSms(application, recipientList[i]),
+          application,
+        )
+      }
     }
 
     return recipientList

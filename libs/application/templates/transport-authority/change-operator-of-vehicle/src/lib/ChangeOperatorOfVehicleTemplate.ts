@@ -27,6 +27,7 @@ import {
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { isRemovingOperatorOnly } from '../utils'
 
 const pruneInDaysAtTen = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -139,7 +140,13 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.COMPLETED,
+              cond: isRemovingOperatorOnly,
+            },
+            { target: States.REVIEW },
+          ],
           [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
@@ -197,7 +204,6 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      // TODOx rejected state
       [States.REJECTED]: {
         meta: {
           name: 'Rejected',
