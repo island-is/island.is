@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Box, Button, Checkbox, Divider } from '@island.is/island-ui/core'
-import { buttonsMsgs, reviewMessagse } from '../messages'
+import { buttonsMsgs, reviewMessages } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 import { EditReviewWarnings, useCollectMessages } from './EditReviewWarnings'
@@ -29,7 +29,7 @@ export const EditReview = () => {
 
           <Box marginBottom={[2, 2, 4]}>
             <Checkbox
-              label={t(reviewMessagse.confirmBeforePublish)}
+              label={t(reviewMessages.confirmBeforePublish)}
               labelVariant="default"
               checked={confirmed}
               onChange={() => setConfirmed(!confirmed)}

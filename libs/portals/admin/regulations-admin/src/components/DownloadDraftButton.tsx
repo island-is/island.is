@@ -5,7 +5,7 @@ import { Query } from '@island.is/api/schema'
 import { Button, toast } from '@island.is/island-ui/core'
 
 import { useLocale } from '@island.is/localization'
-import { editorMsgs, reviewMessagse } from '../messages'
+import { editorMsgs, reviewMessages } from '../lib/messages'
 import type { RegulationDraftId } from '@island.is/regulations/admin'
 import { useAuth } from '@island.is/auth/react'
 
@@ -94,7 +94,7 @@ export function DownloadDraftButton({ draftId, reviewButton }: Props) {
         size="small"
         iconType="outline"
       >
-        {t(reviewMessagse.downloadPDFVersion)}
+        {t(reviewMessages.downloadPDFVersion)}
       </Button>
     )
   }

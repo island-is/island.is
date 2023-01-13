@@ -1,6 +1,6 @@
 import { HTMLText, PlainText } from '@island.is/regulations'
 import { makeHighAngstWarnings } from '@island.is/regulations-tools/useTextWarnings'
-import { errorMsgs } from '../messages'
+import { errorMsgs } from '../lib/messages'
 import {
   findAffectedRegulationsInText,
   findRegulationType,

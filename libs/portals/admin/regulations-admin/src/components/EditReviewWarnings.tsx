@@ -2,7 +2,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { Box, Text, Button, AlertMessage } from '@island.is/island-ui/core'
 import React, { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { editorMsgs, reviewMessagse } from '../messages'
+import { editorMsgs, reviewMessages } from '../lib/messages'
 import { DraftingState } from '../state/types'
 import { isDraftErrorFree } from '../state/validations'
 import { Step } from '../types'
@@ -163,7 +163,7 @@ export const useCollectMessages = (
 export const JumpToStep = (props: { step: Step; label: string }) => {
   const t = useLocale().formatMessage
   const history = useHistory()
-  const jumpLabel = t(reviewMessagse.jumpToStepButton)
+  const jumpLabel = t(reviewMessages.jumpToStepButton)
 
   return (
     <Button
@@ -195,7 +195,7 @@ export const EditReviewWarnings = (props: EditReviewWarningsProps) => {
   return (
     <Box marginBottom={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
-        {t(reviewMessagse.warningsTitle)}
+        {t(reviewMessages.warningsTitle)}
       </Text>
       {props.messages.map((m, i) => (
         <Box marginBottom={2} key={i}>

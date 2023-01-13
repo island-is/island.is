@@ -6,7 +6,7 @@ import {
   Stack,
   Pagination,
 } from '@island.is/island-ui/core'
-import { homeMessages as msg, statusMsgs } from '../messages'
+import { homeMessages as msg, statusMsgs } from '../lib/messages'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { workingDaysUntil } from '../utils'
 import { useHistory } from 'react-router-dom'
