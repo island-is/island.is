@@ -1858,7 +1858,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     additionalDocumentsEditSubmit: {
       id: 'pl.application:attachmentscreen.additionalDocumentsEditSubmit',
-      defaultMessage: 'Sendu inn',
+      defaultMessage: 'Senda inn',
       description: 'Submit',
     },
   }),
