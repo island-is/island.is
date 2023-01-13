@@ -1,5 +1,5 @@
-import { FC, useEffect } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { FC, useEffect, useState } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
+import { formatCurrency } from '@island.is/application/ui-components'
 
 type Props = {
   field: {
@@ -29,6 +30,12 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
+
+  const [rateOfExchange, setRateOfExchange] = useState(0)
+  const [faceValue, setFaceValue] = useState(0)
+  const [index, setIndex] = useState('0')
+
+  const { setValue } = useFormContext()
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
@@ -50,7 +57,9 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     if (fields.length === 0) {
       handleAddRepeaterFields()
     }
-  }, [])
+
+    setValue(`${index}.value`, String(faceValue * rateOfExchange))
+  }, [fields, faceValue, rateOfExchange, setValue])
 
   return (
     <Box>
@@ -100,6 +109,14 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       currency={field.currency}
                       readOnly={field.readOnly}
                       type={field.type}
+                      onChange={(e) => {
+                        setIndex(fieldIndex)
+                        if (field.id === 'rateOfExchange') {
+                          setRateOfExchange(Number(e.target.value))
+                        } else if (field.id === 'faceValue') {
+                          setFaceValue(Number(e.target.value))
+                        }
+                      }}
                     />
                   </GridColumn>
                 )
