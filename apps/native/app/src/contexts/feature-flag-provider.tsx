@@ -1,7 +1,8 @@
-import React, { FC, createContext, useContext, useMemo } from 'react'
+import React, { FC, createContext, useContext, useMemo, useState, useEffect } from 'react'
 import { useAuthStore } from '../stores/auth-store'
 import { config } from '../utils/config'
 import * as configcat from "configcat-js";
+import AsyncStorage from '@react-native-community/async-storage'
 
 interface FeatureFlagUser {
   identifier: string
@@ -28,25 +29,52 @@ export interface FeatureFlagContextProviderProps {
   defaultUser?: FeatureFlagUser
 }
 
+class ConfigCatAsyncStorageCache {
+  set(key:string, config: configcat.ProjectConfig) {
+    return AsyncStorage.setItem(key, JSON.stringify(config));
+  }
+  async get(key: string) {
+    const item = await AsyncStorage.getItem(key);
+    if (item) {
+      try {
+        return JSON.parse(item) as configcat.ProjectConfig;
+      } catch (err) {
+        // noop
+      }
+    }
+    return null;
+  }
+}
+
+// const logger = configcat.createConsoleLogger(configcat.LogLevel.Info);
+const featureFlagClient = configcat.getClient(
+  config.configCat,
+  configcat.PollingMode.AutoPoll,
+  {
+    dataGovernance: configcat.DataGovernance.EuOnly,
+    // logger: logger,
+    cache: new ConfigCatAsyncStorageCache()
+  }
+);
+
 export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
   children,
 }) => {
   const { userInfo } = useAuthStore()
+  const [time, setTime] = useState(Date.now());
 
-  // const logger = configcat.createConsoleLogger(configcat.LogLevel.Info);
+  useEffect(() => {
+    const listener = () => setTime(Date.now())
+    featureFlagClient.addListener('configChanged', listener);
 
-  const featureFlagClient = configcat.getClient(
-    config.configCat,
-    configcat.PollingMode.AutoPoll,
-    {
-      dataGovernance: configcat.DataGovernance.EuOnly,
-      // logger: logger,
+    return () => {
+      featureFlagClient.removeListener('configChanged', listener)
     }
-  );
+  }, [])
 
   const context = useMemo<FeatureFlagClient>(() => {
     const userAuth =
-      userInfo && userInfo.nationalId !== undefined
+      userInfo && userInfo.nationalId
         ? {
             identifier: userInfo.nationalId,
             attributes: {
@@ -65,7 +93,7 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
       },
       dispose: () => featureFlagClient.dispose(),
     }
-  }, [featureFlagClient, userInfo])
+  }, [featureFlagClient, userInfo, time])
 
   return (
     <FeatureFlagContext.Provider value={context}>
@@ -76,4 +104,21 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
 
 export const useFeatureFlagClient = () => {
   return useContext(FeatureFlagContext)
+}
+
+
+export const useFeatureFlag = (key: string, defaultValue: boolean | string) => {
+  const featureFlagClient = useFeatureFlagClient();
+  const [flag, setFlag] = useState(defaultValue);
+
+  useEffect(() => {
+    featureFlagClient.getValue(
+      key,
+      defaultValue,
+    ).then(result => {
+      setFlag(result);
+    })
+  }, [featureFlagClient]);
+
+  return flag;
 }

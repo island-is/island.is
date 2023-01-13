@@ -22,6 +22,7 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { client } from '../../graphql/client'
 import {
   IGenericUserLicense
@@ -40,10 +41,6 @@ import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
-import * as configcat from "configcat-js";
-import { config } from '../../utils/config'
-import { useAuthStore } from '../../stores/auth-store'
-import { FeatureFlagClient, useFeatureFlagClient } from '../../contexts/feature-flag-provider'
 
 
 const {
@@ -194,8 +191,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
 
   const { data: identityDocumentData } = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {client, fetchPolicy: 'network-only'})
-
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
@@ -203,24 +198,11 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const loadingTimeout = useRef<number>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
-  const [showPassport, setShowPassport] = useState<boolean>(false);
+
+  const showPassport = useFeatureFlag('isPassportEnabled', false);
+  const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false);
 
   const passportData = showPassport ? identityDocumentData?.getIdentityDocument ?? [] : [];
-
-  useEffect(() => {
-    const isPassportFlagEnabled = async () => {
-      const isPassEnabled = Boolean(
-        await featureFlagClient.getValue(
-          `isPassportEnabled`,
-          false,
-        ),
-      )
-
-      setShowPassport(isPassEnabled)
-    }
-    isPassportFlagEnabled()
-
-  }, [])
 
   useActiveTabItemPress(1, () => {
     flatListRef.current?.scrollToOffset({
@@ -233,7 +215,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     if (!res.loading) {
       if (!res.error) {
         const license = res.data?.genericLicenses || []
-        setLicenseItems(license.filter((item) => item.license.status !== 'Unknown'))
+        setLicenseItems(license.filter((item) => item.license.status !== 'Unknown' || (!showDisability && item.license.type === LicenseType.DISABILIY_LICENSE)))
       }
     }
   }, [res])
