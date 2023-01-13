@@ -36,8 +36,8 @@ export interface PersonInformation {
 export type YesOrNo = typeof NO | typeof YES
 
 export interface Files {
-  name: string,
-  key: string,
+  name: string
+  key: string
   isSend?: boolean
 }
 
