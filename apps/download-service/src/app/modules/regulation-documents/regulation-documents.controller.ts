@@ -12,7 +12,7 @@ import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { RegulationsService } from '@island.is/clients/regulations'
-import { ApiScope } from '@island.is/auth/scopes'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -27,7 +27,10 @@ import {
 } from '@island.is/regulations/admin'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(
+  AdminPortalScope.regulationAdmin,
+  AdminPortalScope.regulationAdminManage,
+)
 @Controller('regulation')
 export class RegulationDocumentsController {
   constructor(
