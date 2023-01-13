@@ -25799,7 +25799,7 @@ var LocalRunner = class {
             `nx`,
             `print-affected`,
             `--select=projects`,
-            ...chunk(changedFiles, 15).map(
+            ...chunk(changedFiles, 20).map(
               (chunk2) => `--files=${chunk2.join(",")}`
             )
           ],
