@@ -41,7 +41,7 @@ export class DiscountService {
 
   processDiscount(discount: TDiscount): TDiscount {
     if (!this.discountIsValid(discount)) {
-      discount.discountCode = ''
+      discount.discountCode = null
     }
     return discount
   }
