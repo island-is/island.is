@@ -860,6 +860,26 @@ export function getApplicationAnswers(answers: Application['answers']) {
   }
 }
 
+export const isParentWithoutBirthParent = (answers: Application['answers']) => {
+  const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
+  const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
+  const questionThree = getValueViaPath(answers, 'noPrimaryParent.questionThree')
+
+  console.log('ONE -- ', questionOne)
+  console.log('TWO -- ', questionTwo)
+  console.log('THREE -- ', questionThree)
+
+  return questionOne === YES && questionTwo === YES && questionThree === YES
+}
+
+export const isNotEligibleForParentWithoutBirthParent = (answers: Application['answers']) => {
+  const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
+  const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
+  const questionThree = getValueViaPath(answers, 'noPrimaryParent.questionThree')
+
+  return (questionOne === NO || questionTwo === NO || questionThree === NO)
+}
+
 export const requiresOtherParentApproval = (
   answers: Application['answers'],
   externalData: Application['externalData'],

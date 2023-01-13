@@ -52,6 +52,7 @@ import {
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import { ChildInformation } from '../types'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -1074,6 +1075,21 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.externalData, 'navId', applicationFundId)
         }
 
+        return context
+      }),
+      setBirthDate: assign((context) => {
+        const { application } = context
+
+        // tjékka hvernig umsókn er þetta??
+        // "hasRights": true,
+        // "remainingDays": 180,
+        // "parentalRelation": "primary",
+        // "expectedDateOfBirth": "2023-05-31"
+
+        const childRes: ChildInformation[] = []
+
+        set(application.externalData, 'children.data.children', childRes)
+      
         return context
       }),
       setPrivatePensionValuesIfUsePrivatePensionFundIsNO: assign((context) => {

@@ -1859,15 +1859,15 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
     },
-    fatherWithoutMotherTitle: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
-      defaultMessage: 'Vottorð frá heilsugæslu',
+    parentWithoutBirthParentTitle: {
+      id: 'pl.application:attachmentscreen.parent.without.birth.parent.title',
+      defaultMessage: 'Staðfesting',
       description: 'father withouy mother title',
     },
-    fatherWithoutMotherDescription: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherDescription',
+    parentWithoutBirthParentDescription: {
+      id: 'pl.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
-        'Faðir þarf að skila inn fæðingarvottorði frá heilsugæslu sem staðfestir faðerni barns. Athugaðu að skjalið þarf að vera á .pdf formi',
+        'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afriit af staðfestingu þess lútandi með vottorði um áætlaðan. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',
     },
     permanentFostercareTitle: {

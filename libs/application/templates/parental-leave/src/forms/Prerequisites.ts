@@ -18,13 +18,16 @@ import {
 import { Form, FormModes, UserProfileApi } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
+import { parentalLeaveFormMessages, errorMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
   isEligibleForParentalLeave,
   getSelectedChild,
   getApplicationAnswers,
+  getApplicationExternalData,
+  isNotEligibleForParentWithoutBirthParent,
+  isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
 import { NO, YES, ParentalRelations } from '../constants'
 import { defaultMultipleBirthsMonths } from '../config'
@@ -324,13 +327,17 @@ export const PrerequisitesForm: Form = buildForm({
         buildSubSection({
           id: 'noPrimaryParent',
           title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
+          condition: (_, externalData) => {
+            const { children } = getApplicationExternalData(externalData)
+            return children.length === 0 // laga þetta
+          },
           children: [
             buildMultiField({
               id: 'noPrimaryParent',
               title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
               children: [
                 buildRadioField({
-                  id: 'noPrimaryParent.question.one',
+                  id: 'noPrimaryParent.questionOne',
                   title:
                     parentalLeaveFormMessages.shared.noPrimaryParentQuestionOne,
                   options: [
@@ -341,7 +348,7 @@ export const PrerequisitesForm: Form = buildForm({
                   largeButtons: true,
                 }),
                 buildRadioField({
-                  id: 'noPrimaryParent.question.two',
+                  id: 'noPrimaryParent.questionTwo',
                   title:
                     parentalLeaveFormMessages.shared.noPrimaryParentQuestionTwo,
                   options: [
@@ -352,7 +359,7 @@ export const PrerequisitesForm: Form = buildForm({
                   largeButtons: true,
                 }),
                 buildRadioField({
-                  id: 'noPrimaryParent.question.three',
+                  id: 'noPrimaryParent.questionThree',
                   title:
                     parentalLeaveFormMessages.shared
                       .noPrimaryParentQuestionThree,
@@ -364,32 +371,45 @@ export const PrerequisitesForm: Form = buildForm({
                   largeButtons: true,
                 }),
                 buildDateField({
-                  id: 'birthDate',
-                  condition: (answers) => {
-                    const questionOne =
-                      getValueViaPath(
-                        answers,
-                        'noPrimaryParent.question.one',
-                      ) === YES
-                    const questionTwo =
-                      getValueViaPath(
-                        answers,
-                        'noPrimaryParent.question.two',
-                      ) === YES
-                    const questionThree =
-                      getValueViaPath(
-                        answers,
-                        'noPrimaryParent.question.three',
-                      ) === YES
-
-                    return questionOne && questionTwo && questionThree
-                  },
+                  id: 'noPrimaryParent.birthDate',
+                  condition: (answers) => isParentWithoutBirthParent(answers),
                   title:
-                  parentalLeaveFormMessages.shared.noPrimaryParentDatePickerTitle,
+                    parentalLeaveFormMessages.shared
+                      .noPrimaryParentDatePickerTitle,
                   description: '',
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                 }),
+                buildCustomField({
+                  id: 'noPrimaryParent.alertMessage',
+                  title: errorMessages.noChildData,
+                  component: 'FieldAlertMessage',
+                  description: parentalLeaveFormMessages.shared.childrenError,
+                  doesNotRequireAnswer: true,
+                  condition: (answers) =>
+                    isNotEligibleForParentWithoutBirthParent(answers),
+                }),
+                buildSubmitField({
+                  id: 'toDraft',
+                  title: parentalLeaveFormMessages.confirmation.title,
+                  refetchApplicationAfterSubmit: true,
+                  actions: [
+                    {
+                      event: 'SUBMIT',
+                      dataTestId: 'select-child',
+                      name: parentalLeaveFormMessages.selectChild.choose,
+                      type: ParentalRelations.primary,
+                      condition: (answers) => isParentWithoutBirthParent(answers),
+                    },
+                  ],
+                }),
               ],
+            }),
+            // Has to be here so that the submit button appears (does not appear if no screen is left).
+            // Tackle that as AS task.
+            buildDescriptionField({
+              id: 'unused',
+              title: '',
+              description: '',
             }),
           ],
         }),
