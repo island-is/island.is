@@ -75,7 +75,7 @@ describe('communicationsService', () => {
 
   describe('getEmailTemplate', () => {
     it('should generate different templates', () => {
-      // we know these two inputs should generate difrent templates
+      // we know these two inputs should generate different templates
       const contactUsTemplate = communicationsService.getEmailTemplate(
         fakeContactUsInput,
       )
