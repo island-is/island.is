@@ -11,7 +11,7 @@ export const ErrorMessageToActionStatusCodeMap: Record<string, number> = {
   'Request contains some field errors': 4,
 }
 
-export function MapErrorMessageToActionStatusCode(
+export function mapErrorMessageToActionStatusCode(
   message?: string,
 ): ServiceErrorCode {
   if (!message) {

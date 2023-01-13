@@ -26,10 +26,10 @@ import {
 import { Inject } from '@nestjs/common'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
 import {
-  MapErrorMessageToActionStatusCode,
+  mapErrorMessageToActionStatusCode,
   mapPassToPassDataInput,
   mergeInputFields,
-} from './utils'
+} from './typeMapper'
 import {
   GET_PASS,
   LIST_PASSES,
@@ -159,7 +159,7 @@ export class SmartSolutionsApi {
     if (apiRes) {
       if (apiRes.errors) {
         const resError = apiRes.errors[0]
-        const code = MapErrorMessageToActionStatusCode(resError.message)
+        const code = mapErrorMessageToActionStatusCode(resError.message)
         const error = {
           code,
           message: resError.message,
