@@ -499,6 +499,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      false,
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,

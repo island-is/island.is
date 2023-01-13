@@ -442,6 +442,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Náði ekki að sækja fæðingarstað',
     description: 'Not able to fetch birthplace',
   },
+  applicationIsPrunedAndReadOnly: {
+    id: 'application.system:core.fetch.data.applicationIsPrunedAndReadOnly',
+    defaultMessage: 'Umsókn hefur runnið út á tíma og hefur verið gerð óvirk.',
+    description: 'Application has been pruned and is not editable',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({
