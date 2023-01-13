@@ -42,10 +42,13 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
       return Object.values(field)[1]
     })
 
-    const repeaterFields = values.reduce((acc: any, elem: any) => {
-      acc[elem] = ''
-      return acc
-    }, {})
+    const repeaterFields = values.reduce(
+      (acc: Record<string, string>, elem: string) => {
+        acc[elem] = ''
+        return acc
+      },
+      {},
+    )
 
     append(repeaterFields)
   }

@@ -8,7 +8,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
-import { EstateAsset, EstateMember } from '@island.is/clients/syslumenn'
+import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 import { format as formatNationalId } from 'kennitala'
@@ -16,6 +16,9 @@ import {
   formatBankInfo,
   formatCurrency,
 } from '@island.is/application/ui-components'
+import { infer as zinfer } from 'zod'
+import { estateSchema } from '../../lib/dataSchema'
+type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
   id: 'overviewResidencePermit',
@@ -57,17 +60,17 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              ((answers.estate as any).estateMembers ?? []).map(
-                (member: EstateMember | any) => ({
-                  title: member.name,
-                  description: [
-                    member.nationalId !== ''
-                      ? formatNationalId(member.nationalId)
-                      : member.dateOfBirth,
-                    member.relation,
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo).estateMembers ?? []
+              ).map((member) => ({
+                title: member.name,
+                description: [
+                  member.nationalId !== ''
+                    ? formatNationalId(member.nationalId)
+                    : member.dateOfBirth,
+                  member.relation,
+                ],
+              })),
           },
         ),
         buildDescriptionField({
@@ -92,8 +95,8 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              ((answers.estate as any).assets ?? []).map(
-                (asset: EstateAsset) => ({
+              (((answers.estate as unknown) as EstateInfo).assets ?? []).map(
+                (asset) => ({
                   title: asset.description,
                   description: [
                     `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
@@ -148,8 +151,8 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              ((answers.estate as any)?.vehicles ?? []).map(
-                (vehicle: EstateAsset) => ({
+              (((answers.estate as unknown) as EstateInfo)?.vehicles ?? []).map(
+                (vehicle) => ({
                   title: vehicle.description,
                   description: [
                     m.propertyNumber.defaultMessage +
@@ -178,14 +181,16 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              ((answers.bankAccounts as any) ?? []).map((account: any) => ({
-                title: formatBankInfo(account.accountNumber),
-                description: [
-                  `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
-                    account.balance,
-                  )}`,
-                ],
-              })),
+              (((answers as unknown) as EstateSchema).bankAccounts ?? []).map(
+                (account) => ({
+                  title: formatBankInfo(account.accountNumber ?? ''),
+                  description: [
+                    `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
+                      account.balance ?? '',
+                    )}`,
+                  ],
+                }),
+              ),
           },
         ),
         buildDividerField({}),
@@ -206,14 +211,16 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              ((answers.claims as any) ?? []).map((claim: any) => ({
-                title: claim.publisher,
-                description: [
-                  `${m.claimsAmount.defaultMessage}: ${formatCurrency(
-                    claim.value,
-                  )}`,
-                ],
-              })),
+              (((answers as unknown) as EstateSchema).claims ?? []).map(
+                (claim) => ({
+                  title: claim.publisher,
+                  description: [
+                    `${m.claimsAmount.defaultMessage}: ${formatCurrency(
+                      claim.value ?? '',
+                    )}`,
+                  ],
+                }),
+              ),
           },
         ),
         buildDividerField({}),
@@ -234,17 +241,21 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              ((answers.stocks as any) ?? []).map((stock: any) => ({
-                title: stock.organization,
-                description: [
-                  `${m.stocksSsn.defaultMessage}: ${formatNationalId(
-                    stock.ssn,
-                  )}`,
-                  `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
-                  `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
-                  `${m.stocksValue.defaultMessage}: ${stock.value}`,
-                ],
-              })),
+              (((answers as unknown) as EstateSchema).stocks ?? []).map(
+                (stock) => ({
+                  title: stock.organization,
+                  description: [
+                    `${m.stocksSsn.defaultMessage}: ${formatNationalId(
+                      stock.ssn ?? '',
+                    )}`,
+                    `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
+                    `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
+                    `${m.stocksValue.defaultMessage}: ${formatCurrency(
+                      stock.value ?? '',
+                    )}`,
+                  ],
+                }),
+              ),
           },
         ),
         buildDividerField({}),
@@ -335,15 +346,19 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              ((answers.debts as any) ?? []).map((debt: any) => ({
-                title: debt.creditorName,
-                description: [
-                  `${m.debtsSsn.defaultMessage}: ${formatNationalId(debt.ssn)}`,
-                  `${m.debtsBalance.defaultMessage}: ${formatCurrency(
-                    debt.balance,
-                  )}`,
-                ],
-              })),
+              (((answers as unknown) as EstateSchema).debts ?? []).map(
+                (debt) => ({
+                  title: debt.creditorName,
+                  description: [
+                    `${m.debtsSsn.defaultMessage}: ${formatNationalId(
+                      debt.ssn ?? '',
+                    )}`,
+                    `${m.debtsBalance.defaultMessage}: ${formatCurrency(
+                      debt.balance ?? '',
+                    )}`,
+                  ],
+                }),
+              ),
           },
         ),
         buildSubmitField({
