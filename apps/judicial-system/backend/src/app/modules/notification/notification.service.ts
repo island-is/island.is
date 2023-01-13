@@ -371,26 +371,28 @@ export class NotificationService {
     return this.sendEmail(subject, body, prosecutor?.name, prosecutor?.email)
   }
 
+  private sendReadyForCourtEmailNotificationToCourt(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const email = theCase.court?.notificationEmail
+    const {
+      subject,
+      body,
+    } = formatCourtIndictmentReadyForCourtEmailNotification(
+      this.formatMessage,
+      theCase,
+      `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+    )
+    return this.sendEmail(subject, body, theCase.court?.name, email)
+  }
+
   private async sendReadyForCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     if (isIndictmentCase(theCase.type)) {
-      const email = theCase.court?.notificationEmail
-      const {
-        subject,
-        body,
-      } = formatCourtIndictmentReadyForCourtEmailNotification(
-        this.formatMessage,
+      const recipient = await this.sendReadyForCourtEmailNotificationToCourt(
         theCase,
-        `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
       )
-      const recipient = await this.sendEmail(
-        subject,
-        body,
-        theCase.court?.name,
-        email,
-      )
-
       return this.recordNotification(
         theCase.id,
         NotificationType.READY_FOR_COURT,
@@ -398,15 +400,14 @@ export class NotificationService {
       )
     }
 
-    // restriction and investigation cases
-    const notification = await this.notificationModel.findOne({
-      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
-    })
-
+    // Investigation and Restrction Cases
     const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
     ]
 
+    const notification = await this.notificationModel.findOne({
+      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
+    })
     if (notification) {
       if (theCase.state === CaseState.RECEIVED) {
         promises.push(
