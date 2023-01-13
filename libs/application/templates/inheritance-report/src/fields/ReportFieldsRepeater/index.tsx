@@ -15,7 +15,7 @@ import * as styles from '../styles.css'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
-import { Skattleysismörk } from '../../lib/constants'
+import { TaxFreeLimit } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
@@ -34,6 +34,7 @@ type RepeaterProps = {
 export const ReportFieldsRepeater: FC<
   FieldBaseProps<Answers> & RepeaterProps
 > = ({ application, field }) => {
+  const { answers, externalData } = application
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
@@ -41,10 +42,7 @@ export const ReportFieldsRepeater: FC<
 
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const answersValues = getValueViaPath(
-    application.answers,
-    id,
-  ) as Array<object>
+  const answersValues = getValueViaPath(answers, id) as Array<object>
 
   /* ------ Stocks ------ */
   const [rateOfExchange, setRateOfExchange] = useState(0)
@@ -101,8 +99,14 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    setTaxFreeInheritance(Skattleysismörk * percentage)
-    setInheritance(15000000 * percentage)
+    setTaxFreeInheritance(TaxFreeLimit * percentage)
+    setInheritance(
+      (Number(answers.assetsTotal) -
+        Number(answers.debtsTotal) +
+        Number(answers.businessTotal) -
+        Number(answers.totalDeduction)) *
+        percentage,
+    )
     setTaxableInheritance(inheritance - taxFreeInheritance)
     setInheritanceTax((inheritance - taxFreeInheritance) * 0.1)
 
@@ -124,27 +128,27 @@ export const ReportFieldsRepeater: FC<
   useEffect(() => {
     if (props.fromExternalData && fields.length === 0) {
       append(
-        (application.externalData.syslumennOnEntry?.data as any).estate[
+        (externalData.syslumennOnEntry?.data as any).estate[
           props.fromExternalData
         ],
       )
     }
   }, [props, fields, append])
 
-  const calculateTotal = (v: any, index: any) => {
+  const calculateTotal = (input: any, index: any) => {
     const arr = valueArray
-    if (v === '') {
+    if (input === '') {
       arr.splice(index, 1)
     } else if (arr[index]) {
-      arr.splice(index, 1, v)
+      arr.splice(index, 1, input)
       setValueArray(arr)
     } else {
-      arr.push(v)
+      arr.push(input)
       setValueArray(arr)
     }
     setTotal(
       valueArray.length
-        ? valueArray.reduce((a: any, v: any) => (a = a + v))
+        ? valueArray.reduce((sum: number, value: number) => (sum = sum + value))
         : 0,
     )
   }

@@ -24,4 +24,4 @@ export enum ApiActions {
   syslumennOnEntry = 'syslumennOnEntry',
 }
 
-export const Skattleysismörk = 5757759
+export const TaxFreeLimit = 5757759
