@@ -56,8 +56,6 @@ export const PortalProvider = ({
             })
             // Extract the path from each route
             .map(({ path }) => path)
-            // Flatten the array of arrays, since route path can be string or array of strings
-            .flat()
             // Find the route path that matches the current pathname
             .find((path) =>
               matchPath(pathname, {

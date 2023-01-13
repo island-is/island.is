@@ -440,22 +440,26 @@ enum LicenseType {
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
+  DisabilityLicense = 'DisabilityLicense',
 }
 enum LicenseTypePath {
   okurettindi = 'okurettindi',
   skotvopnaleyfi = 'skotvopnaleyfi',
   adrrettindi = 'adrrettindi',
   vinnuvelarettindi = 'vinnuvelarettindi',
+  ororkuskirteini = 'ororkuskirteini',
 }
 enum LicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
+  SocialInsuranceAdministration = 'SocialInsuranceAdministration',
 }
 enum LicenseProviderPath {
   vinnueftirlitid = 'vinnueftirlitid',
   umhverfisstofnun = 'umhverfisstofnun',
   rikislogreglustjori = 'rikislogreglustjori',
+  tryggingastofnun = 'tryggingastofnun',
 }
 
 export const getLicenseDetailHeading = (type: string) => {
@@ -479,6 +483,12 @@ export const getLicenseDetailHeading = (type: string) => {
       return {
         title: m.yourFirearmLicense,
         text: m.firearmLicenseDescription,
+      }
+      break
+    case LicenseType.DisabilityLicense:
+      return {
+        title: m.yourDisabilityicense,
+        text: m.disabilityLicenseDescription,
       }
       break
     default:
@@ -509,6 +519,11 @@ export const getTitleAndLogo = (type: string) => {
         title: m.firearmLicense,
         logo: './assets/images/rls.svg',
       }
+    case LicenseType.DisabilityLicense:
+      return {
+        title: m.disabilityLicense,
+        logo: './assets/images/tr.svg',
+      }
     default:
       return { title: m.license, logo: './assets/images/island.svg' }
   }
@@ -527,6 +542,9 @@ export const getPathFromType = (type: string) => {
       break
     case LicenseType.MachineLicense:
       return ServicePortalPath.MachineLicensesDetail
+      break
+    case LicenseType.DisabilityLicense:
+      return LicenseTypePath.ororkuskirteini
       break
     default:
       return ''
@@ -548,6 +566,9 @@ export const getTypeFromPath = (path: string) => {
     case LicenseTypePath.vinnuvelarettindi:
       return LicenseType.MachineLicense
       break
+    case LicenseTypePath.ororkuskirteini:
+      return LicenseType.DisabilityLicense
+      break
     default:
       return undefined
       break
@@ -563,6 +584,9 @@ export const getPathFromProviderId = (id: string) => {
       break
     case LicenseProviderId.NationalPoliceCommissioner:
       return LicenseProviderPath.rikislogreglustjori
+      break
+    case LicenseProviderId.SocialInsuranceAdministration:
+      return LicenseProviderPath.tryggingastofnun
       break
     default:
       return ''

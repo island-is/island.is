@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CodeTableApi } from '../../gen/fetch/apis'
-import { InsuranceCompany } from './vehicleCodetablesClient.types'
+import { InsuranceCompany, PlateType } from './vehicleCodetablesClient.types'
 
 @Injectable()
 export class VehicleCodetablesClient {
@@ -15,6 +15,20 @@ export class VehicleCodetablesClient {
     return result.map((item) => ({
       code: item.code,
       name: item.name,
+    }))
+  }
+
+  public async getPlateTypes(): Promise<PlateType[]> {
+    const result = await this.codetablesApi.platetypesAllGet({
+      apiVersion: '2.0',
+      apiVersion2: '2.0',
+    })
+
+    return result.map((item) => ({
+      code: item.code,
+      name: item.name,
+      plateHeight: item.plateHeight,
+      plateWidth: item.plateWidth,
     }))
   }
 }

@@ -16,13 +16,7 @@ export const filterNavigationTree = ({
   dynamicRouteArray,
   currentLocationPath,
 }: FilterNavigationTree): boolean => {
-  const routeItem = routes.find(
-    (route) =>
-      route.path === item.path ||
-      (Array.isArray(route.path) &&
-        item.path &&
-        route.path.includes(item.path)),
-  )
+  const routeItem = routes.find((route) => route.path === item.path)
 
   const included = routeItem !== undefined || item.systemRoute === true
 
@@ -50,9 +44,7 @@ export const filterNavigationTree = ({
 
   // Makes dynamic item visible in navigation after dynamicArray hook is run
   if (routeItem?.dynamic) {
-    const solidPath = Array.isArray(routeItem?.path)
-      ? routeItem?.path[0]
-      : routeItem?.path
+    const solidPath = routeItem?.path
 
     const showDynamicPath =
       routeItem?.dynamic && solidPath && dynamicRouteArray?.includes(solidPath)
