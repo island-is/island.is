@@ -60,6 +60,7 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
+  formatCourtIndictmentReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -71,7 +72,6 @@ import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { notificationModuleConfig } from './notification.config'
 import { Defendant, DefendantService } from '../defendant'
-import { formatCourtIndictmentReadyForCourtEmailNotification } from '../../formatters/formatters'
 
 interface Attachment {
   filename: string
