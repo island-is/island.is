@@ -1,45 +1,42 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/admin/core'
-import {
-  useActiveModule,
-  useSingleNavigationItem,
-} from '@island.is/portals/core'
+import { useActiveModule } from '@island.is/portals/core'
 
-import {
-  BOTTOM_NAVIGATION,
-  rootNavigationItem,
-  TOP_NAVIGATION,
-} from '../../lib/masterNavigation'
+import { rootNavigationItem } from '../../lib/masterNavigation'
 
 interface ModuleSwitcherHeaderProps {
   mobile?: boolean
+
+  // If true, the header will be static and not clickable
+  isStaticSwitcher?: boolean
 }
 
-export const ModuleSwitcherHeader = ({ mobile }: ModuleSwitcherHeaderProps) => {
+export const ModuleSwitcherHeader = ({
+  mobile,
+  isStaticSwitcher,
+}: ModuleSwitcherHeaderProps) => {
   const activeModule = useActiveModule()
   const { formatMessage } = useLocale()
-  const hasSingleNavItem = !!useSingleNavigationItem(
-    TOP_NAVIGATION,
-    BOTTOM_NAVIGATION,
-  )
 
   return (
     <Box
       display="flex"
       justifyContent="spaceBetween"
       paddingX={mobile ? undefined : 3}
-      cursor={hasSingleNavItem ? undefined : 'pointer'}
+      cursor={isStaticSwitcher ? undefined : 'pointer'}
     >
       <div>
         <Text variant="eyebrow">{formatMessage(m.shortTitle)}</Text>
-        <Text>
-          {formatMessage(
-            activeModule ? activeModule.name : rootNavigationItem.name,
-          )}
-        </Text>
+        {(!isStaticSwitcher || activeModule) && (
+          <Text>
+            {formatMessage(
+              activeModule ? activeModule.name : rootNavigationItem.name,
+            )}
+          </Text>
+        )}
       </div>
-      {!hasSingleNavItem && (
+      {!isStaticSwitcher && (
         <Box
           display="flex"
           alignItems="center"

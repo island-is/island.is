@@ -171,6 +171,7 @@ export type EstateMember = {
   name: string
   nationalId: string
   relation: string
+  dateOfBirth?: string
 }
 
 export type EstateAsset = {
