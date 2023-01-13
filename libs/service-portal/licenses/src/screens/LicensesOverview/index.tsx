@@ -94,12 +94,16 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
     GenericLicenseType.DriversLicense,
+    GenericLicenseType.AdrLicense,
+    GenericLicenseType.MachineLicense,
+    GenericLicenseType.FirearmLicense,
   ])
 
+  /* Flag to hide disability license */
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
-        `servicePortalFetchAllLicenses`,
+        `isServicePortalDisabilityLicenseEnabled`,
         false,
       )
       if (ffEnabled) {
@@ -108,6 +112,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           GenericLicenseType.AdrLicense,
           GenericLicenseType.MachineLicense,
           GenericLicenseType.FirearmLicense,
+          GenericLicenseType.DisabilityLicense,
         ])
       }
     }
