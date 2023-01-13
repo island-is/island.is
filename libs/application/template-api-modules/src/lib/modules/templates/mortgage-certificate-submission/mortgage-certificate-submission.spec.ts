@@ -1,8 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  createCurrentUser,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
   ApplicationStatus,
   ApplicationTypes,

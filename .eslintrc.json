@@ -101,7 +101,13 @@
               },
               {
                 "sourceTag": "scope:auth",
-                "onlyDependOnLibsWithTags": ["lib:nest", "lib:node", "lib:js", "lib:client", "lib:auth"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:auth"
+                ]
               },
               {
                 "sourceTag": "scope:react",
@@ -109,7 +115,12 @@
               },
               {
                 "sourceTag": "scope:client",
-                "onlyDependOnLibsWithTags": ["lib:client", "lib:nest", "lib:node", "lib:js"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:client",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js"
+                ]
               },
               {
                 "sourceTag": "scope:dom",
@@ -117,7 +128,12 @@
               },
               {
                 "sourceTag": "scope:nest",
-                "onlyDependOnLibsWithTags": ["lib:nest", "lib:node", "lib:js", "lib:client"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client"
+                ]
               },
               {
                 "sourceTag": "scope:node",
@@ -129,7 +145,11 @@
               },
               {
                 "sourceTag": "scope:e2e",
-                "onlyDependOnLibsWithTags": ["lib:js", "lib:client", "lib:as-shared"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:js",
+                  "lib:client",
+                  "lib:as-shared"
+                ]
               }
             ]
           }

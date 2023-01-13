@@ -226,7 +226,7 @@ interface PropertyLocation {
 }
 
 interface UnitsOfUseModel {
-   unitsOfUse?: UnitsOfUse[]
+  unitsOfUse?: UnitsOfUse[]
 }
 
 interface UnitsOfUse {

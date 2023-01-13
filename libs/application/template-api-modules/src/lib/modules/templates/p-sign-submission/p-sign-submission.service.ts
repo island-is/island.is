@@ -122,9 +122,9 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       ssn: nationalRegistryData?.nationalId,
       phoneNumber: application.answers.phone as string,
       email: application.answers.email as string,
-      homeAddress: nationalRegistryData?.address?.streetAddress || "",
-      postalCode: nationalRegistryData?.address?.postalCode || "",
-      city: nationalRegistryData?.address?.locality || "",
+      homeAddress: nationalRegistryData?.address?.streetAddress || '',
+      postalCode: nationalRegistryData?.address?.postalCode || '',
+      city: nationalRegistryData?.address?.locality || '',
       signed: true,
       type: PersonType.Plaintiff,
     }

@@ -4,7 +4,10 @@ import {
   buildTextField,
   buildDateField,
 } from '@island.is/application/core'
-import { Application, NationalRegistryIndividual } from '@island.is/application/types'
+import {
+  Application,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { UserProfile } from '@island.is/api/schema'

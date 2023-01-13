@@ -10,4 +10,7 @@ export * from './lib/constants'
 export * from './lib/institutionMapper'
 export * from './validation/validators'
 export * from './validation/AnswerValidator'
-export { createApplication, createApplicationTemplate } from './test/fixtures/application'
+export {
+  createApplication,
+  createApplicationTemplate,
+} from './test/fixtures/application'

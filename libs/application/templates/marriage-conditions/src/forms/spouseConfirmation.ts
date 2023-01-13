@@ -20,7 +20,7 @@ import {
   Application,
   NationalRegistryUserApi,
   UserProfileApi,
-  NationalRegistryIndividual
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
@@ -243,7 +243,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
                         .nationalRegistry.data as NationalRegistryIndividual
-                      return nationalRegistry.citizenship.code
+                      return nationalRegistry?.citizenship?.code
                     },
                   }),
                   buildTextField({

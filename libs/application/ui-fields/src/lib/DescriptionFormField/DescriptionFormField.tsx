@@ -9,6 +9,7 @@ import { Markdown } from '@island.is/shared/components'
 export const DescriptionFormField: FC<{
   application: Application
   field: DescriptionField
+
   showFieldName: boolean
 }> = ({ application, field, showFieldName }) => {
   const { formatMessage } = useLocale()

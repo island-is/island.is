@@ -56,9 +56,7 @@ export class IdentityClientService {
   private async getCompanyIdentity(
     nationalId: string,
   ): Promise<Identity | null> {
-    const company = await this.rskCompanyInfoService.getCompany(
-      nationalId,
-    )
+    const company = await this.rskCompanyInfoService.getCompany(nationalId)
 
     if (!company) {
       return null

@@ -5,7 +5,10 @@ import {
   buildCustomField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Application, NationalRegistryIndividual } from '@island.is/application/types'
+import {
+  Application,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../fields/QualityPhoto/hooks/useQualityPhoto'

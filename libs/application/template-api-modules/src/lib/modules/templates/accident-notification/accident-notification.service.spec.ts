@@ -13,9 +13,7 @@ import { AccidentNotificationAttachmentProvider } from './attachments/applicatio
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
-import {
-  createCurrentUser,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import { S3 } from 'aws-sdk'
 import type { Locale } from '@island.is/shared/types'
 import { createApplication } from '@island.is/application/core'

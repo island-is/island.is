@@ -44,4 +44,3 @@ export interface Callback {
   chargeItemSubject: string
   status: 'paid' | 'cancelled' | 'recreated' | 'recreatedAndPaid'
 }
-

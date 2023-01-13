@@ -5,7 +5,6 @@ import {
 } from '@island.is/application/types'
 import { FamilyMember } from '../libs/familyMember.type'
 
-
 export class FamilyInformationProvider extends BasicDataProvider {
   type = 'FamilyInformationProvider'
 

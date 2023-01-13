@@ -1,4 +1,3 @@
-
 export enum XRoadMemberClass {
   GovernmentInstitution = 'GOV',
   EducationalInstitution = 'EDU',

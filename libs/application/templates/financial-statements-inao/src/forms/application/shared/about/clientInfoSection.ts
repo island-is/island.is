@@ -12,7 +12,6 @@ import { getCurrentUserType } from '../../../../lib/utils/helpers'
 import { FSIUSERTYPE } from '../../../../types'
 import { Identity } from '@island.is/clients/identity'
 
-
 export const clientInfoSection = buildSection({
   id: 'info',
   title: m.info,
