@@ -10,7 +10,7 @@ const LeftSideColumn = () => {
       <Box>
         <CaseBreadcrumbs />
         <Divider />
-        <CaseTimeline />
+        <CaseTimeline status="Niðurstöður í vinnslu" />
       </Box>
       <Box
         marginBottom={6}
