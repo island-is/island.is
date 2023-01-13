@@ -52,9 +52,10 @@ const defaultOrg: Organization = {
   tag: [],
   title: 'Stafrænt Ísland',
 }
+
 const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
-  const [isDashboard, setIsDashboard] = useState(false) // TODO REVERT TO TRUE
+  const [isDashboard, setIsDashboard] = useState(true) // TODO REVERT TO TRUE
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [currentOrganization, setCurrentOrganization] = useState<
     Organization | undefined
