@@ -23,11 +23,11 @@ const Temp: FC<FieldBaseProps> = ({ field, application }) => {
     ) as boolean
 
   const tempApplicants = [
-    { id: 1, name: "Jón" },
-    {  id: 2, name: "Pétur" }
+    { id: "1010885213", name: "Jón Lýðsson" },
+    { id: "1022551122", name: "Pétur Sigurðsson" }
   ]
 
-
+  console.log(answers)
   return (
     <Box>
       <Stack space={2}>
@@ -40,13 +40,7 @@ const Temp: FC<FieldBaseProps> = ({ field, application }) => {
               application,
               formatMessage,
             )}
-            placeholder={formatText(
-              m.constraints.constraintsMailPlaceholder,
-              application,
-              formatMessage
-            )}
-            defaultValue={getConstraintVal(`${item.name}`)}
-            extraText={false}
+            defaultValue={getConstraintVal(`${item.id}`)}
           />
         ))}
 
