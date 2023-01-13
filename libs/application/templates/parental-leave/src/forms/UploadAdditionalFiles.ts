@@ -1,13 +1,13 @@
 import {
-    buildCustomField,
     buildFileUploadField,
     buildForm,
     buildSection,
+    buildSubmitField,
   } from '@island.is/application/core'
   import { Form } from '@island.is/application/types'
   
   import Logo from '../assets/Logo'
-  import { FILE_SIZE_LIMIT, States } from '../constants'
+  import { FILE_SIZE_LIMIT } from '../constants'
   import {
     parentalLeaveFormMessages,
   } from '../lib/messages'
@@ -19,12 +19,7 @@ import {
     children: [
       buildSection({
         id: 'additionalDocuments',
-        title: (application) =>
-          application.state === States.VINNUMALASTOFNUN_APPROVAL
-            ? parentalLeaveFormMessages.reviewScreen.titleReceived
-            : application.state === States.APPROVED
-            ? parentalLeaveFormMessages.reviewScreen.titleApproved
-            : parentalLeaveFormMessages.reviewScreen.titleInReview,
+        title: '',
         children: [
           buildFileUploadField({
             id: 'fileUpload.additionalDocuments',
@@ -39,6 +34,18 @@ import {
             uploadDescription: '',
             uploadButtonLabel:
               parentalLeaveFormMessages.selfEmployed.attachmentButton,
+          }),
+          buildSubmitField({
+            id: 'additionalDocuments',
+            title: parentalLeaveFormMessages.confirmation.title,
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: 'SUBMIT',
+                name: parentalLeaveFormMessages.attachmentScreen.additionalDocumentsEditSubmit,
+                type: 'primary',
+              },
+            ],
           }),
         ],
       }),
