@@ -8,7 +8,6 @@ import { Features } from '@island.is/feature-flags'
 export const icelandicNamesRegistryModule: PortalModule = {
   name: m.rootName,
   featureFlag: Features.servicePortalIcelandicNamesRegistryModule,
-  widgets: () => [],
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {

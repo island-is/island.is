@@ -6,7 +6,6 @@ import { VehiclePaths } from './lib/paths'
 
 export const vehiclesModule: PortalModule = {
   name: 'Ökutæki',
-  widgets: () => [],
   routes: ({ userInfo }) => [
     {
       name: m.yourVehicles,

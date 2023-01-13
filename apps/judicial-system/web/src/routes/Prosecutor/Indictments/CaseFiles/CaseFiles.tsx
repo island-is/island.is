@@ -1,6 +1,13 @@
-import React, { useCallback, useContext } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import { uuid } from 'uuidv4'
 
 import {
   ProsecutorCaseInfo,
@@ -24,50 +31,122 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import {
+  TUploadFile,
   useS3Upload,
-  useS3UploadV2,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
 
 const CaseFiles: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
-  const { formatMessage } = useIntl()
-  const { files, handleS3Upload, handleRetry, allFilesUploaded } = useS3Upload(
-    workingCase,
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
   )
-  const { remove } = useS3UploadV2(workingCase.id)
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
+  const { formatMessage } = useIntl()
+  const { upload, remove } = useS3Upload(workingCase.id)
+
+  useEffect(() => {
+    if (workingCase.caseFiles) {
+      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
+    }
+  }, [workingCase.caseFiles])
+
+  const allFilesUploaded = useMemo(() => {
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
+  }, [displayFiles])
 
   const stepIsValid = allFilesUploaded
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
+
+  const setSingleFile = useCallback(
+    (displayFile: TUploadFile, newId?: string) => {
+      setDisplayFiles((previous) => {
+        const index = previous.findIndex((f) => f.id === displayFile.id)
+        if (index === -1) {
+          return previous
+        }
+        const next = [...previous]
+        next[index] = { ...displayFile, id: newId ?? displayFile.id }
+        return next
+      })
+    },
+    [setDisplayFiles],
+  )
+
+  const handleChange = useCallback(
+    (files: File[], category: CaseFileCategory) => {
+      // We generate an id for each file so that we find the file again when
+      // updating the file's progress and onRetry.
+      // Also we cannot spread File since it contains read-only properties.
+      const filesWithId: Array<[File, string]> = files.map((file) => [
+        file,
+        `${file.name}-${uuid()}`,
+      ])
+      setDisplayFiles((previous) => [
+        ...filesWithId.map(
+          ([file, id]): TUploadFile => ({
+            status: 'uploading',
+            percent: 1,
+            name: file.name,
+            id: id,
+            type: file.type,
+            category,
+          }),
+        ),
+        ...previous,
+      ])
+      upload(filesWithId, setSingleFile, category)
+    },
+    [upload, setSingleFile],
+  )
+
   const handleRemove = useCallback(
     async (file: UploadFile) => {
       try {
         if (file.id) {
           await remove(file.id)
-          setWorkingCase((prev) => ({
-            ...prev,
-            caseFiles: prev.caseFiles?.filter(
-              (caseFile) => caseFile.id !== file.id,
-            ),
-          }))
+          setDisplayFiles((prev) => {
+            return prev.filter((caseFile) => caseFile.id !== file.id)
+          })
         }
       } catch {
         toast.error(formatMessage(errors.general))
       }
     },
-    [formatMessage, remove, setWorkingCase],
+    [formatMessage, remove, setDisplayFiles],
+  )
+
+  const handleRetry = useCallback(
+    (file: TUploadFile) => {
+      setSingleFile({
+        name: file.name,
+        id: file.id,
+        percent: 1,
+        status: 'uploading',
+        type: file.type,
+        category: file.category,
+      })
+      upload(
+        [
+          [
+            { name: file.name, type: file.type ?? '' } as File,
+            file.id ?? file.name,
+          ],
+        ],
+        setSingleFile,
+        file.category,
+      )
+    },
+    [setSingleFile, upload],
   )
 
   return (
@@ -95,7 +174,7 @@ const CaseFiles: React.FC = () => {
             title={formatMessage(strings.caseFiles.sections.coverLetter)}
           />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COVER_LETTER,
             )}
             accept={Object.values(fileExtensionWhitelist)}
@@ -103,7 +182,7 @@ const CaseFiles: React.FC = () => {
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.COVER_LETTER)
+              handleChange(files, CaseFileCategory.COVER_LETTER)
             }
             onRemove={handleRemove}
             onRetry={handleRetry}
@@ -114,7 +193,7 @@ const CaseFiles: React.FC = () => {
             title={formatMessage(strings.caseFiles.sections.indictment)}
           />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.INDICTMENT,
             )}
             accept={Object.values(fileExtensionWhitelist)}
@@ -122,7 +201,7 @@ const CaseFiles: React.FC = () => {
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.INDICTMENT)
+              handleChange(files, CaseFileCategory.INDICTMENT)
             }
             onRemove={handleRemove}
             onRetry={handleRetry}
@@ -133,14 +212,14 @@ const CaseFiles: React.FC = () => {
             title={formatMessage(strings.caseFiles.sections.criminalRecord)}
           />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.CRIMINAL_RECORD)
+              handleChange(files, CaseFileCategory.CRIMINAL_RECORD)
             }
             onRemove={handleRemove}
             onRetry={handleRetry}
@@ -151,14 +230,14 @@ const CaseFiles: React.FC = () => {
             title={formatMessage(strings.caseFiles.sections.costBreakdown)}
           />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.COST_BREAKDOWN)
+              handleChange(files, CaseFileCategory.COST_BREAKDOWN)
             }
             onRemove={handleRemove}
             onRetry={handleRetry}
@@ -169,7 +248,7 @@ const CaseFiles: React.FC = () => {
             title={formatMessage(strings.caseFiles.sections.otherDocuments)}
           />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) =>
                 file.category === CaseFileCategory.CASE_FILE &&
                 !file.policeCaseNumber,
@@ -178,7 +257,7 @@ const CaseFiles: React.FC = () => {
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.CASE_FILE)
+              handleChange(files, CaseFileCategory.CASE_FILE)
             }
             onRemove={handleRemove}
             onRetry={handleRetry}
