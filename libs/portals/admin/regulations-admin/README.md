@@ -1,4 +1,6 @@
-# Service Portal Regulations Admin
+<!-- gitbook-ignore -->
+
+# Portals Admin Regulations Admin
 
 This library was generated with [Nx](https://nx.dev).
 
@@ -12,9 +14,9 @@ Get fresh AWS credentials, and then open six (6) terminal windows.
    (for setup see [the README.md](../../services/../../apps/services/regulations-admin-backend/Readme.md))
 4. `yarn start regulations-admin-backend`
 5. `yarn start api`
-6. `yarn start service-portal`
+6. `yarn start portals-admin`
 
-Once everything is running, open <http://localhost:4200/minarsidur/reglugerdir-admin> and enjoy.
+Once everything is running, open <http://localhost:4200/stjornbord/reglugerdir-admin> and enjoy.
 
 ## Downloading PDFs
 

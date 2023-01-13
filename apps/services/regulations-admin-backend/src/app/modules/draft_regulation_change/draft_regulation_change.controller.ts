@@ -28,6 +28,7 @@ import { DraftRegulationChangeService } from './draft_regulation_change.service'
 
 import { environment } from '../../../environments'
 import { DraftRegulationChange } from '@island.is/regulations/admin'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulation_change`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -40,7 +41,7 @@ export class DraftRegulationChangeController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Post('draft_regulation_change')
   @ApiCreatedResponse({
     type: DraftRegulationChangeModel,
@@ -58,7 +59,7 @@ export class DraftRegulationChangeController {
     )
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Put('draft_regulation_change/:id')
   @ApiOkResponse({
     type: DraftRegulationChangeModel,
@@ -87,7 +88,7 @@ export class DraftRegulationChangeController {
     return updatedDraftRegulationChange
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Delete('draft_regulation_change/:id')
   @ApiCreatedResponse()
   async delete(

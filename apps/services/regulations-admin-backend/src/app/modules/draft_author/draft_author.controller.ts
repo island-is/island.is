@@ -8,6 +8,7 @@ import { DraftAuthorModel } from './draft_author.model'
 import { DraftAuthorService } from './draft_author.service'
 
 import { environment } from '../../../environments'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 const namespace = `${environment.audit.defaultNamespace}/draft_author`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -20,7 +21,7 @@ export class DraftAuthorController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Post('draft_author')
   @ApiCreatedResponse({
     type: DraftAuthorModel,

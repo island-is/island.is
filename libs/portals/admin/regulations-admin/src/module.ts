@@ -1,19 +1,22 @@
 import { lazy } from 'react'
-import { RegulationsAdminScope } from '@island.is/auth/scopes'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { RegulationsAdminPaths } from './lib/paths'
 
 const creationScopes = {
-  [RegulationsAdminScope.create]: true,
-  [RegulationsAdminScope.manage]: true,
+  [AdminPortalScope.regulationAdmin]: true,
+  [AdminPortalScope.regulationAdminManage]: true,
 }
 
 export const regulationAdminModule: PortalModule = {
   name: 'Reglugerðir — vinnslusvæði',
   widgets: () => [],
+  layout: 'full',
   routes: ({ userInfo }) => {
     const mayCreate = !!userInfo.scopes.find((scope) => scope in creationScopes)
-    const mayManage = userInfo.scopes.includes(RegulationsAdminScope.manage)
+    const mayManage = userInfo.scopes.includes(
+      AdminPortalScope.regulationAdminManage,
+    )
 
     return [
       {

@@ -16,7 +16,7 @@ import {
   useMinistriesQuery,
   useRegulationDraftQuery,
 } from '../utils/dataHooks'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { PortalModuleComponent } from '@island.is/portals/core'
 import { MessageDescriptor } from '@formatjs/intl'
 import { editorMsgs } from '../messages'
 import { EditBasics } from '../components/EditBasics'
@@ -136,7 +136,7 @@ const EditScreen = () => {
 
 // ---------------------------------------------------------------------------
 
-const EditApp: ServicePortalModuleComponent = ({ userInfo }) => {
+const EditApp: PortalModuleComponent = ({ userInfo }) => {
   useNamespaces('ap.regulations-admin')
 
   const params = useParams<Record<string, string | undefined>>()

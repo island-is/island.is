@@ -5,7 +5,7 @@ import { Action, DraftingState } from './types'
 import { produce, setAutoFreeze } from 'immer'
 import { DraftImpactId, RegulationDraft } from '@island.is/regulations/admin'
 import { useAuth } from '@island.is/auth/react'
-import { RegulationsAdminScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, RegulationsAdminScope } from '@island.is/auth/scopes'
 import { derivedUpdates, validateState } from './validations'
 import { makeDraftForm, steps } from './makeFields'
 import { actionHandlers } from './actionHandlers'
@@ -40,7 +40,9 @@ export const useEditDraftReducer = (inputs: StateInputs) => {
   const { regulationDraft, ministries, lawChapters, stepName } = inputs
 
   const isEditor =
-    useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
+    useAuth().userInfo?.scopes?.includes(
+      AdminPortalScope.regulationAdminManage,
+    ) || false
 
   const makeInitialState = () => {
     const draft = makeDraftForm(regulationDraft)

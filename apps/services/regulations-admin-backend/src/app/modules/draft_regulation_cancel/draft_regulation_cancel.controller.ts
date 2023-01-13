@@ -30,6 +30,7 @@ import { environment } from '../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulation_cancel`
 
 import { DraftRegulationCancel } from '@island.is/regulations/admin'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('api')
@@ -41,7 +42,7 @@ export class DraftRegulationCancelController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Post('draft_regulation_cancel')
   @ApiCreatedResponse({
     type: DraftRegulationCancelModel,
@@ -59,7 +60,7 @@ export class DraftRegulationCancelController {
     )
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Put('draft_regulation_cancel/:id')
   @ApiOkResponse({
     type: DraftRegulationCancelModel,
@@ -93,7 +94,7 @@ export class DraftRegulationCancelController {
     return draftRegulationCancel
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Delete('draft_regulation_cancel/:id')
   @ApiCreatedResponse()
   async delete(
@@ -115,7 +116,7 @@ export class DraftRegulationCancelController {
     )
   }
 
-  @Scopes('@island.is/regulations:create')
+  @Scopes(AdminPortalScope.regulationAdmin)
   @Delete('draft_regulation_cancel/:draftId')
   @ApiCreatedResponse()
   async deleteRegulationDraftCancels(

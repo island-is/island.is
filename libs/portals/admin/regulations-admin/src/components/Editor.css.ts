@@ -1,9 +1,5 @@
 import type { EditorClasses } from '@island.is/regulations-tools/Editor'
 import { style, globalStyle, keyframes, StyleRule } from '@vanilla-extract/css'
-import {
-  SERVICE_PORTAL_HEADER_HEIGHT_SM,
-  SERVICE_PORTAL_HEADER_HEIGHT_LG,
-} from '@island.is/service-portal/constants'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import {
   diffStyling,
@@ -89,7 +85,7 @@ export const classes: EditorClasses = {
 
   toolbar: style({
     position: 'sticky',
-    top: SERVICE_PORTAL_HEADER_HEIGHT_SM - 1,
+    top: theme.headerHeight.small - 1,
     zIndex: 1,
 
     margin: 0,
@@ -98,7 +94,7 @@ export const classes: EditorClasses = {
 
     ...themeUtils.responsiveStyle({
       md: {
-        top: SERVICE_PORTAL_HEADER_HEIGHT_LG - 1,
+        top: theme.headerHeight.large - 1,
       },
     }),
 

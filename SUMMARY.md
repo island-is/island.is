@@ -240,7 +240,6 @@
   - [Feature Flags](libs/react/feature-flags/README.md)
 - [Regulations](libs/regulations/README.md)
 - [Residence History](libs/residence-history/README.md)
-  - [Service Portal Regulations Admin](libs/service-portal/regulations-admin/README.md)
 - [Shared](libs/shared/README.md)
   - [Babel](libs/shared/babel/README.md)
   - [Components](libs/shared/components/README.md)

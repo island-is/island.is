@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/service-portal/core'
+import { m } from './messages'
 import { RegulationsAdminPaths } from './paths'
 
 export const regulationAdminNavigation: PortalNavigationItem = {

@@ -23,6 +23,8 @@ if (userMocked) {
       'profile',
       AdminPortalScope.delegations,
       AdminPortalScope.airDiscountScheme,
+      AdminPortalScope.regulationAdmin,
+      AdminPortalScope.regulationAdminManage,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'ap.',

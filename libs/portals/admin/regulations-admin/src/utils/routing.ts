@@ -1,10 +1,10 @@
 import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { generatePath } from 'react-router'
 import { isUuid } from 'uuidv4'
+import { RegulationsAdminPaths } from '../lib/paths'
 import { Step } from '../types'
 
-const { RegulationsAdminEdit } = ServicePortalPath
+const { RegulationsAdminEdit } = RegulationsAdminPaths
 
 // ---------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ export const getEditUrl: GetEditUrlFn = (
 
 // ---------------------------------------------------------------------------
 
-export const getHomeUrl = () => ServicePortalPath.RegulationsAdminRoot
+export const getHomeUrl = () => RegulationsAdminPaths.RegulationsAdminRoot
 
 // ---------------------------------------------------------------------------
 /*

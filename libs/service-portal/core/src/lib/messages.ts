@@ -481,18 +481,6 @@ export const m = defineMessages({
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
-  regulationAdmin: {
-    id: 'service.portal:regulations-admin',
-    defaultMessage: 'Reglugerðir',
-  },
-  regulationAdminEdit: {
-    id: 'service.portal:regulations-edit',
-    defaultMessage: 'Skráning',
-  },
-  regulationAdminMinistries: {
-    id: 'service.portal:regulations-ministries',
-    defaultMessage: 'Ráðuneyti',
-  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',

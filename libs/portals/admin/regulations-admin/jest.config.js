@@ -1,6 +1,6 @@
 module.exports = {
-  displayName: 'service-portal-regulations-admin',
-  preset: '../../../jest.preset.js',
+  displayName: 'portals-admin-regulations-admin',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -8,5 +8,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/service-portal/regulations-admin',
+  coverageDirectory:
+    '../../../../coverage/libs/portals/admin/regulations-admin',
 }
