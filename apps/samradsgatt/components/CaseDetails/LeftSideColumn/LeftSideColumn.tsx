@@ -4,11 +4,18 @@ import CaseBreadcrumbs from './CaseBreadcrumbs'
 import CaseTimeline from './CaseTimeline'
 import SubscriptionBox from './SubscriptionBox'
 
-const LeftSideColumn = () => {
+interface LeftSideColumnProps {
+  caseNumber: string
+}
+
+// TODO: change caseNumber when we have data
+// TODO: add caseNumber to Timeline props
+const LeftSideColumn = ({ caseNumber }: LeftSideColumnProps) => {
+  caseNumber = 'Mál nr. 76/2022' // remove
   return (
     <GridContainer>
       <Box>
-        <CaseBreadcrumbs />
+        <CaseBreadcrumbs caseNumber={caseNumber} />
         <Divider />
         <CaseTimeline />
       </Box>

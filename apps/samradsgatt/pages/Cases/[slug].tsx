@@ -5,15 +5,15 @@ import MainColumn from '../../components/CaseDetails/MainColumn/MainColumn'
 import RightSideColumn from '../../components/CaseDetails/RightSideColumn/RightSideColumn'
 
 interface DetailsProps {
-  CaseID: string
+  caseID: string
 }
 
-const Details: React.FC<DetailsProps> = () => {
+const Details: React.FC<DetailsProps> = ({ caseID }) => {
   return (
     <GridContainer>
       <GridRow>
         <GridColumn span={'3/12'} paddingBottom={3}>
-          <LeftSideColumn />
+          <LeftSideColumn caseNumber={caseID} />
         </GridColumn>
         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
           <MainColumn />
