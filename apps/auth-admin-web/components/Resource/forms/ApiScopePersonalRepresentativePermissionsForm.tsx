@@ -149,7 +149,7 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="permissionType"
-                    message={errors.permissionType}
+                    message={errors.permissionType.message}
                   />
                   <input
                     type="submit"

@@ -224,7 +224,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                           id={scope.name}
                           type="checkbox"
                           {...register(
-                            `apiScopeUser.userAccess[${scope.name}]`,
+                            `apiScopeUser.userAccess[${scope.name}]` as any,
                           )}
                           className="api-scope-user-create-form__checkbox"
                           checked={checked}
