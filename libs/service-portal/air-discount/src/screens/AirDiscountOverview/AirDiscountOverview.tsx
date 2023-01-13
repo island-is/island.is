@@ -9,7 +9,7 @@ import {
   CardLoader,
 } from '@island.is/service-portal/core'
 import { gql, useQuery } from '@apollo/client'
-import { Query, AirDiscountSchemeFlightLeg } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -84,9 +84,6 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
   const airDiscounts = data?.airDiscountSchemeDiscounts
   const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
 
-  console.log(flightLegs)
-
-  console.log(airDiscounts)
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -120,7 +117,11 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
             <Text variant="default" paddingTop={2}>
               {formatMessage(m.introLink, {
                 link: (str) => (
-                  <a href="http://island.is">
+                  <a
+                    href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <Button variant="text">{str}</Button>
                   </a>
                 ),
