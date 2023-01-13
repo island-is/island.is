@@ -41,7 +41,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
     handleCreateCourtCase,
     isCreatingCourtCase,
   } = props
-  const { updateCase, sendNotification } = useCase()
+  const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
   const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
@@ -62,9 +62,6 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
     }
 
     await updateCase(id, update)
-    if (update.courtCaseNumber) {
-      sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
-    }
   }
 
   return (

@@ -29,6 +29,7 @@ import {
   CaseOrigin,
   CaseState,
   isIndictmentCase,
+  NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -56,6 +57,7 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
+import { NotificationService } from '../notification/notification.service'
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -428,6 +430,15 @@ export class CaseService {
     )
   }
 
+  addReceivedByCourtMessageToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   async findById(caseId: string, allowDeleted = false): Promise<Case> {
     const theCase = await this.caseModel.findOne({
       include,
@@ -529,6 +540,10 @@ export class CaseService {
           throw new InternalServerErrorException(
             `Could not update case ${theCase.id}`,
           )
+        }
+
+        if (courtCaseNumberAdded) {
+          await this.addReceivedByCourtMessageToQueue(theCase)
         }
 
         // Update police case numbers of case files if necessary

@@ -23,7 +23,6 @@ import {
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -59,7 +58,6 @@ const ReceptionAndAssignment = () => {
   const {
     createCourtCase,
     isCreatingCourtCase,
-    sendNotification,
     setAndSendCaseToServer,
   } = useCase()
 
@@ -80,7 +78,6 @@ const ReceptionAndAssignment = () => {
 
     if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
-      sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
     }
   }
 
