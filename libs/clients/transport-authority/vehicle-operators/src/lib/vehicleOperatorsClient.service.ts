@@ -45,7 +45,28 @@ export class VehicleOperatorsClient {
         operators: operators.map((operator) => ({
           personIdNumber: operator.ssn || '',
           startDate: operator.startDate || new Date(),
-          endDate: null,
+          endDate: operator.endDate || null,
+          mainOperator: operator.isMainOperator ? 1 : 0,
+        })),
+      },
+    })
+  }
+
+  public async updateOperators(
+    auth: User,
+    permno: string,
+    operators: Operator[],
+  ): Promise<void> {
+    await this.operatorsApiWithAuth(auth).withoutcontractPut({
+      apiVersion: '2.0',
+      apiVersion2: '2.0',
+      putOperatorsWithoutContractModel: {
+        permno: permno,
+        reportingPersonIdNumber: auth.nationalId,
+        operators: operators.map((operator) => ({
+          personIdNumber: operator.ssn || '',
+          startDate: operator.startDate || new Date(),
+          endDate: operator.endDate || null,
           mainOperator: operator.isMainOperator ? 1 : 0,
         })),
       },

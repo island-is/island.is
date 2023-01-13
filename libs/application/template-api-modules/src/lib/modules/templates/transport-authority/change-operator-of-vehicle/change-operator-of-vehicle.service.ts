@@ -233,6 +233,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     const mainOperatorNationalId = answers?.mainOperator?.nationalId
     const newOperators = answers?.operators.map((operator) => ({
       startDate: new Date(),
+      endDate: null,
       ssn: operator.nationalId,
       isMainOperator:
         answers.operators.length > 1
@@ -240,13 +241,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    const oldOperators = answers?.oldOperators?.filter(
-      (operator) => operator.wasRemoved === 'false',
-    )
-    const newOldOperators = oldOperators.map((oldOperator) => ({
+    const newOldOperators = answers?.oldOperators?.map((oldOperator) => ({
       startDate: oldOperator.startDate
-        ? new Date(oldOperator.startDate)
+        ? new Date(new Date(oldOperator.startDate).getTime() + 60000)
         : new Date(),
+      endDate: oldOperator.wasRemoved === 'false' ? null : new Date(),
       ssn: oldOperator.nationalId,
       isMainOperator:
         answers.operators.length > 1
@@ -254,10 +253,18 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    await this.vehicleOperatorsClient.saveOperators(auth, permno, [
-      ...newOperators,
-      ...newOldOperators,
-    ])
+    if (newOperators.length === 0) {
+      await this.vehicleOperatorsClient.updateOperators(
+        auth,
+        permno,
+        newOldOperators,
+      )
+    } else {
+      await this.vehicleOperatorsClient.saveOperators(auth, permno, [
+        ...newOperators,
+        ...newOldOperators,
+      ])
+    }
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 
