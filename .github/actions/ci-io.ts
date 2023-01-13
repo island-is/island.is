@@ -70,7 +70,7 @@ export class LocalRunner implements GitActionStatus {
           `nx`,
           `print-affected`,
           `--select=projects`,
-          ...chunk(changedFiles, 20).map(
+          ...chunk(changedFiles, 15).map(
             (chunk) => `--files=${chunk.join(',')}`,
           ),
         ],
