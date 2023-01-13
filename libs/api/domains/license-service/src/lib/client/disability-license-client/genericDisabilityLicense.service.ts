@@ -138,7 +138,15 @@ export class GenericDisabilityLicenseService
       payload,
       format(user.nationalId),
     )
-    return pass ?? null
+
+    if (pass.ok) {
+      return pass.data
+    }
+    /**
+     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
+     * For now we return null, just to keep existing behavior unchanged
+     */
+    return null
   }
 
   async getPkPassQRCode(user: User): Promise<string | null> {
@@ -152,7 +160,14 @@ export class GenericDisabilityLicenseService
       format(user.nationalId),
     )
 
-    return pass ?? null
+    if (pass.ok) {
+      return pass.data
+    }
+    /**
+     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
+     * For now we return null, just to keep existing behavior unchanged
+     */
+    return null
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
@@ -168,31 +183,15 @@ export class GenericDisabilityLicenseService
 
     let error: PkPassVerificationError | undefined
 
-    if (result.error) {
-      let data = ''
-
-      try {
-        data = JSON.stringify(result.error.serviceError?.data)
-      } catch {
-        // noop
-      }
-
-      // Is there a status code from the service?
-      const serviceErrorStatus = result.error.serviceError?.status
-
-      // Use status code, or http status code from serivce, or "0" for unknown
-      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
-
-      error = {
-        status: status.toString(),
-        message: result.error.serviceError?.message || 'Unknown error',
-        data,
-      }
-
+    if (!result.ok) {
       return {
         valid: false,
         data: undefined,
-        error,
+        error: {
+          status: result.error.code.toString(),
+          message: result.error.message ?? '',
+          data: result.error.data,
+        },
       }
     }
 
@@ -202,13 +201,12 @@ export class GenericDisabilityLicenseService
       A robust verification needs to both check that the PkPass is valid,
       and that the user being scanned does indeed have a license!.
       This method currently checks the validity of the PkPass, but we can't
-      inspect the validity of their actual license. As of now, we can
+      inspect the validity of their actual ADR license. As of now, we can
       only retrieve the license of a logged in user, not the user being scanned!
     */
 
     return {
-      valid: result.valid,
-      error,
+      valid: result.data.valid,
     }
   }
 }
