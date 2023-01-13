@@ -18,8 +18,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
+  CaseQuery = 'CaseQuery',
   CaseListQuery = 'CaseListQuery',
-  CasesQuery = 'CasesQuery',
   CurrentUserQuery = 'CurrentUserQuery',
   UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCaseMutation',
@@ -33,7 +33,7 @@ export enum Operation {
 
 export const intercept = (res: Case, forceFail?: Operation) => {
   cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, Operation.CaseListQuery)) {
+    if (hasOperationName(req, Operation.CaseQuery)) {
       req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
