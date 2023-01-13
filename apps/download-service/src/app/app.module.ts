@@ -9,6 +9,7 @@ import {
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
+  DownloadServiceConfig,
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
@@ -18,10 +19,13 @@ import { DocumentsInfraController } from './modules/infra/documentsInfra.control
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { environment } from '../environments'
 import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
+import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import {
   VehiclesClientConfig,
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
+import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
+import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 
 @Module({
   controllers: [
@@ -29,6 +33,7 @@ import {
     DocumentsInfraController,
     FinanceDocumentController,
     VehicleController,
+    RegulationDocumentsController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -41,6 +46,13 @@ import {
     }),
     FinanceClientModule,
     VehiclesClientModule,
+    RegulationsAdminModule.register({
+      baseApiUrl: environment.regulationsAdmin.baseApiUrl,
+      regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
+      presignedKey: environment.regulationsAdmin.presignedKey,
+      publishKey: environment.regulationsAdmin.publishKey,
+      draftKey: environment.regulationsAdmin.draftKey,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -48,6 +60,8 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
+        DownloadServiceConfig,
+        RegulationsAdminClientConfig,
       ],
     }),
   ],
