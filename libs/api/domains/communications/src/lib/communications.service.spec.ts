@@ -10,6 +10,8 @@ import {
   ServiceWebFormsInputWithInstitutionEmail,
 } from './dto/serviceWebForms.input'
 import { CmsModule } from '@island.is/cms'
+import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
+import { ConfigModule } from '@nestjs/config'
 
 describe('communicationsService', () => {
   const fakeServiceWebInput: ServiceWebFormsInput = {
@@ -55,6 +57,11 @@ describe('communicationsService', () => {
           subdomain: 'subdomain',
         }),
         CmsModule,
+        FileStorageModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [FileStorageConfig],
+        }),
       ],
       providers: [CommunicationsService],
     }).compile()
@@ -67,7 +74,7 @@ describe('communicationsService', () => {
   })
 
   describe('getEmailTemplate', () => {
-    it('should genereate difrent templates', () => {
+    it('should generate different templates', () => {
       // we know these two inputs should generate difrent templates
       const contactUsTemplate = communicationsService.getEmailTemplate(
         fakeContactUsInput,

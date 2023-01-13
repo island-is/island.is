@@ -419,12 +419,11 @@ export const Form = ({ form, namespace }: FormProps) => {
   }
 
   const onSubmit = async () => {
-    setSubmitting(true)
-
     const valid = validate()
 
     try {
       if (valid) {
+        setSubmitting(true)
         const files = await Promise.all(
           form.fields
             .filter((field) => field.type === FormFieldType.FILE)
@@ -492,6 +491,7 @@ export const Form = ({ form, namespace }: FormProps) => {
         })
       }
     } catch (e) {
+      setSubmitting(false)
       setSubmitError(true)
     }
   }
