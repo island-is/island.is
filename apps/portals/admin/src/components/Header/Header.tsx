@@ -46,7 +46,11 @@ export const Header = () => {
                 flexWrap="nowrap"
                 marginLeft={1}
               >
-                <UserMenu showLanguageSwitcher={false} iconOnlyMobile />
+                <UserMenu
+                  showLanguageSwitcher={false}
+                  iconOnlyMobile
+                  showActorButton={false}
+                />
               </Box>
             </Hidden>
           </Box>
