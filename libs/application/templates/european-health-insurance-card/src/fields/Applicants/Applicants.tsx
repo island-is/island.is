@@ -22,8 +22,8 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
 
 
   const applicants = [
-    { id: "hasLogin", name: "Jón" },
-    { id: 2, name: "Pétur" }
+    { id: "1010885213", name: "Jón Lýðsson" },
+    { id: "1022551122", name: "Pétur Sigurðsson" }
   ]
 
   return (
@@ -31,20 +31,14 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
       <Stack space={2}>
         {applicants?.map((item) => (
           <ApplicantsController
-            id={`${item.id}.hasLogin`}
-            checkboxId={`${item.id}.hasLogin`}
+            id={`${item.id}`}
+            checkboxId={`${item.id}`}
             label={formatText(
               item.name,
               application,
               formatMessage,
             )}
-            placeholder={formatText(
-              m.constraints.constraintsMailPlaceholder,
-              application,
-              formatMessage
-            )}
-            defaultValue={getConstraintVal(`${item.id}.login`)}
-            extraText={false}
+            defaultValue={getConstraintVal(`${item.id}`)}
           />
         ))}
 
