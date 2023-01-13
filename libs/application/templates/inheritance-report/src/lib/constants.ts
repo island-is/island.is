@@ -4,6 +4,7 @@ export const YES = 'Yes'
 export const NO = 'No'
 
 export const States = {
+  prerequisites: 'prerequisites',
   draft: 'draft',
   done: 'done',
 }

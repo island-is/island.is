@@ -30,14 +30,14 @@ const InheritanceReportTemplate: ApplicationTemplate<
   featureFlag: Features.inheritanceReport,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
-    initial: States.draft,
+    initial: States.prerequisites,
     states: {
-      [States.draft]: {
+      [States.prerequisites]: {
         meta: {
           name: '',
           status: 'draft',
-          progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          progress: 0.15,
+          lifecycle: EphemeralStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.syslumennOnEntry,
             shouldPersistToExternalData: true,
@@ -47,12 +47,37 @@ const InheritanceReportTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
+                import('../forms/prerequisites').then((module) =>
+                  Promise.resolve(module.prerequisites),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              write: 'all',
+              delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.draft,
+          },
+        },
+      },
+      [States.draft]: {
+        meta: {
+          name: '',
+          status: 'draft',
+          progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
                 import('../forms/form').then((module) =>
                   Promise.resolve(module.form),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
-              api: [NationalRegistryUserApi, UserProfileApi],
               delete: true,
             },
           ],

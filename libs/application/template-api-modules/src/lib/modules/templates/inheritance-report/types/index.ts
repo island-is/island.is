@@ -12,7 +12,7 @@ export interface NationalRegistry {
 
 type Notifier = {
   name: string
-  ssn: string
+  nationalId: string
   phoneNumber: string
   email: string
   relation: string
@@ -20,7 +20,7 @@ type Notifier = {
 
 type EstateMember = {
   name: string
-  ssn: string
+  nationalId: string
   relation: string
   dateOfBirth?: string
   foreignCitizenShip?: 'yes' | 'no'
@@ -38,7 +38,7 @@ type BankAccount = {
 
 type Stock = {
   organization: string
-  ssn: string
+  nationalId: string
   faceValue: string | number
   rateOfExchange: string | number
   value: string | number
@@ -46,7 +46,7 @@ type Stock = {
 
 type Debt = {
   creditorName: string
-  ssn: string
+  nationalId: string
   balance: string | number
 }
 

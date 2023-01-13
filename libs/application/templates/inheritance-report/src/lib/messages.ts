@@ -318,7 +318,7 @@ export const m = defineMessages({
   },
   bankAccountRepeaterButton: {
     id: 'ir.application:bankAccountRepeaterButton',
-    defaultMessage: 'Bæta við bankareikning',
+    defaultMessage: 'Bæta við bankareikningi',
     description: '',
   },
 
@@ -365,8 +365,8 @@ export const m = defineMessages({
     defaultMessage: 'Útgefandi',
     description: '',
   },
-  stocksSsn: {
-    id: 'ir.application:stocksSsn',
+  stocksNationalId: {
+    id: 'ir.application:stocksNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },

@@ -298,8 +298,8 @@ export const assets = buildSection({
                     id: 'organization',
                   },
                   {
-                    title: m.stocksSsn.defaultMessage,
-                    id: 'ssn',
+                    title: m.stocksNationalId.defaultMessage,
+                    id: 'nationalId',
                     format: '######-####',
                   },
                   {
