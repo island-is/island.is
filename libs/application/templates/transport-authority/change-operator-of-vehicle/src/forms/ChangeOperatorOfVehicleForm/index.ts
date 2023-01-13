@@ -4,10 +4,10 @@ import {
   buildCustomField,
   buildSubmitField,
   buildMultiField,
+  buildTextField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { m } from '../../lib/messagesx'
-import { payment } from '../../lib/messages'
+import { conclusion, payment } from '../../lib/messages'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
 
@@ -35,12 +35,12 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: m.confirm,
+              title: payment.general.confirm,
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.confirm,
+                  name: payment.general.confirm,
                   type: 'primary',
                 },
               ],
@@ -50,12 +50,12 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmation',
-      title: m.confirmation,
+      id: 'tmp',
+      title: conclusion.general.sectionTitle,
       children: [
-        buildCustomField({
-          component: 'ConfirmationField',
-          id: 'ConfirmationField',
+        // Only to have submit button visible
+        buildTextField({
+          id: 'tmp',
           title: '',
           description: '',
         }),

@@ -28,7 +28,7 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
             >
               <Box marginBottom={coOwners.length === index + 1 ? 0 : 2}>
                 <Text variant="h4">
-                  {formatMessage(overview.labels.buyersCoOwner)}{' '}
+                  {formatMessage(overview.labels.ownersCoOwner)}{' '}
                   {coOwners.length > 1 ? index + 1 : ''}
                 </Text>
                 <Text>{name}</Text>

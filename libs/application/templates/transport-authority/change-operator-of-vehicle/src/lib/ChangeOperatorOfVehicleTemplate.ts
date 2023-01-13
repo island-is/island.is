@@ -15,7 +15,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { m } from './messagesx'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
 import { ChangeOperatorOfVehicleSchema } from './dataSchema'
@@ -25,9 +24,10 @@ import {
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
-import { application } from './messages'
+import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { isRemovingOperatorOnly } from '../utils'
 
 const pruneInDaysAtTen = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -37,14 +37,26 @@ const pruneInDaysAtTen = (application: Application, days: number) => {
   return pruneDate // Time left of the day + 6 more days
 }
 
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const plate = getValueViaPath(
+    application.answers,
+    'pickVehicle.plate',
+    undefined,
+  ) as string | undefined
+  return {
+    name: applicationMessage.name,
+    value: plate ? `- ${plate}` : '',
+  }
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE,
-  name: m.name,
-  institution: m.institutionName,
+  name: determineMessageFromApplicationAnswers,
+  institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.ChangeOperatorOfVehicle.translation,
   ],
@@ -59,7 +71,7 @@ const template: ApplicationTemplate<
           status: 'draft',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -102,7 +114,7 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             tag: {
-              label: application.actionCardPayment,
+              label: applicationMessage.actionCardPayment,
               variant: 'red',
             },
           },
@@ -128,18 +140,24 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.COMPLETED,
+              cond: isRemovingOperatorOnly,
+            },
+            { target: States.REVIEW },
+          ],
           [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.REVIEW]: {
         entry: 'assignUsers',
         meta: {
-          name: 'Tilkynning um eigendaskipti að ökutæki',
+          name: 'Breyting umráðamanns á ökutæki',
           status: 'inprogress',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -182,11 +200,45 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.REVIEW },
-          // [DefaultEvents.REJECT]: { target: States.REJECTED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      // TODOx rejected state
+      [States.REJECTED]: {
+        meta: {
+          name: 'Rejected',
+          status: 'rejected',
+          progress: 1,
+          lifecycle: pruneAfterDays(3 * 30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.rejectApplication,
+          }),
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardRejected,
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.REVIEWER,
+              formLoader: () =>
+                import('../forms/Rejected').then((module) =>
+                  Promise.resolve(module.Rejected),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
@@ -198,7 +250,7 @@ const template: ApplicationTemplate<
           }),
           actionCard: {
             tag: {
-              label: application.actionCardDone,
+              label: applicationMessage.actionCardDone,
               variant: 'blueberry',
             },
           },

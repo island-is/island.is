@@ -20,13 +20,14 @@ export const OldOperatorInformationSchema = z.object({
   nationalId: z.string().min(1),
   name: z.string().min(1),
   wasRemoved: z.string().optional(),
-  startDate: z.string().optional(), //TODOx need to set this value for previous operators
+  startDate: z.string().optional(),
 })
 
 export const RejecterSchema = z.object({
   plate: z.string(),
   name: z.string(),
   nationalId: z.string(),
+  type: z.enum(['coOwner', 'operator']),
 })
 
 export const ChangeOperatorOfVehicleSchema = z.object({

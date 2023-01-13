@@ -6,7 +6,7 @@ export const applicationCheck = {
       id:
         'ta.cov.application:applicationCheck.submitApplication.sellerNotValid',
       defaultMessage:
-        'Aðeins sá sem skráði umsókn má vera skráður sem seljandi.',
+        'Aðeins sá sem skráði umsókn má vera skráður sem eigandi.',
       description: 'Only applicant can be registered as seller',
     },
   }),

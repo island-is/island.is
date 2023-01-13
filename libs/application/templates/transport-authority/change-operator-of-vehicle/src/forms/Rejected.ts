@@ -2,6 +2,7 @@ import {
   buildForm,
   buildCustomField,
   buildSection,
+  buildMultiField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
@@ -9,15 +10,15 @@ import {
   information,
   externalData,
   payment,
-  review,
   conclusion,
+  review,
 } from '../lib/messages'
 
-export const Approved: Form = buildForm({
-  id: 'ApprovedApplicationForm',
+export const Rejected: Form = buildForm({
+  id: 'RejectedApplicationForm',
   title: '',
   logo: Logo,
-  mode: FormModes.COMPLETED,
+  mode: FormModes.REJECTED,
   children: [
     buildSection({
       id: 'externalData',
@@ -40,19 +41,25 @@ export const Approved: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'reviewSection',
+      id: 'review',
       title: review.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'approved',
-      title: review.general.approvedSectionTitle,
+      id: 'conclusion',
+      title: conclusion.general.rejectedTitle,
       children: [
-        buildCustomField({
-          component: 'Review',
-          id: 'review',
-          title: '',
-          description: '',
+        buildMultiField({
+          id: 'conclusion.multifield',
+          title: conclusion.general.rejectedTitle,
+          children: [
+            buildCustomField({
+              component: 'RejectedConclusion',
+              id: 'RejectedConclusion',
+              title: '',
+              description: '',
+            }),
+          ],
         }),
       ],
     }),
