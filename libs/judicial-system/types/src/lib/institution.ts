@@ -16,5 +16,4 @@ export interface Institution {
   defaultCourtId?: string
   policeCaseNumberPrefix?: string
   nationalId?: string
-  notificationEmail?: string
 }

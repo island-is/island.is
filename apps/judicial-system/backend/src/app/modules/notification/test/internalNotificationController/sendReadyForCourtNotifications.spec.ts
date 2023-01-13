@@ -12,7 +12,6 @@ import {
   NotificationType,
   CaseType,
   CaseState,
-  Institution,
   Recipient,
   User,
   IndictmentSubtype,
@@ -20,6 +19,7 @@ import {
 
 import { randomDate } from '../../../../test'
 import { Case } from '../../../case/models/case.model'
+import { Institution } from '../../../institution/institution.model'
 import { SendNotificationDto } from '../../dto/sendNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
