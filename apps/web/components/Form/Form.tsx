@@ -278,7 +278,9 @@ export const Form = ({ form, namespace }: FormProps) => {
         }
 
         if (
-          (field.required && !data[slug]) ||
+          (field.type !== FormFieldType.FILE &&
+            field.required &&
+            !data[slug]) ||
           (field.type === FormFieldType.ACCEPT_TERMS && data[slug] !== 'true')
         ) {
           return {
