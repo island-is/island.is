@@ -21,7 +21,6 @@ import { NotificationsService } from './notifications.service'
 
 @Module({
   imports: [
-    CacheModule.register({}),// redis talk to andes look at others - simple basic cache in memory
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({

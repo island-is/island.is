@@ -7,7 +7,7 @@ export class NotificationsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    // @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   
@@ -15,11 +15,11 @@ export class NotificationsService {
     locale: string = 'is-IS',
   ): Promise<any> {
     // check cache
-    const cache_key = 'hnipp_templates_' + locale
-    const caches_templates = await this.cacheManager.get(cache_key)
-    if (caches_templates) {
-      return caches_templates
-    }
+    // const cache_key = 'hnipp_templates_' + locale
+    // const caches_templates = await this.cacheManager.get(cache_key)
+    // if (caches_templates) {
+    //   return caches_templates
+    // }
 
     let results = await fetch(
       'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
@@ -50,21 +50,22 @@ export class NotificationsService {
       },
     )
 
-    // temp check for cache
     let templates = await results.json()
-    for (const item of templates.data.hnippTemplateCollection.items) {
-      item.date = new Date()
-      if (item.args == null) {
-        item.args = []
-      }
-    }
+    
+    // // date temp check for cache
+    // for (const item of templates.data.hnippTemplateCollection.items) {
+    //   item.date = new Date()
+    //   if (item.args == null) {
+    //     item.args = []
+    //   }
+    // }
 
-    // add to cache
-    const res = await this.cacheManager.set(
-      cache_key,
-      templates.data.hnippTemplateCollection.items,
-      60, // update me
-    )
+    // // add to cache
+    // const res = await this.cacheManager.set(
+    //   cache_key,
+    //   templates.data.hnippTemplateCollection.items,
+    //   60, // update me
+    // )
 
     return templates.data.hnippTemplateCollection.items
   }
