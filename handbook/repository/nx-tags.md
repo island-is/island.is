@@ -30,11 +30,35 @@ Simple applications can be tagged with the generic tags above, but applications 
 
 It can be just one tag which is applied to both the application project and all of the associated library projects. Or there can be multiple application tags with different rules to segment the library projects.
 
-| Tag               | Description             | Can depend on                                        | Can be depended on by          |
-| ----------------- | ----------------------- | ---------------------------------------------------- | ------------------------------ |
-| `api`             | API domain project.     | `js`, `node`, `nest`, `api`                          | Other API projects.            |
-| `portals-mypages` | Service portal project. | `js`, `dom`, `react`, `react-spa`, `portals-mypages` | Other service portal projects. |
-| `portals-admin`   | Admin portal project.   | `js`, `dom`, `react`, `react-spa`, `portals-admin`   | Other admin portal projects.   |
+| Tag               | Description                               | Can depend on                                                 | Can be depended on by                       |
+| ----------------- | ----------------------------------------- | ------------------------------------------------------------- | ------------------------------------------- |
+| `api`             | API domain project.                       | `js`, `node`, `nest`, `api`, `client`                         | Other API projects.                         |
+| `portals-mypages` | Service portal project.                   | `js`, `dom`, `react`, `react-spa`, `portals-mypages`          | Other service portal projects.              |
+| `portals-admin`   | Admin portal project.                     | `js`, `dom`, `react`, `react-spa`, `portals-admin`            | Other admin portal projects.                |
+| `client`          | Client projects.                          | `js`, `node`, `nest`, `client`                                | Other client projects                       |
+| `as-shared`       | Application-system projects               | `js`, `dom`, `react`, `react-spa`, `react`, `as-shared`,      | Other application-system projects           |
+| `as-form`         | Application-system projects for front-end | `js`, `dom`, `react`, `react-spa`, `as-form`, `as-shared`,    | Other front-end application-system projects |
+| `as-api`          | Application-system projects for back-end  | `js`, `node`, `nest`, `client`, `as-shared`, `as-api`, `api`, | Other back-end application-system projects  |
+| `auth`            | Authentication projects                   | `js`, `node`, `nest`, `client`, `auth`,                       | Other auth applications                     |
+| `e2e`             | Test projects                             | `js`, `client`, `as-shared`                                   | No one                                      |
+
+Here is an chart that displays how these tags are connected. Each tag can depend on another tag that is highere in the tree.
+
+```mermaid
+  flowchart TB;
+    js-->node & dom
+
+    dom--> react
+    node --> nest
+
+    react--> react-spa & react-next
+    nest-->client
+
+    client--> api & auth
+    react-spa-->as-shared & portals-admin & portals-mypages
+
+    as-shared-->as-form & as-api
+```
 
 ## Tag prefixes
 
