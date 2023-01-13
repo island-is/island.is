@@ -113,13 +113,6 @@ const prodConfig = () => ({
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'api',
   },
-  paymentSchedule: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-    xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
-    xRoadClientId: process.env.XROAD_CLIENT_ID,
-    username: process.env.PAYMENT_SCHEDULE_USER,
-    password: process.env.PAYMENT_SCHEDULE_PASSWORD,
-  },
   islykill: {
     cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
@@ -258,16 +251,6 @@ const devConfig = () => ({
   },
   audit: {
     defaultNamespace: '@island.is/api',
-  },
-  paymentSchedule: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-    xRoadProviderId:
-      process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
-      'IS-DEV/GOV/10021/FJS-Public',
-    xRoadClientId:
-      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-    username: process.env.PAYMENT_SCHEDULE_USER,
-    password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
   islykill: {
     cert: process.env.ISLYKILL_CERT,

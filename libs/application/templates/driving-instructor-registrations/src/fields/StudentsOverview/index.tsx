@@ -85,6 +85,7 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
             <Box width="half" className={styles.mobileWidth}>
               <Input
                 name="searchbar"
+                label={formatMessage(m.studentsOverviewSearchLabel)}
                 placeholder={formatMessage(m.studentsOverviewSearchPlaceholder)}
                 icon="search"
                 backgroundColor="blue"

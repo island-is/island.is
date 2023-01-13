@@ -57,9 +57,14 @@ export const m = defineMessages({
     defaultMessage: 'Mínir ökunemar',
     description: 'Students overview page title',
   },
+  studentsOverviewSearchLabel: {
+    id: 'dir.application:studentsOverviewSearchLabel',
+    defaultMessage: 'Leita að ökunema',
+    description: 'Students overview search placeholder',
+  },
   studentsOverviewSearchPlaceholder: {
     id: 'dir.application:studentsOverviewSearchPlaceholder',
-    defaultMessage: 'Leitaðu að nafni eða kennitölu',
+    defaultMessage: 'Slá inn nafn eða kennitölu',
     description: 'Students overview search placeholder',
   },
   studentsOverviewRegisterHoursForOtherStudent: {
