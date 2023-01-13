@@ -8,12 +8,13 @@ import {
   BulletList,
   CategoryCard,
   SkeletonLoader,
+  InputError,
 } from '@island.is/island-ui/core'
 import {
   GetVehicleDetailInput,
   VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '@island.is/api/schema'
-import { information, applicationCheck } from '../../lib/messages'
+import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
@@ -26,7 +27,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application }) => {
+> = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
 
@@ -199,6 +200,9 @@ export const VehicleSelectField: FC<
         value={color}
         {...register('pickVehicle.color', { required: true })}
       />
+      {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
+        <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
+      )}
     </Box>
   )
 }

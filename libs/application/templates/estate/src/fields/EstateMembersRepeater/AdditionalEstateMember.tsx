@@ -45,7 +45,7 @@ export const AdditionalEstateMember = ({
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
-  error: any
+  error: Record<string, string>
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`

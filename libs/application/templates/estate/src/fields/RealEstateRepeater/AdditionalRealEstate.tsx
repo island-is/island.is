@@ -27,7 +27,7 @@ export const AdditionalRealEstate = ({
   fieldName: string
   index: number
   remove: (index: number) => void
-  error: any
+  error: Record<string, string>
 }) => {
   const fieldIndex = `${fieldName}[${index}]`
   const propertyNumberField = `${fieldIndex}.assetNumber`
