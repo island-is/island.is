@@ -1862,12 +1862,6 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Sendu inn',
       description: 'Submit',
     },
-    additionalDocumentsEditReject: {
-      id: 'pl.application:attachmentscreen.additionalDocumentsEditReject',
-      defaultMessage:
-        'Hætta',
-      description: 'Abort',
-    },
   }),
 }
 
