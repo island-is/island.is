@@ -22,6 +22,6 @@ test.describe('Admin portal', () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
     await page.goto('/stjornbord')
-    await expect(findByRole('heading', 'Stjórnborð Ísland.is')).toBeVisible()
+    await expect(findByRole('heading', 'Yfirlit')).toBeVisible()
   })
 })
