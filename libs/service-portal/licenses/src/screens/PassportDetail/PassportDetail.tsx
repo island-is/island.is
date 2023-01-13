@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -22,18 +22,13 @@ import { defineMessage } from 'react-intl'
 import { formatDate } from '../../utils/dateUtils'
 import { m } from '../../lib/messages'
 import {
-  GetChildrenIdentityDocumentQuery,
-  GetIdentityDocumentQuery,
-  IdentityDocumentModel,
   IdentityDocumentModelChild,
   useChildrenPassport,
+  usePassport,
 } from '@island.is/service-portal/graphql'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { FeatureFlagClient } from '@island.is/feature-flags'
 import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
 import { applyPassport, lostPassport } from '../../lib/constants'
-import { useLazyQuery } from '@apollo/client'
 import { capitalizeEveryWord } from '../../utils/capitalize'
 import { NotFound } from '@island.is/portals/core'
 
@@ -63,56 +58,18 @@ const NotifyLostLink = (text: string) => (
 
 const PassportDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [passportEnabled, setPassportEnabled] = useState(false)
   const [blockedAccess, setBlockedAccess] = useState(false)
   const { formatMessage, lang } = useLocale()
   const { id }: { id: string | undefined } = useParams()
 
-  const [
-    getPassportData,
-    { data: identityDocumentData, loading, error },
-  ] = useLazyQuery(GetIdentityDocumentQuery)
-
-  const [
-    getPassportDataChild,
-    { data: childIdentityDocumentData },
-  ] = useLazyQuery(GetChildrenIdentityDocumentQuery)
-
-  useEffect(() => {
-    const isPassportFlagEnabled = async () => {
-      const isPassEnabled = Boolean(
-        await featureFlagClient.getValue(
-          `isServicePortalPassportPageEnabled`,
-          false,
-        ),
-      )
-
-      setPassportEnabled(isPassEnabled)
-      setBlockedAccess(!isPassEnabled)
-    }
-    isPassportFlagEnabled()
-  }, [])
-
-  useEffect(() => {
-    if (passportEnabled) {
-      getPassportData()
-      getPassportDataChild()
-    }
-  }, [passportEnabled])
+  const { data: passportData, loading, error } = usePassport()
+  const { data: childPassportData } = useChildrenPassport()
 
   const passportGender: Gender = {
     F: formatMessage(m.female),
     M: formatMessage(m.male),
     X: formatMessage(m.otherGender),
   }
-  const passportData = identityDocumentData?.getIdentityDocument as
-    | IdentityDocumentModel[]
-    | undefined
-
-  const childPassportData = childIdentityDocumentData?.getIdentityDocumentChildren as
-    | IdentityDocumentModelChild[]
-    | undefined
 
   const data =
     passportData?.find((x) => x.numberWithType === id) ||
