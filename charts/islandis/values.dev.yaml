@@ -1371,6 +1371,66 @@ island-ui-storybook:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+license-api:
+  enabled: true
+  env:
+    NODE_OPTIONS: '--max-old-space-size=464'
+    SERVERSIDE_FEATURES_ON: ''
+    SI_PUBLIC_ENVIRONMENT: 'dev'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: 'license-api/v1/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: 'license-api/v1/readiness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 3
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+      hosts:
+        - host: 'beta.dev01.devland.is'
+          paths:
+            - '/license-api'
+  namespace: 'license-api'
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '200m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 namespaces:
   labels: {}
   namespaces:
@@ -1393,6 +1453,7 @@ namespaces:
     - 'user-notification'
     - 'external-contracts-tests'
     - 'contentful-entry-tagger'
+    - 'license-api'
 portals-admin:
   enabled: true
   env:
