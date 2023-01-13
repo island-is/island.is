@@ -46,6 +46,10 @@ export enum Routes {
 
 export enum ApiActions {
   CREATEAPPLICATION = 'createApplication',
+  CURRENTAPPLICATION = 'currentApplication',
+  MUNICIPALITY = 'municipality',
+  TAXDATA = 'taxData',
+  SENDSPOUSEEMAIL = 'sendSpouseEmail',
 }
 
 export const UPLOAD_ACCEPT = [

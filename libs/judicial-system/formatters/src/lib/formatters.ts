@@ -1,6 +1,7 @@
 import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import _uniq from 'lodash/uniq'
 
 import {
   CaseAppealDecision,
@@ -12,6 +13,7 @@ import {
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -308,7 +310,7 @@ export const formatDefenderRoute = (
   caseType: CaseType,
   id: string,
 ) => {
-  return `${baseUrl}/verjandi${
+  return `${baseUrl}${DEFENDER_ROUTE}${
     isIndictmentCase(caseType) ? '/akaera' : ''
   }/${id}`
 }
@@ -342,5 +344,5 @@ export const readableIndictmentSubtypes = (
     )
   }
 
-  return returnValue
+  return _uniq(returnValue)
 }

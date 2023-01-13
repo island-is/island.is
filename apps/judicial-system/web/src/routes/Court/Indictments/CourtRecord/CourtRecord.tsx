@@ -1,6 +1,13 @@
-import React, { useContext, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import { uuid } from 'uuidv4'
 
 import {
   CourtCaseInfo,
@@ -17,9 +24,16 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { AlertMessage, Box, InputFileUpload } from '@island.is/island-ui/core'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AlertMessage,
+  Box,
+  InputFileUpload,
+  toast,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import {
+  TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -27,44 +41,136 @@ import {
   CaseFileCategory,
   CaseTransition,
 } from '@island.is/judicial-system/types'
+import {
+  mapCaseFileToUploadFile,
+  stepValidationsType,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
-
-enum ModalTypes {
-  NONE,
-  SUBMIT_CASE,
-}
 
 const CourtRecord: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
-  const [modalVisible, setModalVisible] = useState<ModalTypes>(ModalTypes.NONE)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const {
-    files,
-    handleS3Upload,
-    handleRemoveFromS3,
-    handleRetry,
-    allFilesUploaded,
-  } = useS3Upload(workingCase)
+  const { upload, remove } = useS3Upload(workingCase.id)
 
-  const handleNextButtonClick = async () => {
-    const transitionSuccessful = await transitionCase(
-      workingCase,
-      CaseTransition.ACCEPT,
-    )
-
-    if (transitionSuccessful) {
-      setModalVisible(ModalTypes.SUBMIT_CASE)
-    } else {
-      // TODO: Handle error
+  useEffect(() => {
+    if (workingCase.caseFiles) {
+      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
     }
-  }
+  }, [workingCase.caseFiles])
+
+  const allFilesUploaded = useMemo(() => {
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
+  }, [displayFiles])
+
+  const setSingleFile = useCallback(
+    (displayFile: TUploadFile, newId?: string) => {
+      setDisplayFiles((previous) => {
+        const index = previous.findIndex((f) => f.id === displayFile.id)
+        if (index === -1) {
+          return previous
+        }
+        const next = [...previous]
+        next[index] = { ...displayFile, id: newId ?? displayFile.id }
+        return next
+      })
+    },
+    [setDisplayFiles],
+  )
+
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      const transitionSuccessful = await transitionCase(
+        workingCase,
+        CaseTransition.ACCEPT,
+      )
+
+      if (transitionSuccessful) {
+        setNavigateTo(destination)
+      } else {
+        toast.error(formatMessage(errors.transitionCase))
+      }
+    },
+    [transitionCase, workingCase, formatMessage],
+  )
+
+  const handleChange = useCallback(
+    (files: File[], category: CaseFileCategory) => {
+      // We generate an id for each file so that we find the file again when
+      // updating the file's progress and onRetry.
+      // Also we cannot spread File since it contains read-only properties.
+      const filesWithId: Array<[File, string]> = files.map((file) => [
+        file,
+        `${file.name}-${uuid()}`,
+      ])
+      setDisplayFiles((previous) => [
+        ...filesWithId.map(
+          ([file, id]): TUploadFile => ({
+            status: 'uploading',
+            percent: 1,
+            name: file.name,
+            id: id,
+            type: file.type,
+            category,
+          }),
+        ),
+        ...previous,
+      ])
+      upload(filesWithId, setSingleFile, category)
+    },
+    [upload, setSingleFile],
+  )
+
+  const handleRemoveFile = useCallback(
+    async (file: UploadFile) => {
+      try {
+        if (file.id) {
+          await remove(file.id)
+          setDisplayFiles((prev) => {
+            return prev.filter((caseFile) => caseFile.id !== file.id)
+          })
+        }
+      } catch {
+        toast.error(formatMessage(errors.general))
+      }
+    },
+    [formatMessage, remove],
+  )
+
+  const handleRetry = useCallback(
+    (file: TUploadFile) => {
+      setSingleFile({
+        name: file.name,
+        id: file.id,
+        percent: 1,
+        status: 'uploading',
+        type: file.type,
+        category: file.category,
+      })
+      upload(
+        [
+          [
+            { name: file.name, type: file.type ?? '' } as File,
+            file.id ?? file.name,
+          ],
+        ],
+        setSingleFile,
+        file.category,
+      )
+    },
+    [setSingleFile, upload],
+  )
 
   return (
     <PageLayout
@@ -73,6 +179,8 @@ const CourtRecord: React.FC = () => {
       activeSubSection={IndictmentsCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={allFilesUploaded}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.courtRecord)} />
       <FormContentContainer>
@@ -87,30 +195,30 @@ const CourtRecord: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.courtRecordTitle)} />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COURT_RECORD,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(m.inputFieldLabel)}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.COURT_RECORD)
+              handleChange(files, CaseFileCategory.COURT_RECORD)
             }
-            onRemove={handleRemoveFromS3}
+            onRemove={handleRemoveFile}
             onRetry={handleRetry}
           />
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading title={formatMessage(m.rulingTitle)} />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.RULING,
             )}
+            accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(m.inputFieldLabel)}
             buttonLabel={formatMessage(m.uploadButtonText)}
-            onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.RULING)
-            }
-            onRemove={handleRemoveFromS3}
+            onChange={(files) => handleChange(files, CaseFileCategory.RULING)}
+            onRemove={handleRemoveFile}
             onRetry={handleRetry}
           />
         </Box>
@@ -118,23 +226,22 @@ const CourtRecord: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)
+          }
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(m.nextButtonText)}
         />
       </FormContentContainer>
-      {modalVisible === ModalTypes.SUBMIT_CASE && (
+      {navigateTo !== undefined && (
         <Modal
           title={formatMessage(m.modalTitle)}
           text={formatMessage(m.modalText)}
           onPrimaryButtonClick={() => {
-            router.push(
-              `${constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`,
-            )
+            router.push(`${navigateTo}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(core.closeModal)}
-          isPrimaryButtonLoading={false}
         />
       )}
     </PageLayout>

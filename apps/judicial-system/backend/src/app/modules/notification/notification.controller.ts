@@ -11,6 +11,7 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { NotificationType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -35,7 +36,7 @@ import {
 } from '../case'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './notification.service'
 import {
   judgeNotificationRule,
@@ -76,6 +77,17 @@ export class NotificationController {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${caseId}`,
     )
+
+    if (
+      [NotificationType.HEADS_UP, NotificationType.READY_FOR_COURT].includes(
+        notification.type,
+      )
+    ) {
+      return this.notificationService.addMessagesForNotificationToQueue(
+        theCase,
+        notification,
+      )
+    }
 
     return this.notificationService.sendCaseNotification(
       notification,

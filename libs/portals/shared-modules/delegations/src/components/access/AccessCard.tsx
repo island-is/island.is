@@ -15,15 +15,36 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AuthCustomDelegation } from '@island.is/api/schema'
-import { AuthDelegationType } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
-import { m as coreMessages } from '@island.is/service-portal/core'
+import { m as coreMessages } from '@island.is/portals/core'
+import uniqBy from 'lodash/uniqBy'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
+import { AuthApiScope, AuthDelegationType } from '@island.is/api/schema'
+import {
+  AuthCustomDelegation,
+  AuthCustomDelegationIncoming,
+  AuthCustomDelegationOutgoing,
+} from '../../types/customDelegation'
 
-const isDateExpired = (date: string) => new Date(date) < new Date()
+const isDateExpired = (date?: string | null) =>
+  date ? new Date(date) < new Date() : false
+
+const getTagName = (apiScope: AuthApiScope) =>
+  apiScope?.group?.displayName ?? apiScope.displayName
+
+const getTags = (delegation: AuthCustomDelegation) =>
+  sortBy(
+    uniqBy(
+      delegation.scopes?.map((scope) => ({
+        name: scope?.apiScope ? getTagName(scope?.apiScope) : scope.displayName,
+        isExpired: isDateExpired(scope.validTo),
+      })),
+      'name',
+    ),
+    'name',
+  )
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
@@ -40,13 +61,9 @@ export const AccessCard = ({
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const tags = sortBy(
-    delegation.scopes?.map((scope) => ({
-      name: scope?.apiScope?.displayName || scope.displayName,
-      isExpired: isDateExpired(scope.validTo),
-    })),
-    'name',
-  )
+
+  const tags = useMemo(() => getTags(delegation), [delegation])
+
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
   const href = `${DelegationPaths.Delegations}/${delegation.id}`
@@ -97,7 +114,11 @@ export const AccessCard = ({
       default:
         label = formatMessage(m.delegationTypeCustom)
 
-        if (kennitala.isCompany(delegation.from.nationalId)) {
+        if (
+          kennitala.isCompany(
+            (delegation as AuthCustomDelegationIncoming)?.from?.nationalId,
+          )
+        ) {
           icon = 'business'
         }
     }
@@ -189,7 +210,9 @@ export const AccessCard = ({
             })}
           </VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
-            {isOutgoing ? delegation?.to?.name : delegation?.from?.name}
+            {isOutgoing
+              ? (delegation as AuthCustomDelegationOutgoing)?.to?.name
+              : (delegation as AuthCustomDelegationIncoming)?.from?.name}
           </Text>
         </Stack>
         <Inline space="smallGutter">

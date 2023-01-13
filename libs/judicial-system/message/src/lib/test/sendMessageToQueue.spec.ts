@@ -2,7 +2,7 @@ import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
 import each from 'jest-each'
 
-import { MessageType, Message } from '../message'
+import { MessageType, CaseMessage } from '../message'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
 interface Then {
@@ -10,7 +10,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (message: Message) => Promise<Then>
+type GivenWhenThen = (message: CaseMessage) => Promise<Then>
 
 describe('MessageService - Send message to queue', () => {
   let setMocks: (mocks: unknown[]) => void
@@ -30,11 +30,11 @@ describe('MessageService - Send message to queue', () => {
     mockQueueUrl = queueUrl
     mockSqs = sqs
 
-    givenWhenThen = async (message: Message) => {
+    givenWhenThen = async (message: CaseMessage) => {
       const then = {} as Then
 
       try {
-        then.result = await messageService.sendMessageToQueue(message)
+        then.result = await messageService.sendMessageToQueue(message, true)
       } catch (error) {
         then.error = error as Error
       }
@@ -66,7 +66,7 @@ describe('MessageService - Send message to queue', () => {
   )
 
   describe('message not posted to queue', () => {
-    const message = { caseId: uuid() } as Message
+    const message = { caseId: uuid() } as CaseMessage
     let then: Then
 
     beforeEach(async () => {

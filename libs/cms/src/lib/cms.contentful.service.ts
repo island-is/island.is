@@ -81,6 +81,10 @@ import { GetFormInput } from './dto/getForm.input'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { mapImage } from './models/image.model'
 import { EmailSignup, mapEmailSignup } from './models/emailSignup.model'
+import { GetTabSectionInput } from './dto/getTabSection.input'
+import { mapTabSection, TabSection } from './models/tabSection.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { GenericTag, mapGenericTag } from './models/genericTag.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -875,5 +879,37 @@ export class CmsContentfulService {
       .catch(errorHandler('getForm'))
 
     return (result.items as types.IForm[]).map(mapForm)[0] ?? null
+  }
+
+  async getTabSection({
+    id,
+    lang = 'is',
+  }: GetTabSectionInput): Promise<TabSection | null> {
+    const params = {
+      ['content_type']: 'tabSection',
+      'sys.id': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ITabSectionFields>(lang, params, 5)
+      .catch(errorHandler('getTabSection'))
+
+    return (result.items as types.ITabSection[]).map(mapTabSection)[0] ?? null
+  }
+
+  async getGenericTagBySlug({
+    slug,
+    lang = 'is',
+  }: GetGenericTagBySlugInput): Promise<GenericTag | null> {
+    const params = {
+      ['content_type']: 'genericTag',
+      'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGenericTagFields>(lang, params)
+      .catch(errorHandler('getGenericTag'))
+
+    return (result.items as types.IGenericTag[]).map(mapGenericTag)[0] ?? null
   }
 }

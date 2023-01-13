@@ -10,12 +10,9 @@ import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import { Identity, IdentityService } from '@island.is/api/domains/identity'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
+
+import { Identity } from '@island.is/api/domains/identity'
+import { IdentityClientService } from '@island.is/clients/identity'
 
 import {
   CreateDelegationInput,
@@ -32,13 +29,13 @@ import { MeDelegationsService } from '../services/meDelegations.service'
 import type { DelegationDTO, MergedDelegationDTO } from '../services/types'
 import { MergedDelegation } from '../models/delegation.model'
 
-@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
 export class DelegationResolver {
   constructor(
     private meDelegationsService: MeDelegationsService,
     private actorDelegationsService: ActorDelegationsService,
-    private identityService: IdentityService,
+    private identityService: IdentityClientService,
   ) {}
 
   @Query(() => [MergedDelegation], { name: 'authActorDelegations' })
@@ -92,7 +89,6 @@ export class DelegationResolver {
     return this.meDelegationsService.updateDelegation(user, input)
   }
 
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Mutation(() => Delegation, { name: 'patchAuthDelegation' })
   patchDelegation(
     @CurrentUser() user: User,

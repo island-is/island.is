@@ -16,6 +16,7 @@ import {
 } from '@island.is/api/schema'
 import { GET_SHIPS_QUERY } from './queries'
 import { useNamespace } from '@island.is/web/hooks'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 interface ShipSearchProps {
   namespace: {
@@ -44,10 +45,16 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
   const router = useRouter()
 
   const getShipDetailsHref = (id: number) => {
-    return `${n(
+    const href = n(
       'shipDetailsHref',
       '/v/gagnasidur-fiskistofu?selectedTab=skip',
-    )}&nr=${id}`
+    ) as string
+
+    const [pathname, params] = href.split('?')
+
+    const queryParams = new URLSearchParams(params)
+    queryParams.append(n('shipDetailsNumberQueryParam', 'nr'), String(id))
+    return `${pathname}?${queryParams.toString()}`
   }
 
   const [loadShips, { data, error, loading, called }] = useLazyQuery<
@@ -79,7 +86,12 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
       setInputError('')
     }
     if (nameInputIsNumber) {
-      router.push(getShipDetailsHref(Number(nameInput)))
+      const href = getShipDetailsHref(Number(nameInput))
+      window.open(
+        href,
+        shouldLinkOpenInNewWindow(href) ? '_blank' : '_self',
+        'noopener,noreferrer',
+      )
     } else {
       setNameInputDuringLastSearch(nameInput)
       loadShips({
@@ -162,13 +174,20 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
             <T.Body>
               {ships.map((ship) => {
                 const href = getShipDetailsHref(ship.id)
+                const target = shouldLinkOpenInNewWindow(href)
+                  ? '_blank'
+                  : '_self'
                 return (
                   <T.Row key={ship.id}>
                     <T.Data>
-                      <a href={href}>{ship.id}</a>
+                      <a href={href} rel="noreferrer" target={target}>
+                        {ship.id}
+                      </a>
                     </T.Data>
                     <T.Data>
-                      <a href={href}>{ship.name}</a>
+                      <a href={href} rel="noreferrer" target={target}>
+                        {ship.name}
+                      </a>
                     </T.Data>
                     <T.Data>{ship.typeOfVessel}</T.Data>
                     <T.Data>{ship.operator}</T.Data>

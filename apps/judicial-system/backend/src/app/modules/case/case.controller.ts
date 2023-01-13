@@ -51,6 +51,7 @@ import {
   staffRule,
   assistantRule,
 } from '../../guards'
+import { nowFactory } from '../../factories'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import { CaseExistsGuard } from './guards/caseExists.guard'
@@ -139,6 +140,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case> {
@@ -177,21 +179,7 @@ export class CaseController {
       )
     }
 
-    const updatedCase = (await this.caseService.update(
-      theCase,
-      caseToUpdate,
-    )) as Case
-
-    if (
-      updatedCase.courtCaseNumber &&
-      updatedCase.courtCaseNumber !== theCase.courtCaseNumber
-    ) {
-      // The court case number has changed, so the request must be uploaded to the new court case
-      // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase)
-    }
-
-    return updatedCase
+    return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -209,6 +197,7 @@ export class CaseController {
   })
   async transition(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
@@ -217,22 +206,39 @@ export class CaseController {
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
-    const update: { state: CaseState; parentCaseId?: null } = { state }
+    const update: {
+      state: CaseState
+      parentCaseId?: null
+      rulingDate?: Date
+    } = { state }
 
     if (state === CaseState.DELETED) {
       update.parentCaseId = null
     }
 
+    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
+      update.rulingDate = nowFactory()
+    }
+
     const updatedCase = await this.caseService.update(
       theCase,
       update as UpdateCaseDto,
+      user,
       state !== CaseState.DELETED,
     )
 
-    // Indictment cases are not signed
-    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCompletedIndictmentCaseMessagesToQueue(theCase)
+    if (isIndictmentCase(theCase.type)) {
+      if (completedCaseStates.includes(state)) {
+        // Indictment cases are not signed
+        await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
+          theCase,
+        )
+      } else if (state === CaseState.DELETED) {
+        // Indictment cases need some case file cleanup
+        await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
+          theCase,
+        )
+      }
     }
 
     // No need to wait

@@ -33,6 +33,9 @@ describe('FileController - Delete case file', () => {
     mockAwsS3Service = awsS3Service
     mockFileModel = fileModel
 
+    const mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
+    mockDeleteObject.mockRejectedValue(new Error('Some Error'))
+
     givenWhenThen = async (
       caseId: string,
       fileId: string,
@@ -53,16 +56,13 @@ describe('FileController - Delete case file', () => {
     const caseId = uuid()
     const fileId = uuid()
     const caseFile = { id: fileId } as CaseFile
-    let mockUpdate: jest.Mock
 
     beforeEach(async () => {
-      mockUpdate = mockFileModel.update as jest.Mock
-
       await givenWhenThen(caseId, fileId, caseFile)
     })
 
     it('should update the case file status in the database', () => {
-      expect(mockUpdate).toHaveBeenCalledWith(
+      expect(mockFileModel.update).toHaveBeenCalledWith(
         { state: CaseFileState.DELETED, key: null },
         { where: { id: fileId } },
       )
@@ -74,10 +74,8 @@ describe('FileController - Delete case file', () => {
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
-    let mockDeleteObject: jest.Mock
 
     beforeEach(async () => {
-      mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
       const mockUpdate = mockFileModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1])
 
@@ -85,7 +83,7 @@ describe('FileController - Delete case file', () => {
     })
 
     it('should attempt to remove from AWS S3', () => {
-      expect(mockDeleteObject).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(key)
     })
   })
 
@@ -93,10 +91,8 @@ describe('FileController - Delete case file', () => {
     const caseId = uuid()
     const fileId = uuid()
     const caseFile = { id: fileId } as CaseFile
-    let mockDeleteObject: jest.Mock
 
     beforeEach(async () => {
-      mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
       const mockUpdate = mockFileModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1])
 
@@ -104,7 +100,7 @@ describe('FileController - Delete case file', () => {
     })
 
     it('should not attempt to remove from AWS S3', () => {
-      expect(mockDeleteObject).not.toHaveBeenCalled()
+      expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
     })
   })
 

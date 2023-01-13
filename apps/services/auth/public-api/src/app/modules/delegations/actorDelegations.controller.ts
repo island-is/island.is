@@ -89,9 +89,9 @@ export class ActorDelegationsController {
       )
     }
 
-    return this.delegationsIncomingService.findAllAvailable(
-      actor,
+    return this.delegationsIncomingService.findAllAvailable({
+      user: actor,
       delegationTypes,
-    )
+    })
   }
 }

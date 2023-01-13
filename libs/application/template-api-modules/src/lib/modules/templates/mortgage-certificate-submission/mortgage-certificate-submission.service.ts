@@ -11,7 +11,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
-import { Application } from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   NationalRegistry,
   UserProfile,
@@ -19,23 +19,29 @@ import {
   ValidateMortgageCertificateResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class MortgageCertificateSubmissionService {
+export class MortgageCertificateSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly mortgageCertificateService: MortgageCertificateService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.MORTGAGE_CERTIFICATE)
+  }
 
   async createCharge({
     application: { id },
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         id,
+        SYSLUMADUR_NATIONAL_ID,
         [ChargeItemCode.MORTGAGE_CERTIFICATE],
       )
       return result
@@ -57,7 +63,7 @@ export class MortgageCertificateSubmissionService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

@@ -40,6 +40,7 @@ import {
   getMultipleBirthRequestDays,
   getMinimumStartDate,
   getLastDayOfLastMonth,
+  allowOtherParentToUsePersonalAllowance,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -143,6 +144,14 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   component: 'OtherParent',
                   id: 'otherParentObj.chooseOtherParent',
+                  // childInputIds: [
+                  //   'transferRights',
+                  //   'otherParentRightOfAccess',
+                  //   'requestRights.isRequestingRights',
+                  //   'requestRights.requestDays',
+                  //   'giveRights.isGivingRights',
+                  //   'giveRights.giveDays',
+                  // ],
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                 }),
                 buildTextField({
@@ -183,6 +192,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 })?.otherParentObj?.chooseOtherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
+              defaultValue: YES,
               options: [
                 {
                   label: parentalLeaveFormMessages.rightOfAccess.yesOption,
@@ -213,6 +223,10 @@ export const ParentalLeaveForm: Form = buildForm({
                   dataTestId: 'bank-account-number',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      bankInfo?: string
+                    })?.bankInfo,
                 }),
                 buildAsyncSelectField({
                   condition: (answers) => {
@@ -414,7 +428,8 @@ export const ParentalLeaveForm: Form = buildForm({
 
                 return (
                   selectedChild?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                    ParentalRelations.primary &&
+                  allowOtherParentToUsePersonalAllowance(answers)
                 )
               },
               children: [
@@ -497,7 +512,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   title:
                     parentalLeaveFormMessages.employer
                       .isRecivingUnemploymentBenefitsTitle,
-                  description: '',
+                  description:
+                    parentalLeaveFormMessages.employer
+                      .isRecivingUnemploymentBenefitsDescription,
                   condition: (answers) =>
                     (answers as {
                       employer: {
@@ -1000,7 +1017,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'useLength',
                   title: getDurationTitle,
                   description: parentalLeaveFormMessages.duration.description,
-                  defaultValue: NO_ANSWER,
+                  defaultValue: YES,
                   options: [
                     {
                       label: parentalLeaveFormMessages.duration.monthsOption,

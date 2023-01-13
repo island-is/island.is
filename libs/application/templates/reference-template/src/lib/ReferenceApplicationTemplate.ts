@@ -12,11 +12,17 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  defineTemplateApi,
+  MockProviderApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
+
 import { m } from './messages'
 import { assign } from 'xstate'
+import { ApiActions } from '../shared'
+import { ReferenceDataApi, EphemiralApi } from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
 
 const States = {
@@ -46,8 +52,20 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     'careerHistory',
     undefined,
   ) as string | undefined
+  const careerIndustry = getValueViaPath(
+    application.answers,
+    'careerIndustry',
+    undefined,
+  ) as string | undefined
+
   if (careerHistory === 'no') {
     return m.nameApplicationNeverWorkedBefore
+  }
+  if (careerIndustry) {
+    return {
+      name: m.nameApplicationWithValue,
+      value: `- ${careerIndustry}`,
+    }
   }
   return m.name
 }
@@ -89,6 +107,34 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              read: 'all',
+              api: [
+                ReferenceDataApi.configure({
+                  params: {
+                    id: 1986,
+                  },
+                }),
+                NationalRegistryUserApi.configure({
+                  params: {
+                    ageToValidate: 18,
+                  },
+                }),
+                UserProfileApi,
+                MockProviderApi.configure({
+                  externalDataId: 'referenceMock',
+                  params: {
+                    mocked: true,
+                    mockObject: {
+                      mockString: 'This is a mocked string',
+                      mockArray: [
+                        'Need to mock providers?',
+                        'Use this handy templateApi',
+                      ],
+                    },
+                  },
+                }),
+                EphemiralApi,
+              ],
               delete: true,
             },
           ],
@@ -136,10 +182,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.createApplication,
+          }),
           status: 'inprogress',
-          onEntry: {
-            apiModuleAction: ApiActions.createApplication,
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -172,9 +218,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          onExit: {
-            apiModuleAction: ApiActions.completeApplication,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.completeApplication,
+          }),
           roles: [
             {
               id: Roles.ASSIGNEE,

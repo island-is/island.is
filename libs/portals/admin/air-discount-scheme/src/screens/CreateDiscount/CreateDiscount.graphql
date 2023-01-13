@@ -1,0 +1,7 @@
+mutation CreateExplicitDiscountCode(
+  $input: AirDiscountSchemeCreateExplicitDiscountCodeInput!
+) {
+  createAirDiscountSchemeExplicitDiscountCode(input: $input) {
+    discountCode
+  }
+}

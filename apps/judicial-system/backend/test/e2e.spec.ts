@@ -97,7 +97,7 @@ beforeAll(async () => {
             }),
         })
         .overrideProvider(MessageService)
-        .useValue({ sendMessageToQueue: () => undefined }),
+        .useValue({ sendMessagesToQueue: () => undefined }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
@@ -848,8 +848,7 @@ describe('Notification', () => {
 
         return Notification.create({
           caseId: dbCase.id,
-          type: NotificationType.HEADS_UP,
-          message: 'Test Message',
+          type: NotificationType.READY_FOR_COURT,
         })
       })
       .then((value) => {

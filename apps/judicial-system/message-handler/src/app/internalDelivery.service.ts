@@ -16,7 +16,11 @@ export class InternalDeliveryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async deliver(caseId: string, what: string): Promise<boolean> {
+  async deliver(
+    caseId: string,
+    what: string,
+    body?: unknown,
+  ): Promise<boolean> {
     this.logger.debug(`Posting ${what} for case ${caseId}`)
 
     return fetch(
@@ -27,6 +31,7 @@ export class InternalDeliveryService {
           'Content-Type': 'application/json',
           authorization: `Bearer ${this.config.backendAccessToken}`,
         },
+        body: JSON.stringify(body),
       },
     )
       .then(async (res) => {

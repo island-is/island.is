@@ -6,6 +6,8 @@ import { TerminusModule } from '@nestjs/terminus'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
+import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
+import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
@@ -15,7 +17,8 @@ import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
-import { MailchimpModule } from '@island.is/api/domains/mailchimp'
+import { EmailSignupModule } from '@island.is/api/domains/email-signup'
+import { ZenterSignupConfig } from '@island.is/api/domains/email-signup'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -38,6 +41,7 @@ import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
+import { PassportModule } from '@island.is/api/domains/passport'
 import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -85,6 +89,8 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
+import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -202,11 +208,12 @@ const autoSchemaFile = environment.production
       },
     }),
     CommunicationsModule,
-    MailchimpModule,
+    EmailSignupModule,
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
     PowerBiModule,
@@ -224,25 +231,11 @@ const autoSchemaFile = environment.production
     FinancialStatementsInaoModule,
     VehiclesModule,
     AssetsModule,
+    PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
-    ApiDomainsPaymentModule.register({
-      xRoadProviderId: environment.paymentDomain.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentDomain.password!,
-      username: environment.paymentDomain.username!,
-      callbackBaseUrl: environment.paymentDomain.callbackBaseUrl!,
-      callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl!,
-      arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
-    }),
-    PaymentScheduleModule.register({
-      xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentSchedule.password!,
-      username: environment.paymentSchedule.username!,
-    }),
+    ApiDomainsPaymentModule,
+    PaymentScheduleModule,
     ProblemModule,
     CriminalRecordModule.register({
       clientConfig: {
@@ -288,6 +281,10 @@ const autoSchemaFile = environment.production
         FileStorageConfig,
         FiskistofaClientConfig,
         PowerBiConfig,
+        ChargeFjsV2ClientConfig,
+        DisabilityLicenseClientConfig,
+        ZenterSignupConfig,
+        PaymentScheduleClientConfig,
       ],
     }),
   ],
