@@ -121,7 +121,6 @@ export class GenericDisabilityLicenseService
 
     const inputValues = createPkPassDataInput(license)
     if (!inputValues) return null
-    //Fetch template from api?
     return {
       inputFieldValues: inputValues,
       expirationDate: license.rennurut?.toISOString(),
@@ -160,6 +159,7 @@ export class GenericDisabilityLicenseService
       payload,
       format(user.nationalId),
     )
+    
     if (pass.ok) {
       return pass.data
     }
@@ -181,6 +181,8 @@ export class GenericDisabilityLicenseService
       return null
     }
 
+    let error: PkPassVerificationError | undefined
+
     if (!result.ok) {
       return {
         valid: false,
@@ -194,7 +196,7 @@ export class GenericDisabilityLicenseService
     }
 
     /*
-      TODO: VERIFICATION!!!!!!!! Máni (thorkellmani @ github)
+      TODO: VERIFICATION Máni (thorkellmani @ github)
       Currently Impossible
       A robust verification needs to both check that the PkPass is valid,
       and that the user being scanned does indeed have a license!.

@@ -511,7 +511,6 @@ export const getTitleAndLogo = (type: string) => {
         title: m.firearmLicense,
         logo: './assets/images/rls.svg',
       }
-    // TODO: Need better logo from TR
     case LicenseType.DisabilityLicense:
       return {
         title: m.disabilityLicense,
