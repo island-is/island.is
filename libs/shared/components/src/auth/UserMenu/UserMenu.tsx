@@ -17,7 +17,7 @@ type UserMenuProps = {
 }
 
 export const UserMenu = ({
-  fullscreen = true,
+  fullscreen = false,
   showDropdownLanguage = false,
   userMenuOpen,
   small = false,
