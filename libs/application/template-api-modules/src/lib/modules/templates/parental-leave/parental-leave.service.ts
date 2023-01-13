@@ -265,10 +265,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     // send confirmation sms to employer
     try {
-      if (
-        employerPhoneNumber &&
-        checkIfPhoneNumberIsGSM(employerPhoneNumber)
-      ) {
+      if (employerPhoneNumber && checkIfPhoneNumberIsGSM(employerPhoneNumber)) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
           application,
@@ -406,7 +403,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
       benefitsFiles: benefitsPdfs,
-      commonFiles: genericPdfs
+      commonFiles: genericPdfs,
     } = getApplicationAnswers(application.answers)
     if (
       isRecivingUnemploymentBenefits === YES &&
@@ -1146,15 +1143,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       applicationType,
       additionalDocuments,
     } = getApplicationAnswers(application.answers)
-    const { applicationFundId } = getApplicationExternalData(application.externalData)
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
 
     const nationalRegistryId = application.applicant
     let attachments: Attachment[] = []
-  
+
     if (applicationFundId || applicationFundId !== '') {
-      if (additionalDocuments){
+      if (additionalDocuments) {
         additionalDocuments.forEach(async (val, i) => {
-          const pdf = await this.getPdf(application, i, 'fileUpload.additionalDocuments')
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.additionalDocuments',
+          )
           attachments.push({
             attachmentType: apiConstants.attachments.other,
             attachmentBytes: pdf,

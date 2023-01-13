@@ -545,7 +545,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'assignToVMST',
         meta: {
           status: 'inprogress',
-          name: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          name: States.ADDITIONAL_DOCUMENT_EDITS,
           actionCard: {
             description: statesMessages.additionalDocumentRequiredDescription,
           },
@@ -555,8 +555,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ParentalLeaveForm').then((val) =>
-                  Promise.resolve(val.ParentalLeaveForm),
+                import('../forms/UploadAdditionalFiles').then((val) =>
+                  Promise.resolve(val.UploadAdditionalFiles),
                 ),
               read: 'all',
               write: 'all',
@@ -572,10 +572,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT:
-            {
-              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-            },
+          SUBMIT: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
         },
       },
       // [States.RECEIVED]: {
@@ -884,7 +883,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod', 'setAdditionalFileSentVariable'],
+        entry: [
+          'assignToVMST',
+          'removeNullPeriod',
+          'setAdditionalFileSentVariable',
+        ],
         exit: 'clearTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1346,11 +1349,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setAdditionalFileSentVariable: assign((context) => {
         const { application } = context
         const answers = application.answers
-        const { additionalDocuments, commonFiles } = getApplicationAnswers(answers)
+        const { additionalDocuments, commonFiles } = getApplicationAnswers(
+          answers,
+        )
 
         // const newAddDocs = additionalDocuments.map(v => ({...v, isSend: true}))
         // set(answers, 'fileUpload.additionalDocuments', newAddDocs)
-        const newAddDocs = commonFiles.map(v => ({...v, isSend: true}))
+        const newAddDocs = commonFiles.map((v) => ({ ...v, isSend: true }))
         set(answers, 'fileUpload.file', newAddDocs)
 
         return context
