@@ -8,10 +8,8 @@ import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
 
 export const Review: FC<FieldBaseProps> = (props) => {
-  const { application } = props
   const { userInfo } = useAuth()
   const [step, setStep] = useState<ReviewState>('states')
-  console.log(application)
 
   const reviewerNationalId = userInfo?.profile.nationalId || null
 
