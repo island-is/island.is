@@ -49,7 +49,6 @@ export const VehicleSelectField: FC<
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
           isDebtLess: true,
-          updatelocks: [],
           ownerChangeErrorMessages: [],
         }
       : null,
@@ -79,8 +78,6 @@ export const VehicleSelectField: FC<
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
             isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
-            updatelocks:
-              response?.vehicleOwnerchangeChecksByPermno?.updatelocks,
             ownerChangeErrorMessages:
               response?.vehicleOwnerchangeChecksByPermno
                 ?.ownerChangeErrorMessages,
@@ -88,7 +85,6 @@ export const VehicleSelectField: FC<
 
           const disabled =
             !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
-            !!response?.vehicleOwnerchangeChecksByPermno?.updatelocks?.length ||
             !!response?.vehicleOwnerchangeChecksByPermno
               ?.ownerChangeErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
@@ -112,7 +108,6 @@ export const VehicleSelectField: FC<
   const disabled =
     selectedVehicle &&
     (!selectedVehicle.isDebtLess ||
-      !!selectedVehicle.updatelocks?.length ||
       !!selectedVehicle.ownerChangeErrorMessages?.length)
 
   return (
@@ -160,21 +155,6 @@ export const VehicleSelectField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!selectedVehicle.updatelocks?.length &&
-                          selectedVehicle.updatelocks?.map((lock) => {
-                            const message = formatMessage(
-                              getValueViaPath(
-                                applicationCheck.locks,
-                                lock.lockNo || '',
-                              ),
-                            )
-                            const fallbackMessage =
-                              formatMessage(applicationCheck.locks['0']) +
-                              ' - ' +
-                              lock.lockNo
-
-                            return <Bullet>{message || fallbackMessage}</Bullet>
-                          })}
                         {!!selectedVehicle.ownerChangeErrorMessages?.length &&
                           selectedVehicle.ownerChangeErrorMessages?.map(
                             (error) => {
@@ -187,7 +167,8 @@ export const VehicleSelectField: FC<
                               const defaultMessage = error.defaultMessage
                               const fallbackMessage =
                                 formatMessage(
-                                  applicationCheck.validation['0'],
+                                  applicationCheck.validation
+                                    .fallbackErrorMessage,
                                 ) +
                                 ' - ' +
                                 error.errorNo

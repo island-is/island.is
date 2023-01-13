@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { useDebounce } from 'react-use'
 import {
   Button,
@@ -19,6 +19,7 @@ import { useQuery } from '@apollo/client'
 import { InstructorsStudentsQuery } from '../../graphql/queries'
 import Skeleton from './Skeleton'
 import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
+import { format as formatKennitala } from 'kennitala'
 import * as styles from '../style.css'
 
 const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
@@ -34,7 +35,7 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
   )
 
   /* table view */
-  const [showTable, setShowTable] = useState(true)
+  const [showStudentOverview, setShowStudentOverview] = useState(true)
   const [studentId, setStudentId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredStudents, setFilteredStudents] = useState<Array<Student>>()
@@ -71,11 +72,11 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box marginBottom={10}>
       <Text variant="h2" marginBottom={3}>
-        {showTable
+        {showStudentOverview
           ? formatMessage(m.studentsOverviewTitle)
           : formatMessage(m.viewStudentTitle)}
       </Text>
-      {showTable ? (
+      {showStudentOverview ? (
         <Stack space={5}>
           <Box
             display={['block', 'flex', 'flex']}
@@ -84,6 +85,7 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
             <Box width="half" className={styles.mobileWidth}>
               <Input
                 name="searchbar"
+                label={formatMessage(m.studentsOverviewSearchLabel)}
                 placeholder={formatMessage(m.studentsOverviewSearchPlaceholder)}
                 icon="search"
                 backgroundColor="blue"
@@ -94,23 +96,29 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
             </Box>
             <FindStudentModal
               application={application}
-              setShowTable={setShowTable}
+              setShowStudentOverview={setShowStudentOverview}
               setStudentId={setStudentId}
             />
           </Box>
-          <T.Table>
+          <T.Table box={{ overflow: 'hidden' }}>
             <T.Head>
               <T.Row>
-                <T.HeadData>
+                <T.HeadData style={styles.tableStyles}>
                   {formatMessage(m.studentsOverviewTableHeaderCol1)}
                 </T.HeadData>
-                <T.HeadData>
+                <T.HeadData style={styles.tableStyles}>
                   {formatMessage(m.studentsOverviewTableHeaderCol2)}
                 </T.HeadData>
-                <T.HeadData box={{ textAlign: 'center' }}>
+                <T.HeadData
+                  style={styles.tableStyles}
+                  box={{ textAlign: 'center' }}
+                >
                   {formatMessage(m.studentsOverviewTableHeaderCol3)}
                 </T.HeadData>
-                <T.HeadData></T.HeadData>
+                <T.HeadData
+                  box={{ textAlign: 'center' }}
+                  style={styles.tableStyles}
+                ></T.HeadData>
               </T.Row>
             </T.Head>
             {loading || (data && !pageStudents) ? (
@@ -121,18 +129,25 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                   pageStudents.map((student) => {
                     return (
                       <T.Row key={student.id}>
-                        <T.Data>{student.name}</T.Data>
-                        <T.Data>{student.nationalId}</T.Data>
+                        <T.Data style={styles.tableStyles}>
+                          {student.name}
+                        </T.Data>
+                        <T.Data style={styles.tableStyles}>
+                          {formatKennitala(student.nationalId)}
+                        </T.Data>
                         <T.Data box={{ textAlign: 'center' }}>
                           {student.totalLessonCount ?? 0}
                         </T.Data>
-                        <T.Data>
+                        <T.Data
+                          box={{ textAlign: 'center' }}
+                          style={styles.tableStyles}
+                        >
                           <Button
                             variant="text"
                             size="small"
                             onClick={() => {
                               setStudentId(student.nationalId)
-                              setShowTable(false)
+                              setShowStudentOverview(false)
                             }}
                           >
                             {formatMessage(
@@ -145,12 +160,9 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                   })
                 ) : (
                   <T.Row>
-                    <T.Data>
+                    <T.Data colSpan={4}>
                       {formatMessage(m.studentsOverviewNoStudentFound)}
                     </T.Data>
-                    <T.Data></T.Data>
-                    <T.Data></T.Data>
-                    <T.Data></T.Data>
                   </T.Row>
                 )}
               </T.Body>
@@ -178,7 +190,7 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
         <ViewStudent
           application={application}
           studentNationalId={studentId}
-          setShowTable={setShowTable}
+          setShowStudentOverview={setShowStudentOverview}
         />
       )}
     </Box>

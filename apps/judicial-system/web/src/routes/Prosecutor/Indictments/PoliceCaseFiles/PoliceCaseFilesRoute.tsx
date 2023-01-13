@@ -9,6 +9,7 @@ import React, {
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
+import _isEqual from 'lodash/isEqual'
 
 import {
   FormContentContainer,
@@ -41,7 +42,7 @@ import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
@@ -55,7 +56,7 @@ const UploadFilesToPoliceCase: React.FC<{
   caseFiles: CaseFile[]
 }> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles }) => {
   const { formatMessage } = useIntl()
-  const { upload, remove } = useS3UploadV2(caseId)
+  const { upload, remove } = useS3Upload(caseId)
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
     caseFiles.map(mapCaseFileToUploadFile),
@@ -75,7 +76,7 @@ const UploadFilesToPoliceCase: React.FC<{
 
   useEffect(() => {
     const isUploading = displayFiles.some((file) => file.status === 'uploading')
-    setAllUploaded(isUploading)
+    setAllUploaded(!isUploading)
   }, [setAllUploaded, displayFiles])
 
   const setSingleFile = useCallback(
@@ -257,6 +258,23 @@ const PoliceCaseFilesRoute = () => {
     ),
   )
 
+  useEffect(() => {
+    if (!_isEqual(workingCase.policeCaseNumbers, Object.keys(allUploaded))) {
+      setAllUploaded(
+        workingCase.policeCaseNumbers.reduce(
+          (acc, policeCaseNumber) => ({
+            ...acc,
+            [policeCaseNumber]:
+              allUploaded[policeCaseNumber] === undefined
+                ? true
+                : allUploaded[policeCaseNumber],
+          }),
+          {},
+        ),
+      )
+    }
+  }, [allUploaded, workingCase.policeCaseNumbers])
+
   const setAllUploadedForPoliceCaseNumber = useCallback(
     (number: string) => (value: boolean) => {
       setAllUploaded((previous) => ({ ...previous, [number]: value }))
@@ -264,7 +282,7 @@ const PoliceCaseFilesRoute = () => {
     [setAllUploaded],
   )
 
-  const stepIsValid = !Object.values(allUploaded).some((v) => v)
+  const stepIsValid = !Object.values(allUploaded).some((v) => !v)
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],

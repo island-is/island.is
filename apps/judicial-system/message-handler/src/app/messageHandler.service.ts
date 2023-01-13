@@ -1,5 +1,6 @@
 import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common'
 
+import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -13,7 +14,6 @@ import {
 import type { CaseMessage } from '@island.is/judicial-system/message'
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { CaseDeliveryService } from './caseDelivery.service'
 import { InternalDeliveryService } from './internalDelivery.service'
 import { appModuleConfig } from './app.config'
 
@@ -24,8 +24,9 @@ export class MessageHandlerService implements OnModuleDestroy {
 
   constructor(
     private readonly messageService: MessageService,
-    private readonly caseDeliveryService: CaseDeliveryService,
     private readonly internalDeliveryService: InternalDeliveryService,
+    @Inject(appModuleConfig.KEY)
+    private readonly config: ConfigType<typeof appModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -101,6 +102,20 @@ export class MessageHandlerService implements OnModuleDestroy {
         )
         break
       }
+      case MessageType.SEND_HEADS_UP_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.HEADS_UP },
+        )
+        break
+      case MessageType.SEND_READY_FOR_COURT_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.READY_FOR_COURT },
+        )
+        break
       case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.caseId,
@@ -143,7 +158,7 @@ export class MessageHandlerService implements OnModuleDestroy {
 
           // Wait a bit before trying again
           await new Promise((resolve) =>
-            setTimeout(resolve, appModuleConfig().waitTimeSeconds * 1000),
+            setTimeout(resolve, this.config.waitTimeSeconds * 1000),
           )
         })
     }

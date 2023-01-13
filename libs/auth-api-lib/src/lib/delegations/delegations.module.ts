@@ -22,6 +22,7 @@ import { DelegationsIncomingWardService } from './delegations-incoming-ward.serv
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
+import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { DelegationsIncomingRepresentativeService } from './delegations-incoming
       DelegationScope,
       Client,
       ClientAllowedScope,
+      ApiScopeUserAccess,
     ]),
   ],
   providers: [

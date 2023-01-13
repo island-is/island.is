@@ -4,7 +4,7 @@ export interface OwnerChange {
   buyer: OwnerChangeByuer
   dateOfPurchase: Date
   saleAmount: number
-  insuranceCompanyCode: string
+  insuranceCompanyCode?: string | null
   operators?: Array<OwnerChangeOperator> | null
   coOwners?: Array<OwnerChangeCoOwner> | null
 }
@@ -46,6 +46,6 @@ export interface OwnerChangeValidation {
 }
 
 export interface OwnerChangeValidationMessage {
-  errorNo?: number | null
+  errorNo?: string | null
   defaultMessage?: string | null
 }
