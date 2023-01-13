@@ -93,7 +93,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
         description: m.userInfoDescription,
       },
-
       // Mín skírteini
       {
         name: m.licenses,
