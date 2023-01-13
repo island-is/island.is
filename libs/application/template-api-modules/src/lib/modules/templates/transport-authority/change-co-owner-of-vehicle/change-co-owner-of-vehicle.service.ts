@@ -118,7 +118,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateRequestReviewSms(application, recipientList[i]),
+          (_, options) =>
+            generateRequestReviewSms(application, options, recipientList[i]),
           application,
         )
       }
