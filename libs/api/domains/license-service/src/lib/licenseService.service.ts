@@ -6,6 +6,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
+import { DogStatsD, METRICS_PROVIDER } from '@island.is/infra-metrics'
+import type { DogStatsDTags } from '@island.is/infra-metrics'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
@@ -49,6 +51,7 @@ export class LicenseServiceService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
     private readonly cmsContentfulService: CmsContentfulService,
+    @Inject(METRICS_PROVIDER) private metrics: DogStatsD,
   ) {}
 
   private handleError(
@@ -173,6 +176,15 @@ export class LicenseServiceService {
     }
   }
 
+  private getMetricsTags(type?: GenericLicenseType): DogStatsDTags {
+    const license = AVAILABLE_LICENSES.find((i) => i.type === type)
+
+    return {
+      licenseType: type ?? 'unknown',
+      licenseProvider: license?.provider?.id ?? 'unknown',
+    }
+  }
+
   async getAllLicenses(
     user: User,
     locale: Locale,
@@ -198,6 +210,9 @@ export class LicenseServiceService {
         locale,
       )
 
+      const metricsTags = this.getMetricsTags(license.type)
+      this.metrics.increment('all_licenes.license', metricsTags)
+
       if (!onlyList) {
         const licenseService = await this.genericLicenseFactory(
           license.type,
@@ -213,8 +228,20 @@ export class LicenseServiceService {
           licenseDataFromService = await this.getCachedOrCache(
             license,
             user,
-            async () =>
-              await licenseService.getLicense(user, locale, licenseLabels),
+            async () => {
+              const start = DogStatsD.timer()
+              const result = await licenseService.getLicense(
+                user,
+                locale,
+                licenseLabels,
+              )
+              this.metrics.timing(
+                `all_licenes.license.duration`,
+                DogStatsD.duration(start),
+                metricsTags,
+              )
+              return result
+            },
             force ? 0 : license.timeout,
           )
 
@@ -262,6 +289,13 @@ export class LicenseServiceService {
         fetch,
         payload: licenseDataFromService?.payload ?? undefined,
       }
+
+      if (combined.fetch.status === GenericUserLicenseFetchStatus.Error) {
+        this.metrics.increment(`all_licenes.license.error`, 1, metricsTags)
+      } else {
+        this.metrics.increment(`all_licenes.license.ok`, 1, metricsTags)
+      }
+
       licenses.push(combined)
     }
     return licenses
@@ -282,13 +316,23 @@ export class LicenseServiceService {
 
     const licenseLabels = await this.getLicenseLabels(locale)
 
+    const metricsTags = this.getMetricsTags(licenseType)
+    this.metrics.increment(`license`, 1, metricsTags)
+
     if (license && licenseService) {
+      const start = DogStatsD.timer()
       licenseUserdata = await licenseService.getLicenseDetail(
         user,
         locale,
         licenseLabels,
       )
+      this.metrics.timing(
+        `license.duration`,
+        DogStatsD.duration(start),
+        metricsTags,
+      )
     } else {
+      this.metrics.increment(`license.unsupported`, 1)
       throw new Error(`${licenseType} not supported`)
     }
 
@@ -296,7 +340,7 @@ export class LicenseServiceService {
       ? await this.getOrganization(license.orgSlug, locale)
       : undefined
 
-    return {
+    const licenseData: GenericUserLicense = {
       nationalId: user.nationalId,
       license: {
         ...license,
@@ -315,6 +359,14 @@ export class LicenseServiceService {
       },
       payload: licenseUserdata?.payload ?? undefined,
     }
+
+    if (licenseData.fetch.status === GenericUserLicenseFetchStatus.Error) {
+      this.metrics.increment(`license.error`, 1, metricsTags)
+    } else {
+      this.metrics.increment(`license.ok`, 1, metricsTags)
+    }
+
+    return licenseData
   }
 
   async generatePkPass(
@@ -329,15 +381,28 @@ export class LicenseServiceService {
       this.cacheManager,
     )
 
+    const metricsTags = this.getMetricsTags(licenseType)
+    this.metrics.increment(`pkpass_url`, 1, metricsTags)
+
     if (licenseService) {
+      const start = DogStatsD.timer()
       pkpassUrl = await licenseService.getPkPassUrl(user, licenseType, locale)
+      this.metrics.timing(
+        `pkpass_url.duration`,
+        DogStatsD.duration(start),
+        metricsTags,
+      )
     } else {
+      this.metrics.increment(`pkpass_url.unsupported`, 1, metricsTags)
       throw new Error(`${licenseType} not supported`)
     }
 
     if (!pkpassUrl) {
+      this.metrics.increment(`pkpass_url.error`, 1, metricsTags)
       throw new Error(`Unable to get pkpass url for ${licenseType} for user`)
     }
+
+    this.metrics.increment(`pkpass_url.ok`, 1, metricsTags)
     return { pkpassUrl }
   }
 
@@ -353,20 +418,34 @@ export class LicenseServiceService {
       this.cacheManager,
     )
 
+    const metricsTags = this.getMetricsTags(licenseType)
+    this.metrics.increment(`pkpass_qrcode`, 1, metricsTags)
+
     if (licenseService) {
+      const start = DogStatsD.timer()
       pkpassQRCode = await licenseService.getPkPassQRCode(
         user,
         licenseType,
         locale,
       )
+      this.metrics.timing(
+        `pkpass_qrcode.duration`,
+        DogStatsD.duration(start),
+        metricsTags,
+      )
     } else {
+      this.metrics.increment(`pkpass_qrcode.unsupported`, 1, metricsTags)
       throw new Error(`${licenseType} not supported`)
     }
+
     if (!pkpassQRCode) {
+      this.metrics.increment(`pkpass_qrcode.error`, 1, metricsTags)
       throw new Error(
         `Unable to get pkpass qr code for ${licenseType} for user`,
       )
     }
+
+    this.metrics.increment(`pkpass_qrcode.ok`, 1, metricsTags)
 
     return { pkpassQRCode }
   }
@@ -400,20 +479,33 @@ export class LicenseServiceService {
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
     }
 
+    const metricsTags = this.getMetricsTags(licenseType)
+    this.metrics.increment(`pkpass_verify`, 1, metricsTags)
+
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
     )
 
     if (licenseService) {
+      const start = DogStatsD.timer()
       verification = await licenseService.verifyPkPass(data, passTemplateId)
+      this.metrics.timing(
+        `pkpass_verify.duration`,
+        DogStatsD.duration(start),
+        metricsTags,
+      )
     } else {
+      this.metrics.increment(`pkpass_verify.unsupported`, 1, metricsTags)
       throw new Error(`${licenseType} not supported`)
     }
 
     if (!verification) {
+      this.metrics.increment(`pkpass_verify.error`, 1, metricsTags)
       throw new Error(`Unable to verify pkpass for ${licenseType} for user`)
     }
+
+    this.metrics.increment(`pkpass_verify.ok`, 1, metricsTags)
     return verification
   }
 

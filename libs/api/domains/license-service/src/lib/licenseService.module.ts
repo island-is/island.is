@@ -35,6 +35,7 @@ import {
   GenericDrivingLicenseApi,
   GenericDrivingLicenseConfig,
 } from './client/driving-license-client'
+import { DogStatsD, METRICS_PROVIDER } from '@island.is/infra-metrics'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -150,6 +151,10 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         GenericDrivingLicenseConfig.KEY,
         XRoadConfig.KEY,
       ],
+    },
+    {
+      provide: METRICS_PROVIDER,
+      useValue: new DogStatsD({ prefix: `license-service.` }),
     },
   ],
   exports: [LicenseServiceService],
