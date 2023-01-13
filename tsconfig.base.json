@@ -456,6 +456,9 @@
       "@island.is/clients/transport-authority/vehicle-infolocks": [
         "libs/clients/transport-authority/vehicle-infolocks/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/vehicle-operators": [
+        "libs/clients/transport-authority/vehicle-operators/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
       ],
