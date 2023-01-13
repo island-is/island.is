@@ -42,22 +42,28 @@ It can be just one tag which is applied to both the application project and all 
 | `auth`            | Authentication projects                   | `js`, `node`, `nest`, `client`, `auth`,                       | Other auth applications                     |
 | `e2e`             | Test projects                             | `js`, `client`, `as-shared`                                   | No one                                      |
 
-Here is an chart that displays how these tags are connected. Each tag can depend on another tag that is highere in the tree.
+Here is an chart that displays how these tags are connected. Each tag can depend on another tag that is higher in the tree. The doted line represents connections between application tags where the child application can depend on the parent but not neceserely further up.
 
 ```mermaid
-  flowchart TB;
-    js-->node & dom
+  flowchart BT;
+    %% Generic tags
+    node & dom --> js
+    react --> dom
+    react-spa & react-next --> react
+    nest --> node
 
-    dom--> react
-    node --> nest
+    %% App tags
+    api & auth & client & as-api --> nest
+    as-shared & as-form & portals-admin & portals-mypages --> react-spa
 
-    react--> react-spa & react-next
-    nest-->client
+    classDef appTag fill:#f9f
+    class api,auth,client,as-shared,as-form,as-api,portals-admin,portals-mypages appTag
 
-    client--> api & auth
-    react-spa-->as-shared & portals-admin & portals-mypages
-
-    as-shared-->as-form & as-api
+    %% Shallow dependencies
+    api & auth -.-> client
+    as-shared -.-> client
+    as-api & as-form -.-> as-shared
+yar
 ```
 
 ## Tag prefixes
