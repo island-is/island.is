@@ -7,7 +7,6 @@ import { m } from './lib/messages'
 
 export const delegationsModule: PortalModule = {
   name: m.accessControl,
-  widgets: () => [],
   enabled({ userInfo }) {
     return delegationScopes.some((scope) => userInfo.scopes.includes(scope))
   },

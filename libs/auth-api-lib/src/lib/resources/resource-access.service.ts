@@ -65,7 +65,13 @@ export class ResourceAccessService {
         limit: count,
         offset: offset,
         distinct: true,
-        where: { nationalId: searchString },
+        where: {
+          [Op.or]: ['nationalId', 'name', 'email'].map((key) => ({
+            [key]: {
+              [Op.iLike]: `%${searchString.toLowerCase()}%`,
+            },
+          })),
+        },
         order: ['nationalId'],
       })
     } else {
@@ -85,17 +91,19 @@ export class ResourceAccessService {
   }: ApiScopeUserDTO): Promise<ApiScopeUser | null> {
     this.logger.debug('Creating a new admin')
 
-    const response = await this.apiScopeUser.create(apiScopeUser)
-    if (response) {
+    const newApiScopeUser = await this.apiScopeUser.create(apiScopeUser)
+
+    if (newApiScopeUser) {
       const apiScopeResponse = await this.createUserScopes(userAccess)
+
       if (apiScopeResponse) {
-        return response
+        return newApiScopeUser
       } else {
         throw new Error('Error inserting scopes')
       }
     }
 
-    return response
+    return newApiScopeUser
   }
 
   /** Updates an existing Api Scope User */
@@ -163,16 +171,13 @@ export class ResourceAccessService {
   /** Creates User Scopes of Api Scope User */
   async createUserScopes(
     scopes: ApiScopeUserAccessDTO[] | undefined,
-  ): Promise<ApiScopeUserAccess | null> {
-    if (scopes === undefined) return null
+  ): Promise<ApiScopeUserAccess[] | null> {
+    if (!scopes) return null
 
     this.logger.debug('Insert scopes for Api Scope User: ', scopes)
 
-    let response = null
-    scopes.forEach(async (x) => {
-      response = await this.apiScopeUserAccess.create({ ...x })
-    })
-
-    return response
+    return Promise.all(
+      scopes.map((scope) => this.apiScopeUserAccess.create({ ...scope })),
+    )
   }
 }
