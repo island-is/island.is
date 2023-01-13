@@ -488,6 +488,7 @@ export const Form = ({ form, namespace }: FormProps) => {
           },
         }).then(() => {
           setSubmitting(false)
+          setSubmitError(false)
         })
       }
     } catch (e) {
