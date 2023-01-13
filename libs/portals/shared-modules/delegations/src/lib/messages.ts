@@ -42,6 +42,10 @@ export const m = defineMessages({
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  myAccessControl: {
+    id: 'service.portal:my-accessControl',
+    defaultMessage: 'Mínar aðgangsstýringar',
+  },
   accessControlDelegations: {
     id: 'service.portal:delegations',
     defaultMessage: 'Umboð',
@@ -53,6 +57,14 @@ export const m = defineMessages({
   accessControlDelegationsOutgoing: {
     id: 'service.portal:from-me',
     defaultMessage: 'Frá mér',
+  },
+  accessControlDelegationsIncomingLong: {
+    id: 'service.portal:to-me-long',
+    defaultMessage: 'Umboð til mín',
+  },
+  accessControlDelegationsOutgoingLong: {
+    id: 'service.portal:from-me-long',
+    defaultMessage: 'Umboð frá mér',
   },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',

@@ -4,6 +4,7 @@ import {
   Hyphen,
   HyphenProps,
   BoxProps,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import * as styles from './InstitutionPanel.css'
 import React from 'react'
@@ -15,6 +16,7 @@ interface InstitutionPanelProps {
   locale: HyphenProps['locale']
   linkHref: string
   imgContainerDisplay?: BoxProps['display']
+  loading?: boolean
 }
 
 export const InstitutionPanel = ({
@@ -24,6 +26,7 @@ export const InstitutionPanel = ({
   locale,
   linkHref,
   imgContainerDisplay,
+  loading = false,
 }: InstitutionPanelProps) => {
   return (
     <a
@@ -45,26 +48,46 @@ export const InstitutionPanel = ({
           style={{ flex: '0 0 64px' }}
           marginRight={3}
         >
-          <Box
-            component="img"
-            alt=""
-            src={img ? img : './assets/images/skjaldarmerki.svg'}
-            width="full"
-            height="full"
-          />
+          {loading ? (
+            <SkeletonLoader
+              display="block"
+              height={64}
+              width={64}
+              background="purple200"
+            />
+          ) : (
+            <Box
+              component="img"
+              alt=""
+              src={img ? img : './assets/images/skjaldarmerki.svg'}
+              width="full"
+              height="full"
+            />
+          )}
         </Box>
         <Box>
-          <Text variant="eyebrow" color="purple600">
-            {institutionTitle}
-          </Text>
-          <Text
-            variant={institution.length > 24 ? 'h5' : 'h3'}
-            as="h3"
-            color="purple600"
-            lineHeight="sm"
-          >
-            <Hyphen locale={locale}>{institution}</Hyphen>
-          </Text>
+          {loading ? (
+            <SkeletonLoader
+              display="block"
+              height={32}
+              width={185}
+              background="purple200"
+            />
+          ) : (
+            <>
+              <Text variant="eyebrow" color="purple600">
+                {institutionTitle}
+              </Text>
+              <Text
+                variant={institution.length > 24 ? 'h5' : 'h3'}
+                as="h3"
+                color="purple600"
+                lineHeight="sm"
+              >
+                <Hyphen locale={locale}>{institution}</Hyphen>
+              </Text>
+            </>
+          )}
         </Box>
       </Box>
     </a>

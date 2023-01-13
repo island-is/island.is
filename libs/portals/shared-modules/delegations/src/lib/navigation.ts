@@ -11,9 +11,8 @@ export const delegationsNavigation: PortalNavigationItem = {
   description: m.accessControlDescription,
   children: [
     {
-      name: m.accessControlDelegations,
+      name: m.accessControlDelegationsOutgoingLong,
       path: DelegationPaths.Delegations,
-      navHide: true,
       children: [
         {
           name: m.accessControlGrant,
@@ -23,9 +22,8 @@ export const delegationsNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: m.accessControlDelegationsIncoming,
+      name: m.accessControlDelegationsIncomingLong,
       path: DelegationPaths.DelegationsIncoming,
-      navHide: true,
       breadcrumbHide: true,
     },
     {

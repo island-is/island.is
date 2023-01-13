@@ -50,6 +50,7 @@ import {
   DelegationPaths,
   delegationsNavigation,
 } from '@island.is/portals/shared-modules/delegations'
+import { PetitionPaths } from '@island.is/service-portal/endorsements'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -90,6 +91,8 @@ export const getNavigationByPath = (path: string) => {
   } else if (path.includes(PersonalInformationPaths.SettingsRoot)) {
     return personalInformationNavigation
   } else if (path.includes(InformationPaths.MyInfoRoot)) {
+    return informationNavigation
+  } else if (path.includes(PetitionPaths.Petitions)) {
     return informationNavigation
   } else if (path.includes(InformationPaths.Company)) {
     return companyNavigation

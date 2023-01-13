@@ -4,7 +4,7 @@ import { TransportPaths } from './paths'
 
 export const transportsNavigation: PortalNavigationItem = {
   name: m.vehicles,
-  path: TransportPaths.AssetsMyVehicles,
+  path: TransportPaths.AssetsVehicles,
   icon: {
     icon: 'car',
   },

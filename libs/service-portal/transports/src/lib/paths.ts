@@ -1,8 +1,9 @@
 export enum TransportPaths {
-  AssetsVehicles = '/okutaeki',
-  AssetsMyVehicles = '/okutaeki/min-okutaeki',
-  AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
-  AssetsVehiclesLookup = '/okutaeki/leit',
-  AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
-  AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
+  TransportRoot = '/samgongur',
+  AssetsVehicles = '/samgongur/okutaeki',
+  AssetsMyVehicles = '/samgongur/okutaeki/min-okutaeki',
+  AssetsVehiclesDetail = '/samgongur/okutaeki/min-okutaeki/:id',
+  AssetsVehiclesLookup = '/samgongur/okutaeki/leit',
+  AssetsVehiclesHistory = '/samgongur/okutaeki/okutaekjaferill',
+  AssetsVehiclesDrivingLessons = '/samgongur/okutaeki/okunam',
 }

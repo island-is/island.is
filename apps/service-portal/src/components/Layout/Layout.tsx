@@ -39,24 +39,40 @@ import {
   getNavigationByPath,
   MAIN_NAVIGATION,
 } from '../../lib/masterNavigation'
+import { PortalNavigationItem } from '@island.is/portals/core'
 
+const defaultOrg: Organization = {
+  email: '',
+  footerItems: [],
+  id: '123',
+  phone: '1234123',
+  publishedMaterialSearchFilterGenericTags: [],
+  shortTitle: 'Ísland.is',
+  slug: 'island.is',
+  tag: [],
+  title: 'Stafrænt Ísland',
+}
 const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
+  const [isDashboard, setIsDashboard] = useState(false) // TODO REVERT TO TRUE
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [currentOrganization, setCurrentOrganization] = useState<
     Organization | undefined
   >(undefined)
+  const { data: orgData, loading } = useQuery(GET_ORGANIZATIONS_QUERY)
   const { pathname } = useLocation()
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
+  const activeParent = navigation?.children?.find((item) => item.active)
+
+  console.log(activeParent)
   useScrollTopOnUpdate([pathname])
   const { formatMessage } = useLocale()
 
-  const [isDashboard, setIsDashboard] = useState(true)
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
   const globalBanners = banners.filter((banner) =>
     banner.servicePortalPaths?.includes('*'),
   )
-  const subNavItems: NavigationItem[] = []
 
   const mapChildren = (item: ServicePortalNavigationItem): any => {
     if (item.children) {
@@ -83,16 +99,11 @@ const Layout: FC = ({ children }) => {
     }
   }
 
-  const sidemenuNavigation = getNavigationByPath(pathname)
-  if (sidemenuNavigation) {
-    sidemenuNavigation.children
-      ?.filter((item) => !item.navHide)
-      ?.map((item: ServicePortalNavigationItem) =>
-        subNavItems.push(mapChildren(item)),
-      )
-  }
-
-  console.log(sidemenuNavigation)
+  const subNavItems = activeParent?.children
+    ?.filter((item) => !item.navHide)
+    ?.map((item: ServicePortalNavigationItem) => {
+      return mapChildren(item)
+    })
 
   useEffect(() => {
     if (
@@ -105,29 +116,15 @@ const Layout: FC = ({ children }) => {
     }
   }, [pathname])
 
-  const defaultOrg: Organization = {
-    email: '',
-    footerItems: [],
-    id: '123',
-    phone: '1234123',
-    publishedMaterialSearchFilterGenericTags: [],
-    shortTitle: 'Ísland.is',
-    slug: 'island.is',
-    tag: [],
-    title: 'Stafrænt Ísland',
-  }
-
-  const { data: orgData, loading } = useQuery(GET_ORGANIZATIONS_QUERY)
-  const organizations = orgData?.getOrganizations?.items || {}
-
   useEffect(() => {
+    const organizations = orgData?.getOrganizations?.items || {}
     if (organizations && !loading) {
       const org = organizations.find(
-        (org: Organization) => org.id === sidemenuNavigation?.serviceProvider,
+        (org: Organization) => org.id === activeParent?.serviceProvider,
       )
       setCurrentOrganization(org ?? defaultOrg)
     }
-  }, [organizations, loading, sidemenuNavigation?.serviceProvider])
+  }, [loading])
 
   return (
     <>
@@ -144,13 +141,14 @@ const Layout: FC = ({ children }) => {
         />
         {!isDashboard && (
           <SidebarLayout
-            isSticky={false}
+            isSticky={true}
             sidebarContent={
               <Sticky>
                 <Box style={{ marginTop: height }}>
                   <GoBack />
                   <Box marginBottom={3}>
                     <InstitutionPanel
+                      loading={loading}
                       institution={currentOrganization?.title ?? ''}
                       institutionTitle={formatMessage(m.serviceProvider)}
                       locale="is"
@@ -159,7 +157,7 @@ const Layout: FC = ({ children }) => {
                       imgContainerDisplay={['block', 'block', 'block', 'block']}
                     />
                   </Box>
-                  {subNavItems.length > 0 && (
+                  {subNavItems && subNavItems.length > 0 && (
                     <Box background="blue100">
                       <Navigation
                         renderLink={(link, item) => {
@@ -171,7 +169,7 @@ const Layout: FC = ({ children }) => {
                         }}
                         baseId={'service-portal-navigation'}
                         title={formatMessage(
-                          sidemenuNavigation?.name ?? m.tableOfContents,
+                          activeParent?.name ?? m.tableOfContents,
                         )}
                         items={subNavItems}
                         expand
@@ -191,7 +189,7 @@ const Layout: FC = ({ children }) => {
                   active: currentOrganization?.link ? true : false,
                 }}
               />
-              {subNavItems.length > 0 && (
+              {subNavItems && subNavItems.length > 0 && (
                 <Hidden above="sm">
                   <Box paddingBottom={3}>
                     <Navigation
@@ -204,8 +202,8 @@ const Layout: FC = ({ children }) => {
                       }}
                       baseId={'service-portal-mobile-navigation'}
                       title={
-                        sidemenuNavigation?.name
-                          ? formatMessage(sidemenuNavigation?.name)
+                        activeParent?.name
+                          ? formatMessage(activeParent?.name)
                           : formatMessage(m.tableOfContents)
                       }
                       items={subNavItems}

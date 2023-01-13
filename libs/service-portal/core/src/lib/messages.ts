@@ -348,6 +348,10 @@ export const m = defineMessages({
     id: 'service.portal:applications',
     defaultMessage: 'Umsóknir',
   },
+  myApplications: {
+    id: 'service.portal:my-applications',
+    defaultMessage: 'Mínar umsóknir',
+  },
   applicationsDescription: {
     id: 'service.portal:applications-description',
     defaultMessage: 'Staða umsókna sem þú hefur sótt um í gegnum island.is',

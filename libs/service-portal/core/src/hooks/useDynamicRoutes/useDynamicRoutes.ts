@@ -56,6 +56,7 @@ export const useDynamicRoutes = () => {
   const { data: licenseBook, loading: licenseBookLoading } = useQuery<Query>(
     GET_DRIVING_LICENSE_BOOK_QUERY,
   )
+  console.log('DYNAMIC LICENSE BOOK ', licenseBook)
 
   useEffect(() => {
     const dynamicPathArray = []
@@ -85,6 +86,7 @@ export const useDynamicRoutes = () => {
      */
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
     if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
+      console.log('pushing')
       dynamicPathArray.push(ServicePortalPath.TransportVehiclesDrivingLessons)
     }
 
@@ -98,5 +100,6 @@ export const useDynamicRoutes = () => {
 export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
   const { activeDynamicRoutes } = useDynamicRoutes()
   const navigation = useNavigation(nav, activeDynamicRoutes)
+
   return navigation
 }

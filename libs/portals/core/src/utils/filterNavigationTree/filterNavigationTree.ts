@@ -57,11 +57,28 @@ export const filterNavigationTree = ({
     const showDynamicPath =
       routeItem?.dynamic && solidPath && dynamicRouteArray?.includes(solidPath)
 
+    if (solidPath === '/samgongur/okutaeki/okunam') {
+      console.log('dynamic - show dynamic path ', showDynamicPath)
+      console.log('dynamic - solid path ', solidPath)
+    }
+
     item.navHide = !showDynamicPath
+    if (solidPath === '/samgongur/okutaeki/okunam') {
+      console.log('dynamic - nav hide ', item.navHide, item.name)
+    }
   }
   // Hides item from navigation
 
   item.navHide = routeItem?.navHide || !!item.navHide
+
+  if (item.path === '/samgongur/okutaeki/okunam') {
+    console.log(
+      'dynamic - second nav hide ',
+      item.navHide,
+      routeItem?.navHide,
+      !!item.navHide,
+    )
+  }
 
   if (currentLocationPath) {
     if (item.path) {

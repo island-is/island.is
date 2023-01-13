@@ -12,6 +12,11 @@ export const informationNavigation: PortalNavigationItem = {
   serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
   children: [
     {
+      name: m.myInfo,
+      path: InformationPaths.MyInfoRoot,
+      serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
+    },
+    {
       name: m.detailInfo,
       navHide: true,
       path: InformationPaths.UserInfo,
