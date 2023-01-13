@@ -5,7 +5,7 @@ export const airDiscountNavigation: PortalNavigationItem = {
   name: m.airDiscount,
   path: AirDiscountPaths.AirDiscountRoot,
   icon: {
-    icon: 'globe',
+    icon: 'airplane',
     type: 'outline',
   },
 }
