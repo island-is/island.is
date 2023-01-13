@@ -1,8 +1,12 @@
 import faker from 'faker'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { Domain } from '@island.is/auth-api-lib'
+import { CreateApiScope } from './types'
 
-export type CreateDomain = Pick<Domain, 'name' | 'description' | 'nationalId'>
+export type CreateDomain = Pick<Domain, 'name'> &
+  Partial<Pick<Domain, 'description' | 'nationalId'>> & {
+    apiScopes?: CreateApiScope[]
+  }
 
 export const createDomain = ({
   name,

@@ -4,12 +4,12 @@ import { User } from '@island.is/auth-nest-tools'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getRequestMethod, TestApp } from '@island.is/testing/nest'
 
-import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { TestEndpointOptions } from '../../../../test/types'
 import {
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
+import { FixtureFactory } from '@island.is/services/auth/testing'
 
 describe('withoutAuth and permissions', () => {
   async function formatUrl(app: TestApp, endpoint: string, user?: User) {
@@ -18,6 +18,7 @@ describe('withoutAuth and permissions', () => {
     }
     const factory = new FixtureFactory(app)
     const domain = await factory.createDomain({
+      name: 'd1',
       apiScopes: [{ name: 's1' }],
     })
     const delegation = await factory.createCustomDelegation({

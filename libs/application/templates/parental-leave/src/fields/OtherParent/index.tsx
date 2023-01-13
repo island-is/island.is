@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { formatText, getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -8,16 +8,13 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { RadioFormField } from '@island.is/application/ui-fields'
-import {
-  getApplicationAnswers,
-  getOtherParentOptions,
-} from '../../lib/parentalLeaveUtils'
-import { SPOUSE, NO, SINGLE, TransferRightsOption } from '../../constants'
+import { getOtherParentOptions } from '../../lib/parentalLeaveUtils'
+import { SPOUSE, NO, SINGLE } from '../../constants'
 import { useFormContext } from 'react-hook-form'
 
 export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title } = field
-  const { errors, setValue, register } = useFormContext()
+  const { errors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
   // const {

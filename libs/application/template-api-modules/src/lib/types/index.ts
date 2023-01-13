@@ -39,7 +39,6 @@ export interface BaseTemplateAPIModuleConfig {
   generalPetition: {
     endorsementsApiBasePath: string
   }
-  paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
   applicationService: Type<BaseTemplateApiApplicationService>
@@ -108,7 +107,12 @@ export abstract class BaseTemplateApiApplicationService {
   ): Promise<string>
 }
 
-export type SmsTemplateGenerator = (application: Application) => SmsMessage
+export type SmsTemplateGenerator = (
+  application: Application,
+  options: {
+    clientLocationOrigin: string
+  },
+) => SmsMessage
 
 export type AssignmentSmsTemplateGenerator = (
   application: Application,

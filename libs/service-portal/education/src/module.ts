@@ -5,7 +5,6 @@ import { EducationPaths } from './lib/paths'
 
 export const educationModule: PortalModule = {
   name: 'Menntun',
-  widgets: () => [],
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {

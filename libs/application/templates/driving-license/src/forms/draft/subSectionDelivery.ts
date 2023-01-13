@@ -42,6 +42,7 @@ export const subSectionDelivery = buildSubSection({
           id: 'juristiction',
           title: m.districtCommisionerPickup,
           disabled: false,
+          required: true,
           options: ({
             externalData: {
               juristictions: { data },
