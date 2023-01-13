@@ -21,6 +21,7 @@ The license service returns a generic license that consists of the following par
 - Firearm License
 - Machine License
 - ADR License
+- Disability License
 
 ### Usage
 
