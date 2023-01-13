@@ -215,10 +215,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     if (!res.loading) {
       if (!res.error) {
         const license = res.data?.genericLicenses || []
-        setLicenseItems(license.filter((item) => item.license.status !== 'Unknown' || (!showDisability && item.license.type === LicenseType.DISABILIY_LICENSE)))
+        let items = license.filter((item) => item.license.status !== 'Unknown');
+        if(!showDisability) {
+          items = items.filter((item) => item.license.type !== GenericLicenseType.DisabilityLicense);
+        }
+        setLicenseItems(items)
       }
     }
-  }, [res])
+  }, [res, showDisability])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
