@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -30,7 +30,6 @@ import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
 import { applyPassport, lostPassport } from '../../lib/constants'
 import { capitalizeEveryWord } from '../../utils/capitalize'
-import { NotFound } from '@island.is/portals/core'
 
 const getCurrentPassport = (
   id: string | undefined,
