@@ -13,15 +13,17 @@ type UserMenuProps = {
   userMenuOpen?: boolean
   iconOnlyMobile?: boolean
   showLanguageSwitcher?: boolean
+  showActorButton?: boolean
 }
 
 export const UserMenu = ({
-  fullscreen = true,
+  fullscreen = false,
   showDropdownLanguage = false,
   userMenuOpen,
   small = false,
   setUserMenuOpen,
   showLanguageSwitcher = true,
+  showActorButton = true,
   iconOnlyMobile = false,
 }: UserMenuProps) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
@@ -73,6 +75,7 @@ export const UserMenu = ({
         }}
         fullscreen={fullscreen}
         showDropdownLanguage={showDropdownLanguage}
+        showActorButton={showActorButton}
       />
     </Box>
   )

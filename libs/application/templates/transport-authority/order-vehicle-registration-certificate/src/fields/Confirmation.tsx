@@ -26,7 +26,7 @@ export const Confirmation: FC<FieldBaseProps> = ({ application }) => {
           title={formatMessage(confirmation.general.alertMessageTitle, {
             permno: getValueViaPath(
               application.answers,
-              'vehicle.plate',
+              'pickVehicle.plate',
               '',
             ) as string,
           })}

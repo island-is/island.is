@@ -24,7 +24,7 @@ interface Props {
   setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
   handleCreateCourtCase: (wc: Case) => void
   isCreatingCourtCase: boolean
-  receiveCase: (wc: Case, courtCaseNumber: string) => void
+  receiveCase: (wc: Case) => void
 }
 
 const CourtCaseNumber: React.FC<Props> = (props) => {
@@ -61,7 +61,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
 
     await updateCase(id, update)
     if (update.courtCaseNumber) {
-      receiveCase(workingCase, update.courtCaseNumber)
+      receiveCase(workingCase)
     }
   }
 
