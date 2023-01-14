@@ -42,18 +42,21 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [{
+        "target": "generateDevIndexHTML",
+        "projects": "self"
+      }]
     },
-    "serve": {
+    "generateDevIndexHTML": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src",
-          "yarn nx run service-portal:serveReal"
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src"
         ]
       }
     },
-    "serveReal": {
+    "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "service-portal:build"
