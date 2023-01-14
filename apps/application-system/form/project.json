@@ -43,10 +43,12 @@
         }
       },
       "outputs": ["{options.outputPath}"],
-      "dependsOn": [{
-        "target": "generateDevIndexHTML",
-        "projects": "self"
-      }]
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
     "generateDevIndexHTML": {
       "executor": "@nrwl/workspace:run-commands",
