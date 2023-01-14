@@ -75,11 +75,11 @@ const ReceptionAndAssignment = () => {
     },
   )
 
-  const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
+  const receiveCase = async (workingCase: Case) => {
     if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
       // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
       const received = await transitionCase(
-        { ...workingCase, courtCaseNumber },
+        workingCase.id,
         CaseTransition.RECEIVE,
         setWorkingCase,
       )
@@ -99,7 +99,7 @@ const ReceptionAndAssignment = () => {
 
     if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
-      receiveCase(workingCase, courtCaseNumber)
+      receiveCase(workingCase)
     }
   }
 

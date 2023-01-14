@@ -98,6 +98,30 @@ export const include: Includeable[] = [
   },
 ]
 
+export const caseListInclude: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
+  {
+    model: User,
+    as: 'creatingProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'judge',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+]
+
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
 ]
@@ -468,7 +492,7 @@ export class CaseService {
 
   getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
-      include,
+      include: caseListInclude,
       order,
       where: getCasesQueryFilter(user),
     })
