@@ -20,7 +20,7 @@ import {
   ValueSource,
 } from '../../../../infra/src/dsl/types/input-types'
 import { Envs } from '../../../../infra/src/environments'
-import { env, TestEnvironment } from './utils'
+import { env, TestEnvironment } from './urls'
 
 const getServiceMock = (envVariableRef: ValueSource) => {
   const resolver = new Localhost()
