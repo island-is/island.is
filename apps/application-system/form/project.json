@@ -27,6 +27,7 @@
         "production": {
           "optimization": false,
           "outputHashing": "all",
+          "index": "apps/application-system/form/src/index.src.html",
           "sourceMap": false,
           "extractCss": true,
           "namedChunks": false,

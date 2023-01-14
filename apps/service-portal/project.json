@@ -27,6 +27,7 @@
         "production": {
           "optimization": true,
           "outputHashing": "all",
+          "index": "apps/service-portal/src/index.src.html",
           "sourceMap": false,
           "extractCss": true,
           "namedChunks": false,
