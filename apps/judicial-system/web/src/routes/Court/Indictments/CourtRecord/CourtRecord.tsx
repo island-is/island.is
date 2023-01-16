@@ -92,7 +92,7 @@ const CourtRecord: React.FC = () => {
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
       const transitionSuccessful = await transitionCase(
-        workingCase,
+        workingCase.id,
         CaseTransition.ACCEPT,
       )
 
