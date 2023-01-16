@@ -83,9 +83,9 @@ export const rcHearingArrangements = {
       primaryButtonText: {
         id:
           'judicial.system.core:restriction_cases_hearing_arrangements.modal.shared.primary_button_text',
-        defaultMessage: 'Já, senda núna',
+        defaultMessage: 'Já, senda',
         description:
-          'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
+          'Notaður sem texti í "Já, senda" takkann í tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
       },
     }),
   },

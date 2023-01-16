@@ -143,9 +143,9 @@ export const icHearingArrangements = {
     primaryButtonText: {
       id:
         'judicial.system.core:investigation_cases_hearing_arrangements.modal.primary_button_text',
-      defaultMessage: 'Já, senda núna',
+      defaultMessage: 'Já, senda',
       description:
-        'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
+        'Notaður sem texti í "Já, senda" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
     },
   }),
 }
