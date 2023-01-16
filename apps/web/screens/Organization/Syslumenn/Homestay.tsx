@@ -217,6 +217,13 @@ const Homestay: Screen<HomestayProps> = ({
           />
         </Box>
       </Box>
+      {filteredItems.length === 0 && (
+        <Box display="flex" marginTop={4} justifyContent="center">
+          <Text variant="h3">
+            {n('homestayNoSearchResults', 'Engar heimagistingar fundust.')}
+          </Text>
+        </Box>
+      )}
       {filteredItems.slice(0, showCount).map((homestay, index) => {
         return (
           <Box
