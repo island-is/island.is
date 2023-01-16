@@ -19,7 +19,7 @@ export type DomainOption = {
 }
 
 /**
- * This domain hook is used to fetch domains list for cuttent user as well as handle selection of the domain,
+ * This domain hook is used to fetch domains list for current user as well as handle selection of the domain,
  * either in query string or session storage.
  *
  * The priority is the following:
