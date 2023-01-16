@@ -68,7 +68,11 @@ const Processing: React.FC = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (workingCase.state === CaseState.NEW) {
-        await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+        await transitionCase(
+          workingCase.id,
+          CaseTransition.OPEN,
+          setWorkingCase,
+        )
       }
 
       router.push(`${destination}/${workingCase.id}`)

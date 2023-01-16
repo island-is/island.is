@@ -118,7 +118,8 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateRequestReviewSms(application, recipientList[i]),
+          (_, options) =>
+            generateRequestReviewSms(application, options, recipientList[i]),
           application,
         )
       }
@@ -241,6 +242,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
+    // Add a second to the time because the api rejects the date with time 00:00:00:00
     const newOldOperators = answers?.oldOperators?.map((oldOperator) => ({
       startDate: oldOperator.startDate
         ? new Date(new Date(oldOperator.startDate).getTime() + 60000)

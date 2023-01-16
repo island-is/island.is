@@ -1,4 +1,9 @@
-import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
+import {
+  EnvironmentVariables,
+  EnvironmentVariableValue,
+  Secrets,
+  XroadConfig,
+} from './types/input-types'
 import { json, ref } from './dsl'
 
 type XroadSectionConfig = {
@@ -17,6 +22,10 @@ export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
     return this.config.env || {}
   }
 
+  getEnvVarByName(name: keyof I['env']): EnvironmentVariableValue | undefined {
+    return this.config.env?.[name]
+  }
+
   getSecrets(): Secrets {
     return this.config.secrets || {}
   }
@@ -30,9 +39,9 @@ export const Base = new XroadConf({
   env: {
     XROAD_BASE_PATH: {
       dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
-      staging: 'http://securityserver.staging01.devland.is',
+      staging: ref((h) => h.svc('http://securityserver.staging01.devland.is')),
       prod: 'http://securityserver.island.is',
-      local: ref((h) => h.svc('http://localhost:8081')),
+      local: ref((h) => h.svc('http://localhost:8081')), // x-road proxy
     },
     XROAD_BASE_PATH_WITH_ENV: {
       dev: ref(
@@ -40,6 +49,7 @@ export const Base = new XroadConf({
       ),
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
+      local: ref((h) => `${h.svc('http://localhost:8081')}/r1/IS-DEV`), // x-road proxy
     },
     XROAD_TLS_BASE_PATH: {
       dev: 'https://securityserver.dev01.devland.is',

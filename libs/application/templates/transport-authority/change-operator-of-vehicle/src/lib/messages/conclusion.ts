@@ -14,7 +14,7 @@ export const conclusion = {
     },
     approvedTitle: {
       id: 'ta.cov.application:conclusion.general.approvedTitle',
-      defaultMessage: 'Breyting meðeiganda á ökutæki samþykkt',
+      defaultMessage: 'Breyting umráðamanns á ökutæki samþykkt',
       description: 'Approved title of conclusion screen',
     },
     rejectedTitle: {

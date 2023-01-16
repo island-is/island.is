@@ -11,7 +11,6 @@ import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
 import { UserInformation } from '../../shared'
 import { useFormContext } from 'react-hook-form'
-import { getSelectedVehicle } from '../../utils'
 
 export const CoOwner: FC<FieldBaseProps> = ({
   application,
@@ -29,10 +28,14 @@ export const CoOwner: FC<FieldBaseProps> = ({
     ) as UserInformation[],
   )
 
-  const vehicle = getSelectedVehicle(
-    application.externalData,
+  const currentVehicleList = application.externalData?.currentVehicleList
+    ?.data as VehiclesCurrentVehicle[]
+  const vehicleValue = getValueViaPath(
     application.answers,
-  ) as VehiclesCurrentVehicle
+    'pickVehicle.vehicle',
+    '',
+  ) as string
+  const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
 
   const [getVehicleInformation, { loading }] = useLazyQuery(
     gql`

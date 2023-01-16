@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { ApiScope, AuthScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApiScope, AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
 import { DelegationType } from './types/delegationType'
 
@@ -42,6 +42,10 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
     customScopeRules: env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
       {
         scopeName: AuthScope.delegations,
+        onlyForDelegationType: ['ProcurationHolder'],
+      },
+      {
+        scopeName: AdminPortalScope.delegations,
         onlyForDelegationType: ['ProcurationHolder'],
       },
       {
