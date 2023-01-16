@@ -1025,7 +1025,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
         const { application } = context
-        const { usePersonalAllowance } = getApplicationAnswers(application.answers)
+        const { usePersonalAllowance } = getApplicationAnswers(
+          application.answers,
+        )
 
         if (usePersonalAllowance === NO) {
           if (application.answers.personalAllowance) {
@@ -1038,11 +1040,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
         const { application } = context
-        const { usePersonalAllowanceFromSpouse } = getApplicationAnswers(application.answers)
+        const { usePersonalAllowanceFromSpouse } = getApplicationAnswers(
+          application.answers,
+        )
 
         if (usePersonalAllowanceFromSpouse === NO) {
           if (application.answers.personalAllowanceFromSpouse) {
-            unset(application.answers, 'personalAllowanceFromSpouse.useAsMuchAsPossible')
+            unset(
+              application.answers,
+              'personalAllowanceFromSpouse.useAsMuchAsPossible',
+            )
             unset(application.answers, 'personalAllowanceFromSpouse.usage')
           }
         }

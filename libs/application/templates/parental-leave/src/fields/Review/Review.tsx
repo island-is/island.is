@@ -715,7 +715,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <ReviewGroup
         isEditable={editable}
         editAction={() => goToScreen?.('personalAllowance')}
-        >
+      >
         <GridRow marginBottom={2}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <RadioValue
