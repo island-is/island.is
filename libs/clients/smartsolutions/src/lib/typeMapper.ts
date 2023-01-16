@@ -51,7 +51,7 @@ export function mergeInputFields(
   toUpdate?: Array<PassInputFieldValueDataInput>,
 ) {
   if (!original || !toUpdate) {
-    return original ?? toUpdate
+    return original ?? toUpdate ?? null
   }
 
   const updatedInputFields = original
