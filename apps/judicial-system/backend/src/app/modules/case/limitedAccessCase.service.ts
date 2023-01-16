@@ -6,10 +6,11 @@ import { InjectModel } from '@nestjs/sequelize'
 import {
   CaseFileState,
   CaseState,
+  isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../../factories'
+import { nowFactory, uuidFactory } from '../../factories'
 import { Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
@@ -128,21 +129,52 @@ export class LimitedAccessCaseService {
   }
 
   findDefenderNationalId(theCase: Case, nationalId: string): User {
-    if (theCase.defenderNationalId !== nationalId) {
-      throw new NotFoundException('Defendant not found')
+    let defender:
+      | {
+          nationalId: string
+          name?: string
+          phoneNumber?: string
+          email?: string
+        }
+      | undefined
+
+    if (isIndictmentCase(theCase.type)) {
+      const defendant = theCase.defendants?.find(
+        (defendant) => defendant.defenderNationalId === nationalId,
+      )
+
+      if (defendant) {
+        defender = {
+          nationalId: defendant.defenderNationalId as string,
+          name: defendant.defenderName,
+          phoneNumber: defendant.defenderPhoneNumber,
+          email: defendant.defenderEmail,
+        }
+      }
+    } else if (theCase.defenderNationalId === nationalId) {
+      defender = {
+        nationalId: theCase.defenderNationalId,
+        name: theCase.defenderName,
+        phoneNumber: theCase.defenderPhoneNumber,
+        email: theCase.defenderEmail,
+      }
+    }
+
+    if (!defender) {
+      throw new NotFoundException('Defender not found')
     }
 
     const now = nowFactory()
 
     return {
-      id: 'defender',
+      id: uuidFactory(),
       created: now,
       modified: now,
-      nationalId,
-      name: theCase.defenderName ?? '',
+      nationalId: defender.nationalId,
+      name: defender.name ?? '',
       title: 'verjandi',
-      mobileNumber: theCase.defenderPhoneNumber ?? '',
-      email: theCase.defenderEmail ?? '',
+      mobileNumber: defender.phoneNumber ?? '',
+      email: defender.email ?? '',
       role: UserRole.DEFENDER,
       active: true,
     } as User

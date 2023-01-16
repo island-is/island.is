@@ -63,7 +63,6 @@ import {
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
-import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
 import { Defendant, DefendantService } from '../defendant'
 import { SendNotificationDto } from './dto/sendNotification.dto'
@@ -85,7 +84,6 @@ export class NotificationService {
     @Inject(notificationModuleConfig.KEY)
     private readonly config: ConfigType<typeof notificationModuleConfig>,
     private readonly courtService: CourtService,
-    private readonly awsS3Service: AwsS3Service,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
@@ -823,7 +821,7 @@ export class NotificationService {
         promises.push(
           this.sendRulingEmailNotificationToDefender(
             theCase,
-            undefined && defendant.defenderNationalId, // Temporarily dicable links in defender emails for indictments
+            defendant.defenderNationalId,
             defendant.defenderName,
             defendant.defenderEmail,
           ),
