@@ -58,6 +58,7 @@ const Homestay: Screen<HomestayProps> = ({
   )
   useContentfulId(organizationPage.id, subpage.id)
 
+  const PAGE_SIZE = 10
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -80,7 +81,7 @@ const Homestay: Screen<HomestayProps> = ({
     }),
   )
 
-  const [showCount, setShowCount] = useState(10)
+  const [showCount, setShowCount] = useState(PAGE_SIZE)
   const [query, _setQuery] = useState(' ')
 
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
@@ -274,7 +275,7 @@ const Homestay: Screen<HomestayProps> = ({
         textAlign="center"
       >
         {showCount < filteredItems.length && (
-          <Button onClick={() => setShowCount(showCount + 10)}>
+          <Button onClick={() => setShowCount(showCount + PAGE_SIZE)}>
             {n('seeMore', 'Sjá meira')} ({filteredItems.length - showCount})
           </Button>
         )}
