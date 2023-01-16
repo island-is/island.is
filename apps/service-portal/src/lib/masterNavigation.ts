@@ -6,7 +6,7 @@ import { applicationsNavigation } from '@island.is/service-portal/applications'
 import { assetsNavigation } from '@island.is/service-portal/assets'
 import { documentProviderNavigation } from '@island.is/service-portal/document-provider'
 import { educationNavigation } from '@island.is/service-portal/education'
-import { icelandicNamesRegistryNavigation } from '@island.is/service-portal/icelandic-names-registry'
+import { icelandicNamesRegistryNavigation } from '@island.is/portals-admin-icelandic-names-registry'
 import {
   companyNavigation,
   informationNavigation,
