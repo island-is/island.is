@@ -35,11 +35,7 @@ import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Layout.css'
 import GoBack from '../GoBack/GoBack'
 import { useDynamicRoutesWithNavigation } from '@island.is/service-portal/core'
-import {
-  getNavigationByPath,
-  MAIN_NAVIGATION,
-} from '../../lib/masterNavigation'
-import { PortalNavigationItem } from '@island.is/portals/core'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 const defaultOrg: Organization = {
   email: '',
@@ -65,7 +61,6 @@ const Layout: FC = ({ children }) => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const activeParent = navigation?.children?.find((item) => item.active)
 
-  console.log(activeParent)
   useScrollTopOnUpdate([pathname])
   const { formatMessage } = useLocale()
 
@@ -155,7 +150,7 @@ const Layout: FC = ({ children }) => {
                       locale="is"
                       linkHref={currentOrganization?.link ?? ''}
                       img={currentOrganization?.logo?.url ?? ''}
-                      imgContainerDisplay={['block', 'block', 'block', 'block']}
+                      imgContainerDisplay="block"
                     />
                   </Box>
                   {subNavItems && subNavItems.length > 0 && (

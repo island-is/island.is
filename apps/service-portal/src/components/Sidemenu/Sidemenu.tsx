@@ -1,13 +1,13 @@
 import React, { ReactElement, useRef } from 'react'
 import { Box, Divider, Icon, Stack, Text } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import {
+  ServicePortalPath,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import { Link } from 'react-router-dom'
-import { UserLanguageSwitcher } from '@island.is/shared/components'
-import { useAuth } from '@island.is/auth/react'
-import { useNavigation } from '@island.is/portals/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 interface Props {
@@ -21,7 +21,7 @@ const Sidemenu = ({
   sideMenuOpen,
 }: Props): ReactElement | null => {
   const ref = useRef(null)
-  const navigation = useNavigation(MAIN_NAVIGATION)
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
 
   if (!sideMenuOpen) return null
