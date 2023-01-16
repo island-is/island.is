@@ -59,14 +59,14 @@ export const defenderInfo = {
         },
         title: {
           id:
-            'judicial.system.core:defender_info.restriction_cases.defender.title',
+            'judicial.system.core:defender_info.restriction_cases.sections.defender.title',
           defaultMessage: 'Verjandi',
           description:
             'Notaður sem titill fyrir "Verjanda" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         tooltip: {
           id:
-            'judicial.system.core:defender_info.restriction_cases.defender.tooltip',
+            'judicial.system.core:defender_info.restriction_cases.sections.defender.tooltip',
           defaultMessage:
             'Lögmaður sem er valinn hér verður skipaður verjandi í þinghaldi og fær sendan úrskurð rafrænt.',
           description:
@@ -76,7 +76,7 @@ export const defenderInfo = {
       sendRequest: defineMessages({
         label: {
           id:
-            'judicial.system.core:defender_info.restriction_cases.send_request.label',
+            'judicial.system.core:defender_info.restriction_cases.sections.send_request.label',
           defaultMessage:
             'Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma',
           description:
@@ -84,7 +84,7 @@ export const defenderInfo = {
         },
         tooltip: {
           id:
-            'judicial.system.core:defender_info.restriction_cases.send_request.tooltip',
+            'judicial.system.core:defender_info.restriction_cases.sections.send_request.tooltip',
           defaultMessage:
             'Ef hakað er hér þá fær verjandi {caseType, select, ADMISSION_TO_FACILITY {kröfuna um vistun á viðeigandi stofnun} TRAVEL_BAN {farbannskröfuna} other {gæsluvarðhaldskröfuna}} senda þegar fyrirtökutíma hefur verið úthlutað',
           description:
