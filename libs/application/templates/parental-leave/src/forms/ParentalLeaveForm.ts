@@ -41,6 +41,7 @@ import {
   getMultipleBirthRequestDays,
   getMinimumStartDate,
   getLastDayOfLastMonth,
+  allowOtherParentToUsePersonalAllowance,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -428,7 +429,8 @@ export const ParentalLeaveForm: Form = buildForm({
 
                 return (
                   selectedChild?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                    ParentalRelations.primary &&
+                  allowOtherParentToUsePersonalAllowance(answers)
                 )
               },
               children: [

@@ -1,6 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import format from 'date-fns/format'
-import { urls } from '../../../support/utils'
+import { urls } from '../../../support/urls'
 import { session } from '../../../support/session'
 
 test.use({ baseURL: urls.islandisBaseUrl })

@@ -79,7 +79,7 @@ const HearingArrangements = () => {
       const caseOpened =
         workingCase.state === CaseState.NEW
           ? await transitionCase(
-              workingCase,
+              workingCase.id,
               CaseTransition.OPEN,
               setWorkingCase,
             )
