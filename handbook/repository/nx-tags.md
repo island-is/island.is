@@ -63,7 +63,6 @@ Here is an chart that displays how these tags are connected. Each tag can depend
     api & auth -.-> client
     as-shared -.-> client
     as-api & as-form -.-> as-shared
-yar
 ```
 
 ## Tag prefixes
