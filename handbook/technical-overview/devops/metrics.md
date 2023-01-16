@@ -31,12 +31,14 @@ We are collecting application metrics of two types:
 
 ### Naming metrics
 
-Metrics should be named with ASCII letters, underscores and periods. Periods are used to create a hierarchy that always starts with `islandis.`, provided by metrics client. Following that there should be a prefix for the given service and more detailed name for the metric in question. See more in ["What best practices are recommended for naming metrics and tags?" from DataDog](https://docs.datadoghq.com/developers/guide/what-best-practices-are-recommended-for-naming-metrics-and-tags/).
+Metrics should be named with ASCII letters, underscores and periods. Periods are used to create a hierarchy and should be passed into the metrics client. Following that there should be a prefix for the given service and more detailed name for the metric in question. Note that metrics always starts with `islandis.` (this is automatically provided by metrics client). See more in ["What best practices are recommended for naming metrics and tags?" from DataDog](https://docs.datadoghq.com/developers/guide/what-best-practices-are-recommended-for-naming-metrics-and-tags/).
 
 ### Example
 
 ```typescript
-// Given this client
+import { DogStatsD } from '@island.is/infra-metrics'
+
+// Given this client (which will add `islandis.` prefix)
 const metrics = new DogStatsD({ prefix: `my-service.` })
 
 // increment a metric for a call to the service by 1 with tags
