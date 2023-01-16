@@ -569,7 +569,9 @@ export class CaseService {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
         }
 
-        if ((update as { [key: string]: string }).state) {
+        if (
+          (update as { [key: string]: string }).state === CaseState.RECEIVED
+        ) {
           await this.addReceivedByCourtMessageToQueue(theCase)
         }
       })
