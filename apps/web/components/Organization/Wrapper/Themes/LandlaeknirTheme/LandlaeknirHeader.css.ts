@@ -1,6 +1,11 @@
 import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
+const backgroundUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/1FB32FjyMGC1PfpDfB2Kj1/257dc1108da254359f8988dfef536936/Pattern_PP_Pattern_Circle_Blue_1.png'
+const illustrationUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg'
+
 export const headerBg = style({
   height: 385,
   marginTop: -130,
@@ -10,21 +15,18 @@ export const headerBg = style({
   ...themeUtils.responsiveStyle({
     xs: {
       backgroundSize: 'cover',
-      backgroundImage:
-        'url(https://images.ctfassets.net/8k0h54kbe6bj/1FB32FjyMGC1PfpDfB2Kj1/257dc1108da254359f8988dfef536936/Pattern_PP_Pattern_Circle_Blue_1.png)',
+      backgroundImage: `'url(${backgroundUrl})`,
     },
     lg: {
       backgroundPositionY: 'bottom',
       backgroundPositionX: '120%, 0',
       backgroundSize: 'unset',
-      backgroundImage:
-        'url(https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg), url(https://images.ctfassets.net/8k0h54kbe6bj/1FB32FjyMGC1PfpDfB2Kj1/257dc1108da254359f8988dfef536936/Pattern_PP_Pattern_Circle_Blue_1.png)',
+      backgroundImage: `url(${illustrationUrl}), url(${backgroundUrl})`,
     },
     xl: {
       backgroundPosition: 'bottom right',
       backgroundSize: 'contain, cover',
-      backgroundImage:
-        'url(https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg), url(https://images.ctfassets.net/8k0h54kbe6bj/1FB32FjyMGC1PfpDfB2Kj1/257dc1108da254359f8988dfef536936/Pattern_PP_Pattern_Circle_Blue_1.png)',
+      backgroundImage: `url(${illustrationUrl}), url(${backgroundUrl})`,
     },
   }),
 })
