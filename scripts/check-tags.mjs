@@ -38,7 +38,7 @@ const checkProjects = async () => {
     hasError = hasError || (await checkTags(project))
   }
 
-  if (true) {
+  if (hasError) {
     console.log(colors.red('Found errors'))
     console.log('All projects should have a configured NX tags which controls which project can import what. For more information see: https://docs.devland.is/repository/nx-tags')
     process.exit(1)
