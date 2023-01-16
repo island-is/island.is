@@ -43,7 +43,7 @@ const isDraftEmpty = (draft: RegDraftForm): boolean => {
     draft.title.value ||
     draft.text.value ||
     draft.appendixes.some(({ text, title }) => title.value || text.value) ||
-    draft.impacts.length
+    draft.impacts['length']
 
   return !someContent
 }

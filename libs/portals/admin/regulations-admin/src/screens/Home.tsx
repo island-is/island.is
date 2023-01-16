@@ -8,10 +8,11 @@ import {
   Text,
   GridColumn,
   GridRow,
+  DropdownMenu,
 } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 
-import { homeMessages as msg } from '../lib/messages'
+import { editorMsgs, homeMessages as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useCreateRegulationDraft } from '../utils/dataHooks'
 import { RegulationsTabs } from '../components/RegulationsTabs'
@@ -46,18 +47,23 @@ const Home = () => {
             display="flex"
             justifyContent={['flexStart', 'flexStart', 'flexEnd']}
             alignItems="center"
+            position="relative"
+            className={s.newButtonBox}
           >
-            <Button
-              colorScheme="default"
-              iconType="filled"
-              preTextIconType="filled"
-              size="small"
-              variant="primary"
-              disabled={creating}
-              onClick={() => createNewDraft()}
-            >
-              {t(msg.createRegulation)}
-            </Button>
+            <DropdownMenu
+              icon="ellipsisHorizontal"
+              items={[
+                {
+                  onClick: () => createNewDraft({ regulationType: 'base' }),
+                  title: t(editorMsgs.type_base),
+                },
+                {
+                  onClick: () => createNewDraft({ regulationType: 'amending' }),
+                  title: t(editorMsgs.type_amending),
+                },
+              ]}
+              title={t(msg.createRegulation)}
+            />
           </Box>
         </GridColumn>
       </GridRow>
