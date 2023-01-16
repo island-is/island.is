@@ -98,11 +98,13 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
     )
   }
 
-  const copy = (code: string) => {
-    copyToClipboard(code)
-    const newCode: CopiedCode = { code: code, copied: true }
-    setCopiedCodes([...copiedCodes, newCode])
-    toast.success(formatMessage(m.codeCopiedSuccess))
+  const copy = (code?: string | null) => {
+    if (code) {
+      copyToClipboard(code)
+      const newCode: CopiedCode = { code: code, copied: true }
+      setCopiedCodes([...copiedCodes, newCode])
+      toast.success(formatMessage(m.codeCopiedSuccess))
+    }
   }
 
   return (
@@ -170,7 +172,11 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
                   heading={item.user.name}
                   text={message}
                   secondaryText={
-                    item.user.fund?.credit === 0 ? undefined : item.discountCode
+                    item.user.fund?.credit === 0
+                      ? undefined
+                      : item.discountCode
+                      ? item.discountCode
+                      : '0'
                   }
                   cta={{
                     label: isCopied
