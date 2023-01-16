@@ -135,10 +135,7 @@
               },
               {
                 "sourceTag": "scope:judicial-system",
-                "onlyDependOnLibsWithTags": [
-                  "lib:judicial-system",
-                  "lib:js"
-                ]
+                "onlyDependOnLibsWithTags": ["lib:judicial-system", "lib:js"]
               },
               {
                 "sourceTag": "scope:react",
