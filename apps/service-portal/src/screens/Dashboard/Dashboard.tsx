@@ -20,7 +20,6 @@ import * as styles from './Dashboard.css'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { useNavigation } from '@island.is/portals/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 export const Dashboard: FC<{}> = () => {

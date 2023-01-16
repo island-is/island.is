@@ -7,6 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { information, overview } from '../../../lib/messages'
 import { UserInformation } from '../../../types'
 import { ReviewGroup } from '../../ReviewGroup'
+import kennitala from 'kennitala'
 
 export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -27,7 +28,10 @@ export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
           </Text>
           <Text>{getValueViaPath(answers, 'seller.name', '') as string}</Text>
           <Text>
-            {getValueViaPath(answers, 'seller.nationalId', '') as string}
+            {kennitala.format(
+              getValueViaPath(answers, 'seller.nationalId', '') as string,
+              '-',
+            )}
           </Text>
           <Text>{getValueViaPath(answers, 'seller.email', '') as string}</Text>
           <Text>{getValueViaPath(answers, 'seller.phone', '') as string}</Text>

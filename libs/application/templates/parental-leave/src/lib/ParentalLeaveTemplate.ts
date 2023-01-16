@@ -994,13 +994,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(application.answers, 'transferRights')
           unset(application.answers, 'personalAllowanceFromSpouse')
           unset(application.answers, 'otherParentRightOfAccess')
-          // set(application.answers, 'otherParentEmail', undefined)
-          // set(application.answers, 'otherParentPhoneNumber', '')
-          // set(application.answers, 'requestRights.isRequestingRights', NO)
-          // set(application.answers, 'requestRights.requestDays', '0')
-          // set(application.answers, 'giveRights.giveDays', '0')
-          // set(application.answers, 'giveRights.isGivingRights', NO)
-          // set(application.answers, 'transferRights', TransferRightsOption.NONE)
         }
         return context
       }),
