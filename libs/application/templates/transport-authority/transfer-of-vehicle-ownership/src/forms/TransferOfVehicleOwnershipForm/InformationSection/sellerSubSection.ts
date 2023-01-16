@@ -55,6 +55,7 @@ export const sellerSubSection = buildSubSection({
           title: information.labels.seller.phone,
           width: 'full',
           variant: 'tel',
+          format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.phone,
