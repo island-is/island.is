@@ -1402,11 +1402,11 @@ license-api:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: 'license-api/v1/liveness'
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: 'license-api/v1/readiness'
+      path: '/readiness'
       timeoutSeconds: 3
   hpa:
     scaling:
