@@ -15,7 +15,6 @@ export const VehicleSection: FC<FieldBaseProps> = ({ application }) => {
     | undefined
   const carPlate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
 
-  // TODO: Add type in data schema and as hidden field in pickVehicle
   return (
     <ReviewGroup isLast>
       <GridRow>
