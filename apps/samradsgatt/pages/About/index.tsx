@@ -7,6 +7,7 @@ import {
 import MainColumn from '../../components/About/MainColumn'
 import React from 'react'
 import RightSideColmn from '../../components/About/RightSideColumn'
+import AboutBreadcrumbs from '../../components/About/AboutBreadcrumbs'
 
 interface AboutProps {
   information: string
@@ -18,7 +19,7 @@ const AboutPage: React.FC<AboutProps> = () => {
       <GridRow>
         <GridColumn span={'3/12'} paddingBottom={3}>
           {/* <LeftSideColumn /> */}
-          <Box paddingY={3}>{'Breadcrumbs'}</Box>
+          <AboutBreadcrumbs />
         </GridColumn>
         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
           <MainColumn />
