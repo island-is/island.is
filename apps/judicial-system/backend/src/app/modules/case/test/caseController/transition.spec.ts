@@ -194,6 +194,15 @@ describe('CaseController - Transition', () => {
               type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
               caseId,
             })
+          } else if (newState === CaseState.RECEIVED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+                  caseId,
+                },
+              ],
+            )
           } else {
             expect(
               mockMessageService.sendMessagesToQueue,
