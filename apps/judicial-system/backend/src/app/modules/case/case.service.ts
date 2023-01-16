@@ -438,6 +438,13 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  addMessagesForSubmittedIndicitmentCaseToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+      caseId: theCase.id,
+    })
+  }
+
   addMessagesForCompletedIndictmentCaseToQueue(theCase: Case): Promise<void> {
     return this.messageService.sendMessagesToQueue(
       this.getArchiveCaseFileMessages(theCase).concat([
