@@ -11,11 +11,10 @@ export const headerBg = style({
   marginTop: -130,
   paddingTop: 130,
   backgroundRepeat: 'no-repeat, no-repeat',
-
   ...themeUtils.responsiveStyle({
     xs: {
       backgroundSize: 'cover',
-      backgroundImage: `'url(${backgroundUrl})`,
+      backgroundImage: `url(${backgroundUrl})`,
     },
     lg: {
       backgroundPositionY: 'bottom',
