@@ -4,6 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import {
+  CaseFileCategory,
   CaseFileState,
   CaseState,
   isIndictmentCase,
@@ -14,8 +15,8 @@ import { nowFactory, uuidFactory } from '../../factories'
 import { Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
-import { Case } from './models/case.model'
 import { CaseFile } from '../file'
+import { Case } from './models/case.model'
 
 export const attributes: (keyof Case)[] = [
   'id',
@@ -89,7 +90,7 @@ export const include: Includeable[] = [
     required: false,
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
-      category: { [Op.not]: null },
+      category: CaseFileCategory.RULING,
     },
   },
 ]
