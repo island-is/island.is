@@ -23,9 +23,11 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = ({
     {
       variables: {
         answers: {
+          pickVehicle: {
+            plate: answers?.pickVehicle?.plate,
+          },
           vehicle: {
             date: answers?.vehicle?.date,
-            plate: answers?.vehicle?.plate,
             salePrice: answers?.vehicle?.salePrice,
           },
           seller: {

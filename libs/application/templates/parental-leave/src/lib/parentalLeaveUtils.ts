@@ -915,6 +915,10 @@ export const otherParentApprovalDescription = (
   return formatMessage(description)
 }
 
+export const allowOtherParentToUsePersonalAllowance = (
+  answers: Application['answers'],
+) => answers?.otherParent === SPOUSE
+
 export const allowOtherParent = (answers: Application['answers']) => {
   const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
     answers,

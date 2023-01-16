@@ -5,12 +5,13 @@ import {
   BulletList,
   SkeletonLoader,
   Text,
+  InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
 import { VehiclesCurrentVehicle } from '../../types'
-import { information, applicationCheck } from '../../lib/messages'
+import { information, applicationCheck, error } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
 import { GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS } from '../../graphql/queries'
@@ -30,7 +31,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleRadioField: FC<
   VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application }) => {
+> = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
 
@@ -170,6 +171,9 @@ export const VehicleRadioField: FC<
         ref={register({ required: true })}
         name="pickVehicle.color"
       />
+      {plate.length === 0 && errors && errors.pickVehicle && (
+        <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
+      )}
     </div>
   )
 }

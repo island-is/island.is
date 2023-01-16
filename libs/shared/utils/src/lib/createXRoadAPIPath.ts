@@ -13,21 +13,5 @@ export const createXRoadAPIPath = (
   xRoadMemberCode: string,
   xRoadMemberAPIPath: string,
 ) => {
-  if (!xRoadBasePath) {
-    console.error('xRoad base path not provided.')
-  }
-
-  if (!xRoadMemberClass) {
-    console.error('xRoad member class not provided.')
-  }
-
-  if (!xRoadMemberCode) {
-    console.error('xRoad member code not provided.')
-  }
-
-  if (!xRoadMemberAPIPath) {
-    console.error('xRoad member API path not provided.')
-  }
-
   return `${xRoadBasePath}/${xRoadMemberClass}/${xRoadMemberCode}${xRoadMemberAPIPath}`
 }
