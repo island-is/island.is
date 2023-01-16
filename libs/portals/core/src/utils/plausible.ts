@@ -1,4 +1,3 @@
-import isString from 'lodash/isString'
 import { matchPath } from 'react-router-dom'
 import { ParamType } from '@island.is/plausible'
 

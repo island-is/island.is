@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
 import { useAuth } from '@island.is/auth/react'
 import { useRoutes } from '../components/PortalProvider'
 import { PortalNavigationItem } from '../types/portalCore'

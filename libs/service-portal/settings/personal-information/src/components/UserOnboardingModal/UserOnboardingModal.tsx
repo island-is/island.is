@@ -16,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { servicePortalCloseOnBoardingModal } from '@island.is/plausible'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
 import { OnboardingHeader } from './components/Header'
 import ProfileForm from '../Forms/ProfileForm/ProfileForm'
 import * as styles from './UserOnboardingModal.css'

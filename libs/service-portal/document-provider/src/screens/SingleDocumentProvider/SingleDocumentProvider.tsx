@@ -9,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom-v5-compat'
 import { DocumentProviderOrganisationForm } from './DocumentProviderOrganisationForm'
 import { OrganisationPreview } from '../DocumentProviders/DocumentProviders'
 import { DocumentProviderTechnicalContactForm } from './DocumentProviderTechnicalContactForm'

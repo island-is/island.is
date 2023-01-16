@@ -1,6 +1,6 @@
 import { ApolloProvider } from '@apollo/client'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import { CompatRouter } from 'react-router-dom-v5-compat'
+import { BrowserRouter, Switch } from 'react-router-dom'
+import { CompatRouter, CompatRoute } from 'react-router-dom-v5-compat'
 
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
@@ -27,18 +27,22 @@ export const App = () => (
                 <UserProfileLocale />
                 <Layout>
                   <Switch>
-                    <Route
+                    <CompatRoute
                       exact
                       path="/tengjast-umsokn"
                       component={AssignApplication}
                     />
 
-                    <Route exact path="/:slug" component={Applications} />
-                    <Route exact path="/:slug/:id" component={Application} />
+                    <CompatRoute exact path="/:slug" component={Applications} />
+                    <CompatRoute
+                      exact
+                      path="/:slug/:id"
+                      component={Application}
+                    />
 
-                    <Route path="*">
+                    <CompatRoute path="*">
                       <ErrorShell />
-                    </Route>
+                    </CompatRoute>
                   </Switch>
                 </Layout>
               </HeaderInfoProvider>

@@ -1,6 +1,8 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { Suspense, useEffect } from 'react'
-import { Route, Switch, useLocation } from 'react-router-dom'
+import { Switch } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
+import { CompatRoute } from 'react-router-dom-v5-compat'
 
 import { Box } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
@@ -68,14 +70,14 @@ const RouteLoader = React.memo(
     <Switch>
       {routes.map((route) =>
         route.enabled === false ? (
-          <Route
+          <CompatRoute
             path={route.path}
             exact
             key={route.path}
             component={AccessDenied}
           />
         ) : (
-          <Route
+          <CompatRoute
             path={route.path}
             exact
             key={route.path}
@@ -89,7 +91,7 @@ const RouteLoader = React.memo(
           />
         ),
       )}
-      {routes.length > 0 && <Route component={NotFound} />}
+      {routes.length > 0 && <CompatRoute component={NotFound} />}
     </Switch>
   ),
 )

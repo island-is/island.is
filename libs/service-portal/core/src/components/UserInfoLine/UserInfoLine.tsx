@@ -12,7 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { sharedMessages } from '@island.is/shared/translations'
 

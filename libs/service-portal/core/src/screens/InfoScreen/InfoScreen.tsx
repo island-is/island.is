@@ -17,7 +17,8 @@ import { servicePortalOutboundLink } from '@island.is/plausible'
 import { m } from '../../lib/messages'
 import * as styles from './InfoScreen.css'
 import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
+
 interface Props {
   title: MessageDescriptor
   intro: MessageDescriptor

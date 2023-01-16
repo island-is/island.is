@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import { Link, match, matchPath, useLocation } from 'react-router-dom'
+import { Link, match, matchPath } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
 
 import {
   Box,

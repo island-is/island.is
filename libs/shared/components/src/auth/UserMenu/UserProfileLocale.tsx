@@ -1,5 +1,5 @@
 import { useLocale, useNamespaces, isLocale } from '@island.is/localization'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
 import { useEffect } from 'react'
 import { useAuth } from '@island.is/auth/react'
 import { useGetUserProfileLocaleLazyQuery } from '../../../gen/graphql'

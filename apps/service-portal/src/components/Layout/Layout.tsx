@@ -13,7 +13,7 @@ import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBread
 import * as styles from './Layout.css'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
 import { RemoveScroll } from 'react-remove-scroll'
