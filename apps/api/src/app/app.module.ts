@@ -6,7 +6,6 @@ import { TerminusModule } from '@nestjs/terminus'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
-import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
@@ -51,6 +50,7 @@ import {
   GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
+  GenericDisabilityLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
@@ -84,12 +84,14 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
+import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -234,13 +236,7 @@ const autoSchemaFile = environment.production
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule,
-    PaymentScheduleModule.register({
-      xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentSchedule.password!,
-      username: environment.paymentSchedule.username!,
-    }),
+    PaymentScheduleModule,
     ProblemModule,
     CriminalRecordModule.register({
       clientConfig: {
@@ -260,10 +256,12 @@ const autoSchemaFile = environment.production
         AirDiscountSchemeClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        DisabilityLicenseClientConfig,
         GenericFirearmLicenseConfig,
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
+        GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
@@ -289,6 +287,7 @@ const autoSchemaFile = environment.production
         ChargeFjsV2ClientConfig,
         DisabilityLicenseClientConfig,
         ZenterSignupConfig,
+        PaymentScheduleClientConfig,
       ],
     }),
   ],

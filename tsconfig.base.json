@@ -459,6 +459,9 @@
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/vehicle-plate-ordering": [
+        "libs/clients/transport-authority/vehicle-plate-ordering/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
@@ -640,9 +643,6 @@
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
-      ],
-      "@island.is/service-portal/settings/access-control": [
-        "libs/service-portal/settings/access-control/src/index.ts"
       ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"

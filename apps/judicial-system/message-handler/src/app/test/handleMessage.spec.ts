@@ -16,7 +16,6 @@ import {
 import { appModuleConfig } from '../app.config'
 import { MessageHandlerService } from '../messageHandler.service'
 import { InternalDeliveryService } from '../internalDelivery.service'
-import { CaseDeliveryService } from '../caseDelivery.service'
 
 jest.mock('@island.is/logging')
 jest.mock('node-fetch')
@@ -44,8 +43,8 @@ describe('MessageHandlerService - Handle message', () => {
     givenWhenThen = async (message: CaseMessage) => {
       const messageHandlerService = new MessageHandlerService(
         (undefined as unknown) as MessageService,
-        (undefined as unknown) as CaseDeliveryService,
         new InternalDeliveryService(config, logger),
+        config,
         logger,
       )
       const then = {} as Then
@@ -293,6 +292,58 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send heads up notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+        caseId,
+      })
+    })
+
+    it('should send a heads up notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: NotificationType.HEADS_UP }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send ready for court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+        caseId,
+      })
+    })
+
+    it('should send a ready for court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: NotificationType.READY_FOR_COURT }),
         },
       )
       expect(then.result).toBe(true)
