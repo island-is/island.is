@@ -16,6 +16,7 @@ import {
   HttpException,
   Inject,
   ParseBoolPipe,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -27,6 +28,7 @@ import {
 } from '@island.is/dokobit-signing'
 import {
   CaseState,
+  CaseTransition,
   CaseType,
   completedCaseStates,
   indictmentCases,
@@ -79,6 +81,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 
 @Controller('api')
 @ApiTags('cases')
@@ -145,6 +148,12 @@ export class CaseController {
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
+
+    if (caseToUpdate.courtCaseNumber && theCase.state === CaseState.SUBMITTED) {
+      const state = transitionCase(CaseTransition.RECEIVE, theCase.state)
+
+      caseToUpdate = { ...caseToUpdate, state } as UpdateCaseDto
+    }
 
     // Make sure valid users are assigned to the case's roles
     if (caseToUpdate.prosecutorId) {
@@ -265,6 +274,7 @@ export class CaseController {
     isArray: true,
     description: 'Gets all existing cases',
   })
+  @UseInterceptors(CaseListInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 

@@ -98,6 +98,30 @@ export const include: Includeable[] = [
   },
 ]
 
+export const caseListInclude: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
+  {
+    model: User,
+    as: 'creatingProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'judge',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+]
+
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
 ]
@@ -428,6 +452,15 @@ export class CaseService {
     )
   }
 
+  addReceivedByCourtMessageToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   async findById(caseId: string, allowDeleted = false): Promise<Case> {
     const theCase = await this.caseModel.findOne({
       include,
@@ -468,7 +501,7 @@ export class CaseService {
 
   getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
-      include,
+      include: caseListInclude,
       order,
       where: getCasesQueryFilter(user),
     })
@@ -534,6 +567,12 @@ export class CaseService {
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
+        }
+
+        if (
+          (update as { [key: string]: string }).state === CaseState.RECEIVED
+        ) {
+          await this.addReceivedByCourtMessageToQueue(theCase)
         }
       })
       .then(async () => {

@@ -116,6 +116,13 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.READY_FOR_COURT },
         )
         break
+      case MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.RECEIVED_BY_COURT },
+        )
+        break
       case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.caseId,
