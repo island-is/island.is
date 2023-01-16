@@ -4,29 +4,19 @@ import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { Case, UpdateDefendant } from '@island.is/judicial-system/types'
+import {
+  Case,
+  UpdateDefendant as TUpdateDefendant,
+} from '@island.is/judicial-system/types'
+import {
+  CreateDefendantMutationMutation,
+  DeleteDefendantMutationMutation,
+  UpdateDefendantMutationMutation,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CreateDefendantMutation } from './createDefendantGql'
-import { DeleteDefendantMutation } from './deleteDefendantGql'
-import { UpdateDefendantMutation } from './updateDefendantGql'
-
-interface CreateDefendantMutationResponse {
-  createDefendant: {
-    id: string
-  }
-}
-
-interface DeleteDefendantMutationResponse {
-  deleteDefendant: {
-    deleted: boolean
-  }
-}
-
-export interface UpdateDefendantMutationResponse {
-  updateDefendant: {
-    id: string
-  }
-}
+import { CreateDefendant } from './createDefendantGql'
+import { DeleteDefendant } from './deleteDefendantGql'
+import { UpdateDefendant } from './updateDefendantGql'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
@@ -34,16 +24,16 @@ const useDefendants = () => {
   const [
     createDefendantMutation,
     { loading: isCreatingDefendant },
-  ] = useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
+  ] = useMutation<CreateDefendantMutationMutation>(CreateDefendant)
   const [
     deleteDefendantMutation,
-  ] = useMutation<DeleteDefendantMutationResponse>(DeleteDefendantMutation)
+  ] = useMutation<DeleteDefendantMutationMutation>(DeleteDefendant)
   const [
     updateDefendantMutation,
-  ] = useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
+  ] = useMutation<UpdateDefendantMutationMutation>(UpdateDefendant)
 
   const createDefendant = useCallback(
-    async (caseId: string, defendant: UpdateDefendant) => {
+    async (caseId: string, defendant: TUpdateDefendant) => {
       try {
         if (!isCreatingDefendant) {
           const { data } = await createDefendantMutation({
@@ -60,7 +50,7 @@ const useDefendants = () => {
             },
           })
 
-          if (data) {
+          if (data?.createDefendant) {
             return data.createDefendant.id
           }
         }
@@ -78,7 +68,7 @@ const useDefendants = () => {
           variables: { input: { caseId, defendantId } },
         })
 
-        if (data?.deleteDefendant.deleted) {
+        if (data?.deleteDefendant?.deleted) {
           return true
         } else {
           return false
@@ -94,7 +84,7 @@ const useDefendants = () => {
     async (
       caseId: string,
       defendantId: string,
-      updateDefendant: UpdateDefendant,
+      updateDefendant: TUpdateDefendant,
     ) => {
       try {
         const { data } = await updateDefendantMutation({
@@ -107,7 +97,7 @@ const useDefendants = () => {
           },
         })
 
-        if (data) {
+        if (data?.updateDefendant) {
           return true
         } else {
           return false
@@ -122,7 +112,7 @@ const useDefendants = () => {
   const updateDefendantState = useCallback(
     (
       defendantId: string,
-      update: UpdateDefendant,
+      update: TUpdateDefendant,
       setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
     ) => {
       setWorkingCase((theCase: Case) => {
@@ -150,7 +140,7 @@ const useDefendants = () => {
     (
       caseId: string,
       defendantId: string,
-      update: UpdateDefendant,
+      update: TUpdateDefendant,
       setWorkingCase: React.Dispatch<SetStateAction<Case>>,
     ) => {
       updateDefendantState(defendantId, update, setWorkingCase)

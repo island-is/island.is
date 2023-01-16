@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
-export const DeleteDefendantMutation = gql`
-  mutation DeleteDefendantMutation($input: DeleteDefendantInput!) {
+export const DeleteDefendant = gql`
+  mutation DeleteDefendant($input: DeleteDefendantInput!) {
     deleteDefendant(input: $input) {
       deleted
     }
