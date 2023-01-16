@@ -43,7 +43,7 @@ export const App = () => {
                           <CompatRoute exact path={ServicePortalPaths.Root}>
                             <Dashboard />
                           </CompatRoute>
-                          <CompatRoute>
+                          <CompatRoute exact path="*">
                             <Modules />
                           </CompatRoute>
                         </Switch>
