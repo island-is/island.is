@@ -49,7 +49,11 @@ const Overview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
-      await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      await transitionCase(
+        workingCase.id,
+        CaseTransition.SUBMIT,
+        setWorkingCase,
+      )
     }
 
     setModal('caseSubmittedModal')

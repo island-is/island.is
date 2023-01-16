@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Case } from '@island.is/judicial-system/types'
+import { CaseListEntry } from '@island.is/judicial-system/types'
 import {
   displayFirstPlusRemaining,
   formatDOB,
@@ -43,7 +43,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 }
 
 interface Props {
-  theCase: Case
+  theCase: CaseListEntry
   onClick: () => void
   isCourtRole: boolean
 }

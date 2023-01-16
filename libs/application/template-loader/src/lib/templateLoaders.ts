@@ -23,6 +23,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/data-protection-complaint'),
   [ApplicationTypes.LOGIN_SERVICE]: () =>
     import('@island.is/application/templates/login-service'),
+  [ApplicationTypes.INHERITANCE_REPORT]: () =>
+    import('@island.is/application/templates/inheritance-report'),
   [ApplicationTypes.INSTITUTION_COLLABORATION]: () =>
     import('@island.is/application/templates/institution-collaboration'),
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: () =>
