@@ -17,19 +17,19 @@ const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
   const sections = [
     {
       section: 'Samráð fyrirhugað',
-      index: 1,
+      index: 0,
     },
     {
       section: 'Til umsagnar',
-      index: 2,
+      index: 1,
     },
     {
       section: 'Niðurstöður í vinnslu',
-      index: 3,
+      index: 2,
     },
     {
       section: 'Niðurstöður birtar',
-      index: 4,
+      index: 3,
     },
   ]
 
@@ -60,6 +60,7 @@ const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
         )
       }
     })
+
     return finalSections
   }
   return (
