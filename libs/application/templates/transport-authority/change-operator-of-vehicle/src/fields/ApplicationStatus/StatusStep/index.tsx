@@ -8,7 +8,7 @@ export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
   title,
   description,
   tagVariant = 'blue',
-  tagText = 'Í bið',
+  tagText = '',
   visible = true,
   reviewer = [],
   reviewerNationalId = '',
