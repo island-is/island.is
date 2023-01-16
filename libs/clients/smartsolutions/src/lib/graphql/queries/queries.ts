@@ -54,43 +54,18 @@ export const LIST_PASSES = `
 export const GET_PASS = `
   query GetPass($id: String!) {
     pass(id: $id) {
-      alreadyPaid
       expirationDate
-      expirationDateWithoutTime
-      expirationTime
       externalIdentifier
       id
       inputFieldValues {
         id
         value
-        version
-        whenCreated
-        whenModified
         passInputField {
-          description
-          format
           id
           identifier
-          label
-          mandatory
-          type
-          version
-          whenCreated
-          whenModified
         }
       }
-      isVoided
-      passBackSide {
-        expirationDate
-        id
-        label
-        orderIndex
-        value
-      }
-      posDistributionCode
-      stampsLeft
       thumbnail {
-        description
         filename
         height
         id
