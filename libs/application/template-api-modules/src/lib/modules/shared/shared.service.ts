@@ -54,7 +54,14 @@ export class SharedTemplateApiService {
     smsTemplateGenerator: SmsTemplateGenerator,
     application: Application,
   ) {
-    const { phoneNumber, message } = smsTemplateGenerator(application)
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    const { phoneNumber, message } = smsTemplateGenerator(application, {
+      clientLocationOrigin,
+    })
 
     return this.smsService.sendSms(phoneNumber, message)
   }
