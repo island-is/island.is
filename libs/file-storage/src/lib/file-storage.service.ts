@@ -65,7 +65,7 @@ export class FileStorageService {
   }
 
   public getObjectUrl(key: string): string {
-    return `s3://${this.config.uploadBucket}/${key}`;
+    return `s3://${this.config.uploadBucket}/${key}`
   }
 
   async copyObjectFromUploadBucket(

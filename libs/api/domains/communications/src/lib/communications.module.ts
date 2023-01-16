@@ -15,7 +15,7 @@ import { FileStorageModule } from '@island.is/file-storage'
     EmailModule.register(environment.emailOptions as EmailServiceOptions),
     ZendeskModule.register(environment.zendeskOptions as ZendeskServiceOptions),
     CmsModule,
-    FileStorageModule
+    FileStorageModule,
   ],
   providers: [CommunicationsResolver, CommunicationsService],
 })

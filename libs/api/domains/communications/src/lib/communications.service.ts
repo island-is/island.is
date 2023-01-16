@@ -150,12 +150,16 @@ export class CommunicationsService {
       recipient = emailConfig[key]
     }
 
-    const attachments = await Promise.all(input.files?.map(async (file) => {
-      return {
-        filename: file,
-        href: await this.fileStorageService.generateSignedUrl(this.fileStorageService.getObjectUrl(file))
-      }
-    }) ?? [])
+    const attachments = await Promise.all(
+      input.files?.map(async (file) => {
+        return {
+          filename: file,
+          href: await this.fileStorageService.generateSignedUrl(
+            this.fileStorageService.getObjectUrl(file),
+          ),
+        }
+      }) ?? [],
+    )
 
     const emailOptions = {
       from: {
@@ -169,7 +173,7 @@ export class CommunicationsService {
       to: recipient,
       subject: `Island.is form: ${form.title}`,
       text: input.message,
-      attachments
+      attachments,
     }
 
     try {

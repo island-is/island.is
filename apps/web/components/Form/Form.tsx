@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import slugify from '@sindresorhus/slugify'
 import { useMutation } from '@apollo/client/react'
-
+import gql from 'graphql-tag'
 import {
   Box,
   Text,
@@ -23,13 +23,21 @@ import {
   MutationCreateUploadUrlArgs,
   PresignedPost,
 } from '@island.is/web/graphql/schema'
-import { CREATE_UPLOAD_URL } from '@island.is/application/graphql'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
-import * as styles from './Form.css'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import * as styles from './Form.css'
+
+const CREATE_UPLOAD_URL = gql`
+  mutation CreateUploadUrl($filename: String!) {
+    createUploadUrl(filename: $filename) {
+      url
+      fields
+    }
+  }
+`
 
 enum FormFieldType {
   CHECKBOXES = 'checkboxes',
