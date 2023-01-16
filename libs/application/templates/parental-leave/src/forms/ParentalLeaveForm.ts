@@ -143,14 +143,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   component: 'OtherParent',
                   id: 'otherParentObj.chooseOtherParent',
-                  // childInputIds: [
-                  //   'transferRights',
-                  //   'otherParentRightOfAccess',
-                  //   'requestRights.isRequestingRights',
-                  //   'requestRights.requestDays',
-                  //   'giveRights.isGivingRights',
-                  //   'giveRights.giveDays',
-                  // ],
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                 }),
                 buildTextField({
