@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { prettyName, RegName } from '@island.is/regulations'
-import { impactMsgs } from '../../messages'
+import { impactMsgs } from '../../lib/messages'
 import {
   DraftImpactForm,
   GroupedDraftImpactForms,

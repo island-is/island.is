@@ -18,7 +18,7 @@ import {
 } from '../utils/dataHooks'
 import { PortalModuleComponent } from '@island.is/portals/core'
 import { MessageDescriptor } from '@formatjs/intl'
-import { editorMsgs } from '../messages'
+import { editorMsgs } from '../lib/messages'
 import { EditBasics } from '../components/EditBasics'
 import { EditMeta } from '../components/EditMeta'
 import { EditSignature } from '../components/EditSignature'
@@ -140,11 +140,11 @@ const EditApp: PortalModuleComponent = ({ userInfo }) => {
   useNamespaces('ap.regulations-admin')
 
   const params = useParams<Record<string, string | undefined>>()
-  const draftId = assertDraftId(params.draftId)
-  const stepName = assertStep(params.stepName)
+  const draftId = assertDraftId(params['draftId'])
+  const stepName = assertStep(params['stepName'])
   const impactId =
-    stepName === 'impacts' && params.impact
-      ? assertImpactId(params.impact)
+    stepName === 'impacts' && params['impact']
+      ? assertImpactId(params['impact'])
       : undefined
 
   const regulationDraft = useRegulationDraftQuery(draftId)

@@ -18,7 +18,7 @@ import {
   AppendixFormSimpleProps,
   AppendixDraftForm,
 } from './types'
-import { buttonsMsgs } from '../messages'
+import { buttonsMsgs } from '../lib/messages'
 import {} from '@island.is/regulations/web'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
 import { useEditDraftReducer, StateInputs } from './reducer'

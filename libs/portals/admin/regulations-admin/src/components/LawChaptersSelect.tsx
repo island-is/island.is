@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 
 import { Box, Inline, Option, Select } from '@island.is/island-ui/core'
-import { editorMsgs as msg } from '../messages'
+import { editorMsgs as msg } from '../lib/messages'
 
 import { LawChapter, LawChapterSlug } from '@island.is/regulations'
 import { emptyOption } from '../utils'

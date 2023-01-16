@@ -641,7 +641,7 @@ export const buttonsMsgs = defineMessages({
   },
 })
 
-export const reviewMessagse = defineMessages({
+export const reviewMessages = defineMessages({
   confirmBeforePublish: {
     id: 'ap.regulations-admin:review-confirmmessage',
     defaultMessage: 'Ég hef yfirfarið að reglugerðin sé rétt skráð',

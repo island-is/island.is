@@ -14,7 +14,7 @@ import {
   Divider,
 } from '@island.is/island-ui/core'
 import { useDraftingState } from '../state/useDraftingState'
-import { editorMsgs as msg } from '../messages'
+import { editorMsgs as msg } from '../lib/messages'
 import { getMinPublishDate } from '../utils'
 
 import { EditorInput } from './EditorInput'

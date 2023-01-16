@@ -1,7 +1,7 @@
 import * as s from './SaveDeleteButtons.css'
 import { Box, Button } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
-import { buttonsMsgs, buttonsMsgs as msg } from '../messages'
+import { buttonsMsgs, buttonsMsgs as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 import ConfirmModal from './ConfirmModal/ConfirmModal'

@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from 'react'
 import { Box, Button, Inline, Text, Divider } from '@island.is/island-ui/core'
-import { editorMsgs, impactMsgs, reviewMessagse } from '../messages'
+import { editorMsgs, impactMsgs, reviewMessages } from '../lib/messages'
 import { useDraftingState } from '../state/useDraftingState'
 import { useLocale } from '@island.is/localization'
 import { downloadUrl } from '../utils/files'
@@ -164,7 +164,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
       {Object.keys(draft.impacts).length > 0 && (
         <Box marginTop={4} marginBottom={4}>
           <Text variant="h4" as="h4" marginBottom={2}>
-            {t(reviewMessagse.impactsTitle)}
+            {t(reviewMessages.impactsTitle)}
           </Text>
 
           {Object.keys(draft.impacts).map((key) => {
@@ -205,7 +205,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
 
           <Inline space={[3, 3, 4, 5]} align="left" alignY="center">
             <MicroAction
-              text={t(reviewMessagse.copyTitle)}
+              text={t(reviewMessages.copyTitle)}
               clicked={clicked.title}
               icon="copy"
               onClick={() => {
@@ -216,7 +216,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
               }}
             />
             <MicroAction
-              text={t(reviewMessagse.copyHtml)}
+              text={t(reviewMessages.copyHtml)}
               clicked={clicked.html}
               icon="copy"
               onClick={() => {
@@ -254,7 +254,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
             */}
 
             <MicroAction
-              text={t(reviewMessagse.copySignatureDate)}
+              text={t(reviewMessages.copySignatureDate)}
               clicked={clicked.signatureDate}
               icon="copy"
               onClick={() => {
@@ -267,7 +267,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
 
             {draft.idealPublishDate.value && (
               <MicroAction
-                text={t(reviewMessagse.copyIdealPublishDate)}
+                text={t(reviewMessages.copyIdealPublishDate)}
                 clicked={clicked.idealPublishDate}
                 icon="copy"
                 onClick={() => {
@@ -280,7 +280,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
             )}
 
             <MicroAction
-              text={t(reviewMessagse.downloadSignedDocument)}
+              text={t(reviewMessages.downloadSignedDocument)}
               clicked={clicked.signedDocument}
               icon="download"
               onClick={() => {

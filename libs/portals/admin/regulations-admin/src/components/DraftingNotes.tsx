@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
-import { editorMsgs as msg } from '../messages'
+import { editorMsgs as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 

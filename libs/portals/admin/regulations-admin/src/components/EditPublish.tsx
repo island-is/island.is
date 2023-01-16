@@ -8,7 +8,7 @@ import {
   Inline,
   Input,
 } from '@island.is/island-ui/core'
-import { editorMsgs as msg } from '../messages'
+import { editorMsgs as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 import { getMinPublishDate } from '../utils'

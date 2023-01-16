@@ -6,7 +6,7 @@ import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 
 import { Option } from '@island.is/island-ui/core'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { errorMsgs } from '../messages'
+import { errorMsgs } from '../lib/messages'
 
 // ---------------------------------------------------------------------------
 

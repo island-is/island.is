@@ -16,7 +16,7 @@ import {
   RegDraftForm,
   StepNav,
 } from './types'
-import { errorMsgs } from '../messages'
+import { errorMsgs } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
 // ---------------------------------------------------------------------------

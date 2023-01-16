@@ -1,6 +1,6 @@
 import React from 'react'
 import { SkeletonLoader, Tabs } from '@island.is/island-ui/core'
-import { homeMessages } from '../messages'
+import { homeMessages } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useShippedRegulationsQuery } from '../utils/dataHooks'
 import { TaskList } from './TaskList'

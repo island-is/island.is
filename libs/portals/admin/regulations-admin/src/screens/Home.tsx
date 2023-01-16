@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 
-import { homeMessages as msg } from '../messages'
+import { homeMessages as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useCreateRegulationDraft } from '../utils/dataHooks'
 import { RegulationsTabs } from '../components/RegulationsTabs'
