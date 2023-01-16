@@ -104,7 +104,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
                     formatMessage,
                   )}
                   ref={register}
-                  disabled={!isEditable}
+                  disabled={true}
                   backgroundColor="white"
                   value={defaultValues.country}
                 />
@@ -117,7 +117,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
                   application,
                   formatMessage,
                 )}
-                disabled={!isEditable}
+                disabled={true}
                 backgroundColor="white"
                 value={extractKeyFromStringObject(
                   defaultValues.country,
