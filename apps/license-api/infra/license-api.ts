@@ -47,3 +47,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     })
     .liveness('license-api/v1/liveness')
     .readiness('license-api/v1/readiness')
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'api-catalogue',
+    )
