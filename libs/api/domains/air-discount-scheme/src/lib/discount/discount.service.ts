@@ -20,7 +20,7 @@ export class DiscountService {
     private usersApi: UsersApi,
   ) {}
 
-  handleError(error: any): any {
+  handleError(error: FetchError | ApolloError): void {
     this.logger.error(error)
 
     throw new ApolloError(
