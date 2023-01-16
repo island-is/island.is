@@ -1,6 +1,6 @@
-import React from 'react'
 import { ApolloProvider } from '@apollo/client'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { CompatRouter } from 'react-router-dom-v5-compat'
 
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
@@ -19,31 +19,33 @@ import { UserProfileLocale } from '@island.is/shared/components'
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
-      <Router basename="/umsoknir">
-        <Authenticator>
-          <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-            <HeaderInfoProvider>
-              <UserProfileLocale />
-              <Layout>
-                <Switch>
-                  <Route
-                    exact
-                    path="/tengjast-umsokn"
-                    component={AssignApplication}
-                  />
+      <BrowserRouter basename="/umsoknir">
+        <CompatRouter>
+          <Authenticator>
+            <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+              <HeaderInfoProvider>
+                <UserProfileLocale />
+                <Layout>
+                  <Switch>
+                    <Route
+                      exact
+                      path="/tengjast-umsokn"
+                      component={AssignApplication}
+                    />
 
-                  <Route exact path="/:slug" component={Applications} />
-                  <Route exact path="/:slug/:id" component={Application} />
+                    <Route exact path="/:slug" component={Applications} />
+                    <Route exact path="/:slug/:id" component={Application} />
 
-                  <Route path="*">
-                    <ErrorShell />
-                  </Route>
-                </Switch>
-              </Layout>
-            </HeaderInfoProvider>
-          </FeatureFlagProvider>
-        </Authenticator>
-      </Router>
+                    <Route path="*">
+                      <ErrorShell />
+                    </Route>
+                  </Switch>
+                </Layout>
+              </HeaderInfoProvider>
+            </FeatureFlagProvider>
+          </Authenticator>
+        </CompatRouter>
+      </BrowserRouter>
     </LocaleProvider>
   </ApolloProvider>
 )

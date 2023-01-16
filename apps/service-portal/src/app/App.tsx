@@ -1,5 +1,5 @@
-import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { CompatRouter } from 'react-router-dom-v5-compat'
 import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
@@ -26,30 +26,32 @@ export const App = () => {
       <ApolloProvider client={client}>
         <LocaleProvider locale={defaultLanguage} messages={{}}>
           <ApplicationErrorBoundary>
-            <Router basename={ServicePortalPaths.Base}>
-              <Authenticator>
-                <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                  <PortalProvider
-                    modules={modules}
-                    meta={{
-                      basePath: ServicePortalPaths.Base,
-                      portalType: 'my-pages',
-                    }}
-                  >
-                    <UserProfileLocale />
-                    <Layout>
-                      <Switch>
-                        <Route exact path={ServicePortalPaths.Root}>
-                          <Dashboard />
-                        </Route>
-                        <Route>
-                          <Modules />
-                        </Route>
-                      </Switch>
-                    </Layout>
-                  </PortalProvider>
-                </FeatureFlagProvider>
-              </Authenticator>
+            <BrowserRouter basename={ServicePortalPaths.Base}>
+              <CompatRouter>
+                <Authenticator>
+                  <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                    <PortalProvider
+                      modules={modules}
+                      meta={{
+                        basePath: ServicePortalPaths.Base,
+                        portalType: 'my-pages',
+                      }}
+                    >
+                      <UserProfileLocale />
+                      <Layout>
+                        <Switch>
+                          <Route exact path={ServicePortalPaths.Root}>
+                            <Dashboard />
+                          </Route>
+                          <Route>
+                            <Modules />
+                          </Route>
+                        </Switch>
+                      </Layout>
+                    </PortalProvider>
+                  </FeatureFlagProvider>
+                </Authenticator>
+              </CompatRouter>
             </Router>
           </ApplicationErrorBoundary>
         </LocaleProvider>

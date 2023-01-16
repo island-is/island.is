@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { CompatRouter } from 'react-router-dom-v5-compat'
 import { ApolloProvider } from '@apollo/client'
 
 import { client } from '../graphql'
@@ -19,30 +20,32 @@ export const App = () => {
     <ApolloProvider client={client}>
       <LocaleProvider locale={defaultLanguage} messages={{}}>
         <ApplicationErrorBoundary>
-          <Router basename={AdminPortalPaths.Base}>
-            <Authenticator>
-              <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                <PortalProvider
-                  modules={modules}
-                  meta={{
-                    basePath: AdminPortalPaths.Base,
-                    portalType: 'admin',
-                  }}
-                >
-                  <Layout>
-                    <Switch>
-                      <Route exact path={AdminPortalPaths.Root}>
-                        <Dashboard />
-                      </Route>
-                      <Route>
-                        <Modules />
-                      </Route>
-                    </Switch>
-                  </Layout>
-                </PortalProvider>
-              </FeatureFlagProvider>
-            </Authenticator>
-          </Router>
+          <BrowserRouter basename={AdminPortalPaths.Base}>
+            <CompatRouter>
+              <Authenticator>
+                <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                  <PortalProvider
+                    modules={modules}
+                    meta={{
+                      basePath: AdminPortalPaths.Base,
+                      portalType: 'admin',
+                    }}
+                  >
+                    <Layout>
+                      <Switch>
+                        <Route exact path={AdminPortalPaths.Root}>
+                          <Dashboard />
+                        </Route>
+                        <Route>
+                          <Modules />
+                        </Route>
+                      </Switch>
+                    </Layout>
+                  </PortalProvider>
+                </FeatureFlagProvider>
+              </Authenticator>
+            </CompatRouter>
+          </BrowserRouter>
         </ApplicationErrorBoundary>
       </LocaleProvider>
     </ApolloProvider>
