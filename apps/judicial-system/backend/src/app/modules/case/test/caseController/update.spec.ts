@@ -135,7 +135,7 @@ describe('CaseController - Update', () => {
 
   describe('court case number added', () => {
     const caseToUpdate = {
-      state: CaseState.SUBMITTED,
+      state: CaseState.RECEIVED,
       courtCaseNumber: 'R-2020-1234',
     } as UpdateCaseDto
 
