@@ -1,5 +1,5 @@
 import {} from '@island.is/regulations-tools/useTextWarnings'
-import { makeDraftAppendixForm, steps } from './makeFields'
+import { makeDraftAppendixForm, stepsBase } from './makeFields'
 import { Action, ActionName, DraftingState } from './types'
 import {
   derivedUpdates,
@@ -22,9 +22,9 @@ export const actionHandlers: {
       stepName !== 'review' &&
       stepName !== 'publish'
     ) {
-      state.step = steps.review
+      state.step = stepsBase.review
     }
-    state.step = steps[stepName]
+    state.step = stepsBase[stepName]
   },
 
   SAVING_STATUS: (state) => {

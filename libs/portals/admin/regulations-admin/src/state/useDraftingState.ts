@@ -22,7 +22,7 @@ import { buttonsMsgs } from '../lib/messages'
 import {} from '@island.is/regulations/web'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
 import { useEditDraftReducer, StateInputs } from './reducer'
-import { steps } from './makeFields'
+import { stepsBase } from './makeFields'
 import {
   isDraftErrorFree,
   isDraftLocked,
@@ -33,8 +33,10 @@ import { toast } from 'react-toastify'
 // ---------------------------------------------------------------------------
 
 export const ensureStepName = (cand: unknown) => {
-  if (typeof cand === 'string' && cand in steps) {
+  if (typeof cand === 'string' && cand in stepsBase) {
     return cand as Step
+  } else {
+    return undefined
   }
 }
 
@@ -43,7 +45,7 @@ const isDraftEmpty = (draft: RegDraftForm): boolean => {
     draft.title.value ||
     draft.text.value ||
     draft.appendixes.some(({ text, title }) => title.value || text.value) ||
-    draft.impacts.length
+    draft.impacts['length']
 
   return !someContent
 }

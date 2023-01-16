@@ -21,7 +21,7 @@ import { MessageDescriptor } from 'react-intl'
 
 // ---------------------------------------------------------------------------
 
-export const steps: Record<Step, StepNav> = {
+export const stepsBase: Record<Step, StepNav> = {
   basics: {
     name: 'basics',
     next: 'signature',
@@ -44,6 +44,35 @@ export const steps: Record<Step, StepNav> = {
   review: {
     name: 'review',
     prev: 'impacts',
+  },
+  publish: {
+    name: 'publish',
+  },
+}
+
+export const stepsAmending: Record<Step, StepNav> = {
+  impacts: {
+    name: 'impacts',
+    next: 'basics',
+  },
+  basics: {
+    name: 'basics',
+    prev: 'impacts',
+    next: 'signature',
+  },
+  signature: {
+    name: 'signature',
+    prev: 'basics',
+    next: 'meta',
+  },
+  meta: {
+    name: 'meta',
+    prev: 'signature',
+    next: 'review',
+  },
+  review: {
+    name: 'review',
+    prev: 'meta',
   },
   publish: {
     name: 'publish',

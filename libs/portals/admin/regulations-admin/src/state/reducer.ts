@@ -7,7 +7,7 @@ import { DraftImpactId, RegulationDraft } from '@island.is/regulations/admin'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { derivedUpdates, validateState } from './validations'
-import { makeDraftForm, steps } from './makeFields'
+import { makeDraftForm, stepsAmending, stepsBase } from './makeFields'
 import { actionHandlers } from './actionHandlers'
 
 const draftingStateReducer: Reducer<DraftingState, Action> = (
@@ -48,7 +48,10 @@ export const useEditDraftReducer = (inputs: StateInputs) => {
     const draft = makeDraftForm(regulationDraft)
     const state: DraftingState = {
       draft,
-      step: steps[stepName],
+      step:
+        draft.type.value === 'amending'
+          ? stepsAmending[stepName]
+          : stepsBase[stepName],
       ministries,
       lawChapters: {
         list: lawChapters,
