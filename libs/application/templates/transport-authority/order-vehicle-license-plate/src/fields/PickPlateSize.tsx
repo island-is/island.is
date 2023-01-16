@@ -8,6 +8,7 @@ import { GET_VEHICLE_INFORMATION } from '../graphql/queries'
 import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { PlateType, VehiclesCurrentVehicle } from '../types'
 import { information } from '../lib/messages'
+import { getSelectedVehicle } from '../utils'
 
 export const PickPlateSize: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
@@ -29,14 +30,10 @@ export const PickPlateSize: FC<FieldBaseProps> = (props) => {
     ) as string,
   )
 
-  const currentVehicleList = application.externalData?.currentVehicleList
-    ?.data as VehiclesCurrentVehicle[]
-  const vehicleValue = getValueViaPath(
+  const vehicle = getSelectedVehicle(
+    application.externalData,
     application.answers,
-    'pickVehicle.vehicle',
-    '',
-  ) as string
-  const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+  ) as VehiclesCurrentVehicle
 
   const { data, loading } = useQuery(
     gql`
