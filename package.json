@@ -474,6 +474,7 @@
     "apps/web",
     "apps/api",
     "libs/*",
-    "apps/services/*"
+    "apps/services/*",
+    "apps/services/auth/*"
   ]
 }

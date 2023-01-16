@@ -50,7 +50,7 @@
     "@nestjs/terminus": "7.0.1",
     "@nestjs/websockets": "^8.0.0",
     "auth-nest-tools": "workspace:^",
-    "class-transformer": "0.5.1",
+    "class-transformer/storage": "0.5.1",
     "clients": "workspace:^",
     "cms": "workspace:^",
     "cms-translations": "workspace:^",
@@ -59,10 +59,14 @@
     "file-storage": "workspace:^",
     "infra-nest-server": "workspace:^",
     "nest": "workspace:^",
+    "services-user-profile": "workspace:^",
+    "services-auth-public-api": "workspace:^",
     "reflect-metadata": "0.1.13",
     "ts-morph": "16.0.0"
   },
   "devDependencies": {
+    "services-user-profile": "workspace:^",
+    "services-auth-public-api": "workspace:^",
     "@anatine/esbuild-decorators": "0.2.19",
     "@anatine/esbuildnx": "0.2.0",
     "@angular-devkit/schematics": "13.3.2",
