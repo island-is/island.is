@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom-v5-compat'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
 
@@ -43,7 +43,7 @@ const GrantAccess: PortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
   const [name, setName] = useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)
-  const history = useHistory()
+  const navigate = useNavigate()
   const { md } = useBreakpoint()
   const {
     options,
@@ -126,7 +126,7 @@ const GrantAccess: PortalModuleComponent = ({ userInfo }) => {
         },
       })
       if (data) {
-        history.push(
+        navigate(
           `${DelegationPaths.Delegations}/${data.createAuthDelegation.id}`,
         )
       }
@@ -305,7 +305,7 @@ const GrantAccess: PortalModuleComponent = ({ userInfo }) => {
                 <DelegationsFormFooter
                   disabled={!name || !domainNameWatcher}
                   loading={mutationLoading}
-                  onCancel={() => history.push(DelegationPaths.Delegations)}
+                  onCancel={() => navigate(DelegationPaths.Delegations)}
                   showShadow={false}
                   confirmLabel={formatMessage({
                     id: 'sp.access-control-delegations:choose-access-rights',

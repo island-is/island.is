@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useParams, useLocation } from 'react-router-dom-v5-compat'
+
+import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat'
 import { useMutation } from '@apollo/client'
 import isEmpty from 'lodash/isEmpty'
 import {
@@ -43,7 +43,7 @@ type UseParams = {
 
 export const Applications: FC = () => {
   const { slug } = useParams<keyof UseParams>() as UseParams
-  const history = useHistory()
+  const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
 
@@ -84,7 +84,7 @@ export const Applications: FC = () => {
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        history.push(`../${slug}/${createApplication.id}`)
+        navigate(`../${slug}/${createApplication.id}`)
       },
     },
   )
@@ -208,9 +208,7 @@ export const Applications: FC = () => {
             {data?.applicationApplications && (
               <ApplicationList
                 applications={data.applicationApplications}
-                onClick={(applicationUrl) =>
-                  history.push(`../${applicationUrl}`)
-                }
+                onClick={(applicationUrl) => navigate(`../${applicationUrl}`)}
                 refetch={refetch}
               />
             )}

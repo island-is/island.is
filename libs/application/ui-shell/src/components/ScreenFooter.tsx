@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom-v5-compat'
 import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
@@ -64,7 +64,7 @@ export const ScreenFooter: FC<FooterProps> = ({
   renderLastScreenBackButton,
 }) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
+  const navigate = useNavigate()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack =
@@ -138,7 +138,7 @@ export const ScreenFooter: FC<FooterProps> = ({
               <Box display="inlineFlex">
                 <Button
                   loading={loading}
-                  onClick={() => history.push('/minarsidur')}
+                  onClick={() => navigate('/minarsidur')}
                   icon="arrowForward"
                   data-testid="applications-home"
                   type="button"

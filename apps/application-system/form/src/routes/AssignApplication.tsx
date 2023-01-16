@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useLocation } from 'react-router-dom-v5-compat'
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat'
 import { ServerError, useMutation } from '@apollo/client'
 import { GraphQLError } from 'graphql'
 import qs from 'qs'
@@ -25,7 +24,7 @@ const parseGraphQLError = (
 
 export const AssignApplication = () => {
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const queryParams = qs.parse(location.search, { ignoreQueryPrefix: true })
   const isMissingToken = !queryParams.token
   const [assignApplication, { loading, error }] = useMutation(
@@ -37,7 +36,7 @@ export const AssignApplication = () => {
         // fall back to application if for some reason we can not find the configuration
         const slug = getSlugFromType(typeId) || 'application'
 
-        history.push(`../${slug}/${id}`)
+        navigate(`../${slug}/${id}`)
       },
     },
   )

@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom-v5-compat'
 import { useLocation } from 'react-use'
 import { Box, Tabs } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
@@ -19,7 +19,7 @@ const AccessControl = () => {
 
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const { basePath } = usePortalMeta()
   const DELEGATIONS_INCOMING_PATH = `${basePath}${DelegationPaths.DelegationsIncoming}`
@@ -33,7 +33,7 @@ const AccessControl = () => {
 
     // Make sure not to add to history stack the same route twice in a row
     if (url !== location.pathname) {
-      history.push(url)
+      navigate(url)
     }
   }
 

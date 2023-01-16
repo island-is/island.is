@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom-v5-compat'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 import AuthenticatorErrorScreen from './AuthenticatorErrorScreen'
 import { getUserManager } from '../userManager'
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const OidcSignIn = ({ authDispatch }: Props): ReactElement => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const [hasError, setHasError] = useState(false)
 
   const init = async function init() {
@@ -23,7 +23,9 @@ export const OidcSignIn = ({ authDispatch }: Props): ReactElement => {
       authDispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
 
       const url = typeof user.state === 'string' ? user.state : '/'
-      history.replace(url)
+      navigate(url, {
+        replace: true,
+      })
     } catch (error) {
       if (error.error === 'login_required') {
         // If trying to switch delegations and the IDS session is expired, we'll

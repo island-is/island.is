@@ -1,7 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
-import { Switch, useHistory } from 'react-router-dom'
-import { CompatRoute } from 'react-router-dom-v5-compat'
-import type { History } from 'history'
+import { Switch } from 'react-router-dom'
+import { CompatRoute, Location, useLocation } from 'react-router-dom-v5-compat'
 import type { User } from 'oidc-client-ts'
 
 import OidcSignIn from './OidcSignIn'
@@ -21,16 +20,18 @@ interface Props {
   autoLogin?: boolean
 }
 
-const getReturnUrl = (history: History, { redirectPath }: AuthSettings) => {
-  const returnUrl = history.location.pathname + history.location.search
+const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
+  const returnUrl = location.pathname + location.search
+
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
     return '/'
   }
+
   return returnUrl
 }
 
 export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
-  const history = useHistory()
+  const location = useLocation()
   const reducerInstance = useReducer(reducer, initialState)
   const [state, dispatch] = reducerInstance
   const userManager = getUserManager()
@@ -42,11 +43,11 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.SIGNIN_START,
       })
       return userManager.signinRedirect({
-        state: getReturnUrl(history, authSettings),
+        state: getReturnUrl(location, authSettings),
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, authSettings, history],
+    [dispatch, userManager, authSettings, location],
   )
 
   const signInSilent = useCallback(
@@ -92,12 +93,12 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       return userManager.signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
-          getReturnUrl(history, authSettings),
+          getReturnUrl(location, authSettings),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch, history, authSettings],
+    [userManager, dispatch, location, authSettings],
   )
 
   const signOut = useCallback(

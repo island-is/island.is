@@ -7,8 +7,7 @@ import {
   ISLAND_DOMAIN,
 } from '../../constants/domain'
 import { usePortalMeta, useQueryParam } from '@island.is/portals/core'
-import { useHistory } from 'react-router-dom'
-import { useLocation } from 'react-router-dom-v5-compat'
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat'
 import { isDefined, storageFactory } from '@island.is/shared/utils'
 import { useAuthDomainsQuery } from './useDomains.generated'
 
@@ -34,7 +33,7 @@ export type DomainOption = {
 export const useDomains = (includeDefaultOption = true) => {
   const { formatMessage, lang } = useLocale()
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { portalType } = usePortalMeta()
   const defaultPortalDomain =
     portalType === 'admin' ? ADMIN_ISLAND_DOMAIN : ISLAND_DOMAIN
@@ -90,7 +89,9 @@ export const useDomains = (includeDefaultOption = true) => {
 
     if (currentDomain && currentDomain !== displayNameQueryParam) {
       query.set('domain', name)
-      history.replace(`${location.pathname}?${query.toString()}`)
+      navigate(`${location.pathname}?${query.toString()}`, {
+        replace: true,
+      })
     }
   }
 

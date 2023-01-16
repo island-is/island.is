@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom-v5-compat'
 import { useParams } from 'react-router-dom-v5-compat'
 import { useForm, FormProvider } from 'react-hook-form'
 import classNames from 'classnames'
@@ -52,7 +52,7 @@ export const AccessForm = ({
   const { basePath } = usePortalMeta()
   const routes = useRoutes()
   const { delegationId } = useParams<keyof UseParams>() as UseParams
-  const history = useHistory()
+  const navigate = useNavigate()
   const { lg } = useBreakpoint()
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
@@ -108,7 +108,7 @@ export const AccessForm = ({
       })
 
       if (data && !errors && !err) {
-        history.push(DelegationPaths.Delegations)
+        navigate(DelegationPaths.Delegations)
         servicePortalSaveAccessControl(
           formatPlausiblePathToParams({
             path: DelegationPaths.DelegationsGrant,
@@ -169,7 +169,7 @@ export const AccessForm = ({
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter
-            onCancel={() => history.push(DelegationPaths.Delegations)}
+            onCancel={() => navigate(DelegationPaths.Delegations)}
             onConfirm={() => {
               // Only open confirm modal if there are scopes
               // else open delete modal
@@ -205,7 +205,7 @@ export const AccessForm = ({
         error={updateError}
       />
       <AccessDeleteModal
-        onDelete={() => history.push(DelegationPaths.Delegations)}
+        onDelete={() => navigate(DelegationPaths.Delegations)}
         onClose={() => setOpenDeleteModal(false)}
         isVisible={openDeleteModal}
         delegation={delegation}
