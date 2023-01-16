@@ -29,7 +29,6 @@ import {
   CaseOrigin,
   CaseState,
   isIndictmentCase,
-  NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -57,7 +56,6 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
-import { NotificationService } from '../notification/notification.service'
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
