@@ -9,11 +9,13 @@ import { useAuth } from '@island.is/auth/react'
 
 interface UserDelegationsProps {
   user: User
+  showActorButton: boolean
   onSwitchUser: (nationalId: string) => void
 }
 
 export const UserDelegations = ({
   user,
+  showActorButton,
   onSwitchUser,
 }: UserDelegationsProps) => {
   const { formatMessage } = useLocale()
@@ -23,7 +25,7 @@ export const UserDelegations = ({
   return (
     <Box>
       <Stack space={1}>
-        {!!actor && (
+        {showActorButton && !!actor && (
           <UserTopicCard
             colorScheme="blue"
             onClick={() => onSwitchUser(actor?.nationalId)}
