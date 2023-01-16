@@ -1025,12 +1025,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
         const { application } = context
+        const { usePersonalAllowance } = getApplicationAnswers(application.answers)
 
-        const answers = getApplicationAnswers(application.answers)
-
-        if (answers.usePersonalAllowance === NO) {
+        if (usePersonalAllowance === NO) {
           if (application.answers.personalAllowance) {
-            unset(application.answers, 'personalAllowance')
+            unset(application.answers, 'personalAllowance.useAsMuchAsPossible')
+            unset(application.answers, 'personalAllowance.usage')
           }
         }
 
@@ -1038,12 +1038,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
         const { application } = context
+        const { usePersonalAllowanceFromSpouse } = getApplicationAnswers(application.answers)
 
-        const answers = getApplicationAnswers(application.answers)
-
-        if (answers.usePersonalAllowanceFromSpouse === NO) {
+        if (usePersonalAllowanceFromSpouse === NO) {
           if (application.answers.personalAllowanceFromSpouse) {
-            unset(application.answers, 'personalAllowanceFromSpouse')
+            unset(application.answers, 'personalAllowanceFromSpouse.useAsMuchAsPossible')
+            unset(application.answers, 'personalAllowanceFromSpouse.usage')
           }
         }
 

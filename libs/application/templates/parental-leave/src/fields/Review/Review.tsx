@@ -186,6 +186,26 @@ export const Review: FC<ReviewScreenProps> = ({
     return undefined
   }
 
+  const validateUseAsMuchAsPossible = () => {
+    if (usePersonalAllowance !== YES) return undefined
+
+    if (!personalUseAsMuchAsPossible) {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
+  const validateUsage = () => {
+    if (personalUseAsMuchAsPossible !== NO) return undefined
+
+    if ((parseFloat(personalUsage) <= 0 || parseFloat(personalUsage) > 100) || personalUsage === '' || personalUsage === undefined) {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
   const hasError = (id: string) => get(errors, id) as string
 
   const checkPaymentErrors = (ids: string[]) => {
@@ -789,7 +809,7 @@ export const Review: FC<ReviewScreenProps> = ({
                     if (s === YES) setValue('personalAllowance.usage', '100')
                     if (s === NO) setValue('personalAllowance.usage', '')
                   }}
-                  error={hasError('personalAllowance.useAsMuchAsPossible')}
+                  error={validateUseAsMuchAsPossible()}
                 />
               </>
             )}
@@ -816,7 +836,7 @@ export const Review: FC<ReviewScreenProps> = ({
                         personalUsage: e.target.value?.replace('%', ''),
                       }))
                     }
-                    error={hasError('personalAllowance.usage')}
+                    error={validateUsage()}
                   />
                 </>
               )}
