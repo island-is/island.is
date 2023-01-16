@@ -25,7 +25,10 @@ describe('ApiDomains: DiscountResolver', () => {
     scope: [ApiScope.internal],
   })
 
-  const fabGetDiscount = (nationalId: string): DiscountWithTUser => ({
+  const fabDiscount = (
+    nationalId: string,
+    discountCode: string | null,
+  ): DiscountWithTUser => ({
     user: {
       ...fabTUser(nationalId),
       // The DiscountWithTUser.user takes from both TUser and the User model
@@ -33,21 +36,22 @@ describe('ApiDomains: DiscountResolver', () => {
       name: 'Bergvin',
     },
     connectionDiscountCodes: [],
-    discountCode: 'GETDISCO',
+    discountCode,
     expiresIn: 86400,
     nationalId,
   })
 
-  const fabCreateDiscount = (nationalId: string): DiscountWithTUser => ({
-    user: {
-      ...fabTUser(nationalId),
-      name: 'Bergvin',
-    },
-    connectionDiscountCodes: [],
-    discountCode: 'CREATEDC',
-    expiresIn: 86400,
-    nationalId,
-  })
+  const fabGetDiscount = (nationalId: string): DiscountWithTUser => {
+    return fabDiscount(nationalId, 'GETDISCO')
+  }
+
+  const fabCreateDiscount = (nationalId: string): DiscountWithTUser => {
+    return fabDiscount(nationalId, 'CREATEDC')
+  }
+
+  const fabInvalidDiscount = (nationalId: string): DiscountWithTUser => {
+    return fabDiscount(nationalId, null)
+  }
 
   const fabTUser = (nationalId: string): TUser => ({
     address: 'Neinsstaðarból 18',
@@ -80,6 +84,7 @@ describe('ApiDomains: DiscountResolver', () => {
             // Is there a nicer way to mock a service while keeping some of its methods unchanged?
             getCurrentDiscounts: DiscountService.prototype.getCurrentDiscounts,
             discountIsValid: DiscountService.prototype.discountIsValid,
+            processDiscount: DiscountService.prototype.processDiscount,
             getDiscount: jest.fn(
               (user: User, nationalId: string): TDiscount | void => {
                 if (idsForGetDiscount.includes(nationalId)) {
@@ -93,7 +98,7 @@ describe('ApiDomains: DiscountResolver', () => {
                 if (idsForCreateDiscount.includes(nationalId)) {
                   return fabCreateDiscount(nationalId)
                 }
-                return null
+                return fabInvalidDiscount(nationalId)
               },
             ),
             getUserRelations: jest.fn((user: User): TUser[] => {
@@ -177,29 +182,26 @@ describe('ApiDomains: DiscountResolver', () => {
     it('A user who is not eligible and does not have any eligible wards, should not get any discounts', async () => {
       const user = fabAuthUser('1010302719')
       const discountsWithUser = await resolver.getDiscount(user)
-      expect(discountsWithUser).toHaveLength(0)
+      expect(discountsWithUser[0].discountCode).toBeNull()
     })
 
-    it("A user who is not eligible, but has eligible wards, should get their wards' discounts and nothing else", async () => {
+    it("A user who is not eligible, but has eligible wards, should get their wards' discounts", async () => {
+      const custodian = '1010302989'
       const knownWards = ['2222222229', '3333333339']
       const expectedDiscounts = [
+        fabInvalidDiscount(custodian),
         fabGetDiscount(knownWards[0]),
         fabCreateDiscount(knownWards[1]),
       ]
 
-      const user = fabAuthUser('1010302989')
+      const user = fabAuthUser(custodian)
       const discountsWithUser = await resolver.getDiscount(user)
 
-      expect(discountsWithUser).toHaveLength(2)
+      expect(discountsWithUser).toHaveLength(3)
 
       expect(discountsWithUser).toEqual(
         expect.arrayContaining(expectedDiscounts.map(expect.objectContaining)),
       )
-
-      const nationalIds = discountsWithUser.map(
-        (discountWithuser) => discountWithuser.user.nationalId,
-      )
-      expect(nationalIds).toEqual(knownWards)
     })
   })
 })

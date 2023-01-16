@@ -155,6 +155,7 @@
     "clients-transport-authority-digital-tachograph-drivers-card": "libs/clients/transport-authority/digital-tachograph-drivers-card",
     "clients-transport-authority-vehicle-codetables": "libs/clients/transport-authority/vehicle-codetables",
     "clients-transport-authority-vehicle-infolocks": "libs/clients/transport-authority/vehicle-infolocks",
+    "clients-transport-authority-vehicle-operators": "libs/clients/transport-authority/vehicle-operators",
     "clients-transport-authority-vehicle-owner-change": "libs/clients/transport-authority/vehicle-owner-change",
     "clients-transport-authority-vehicle-plate-ordering": "libs/clients/transport-authority/vehicle-plate-ordering",
     "clients-transport-authority-vehicle-printing": "libs/clients/transport-authority/vehicle-printing",
