@@ -1230,10 +1230,10 @@ license-api:
       hosts:
         - host: 'island.is'
           paths:
-            - '/api'
+            - '/license-api'
         - host: 'www.island.is'
           paths:
-            - '/api'
+            - '/license-api'
   namespace: 'license-api'
   pvcs: []
   replicaCount:

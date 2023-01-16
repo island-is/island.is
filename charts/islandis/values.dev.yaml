@@ -1423,7 +1423,7 @@ license-api:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/api'
+            - '/license-api'
   namespace: 'license-api'
   pvcs: []
   replicaCount:

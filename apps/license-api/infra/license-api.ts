@@ -35,7 +35,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths: ['/api'],
+        paths: ['/license-api'],
         extraAnnotations: {
           dev: {},
           staging: {

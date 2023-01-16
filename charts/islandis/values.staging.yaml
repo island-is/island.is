@@ -1238,7 +1238,7 @@ license-api:
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
-            - '/api'
+            - '/license-api'
   namespace: 'license-api'
   pvcs: []
   replicaCount:
