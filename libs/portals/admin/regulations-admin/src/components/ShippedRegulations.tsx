@@ -66,7 +66,8 @@ export const ShippedRegulations = (props: ShippedRegulationsProps) => {
                         history.push(getEditUrl(shipped.id, 'publish'))
                       },
                     }
-                  : (undefined as any)
+                  : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (undefined as any)
               }
             ></ActionCard>
           )

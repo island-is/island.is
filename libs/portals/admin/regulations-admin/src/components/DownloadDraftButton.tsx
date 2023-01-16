@@ -77,6 +77,7 @@ export function DownloadDraftButton({ draftId, reviewButton }: Props) {
         toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [called, data, userInfo?.access_token])
 
   const onClick = async () => {

@@ -1,7 +1,7 @@
 import { Reducer, useReducer } from 'react'
 import { Step } from '../types'
 import { LawChapter, MinistryList } from '@island.is/regulations'
-import { Action, DraftingState } from './types'
+import { Action, DraftingState, RegDraftFormSimpleProps } from './types'
 import { produce, setAutoFreeze } from 'immer'
 import { DraftImpactId, RegulationDraft } from '@island.is/regulations/admin'
 import { useAuth } from '@island.is/auth/react'
@@ -64,7 +64,7 @@ export const useEditDraftReducer = (inputs: StateInputs) => {
 
     // Derive all guesssed values on start.
     Object.entries(derivedUpdates).forEach(([prop, updaterFn]) => {
-      updaterFn!(
+      updaterFn(
         state,
         // @ts-expect-error  (because reasons)
         draft[prop as RegDraftFormSimpleProps].value,
