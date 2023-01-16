@@ -19,6 +19,18 @@ interface SyslumennListCsvExportProps {
   csvStringProvider(): Promise<string>
 }
 
+const downloadCSV = (csvString: string, csvFilename: string) => {
+  const encodedUri =
+    'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString)
+  const a = document.createElement('a')
+  a.setAttribute('href', encodedUri)
+  a.setAttribute('target', '_blank')
+  a.setAttribute('download', csvFilename)
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+}
+
 export const SyslumennListCsvExport: React.FC<SyslumennListCsvExportProps> = ({
   defaultLabel,
   loadingLabel,
@@ -54,26 +66,14 @@ export const SyslumennListCsvExport: React.FC<SyslumennListCsvExportProps> = ({
 
   const [csvState, setCsvState] = useState<CsvState>(csvStateDefault)
 
-  const downloadCSV = (csvString: string) => {
-    const encodedUri =
-      'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString)
-    const a = document.createElement('a')
-    a.setAttribute('href', encodedUri)
-    a.setAttribute('target', '_blank')
-    a.setAttribute(
-      'download',
-      `${csvFilenamePrefix}_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.csv`,
-    )
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-  }
-
   const onClick = () => {
     setCsvState(csvStateLoading)
     csvStringProvider()
       .then((csvString: string) => {
-        downloadCSV(csvString)
+        downloadCSV(
+          csvString,
+          `${csvFilenamePrefix}_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.csv`,
+        )
         setTimeout(() => {
           // In order to give the User some feedback, we delay the return to default, i.e. make sure that the loading state is shown for at least one second.
           setCsvState(csvStateDefault)

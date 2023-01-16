@@ -39,6 +39,19 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
 import { webRichText } from '@island.is/web/utils/richText'
 
+const PAGE_SIZE = 10
+const CSV_COLUMN_SEPARATOR = ','
+const CSV_ROW_SEPARATOR = '\n'
+
+const csvColumnSeparatorSafeValue = (value: string): string => {
+  /**
+   * Note:
+   *    This handles the case if the value it self contains the CSV column separator character.
+   *    E.g. in many cases, the address field contains ','.
+   */
+  return value?.includes(CSV_COLUMN_SEPARATOR) ? `"${value}"` : value
+}
+
 interface HomestayProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
@@ -57,8 +70,6 @@ const Homestay: Screen<HomestayProps> = ({
     false,
   )
   useContentfulId(organizationPage.id, subpage.id)
-
-  const PAGE_SIZE = 10
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -89,9 +100,8 @@ const Homestay: Screen<HomestayProps> = ({
   const csvStringProvider = () => {
     return new Promise<string>((resolve, reject) => {
       if (homestays) {
-        const COLUMN_SEPARATOR = ','
-        const ROW_SEPARATOR = '\n'
-        const HEADER_COLUMNS = [
+        // CSV Header row
+        const headerRow = [
           'Skráningarnúmer',
           'Heiti heimagistingar',
           'Heimilisfang',
@@ -102,19 +112,8 @@ const Homestay: Screen<HomestayProps> = ({
           'Umsóknarár',
           'Fjöldi gesta',
           'Fjöldi herbergja',
-        ]
-
-        const columnSeparatorSafeValue = (value: string): string => {
-          /**
-           * Note:
-           *    This handles the case if the value it self contains the column separator character.
-           *    E.g. in many cases, the address field contains ','.
-           */
-          return value?.includes(COLUMN_SEPARATOR) ? `"${value}"` : value
-        }
-
-        // CSV Header row
-        const rows = [HEADER_COLUMNS.join(COLUMN_SEPARATOR)]
+        ].join(CSV_COLUMN_SEPARATOR)
+        const rows = [headerRow]
 
         // CSV Value rows
         for (const homestay of homestays) {
@@ -129,14 +128,11 @@ const Homestay: Screen<HomestayProps> = ({
             homestay.year?.toString(),
             homestay.guests?.toString(),
             homestay.rooms?.toString(),
-          ]
-          const safeColumnValues = columnValues.map((x) =>
-            columnSeparatorSafeValue(x),
-          )
-          rows.push(safeColumnValues.join(COLUMN_SEPARATOR))
+          ].map((x) => csvColumnSeparatorSafeValue(x))
+          rows.push(columnValues.join(CSV_COLUMN_SEPARATOR))
         }
 
-        return resolve(rows.join(ROW_SEPARATOR))
+        return resolve(rows.join(CSV_ROW_SEPARATOR))
       }
       reject('Homestay data has not been loaded.')
     })
