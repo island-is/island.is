@@ -36,6 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, errors } from '@island.is/judicial-system-web/messages'
+import { UpdateFilesResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import { UpdateFileMutation } from './UpdateFiles.gql'
@@ -71,10 +72,6 @@ export interface ReorderableItem {
   orderWithinChapter?: number
   userGeneratedFilename?: string
   displayDate?: string
-}
-
-interface UpdateFilesMutationResponse {
-  caseFiles: TCaseFile[]
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {
@@ -402,7 +399,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
+  const [updateFilesMutation] = useMutation<UpdateFilesResponse>(
     UpdateFileMutation,
   )
 
