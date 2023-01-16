@@ -13,6 +13,9 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID',
+      TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
+      DISABILITY_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID',
       SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
