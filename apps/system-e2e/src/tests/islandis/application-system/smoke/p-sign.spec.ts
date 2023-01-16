@@ -1,7 +1,7 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/urls'
-import { session } from '../../../support/session'
-import { mockApi } from '../../../support/api-tools'
+import { urls } from '../../../../support/urls'
+import { session } from '../../../../support/session'
+import { mockApi } from '../../../../support/api-tools'
 import { regex as uuidRegex } from 'uuidv4'
 
 test.use({ baseURL: urls.islandisBaseUrl })
