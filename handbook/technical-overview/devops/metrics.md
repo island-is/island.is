@@ -62,7 +62,9 @@ if (success) {
 
 Metrics can be tagged which can help categorizing and creating relevant filters in DataDog.
 
-Beware that each new tag will incur extra cost so use existing tags or create tags that will be used.
+{% hint style="warning" %}
+Each combination of metric name and tag values is counted as a custom metric. If you have a lot (hundreds or thousands) of custom metrics they might incur extra hosting costs. Note that not every tag is counted as a new metric. See more in ["Custom Metrics Billing" from DataDog](https://docs.datadoghq.com/account_management/billing/custom_metrics).
+{% endhint %}
 
 ## Local development and debugging
 
