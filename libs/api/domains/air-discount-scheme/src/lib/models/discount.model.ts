@@ -10,7 +10,7 @@ export class Discount {
   nationalId!: string
 
   @Field(() => String, { nullable: true })
-  discountCode!: string | null
+  discountCode: string | null = null
 
   @Field(() => [GQLConnectionDiscountCode])
   connectionDiscountCodes!: ConnectionDiscountCode[]
