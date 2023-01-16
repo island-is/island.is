@@ -211,7 +211,7 @@ export class LicenseServiceService {
       )
 
       const metricsTags = this.getMetricsTags(license.type)
-      this.metrics.increment('all_licenes.license', metricsTags)
+      this.metrics.increment('all_licenses.license', metricsTags)
 
       if (!onlyList) {
         const licenseService = await this.genericLicenseFactory(
@@ -236,7 +236,7 @@ export class LicenseServiceService {
                 licenseLabels,
               )
               this.metrics.timing(
-                `all_licenes.license.duration`,
+                `all_licenses.license.duration`,
                 DogStatsD.duration(start),
                 metricsTags,
               )
@@ -291,9 +291,9 @@ export class LicenseServiceService {
       }
 
       if (combined.fetch.status === GenericUserLicenseFetchStatus.Error) {
-        this.metrics.increment(`all_licenes.license.error`, 1, metricsTags)
+        this.metrics.increment(`all_licenses.license.error`, 1, metricsTags)
       } else {
-        this.metrics.increment(`all_licenes.license.ok`, 1, metricsTags)
+        this.metrics.increment(`all_licenses.license.ok`, 1, metricsTags)
       }
 
       licenses.push(combined)
