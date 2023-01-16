@@ -27,5 +27,5 @@
       }
     }
   },
-  "tags": ["lib:as-shared", "scope:as-shared"]
+  "tags": ["lib:application-system", "scope:application-system"]
 }

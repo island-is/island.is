@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": ["lib:js", "scope:as-shared", "TODO:splitUp"]
+  "tags": ["lib:js", "scope:application-system", "TODO:splitUp"]
 }

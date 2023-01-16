@@ -13,5 +13,5 @@
       }
     }
   },
-  "tags": ["scope:as-shared", "lib:as-shared"]
+  "tags": ["scope:application-system", "lib:application-system"]
 }

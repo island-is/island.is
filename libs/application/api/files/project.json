@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": ["scope:as-api", "lib:as-api"]
+  "tags": ["scope:application-system-api", "lib:application-system-api"]
 }

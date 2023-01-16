@@ -47,11 +47,11 @@
                 ]
               },
               {
-                "sourceTag": "scope:as-api",
+                "sourceTag": "scope:application-system-api",
                 "onlyDependOnLibsWithTags": [
                   "lib:api",
-                  "lib:as-api",
-                  "lib:as-shared",
+                  "lib:application-system-api",
+                  "lib:application-system",
                   "lib:client",
                   "lib:nest",
                   "lib:node",
@@ -59,10 +59,10 @@
                 ]
               },
               {
-                "sourceTag": "scope:as-form",
+                "sourceTag": "scope:application-system-web",
                 "onlyDependOnLibsWithTags": [
-                  "lib:as-shared",
-                  "lib:as-form",
+                  "lib:application-system",
+                  "lib:application-system-web",
                   "lib:react-spa",
                   "lib:react",
                   "lib:dom",
@@ -70,9 +70,9 @@
                 ]
               },
               {
-                "sourceTag": "scope:as-shared",
+                "sourceTag": "scope:application-system",
                 "onlyDependOnLibsWithTags": [
-                  "lib:as-shared",
+                  "lib:application-system",
                   "lib:react",
                   "lib:react-spa",
                   "lib:dom",
@@ -100,13 +100,44 @@
                 ]
               },
               {
-                "sourceTag": "scope:auth",
+                "sourceTag": "scope:auth-api",
                 "onlyDependOnLibsWithTags": [
                   "lib:nest",
                   "lib:node",
                   "lib:js",
                   "lib:client",
-                  "lib:auth"
+                  "lib:auth-api"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:judicial-system-api",
+                  "lib:judicial-system",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:auth-api"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system-web",
+                "onlyDependOnLibsWithTags": [
+                  "lib:judicial-system-web",
+                  "lib:judicial-system",
+                  "lib:react-next",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system",
+                "onlyDependOnLibsWithTags": [
+                  "lib:judicial-system",
+                  "lib:js"
                 ]
               },
               {
@@ -148,7 +179,7 @@
                 "onlyDependOnLibsWithTags": [
                   "lib:js",
                   "lib:client",
-                  "lib:as-shared"
+                  "lib:application-system"
                 ]
               }
             ]

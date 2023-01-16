@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/judicial-system/auth"]
     }
   },
-  "tags": ["lib:nest", "scope:nest"]
+  "tags": ["lib:judicial-system-api", "scope:judicial-system-api"]
 }

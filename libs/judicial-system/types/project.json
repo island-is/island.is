@@ -18,5 +18,5 @@
       "outputs": ["coverage/libs/judicial-system/types"]
     }
   },
-  "tags": ["scope:js", "lib:js"]
+  "tags": ["scope:judicial-system", "lib:judicial-system"]
 }

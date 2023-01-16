@@ -30,19 +30,22 @@ Simple applications can be tagged with the generic tags above, but applications 
 
 It can be just one tag which is applied to both the application project and all of the associated library projects. Or there can be multiple application tags with different rules to segment the library projects.
 
-| Tag               | Description                               | Can depend on                                                 | Can be depended on by                       |
-| ----------------- | ----------------------------------------- | ------------------------------------------------------------- | ------------------------------------------- |
-| `api`             | API domain project.                       | `js`, `node`, `nest`, `api`, `client`                         | Other API projects.                         |
-| `portals-mypages` | Service portal project.                   | `js`, `dom`, `react`, `react-spa`, `portals-mypages`          | Other service portal projects.              |
-| `portals-admin`   | Admin portal project.                     | `js`, `dom`, `react`, `react-spa`, `portals-admin`            | Other admin portal projects.                |
-| `client`          | Client projects.                          | `js`, `node`, `nest`, `client`                                | Other client projects                       |
-| `as-shared`       | Application-system projects               | `js`, `dom`, `react`, `react-spa`, `react`, `as-shared`,      | Other application-system projects           |
-| `as-form`         | Application-system projects for front-end | `js`, `dom`, `react`, `react-spa`, `as-form`, `as-shared`,    | Other front-end application-system projects |
-| `as-api`          | Application-system projects for back-end  | `js`, `node`, `nest`, `client`, `as-shared`, `as-api`, `api`, | Other back-end application-system projects  |
-| `auth`            | Authentication projects                   | `js`, `node`, `nest`, `client`, `auth`,                       | Other auth applications                     |
-| `e2e`             | Test projects                             | `js`, `client`, `as-shared`                                   | No one                                      |
+| Tag                      | Description                     | Can depend on                                                                          | Can be depended on by                 |
+| ------------------------ | ------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------- |
+| `api`                    | API domain project.             | `js`, `node`, `nest`, `api`, `client`                                                  | Other API projects.                   |
+| `portals-mypages`        | Service portal project.         | `js`, `dom`, `react`, `react-spa`, `portals-mypages`                                   | Other service portal projects.        |
+| `portals-admin`          | Admin portal project.           | `js`, `dom`, `react`, `react-spa`, `portals-admin`                                     | Other admin portal projects.          |
+| `client`                 | Client projects.                | `js`, `node`, `nest`, `client`                                                         | Other clients and application-system  |
+| `application-system`     | Application system projects     | `js`, `dom`, `react`, `react-spa`, `react`, `application-system`, `client`             | Other application system projects     |
+| `application-system-web` | Application system web projects | `js`, `dom`, `react`, `react-spa`, `application-system-web`, `application-system`,     | Other application system web projects |
+| `application-system-api` | Application system api projects | `js`, `node`, `nest`, `client`, `application-system`, `application-system-api`, `api`, | Other application system api projects |
+| `judicial-system`        | Judicial system projects        | `js`, `judicial-system`                                                                | Other judicial system projects        |
+| `judicial-system-api`    | Judicial system web projects    | `js`, `node`, `nest`, `client`, `judicial-system`, `judicial-system-api`               | Other judicial system api projects    |
+| `judicial-system-web`    | Judicial system api projects    | `js`, `dom`, `react`, `react-spa`, `judicial-system`, `judicial-system-web`            | Other judicial system web projects    |
+| `auth-api`               | Authentication api projects     | `js`, `node`, `nest`, `client`, `auth-api`                                             | Other auth APIs                       |
+| `e2e`                    | Test projects                   | `js`, `client`, `application-system`                                                   | No one                                |
 
-Here is an chart that displays how these tags are connected. Each tag can depend on another tag that is higher in the tree. The doted line represents connections between application tags where the child application can depend on the parent but not neceserely further up.
+Here is a chart that displays how these tags are connected. Each tag can depend on another tag that is higher in the tree. The dotted line represents connections between application tags where a project can depend on another but not necessarily further up.
 
 ```mermaid
   flowchart BT;
@@ -53,16 +56,18 @@ Here is an chart that displays how these tags are connected. Each tag can depend
     nest --> node
 
     %% App tags
-    api & auth & client & as-api --> nest
-    as-shared & as-form & portals-admin & portals-mypages --> react-spa
+    judicial-system --> js
+    api & auth-api & client & application-system-api & judicial-system-api --> nest
+    application-system & application-system-web & portals-admin & portals-mypages & judicial-system-web --> react-spa
 
     classDef appTag fill:#f9f
-    class api,auth,client,as-shared,as-form,as-api,portals-admin,portals-mypages appTag
+    class api,auth-api,client,application-system,application-system-web,application-system-api,portals-admin,portals-mypages,judicial-system-api,judicial-system-web,judicial-system appTag
 
     %% Shallow dependencies
-    api & auth -.-> client
-    as-shared -.-> client
-    as-api & as-form -.-> as-shared
+    api & auth-api -.-> client
+    application-system -.-> client
+    application-system-api & application-system-web -.-> application-system
+    judicial-system-api & judicial-system-web -.-> judicial-system
 ```
 
 ## Tag prefixes

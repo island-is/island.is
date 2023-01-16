@@ -15,7 +15,7 @@
               {
                 "sourceTag": "scope:portals-mypages",
                 "onlyDependOnLibsWithTags": [
-                  "lib:as-shared",
+                  "lib:application-system",
                   "lib:portals-mypages",
                   "lib:react-spa",
                   "lib:react",

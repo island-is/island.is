@@ -114,5 +114,5 @@
     },
     "docker-static": {}
   },
-  "tags": ["scope:as-form"]
+  "tags": ["scope:application-system-web"]
 }
