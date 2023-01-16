@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom-v5-compat'
 import {
   unitsOfUseFragment,
   pagingFragment,
@@ -85,10 +85,14 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
   ${addressFragment}
 `
 
+type UseParams = {
+  id: string
+}
+
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams<keyof UseParams>() as UseParams
 
   const { loading, error, data } = useQuery<Query>(GET_SINGLE_PROPERTY_QUERY, {
     variables: {

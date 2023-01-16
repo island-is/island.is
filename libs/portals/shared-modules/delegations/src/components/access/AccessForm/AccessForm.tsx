@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+import { useParams } from 'react-router-dom-v5-compat'
 import { useForm, FormProvider } from 'react-hook-form'
 import classNames from 'classnames'
 
@@ -38,6 +39,10 @@ type AccessFormProps = {
   validityPeriod: Date | null
 }
 
+type UseParams = {
+  delegationId: string
+}
+
 export const AccessForm = ({
   delegation,
   scopeTree,
@@ -46,9 +51,7 @@ export const AccessForm = ({
   const { formatMessage } = useLocale()
   const { basePath } = usePortalMeta()
   const routes = useRoutes()
-  const { delegationId } = useParams<{
-    delegationId: string
-  }>()
+  const { delegationId } = useParams<keyof UseParams>() as UseParams
   const history = useHistory()
   const { lg } = useBreakpoint()
   const [openConfirmModal, setOpenConfirmModal] = useState(false)

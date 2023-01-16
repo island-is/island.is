@@ -1,9 +1,13 @@
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom-v5-compat'
 import { AuthDomainDirection } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { useAuthScopeTreeLazyQuery } from '../components/access/AccessList/AccessListContainer/AccessListContainer.generated'
 import { useAuthDelegationQuery } from '../screens/AccessOutgoing/AccessOutgoing.generated'
 import { AuthCustomDelegationOutgoing } from '../types/customDelegation'
+
+type UseParams = {
+  delegationId: string
+}
 
 /**
  * Wrapper hook for fetching delegation by id from url param
@@ -11,9 +15,7 @@ import { AuthCustomDelegationOutgoing } from '../types/customDelegation'
  */
 export const useDelegation = (direction?: AuthDomainDirection) => {
   const { lang } = useLocale()
-  const { delegationId } = useParams<{
-    delegationId: string
-  }>()
+  const { delegationId } = useParams<keyof UseParams>() as UseParams
 
   const [
     getAuthScopeTreeQuery,

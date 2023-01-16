@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom-v5-compat'
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
@@ -7,9 +7,12 @@ import ChildView from '../../components/ChildView/ChildView'
 
 import { NATIONAL_REGISTRY_FAMILY_DETAIL } from '../../lib/queries/getNationalRegistryFamily'
 
-const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { nationalId }: { nationalId: string | undefined } = useParams()
+type UseParams = {
+  nationalId: string
+}
 
+const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
+  const { nationalId } = useParams<keyof UseParams>() as UseParams
   const { data, loading, error } = useQuery<Query>(
     NATIONAL_REGISTRY_FAMILY_DETAIL,
     {

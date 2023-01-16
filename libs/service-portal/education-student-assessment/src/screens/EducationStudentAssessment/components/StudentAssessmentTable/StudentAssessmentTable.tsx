@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom-v5-compat'
 
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -73,8 +73,12 @@ type DataField = Pick<
   'variant' | 'color' | 'truncate' | 'fontWeight' | 'lineHeight'
 >
 
+type UseParams = {
+  familyIndex: string
+}
+
 const StudentAssessmentTable = () => {
-  const { familyIndex } = useParams<{ familyIndex: string }>()
+  const { familyIndex } = useParams<keyof UseParams>() as UseParams
   const { data, loading: queryLoading } = useQuery<Query>(
     EducationExamResultQuery,
     {

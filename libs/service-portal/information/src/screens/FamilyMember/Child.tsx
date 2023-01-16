@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom-v5-compat'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
@@ -55,8 +55,12 @@ export const NATIONAL_REGISTRY_USER_NAME = gql`
   }
 `
 
+type UseParams = {
+  nationalId: string
+}
+
 const Child: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { nationalId }: { nationalId: string | undefined } = useParams()
+  const { nationalId } = useParams<keyof UseParams>() as UseParams
 
   const { data: userData } = useQuery<Query>(NATIONAL_REGISTRY_USER_NAME)
   const { data, loading, error } = useQuery<Query>(ChildrenQuery)

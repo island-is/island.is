@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom-v5-compat'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
@@ -55,10 +55,14 @@ const NotifyLostLink = (text: string) => (
   </Link>
 )
 
+type UseParams = {
+  id: string
+}
+
 const PassportDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams<keyof UseParams>() as UseParams
 
   const { data: passportData, loading, error } = usePassport()
   const { data: childPassportData } = useChildrenPassport()

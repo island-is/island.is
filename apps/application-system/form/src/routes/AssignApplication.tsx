@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+import { useLocation } from 'react-router-dom-v5-compat'
 import { ServerError, useMutation } from '@apollo/client'
 import { GraphQLError } from 'graphql'
 import qs from 'qs'

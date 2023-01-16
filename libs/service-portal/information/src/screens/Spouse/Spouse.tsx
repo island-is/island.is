@@ -1,6 +1,6 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom-v5-compat'
 
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -34,6 +34,10 @@ const dataInfoSpouse = defineMessage({
   defaultMessage: 'Hér fyrir neðan eru gögn um fjölskyldumeðlim.',
 })
 
+type UseParams = {
+  nationalId: string
+}
+
 const FamilyMember: ServicePortalModuleComponent = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
@@ -41,7 +45,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
 
-  const { nationalId }: { nationalId: string | undefined } = useParams()
+  const { nationalId } = useParams<keyof UseParams>() as UseParams
 
   const person =
     nationalRegistryUser?.spouse?.nationalId === nationalId

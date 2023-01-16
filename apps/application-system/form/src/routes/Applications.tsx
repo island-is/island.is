@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
-import { useParams, useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom-v5-compat'
 import { useMutation } from '@apollo/client'
 import isEmpty from 'lodash/isEmpty'
 import {
@@ -36,8 +37,12 @@ import {
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
 
+type UseParams = {
+  slug: string
+}
+
 export const Applications: FC = () => {
-  const { slug } = useParams<{ slug: string }>()
+  const { slug } = useParams<keyof UseParams>() as UseParams
   const history = useHistory()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)

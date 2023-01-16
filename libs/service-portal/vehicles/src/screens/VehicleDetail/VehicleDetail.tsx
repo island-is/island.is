@@ -1,6 +1,6 @@
 import isNumber from 'lodash/isNumber'
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React from 'react'
+import { useParams } from 'react-router-dom-v5-compat'
 import { useQuery, gql } from '@apollo/client'
 import {
   Query,
@@ -162,10 +162,14 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
   }
 `
 
+type UseParams = {
+  id: string
+}
+
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams<keyof UseParams>() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
