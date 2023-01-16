@@ -173,5 +173,5 @@
       }
     }
   },
-  "tags": ["lib:application-system-api", "scope:application-system-api"]
+  "tags": ["scope:application-system-api"]
 }
