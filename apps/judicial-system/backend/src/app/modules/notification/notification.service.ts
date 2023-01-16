@@ -1362,6 +1362,15 @@ export class NotificationService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  private async addMessagesForReceivedByCourtNotificationToQueue(
+    theCase: Case,
+  ): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+      caseId: theCase.id,
+    })
+  }
+
   /* API */
 
   async getAllCaseNotifications(theCase: Case): Promise<Notification[]> {
@@ -1415,6 +1424,9 @@ export class NotificationService {
           break
         case NotificationType.READY_FOR_COURT:
           await this.addMessagesForReadyForCourtNotificationToQueue(theCase)
+          break
+        case NotificationType.RECEIVED_BY_COURT:
+          await this.addMessagesForReceivedByCourtNotificationToQueue(theCase)
           break
         default:
           throw new InternalServerErrorException(
