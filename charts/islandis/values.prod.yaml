@@ -1202,10 +1202,8 @@ license-api:
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
-  grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'api-catalogue'
-  grantNamespacesEnabled: true
+  grantNamespaces: []
+  grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1232,10 +1230,10 @@ license-api:
       hosts:
         - host: 'island.is'
           paths:
-            - '/license-api'
+            - '/api'
         - host: 'www.island.is'
           paths:
-            - '/license-api'
+            - '/api'
   namespace: 'license-api'
   pvcs: []
   replicaCount:

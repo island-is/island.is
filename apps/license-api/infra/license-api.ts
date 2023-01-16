@@ -35,8 +35,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths: ['/license-api'],
-        public: true,
+        paths: ['/api'],
         extraAnnotations: {
           dev: {},
           staging: {
@@ -48,4 +47,3 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .grantNamespaces('nginx-ingress-external', 'api-catalogue')
