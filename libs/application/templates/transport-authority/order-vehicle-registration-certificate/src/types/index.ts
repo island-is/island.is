@@ -3,5 +3,4 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
-  isStolen?: boolean
 }

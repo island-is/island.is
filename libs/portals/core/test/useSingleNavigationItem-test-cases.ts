@@ -1,3 +1,7 @@
+import {
+  SingleNavigationItemStatus,
+  UseSingleNavigationItemResult,
+} from '../src/hooks/useSingleNavigationItem'
 import { PortalModule, PortalNavigationItem } from '../src/types/portalCore'
 
 type TestPortalModule = Pick<PortalModule, 'name' | 'enabled' | 'routes'>
@@ -5,11 +9,11 @@ type TestPortalModule = Pick<PortalModule, 'name' | 'enabled' | 'routes'>
 interface TestCase {
   modules: TestPortalModule[]
   navigationTrees: PortalNavigationItem[]
-  expected: PortalNavigationItem | null
+  expected: UseSingleNavigationItemResult
 }
 
 export const testCases: Record<string, TestCase> = {
-  'should return null when no navigation trees': {
+  'should return NO_ITEM and undefined item when no navigation trees': {
     modules: [
       {
         name: 'Test module',
@@ -24,9 +28,11 @@ export const testCases: Record<string, TestCase> = {
       },
     ],
     navigationTrees: [],
-    expected: null,
+    expected: {
+      status: SingleNavigationItemStatus.NO_ITEM,
+    },
   },
-  'should return single navigation item for single navigation tree with single valid child': {
+  'should return SINGLE_ITEM and an item for single navigation tree with single valid child': {
     modules: [
       {
         name: 'Test module',
@@ -53,11 +59,14 @@ export const testCases: Record<string, TestCase> = {
       },
     ],
     expected: {
-      name: 'Test child',
-      path: '/test',
+      navigationItem: {
+        name: 'Test child',
+        path: '/test',
+      },
+      status: SingleNavigationItemStatus.SINGLE_ITEM,
     },
   },
-  'should return single navigation item for multiple navigation trees with combined single valid child': {
+  'should return SINGLE_ITEM and an item for multiple navigation trees with combined single valid child': {
     modules: [
       {
         name: 'Accessible module',
@@ -104,11 +113,95 @@ export const testCases: Record<string, TestCase> = {
       },
     ],
     expected: {
-      name: 'Test accessible child',
-      path: '/valid',
+      navigationItem: {
+        name: 'Test accessible child',
+        path: '/valid',
+      },
+      status: SingleNavigationItemStatus.SINGLE_ITEM,
     },
   },
-  'should return null for single navigation tree with multiple valid children': {
+  'should return NO_ITEM and undefined item for single navigation tree with no valid child': {
+    modules: [
+      {
+        name: 'Test module',
+        enabled: () => false,
+        routes: () => [
+          {
+            name: 'Test route',
+            path: '/test',
+            enabled: false,
+          },
+        ],
+      },
+    ],
+    navigationTrees: [
+      {
+        name: 'Test tree',
+        path: '/',
+        children: [
+          {
+            name: 'Test child',
+            path: '/test',
+          },
+        ],
+      },
+    ],
+    expected: {
+      status: SingleNavigationItemStatus.NO_ITEM,
+    },
+  },
+  'should return NO_ITEM and undefined item for multiple navigation trees with no combined valid child': {
+    modules: [
+      {
+        name: 'Top module',
+        enabled: () => false,
+        routes: () => [
+          {
+            name: 'Top route',
+            path: '/top',
+            enabled: false,
+          },
+        ],
+      },
+      {
+        name: 'Bottom module',
+        enabled: () => false,
+        routes: () => [
+          {
+            name: 'Bottom route',
+            path: '/bottom',
+            enabled: false,
+          },
+        ],
+      },
+    ],
+    navigationTrees: [
+      {
+        name: 'Test top tree',
+        path: '/',
+        children: [
+          {
+            name: 'Test top child',
+            path: '/top',
+          },
+        ],
+      },
+      {
+        name: 'Test bottom tree',
+        path: '/',
+        children: [
+          {
+            name: 'Test bottom child',
+            path: '/bottom',
+          },
+        ],
+      },
+    ],
+    expected: {
+      status: SingleNavigationItemStatus.NO_ITEM,
+    },
+  },
+  'should return MULTIPLE_ITEMS and undefined item for single navigation tree with multiple valid children': {
     modules: [
       {
         name: 'Test module',
@@ -143,9 +236,11 @@ export const testCases: Record<string, TestCase> = {
         ],
       },
     ],
-    expected: null,
+    expected: {
+      status: SingleNavigationItemStatus.MULTIPLE_ITEMS,
+    },
   },
-  'should return null for multiple navigation tree with combined multiple valid children': {
+  'should return MULTIPLE_ITEMS and undefined item for multiple navigation tree with combined multiple valid children': {
     modules: [
       {
         name: 'Top module',
@@ -192,6 +287,8 @@ export const testCases: Record<string, TestCase> = {
         ],
       },
     ],
-    expected: null,
+    expected: {
+      status: SingleNavigationItemStatus.MULTIPLE_ITEMS,
+    },
   },
 }

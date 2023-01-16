@@ -1,5 +1,5 @@
 import {
-  Case,
+  CaseListEntry,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -34,7 +34,10 @@ const filterOptions = (
   },
 ]
 
-function myCasesFilter(theCase: Case, user: User | undefined): boolean {
+function myCasesFilter(
+  theCase: CaseListEntry,
+  user: User | undefined,
+): boolean {
   if (!user) {
     return false
   }
@@ -49,9 +52,9 @@ function myCasesFilter(theCase: Case, user: User | undefined): boolean {
 
 export function filterCases(
   filter: Filter,
-  cases: Case[],
+  cases: CaseListEntry[],
   user?: User,
-): Case[] {
+): CaseListEntry[] {
   if (filter === 'MY_CASES') {
     return cases.filter((c) => myCasesFilter(c, user))
   }
@@ -88,13 +91,13 @@ export type UserFilter = {
   filter: FilterOption
   setFilter: (filter: FilterOption) => void
   options: FilterOption[]
-  activeCases: Case[]
-  pastCases: Case[]
+  activeCases: CaseListEntry[]
+  pastCases: CaseListEntry[]
 }
 
 export const useFilter = (
-  allActiveCases: Case[],
-  allPastCases: Case[],
+  allActiveCases: CaseListEntry[],
+  allPastCases: CaseListEntry[],
   user?: User | undefined,
 ): UserFilter => {
   const { formatMessage } = useIntl()
@@ -124,7 +127,10 @@ export const useFilter = (
     [setFilter],
   )
 
-  const [activeCases, pastCases]: [Case[], Case[]] = useMemo(
+  const [activeCases, pastCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(
     () => [
       filterCases(filter.value, allActiveCases, user),
       filterCases(filter.value, allPastCases, user),
