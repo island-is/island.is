@@ -98,7 +98,7 @@ export const HearingArrangements: React.FC = () => {
       const caseOpened =
         workingCase.state === CaseState.NEW
           ? await transitionCase(
-              workingCase,
+              workingCase.id,
               CaseTransition.OPEN,
               setWorkingCase,
             )

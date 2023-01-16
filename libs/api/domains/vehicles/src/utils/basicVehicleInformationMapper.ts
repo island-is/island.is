@@ -87,6 +87,8 @@ export const basicVehicleInformationMapper = (
       plateLocation: data.platestoragelocation,
       specialName: data.speccom,
       plateStatus: data.platestatus,
+      plateTypeFront: data.platetypefront,
+      plateTypeRear: data.platetyperear,
     },
     currentOwnerInfo: {
       owner: owner?.fullname,

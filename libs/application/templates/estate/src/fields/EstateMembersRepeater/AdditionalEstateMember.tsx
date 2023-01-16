@@ -33,6 +33,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
+import { EstateMember } from '../../types'
 
 export const AdditionalEstateMember = ({
   application,
@@ -44,12 +45,12 @@ export const AdditionalEstateMember = ({
   error,
 }: {
   application: Application
-  field: Partial<ArrayField<any, 'id'>>
+  field: Partial<ArrayField<EstateMember, 'id'>>
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
-  error: any
+  error: Record<string, string>
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
