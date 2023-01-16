@@ -24,6 +24,7 @@ import {
   isIndictmentCase,
   isExtendedCourtRole,
   User,
+  CaseListEntry,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -130,13 +131,12 @@ export const Cases: React.FC = () => {
     user?.institution?.type === InstitutionType.PRISON_ADMIN
   const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
-  const { data, error, loading, refetch } = useQuery<{ cases?: Case[] }>(
-    CasesQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { data, error, loading, refetch } = useQuery<{
+    cases?: CaseListEntry[]
+  }>(CasesQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
     fetchPolicy: 'no-cache',
@@ -166,16 +166,19 @@ export const Cases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [Case[], Case[]] = useMemo(() => {
+  const [allActiveCases, allPastCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(() => {
     if (!resCases) {
       return [[], []]
     }
 
-    const casesWithoutDeleted = resCases.filter((c: Case) => {
+    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
       return c.state !== CaseState.DELETED
     })
 
-    return partition(casesWithoutDeleted, (c: Case) => {
+    return partition(casesWithoutDeleted, (c) => {
       if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
         return false
       } else if (isPrisonAdminUser || isPrisonUser) {
@@ -194,7 +197,7 @@ export const Cases: React.FC = () => {
     pastCases,
   } = useFilter(allActiveCases, allPastCases, user)
 
-  const deleteCase = async (caseToDelete: Case) => {
+  const deleteCase = async (caseToDelete: CaseListEntry) => {
     if (
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT ||
@@ -202,7 +205,7 @@ export const Cases: React.FC = () => {
       caseToDelete.state === CaseState.RECEIVED
     ) {
       await sendNotification(caseToDelete.id, NotificationType.REVOKED)
-      await transitionCase(caseToDelete, CaseTransition.DELETE)
+      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
     }
   }

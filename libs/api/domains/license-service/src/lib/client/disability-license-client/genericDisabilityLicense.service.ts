@@ -159,7 +159,7 @@ export class GenericDisabilityLicenseService
       payload,
       format(user.nationalId),
     )
-    
+
     if (pass.ok) {
       return pass.data
     }

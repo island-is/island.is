@@ -55,7 +55,6 @@ const appSystemApi = appSystemApiSetup({
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
-const servicePortal = servicePortalSetup({})
 const adminPortal = adminPortalSetup()
 const samradsgatt = samradsgattSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
@@ -72,6 +71,7 @@ const api = apiSetup({
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
 })
+const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
