@@ -70,7 +70,7 @@ export const HeilbrigdisstofnunSudurlandsFooter = ({
   }
 
   return (
-    <footer aria-labelledby="heilbrigdisstofnun-nordurlands-footer">
+    <footer aria-labelledby="heilbrigdisstofnun-sudurlands-footer">
       <Box className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>

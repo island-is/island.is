@@ -65,7 +65,8 @@ import {
   FjarsyslaRikisinsHeader,
   FjarsyslaRikisinsFooter,
 } from './Themes/FjarsyslaRikisinsTheme'
-import HeilbrigdisstofnunSudurlandsFooter from './HeilbrigdisstofnunSudurlandsFooter/HeilbrigdisstofnunSudurlandsFooter'
+import HeilbrigdisstofnunSudurlandsFooter from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsFooter'
+import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsHeader'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -179,6 +180,12 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
     case 'hsn':
       return (
         <HeilbrigdisstofnunNordurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'hsu':
+      return (
+        <HeilbrigdisstofnunSudurlandsHeader
           organizationPage={organizationPage}
         />
       )
