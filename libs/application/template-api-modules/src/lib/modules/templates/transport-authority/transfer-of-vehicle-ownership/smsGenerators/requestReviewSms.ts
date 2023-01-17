@@ -33,6 +33,6 @@ export const generateRequestReviewSms: RequestReviewSms = (
     message:
       `Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} inn á island.is/umsoknir. ` +
       `Til þess að eigendaskiptin verði skráð þarftu að samþykkja beiðnina fyrir ${pruneDateStr}. ` +
-      `Slóð á umsóknina: ${clientLocationOrigin}/${ApplicationConfigurations.DigitalTachographDriversCard.slug}/${application.id}.`,
+      `Slóð á umsóknina: ${clientLocationOrigin}/${ApplicationConfigurations.TransferOfVehicleOwnership.slug}/${application.id}.`,
   }
 }

@@ -2,7 +2,7 @@ import {
   CASES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 
 import {
   makeCourt,
@@ -39,7 +39,7 @@ describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id submitted`, () => {
     const caseData = mockCase(CaseType.INDICTMENT)
     const caseDataAddition = {
       ...caseData,
-      state: CaseState.SUBMITTED,
+      courtCaseNumber: 'S-test/2023',
       prosecutor: makeProsecutor(),
       creatingProsecutor: makeProsecutor(),
       court: makeCourt(),

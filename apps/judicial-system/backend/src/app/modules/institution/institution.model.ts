@@ -77,4 +77,11 @@ export class Institution extends Model {
   })
   @ApiProperty()
   nationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  notificationEmail?: string
 }
