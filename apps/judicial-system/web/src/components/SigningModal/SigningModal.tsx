@@ -19,14 +19,14 @@ import {
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
+import { RulingSignatureConfirmationGql } from '../../utils/mutations'
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
-  RequestRulingSignatureMutationMutation,
-  RulingSignatureConfirmationQueryQuery,
+  RequestRulingSignatureMutation,
+  RulingSignatureConfirmationQuery,
 } from '../../graphql/schema'
-import RequestRulingSignatureMutation from './requestRulingSignatureGql'
+import RequestRulingSignatureGql from './requestRulingSignatureGql'
 import { signingModal as m } from './SigningModal.strings'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
@@ -49,12 +49,12 @@ interface SigningModalProps {
   requestRulingSignature: (
     options?:
       | MutationFunctionOptions<
-          RequestRulingSignatureMutationMutation,
+          RequestRulingSignatureMutation,
           OperationVariables
         >
       | undefined,
-  ) => Promise<FetchResult<RequestRulingSignatureMutationMutation>>
-  requestRulingSignatureResponse?: RequestRulingSignatureMutationMutation['requestRulingSignature']
+  ) => Promise<FetchResult<RequestRulingSignatureMutation>>
+  requestRulingSignatureResponse?: RequestRulingSignatureMutation['requestRulingSignature']
   onClose: () => void
   navigateOnClose?: boolean
 }
@@ -68,16 +68,13 @@ export const useRequestRulingSignature = (
   const [
     requestRulingSignature,
     { loading: isRequestingRulingSignature, data, error },
-  ] = useMutation<RequestRulingSignatureMutationMutation>(
-    RequestRulingSignatureMutation,
-    {
-      variables: { input: { caseId } },
-      onError: () => {
-        toast.error(formatMessage(errorMessages.requestRulingSignature))
-      },
-      onCompleted: () => onSuccess(),
+  ] = useMutation<RequestRulingSignatureMutation>(RequestRulingSignatureGql, {
+    variables: { input: { caseId } },
+    onError: () => {
+      toast.error(formatMessage(errorMessages.requestRulingSignature))
     },
-  )
+    onCompleted: () => onSuccess(),
+  })
 
   if (!data && error) {
     return {
@@ -97,7 +94,7 @@ export const useRequestRulingSignature = (
 type signingProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 export const getSigningProgress = (
-  rulingSignatureConfirmation: RulingSignatureConfirmationQueryQuery['rulingSignatureConfirmation'],
+  rulingSignatureConfirmation: RulingSignatureConfirmationQuery['rulingSignatureConfirmation'],
   error: ApolloError | undefined,
 ): signingProgress => {
   if (rulingSignatureConfirmation?.documentSigned) return 'success'
@@ -119,8 +116,8 @@ export const SigningModal: React.FC<SigningModalProps> = ({
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  const { data, error } = useQuery<RulingSignatureConfirmationQueryQuery>(
-    RulingSignatureConfirmationQuery,
+  const { data, error } = useQuery<RulingSignatureConfirmationQuery>(
+    RulingSignatureConfirmationGql,
     {
       variables: {
         input: {

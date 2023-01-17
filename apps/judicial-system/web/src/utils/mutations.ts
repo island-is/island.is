@@ -1,9 +1,7 @@
 import { gql } from '@apollo/client'
 
-export const RulingSignatureConfirmationQuery = gql`
-  query RulingSignatureConfirmationQuery(
-    $input: SignatureConfirmationQueryInput!
-  ) {
+export const RulingSignatureConfirmationGql = gql`
+  query RulingSignatureConfirmation($input: SignatureConfirmationQueryInput!) {
     rulingSignatureConfirmation(input: $input) {
       documentSigned
       code
