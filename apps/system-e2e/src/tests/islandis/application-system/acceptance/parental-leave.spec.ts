@@ -5,17 +5,20 @@ import {
   getEnvironmentBaseUrl,
   TestEnvironment,
   urls,
-} from '../../../support/urls'
+} from '../../../../support/urls'
 import {
   employerFormMessages,
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave/messages'
 import { coreMessages } from '@island.is/application/core/messages'
-import { label } from '../../../support/i18n'
-import { EmailAccount, makeEmailAccount } from '../../../support/email-account'
-import { helpers, locatorByRole } from '../../../support/locator-helpers'
-import { session } from '../../../support/session'
-import { mockApi } from '../../../support/api-tools'
+import { label } from '../../../../support/i18n'
+import {
+  EmailAccount,
+  makeEmailAccount,
+} from '../../../../support/email-account'
+import { helpers, locatorByRole } from '../../../../support/locator-helpers'
+import { session } from '../../../../support/session'
+import { mockApi } from '../../../../support/api-tools'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
 test.use({ baseURL: urls.islandisBaseUrl })

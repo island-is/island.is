@@ -1,7 +1,7 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/urls'
-import { graphqlSpy } from '../../../support/api-tools'
-import { session } from '../../../support/session'
+import { urls } from '../../../../support/urls'
+import { graphqlSpy } from '../../../../support/api-tools'
+import { session } from '../../../../support/session'
 
 test.use({ baseURL: urls.adsBaseUrl })
 
