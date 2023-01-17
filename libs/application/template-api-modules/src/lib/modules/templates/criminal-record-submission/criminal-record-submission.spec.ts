@@ -19,7 +19,7 @@ import {
 import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { ConfigService } from '@nestjs/config'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
-import { createApplication } from '@island.is/application/core'
+import { createApplication } from '@island.is/application/testing'
 
 const config = defineConfig({
   name: 'SyslumennApi',

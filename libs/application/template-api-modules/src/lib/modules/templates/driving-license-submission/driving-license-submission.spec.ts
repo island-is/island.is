@@ -16,7 +16,7 @@ import {
 } from '@island.is/email-service'
 import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import { ConfigService } from '@nestjs/config'
-import { createApplication } from '@island.is/application/core'
+import { createApplication } from '@island.is/application/testing'
 
 describe('DrivingLicenseSubmissionService', () => {
   let drivingLicenseSubmissionService: DrivingLicenseSubmissionService

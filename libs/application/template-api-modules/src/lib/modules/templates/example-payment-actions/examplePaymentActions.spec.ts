@@ -15,7 +15,7 @@ import {
   EMAIL_OPTIONS,
 } from '@island.is/email-service'
 import { ConfigService } from '@nestjs/config'
-import { createApplication } from '@island.is/application/core'
+import { createApplication } from '@island.is/application/testing'
 
 describe('ExamplePaymentActionsService', () => {
   let service: ExamplePaymentActionsService

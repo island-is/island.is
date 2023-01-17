@@ -18,7 +18,7 @@ import { ApplicationChargeService } from '../../charge/application-charge.servic
 import { ConfigModule } from '@nestjs/config'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { FileStorageConfig, FileStorageService } from '@island.is/file-storage'
-import { createApplication } from '@island.is/application/core'
+import { createApplication } from '@island.is/application/testing'
 
 let lifeCycleService: ApplicationLifeCycleService
 let awsService: AwsService

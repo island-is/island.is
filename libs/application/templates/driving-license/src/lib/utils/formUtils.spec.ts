@@ -1,4 +1,4 @@
-import { createApplication } from '@island.is/application/core'
+import { createApplication } from '@island.is/application/testing'
 import { NO, YES } from '../constants'
 import {
   isVisible,

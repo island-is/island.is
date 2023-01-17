@@ -19,7 +19,7 @@ import {
 import { MortgageCertificateService } from '@island.is/api/domains/mortgage-certificate'
 import { ConfigService } from '@nestjs/config'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
-import { createApplication } from '@island.is/application/core'
+import { createApplication } from '@island.is/application/testing'
 
 const config = defineConfig({
   name: 'SyslumennApi',
