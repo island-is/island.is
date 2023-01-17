@@ -31,9 +31,7 @@ export const informationSection = buildSection({
             {
               value: YES,
               label: information.labels.anonymityStatus.checkboxTitle,
-              subLabel:
-                information.labels.anonymityStatus.checkboxSubTitle
-                  .defaultMessage,
+              subLabel: information.labels.anonymityStatus.checkboxSubTitle,
             },
           ],
         }),
