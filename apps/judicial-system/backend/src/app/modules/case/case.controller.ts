@@ -149,12 +149,6 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
-    if (caseToUpdate.courtCaseNumber && theCase.state === CaseState.SUBMITTED) {
-      const state = transitionCase(CaseTransition.RECEIVE, theCase.state)
-
-      caseToUpdate = { ...caseToUpdate, state } as UpdateCaseDto
-    }
-
     // Make sure valid users are assigned to the case's roles
     if (caseToUpdate.prosecutorId) {
       await this.validateAssignedUser(
@@ -237,7 +231,11 @@ export class CaseController {
     )
 
     if (isIndictmentCase(theCase.type)) {
-      if (completedCaseStates.includes(state)) {
+      if (state === CaseState.SUBMITTED) {
+        await this.caseService.addMessagesForSubmittedIndicitmentCaseToQueue(
+          theCase,
+        )
+      } else if (completedCaseStates.includes(state)) {
         // Indictment cases are not signed
         await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
           theCase,

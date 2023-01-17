@@ -17,6 +17,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   DEFENDER_ROUTE,
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
@@ -59,6 +60,7 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
+  formatCourtIndictmentReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -369,17 +371,43 @@ export class NotificationService {
     return this.sendEmail(subject, body, prosecutor?.name, prosecutor?.email)
   }
 
+  private sendReadyForCourtEmailNotificationToCourt(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const email = theCase.court?.notificationEmail
+    const {
+      subject,
+      body,
+    } = formatCourtIndictmentReadyForCourtEmailNotification(
+      this.formatMessage,
+      theCase,
+      `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+    )
+    return this.sendEmail(subject, body, theCase.court?.name, email)
+  }
+
   private async sendReadyForCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
-    const notification = await this.notificationModel.findOne({
-      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
-    })
+    if (isIndictmentCase(theCase.type)) {
+      const recipient = await this.sendReadyForCourtEmailNotificationToCourt(
+        theCase,
+      )
+      return this.recordNotification(
+        theCase.id,
+        NotificationType.READY_FOR_COURT,
+        [recipient],
+      )
+    }
 
+    // Investigation and Restrction Cases
     const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
     ]
 
+    const notification = await this.notificationModel.findOne({
+      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
+    })
     if (notification) {
       if (theCase.state === CaseState.RECEIVED) {
         promises.push(

@@ -154,6 +154,38 @@ describe('CaseController - Create court case', () => {
     })
   })
 
+  describe('court case received', () => {
+    const user = { id: uuid() } as TUser
+    const caseId = uuid()
+    const type = randomEnum(CaseType)
+    const courtId = uuid()
+    const theCase = {
+      id: caseId,
+      type,
+      state: CaseState.SUBMITTED,
+      courtId,
+    } as Case
+    const returnedCase = {
+      id: caseId,
+      courtId,
+      courtCaseNumber,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should update the court case number', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        { state: CaseState.RECEIVED, courtCaseNumber },
+        { where: { id: caseId }, transaction },
+      )
+    })
+  })
+
   describe.each([...restrictionCases, ...investigationCases])(
     '%s case queued',
     (type) => {
