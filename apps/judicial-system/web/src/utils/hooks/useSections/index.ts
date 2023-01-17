@@ -310,13 +310,13 @@ const useSections = (
   ): RouteSection => {
     const { id } = workingCase
 
-    const caseHasBeenSentToCourt =
-      workingCase.state !== CaseState.NEW &&
-      workingCase.state !== CaseState.DRAFT
+    const caseHasBeenReceivedByCourt =
+      workingCase.courtCaseNumber !== undefined &&
+      workingCase.courtCaseNumber !== null
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       // Prosecutor can only view the overview when case has been submitted to court
-      children: caseHasBeenSentToCourt
+      children: caseHasBeenReceivedByCourt
         ? []
         : [
             {
