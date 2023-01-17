@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/application/graphql"]
     }
   },
-  "tags": ["lib:react-spa", "scope:react-spa"]
+  "tags": ["lib:application-system", "scope:application-system"]
 }

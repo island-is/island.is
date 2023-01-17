@@ -17,6 +17,7 @@
                 "onlyDependOnLibsWithTags": [
                   "lib:application-system",
                   "lib:portals-mypages",
+                  "lib:portals",
                   "lib:react-spa",
                   "lib:react",
                   "lib:dom",

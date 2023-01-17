@@ -34,5 +34,5 @@
       }
     }
   },
-  "tags": ["lib:react-spa", "scope:react-spa"]
+  "tags": ["lib:portals", "scope:portals"]
 }

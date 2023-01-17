@@ -101,20 +101,3 @@ jobs:
       - name: Exit if repo is dirty
         if: steps.changes.outputs.changed == 1
         run: exit 1
-
-  nxtags-check:
-    name: Lint NX tags
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Check tags
-        run: npm run check-tags

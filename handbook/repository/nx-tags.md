@@ -30,20 +30,21 @@ Simple applications can be tagged with the generic tags above, but applications 
 
 It can be one tag which is applied to both the application project and all the associated library projects (like "api"). Or there can be multiple application tags with different rules to segment the library projects (like the "judicial-system" tags).
 
-| Tag                      | Description                     | Can depend on                                                                          | Can be depended on by                 |
-| ------------------------ | ------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------- |
-| `api`                    | API domain project.             | `js`, `node`, `nest`, `api`, `client`                                                  | Other API projects.                   |
-| `application-system`     | Application system projects     | `js`, `dom`, `react`, `react-spa`, `react`, `application-system`, `client`             | Other application system projects     |
+| Tag                     | Description                     | Can depend on                                                                          | Can be depended on by                 |
+| ----------------------- |---------------------------------|----------------------------------------------------------------------------------------|---------------------------------------|
+| `api`                   | API domain project.             | `js`, `node`, `nest`, `api`, `client`                                                  | Other API projects.                   |
+| `application-system`    | Application system projects     | `js`, `dom`, `react`, `react-spa`, `react`, `application-system`, `client`             | Other application system projects     |
 | `application-system-web` | Application system web projects | `js`, `dom`, `react`, `react-spa`, `application-system-web`, `application-system`,     | Other application system web projects |
 | `application-system-api` | Application system api projects | `js`, `node`, `nest`, `client`, `application-system`, `application-system-api`, `api`, | Other application system api projects |
-| `auth-api`               | Authentication api projects     | `js`, `node`, `nest`, `client`, `auth-api`                                             | Other auth APIs                       |
-| `client`                 | Client projects.                | `js`, `node`, `nest`, `client`                                                         | Other clients and application-system  |
-| `e2e`                    | Test projects                   | `js`, `client`, `application-system`                                                   | No one                                |
-| `judicial-system`        | Judicial system projects        | `js`, `judicial-system`                                                                | Other judicial system projects        |
-| `judicial-system-api`    | Judicial system web projects    | `js`, `node`, `nest`, `client`, `judicial-system`, `judicial-system-api`               | Other judicial system api projects    |
-| `judicial-system-web`    | Judicial system api projects    | `js`, `dom`, `react`, `react-spa`, `judicial-system`, `judicial-system-web`            | Other judicial system web projects    |
-| `portals-mypages`        | Service portal project.         | `js`, `dom`, `react`, `react-spa`, `portals-mypages`                                   | Other service portal projects.        |
-| `portals-admin`          | Admin portal project.           | `js`, `dom`, `react`, `react-spa`, `portals-admin`                                     | Other admin portal projects.          |
+| `auth-api`              | Authentication api projects     | `js`, `node`, `nest`, `client`, `auth-api`                                             | Other auth APIs                       |
+| `client`                | Client projects.                | `js`, `node`, `nest`, `client`                                                         | Other clients and application-system  |
+| `e2e`                   | Test projects                   | `js`, `client`, `application-system`                                                   | No one                                |
+| `judicial-system`       | Judicial system projects        | `js`, `judicial-system`                                                                | Other judicial system projects        |
+| `judicial-system-api`   | Judicial system web projects    | `js`, `node`, `nest`, `client`, `judicial-system`, `judicial-system-api`               | Other judicial system api projects    |
+| `judicial-system-web`   | Judicial system api projects    | `js`, `dom`, `react`, `react-spa`, `judicial-system`, `judicial-system-web`            | Other judicial system web projects    |
+| `portals`        | Portal project.                 | `js`, `dom`, `react`, `react-spa`, `portals`                                   | Other portal projects.                |
+| `portals-mypages`       | My pages portal project.        | `js`, `dom`, `react`, `react-spa`, `portals`, `portals-mypages`                        | Other my pages portal projects.       |
+| `portals-admin`         | Admin portal project.           | `js`, `dom`, `react`, `react-spa`, `portals`, `portals-admin`                          | Other admin portal projects.          |
 
 Here is a chart that displays how these tags are connected. Each tag can depend on other tags with a full line arrow pointing to it. Dotted lines represents connections between application tags where a project can depend on the tag but not necessarily other tags further up.
 
@@ -58,7 +59,7 @@ Here is a chart that displays how these tags are connected. Each tag can depend 
     %% App tags
     judicial-system --> js
     api & auth-api & client & application-system-api & judicial-system-api --> nest
-    application-system & application-system-web & portals-admin & portals-mypages & judicial-system-web --> react-spa
+    application-system & application-system-web & portals & portals-admin & portals-mypages & judicial-system-web --> react-spa
 
     classDef appTag fill:#f9f
     class api,auth-api,client,application-system,application-system-web,application-system-api,portals-admin,portals-mypages,judicial-system-api,judicial-system-web,judicial-system appTag
@@ -68,6 +69,7 @@ Here is a chart that displays how these tags are connected. Each tag can depend 
     application-system -.-> client
     application-system-api & application-system-web -.-> application-system
     judicial-system-api & judicial-system-web -.-> judicial-system
+    portals-mypages & portals-mypages -.-> portals
 ```
 
 ## Tag prefixes

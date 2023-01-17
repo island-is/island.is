@@ -25,5 +25,5 @@
       }
     }
   },
-  "tags": ["scope:application-system", "lib:application-system"]
+  "tags": ["scope:application-system-web", "lib:application-system-web"]
 }

@@ -30,6 +30,7 @@
                 "sourceTag": "scope:portals-mypages",
                 "onlyDependOnLibsWithTags": [
                   "lib:portals-mypages",
+                  "lib:portals",
                   "lib:react-spa",
                   "lib:react",
                   "lib:dom",
@@ -40,6 +41,17 @@
                 "sourceTag": "scope:portals-admin",
                 "onlyDependOnLibsWithTags": [
                   "lib:portals-admin",
+                  "lib:portals",
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:portals",
+                "onlyDependOnLibsWithTags": [
+                  "lib:portals",
                   "lib:react-spa",
                   "lib:react",
                   "lib:dom",

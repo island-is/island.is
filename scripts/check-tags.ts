@@ -3,11 +3,15 @@
  */
 import { readFile } from 'fs/promises'
 import glob from 'glob'
-import colors from 'colors/safe.js'
+import chalk from 'chalk'
 
-const checkTags = async (filePath) => {
+interface Project {
+  tags: string[]
+}
+
+const checkTags = async (filePath: string) => {
   const projectText = await readFile(filePath, 'utf8')
-  const project = JSON.parse(projectText)
+  const project = JSON.parse(projectText) as Project
   const tagsRaw = project.tags ?? []
   const tags = tagsRaw.map((tag) => tag.split(':'))
   const isNormal =
@@ -19,16 +23,15 @@ const checkTags = async (filePath) => {
   const isEmpty = tags.length === 0
 
   if (isEmpty) {
-    console.log(colors.red.underline(filePath))
+    console.log(chalk.red.underline(filePath))
     console.log('Missing nx tags for project boundaries\n')
     return true
   } else if (!isNormal) {
-    if (!isNormal) {
-      console.log(colors.yellow.underline(filePath))
-      console.log('Unexpected nx tags:', tagsRaw.join(','), '\n')
-    }
-    return false
+    console.log(chalk.yellow.underline(filePath))
+    console.log('Unexpected nx tags:', tagsRaw.join(','), '\n')
   }
+
+  return false
 }
 
 const checkProjects = async () => {
@@ -39,7 +42,7 @@ const checkProjects = async () => {
   }
 
   if (hasError) {
-    console.log(colors.red('Found errors'))
+    console.log(chalk.red('Found errors'))
     console.log(
       'All projects should have a configured NX tags which controls which project can import what. For more information see: https://docs.devland.is/repository/nx-tags',
     )

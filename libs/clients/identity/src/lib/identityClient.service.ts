@@ -87,7 +87,7 @@ export class IdentityClientService {
 
     return {
       nationalId: person.nationalId,
-      name: person.fullName,
+      name: person.name,
       address: person.legalDomicile && {
         streetAddress: person.legalDomicile.streetAddress,
         postalCode: person.legalDomicile.postalCode,
