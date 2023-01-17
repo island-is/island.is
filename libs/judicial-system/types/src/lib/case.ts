@@ -243,6 +243,35 @@ export interface Case {
   crimeScenes?: CrimeSceneMap
 }
 
+export interface CaseListEntry
+  extends Pick<
+    Case,
+    | 'id'
+    | 'created'
+    | 'policeCaseNumbers'
+    | 'state'
+    | 'type'
+    | 'defendants'
+    | 'courtCaseNumber'
+    | 'decision'
+    | 'validToDate'
+    | 'isValidToDateInThePast'
+    | 'courtDate'
+    | 'initialRulingDate'
+    | 'rulingDate'
+    | 'courtEndTime'
+    | 'prosecutorAppealDecision'
+    | 'accusedAppealDecision'
+    | 'prosecutorPostponedAppealDate'
+    | 'accusedPostponedAppealDate'
+    | 'judge'
+    | 'prosecutor'
+    | 'registrar'
+    | 'creatingProsecutor'
+  > {
+  parentCaseId?: string
+}
+
 export type CreateCase = Pick<
   Case,
   | 'type'
