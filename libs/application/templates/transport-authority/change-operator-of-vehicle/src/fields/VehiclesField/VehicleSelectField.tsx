@@ -200,20 +200,17 @@ export const VehicleSelectField: FC<
       <input
         type="hidden"
         value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
+        {...register('pickVehicle.plate', { required: true })}
       />
       <input
         type="hidden"
         value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
+        {...register('pickVehicle.color', { required: true })}
       />
       <input
         type="hidden"
         value={type}
-        ref={register({ required: true })}
-        name="pickVehicle.type"
+        {...register('pickVehicle.type', { required: true })}
       />
       {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

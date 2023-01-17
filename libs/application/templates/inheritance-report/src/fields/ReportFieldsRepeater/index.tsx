@@ -155,7 +155,7 @@ export const ReportFieldsRepeater: FC<
 
   return (
     <Box>
-      {fields.map((repeaterField, index) => {
+      {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
         return (
           <Box position="relative" key={repeaterField.id} marginTop={3}>

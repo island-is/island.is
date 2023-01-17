@@ -4,17 +4,17 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
-import { OperatorInformation } from '../../shared'
+import { OperatorFormField } from '../../shared'
 import { OperatorRepeaterItem } from './OperatorRepeaterItem'
 
 export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
-  const { fields, append, remove } = useFieldArray<OperatorInformation>({
+  const { fields, append, remove } = useFieldArray({
     name: 'operators',
   })
 
-  const handleAdd = (operator?: OperatorInformation) =>
+  const handleAdd = (operator?: OperatorFormField) =>
     append({
       name: operator?.name || '',
       nationalId: operator?.nationalId || '',

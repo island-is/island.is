@@ -10,16 +10,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
-import { ArrayField } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { OperatorInformation } from '../../shared'
+import { OperatorFormField } from '../../shared'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<OperatorInformation, 'id'>>
+  repeaterField: OperatorFormField
   handleRemove: (index: number) => void
 }
 
