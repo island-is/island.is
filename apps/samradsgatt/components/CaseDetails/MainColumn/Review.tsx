@@ -1,6 +1,13 @@
 import { Box, Text } from '@island.is/island-ui/core'
+import { format } from 'date-fns'
+import { Advice } from '../../../types/viewModels'
 
-const Review = () => {
+interface Props {
+  key: number
+  advice: Advice
+}
+
+const Review: React.FC<Props> = ({ advice }) => {
   return (
     <Box
       marginBottom={6}
@@ -11,16 +18,12 @@ const Review = () => {
       borderRadius="standard"
     >
       <Text variant="eyebrow" color="purple400">
-        {'#Dagsetning'}
+        {format(new Date(advice.created), 'dd.MM.yyyy')}
       </Text>
-      <Text variant="h3">{'Umsagnaradili#'}</Text>
-      <Text variant="default">
-        {' '}
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat
-        dolorem perspiciatis aperiam. Itaque, ipsa ea. Nesciunt labore eveniet,
-        ducimus ullam illo saepe animi. Nemo, fugiat? Corrupti rem expedita
-        magni totam.
+      <Text variant="h3">
+        {advice.number} - {advice.participantName}
       </Text>
+      <Text variant="default">{advice.content}</Text>
     </Box>
   )
 }

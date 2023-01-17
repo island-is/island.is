@@ -3,21 +3,25 @@ import { Box, Text } from '@island.is/island-ui/core'
 import CaseOverview from './CaseOverview'
 import Review from './Review'
 import WriteReview from './WriteReview'
-import { Case } from '../../../types/viewModels'
+import { Advice, Case } from '../../../types/viewModels'
 
 interface MainColumnProps {
-  detailedCase: Case
+  chosenCase: Case
+  advices?: Array<Advice>
 }
 
-const MainColumn: React.FC<MainColumnProps> = ({ detailedCase }) => {
+const MainColumn: React.FC<MainColumnProps> = ({ chosenCase, advices }) => {
+  console.log('case', chosenCase)
   return (
     <Box paddingLeft={4}>
-      <CaseOverview detailedCase={detailedCase} />
+      <CaseOverview chosenCase={chosenCase} />
       <Box marginBottom={6}>
         <Text variant="h1" color="blue400" paddingY={2}>
           {'Innsendar umsagnir'}
         </Text>
-        <Review />
+        {advices.map((advice) => {
+          return <Review advice={advice} key={advice.number} />
+        })}
       </Box>
       <WriteReview />
     </Box>

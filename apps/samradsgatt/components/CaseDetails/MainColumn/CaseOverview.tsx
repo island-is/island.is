@@ -1,12 +1,16 @@
 import { Box, GridRow, Text } from '@island.is/island-ui/core'
 import CaseStatusCard from './CaseStatusCard'
-import { Case } from '../../../types/viewModels'
+import { Advice, Case } from '../../../types/viewModels'
+import { format } from 'date-fns'
 
 interface CaseOverviewProps {
-  detailedCase: Case
+  chosenCase: Case
+  advices?: Array<Advice>
 }
 
-const CaseOverview: React.FC<CaseOverviewProps> = ({ detailedCase }) => {
+const CaseOverview: React.FC<CaseOverviewProps> = ({ chosenCase }) => {
+  const datePublished = format(new Date(chosenCase.created), 'dd.MM.yyyy')
+
   return (
     <Box>
       <GridRow>
@@ -18,14 +22,12 @@ const CaseOverview: React.FC<CaseOverviewProps> = ({ detailedCase }) => {
           paddingLeft={2}
         >
           <Text variant="eyebrow" color="purple400">
-            {'Malanumer#'}
-            {/* {detailedCase.caseNumber} */}
+            {'Mál nr.'} {chosenCase.caseNumber}
           </Text>
         </Box>
         <Box>
           <Text variant="eyebrow" color="purple400">
-            {'Dagsetning#'}
-            {/* {detailedCase.created} */}
+            {'Birt'} {datePublished}
           </Text>
         </Box>
       </GridRow>
@@ -39,7 +41,7 @@ const CaseOverview: React.FC<CaseOverviewProps> = ({ detailedCase }) => {
         >
           {' '}
           <Text variant="eyebrow" color="blue400">
-            {'Tag1'}
+            {chosenCase.type}
           </Text>
         </Box>
         <Box
@@ -50,7 +52,7 @@ const CaseOverview: React.FC<CaseOverviewProps> = ({ detailedCase }) => {
         >
           {' '}
           <Text variant="eyebrow" color="blue400">
-            {'Tag2'}
+            {chosenCase.institution}
           </Text>
         </Box>
         <Text variant="eyebrow" color="blue400">
@@ -59,28 +61,16 @@ const CaseOverview: React.FC<CaseOverviewProps> = ({ detailedCase }) => {
       </GridRow>
       <Box marginBottom={4} paddingTop={2}>
         <Text variant="h1" color="blue400">
-          {'Titill máls'}
+          {chosenCase.name}
         </Text>
         <CaseStatusCard />
         <Box marginBottom={6} marginTop={4}>
           <Text variant="h4">{'Málsefni'}</Text>
-          <Text variant="default">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat
-            dolorem perspiciatis aperiam. Itaque, ipsa ea. Nesciunt labore
-            eveniet, ducimus ullam illo saepe animi. Nemo, fugiat? Corrupti rem
-            expedita magni totam.
-            {/* {detailedCase.announcementText} */}
-          </Text>
+          <Text variant="default">{chosenCase.announcementText}</Text>
         </Box>
         <Box>
           <Text variant="h4">{'Nánar um málið'}</Text>
-          <Text variant="default">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat
-            dolorem perspiciatis aperiam. Itaque, ipsa ea. Nesciunt labore
-            eveniet, ducimus ullam illo saepe animi. Nemo, fugiat? Corrupti rem
-            expedita magni totam.
-            {/* {detailedCase.detailedDescription} */}
-          </Text>
+          <Text variant="default">{chosenCase.detailedDescription}</Text>
         </Box>
       </Box>
     </Box>

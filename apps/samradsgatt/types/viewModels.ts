@@ -19,3 +19,12 @@ export interface Case {
   changed: string
   oldInstitutionName: string
 }
+
+export interface Advice {
+  id: string
+  number: number
+  participantName: string
+  participantEmail: string
+  content: string
+  created: string
+}
