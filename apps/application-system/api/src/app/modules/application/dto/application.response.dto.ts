@@ -129,6 +129,16 @@ export class ApplicationResponseDto {
   @IsEnum(ApplicationStatus)
   status!: ApplicationStatus
 
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftFinishedSteps!: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftTotalSteps!: number
+
   constructor(partial: Partial<ApplicationResponseDto>) {
     Object.assign(this, partial)
   }

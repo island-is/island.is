@@ -83,6 +83,12 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+
+  @Field(() => Number)
+  draftFinishedSteps!: number
+
+  @Field(() => Number)
+  draftTotalSteps!: number
 }
 
 @ObjectType()

@@ -347,6 +347,8 @@ export class ApplicationController {
       created: createdApplication.created,
       answers: updatedApplication.answers as FormValue,
       externalData: updatedApplication.externalData as ExternalData,
+      draftFinishedSteps: updatedApplication.draftFinishedSteps,
+      draftTotalSteps: updatedApplication.draftTotalSteps,
       attachments: {},
     }
 

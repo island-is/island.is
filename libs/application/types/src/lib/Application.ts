@@ -48,6 +48,8 @@ export interface Application<TAnswers = FormValue> {
   institution?: string
   progress?: number
   status: ApplicationStatus
+  draftTotalSteps: number
+  draftFinishedSteps: number
 }
 
 export interface ApplicationWithAttachments extends Application {
