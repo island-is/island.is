@@ -1,21 +1,20 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
+import { OptionsType, ValueType } from 'react-select'
 
 import { Select, Option } from '@island.is/island-ui/core'
-import {
-  isIndictmentCase,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase, UserRole } from '@island.is/judicial-system/types'
 import {
   UserContext,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { strings } from './ProsecutorSelection.strings'
-import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
-import { OptionsType, ValueType } from 'react-select'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+
+import { ProsecutorSelectionUsersGql } from './prosecutorSelectionUsersGql'
+import { ProsecutorSelectionUsersQuery } from '../../graphql/schema'
+import type { User } from '../../graphql/schema'
 
 interface Props {
   onChange: (prosecutorId: string) => boolean
@@ -36,15 +35,18 @@ const ProsecutorSelection: React.FC<Props> = (props) => {
       : undefined
   }, [workingCase.prosecutor])
 
-  const { data, loading } = useQuery(ProsecutorSelectionUsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { data, loading } = useQuery<ProsecutorSelectionUsersQuery>(
+    ProsecutorSelectionUsersGql,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
 
-  const availableProsecutors: OptionsType<Option> = useMemo(() => {
-    return data?.users
+  const availableProsecutors: OptionsType<Option> | undefined = useMemo(() => {
+    return (data?.users as User[])
       .filter(
-        (aUser: User) =>
+        (aUser) =>
           aUser.role === UserRole.PROSECUTOR &&
           ((!workingCase.creatingProsecutor &&
             aUser.institution?.id === user?.institution?.id) ||
