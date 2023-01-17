@@ -368,6 +368,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Validate payment
 
+    throw new Error('Villa frá submitApplication')
+
     // 1a. Make sure a paymentUrl was created
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
