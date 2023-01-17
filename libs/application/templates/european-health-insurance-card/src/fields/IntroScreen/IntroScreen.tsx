@@ -7,9 +7,10 @@ import { europeanHealthInsuranceCardApplicationMessages as m } from '../../lib/m
 import { useLocale } from '@island.is/localization'
 
 const IntroScreen: FC<FieldBaseProps> = ({ application }) => {
+  console.log(application)
+  console.log('check')
   const { formatMessage } = useLocale()
   return (
-
     <Stack space={1}>
       <Box marginBottom={2} marginTop={2}>
         <Text lineHeight="lg">
@@ -21,9 +22,6 @@ const IntroScreen: FC<FieldBaseProps> = ({ application }) => {
         </Text>
       </Box>
     </Stack>
-
-
-
   )
 }
 export default IntroScreen

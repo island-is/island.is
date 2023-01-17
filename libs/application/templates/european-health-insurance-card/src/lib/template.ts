@@ -5,19 +5,30 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  ChildrenCustodyInformationApi,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
+import {
+  EhicChildrenCustodyInformationApi,
+  EhicNationalRegistrySpouseApi,
+  EhicNationalRegistryUserApi,
+} from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
 enum States {
   DRAFT = 'draft',
   APPROVED = 'approved',
+  PREREQUISITES = 'prerequisites',
+  SUBMITTED = 'submitted',
+  DECLINED = 'declined',
 }
 
 enum Roles {
@@ -40,14 +51,19 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um Umsokn',
           status: States.DRAFT,
           progress: 0.43,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 600 * 1000, // 10 minutes
+          },
+          // lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -64,8 +80,10 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              write: 'all',
-              delete: true,
+              api: [NationalRegistryUserApi],
+              // write: 'all',
+              read: 'all',
+              // delete: true,
             },
           ],
         },

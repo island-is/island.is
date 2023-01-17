@@ -2,15 +2,26 @@ import {
   defineTemplateApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
-export const EhicNationalRegistry = NationalRegistryUserApi.configure({
-  externalDataId: 'ehicNationalRegistry',
+export const EhicNationalRegistryUserApi = NationalRegistryUserApi.configure({
+  externalDataId: 'NationalRegistryUserApi',
   order: 0,
 })
 
-export const EhicService = defineTemplateApi({
+export const EhicNationalRegistrySpouseApi = NationalRegistryUserApi.configure({
+  externalDataId: 'NationalRegistrySpouseApi',
   order: 1,
-  action: 'getCardResponse',
-  externalDataId: 'ehicCardProvider',
 })
+
+export const EhicChildrenCustodyInformationApi = NationalRegistryUserApi.configure(
+  {
+    externalDataId: 'ChildrenCustodyInformationApi',
+    order: 2,
+  },
+)
+
+// export const EhicService = defineTemplateApi({
+//   order: 3,
+//   action: 'getCardResponse',
+//   externalDataId: 'ehicCardProvider',
+// })

@@ -1,41 +1,81 @@
-import { Comparators, Form, FormModes } from '@island.is/application/types'
 import {
-  buildCompanySearchField,
+  Comparators,
+  Form,
+  FormModes,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
+import {
   buildCustomField,
+  buildDataProviderItem,
+  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import styles from './european-health-insurance-card.module.scss'
-
+import { EhicNationalRegistryUserApi } from '../dataProviders'
+import { sectionDataProviders } from './sectionDataProviders'
 /* eslint-disable-next-line */
-export interface EuropeanHealthInsuranceCardProps { }
-
+export interface EuropeanHealthInsuranceCardProps {}
 export const EuropeanHealthInsuranceCard: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
   mode: FormModes.DRAFT,
   children: [
+    sectionDataProviders,
+    // buildSection({
+    //   id: 'externalData',
+    //   title: 'section.externalData',
+    //   children: [
+    //     buildExternalDataProvider({
+    //       title: 'externalData.general.pageTitle',
+    //       id: 'approveExternalData',
+    //       subTitle: 'externalData.general.subTitle',
+    //       description: 'externalData.general.description',
+    //       checkboxLabel: 'externalData.general.checkboxLabel',
+    //       dataProviders: [
+    //         buildDataProviderItem({
+    //           provider: NationalRegistryUserApi,
+    //           title: 'externalData.labels.nationalRegistryTitle',
+    //           subTitle: 'externalData.labels.nationalRegistrySubTitle',
+    //         }),
+    //       ],
+    //     }),
+    //   ],
+    // }),
     buildSection({
       id: 'intro',
       title: e.introScreen.sectionLabel,
       children: [
+        // buildExternalDataProvider({
+        //   title: 'externalData',
+        //   id: 'approveExternalData',
+        //   subTitle: 'externalData.general.subTitle',
+        //   description: 'externalData.general.description',
+        //   checkboxLabel: 'externalData.general.checkboxLabel',
+        //   dataProviders: [
+        //     buildDataProviderItem({
+        //       provider: NationalRegistryUserApi,
+        //       title: 'externalData.labels.nationalRegistryTitle',
+        //       subTitle: 'externalData.labels.nationalRegistrySubTitle',
+        //     }),
+        //   ],
+        // }),
         buildCustomField(
           {
             id: 'introScreen',
             title: e.introScreen.sectionTitle,
             component: 'IntroScreen',
-          }, {
-          subTitle: e.introScreen.sectionDescription,
-        },
+          },
+          {
+            subTitle: e.introScreen.sectionDescription,
+          },
         ),
       ],
     }),
-
     buildSection({
       id: 'applicants',
       title: e.applicants.sectionLabel,
@@ -54,7 +94,6 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
         }),
       ],
     }),
-
     buildSection({
       id: 'temp',
       title: e.temp.sectionLabel,
@@ -73,8 +112,6 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
         }),
       ],
     }),
-
-
     buildSection({
       id: 'applicationReviewSection',
       title: e.review.sectionLabel,
@@ -101,7 +138,6 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
         }),
       ],
     }),
-
     buildSection({
       id: 'applicant',
       title: 'Staðfesting',
@@ -118,5 +154,4 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
     }),
   ],
 })
-
 export default EuropeanHealthInsuranceCard
