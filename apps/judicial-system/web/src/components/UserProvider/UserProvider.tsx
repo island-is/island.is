@@ -1,8 +1,11 @@
-import type { User } from '@island.is/judicial-system/types'
 import { gql, useQuery } from '@apollo/client'
+import Cookies from 'js-cookie'
+
 import React, { createContext, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
-import Cookies from 'js-cookie'
+
+import { CurrentUserQuery } from '../../graphql/schema'
+import type { User } from '../../graphql/schema'
 
 interface UserProvider {
   isAuthenticated?: boolean
@@ -12,8 +15,8 @@ interface UserProvider {
 
 export const UserContext = createContext<UserProvider>({})
 
-export const CurrentUserQuery = gql`
-  query CurrentUserQuery {
+export const CurrentUserGql = gql`
+  query CurrentUser {
     currentUser {
       id
       name
@@ -46,12 +49,12 @@ export const UserProvider: React.FC<Props> = ({
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
-  const { data } = useQuery(CurrentUserQuery, {
+  const { data } = useQuery<CurrentUserQuery>(CurrentUserGql, {
     fetchPolicy: 'no-cache',
     skip: !isAuthenticated || Boolean(user),
   })
 
-  const loggedInUser = data?.currentUser
+  const loggedInUser = data?.currentUser as User
 
   useEffect(() => {
     if (loggedInUser && !user) {

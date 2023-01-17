@@ -9,9 +9,9 @@ import {
   UpdateDefendant as TUpdateDefendant,
 } from '@island.is/judicial-system/types'
 import {
-  CreateDefendantMutationMutation,
-  DeleteDefendantMutationMutation,
-  UpdateDefendantMutationMutation,
+  CreateDefendantMutation,
+  DeleteDefendantMutation,
+  UpdateDefendantMutation,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CreateDefendant } from './createDefendantGql'
@@ -24,13 +24,13 @@ const useDefendants = () => {
   const [
     createDefendantMutation,
     { loading: isCreatingDefendant },
-  ] = useMutation<CreateDefendantMutationMutation>(CreateDefendant)
-  const [
-    deleteDefendantMutation,
-  ] = useMutation<DeleteDefendantMutationMutation>(DeleteDefendant)
-  const [
-    updateDefendantMutation,
-  ] = useMutation<UpdateDefendantMutationMutation>(UpdateDefendant)
+  ] = useMutation<CreateDefendantMutation>(CreateDefendant)
+  const [deleteDefendantMutation] = useMutation<DeleteDefendantMutation>(
+    DeleteDefendant,
+  )
+  const [updateDefendantMutation] = useMutation<UpdateDefendantMutation>(
+    UpdateDefendant,
+  )
 
   const createDefendant = useCallback(
     async (caseId: string, defendant: TUpdateDefendant) => {
