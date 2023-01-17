@@ -1429,7 +1429,9 @@ test.each([
   ({ parentRelation, expected }) => {
     const application = buildApplication({
       answers: {
-        otherParent: parentRelation,
+        otherParentObj: {
+          chooseOtherParent: parentRelation,
+        },
       },
     })
     expect(allowOtherParentToUsePersonalAllowance(application.answers)).toBe(

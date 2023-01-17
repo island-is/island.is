@@ -438,6 +438,13 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  addMessagesForSubmittedIndicitmentCaseToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+      caseId: theCase.id,
+    })
+  }
+
   addMessagesForCompletedIndictmentCaseToQueue(theCase: Case): Promise<void> {
     return this.messageService.sendMessagesToQueue(
       this.getArchiveCaseFileMessages(theCase).concat([
@@ -450,6 +457,15 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(
       this.getArchiveCaseFileMessages(theCase),
     )
+  }
+
+  addReceivedByCourtMessageToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        caseId: theCase.id,
+      },
+    ])
   }
 
   async findById(caseId: string, allowDeleted = false): Promise<Case> {
@@ -558,6 +574,12 @@ export class CaseService {
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
+        }
+
+        if (
+          (update as { [key: string]: string }).state === CaseState.RECEIVED
+        ) {
+          await this.addReceivedByCourtMessageToQueue(theCase)
         }
       })
       .then(async () => {

@@ -42,6 +42,75 @@ export const errorModal = {
       description: 'Error Modal: Max debt modal name of link two',
     },
   }),
+  doNotOwe: defineMessages({
+    title: {
+      id: `pdpp.application:errorModal.doNotOwe.title`,
+      defaultMessage: 'Ekki skilvís með fyrri greiðsluáætlanir',
+      description: 'Error Modal: Do not owe title',
+    },
+    summary: {
+      id: `pdpp.application:errorModal.doNotOwe.summary`,
+      defaultMessage:
+        'Ekki er hægt að gera greiðsluáætlun Í sjálfsafgreiðslu þar sem þú hefur ekki staðið við fyrri greiðsluáætlanir. Vinsamlegast hafðu samband við innheimtumann í þínu umdæmi til að fá frekari upplýsingar og úrlausn.',
+      description: 'Error Modal: Do not owe summary',
+    },
+    linkOne: {
+      id: `pdpp.application:errorModal.doNotOwe.linkOne`,
+      defaultMessage:
+        'https://www.skatturinn.is/innheimta/vanskil/greidsluaaetlanir/',
+      description: 'Error Modal: Do not owe link one',
+    },
+    linkOneName: {
+      id: `pdpp.application:errorModal.doNotOwe.linkOneName`,
+      defaultMessage: 'Skattar',
+      description: 'Error Modal: Do not owe name of link one',
+    },
+    linkTwo: {
+      id: `pdpp.application:errorModal.doNotOwe.linkTwo`,
+      defaultMessage: 'https://island.is/s/syslumenn/nordurland-vestra',
+      description: 'Error Modal: Do not owe link two',
+    },
+    linkTwoName: {
+      id: `pdpp.application:errorModal.doNotOwe.linkTwoName`,
+      defaultMessage: 'Sektir, sakarkostnaður og ofgreiddar bætur',
+      description: 'Error Modal: Do not owe name of link two',
+    },
+  }),
+  other: defineMessages({
+    title: {
+      id: `pdpp.application:errorModal.other.title`,
+      defaultMessage:
+        'Gjaldflokkar sem falla ekki undir rafræna greiðsluáætlun',
+      description: 'Error Modal: other title',
+    },
+    summary: {
+      id: `pdpp.application:errorModal.other.summary`,
+      defaultMessage:
+        'Í sjálfsafgreiðslu er ekki er heimilt að gera greiðsluáætlun um þessi gjöld. Vinsamlegast hafðu samband við innheimtumann í þínu umdæmi til að fá frekari upplýsingar og úrlausn.',
+      description: 'Error Modal: other summary',
+    },
+    linkOne: {
+      id: `pdpp.application:errorModal.other.linkOne`,
+      defaultMessage:
+        'https://www.skatturinn.is/innheimta/vanskil/greidsluaaetlanir/',
+      description: 'Error Modal: other link one',
+    },
+    linkOneName: {
+      id: `pdpp.application:errorModal.other.linkOneName`,
+      defaultMessage: 'Skattar',
+      description: 'Error Modal: other name of link one',
+    },
+    linkTwo: {
+      id: `pdpp.application:errorModal.other.linkTwo`,
+      defaultMessage: 'https://island.is/s/syslumenn/nordurland-vestra',
+      description: 'Error Modal: other link two',
+    },
+    linkTwoName: {
+      id: `pdpp.application:errorModal.other.linkTwoName`,
+      defaultMessage: 'Sektir, sakarkostnaður og ofgreiddar bætur',
+      description: 'Error Modal: other name of link two',
+    },
+  }),
   estimationOfReturns: defineMessages({
     title: {
       id: `pdpp.application:errorModal.estimationOfReturns.title`,
