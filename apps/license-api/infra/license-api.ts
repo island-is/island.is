@@ -36,6 +36,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
           prod: 'license-api-callback-xrd',
         },
         paths: ['/license-api'],
+        public: false,
         extraAnnotations: {
           dev: {},
           staging: {
@@ -44,6 +45,11 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
           prod: {},
         },
       },
+    })
+    .replicaCount({
+      default: 2,
+      min: 2,
+      max: 10,
     })
     .liveness('/liveness')
     .readiness('/liveness')
