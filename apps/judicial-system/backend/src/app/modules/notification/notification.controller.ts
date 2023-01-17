@@ -85,6 +85,7 @@ export class NotificationController {
         NotificationType.RECEIVED_BY_COURT,
       ].includes(notification.type)
     ) {
+      // Notifications put on queue will call the internal notification controller
       return this.notificationService.addMessagesForNotificationToQueue(
         theCase,
         notification,
