@@ -1,5 +1,5 @@
-import { BrowserRouter, Switch } from 'react-router-dom'
-import { CompatRouter, CompatRoute } from 'react-router-dom-v5-compat'
+import { BrowserRouter } from 'react-router-dom'
+import { CompatRouter, CompatRoute, Routes } from 'react-router-dom-v5-compat'
 import { ApolloProvider } from '@apollo/client'
 
 import { client } from '../graphql'
@@ -32,14 +32,14 @@ export const App = () => {
                     }}
                   >
                     <Layout>
-                      <Switch>
+                      <Routes>
                         <CompatRoute exact path={AdminPortalPaths.Root}>
                           <Dashboard />
                         </CompatRoute>
                         <CompatRoute exact path="*">
                           <Modules />
                         </CompatRoute>
-                      </Switch>
+                      </Routes>
                     </Layout>
                   </PortalProvider>
                 </FeatureFlagProvider>

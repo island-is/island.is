@@ -1,6 +1,10 @@
 import { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
-import { Switch } from 'react-router-dom'
-import { CompatRoute, Location, useLocation } from 'react-router-dom-v5-compat'
+import {
+  CompatRoute,
+  Location,
+  Routes,
+  useLocation,
+} from 'react-router-dom-v5-compat'
 import type { User } from 'oidc-client-ts'
 
 import OidcSignIn from './OidcSignIn'
@@ -189,7 +193,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
 
   return (
     <AuthContext.Provider value={context}>
-      <Switch>
+      <Routes>
         <CompatRoute
           exact
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -207,7 +211,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
             {children}
           </CheckAuth>
         </CompatRoute>
-      </Switch>
+      </Routes>
     </AuthContext.Provider>
   )
 }
