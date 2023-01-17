@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   Box,
   GridColumn,
@@ -15,6 +16,86 @@ import { BLOCKS } from '@contentful/rich-text-types'
 import { SpanType } from '@island.is/island-ui/core/types'
 import * as styles from './HeilbrigdisstofnunSudurlandsFooter.css'
 
+const ROWS_PER_COLUMN = 3
+
+interface FooterColumnProps {
+  rows: FooterItem[]
+  span?: SpanType
+  offset?: boolean
+}
+
+const FooterColumn = ({
+  rows,
+  span = ['8/8', '4/8', '2/8'],
+  offset = false,
+}: FooterColumnProps) => {
+  if (rows.length <= 0) return null
+  return (
+    <GridColumn span={span}>
+      {rows.map((item, index) => (
+        <Box
+          key={`${item?.id}-${index}`}
+          className={styles.locationBox}
+          marginLeft={offset ? [0, 0, 0, 10] : 0}
+        >
+          {item?.link?.url ? (
+            <Link href={item.link.url} color="white">
+              <Text fontWeight="semiBold" color="white" marginBottom={1}>
+                {item?.title && <Hyphen>{item.title}</Hyphen>}
+              </Text>
+            </Link>
+          ) : (
+            <Text fontWeight="semiBold" color="white" marginBottom={1}>
+              {item?.title && <Hyphen>{item.title}</Hyphen>}
+            </Text>
+          )}
+
+          {webRichText((item?.content as SliceType[]) ?? [], {
+            renderNode: {
+              [BLOCKS.PARAGRAPH]: (_node, children) => (
+                <Text
+                  color="white"
+                  variant="eyebrow"
+                  fontWeight="regular"
+                  lineHeight="xl"
+                  marginBottom={2}
+                >
+                  {children}
+                </Text>
+              ),
+            },
+          })}
+        </Box>
+      ))}
+    </GridColumn>
+  )
+}
+
+const convertFooterItemsToFooterColumns = (footerItems: FooterItem[]) => {
+  const columns: FooterColumnProps[] = [
+    // First column should always just be a single element with an offset (that's according to the design of this footer)
+    {
+      rows: [footerItems[0]],
+      offset: true,
+    },
+  ]
+
+  // Group together rows of footer items and make them a single column
+  let currentColumnIndex = 1
+  for (const footerItem of footerItems.slice(1)) {
+    if (columns.length <= currentColumnIndex) {
+      columns[currentColumnIndex] = { rows: [] }
+    }
+
+    columns[currentColumnIndex].rows.push(footerItem)
+
+    if (columns[currentColumnIndex].rows.length >= ROWS_PER_COLUMN) {
+      currentColumnIndex += 1
+    }
+  }
+  return columns
+}
+
 interface HeilbrigdisstofnunSudurlandsFooterProps {
   footerItems: FooterItem[]
 }
@@ -22,52 +103,10 @@ interface HeilbrigdisstofnunSudurlandsFooterProps {
 export const HeilbrigdisstofnunSudurlandsFooter = ({
   footerItems,
 }: HeilbrigdisstofnunSudurlandsFooterProps) => {
-  const renderColumn = (
-    column: FooterItem[],
-    span: SpanType = ['8/8', '4/8', '2/8'],
-    offset = false,
-  ) => {
-    if (column.length <= 0) return null
-    return (
-      <GridColumn span={span}>
-        {column.map((item, index) => (
-          <Box
-            key={`${item?.id}-${index}`}
-            className={styles.locationBox}
-            marginLeft={offset ? [0, 0, 0, 10] : 0}
-          >
-            {item?.link?.url ? (
-              <Link href={item.link.url} color="white">
-                <Text fontWeight="semiBold" color="white" marginBottom={1}>
-                  {item?.title && <Hyphen>{item.title}</Hyphen>}
-                </Text>
-              </Link>
-            ) : (
-              <Text fontWeight="semiBold" color="white" marginBottom={1}>
-                {item?.title && <Hyphen>{item.title}</Hyphen>}
-              </Text>
-            )}
-
-            {webRichText((item?.content as SliceType[]) ?? [], {
-              renderNode: {
-                [BLOCKS.PARAGRAPH]: (_node, children) => (
-                  <Text
-                    color="white"
-                    variant="eyebrow"
-                    fontWeight="regular"
-                    lineHeight="xl"
-                    marginBottom={2}
-                  >
-                    {children}
-                  </Text>
-                ),
-              },
-            })}
-          </Box>
-        ))}
-      </GridColumn>
-    )
-  }
+  const footerColumns = useMemo(
+    () => convertFooterItemsToFooterColumns(footerItems),
+    [footerItems],
+  )
 
   return (
     <footer aria-labelledby="heilbrigdisstofnun-sudurlands-footer">
@@ -83,12 +122,9 @@ export const HeilbrigdisstofnunSudurlandsFooter = ({
             </GridRow>
 
             <GridRow className={styles.line}>
-              {renderColumn([footerItems[0]], ['8/8', '4/8', '2/8'], true)}
-              {renderColumn(footerItems.slice(1, 4))}
-              {renderColumn(footerItems.slice(4, 7))}
-              {renderColumn(footerItems.slice(7, 10))}
-              {renderColumn(footerItems.slice(10, 13))}
-              {renderColumn(footerItems.slice(13, 16), ['8/8', '4/8', '2/8'])}
+              {footerColumns.map((columnProps, index) => (
+                <FooterColumn key={index} {...columnProps} />
+              ))}
             </GridRow>
 
             <GridRow align="flexEnd" marginTop={3}>
