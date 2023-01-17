@@ -1,7 +1,12 @@
 import { Box, GridRow, Text } from '@island.is/island-ui/core'
 import CaseStatusCard from './CaseStatusCard'
+import { Case } from '../../../types/viewModels'
 
-const CaseOverview = () => {
+interface CaseOverviewProps {
+  detailedCase: Case
+}
+
+const CaseOverview: React.FC<CaseOverviewProps> = ({ detailedCase }) => {
   return (
     <Box>
       <GridRow>
@@ -14,11 +19,13 @@ const CaseOverview = () => {
         >
           <Text variant="eyebrow" color="purple400">
             {'Malanumer#'}
+            {/* {detailedCase.caseNumber} */}
           </Text>
         </Box>
         <Box>
           <Text variant="eyebrow" color="purple400">
             {'Dagsetning#'}
+            {/* {detailedCase.created} */}
           </Text>
         </Box>
       </GridRow>
@@ -62,6 +69,7 @@ const CaseOverview = () => {
             dolorem perspiciatis aperiam. Itaque, ipsa ea. Nesciunt labore
             eveniet, ducimus ullam illo saepe animi. Nemo, fugiat? Corrupti rem
             expedita magni totam.
+            {/* {detailedCase.announcementText} */}
           </Text>
         </Box>
         <Box>
@@ -71,6 +79,7 @@ const CaseOverview = () => {
             dolorem perspiciatis aperiam. Itaque, ipsa ea. Nesciunt labore
             eveniet, ducimus ullam illo saepe animi. Nemo, fugiat? Corrupti rem
             expedita magni totam.
+            {/* {detailedCase.detailedDescription} */}
           </Text>
         </Box>
       </Box>

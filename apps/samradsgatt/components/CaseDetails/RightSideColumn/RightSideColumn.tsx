@@ -1,10 +1,22 @@
 import { Box, CategoryCard } from '@island.is/island-ui/core'
 
-const RightSideColumn = () => {
+import { Case } from '../../../types/viewModels'
+
+interface RightSideColumnProps {
+  detailedCase?: Case
+}
+
+const RightSideColumn: React.FC<RightSideColumnProps> = ({ detailedCase }) => {
+  const contactName = 'Skrifstofa sveitarfélaga og byggðamála'
+  const contactEmail = 'irn@irn.is'
   return (
     <Box paddingY={8}>
       <Box padding={3}>
-        <CategoryCard heading="Skjöl til samráðs" text="Lorem ipsum......." />
+        <CategoryCard
+          heading="Skjöl til samráðs"
+          text="Lorem ipsum..."
+          // text={detailedCase.shortDescription}
+        />
       </Box>
       <Box padding={3}>
         <CategoryCard
@@ -13,7 +25,10 @@ const RightSideColumn = () => {
         />
       </Box>
       <Box padding={3}>
-        <CategoryCard heading="Ábyrgðaraðilli" text="Lorem ipsum......." />
+        <CategoryCard
+          heading="Ábyrgðaraðilli"
+          text={`${contactName}` + ` ` + `${contactEmail}`}
+        />
       </Box>
     </Box>
   )

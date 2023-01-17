@@ -3,12 +3,13 @@ import { GridColumn, GridRow, GridContainer } from '@island.is/island-ui/core'
 import LeftSideColumn from '../../components/CaseDetails/LeftSideColumn/LeftSideColumn'
 import MainColumn from '../../components/CaseDetails/MainColumn/MainColumn'
 import RightSideColumn from '../../components/CaseDetails/RightSideColumn/RightSideColumn'
+import { Case } from '../../types/viewModels'
 
 interface DetailsProps {
-  CaseID: string
+  detailedCase: Case
 }
 
-const Details: React.FC<DetailsProps> = () => {
+const Details: React.FC<DetailsProps> = ({ detailedCase }) => {
   return (
     <GridContainer>
       <GridRow>
@@ -16,10 +17,10 @@ const Details: React.FC<DetailsProps> = () => {
           <LeftSideColumn />
         </GridColumn>
         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
-          <MainColumn />
+          <MainColumn detailedCase={detailedCase} />
         </GridColumn>
         <GridColumn span={'3/12'}>
-          <RightSideColumn />
+          <RightSideColumn detailedCase={detailedCase} />
         </GridColumn>
       </GridRow>
     </GridContainer>
