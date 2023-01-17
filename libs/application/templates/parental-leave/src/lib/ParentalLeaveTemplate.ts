@@ -572,7 +572,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
+          [DefaultEvents.APPROVE]: {
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
         },
@@ -883,12 +883,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: [
-          'assignToVMST',
-          'removeNullPeriod',
-          'setAdditionalFileSentVariable',
-        ],
-        exit: 'clearTemp',
+        entry: ['assignToVMST', 'removeNullPeriod'],
+        exit: ['clearTemp', 'setAdditionalFileSentVariable'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -1353,10 +1349,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           answers,
         )
 
-        // const newAddDocs = additionalDocuments.map(v => ({...v, isSend: true}))
-        // set(answers, 'fileUpload.additionalDocuments', newAddDocs)
-        const newAddDocs = commonFiles.map((v) => ({ ...v, isSend: true }))
-        set(answers, 'fileUpload.file', newAddDocs)
+        const newAddDocs = additionalDocuments.map((v) => ({
+          ...v,
+          isSend: true,
+        }))
+        set(answers, 'fileUpload.additionalDocuments', newAddDocs)
+        // const newAddDocs = commonFiles.map((v) => ({ ...v, isSend: true }))
+        // set(answers, 'fileUpload.file', newAddDocs)
 
         return context
       }),
