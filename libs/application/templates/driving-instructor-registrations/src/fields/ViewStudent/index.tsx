@@ -30,6 +30,7 @@ import {
   RegisterDrivingLesson,
   DeleteDrivingLesson,
   EditDrivingLesson,
+  AllowPracticeDriving,
 } from '../../graphql/mutations'
 import { Application } from '@island.is/application/types'
 import Skeleton from './Skeleton'
@@ -71,6 +72,10 @@ const ViewStudent = ({
     EditDrivingLesson,
   )
 
+  const [allowPractiveDriving, { loading: loadingAllow }] = useMutation(
+    AllowPracticeDriving,
+  )
+
   const [minutesInputActive, setMinutesInputActive] = useState(false)
   const [minutes, setMinutes] = useState<number>(0)
   const [date, setDate] = useState<string>('')
@@ -108,12 +113,20 @@ const ViewStudent = ({
 
   const resetFields = (message?: string) => {
     refetchStudent().then(() => {
-      message === 'edit'
-        ? toast.success(formatMessage(m.successOnEditLesson))
-        : message === 'delete'
-        ? toast.success(formatMessage(m.successOnDeleteLesson))
-        : toast.success(formatMessage(m.successOnRegisterLesson))
-
+      switch (message) {
+        case 'edit':
+          toast.success(formatMessage(m.successOnEditLesson))
+          break
+        case 'delete':
+          toast.success(formatMessage(m.successOnDeleteLesson))
+          break
+        case 'save':
+          toast.success(formatMessage(m.successOnRegisterLesson))
+          break
+        case 'allow':
+          toast.success(formatMessage(m.successOnAllowPracticeDriving))
+          break
+      }
       setEditingRegistration(undefined)
       setDate('')
       setMinutes(0)
@@ -138,7 +151,7 @@ const ViewStudent = ({
       setNewRegId(
         res.data.drivingLicenseBookCreatePracticalDrivingLesson.id.toUpperCase(),
       )
-      resetFields()
+      resetFields('save')
     }
   }
 
@@ -187,6 +200,22 @@ const ViewStudent = ({
     }
   }
 
+  const allowPracticeDriving = async (studentNationalId: string) => {
+    const res = await allowPractiveDriving({
+      variables: {
+        input: {
+          nationalId: studentNationalId,
+        },
+      },
+    }).catch(() => {
+      toast.error(formatMessage(m.errorOnAllowPracticeDriving))
+    })
+
+    if (res && res.data.drivingLicenseBookAllowPracticeDriving.success) {
+      resetFields('allow')
+    }
+  }
+
   return (
     <GridContainer>
       {!error &&
@@ -195,15 +224,20 @@ const ViewStudent = ({
       Object.entries(student).length > 0 ? (
         <>
           <GridRow marginBottom={3}>
-            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
+            {/* name */}
+            <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">{formatMessage(m.viewStudentName)}</Text>
               <Text variant="default">{student.name}</Text>
             </GridColumn>
-            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
+            {/* nationalId */}
+            <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">{formatMessage(m.viewStudentNationalId)}</Text>
               <Text variant="default">{student.nationalId}</Text>
             </GridColumn>
-            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
+          </GridRow>
+          <GridRow marginBottom={3}>
+            {/* Completed */}
+            <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">
                 {formatMessage(m.viewStudentCompleteHours)}
               </Text>
@@ -211,39 +245,77 @@ const ViewStudent = ({
                 {student.book?.totalLessonCount ?? 0}
               </Text>
             </GridColumn>
-          </GridRow>
+            {/* Practice driving */}
+            <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
+              <Text variant="h4">Æfingarakstursleyfi</Text>
 
+              <Text variant="default">
+                {student.book?.practiceDriving ? 'Já' : 'Nei'}
+              </Text>
+            </GridColumn>
+          </GridRow>
           <GridRow marginBottom={5} className={styles.hideRow}>
+            {/* Completed schools */}
             <GridColumn span={['12/12', '6/12']}>
               <Text variant="h4">
                 {formatMessage(m.viewStudentCompleteSchools)}
               </Text>
-              {student.book?.drivingSchoolExams?.map((school, key) => {
-                const datePostfix = school.examDate
-                  ? `- ${school.examDate}`
-                  : ''
-                return (
-                  <Text key={key} variant="default">
-                    {`${school.schoolTypeName}${datePostfix}`}
-                  </Text>
-                )
-              })}
+              {student.book?.drivingSchoolExams.length > 0 ? (
+                student.book?.drivingSchoolExams?.map((school, key) => {
+                  const datePostfix = school.examDate
+                    ? `- ${format(new Date(school.examDate), 'dd.MM.yyyy')}`
+                    : ''
+                  return (
+                    <Text key={key} variant="default">
+                      {`${school.schoolTypeName}${datePostfix}`}
+                    </Text>
+                  )
+                })
+              ) : (
+                <Text variant="default">Engum ökuskóla lokið</Text>
+              )}
             </GridColumn>
+            {/* Exams */}
             <GridColumn span={['12/12', '6/12']}>
               <Text variant="h4">
                 {formatMessage(m.viewStudentExamsComplete)}
               </Text>
-              {student.book?.testResults?.map((test, key) => {
-                return (
-                  <Text key={key} variant="default">
-                    {test.testTypeName}
-                  </Text>
-                )
-              })}
+              {student.book?.testResults.length > 0 ? (
+                student.book?.testResults.map((test, key) => {
+                  const datePostfix = test.examDate
+                    ? `- ${format(new Date(test.examDate), 'dd.MM.yyyy')}`
+                    : ''
+                  return (
+                    <Text key={key} variant="default">
+                      {`${test.testTypeName}${datePostfix}`}
+                    </Text>
+                  )
+                })
+              ) : (
+                <Text variant="default">Engu skriflegu prófi lokið</Text>
+              )}
             </GridColumn>
           </GridRow>
+          {/* Practice driving button */}
+          {!student.book.practiceDriving &&
+            student.book.totalLessonCount >= 10 && (
+              <GridRow marginBottom={5}>
+                <GridColumn span={['12/12', '6/12']}>
+                  <Button
+                    fluid
+                    onClick={() => allowPracticeDriving(student.nationalId)}
+                  >
+                    Veita æfingarakstursleyfi
+                  </Button>
+                </GridColumn>
+              </GridRow>
+            )}
 
+          {/* Minutes sections */}
           <GridRow marginBottom={5}>
+            <GridColumn span={'12/12'} paddingBottom={2}>
+              <Text variant="h3">Skrá ökutíma</Text>
+            </GridColumn>
             <GridColumn span={'12/12'} paddingBottom={2}>
               <Text variant="h4">
                 {formatMessage(m.viewStudentRegisterMinutes)}
@@ -292,7 +364,7 @@ const ViewStudent = ({
               />
             </GridColumn>
           </GridRow>
-
+          {/* Table */}
           <GridRow marginBottom={5}>
             <GridColumn
               span={['12/12', '5/12']}

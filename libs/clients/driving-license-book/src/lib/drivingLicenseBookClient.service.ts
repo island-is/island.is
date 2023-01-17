@@ -210,7 +210,9 @@ export class DrivingLicenseBookClientApiFactory {
     const activeBook = await this.getActiveBookId(nationalId)
 
     const book = data?.books?.filter((b) => b.id === activeBook && !!b.id)[0]
-
+    const hasPracticeDriving = activeBook
+      ? await this.hasPracticeDriving(activeBook)
+      : false
     if (!book) {
       this.logger.error(
         `${LOGTAG} Error fetching student, student has no active book`,
@@ -219,7 +221,7 @@ export class DrivingLicenseBookClientApiFactory {
         `driving-license-book-client: Student has no active book`,
       )
     }
-    return getStudentAndBookMapper(data, book)
+    return getStudentAndBookMapper(data, book, hasPracticeDriving)
   }
 
   async getMostRecentStudentBook({
@@ -337,7 +339,13 @@ export class DrivingLicenseBookClientApiFactory {
     return data?.bookId || null
   }
 
-  async allowPractiveDriving({
+  private async hasPracticeDriving(id: string): Promise<boolean> {
+    const api = await this.create()
+    const { data } = await api.apiStudentGetLicenseBookIdGet({ id })
+    return data?.practiceDriving || false
+  }
+
+  async allowPracticeDriving({
     teacherNationalId,
     studentNationalId,
   }: AllowedPractieDrivingInput) {

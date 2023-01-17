@@ -13,6 +13,7 @@ export const ViewSingleStudentQuery = gql`
         isDigital
         totalLessonTime
         totalLessonCount
+        practiceDriving
         testResults {
           hasPassed
         }
@@ -25,9 +26,11 @@ export const ViewSingleStudentQuery = gql`
         }
         drivingSchoolExams {
           schoolTypeName
+          examDate
         }
         testResults {
           testTypeName
+          examDate
         }
       }
     }

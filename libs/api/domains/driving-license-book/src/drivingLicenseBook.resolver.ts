@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { NotFoundException, UseGuards, UseInterceptors } from '@nestjs/common'
+import { UseGuards, UseInterceptors } from '@nestjs/common'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -159,9 +159,6 @@ export class DrivingLicenseBookResolver {
     @Args('input') input: DrivingLicenseBookStudentInput,
     @CurrentUser() user: User,
   ) {
-    return this.drivingLicenseBookService.allowPracticeDriving(
-      user,
-      input,
-    )
+    return this.drivingLicenseBookService.allowPracticeDriving(user, input)
   }
 }

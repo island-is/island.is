@@ -150,7 +150,7 @@ export class DrivingLicenseBookService {
     student: DrivingLicenseBookStudentInput,
   ) {
     this.logger.debug(`driving-license-book: Allow practice driving`)
-    return await this.drivingLicenseBookClientApiFactory.allowPractiveDriving({
+    return await this.drivingLicenseBookClientApiFactory.allowPracticeDriving({
       teacherNationalId: user.nationalId,
       studentNationalId: student.nationalId,
     })
