@@ -65,8 +65,7 @@ export const VehicleRadioField: FC<
       <input
         type="hidden"
         value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
+        {...register('pickVehicle.plate', { required: true })}
       />
     </div>
   )
