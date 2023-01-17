@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom-v5-compat'
 import { isExternalLink } from '../..'
 import * as styles from './LinkResolver.css'
 interface Props {

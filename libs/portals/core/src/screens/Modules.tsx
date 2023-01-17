@@ -1,7 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { Suspense, useEffect } from 'react'
 import { useLocation } from 'react-router-dom-v5-compat'
-import { CompatRoute, Routes } from 'react-router-dom-v5-compat'
+import { Routes, Route } from 'react-router-dom-v5-compat'
 
 import { Box } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
@@ -69,28 +69,22 @@ const RouteLoader = React.memo(
     <Routes>
       {routes.map((route) =>
         route.enabled === false ? (
-          <CompatRoute
-            path={route.path}
-            exact
-            key={route.path}
-            component={AccessDenied}
-          />
+          <Route path={route.path} key={route.path} element={AccessDenied} />
         ) : (
-          <CompatRoute
+          <Route
             path={route.path}
-            exact
             key={route.path}
-            render={() => (
+            element={
               <RouteComponent
                 route={route}
                 userInfo={userInfo}
                 client={client}
               />
-            )}
+            }
           />
         ),
       )}
-      {routes.length > 0 && <CompatRoute component={NotFound} />}
+      {routes.length > 0 && <Route element={NotFound} />}
     </Routes>
   ),
 )

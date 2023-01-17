@@ -10,7 +10,7 @@ import {
   IconProps,
 } from '@island.is/island-ui/core'
 import * as styles from '../ErrorScreen/ErrorScreen.css'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom-v5-compat'
 import { ServicePortalPath } from '../../lib/navigation/paths'
 
 interface ButtonType {

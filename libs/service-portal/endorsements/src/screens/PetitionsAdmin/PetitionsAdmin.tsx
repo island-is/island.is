@@ -1,6 +1,6 @@
 import format from 'date-fns/format'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom-v5-compat'
 
 import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

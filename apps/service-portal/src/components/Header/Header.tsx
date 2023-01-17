@@ -13,7 +13,7 @@ import { UserLanguageSwitcher } from '@island.is/shared/components'
 import { useLocale } from '@island.is/localization'
 import { UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom-v5-compat'
 import { useAuth } from '@island.is/auth/react'
 
 interface Props {

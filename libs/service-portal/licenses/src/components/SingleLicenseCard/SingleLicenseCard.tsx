@@ -8,7 +8,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom-v5-compat'
 import * as styles from './SingleLicenseCard.css'
 import { m } from '../../lib/messages'
 import { LinkResolver } from '@island.is/service-portal/core'

@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom'
-import { CompatRouter, CompatRoute, Routes } from 'react-router-dom-v5-compat'
+import { CompatRouter, Routes, Route } from 'react-router-dom-v5-compat'
 import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
@@ -40,12 +40,12 @@ export const App = () => {
                       <UserProfileLocale />
                       <Layout>
                         <Routes>
-                          <CompatRoute exact path={ServicePortalPaths.Root}>
-                            <Dashboard />
-                          </CompatRoute>
-                          <CompatRoute exact path="*">
-                            <Modules />
-                          </CompatRoute>
+                          <Route
+                            index
+                            path={ServicePortalPaths.Root}
+                            element={<Dashboard />}
+                          />
+                          <Route path="*" element={<Modules />} />
                         </Routes>
                       </Layout>
                     </PortalProvider>
