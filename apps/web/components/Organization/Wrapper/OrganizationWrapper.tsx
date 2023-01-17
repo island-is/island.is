@@ -100,7 +100,6 @@ interface HeaderProps {
 export const lightThemes = [
   'digital_iceland',
   'default',
-  'landlaeknir',
   'fiskistofa',
   'landing_page',
 ]
