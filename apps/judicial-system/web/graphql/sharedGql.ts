@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
-export const CreatePresignedPostMutation = gql`
-  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
+export const CreatePresignedPostGql = gql`
+  mutation CreatePresignedPost($input: CreatePresignedPostInput!) {
     createPresignedPost(input: $input) {
       url
       fields
@@ -9,8 +9,8 @@ export const CreatePresignedPostMutation = gql`
   }
 `
 
-export const CreateFileMutation = gql`
-  mutation CreateFileMutation($input: CreateFileInput!) {
+export const CreateFileGql = gql`
+  mutation CreateFile($input: CreateFileInput!) {
     createFile(input: $input) {
       id
       created
@@ -24,31 +24,31 @@ export const CreateFileMutation = gql`
   }
 `
 
-export const DeleteFileMutation = gql`
-  mutation DeleteFileMutation($input: DeleteFileInput!) {
+export const DeleteFileGql = gql`
+  mutation DeleteFile($input: DeleteFileInput!) {
     deleteFile(input: $input) {
       success
     }
   }
 `
 
-export const GetSignedUrlQuery = gql`
-  query GetSignedUrlQuery($input: GetSignedUrlInput!) {
+export const GetSignedUrlGql = gql`
+  query GetSignedUrl($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
       url
     }
   }
 `
 
-export const UploadFileToCourtMutation = gql`
-  mutation UploadFileToCourtMutation($input: UploadFileToCourtInput!) {
+export const UploadFileToCourtGql = gql`
+  mutation UploadFileToCourt($input: UploadFileToCourtInput!) {
     uploadFileToCourt(input: $input) {
       success
     }
   }
 `
 
-export const PoliceCaseFilesQuery = gql`
+export const PoliceCaseFilesGql = gql`
   query GetPoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
     policeCaseFiles(input: $input) {
       id
@@ -57,8 +57,8 @@ export const PoliceCaseFilesQuery = gql`
   }
 `
 
-export const UploadPoliceCaseFileMutation = gql`
-  mutation UploadPoliceCaseFileMutation($input: UploadPoliceCaseFileInput!) {
+export const UploadPoliceCaseFileGql = gql`
+  mutation UploadPoliceCaseFile($input: UploadPoliceCaseFileInput!) {
     uploadPoliceCaseFile(input: $input) {
       key
       size

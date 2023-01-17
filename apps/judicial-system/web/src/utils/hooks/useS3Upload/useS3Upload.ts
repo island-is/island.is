@@ -5,18 +5,18 @@ import { useIntl } from 'react-intl'
 import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import {
-  CreateFileMutationDocument,
-  CreateFileMutationMutation,
-  CreateFileMutationMutationVariables,
-  CreatePresignedPostMutationDocument,
-  CreatePresignedPostMutationMutation,
-  CreatePresignedPostMutationMutationVariables,
-  DeleteFileMutationDocument,
-  DeleteFileMutationMutation,
-  DeleteFileMutationMutationVariables,
+  CreateFileDocument,
+  CreateFileMutation,
+  CreateFileMutationVariables,
+  CreatePresignedPostDocument,
+  CreatePresignedPostMutation,
+  CreatePresignedPostMutationVariables,
+  DeleteFileDocument,
+  DeleteFileMutation,
+  DeleteFileMutationVariables,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { UploadPoliceCaseFileMutation } from '@island.is/judicial-system-web/graphql'
+import { UploadPoliceCaseFileGql } from '@island.is/judicial-system-web/graphql'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 export interface TUploadFile extends UploadFile {
@@ -73,20 +73,18 @@ const uploadToS3 = (
 export const useS3Upload = (caseId: string) => {
   const { formatMessage } = useIntl()
   const [createPresignedMutation] = useMutation<
-    CreatePresignedPostMutationMutation,
-    CreatePresignedPostMutationMutationVariables
-  >(CreatePresignedPostMutationDocument)
+    CreatePresignedPostMutation,
+    CreatePresignedPostMutationVariables
+  >(CreatePresignedPostDocument)
   const [addFileToCaseMutation] = useMutation<
-    CreateFileMutationMutation,
-    CreateFileMutationMutationVariables
-  >(CreateFileMutationDocument)
-  const [uploadPoliceCaseFileMutation] = useMutation(
-    UploadPoliceCaseFileMutation,
-  )
+    CreateFileMutation,
+    CreateFileMutationVariables
+  >(CreateFileDocument)
+  const [uploadPoliceCaseFileMutation] = useMutation(UploadPoliceCaseFileGql)
   const [deleteFileMutation] = useMutation<
-    DeleteFileMutationMutation,
-    DeleteFileMutationMutationVariables
-  >(DeleteFileMutationDocument)
+    DeleteFileMutation,
+    DeleteFileMutationVariables
+  >(DeleteFileDocument)
 
   const upload = useCallback(
     async (
