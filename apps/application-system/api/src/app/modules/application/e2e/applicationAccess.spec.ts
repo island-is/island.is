@@ -4,7 +4,7 @@ import { ApplicationService } from '@island.is/application/api/core'
 import {
   createApplicationTemplate,
   createApplication,
-} from '@island.is/application/testingd'
+} from '@island.is/application/testing'
 import * as faker from 'faker'
 import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
