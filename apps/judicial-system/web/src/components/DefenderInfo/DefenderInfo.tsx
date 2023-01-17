@@ -73,11 +73,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
           text={formatMessage(
             defenderInfo.investigationCases.sections.defender.tooltip,
             {
-              defenderType:
-                workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                  ? 'talsmaður'
-                  : 'verjandi',
+              sessionArrangement: workingCase.sessionArrangements,
             },
           )}
           placement="right"

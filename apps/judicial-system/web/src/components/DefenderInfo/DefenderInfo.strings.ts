@@ -22,7 +22,7 @@ export const defenderInfo = {
           id:
             'judicial.system.core:defender_info.investigation_cases.sections.defender.tooltip',
           defaultMessage:
-            'Lögmaður sem er valinn hér verður skipaður {defenderType} í þinghaldi og fær sendan úrskurð rafrænt.',
+            'Lögmaður sem er valinn hér verður skipaður {sessionArrangement, select, ALL_PRESENT_SPOKESPERSON {talsmaður} other {verjandi}} í þinghaldi og fær sendan úrskurð rafrænt.',
           description:
             'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á fyrirtöku skrefi í rannsóknarheimildum.',
         },
