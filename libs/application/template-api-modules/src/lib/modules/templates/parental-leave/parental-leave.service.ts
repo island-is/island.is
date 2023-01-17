@@ -313,7 +313,31 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       selfEmployedFiles: selfEmployedPdfs,
       studentFiles: studentPdfs,
       singleParentFiles: singleParentPdfs,
+      additionalDocuments,
     } = getApplicationAnswers(application.answers)
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+
+    // We don't want to send old files to VMST again
+    if (applicationFundId && applicationFundId !== '') {
+      if (additionalDocuments) {
+        additionalDocuments.forEach(async (val, i) => {
+          if (!val?.isSend) {
+            const pdf = await this.getPdf(
+              application,
+              i,
+              'fileUpload.additionalDocuments',
+            )
+            attachments.push({
+              attachmentType: apiConstants.attachments.other,
+              attachmentBytes: pdf,
+            })
+          }
+        })
+      }
+      return attachments
+    }
 
     if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
       // const selfEmployedPdfs = (await getValueViaPath(
@@ -1141,34 +1165,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       isRecivingUnemploymentBenefits,
       applicationType,
-      additionalDocuments,
     } = getApplicationAnswers(application.answers)
-    const { applicationFundId } = getApplicationExternalData(
-      application.externalData,
-    )
 
     const nationalRegistryId = application.applicant
-    let attachments: Attachment[] = []
-
-    if (applicationFundId && applicationFundId !== '') {
-      if (additionalDocuments) {
-        additionalDocuments.forEach(async (val, i) => {
-          if (!val?.isSend) {
-            const pdf = await this.getPdf(
-              application,
-              i,
-              'fileUpload.additionalDocuments',
-            )
-            attachments.push({
-              attachmentType: apiConstants.attachments.other,
-              attachmentBytes: pdf,
-            })
-          }
-        })
-      }
-    } else {
-      attachments = await this.getAttachments(application)
-    }
+    const attachments = await this.getAttachments(application)
 
     try {
       const periods = await this.createPeriodsDTO(

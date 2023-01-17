@@ -196,7 +196,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_APPROVAL]: {
-        entry: ['assignToOtherParent', 'setAdditionalFileSentVariable'],
+        entry: ['assignToOtherParent'],
         exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
@@ -1354,8 +1354,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           isSend: true,
         }))
         set(answers, 'fileUpload.additionalDocuments', newAddDocs)
-        // const newAddDocs = commonFiles.map((v) => ({ ...v, isSend: true }))
-        // set(answers, 'fileUpload.file', newAddDocs)
 
         return context
       }),
