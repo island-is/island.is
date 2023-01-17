@@ -101,6 +101,12 @@ export class DelegationsOutgoingService {
       )
     }
 
+    if (otherUser === user.actor?.nationalId) {
+      throw new BadRequestException(
+        'Cannot fetch delegations for yourself as actor.',
+      )
+    }
+
     const delegation = await this.findOneInternal(
       user,
       DelegationDirection.OUTGOING,

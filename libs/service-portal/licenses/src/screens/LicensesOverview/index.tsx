@@ -8,25 +8,20 @@ import {
   m as coreMessage,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
-import { gql, useLazyQuery, useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import {
   GenericLicenseType,
   GenericUserLicenseFetchStatus,
-  GetChildrenIdentityDocumentQuery,
   useChildrenPassport,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
-import {
-  IdentityDocumentModel,
-  IdentityDocumentModelChild,
-  Query,
-} from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
 
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { GetIdentityDocumentQuery } from '@island.is/service-portal/graphql'
+import { usePassport } from '@island.is/service-portal/graphql'
 import UserLicenses from './UserLicenses'
 import ChildrenLicenses from './ChildrenLicenses'
 
@@ -99,27 +94,16 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
     GenericLicenseType.DriversLicense,
+    GenericLicenseType.AdrLicense,
+    GenericLicenseType.MachineLicense,
+    GenericLicenseType.FirearmLicense,
   ])
-  const [passportEnabled, setPassportEnabled] = useState(false)
 
-  const [
-    getPassportData,
-    {
-      data: identityDocumentData,
-      loading: passportLoading,
-      error: passportError,
-    },
-  ] = useLazyQuery(GetIdentityDocumentQuery)
-
-  const [
-    getPassportDataChild,
-    { data: childIdentityDocumentData, loading: childrenLoading },
-  ] = useLazyQuery(GetChildrenIdentityDocumentQuery)
-
+  /* Flag to hide disability license */
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
-        `servicePortalFetchAllLicenses`,
+        `isServicePortalDisabilityLicenseEnabled`,
         false,
       )
       if (ffEnabled) {
@@ -128,30 +112,12 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           GenericLicenseType.AdrLicense,
           GenericLicenseType.MachineLicense,
           GenericLicenseType.FirearmLicense,
+          GenericLicenseType.DisabilityLicense,
         ])
       }
     }
     isFlagEnabled()
-
-    const isPassportFlagEnabled = async () => {
-      const isPassEnabled = Boolean(
-        await featureFlagClient.getValue(
-          `isServicePortalPassportPageEnabled`,
-          false,
-        ),
-      )
-
-      setPassportEnabled(isPassEnabled)
-    }
-    isPassportFlagEnabled()
   }, [])
-
-  useEffect(() => {
-    if (passportEnabled) {
-      getPassportData()
-      getPassportDataChild()
-    }
-  }, [passportEnabled])
 
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
     variables: {
@@ -162,13 +128,13 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     },
   })
   const { genericLicenses = [] } = data ?? {}
-  const passportData = identityDocumentData?.getIdentityDocument as
-    | IdentityDocumentModel[]
-    | undefined
+  const {
+    data: passportData,
+    loading: passportLoading,
+    error: passportError,
+  } = usePassport()
 
-  const childrenData = childIdentityDocumentData?.getIdentityDocumentChildren as
-    | IdentityDocumentModelChild[]
-    | undefined
+  const { data: childrenData, loading: childrenLoading } = useChildrenPassport()
 
   const isLoading = loading || passportLoading
   const isGenericLicenseEmpty = genericLicenses.every(
@@ -204,7 +170,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         intro={defineMessage(m.intro)}
         marginBottom={1}
       />
-      {hasChildren && passportEnabled ? (
+      {hasChildren ? (
         <Box>
           <Tabs
             label={formatMessage(m.seeLicenses)}
@@ -241,7 +207,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           hasData={hasData}
           hasError={hasError}
           isGenericLicenseEmpty={isGenericLicenseEmpty}
-          passportData={passportEnabled ? passportData : null}
+          passportData={passportData}
           genericLicenses={genericLicenses}
         />
       )}

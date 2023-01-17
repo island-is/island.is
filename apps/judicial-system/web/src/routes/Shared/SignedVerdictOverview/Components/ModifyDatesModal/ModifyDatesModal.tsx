@@ -96,6 +96,7 @@ const getModificationSuccessText = (
         'dagur,',
         'dagsins',
       )} kl. ${formatDate(modifiedValidToDate?.value, constants.TIME_FORMAT)}`,
+      userRole,
     })
   } else if (validToDateAndIsolationToDateAreTheSame) {
     modification = formatMessage(

@@ -350,6 +350,32 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('send received by court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        caseId,
+      })
+    })
+
+    it('should send a received by court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: NotificationType.RECEIVED_BY_COURT }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('send defendants not updated at court notification', () => {
     let then: Then
 

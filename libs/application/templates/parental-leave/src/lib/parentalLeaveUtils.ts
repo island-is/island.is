@@ -46,6 +46,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
   PregnancyStatusAndRightsResults,
+  OtherParentObj,
 } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
@@ -913,6 +914,13 @@ export const otherParentApprovalDescription = (
           .otherParentDescRequestingPersonalDiscount
 
   return formatMessage(description)
+}
+
+export const allowOtherParentToUsePersonalAllowance = (
+  answers: Application['answers'],
+) => {
+  const otherParentObj = (answers?.otherParentObj as unknown) as OtherParentObj
+  return otherParentObj?.chooseOtherParent === SPOUSE
 }
 
 export const allowOtherParent = (answers: Application['answers']) => {
