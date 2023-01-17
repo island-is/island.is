@@ -43,11 +43,13 @@ export const testServer = async ({
   })
 
   const moduleRef = await builder.compile()
-  const app = (await moduleRef
-    .createNestApplication()
-    .useGlobalPipes(
-      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-    )) as TestApp
+  const app = (await moduleRef.createNestApplication().useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
+    }),
+  )) as TestApp
 
   if (enableVersioning) {
     app.enableVersioning()
