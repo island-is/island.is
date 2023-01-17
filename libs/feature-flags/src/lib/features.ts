@@ -36,9 +36,6 @@ export enum Features {
   transportAuthorityOrderVehicleRegistrationCertificate = 'isTransportAuthorityOrderVehicleRegistrationCertificateEnabled',
   transportAuthorityTransferOfVehicleOwnership = 'isTransportAuthorityTransferOfVehicleOwnershipEnabled',
 
-  // Application delegation flags
-  noDebtCertificateCompanyDelegations = 'applicationNoDebtCertificateCompanyDelegations',
-
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -48,6 +45,7 @@ export enum Features {
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
 
+  // Application delegation flags
   applicationTemplatePublicDeptPaymentPlanAllowDelegation = 'applicationTemplatePublicDeptPaymentPlanAllowDelegation',
 }
 

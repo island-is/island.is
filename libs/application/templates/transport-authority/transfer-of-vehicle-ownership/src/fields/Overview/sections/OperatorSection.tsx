@@ -6,6 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { information } from '../../../lib/messages'
 import { ReviewScreenProps } from '../../../types'
 import { ReviewGroup } from '../../ReviewGroup'
+import kennitala from 'kennitala'
 
 export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   coOwnersAndOperators = [],
@@ -33,7 +34,7 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                     : ''}
                 </Text>
                 <Text>{name}</Text>
-                <Text>{nationalId}</Text>
+                <Text>{kennitala.format(nationalId, '-')}</Text>
                 <Text>{email}</Text>
                 <Text>{phone}</Text>
               </Box>
