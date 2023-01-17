@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Text, GridContainer, Divider } from '@island.is/island-ui/core'
 import CaseBreadcrumbs from './CaseBreadcrumbs'
 import CaseTimeline from './CaseTimeline'
-import SubscriptionBox from './SubscriptionBox'
+import SubscriptionBox from '../../SubscriptionBox'
 
 const LeftSideColumn = () => {
   return (
