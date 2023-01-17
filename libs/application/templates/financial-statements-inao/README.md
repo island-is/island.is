@@ -1,4 +1,6 @@
-# Application Templates General Fishing License
+<!-- gitbook-ignore -->
+
+# Application Template Financial Statements
 
 This library was generated with [Nx](https://nx.dev).
 
@@ -13,8 +15,6 @@ First you need to enter the AWS environment variables (get from https://island-i
 `export AWS_SESSION_TOKEN="<session_token>"`
 
 ### Running locally
-
-Run the application system as usually
 
 start dev services:
 
