@@ -32,6 +32,7 @@ export const buyerSubSection = buildSubSection({
           title: information.labels.buyer.phone,
           width: 'full',
           variant: 'tel',
+          format: '###-####',
           required: true,
         }),
         buildCustomField({

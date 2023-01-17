@@ -90,15 +90,33 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           />
           <GridRow>
             <GridColumn span="12/12">
+              {
+                // One country to register the json value.
+                // Other country to display the country name for the user.
+              }
+              <Box display="none">
+                <Input
+                  id="formerInsurance.country"
+                  label={formatText(
+                    m.formerInsuranceCountry,
+                    application,
+                    formatMessage,
+                  )}
+                  {...register('formerInsurance.country')}
+                  disabled={true}
+                  backgroundColor="white"
+                  value={defaultValues.country}
+                />
+              </Box>
               <Input
-                id="formerInsurance.country"
-                {...register('formerInsurance.country')}
+                id="country"
+                name="country"
                 label={formatText(
                   m.formerInsuranceCountry,
                   application,
                   formatMessage,
                 )}
-                disabled={!isEditable}
+                disabled={true}
                 backgroundColor="white"
                 value={extractKeyFromStringObject(
                   defaultValues.country,

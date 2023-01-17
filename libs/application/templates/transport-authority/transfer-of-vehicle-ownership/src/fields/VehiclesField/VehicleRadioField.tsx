@@ -33,7 +33,7 @@ export const VehicleRadioField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
 
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
@@ -63,6 +63,8 @@ export const VehicleRadioField: FC<
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
     setPlate(currentVehicle.permno || '')
     setColor(currentVehicle.color || undefined)
+    setValue('vehicle.plate', currentVehicle.permno)
+    setValue('vehicle.type', currentVehicle.make)
   }
 
   const vehicleOptions = (
