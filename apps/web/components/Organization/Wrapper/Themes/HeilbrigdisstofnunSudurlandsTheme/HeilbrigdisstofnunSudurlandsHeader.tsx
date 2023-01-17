@@ -1,21 +1,24 @@
-import React from 'react'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
+import React from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './LandlaeknirHeader.css'
+import * as styles from './HeilbrigdisstofnunSudurlandsHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const LandlaeknirHeader: React.FC<HeaderProps> = ({
+export const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
     <Box className={styles.headerBg}>
+      <Hidden below="sm">
+        <Box className={styles.headerImage} />
+      </Hidden>
       <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
@@ -29,7 +32,7 @@ export const LandlaeknirHeader: React.FC<HeaderProps> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="landlaeknir-logo"
+                  alt=""
                 />
               </Link>
             )
@@ -46,15 +49,12 @@ export const LandlaeknirHeader: React.FC<HeaderProps> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="landlaeknir-logo"
+                  alt=""
                 />
               </Link>
             </Hidden>
           )}
-          <Box
-            className={styles.title}
-            textAlign={['center', 'center', 'left']}
-          >
+          <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'right']}>
             <Link
               href={
                 linkResolver('organizationpage', [organizationPage.slug]).href

@@ -1,33 +1,27 @@
 import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
-const backgroundUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/1FB32FjyMGC1PfpDfB2Kj1/257dc1108da254359f8988dfef536936/Pattern_PP_Pattern_Circle_Blue_1.png'
-const illustrationUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg'
-
 export const headerBg = style({
+  position: 'relative',
+  zIndex: -1,
   height: 385,
   marginTop: -130,
   paddingTop: 130,
-  backgroundRepeat: 'no-repeat, no-repeat',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      backgroundSize: 'cover',
-      backgroundImage: `url(${backgroundUrl})`,
-    },
-    lg: {
-      backgroundPositionY: 'bottom',
-      backgroundPositionX: '120%, 0',
-      backgroundSize: 'unset',
-      backgroundImage: `url(${illustrationUrl}), url(${backgroundUrl})`,
-    },
-    xl: {
-      backgroundPosition: 'bottom right',
-      backgroundSize: 'contain, cover',
-      backgroundImage: `url(${illustrationUrl}), url(${backgroundUrl})`,
-    },
-  }),
+  backgroundColor: '#122771',
+  backgroundRepeat: 'no-repeat',
+})
+
+export const headerImage = style({
+  position: 'absolute',
+  width: 733,
+  top: 0,
+  left: 0,
+  height: 385,
+  backgroundRepeat: 'no-repeat',
+  opacity: 0.5,
+  backgroundSize: 'contain',
+  backgroundImage:
+    'linear-gradient(270.1deg, rgba(18, 39, 113, 0.2) 0.08%, rgba(18, 39, 113, 0) 103.56%), url(https://images.ctfassets.net/8k0h54kbe6bj/5VPkYND5fDBou7G0jCPCtD/2019274c76468def75fd5f340d2b3031/Mynd_-_header.png)',
 })
 
 export const iconCircle = style({
@@ -83,20 +77,6 @@ export const navigation = style({
       paddingLeft: 24,
       paddingRight: 24,
       paddingTop: 32,
-    },
-  }),
-})
-
-export const title = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      marginLeft: -300,
-    },
-    lg: {
-      marginLeft: -300,
-    },
-    xl: {
-      marginLeft: -180,
     },
   }),
 })
