@@ -225,13 +225,14 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                           type="checkbox"
                           {...register(
                             `apiScopeUser.userAccess[${scope.name}]` as any,
+                            {
+                              onChange: (e) =>
+                                handleScopeChange(scope.name, e.target.checked),
+                            },
                           )}
                           className="api-scope-user-create-form__checkbox"
                           checked={checked}
                           title={scope.name}
-                          onChange={(e) =>
-                            handleScopeChange(scope.name, e.target.checked)
-                          }
                         ></input>
                         <HelpBox helpText={scope.description} />
                       </div>

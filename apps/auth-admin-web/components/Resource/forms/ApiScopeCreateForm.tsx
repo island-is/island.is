@@ -130,6 +130,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     id="apiScope.name"
                     {...register('apiScope.name', {
                       required: true,
+                      onBlur: () => setApiScopeNameHintVisible(false),
+                      onChange: (e) => onApiScopeNameChange(e.target.value),
                       validate: isEditing
                         ? () => {
                             return true
@@ -140,9 +142,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     className="api-scope-form__input"
                     title={localization.fields['name'].helpText}
                     defaultValue={props.apiScope.name}
-                    onChange={(e) => onApiScopeNameChange(e.target.value)}
                     placeholder={localization.fields['name'].placeholder}
-                    onBlur={() => setApiScopeNameHintVisible(false)}
                     onFocus={(e) => onApiScopeNameChange(e.target.value)}
                   />
                   <HintBox

@@ -158,6 +158,8 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     id="name"
                     {...register('name', {
                       required: true,
+                      onChange: (e) => onNameChange(e.target.value),
+                      onBlur: () => setNameHintVisible(false),
                       validate: isEditing
                         ? () => {
                             return true
@@ -168,10 +170,8 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     className="api-resource-form__input"
                     defaultValue={props.apiResource.name}
                     readOnly={isEditing}
-                    onChange={(e) => onNameChange(e.target.value)}
                     title={localization.fields['name'].helpText}
                     placeholder={localization.fields['name'].placeholder}
-                    onBlur={() => setNameHintVisible(false)}
                     onFocus={(e) => onNameChange(e.target.value)}
                   />
                   <div

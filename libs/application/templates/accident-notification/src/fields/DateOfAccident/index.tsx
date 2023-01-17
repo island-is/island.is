@@ -86,14 +86,16 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
           render={({ field: { onChange } }) => {
             return (
               <Input
-                id="accidentDetails.isHealthInsured"
-                {...register('accidentDetails.isHealthInsured')}
+                name="accidentDetails.isHealthInsured"
+                TODO CHECK OUT IF WORKS BEFORE PR
+                {...register('accidentDetails.isHealthInsured'), {
+                  onChange: (e) => {
+                    onChange(e.target.value)
+                    setValue('accidentDetails.isHealthInsured', e.target.value)
+                  },
+                }}
                 defaultValue={'yes'}
                 value={isHealthInsured}
-                onChange={(e) => {
-                  onChange(e.target.value)
-                  setValue('accidentDetails.isHealthInsured', e.target.value)
-                }}
               />
             )
           }}

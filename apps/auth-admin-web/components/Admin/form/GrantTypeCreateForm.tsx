@@ -99,6 +99,9 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     id="grantType.name"
                     {...register('grantType.name', {
                       required: true,
+                      onBlur: () => setNameHintVisible(false),
+                      onChange: (e) => onNameChange(e.target.value),
+
                       validate: isEditing
                         ? () => {
                             return true
@@ -110,9 +113,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     placeholder={localization.fields['name'].placeholder}
                     title={localization.fields['name'].helpText}
                     readOnly={isEditing}
-                    onBlur={() => setNameHintVisible(false)}
                     onFocus={(e) => onNameChange(e.target.value)}
-                    onChange={(e) => onNameChange(e.target.value)}
                   />
                   <HintBox
                     helpText={nameHintMessage}

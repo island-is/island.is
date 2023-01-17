@@ -114,8 +114,8 @@ const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
                     className="client-allowed-scopes__select"
                     {...register('scopeName', {
                       required: true,
+                      onChange: (e) => setSelectedItem(e.target.value),
                     })}
-                    onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: ApiScope) => {
                       return (

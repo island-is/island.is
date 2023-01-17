@@ -117,9 +117,9 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     className="api-resource-scope-form__select"
                     {...register('scopeName', {
                       required: true,
+                      onChange: (e) => setSelectedItem(e.target.value),
                     })}
                     title={localization.fields['scopeName'].helpText}
-                    onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: ApiScope) => {
                       return (

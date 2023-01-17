@@ -198,11 +198,13 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     </label>
                     <select
                       id="clientType"
-                      {...register('client.clientType', { required: true })}
+                      {...register('client.clientType', {
+                        required: true,
+                        onChange: (e) => setClientType(e.target.value),
+                        onBlur: hideClientInfo,
+                      })}
                       title={localization.fields['clientType'].helpText}
-                      onChange={(e) => setClientType(e.target.value)}
                       onFocus={() => setShowClientTypeInfo(true)}
-                      onBlur={hideClientInfo}
                     >
                       <option value="" selected={!client.clientType}>
                         {
@@ -351,6 +353,8 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       id="clientId"
                       type="text"
                       {...register('client.clientId', {
+                        onBlur: () => setClientIdHintVisible(false),
+                        onChange: (e) => onClientIdChange(e.target.value),
                         required: true,
                         validate: isEditing
                           ? () => {
@@ -361,10 +365,8 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       defaultValue={client.clientId}
                       className="client-basic__input"
                       placeholder={localization.fields['clientId'].placeholder}
-                      onChange={(e) => onClientIdChange(e.target.value)}
                       title={localization.fields['clientId'].helpText}
                       readOnly={isEditing}
-                      onBlur={() => setClientIdHintVisible(false)}
                       onFocus={(e) => onClientIdChange(e.target.value)}
                     />
                     <div
@@ -404,15 +406,15 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         {...register('baseUrl', {
                           required: baseUrlRequired,
                           validate: ValidationUtils.validateBaseUrl,
+                          onChange: (e) => setCallbackUri(e.target.value),
+                          onBlur: () => setShowBaseUrlInfo(false),
                         })}
                         type="text"
                         defaultValue={client.clientUri ?? ''}
                         className="client-basic__input"
                         placeholder={localization.fields['baseUrl'].placeholder}
                         title={localization.fields['baseUrl'].helpText}
-                        onChange={(e) => setCallbackUri(e.target.value)}
                         onFocus={() => setShowBaseUrlInfo(true)}
-                        onBlur={() => setShowBaseUrlInfo(false)}
                       />
                       <HelpBox
                         helpText={localization.fields['baseUrl'].helpText}

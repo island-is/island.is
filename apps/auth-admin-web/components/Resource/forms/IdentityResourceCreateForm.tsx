@@ -102,6 +102,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                   <input
                     id="name"
                     {...register('name', {
+                      onBlur: () => setNameHintVisible(false),
+                      onChange: (e) => onNameChange(e.target.value),
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -113,9 +115,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.name}
                     readOnly={isEditing}
-                    onChange={(e) => onNameChange(e.target.value)}
                     placeholder={localization.fields['name'].placeholder}
-                    onBlur={() => setNameHintVisible(false)}
                     onFocus={(e) => onNameChange(e.target.value)}
                   />
                   <div

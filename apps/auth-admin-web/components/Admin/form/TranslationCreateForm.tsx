@@ -95,10 +95,10 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     className="translation-create-form__select"
                     {...register('translation.language', {
                       required: true,
+                      onChange: (e) => setSelectedLanguage(e.target.value),
                     })}
                     disabled={isEditing}
                     defaultValue={translation.language}
-                    onChange={(e) => setSelectedLanguage(e.target.value)}
                     title={localization.fields['language'].helpText}
                   >
                     {languages.map((language: Language) => {
