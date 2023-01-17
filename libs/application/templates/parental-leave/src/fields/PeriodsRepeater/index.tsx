@@ -24,16 +24,14 @@ import {
   getAvailableRightsInDays,
   getExpectedDateOfBirth,
   getApplicationAnswers,
-  calculateDaysUsedByPeriods,
   getVMSTPeriods,
   syncVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { NO, States } from '../../constants'
+import { States } from '../../constants'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 import { GetApplicationInformation } from '../../graphql/queries'
-import { Period, VMSTPeriod, YesOrNo } from '../../types'
 
 type FieldProps = FieldBaseProps & {
   field?: {
