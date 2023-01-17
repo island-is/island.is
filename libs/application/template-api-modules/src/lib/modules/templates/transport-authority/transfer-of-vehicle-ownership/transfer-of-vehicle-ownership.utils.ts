@@ -43,7 +43,13 @@ export const getApplicationPruneDateStr = (
   const date = new Date(applicationCreated)
   date.setDate(date.getDate() + expiresAfterDays)
 
-  return date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear()
+  return (
+    ('0' + date.getDate()).slice(-2) +
+    '.' +
+    ('0' + (date.getMonth() + 1)).slice(-2) +
+    '.' +
+    date.getFullYear()
+  )
 }
 
 export const getRecipients = (
