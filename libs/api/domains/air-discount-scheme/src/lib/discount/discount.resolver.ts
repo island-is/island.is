@@ -15,12 +15,12 @@ import { Discount } from '../models/discount.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
-@Resolver()
+@Resolver(() => Discount)
 export class DiscountResolver {
   constructor(private discountService: DiscountService) {}
 
   @Query(() => [Discount], { name: 'airDiscountSchemeDiscounts' })
-  async getDiscount(@CurrentUser() user: User) {
+  async getDiscount(@CurrentUser() user: User): Promise<Discount[]> {
     return this.discountService.getCurrentDiscounts(user)
   }
 }

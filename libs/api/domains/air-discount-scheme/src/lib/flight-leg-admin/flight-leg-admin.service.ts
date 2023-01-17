@@ -13,16 +13,18 @@ export class FlightLegAdminService {
   }
 
   flightLegs(user: User, input: FlightLegsInput): Promise<FlightLeg[]> {
-    return this.adsAdminApiWithAuth(user).privateFlightControllerGetFlightLegs({
+    return this.adsAdminApiWithAuth(
+      user,
+    ).privateFlightAdminControllerGetFlightLegs({
       getFlightLegsBody: input,
     })
   }
 
   confirmInvoice(user: User, input: ConfirmInvoiceInput): Promise<FlightLeg[]> {
-    return this.adsAdminApiWithAuth(user).privateFlightControllerConfirmInvoice(
-      {
-        confirmInvoiceBody: input,
-      },
-    )
+    return this.adsAdminApiWithAuth(
+      user,
+    ).privateFlightAdminControllerConfirmInvoice({
+      confirmInvoiceBody: input,
+    })
   }
 }

@@ -64,6 +64,7 @@ import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ChildrenService } from './children/children.service'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 interface VMSTError {
   type: string
@@ -102,6 +103,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly attachmentBucket: string,
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     private readonly childrenService: ChildrenService,
+    private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -116,8 +118,36 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
+  // Check whether phoneNumber is GSM
+  checkIfPhoneNumberIsGSM(phoneNumber: string) {
+    const phoneNumberStartStr = ['6', '7', '8']
+    return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
+  }
+
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
     return this.childrenService.provideChildren(application, auth.nationalId)
+  }
+
+  async getPerson({ auth }: TemplateApiModuleActionProps) {
+    const spouse = await this.nationalRegistryApi.getCohabitationInfo(
+      auth.nationalId,
+    )
+    const person = await this.nationalRegistryApi.getIndividual(auth.nationalId)
+
+    if (!person) {
+      return null
+    }
+
+    return (
+      spouse && {
+        spouse: {
+          nationalId: spouse.spouseNationalId,
+          name: spouse.spouseName,
+        },
+        fullname: person.fullName,
+        genderCode: person.genderCode,
+      }
+    )
   }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
@@ -131,7 +161,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     try {
-      if (otherParentPhoneNumber) {
+      if (
+        otherParentPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(otherParentPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -162,7 +195,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     try {
-      if (applicantPhoneNumber) {
+      if (
+        applicantPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -194,7 +230,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     try {
-      if (applicantPhoneNumber) {
+      if (
+        applicantPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -231,7 +270,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     // send confirmation sms to employer
     try {
-      if (employerPhoneNumber) {
+      if (
+        employerPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(employerPhoneNumber)
+      ) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
           application,

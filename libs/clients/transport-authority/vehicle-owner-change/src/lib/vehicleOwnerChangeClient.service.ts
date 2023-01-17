@@ -20,62 +20,25 @@ export class VehicleOwnerChangeClient {
   public async validateVehicleForOwnerChange(
     auth: User,
     permno: string,
-    dateOfPurchase: Date,
   ): Promise<OwnerChangeValidation> {
-    const useGroup = '000'
-
-    let errorList: ReturnTypeMessage[] = []
-
-    try {
-      // Note: we have manually changed this endpoint to void, since the messages we want only
-      // come with error code 400. If this function returns an array of ReturnTypeMessage, then
-      // we will get an error with code 204, since the openapi generator tries to convert empty result
-      // into an array of ReturnTypeMessage
-      await this.ownerchangeApiWithAuth(auth).vehiclecheckPost({
-        apiVersion: '2.0',
-        apiVersion2: '2.0',
-        postVehicleOwnerChange: {
-          permno: permno,
-          dateOfPurchase: dateOfPurchase,
-          useGroup: useGroup,
-        },
-      })
-    } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, because if ownerchange results in error,
-      // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
-      // that is of the same class as 200 result schema
-      if (e?.problem?.Errors) {
-        errorList = e.problem.Errors as ReturnTypeMessage[]
-      } else {
-        throw e
-      }
-    }
-
-    const warnSeverityError = 'E'
-    const warnSeverityLock = 'L'
-    errorList = errorList.filter(
-      (x) =>
-        x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock,
-    )
-
-    return {
-      hasError: errorList.length > 0,
-      errorMessages: errorList.map((item) => {
-        let errorNo = item.warningSerialNumber?.toString()
-
-        // Note: For vehicle locks, we need to do some special parsing since
-        // the error number (warningSerialNumber) is always -1 for locks,
-        // but the number is included in the errorMess field (value before the first space)
-        if (item.warnSever === warnSeverityLock) {
-          errorNo = item.errorMess?.split(' ')[0]
-        }
-
-        return {
-          errorNo: (item.warnSever || '_') + errorNo,
-          defaultMessage: item.errorMess,
-        }
-      }),
-    }
+    // Note: since the vehiclecheck endpoint is funky, we will instead just use the personcheck endpoint
+    // and send in dummy data where needed
+    return await this.validateAllForOwnerChange(auth, {
+      permno: permno,
+      seller: {
+        ssn: auth.nationalId,
+        email: 'mockEmail@island.is',
+      },
+      buyer: {
+        ssn: auth.nationalId,
+        email: 'mockEmail@island.is',
+      },
+      dateOfPurchase: new Date(),
+      saleAmount: 0,
+      insuranceCompanyCode: null,
+      operators: null,
+      coOwners: null,
+    })
   }
 
   public async validateAllForOwnerChange(
@@ -203,7 +166,7 @@ export class VehicleOwnerChangeClient {
         buyerEmail: ownerChange.buyer.email,
         dateOfPurchase: purchaseDate,
         saleAmount: ownerChange.saleAmount,
-        insuranceCompanyCode: ownerChange.insuranceCompanyCode,
+        insuranceCompanyCode: ownerChange.insuranceCompanyCode || '',
         useGroup: useGroup,
         operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
           ?.email,

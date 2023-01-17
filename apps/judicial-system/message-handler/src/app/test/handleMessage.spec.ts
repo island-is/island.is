@@ -44,6 +44,7 @@ describe('MessageHandlerService - Handle message', () => {
       const messageHandlerService = new MessageHandlerService(
         (undefined as unknown) as MessageService,
         new InternalDeliveryService(config, logger),
+        config,
         logger,
       )
       const then = {} as Then
@@ -317,6 +318,58 @@ describe('MessageHandlerService - Handle message', () => {
             authorization: `Bearer ${config.backendAccessToken}`,
           },
           body: JSON.stringify({ type: NotificationType.HEADS_UP }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send ready for court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+        caseId,
+      })
+    })
+
+    it('should send a ready for court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: NotificationType.READY_FOR_COURT }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send received by court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        caseId,
+      })
+    })
+
+    it('should send a received by court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: NotificationType.RECEIVED_BY_COURT }),
         },
       )
       expect(then.result).toBe(true)

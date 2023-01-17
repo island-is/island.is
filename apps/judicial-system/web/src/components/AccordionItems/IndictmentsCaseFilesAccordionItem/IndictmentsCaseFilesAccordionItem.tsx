@@ -32,7 +32,7 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   useFileList,
-  useS3UploadV2,
+  useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, errors } from '@island.is/judicial-system-web/messages'
@@ -407,7 +407,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   )
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
-  const { remove } = useS3UploadV2(caseId)
+  const { remove } = useS3Upload(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],

@@ -19,7 +19,6 @@ import {
   DefaultEvents,
   defineTemplateApi,
   UserProfileApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 
 import {
@@ -52,7 +51,7 @@ import {
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
-import { ChildrenApi } from '../dataProviders'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -129,7 +128,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi, ChildrenApi],
+              api: [UserProfileApi, GetPersonInformation, ChildrenApi],
             },
           ],
         },
@@ -995,13 +994,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(application.answers, 'transferRights')
           unset(application.answers, 'personalAllowanceFromSpouse')
           unset(application.answers, 'otherParentRightOfAccess')
-          // set(application.answers, 'otherParentEmail', undefined)
-          // set(application.answers, 'otherParentPhoneNumber', '')
-          // set(application.answers, 'requestRights.isRequestingRights', NO)
-          // set(application.answers, 'requestRights.requestDays', '0')
-          // set(application.answers, 'giveRights.giveDays', '0')
-          // set(application.answers, 'giveRights.isGivingRights', NO)
-          // set(application.answers, 'transferRights', TransferRightsOption.NONE)
         }
         return context
       }),
@@ -1026,12 +1018,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
         const { application } = context
+        const { usePersonalAllowance } = getApplicationAnswers(
+          application.answers,
+        )
 
-        const answers = getApplicationAnswers(application.answers)
-
-        if (answers.usePersonalAllowance === NO) {
+        if (usePersonalAllowance === NO) {
           if (application.answers.personalAllowance) {
-            unset(application.answers, 'personalAllowance')
+            unset(application.answers, 'personalAllowance.useAsMuchAsPossible')
+            unset(application.answers, 'personalAllowance.usage')
           }
         }
 
@@ -1039,12 +1033,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
         const { application } = context
+        const { usePersonalAllowanceFromSpouse } = getApplicationAnswers(
+          application.answers,
+        )
 
-        const answers = getApplicationAnswers(application.answers)
-
-        if (answers.usePersonalAllowanceFromSpouse === NO) {
+        if (usePersonalAllowanceFromSpouse === NO) {
           if (application.answers.personalAllowanceFromSpouse) {
-            unset(application.answers, 'personalAllowanceFromSpouse')
+            unset(
+              application.answers,
+              'personalAllowanceFromSpouse.useAsMuchAsPossible',
+            )
+            unset(application.answers, 'personalAllowanceFromSpouse.usage')
           }
         }
 

@@ -6,7 +6,6 @@ import { InformationPaths } from './lib/paths'
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
-  widgets: () => [],
   routes: ({ userInfo }) => [
     {
       name: 'Mínar upplýsingar',
