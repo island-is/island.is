@@ -22,6 +22,8 @@ export const licenseNavigation: PortalNavigationItem = {
       navHide: true,
       name: m.passport,
       path: LicensePaths.LicensesPassportDetail,
+      serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
+      activeIfExact: false,
     },
   ],
   description: m.licensesDescription,

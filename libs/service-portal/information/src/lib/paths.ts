@@ -1,6 +1,6 @@
 export enum InformationPaths {
   Child = '/min-gogn/barn/:nationalId',
-  FamilyMember = '/min-gogn/:nationalId',
+  FamilyMember = '/min-gogn/minar-upplysingar/:nationalId',
   Spouse = '/min-gogn/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',

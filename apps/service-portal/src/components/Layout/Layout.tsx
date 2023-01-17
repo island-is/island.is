@@ -25,7 +25,7 @@ import {
   Organization,
   useAlertBanners,
 } from '@island.is/service-portal/graphql'
-import { useMeasure } from 'react-use'
+import { useMeasure, useWindowSize } from 'react-use'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 import { useQuery } from '@apollo/client'
 import SidebarLayout from './SidebarLayout'
@@ -36,34 +36,26 @@ import * as styles from './Layout.css'
 import GoBack from '../GoBack/GoBack'
 import { useDynamicRoutesWithNavigation } from '@island.is/service-portal/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-
-const defaultOrg: Organization = {
-  email: '',
-  footerItems: [],
-  id: '123',
-  phone: '1234123',
-  publishedMaterialSearchFilterGenericTags: [],
-  shortTitle: 'Ísland.is',
-  slug: 'island.is',
-  tag: [],
-  title: 'Stafrænt Ísland',
-}
+import { PortalNavigationItem } from '@island.is/portals/core'
+import { theme } from '@island.is/island-ui/theme'
 
 const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
+  const { formatMessage } = useLocale()
+  const { pathname } = useLocation()
+  const { width } = useWindowSize()
   const [isDashboard, setIsDashboard] = useState(true) // TODO REVERT TO TRUE
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [currentOrganization, setCurrentOrganization] = useState<
     Organization | undefined
   >(undefined)
   const { data: orgData, loading } = useQuery(GET_ORGANIZATIONS_QUERY)
-  const { pathname } = useLocation()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const activeParent = navigation?.children?.find((item) => item.active)
-
   useScrollTopOnUpdate([pathname])
-  const { formatMessage } = useLocale()
 
+  const isMobile = width < theme.breakpoints.sm
+  console.log(isMobile)
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
   const globalBanners = banners.filter((banner) =>
@@ -95,10 +87,10 @@ const Layout: FC = ({ children }) => {
     }
   }
 
-  const subNavItems = activeParent?.children
+  const subNavItems: NavigationItem[] | undefined = activeParent?.children
     ?.filter((item) => !item.navHide)
     ?.map((item: ServicePortalNavigationItem) => {
-      return mapChildren(item)
+      return mapChildren(item) as NavigationItem
     })
 
   useEffect(() => {
@@ -114,13 +106,18 @@ const Layout: FC = ({ children }) => {
 
   useEffect(() => {
     const organizations = orgData?.getOrganizations?.items || {}
+    const activeItem = activeParent?.children?.find(
+      (item: PortalNavigationItem) => item.active,
+    )
+
     if (organizations && !loading) {
       const org = organizations.find(
-        (org: Organization) => org.id === activeParent?.serviceProvider,
+        (org: Organization) => org.id === activeItem?.serviceProvider,
       )
-      setCurrentOrganization(org ?? defaultOrg)
+      if (org) setCurrentOrganization(org)
+      else setCurrentOrganization(undefined)
     }
-  }, [loading])
+  }, [loading, pathname])
 
   return (
     <>
@@ -143,15 +140,17 @@ const Layout: FC = ({ children }) => {
                 <Box style={{ marginTop: height }}>
                   <GoBack />
                   <Box marginBottom={3}>
-                    <InstitutionPanel
-                      loading={loading}
-                      institution={currentOrganization?.title ?? ''}
-                      institutionTitle={formatMessage(m.serviceProvider)}
-                      locale="is"
-                      linkHref={currentOrganization?.link ?? ''}
-                      img={currentOrganization?.logo?.url ?? ''}
-                      imgContainerDisplay="block"
-                    />
+                    {currentOrganization && (
+                      <InstitutionPanel
+                        loading={loading}
+                        institution={currentOrganization?.title ?? ''}
+                        institutionTitle={formatMessage(m.serviceProvider)}
+                        locale="is"
+                        linkHref={currentOrganization?.link ?? ''}
+                        img={currentOrganization?.logo?.url ?? ''}
+                        imgContainerDisplay="block"
+                      />
+                    )}
                   </Box>
                   {subNavItems && subNavItems.length > 0 && (
                     <Box background="blue100">
@@ -167,7 +166,7 @@ const Layout: FC = ({ children }) => {
                         title={formatMessage(
                           activeParent?.name ?? m.tableOfContents,
                         )}
-                        items={subNavItems}
+                        items={subNavItems ?? []}
                         expand
                       />
                     </Box>
@@ -185,29 +184,7 @@ const Layout: FC = ({ children }) => {
                   active: currentOrganization?.link ? true : false,
                 }}
               />
-              {subNavItems && subNavItems.length > 0 && (
-                <Hidden above="sm">
-                  <Box paddingBottom={3}>
-                    <Navigation
-                      renderLink={(link, item) => {
-                        return item?.href ? (
-                          <ReactLink to={item?.href}>{link}</ReactLink>
-                        ) : (
-                          link
-                        )
-                      }}
-                      baseId={'service-portal-mobile-navigation'}
-                      title={
-                        activeParent?.name
-                          ? formatMessage(activeParent?.name)
-                          : formatMessage(m.tableOfContents)
-                      }
-                      items={subNavItems}
-                      isMenuDialog={true}
-                    />
-                  </Box>
-                </Hidden>
-              )}
+
               {children}
             </Box>
           </SidebarLayout>
@@ -225,6 +202,29 @@ const Layout: FC = ({ children }) => {
         setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
         sideMenuOpen={sideMenuOpen}
       />
+      {subNavItems && subNavItems.length > 0 && (
+        <Hidden above="sm">
+          <Box paddingBottom={3}>
+            <Navigation
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <ReactLink to={item?.href}>{link}</ReactLink>
+                ) : (
+                  link
+                )
+              }}
+              baseId={'service-portal-mobile-navigation'}
+              title={
+                activeParent?.name
+                  ? formatMessage(activeParent?.name)
+                  : formatMessage(m.tableOfContents)
+              }
+              items={subNavItems}
+              isMenuDialog={true}
+            />
+          </Box>
+        </Hidden>
+      )}
     </>
   )
 }

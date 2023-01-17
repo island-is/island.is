@@ -9,10 +9,12 @@ export const educationNavigation: PortalNavigationItem = {
     icon: 'school',
   },
   description: m.educationDescription,
+  serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
   children: [
     {
       name: m.myEducation,
       path: EducationPaths.EducationRoot,
+      serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
     },
   ],
 }

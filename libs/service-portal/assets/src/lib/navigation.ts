@@ -8,15 +8,18 @@ export const assetsNavigation: PortalNavigationItem = {
   icon: {
     icon: 'home',
   },
+  serviceProvider: '53jrbgxPKpbNtordSfEZUK',
   children: [
     {
       name: m.myRealEstate,
       path: AssetsPaths.AssetsRoot,
+      serviceProvider: '53jrbgxPKpbNtordSfEZUK',
     },
     {
       name: 'id',
       navHide: true,
       path: AssetsPaths.AssetsRealEstateDetail,
+      serviceProvider: '53jrbgxPKpbNtordSfEZUK',
     },
   ],
   description: m.realEstateDescription,

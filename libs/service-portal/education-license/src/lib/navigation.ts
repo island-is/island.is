@@ -8,11 +8,13 @@ export const educationLicenseNavigation: PortalNavigationItem = {
   icon: {
     icon: 'receipt',
   },
+  serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
   description: m.educationLicenseDescription,
   children: [
     {
       name: m.myEducationLicense,
       path: EducationLicensePaths.EducationLicense,
+      serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
     },
   ],
 }

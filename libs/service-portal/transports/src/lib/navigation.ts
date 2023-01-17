@@ -8,10 +8,12 @@ export const transportsNavigation: PortalNavigationItem = {
   icon: {
     icon: 'car',
   },
+  serviceProvider: '6IZT17s7stKJAmtPutjpD7',
   children: [
     {
       name: m.myVehicles,
       path: TransportPaths.AssetsMyVehicles,
+      serviceProvider: '6IZT17s7stKJAmtPutjpD7',
       children: [
         {
           // Path param reference
@@ -24,14 +26,17 @@ export const transportsNavigation: PortalNavigationItem = {
     {
       name: m.vehiclesLookup,
       path: TransportPaths.AssetsVehiclesLookup,
+      serviceProvider: '6IZT17s7stKJAmtPutjpD7',
     },
     {
       name: m.vehiclesDrivingLessons,
       path: TransportPaths.AssetsVehiclesDrivingLessons,
+      serviceProvider: '6IZT17s7stKJAmtPutjpD7',
     },
     {
       name: m.vehiclesHistory,
       path: TransportPaths.AssetsVehiclesHistory,
+      serviceProvider: '6IZT17s7stKJAmtPutjpD7',
     },
   ],
   description: m.vehiclesDescription,

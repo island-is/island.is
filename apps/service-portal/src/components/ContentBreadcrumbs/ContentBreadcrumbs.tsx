@@ -99,6 +99,7 @@ const ContentBreadcrumbs: FC<{
       justifyContent="spaceBetween"
       alignItems="center"
       paddingBottom={[2, 3]}
+      paddingTop={[1, 1, 0]}
     >
       <Box paddingTop={0}>
         <Breadcrumbs color="blue400" separatorColor="blue400">
