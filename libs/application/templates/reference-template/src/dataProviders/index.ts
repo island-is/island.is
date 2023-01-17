@@ -1,5 +1,5 @@
 import { defineTemplateApi } from '@island.is/application/types'
-export { MockProviderApi } from '@island.is/application/types'
+import { MockProviderApi } from '@island.is/application/types'
 export interface MyParameterType {
   id: number
 }
@@ -21,6 +21,17 @@ export const EphemiralApi = defineTemplateApi({
   shouldPersistToExternalData: false,
 })
 
+export const MyMockProvider = MockProviderApi.configure({
+  externalDataId: 'referenceMock',
+  params: {
+    mocked: false,
+    mockObject: {
+      mockString: 'This is a mocked string',
+      mockArray: ['Need to mock providers?', 'Use this handy templateApi'],
+    },
+  },
+})
+console.log({ MyMockProvider })
 export interface MyParameterType {
   id: number
 }

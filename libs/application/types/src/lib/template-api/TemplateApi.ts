@@ -53,7 +53,8 @@ export class TemplateApi<TParams = unknown> {
       throwOnError,
       externalDataId,
     } = config
-    const configuredApi = { ...this }
+    const configuredApi = Object.create(this)
+
     if (params) {
       configuredApi.params = {
         ...configuredApi.params,
