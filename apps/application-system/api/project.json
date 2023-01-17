@@ -66,6 +66,11 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership/emailGenerators/assets",
             "output": "./transport-authority-transfer-of-vehicle-ownership-assets"
+          },
+          {
+            "glob": "*",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-operator-of-vehicle/emailGenerators/assets",
+            "output": "./transport-authority-change-operator-of-vehicle-assets"
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",

@@ -8,6 +8,7 @@ import { information, overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../types'
 import { hasReviewerApproved } from '../../../utils'
+import kennitala from 'kennitala'
 
 export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   application,
@@ -42,7 +43,10 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
           </Text>
           <Text>{getValueViaPath(answers, 'buyer.name', '') as string}</Text>
           <Text>
-            {getValueViaPath(answers, 'buyer.nationalId', '') as string}
+            {kennitala.format(
+              getValueViaPath(answers, 'buyer.nationalId', '') as string,
+              '-',
+            )}
           </Text>
           <Text>{getValueViaPath(answers, 'buyer.email', '') as string}</Text>
           <Text>{getValueViaPath(answers, 'buyer.phone', '') as string}</Text>
