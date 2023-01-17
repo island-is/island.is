@@ -576,9 +576,10 @@ export class CaseService {
           transaction,
         )
 
-        // Reset case file states if court case number is changed or removed
+        // Reset case file states if court case number is changed
         if (
           theCase.courtCaseNumber &&
+          update.courtCaseNumber &&
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
