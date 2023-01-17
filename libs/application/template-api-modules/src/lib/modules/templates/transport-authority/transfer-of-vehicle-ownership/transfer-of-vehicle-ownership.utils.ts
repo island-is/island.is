@@ -44,7 +44,7 @@ export const getApplicationPruneDateStr = (
   date.setDate(date.getDate() + expiresAfterDays)
 
   return (
-    date.getDate() +
+    ('0' + date.getDate()).slice(-2) +
     '.' +
     ('0' + (date.getMonth() + 1)).slice(-2) +
     '.' +
