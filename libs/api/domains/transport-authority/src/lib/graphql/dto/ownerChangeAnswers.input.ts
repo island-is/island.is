@@ -1,10 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class OwnerChangeAnswersVehicle {
+export class OwnerChangeAnswersPickVehicle {
   @Field(() => String, { nullable: false })
   plate!: string
+}
 
+@InputType()
+export class OwnerChangeAnswersVehicle {
   @Field(() => String, { nullable: true })
   salePrice?: string
 
@@ -47,6 +50,9 @@ export class OwnerChangeAnswersInsurance {
 
 @InputType()
 export class OwnerChangeAnswers {
+  @Field(() => OwnerChangeAnswersPickVehicle, { nullable: false })
+  pickVehicle!: OwnerChangeAnswersPickVehicle
+
   @Field(() => OwnerChangeAnswersVehicle, { nullable: false })
   vehicle!: OwnerChangeAnswersVehicle
 

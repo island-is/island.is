@@ -5,7 +5,6 @@ import { IntlProvider } from 'react-intl'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import { MockedAuthenticator } from '@island.is/auth/react'
-
 import { defaultLanguage } from '@island.is/shared/constants'
 
 import { testCases } from '../../test/useSingleNavigationItem-test-cases'

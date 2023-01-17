@@ -5,6 +5,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseState,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -107,7 +108,10 @@ describe('CaseController - Update', () => {
 
   describe('case updated', () => {
     const caseToUpdate = { field1: uuid(), field2: uuid() } as UpdateCaseDto
-    const updatedCase = { ...theCase, ...caseToUpdate } as Case
+    const updatedCase = {
+      ...theCase,
+      ...caseToUpdate,
+    } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -126,6 +130,27 @@ describe('CaseController - Update', () => {
 
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
+    })
+  })
+
+  describe('court case number added', () => {
+    const caseToUpdate = {
+      state: CaseState.RECEIVED,
+      courtCaseNumber: 'R-2020-1234',
+    } as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should transition the case from SUBMITTED to RECEIVED', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        {
+          courtCaseNumber: caseToUpdate.courtCaseNumber,
+          state: CaseState.RECEIVED,
+        },
+        { where: { id: caseId }, transaction },
+      )
     })
   })
 
