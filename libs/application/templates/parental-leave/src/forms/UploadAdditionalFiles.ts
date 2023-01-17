@@ -24,12 +24,12 @@ export const UploadAdditionalFiles: Form = buildForm({
       title: parentalLeaveFormMessages.confirmation.title,
       children: [
         buildCustomField({
-          id: 'periodSynchronization',
+          id: 'periodSynchronizationScreen',
           title: parentalLeaveFormMessages.confirmation.title,
           component: 'PeriodSynchronization',
         }),
         buildMultiField({
-          id: 'additionalDocuments1',
+          id: 'additionalDocumentsScreen',
           title: parentalLeaveFormMessages.confirmation.title,
           description: parentalLeaveFormMessages.confirmation.description,
           children: [
@@ -48,7 +48,7 @@ export const UploadAdditionalFiles: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildSubmitField({
-              id: 'submit-23456',
+              id: 'additionalDocumentsSubmit',
               title: 'submit',
               placement: 'footer',
               refetchApplicationAfterSubmit: true,
