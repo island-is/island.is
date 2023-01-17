@@ -108,8 +108,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 ).then((val) => Promise.resolve(val.GeneralFishingLicenseForm)),
               actions: [
                 {
-                  // TODO: CHANGE TO PAYMENT STEP WHEN GFL TYPES SHOULD GO LIVE
-                  event: DefaultEvents.SUBMIT,
+                  event: DefaultEvents.PAYMENT,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -121,56 +120,54 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          // TODO: CHANGE TO PAYMENT STEP WHEN GFL TYPES SHOULD GO LIVE
-          [DefaultEvents.PAYMENT]: { target: States.SUBMITTED },
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
           [DefaultEvents.REJECT]: {
             target: States.DECLINED,
           },
         },
       },
-      // TODO: UNCOMMENT STEP WHEN GFL TYPES SHOULD GO LIVE
-      // [States.PAYMENT]: {
-      //   meta: {
-      //     name: 'Payment state',
-      //     status: 'inprogress',
-      //     actionCard: {
-      //       description: application.labels.actionCardPayment,
-      //     },
-      //     progress: 0.9,
-      //     lifecycle: {
-      //       shouldBeListed: true,
-      //       shouldBePruned: true,
-      //       // Applications that stay in this state for 24 hours will be pruned automatically
-      //       whenToPrune: 24 * 3600 * 1000,
-      //     },
-      //     onEntry: defineTemplateApi({
-      //       action: ApiActions.createCharge,
-      //     }),
-      //     roles: [
-      //       {
-      //         id: Roles.APPLICANT,
-      //         formLoader: () =>
-      //           import('../forms/GeneralFishingLicensePaymentForm').then(
-      //             (val) => val.GeneralFishingLicensePaymentForm,
-      //           ),
-      //         actions: [
-      //           { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
-      //           {
-      //             event: DefaultEvents.ABORT,
-      //             name: 'Hætta við',
-      //             type: 'reject',
-      //           },
-      //         ],
-      //         write: 'all',
-      //         delete: true,
-      //       },
-      //     ],
-      //   },
-      //   on: {
-      //     [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
-      //     [DefaultEvents.ABORT]: { target: States.DRAFT },
-      //   },
-      // },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Payment state',
+          status: 'inprogress',
+          actionCard: {
+            description: application.labels.actionCardPayment,
+          },
+          progress: 0.9,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/GeneralFishingLicensePaymentForm').then(
+                  (val) => val.GeneralFishingLicensePaymentForm,
+                ),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Hætta við',
+                  type: 'reject',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
+        },
+      },
       [States.SUBMITTED]: {
         meta: {
           name: application.general.name.defaultMessage,

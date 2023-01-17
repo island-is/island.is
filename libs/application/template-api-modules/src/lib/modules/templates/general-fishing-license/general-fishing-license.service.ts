@@ -57,20 +57,19 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    // TODO: UNCOMMENT WHEN GFL TYPES SHOULD GO LIVE
-    // const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
-    //   auth,
-    //   application.id,
-    // )
+    const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
+      application.id,
+    )
 
-    // if (paymentStatus?.fulfilled !== true) {
-    //   this.logger.error(
-    //     'Trying to submit General Fishing License application that has not been paid.',
-    //   )
-    //   throw new Error(
-    //     'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
-    //   )
-    // }
+    if (paymentStatus?.fulfilled !== true) {
+      this.logger.error(
+        'Trying to submit General Fishing License application that has not been paid.',
+      )
+      throw new Error(
+        'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+      )
+    }
 
     try {
       const applicantNationalId = getValueViaPath(
