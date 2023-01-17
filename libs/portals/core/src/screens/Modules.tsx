@@ -84,7 +84,7 @@ const RouteLoader = React.memo(
           />
         ),
       )}
-      {routes.length > 0 && <Route element={NotFound} />}
+      {routes.length > 0 && <Route path="*" element={<NotFound />} />}
     </Routes>
   ),
 )

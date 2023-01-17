@@ -29,11 +29,11 @@ export const App = () => (
                   <Routes>
                     <Route
                       path="/tengjast-umsokn"
-                      element={AssignApplication}
+                      element={<AssignApplication />}
                     />
-                    <Route path="/:slug" element={Applications} />
-                    <Route path="/:slug/:id" element={Application} />
-                    <Route path="*" element={ErrorShell} />
+                    <Route path="/:slug" element={<Applications />} />
+                    <Route path="/:slug/:id" element={<Application />} />
+                    <Route path="*" element={<ErrorShell />} />
                   </Routes>
                 </Layout>
               </HeaderInfoProvider>
