@@ -9,7 +9,11 @@ import {
   DefaultEvents,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  pruneAfterDays,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
@@ -72,7 +76,7 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: pruneAfterDays(1),
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
