@@ -25,6 +25,7 @@ export {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
+  formatCourtIndictmentReadyForCourtEmailNotification,
   stripHtmlTags,
 } from './formatters'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
