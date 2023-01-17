@@ -125,6 +125,7 @@ export const heirs = buildSection({
                   {
                     title: m.heirsPhone.defaultMessage,
                     id: 'phone',
+                    format: '###-####',
                   },
                   {
                     title: m.heirsRelation.defaultMessage,
@@ -195,9 +196,166 @@ export const heirs = buildSection({
           children: [
             buildDividerField({}),
             buildDescriptionField({
-              id: 'temp1',
+              id: 'overviewPropertyForExchange',
+              title: m.propertyForExchange,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.netProperty,
+              value: ({ answers }) =>
+                formatCurrency(
+                  String(
+                    Number(answers.assetsTotal) -
+                      Number(answers.debtsTotal) +
+                      Number(answers.businessTotal),
+                  ),
+                ),
+            }),
+            buildDescriptionField({
+              id: 'space',
               title: '',
               space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.totalDeduction,
+              value: ({ answers }) =>
+                formatCurrency(String(Number(answers.totalDeduction ?? '0'))),
+            }),
+            buildDescriptionField({
+              id: 'space1',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.netPropertyForExchange,
+              value: ({ answers }) =>
+                formatCurrency(
+                  String(
+                    Number(answers.assetsTotal) -
+                      Number(answers.debtsTotal) +
+                      Number(answers.businessTotal) -
+                      Number(answers.totalDeduction),
+                  ),
+                ),
+            }),
+            buildDescriptionField({
+              id: 'space2',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildCustomField({
+              title: '',
+              id: 'heirsOverview',
+              component: 'HeirsOverview',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewHeirsTotal',
+              title: m.totalReconciliation,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.heirsInheritanceRate,
+              value: ({ answers }) => {
+                const sum = (answers.heirs as any).data.reduce(
+                  (sum: number, heir: any) => {
+                    return sum + Number(heir.heirsPercentage)
+                  },
+                  0,
+                )
+
+                return String(sum) + '%'
+              },
+              width: 'half',
+            }),
+            buildKeyValueField({
+              label: m.inheritanceAmount,
+              value: ({ answers }) => {
+                const sum = (answers.heirs as any).data.reduce(
+                  (sum: number, heir: any) => {
+                    return sum + Number(heir.inheritance)
+                  },
+                  0,
+                )
+
+                return formatCurrency(String(sum))
+              },
+              width: 'half',
+            }),
+            buildDescriptionField({
+              id: 'space3',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.taxFreeInheritance,
+              value: ({ answers }) => {
+                const sum = (answers.heirs as any).data.reduce(
+                  (sum: number, heir: any) => {
+                    return sum + Number(heir.taxFreeInheritance)
+                  },
+                  0,
+                )
+
+                return formatCurrency(String(sum))
+              },
+              width: 'half',
+            }),
+            buildKeyValueField({
+              label: m.taxableInheritance,
+              value: ({ answers }) => {
+                const sum = (answers.heirs as any).data.reduce(
+                  (sum: number, heir: any) => {
+                    return sum + Number(heir.taxableInheritance)
+                  },
+                  0,
+                )
+
+                return formatCurrency(String(sum))
+              },
+              width: 'half',
+            }),
+            buildDescriptionField({
+              id: 'space4',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.inheritanceTax,
+              value: ({ answers }) => {
+                let sum = (answers.heirs as any).data.reduce(
+                  (sum: number, heir: any) => {
+                    return sum + Number(heir.inheritanceTax)
+                  },
+                  0,
+                )
+
+                sum = Number.parseInt(sum, 10)
+                return formatCurrency(String(sum))
+              },
+              width: 'half',
+            }),
+            buildDescriptionField({
+              id: 'space5',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewHeirsAdditionalInfo',
+              title: m.heirAdditionalInfo,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.info,
+              value: ({ answers }) => answers.heirsAdditionalInfo as string,
             }),
             buildSubmitField({
               id: 'inheritanceReport.submit',

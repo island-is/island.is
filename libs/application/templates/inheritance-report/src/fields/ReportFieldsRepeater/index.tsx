@@ -33,7 +33,7 @@ type RepeaterProps = {
 
 export const ReportFieldsRepeater: FC<
   FieldBaseProps<Answers> & RepeaterProps
-> = ({ application, field }) => {
+> = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
@@ -278,6 +278,12 @@ export const ReportFieldsRepeater: FC<
                 }
                 backgroundColor={'white'}
                 readOnly={true}
+                errorMessage={
+                  props.sumField === 'heirsPercentage' &&
+                  (errors as any)?.heirs?.total
+                    ? formatMessage(m.totalPercentageError)
+                    : ''
+                }
               />
             </GridColumn>
           </GridRow>

@@ -512,6 +512,11 @@ export const m = defineMessages({
     defaultMessage: 'Samtals',
     description: '',
   },
+  totalReconciliation: {
+    id: 'ir.application:totalReconciliation',
+    defaultMessage: 'Samtals (afstemming)',
+    description: '',
+  },
 
   // Debts
   debtsAndFuneralCost: {
@@ -820,6 +825,11 @@ export const m = defineMessages({
   totalPercentage: {
     id: 'ir.application:totalPercentage',
     defaultMessage: 'Samtals arfshlutfall',
+    description: '',
+  },
+  totalPercentageError: {
+    id: 'ir.application:totalPercentageError',
+    defaultMessage: 'Arfshlutfall samtals þarf að vera 100%',
     description: '',
   },
 
