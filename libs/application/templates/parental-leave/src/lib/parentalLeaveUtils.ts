@@ -15,6 +15,7 @@ import {
   Field,
   FormValue,
   Option,
+  RepeaterProps,
 } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -48,6 +49,7 @@ import {
   PregnancyStatusAndRightsResults,
   Files,
   OtherParentObj,
+  VMSTPeriod,
 } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
@@ -1333,4 +1335,108 @@ export const getStartDateDesc = (application: Application) => {
     return parentalLeaveFormMessages.startDate.grantDescription
   }
   return parentalLeaveFormMessages.startDate.description
+}
+export const syncVMSTPeriods = async (
+  VMSTPeriods: Period[],
+  setRepeaterItems: RepeaterProps['setRepeaterItems'],
+  setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
+) => {
+  setFieldLoadingState?.(true)
+  await setRepeaterItems(VMSTPeriods)
+  setFieldLoadingState?.(false)
+}
+export const getVMSTPeriods = (
+  data: any,
+  periods: Period[],
+  rights: number,
+) => {
+  // If periods is not sync with VMST periods, sync it
+  const newPeriods: Period[] = []
+  const temptVMSTPeriods: Period[] = []
+  const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
+  VMSTPeriods?.forEach((period, index) => {
+    /*
+     ** VMST could change startDate but still return 'date_of_birth'
+     ** Make sure if period is in the past then we use the date they sent
+     */
+    let firstPeriodStart =
+      period.firstPeriodStart === 'date_of_birth'
+        ? 'actualDateOfBirth'
+        : 'specificDate'
+    if (new Date(period.from).getTime() < new Date().getTime()) {
+      firstPeriodStart = 'specificDate'
+    }
+
+    // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: firstPeriodStart,
+      useLength: NO as YesOrNo,
+      rightCodePeriod: rightsCodePeriod,
+    }
+    if (
+      period.paid ||
+      new Date(period.from).getTime() <= new Date().getTime()
+    ) {
+      newPeriods.push(obj)
+    }
+    temptVMSTPeriods.push(obj)
+  })
+
+  let index = newPeriods.length
+  if (index > 0) {
+    const VMSTEndDate = new Date(newPeriods[index - 1].endDate)
+    periods.forEach((period) => {
+      if (new Date(period.startDate) > VMSTEndDate) {
+        newPeriods.push({ ...period, rawIndex: index })
+        index += 1
+      }
+    })
+
+    const usedDayNewPeriods = calculateDaysUsedByPeriods(newPeriods)
+    // We don't want update periods if there isn't necessary. Otherwise, enable below code
+    // if (usedDayNewPeriods > rights) {
+    //   syncVMSTPeriods(temptVMSTPeriods)
+    // } else {
+    //   syncVMSTPeriods(newPeriods)
+    // }
+    let isMustSync = false
+    if (periods.length !== newPeriods.length) {
+      if (usedDayNewPeriods > rights) {
+        return temptVMSTPeriods
+      } else {
+        return newPeriods
+      }
+    } else if (
+      newPeriods[0].rightCodePeriod &&
+      newPeriods[0]?.rightCodePeriod !== periods[0]?.rightCodePeriod
+    ) {
+      isMustSync = true
+    } else {
+      newPeriods.forEach((period, i) => {
+        if (
+          new Date(period.startDate).getTime() !==
+            new Date(periods[i].startDate).getTime() ||
+          new Date(period.endDate).getTime() !==
+            new Date(periods[i].endDate).getTime() ||
+          period.ratio !== periods[i].ratio ||
+          period.firstPeriodStart !== periods[i].firstPeriodStart
+        ) {
+          isMustSync = true
+        }
+      })
+    }
+
+    if (isMustSync) {
+      if (usedDayNewPeriods > rights) {
+        return temptVMSTPeriods
+      } else {
+        return newPeriods
+      }
+    }
+  }
 }
