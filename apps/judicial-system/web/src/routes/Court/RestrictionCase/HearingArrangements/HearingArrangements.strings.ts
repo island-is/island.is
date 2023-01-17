@@ -76,7 +76,8 @@ export const rcHearingArrangements = {
       secondaryButtonText: {
         id:
           'judicial.system.core:restriction_cases_hearing_arrangements.modal.shared.secondary_button_text',
-        defaultMessage: 'Nei',
+        defaultMessage:
+          'Nei{courtDateHasChanged, select, true {} other {, senda seinna}}',
         description:
           'Notaður sem texti í "Nei" takkann í tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
       },
