@@ -1,5 +1,6 @@
 import {
   Box,
+  Breadcrumbs,
   GridColumn,
   GridContainer,
   GridRow,
@@ -7,19 +8,26 @@ import {
 import MainColumn from '../../components/About/MainColumn'
 import React from 'react'
 import RightSideColmn from '../../components/About/RightSideColumn'
-import AboutBreadcrumbs from '../../components/About/AboutBreadcrumbs'
+import { useLocation } from 'react-use'
 
 interface AboutProps {
   information: string
 }
 
 const AboutPage: React.FC<AboutProps> = () => {
+  const location = useLocation()
   return (
     <GridContainer>
       <GridRow>
         <GridColumn span={'3/12'} paddingBottom={3}>
-          {/* <LeftSideColumn /> */}
-          <AboutBreadcrumbs />
+          <Box paddingY={3}>
+            <Breadcrumbs
+              items={[
+                { title: 'Samráðsgátt', href: '/samradsgatt' },
+                { title: 'Um samráðsgátt', href: location.href },
+              ]}
+            />
+          </Box>
         </GridColumn>
         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
           <MainColumn />
