@@ -71,14 +71,14 @@ const RouteLoader = React.memo(
           <Route
             path={route.path}
             exact
-            key={Array.isArray(route.path) ? route.path[0] : route.path}
+            key={route.path}
             component={AccessDenied}
           />
         ) : (
           <Route
             path={route.path}
             exact
-            key={Array.isArray(route.path) ? route.path[0] : route.path}
+            key={route.path}
             render={() => (
               <RouteComponent
                 route={route}

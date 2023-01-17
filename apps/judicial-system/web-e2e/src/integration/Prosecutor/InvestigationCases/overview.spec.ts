@@ -92,7 +92,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
 
   it('should navigate to /krofur on successful confirmation', () => {
     cy.intercept('POST', '**/api/graphql', (req) => {
-      if (hasOperationName(req, Operation.CasesQuery)) {
+      if (hasOperationName(req, Operation.CaseListQuery)) {
         req.reply({
           fixture: 'cases',
         })

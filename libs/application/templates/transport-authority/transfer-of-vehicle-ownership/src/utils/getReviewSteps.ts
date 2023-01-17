@@ -13,7 +13,7 @@ export const getReviewSteps = (
 ) => {
   const vehiclePlate = getValueViaPath(
     application.answers,
-    'vehicle.plate',
+    'pickVehicle.plate',
     '',
   ) as string
 
