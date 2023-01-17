@@ -237,7 +237,11 @@ export class CaseController {
     )
 
     if (isIndictmentCase(theCase.type)) {
-      if (completedCaseStates.includes(state)) {
+      if (state === CaseState.SUBMITTED) {
+        await this.caseService.addMessagesForSubmittedIndicitmentCaseToQueue(
+          theCase,
+        )
+      } else if (completedCaseStates.includes(state)) {
         // Indictment cases are not signed
         await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
           theCase,
