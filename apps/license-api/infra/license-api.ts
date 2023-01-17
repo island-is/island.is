@@ -31,9 +31,9 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     .ingress({
       primary: {
         host: {
-          dev: ['beta'],
-          staging: ['beta'],
-          prod: ['', 'www.island.is'],
+          dev: 'license-api-callback-xrd',
+          staging: 'license-api-callback-xrd',
+          prod: 'license-api-callback-xrd',
         },
         paths: ['/license-api'],
         extraAnnotations: {

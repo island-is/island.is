@@ -1228,10 +1228,7 @@ license-api:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: 'island.is'
-          paths:
-            - '/license-api'
-        - host: 'www.island.is'
+        - host: 'license-api-callback-xrd.island.is'
           paths:
             - '/license-api'
   namespace: 'license-api'

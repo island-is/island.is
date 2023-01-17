@@ -1236,7 +1236,7 @@ license-api:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
       hosts:
-        - host: 'beta.staging01.devland.is'
+        - host: 'license-api-callback-xrd.staging01.devland.is'
           paths:
             - '/license-api'
   namespace: 'license-api'

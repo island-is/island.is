@@ -1421,7 +1421,7 @@ license-api:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: 'beta.dev01.devland.is'
+        - host: 'license-api-callback-xrd.dev01.devland.is'
           paths:
             - '/license-api'
   namespace: 'license-api'
