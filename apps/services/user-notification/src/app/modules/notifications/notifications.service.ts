@@ -49,7 +49,7 @@ export class NotificationsService {
         }),
       },
     )
-
+    // LOG THIS !!!!!!!!!!!
     let templates = await results.json()
     
     // // date temp check for cache
