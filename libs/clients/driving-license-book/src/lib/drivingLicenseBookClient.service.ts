@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { AuthHeaderMiddleware, User } from '@island.is/auth-nest-tools'
 import {
+  AllowedPractieDrivingInput,
   CreateDrivingSchoolTestResultInput,
   CreatePracticalDrivingLessonInput,
   DeletePracticalDrivingLessonInput,
@@ -334,5 +335,23 @@ export class DrivingLicenseBookClientApiFactory {
       licenseCategory: LICENSE_CATEGORY_B,
     })
     return data?.bookId || null
+  }
+
+  async allowPractiveDriving({
+    teacherNationalId,
+    studentNationalId,
+  }: AllowedPractieDrivingInput) {
+    const api = await this.create()
+    try {
+      await api.apiTeacherCreateAllowedPracticeDrivingPost({
+        createAllowedPractieDrivingRequestBody: {
+          teacherSsn: teacherNationalId,
+          studentSsn: studentNationalId,
+        },
+      })
+      return { success: true }
+    } catch (e) {
+      return { success: false }
+    }
   }
 }

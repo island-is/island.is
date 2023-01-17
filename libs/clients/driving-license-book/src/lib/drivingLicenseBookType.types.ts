@@ -158,3 +158,9 @@ export interface CreateDrivingSchoolTestResultInput {
   createdOn: string
   comments?: string
 }
+
+export interface AllowedPractieDrivingInput {
+  teacherNationalId: string;
+  studentNationalId: string;
+}
+
