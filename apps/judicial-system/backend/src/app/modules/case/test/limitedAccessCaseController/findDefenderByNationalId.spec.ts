@@ -53,7 +53,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
       const nationalId = '1234567890'
       const name = 'John Doe'
       const phoneNumber = '1234567'
-      const email = 'dummyœdummy.dy'
+      const email = 'dummy@dummy.dy'
       const theCase = {
         id: caseId,
         type,
