@@ -4,11 +4,10 @@ import { DelegationsModule as AuthDelegationsModule } from '@island.is/auth-api-
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ActorDelegationsController } from './actorDelegations.controller'
-import { MeDelegationsController } from './meDelegations.controller'
 
 @Module({
   imports: [AuthDelegationsModule, FeatureFlagModule],
-  controllers: [ActorDelegationsController, MeDelegationsController],
+  controllers: [ActorDelegationsController],
   providers: [],
 })
 export class DelegationsModule {}
