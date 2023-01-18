@@ -240,6 +240,7 @@ export const HearingArrangements: React.FC = () => {
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}
           secondaryButtonText={formatMessage(
             m.modal.shared.secondaryButtonText,
+            {
               courtDateHasChanged,
             },
           )}
