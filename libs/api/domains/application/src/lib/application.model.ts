@@ -35,6 +35,12 @@ class ActionCardMetaData {
 
   @Field(() => Boolean, { nullable: true })
   deleteButton?: boolean
+
+  @Field(() => Number, { nullable: true })
+  draftFinishedSteps?: number
+
+  @Field(() => Number, { nullable: true })
+  draftTotalSteps?: number
 }
 
 @ObjectType()
@@ -83,12 +89,6 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
-
-  @Field(() => Number)
-  draftFinishedSteps!: number
-
-  @Field(() => Number)
-  draftTotalSteps!: number
 }
 
 @ObjectType()

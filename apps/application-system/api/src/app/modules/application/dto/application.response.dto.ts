@@ -46,6 +46,16 @@ class ActionCardMetaData {
   @Expose()
   @IsBoolean()
   deleteButton?: boolean
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftFinishedSteps?: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftTotalSteps?: number
 }
 
 export class ApplicationResponseDto {
@@ -128,16 +138,6 @@ export class ApplicationResponseDto {
   @Expose()
   @IsEnum(ApplicationStatus)
   status!: ApplicationStatus
-
-  @ApiProperty()
-  @Expose()
-  @IsNumber()
-  draftFinishedSteps!: number
-
-  @ApiProperty()
-  @Expose()
-  @IsNumber()
-  draftTotalSteps!: number
 
   constructor(partial: Partial<ApplicationResponseDto>) {
     Object.assign(this, partial)

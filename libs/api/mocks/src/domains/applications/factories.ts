@@ -18,8 +18,6 @@ export const application = factory<Application>({
   answers: [],
   externalData: {},
   status: ApplicationStatus.IN_PROGRESS,
-  draftFinishedSteps: 0,
-  draftTotalSteps: 0,
 })
 
 export const externalData = factory<DataProviderResult>({
