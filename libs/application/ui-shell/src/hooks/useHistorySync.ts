@@ -1,9 +1,5 @@
 import { Dispatch, useEffect, useState } from 'react'
-import {
-  useLocation,
-  useNavigate,
-  useNavigationType,
-} from 'react-router-dom-v5-compat'
+import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import {
   Action,
   ActionTypes,
@@ -49,6 +45,7 @@ export const useHistorySync = (
     const { historyReason } = lastHistoryState
 
     if (historyReason === 'navigate' || historyReason === 'initial') {
+      console.log('navigate', historyReason)
       navigate(url, {
         state: lastHistoryState,
         replace: historyReason === 'initial',
@@ -69,6 +66,7 @@ export const useHistorySync = (
       location.state !== null &&
       location.state.screen !== null
     ) {
+      console.log('dispatch inside ', location.state)
       dispatch({ type: ActionTypes.HISTORY_POP, payload: location.state })
     }
   }, [navigationType, dispatch, location.state])

@@ -7,7 +7,7 @@ import {
   ISLAND_DOMAIN,
 } from '../../constants/domain'
 import { usePortalMeta, useQueryParam } from '@island.is/portals/core'
-import { useLocation, useNavigate } from 'react-router-dom-v5-compat'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { isDefined, storageFactory } from '@island.is/shared/utils'
 import { useAuthDomainsQuery } from './useDomains.generated'
 

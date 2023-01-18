@@ -1,10 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
-import {
-  Location,
-  Routes,
-  useLocation,
-  Route,
-} from 'react-router-dom-v5-compat'
+import { Location, Routes, useLocation, Route } from 'react-router-dom'
 import type { User } from 'oidc-client-ts'
 
 import OidcSignIn from './OidcSignIn'

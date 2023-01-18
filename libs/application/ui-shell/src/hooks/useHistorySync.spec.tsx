@@ -7,7 +7,7 @@ import {
 import { z } from 'zod'
 import { initializeReducer } from '../reducer/ApplicationFormReducer'
 import { useHistorySync } from './useHistorySync'
-import { Router } from 'react-router-dom-v5-compat'
+import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { act, renderHook } from '@testing-library/react-hooks'
 

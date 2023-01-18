@@ -9,7 +9,7 @@ import { GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentCard.css'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
-import { useLocation } from 'react-router-dom-v5-compat'
+import { useLocation } from 'react-router-dom'
 import { documentsOpenDocument } from '@island.is/plausible'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {

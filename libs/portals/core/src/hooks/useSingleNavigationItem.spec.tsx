@@ -2,7 +2,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react-hooks'
 import { ReactNode } from 'react'
 import { IntlProvider } from 'react-intl'
-import { BrowserRouter } from 'react-router-dom-v5-compat'
+import { BrowserRouter } from 'react-router-dom'
 
 import { MockedAuthenticator } from '@island.is/auth/react'
 import { defaultLanguage } from '@island.is/shared/constants'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useParams } from 'react-router-dom-v5-compat'
+import { useParams } from 'react-router-dom'
 
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'

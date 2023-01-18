@@ -1,5 +1,5 @@
 import React from 'react'
-import { Router } from 'react-router-dom-v5-compat'
+import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'

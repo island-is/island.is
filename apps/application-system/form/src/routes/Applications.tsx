@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
-import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import isEmpty from 'lodash/isEmpty'
 import {

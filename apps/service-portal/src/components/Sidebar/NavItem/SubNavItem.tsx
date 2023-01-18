@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Link } from 'react-router-dom-v5-compat'
+import { Link } from 'react-router-dom'
 import { Box, Icon } from '@island.is/island-ui/core'
 import * as styles from '../NavItem/NavItem.css'
 interface Props {

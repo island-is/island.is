@@ -1,9 +1,4 @@
-import {
-  BrowserRouter,
-  CompatRouter,
-  Routes,
-  Route,
-} from 'react-router-dom-v5-compat'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
 
 import { client } from '../graphql'
@@ -25,30 +20,28 @@ export const App = () => {
       <LocaleProvider locale={defaultLanguage} messages={{}}>
         <ApplicationErrorBoundary>
           <BrowserRouter basename={AdminPortalPaths.Base}>
-            <CompatRouter>
-              <Authenticator>
-                <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                  <PortalProvider
-                    modules={modules}
-                    meta={{
-                      basePath: AdminPortalPaths.Base,
-                      portalType: 'admin',
-                    }}
-                  >
-                    <Layout>
-                      <Routes>
-                        <Route
-                          index
-                          path={AdminPortalPaths.Root}
-                          element={<Dashboard />}
-                        />
-                        <Route path="*" element={<Modules />} />
-                      </Routes>
-                    </Layout>
-                  </PortalProvider>
-                </FeatureFlagProvider>
-              </Authenticator>
-            </CompatRouter>
+            <Authenticator>
+              <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                <PortalProvider
+                  modules={modules}
+                  meta={{
+                    basePath: AdminPortalPaths.Base,
+                    portalType: 'admin',
+                  }}
+                >
+                  <Layout>
+                    <Routes>
+                      <Route
+                        index
+                        path={AdminPortalPaths.Root}
+                        element={<Dashboard />}
+                      />
+                      <Route path="*" element={<Modules />} />
+                    </Routes>
+                  </Layout>
+                </PortalProvider>
+              </FeatureFlagProvider>
+            </Authenticator>
           </BrowserRouter>
         </ApplicationErrorBoundary>
       </LocaleProvider>

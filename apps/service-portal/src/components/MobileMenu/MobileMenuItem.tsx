@@ -1,6 +1,6 @@
 import { Box, GridColumn, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom-v5-compat'
+import { Link } from 'react-router-dom'
 import { getMobileMenuFigure } from './figuresMapper'
 import * as styles from './MobileMenu.css'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'

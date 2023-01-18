@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom-v5-compat'
+import { useNavigate } from 'react-router-dom'
 
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

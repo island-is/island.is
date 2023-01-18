@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom-v5-compat'
+import { useParams } from 'react-router-dom'
 import { AuthDomainDirection } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { useAuthScopeTreeLazyQuery } from '../components/access/AccessList/AccessListContainer/AccessListContainer.generated'

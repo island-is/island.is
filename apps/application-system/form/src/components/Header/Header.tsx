@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useLocation } from 'react-router-dom-v5-compat'
+import { useLocation } from 'react-router-dom'
 
 import {
   Box,

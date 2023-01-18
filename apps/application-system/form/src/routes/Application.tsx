@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom-v5-compat'
+import { useParams } from 'react-router-dom'
 
 import { ApplicationForm, ErrorShell } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'

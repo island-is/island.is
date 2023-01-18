@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom-v5-compat'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Box, Input, ActionCard, Pagination } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { OrganisationPreview } from './DocumentProviders'
@@ -68,16 +68,18 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
                     ),
                     variant: 'text',
                     onClick: () => {
-                      navigate({
-                        pathname: ServicePortalPath.DocumentProviderDocumentProvidersSingle.replace(
+                      navigate(
+                        ServicePortalPath.DocumentProviderDocumentProvidersSingle.replace(
                           ':nationalId',
                           nationalId,
                         ),
-                        state: {
-                          id,
-                          name,
+                        {
+                          state: {
+                            id,
+                            name,
+                          },
                         },
-                      })
+                      )
                     },
                   }}
                 />

@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { useParams } from 'react-router-dom-v5-compat'
+import { useParams } from 'react-router-dom'
 
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'

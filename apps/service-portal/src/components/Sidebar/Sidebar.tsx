@@ -3,7 +3,7 @@ import {
   ServicePortalPath,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom-v5-compat'
+import { Link } from 'react-router-dom'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'

@@ -6,7 +6,7 @@ import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
 import { Helpdesk } from '@island.is/api/schema'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom-v5-compat'
+import { Link } from 'react-router-dom'
 import {
   useUpdateHelpDesk,
   HelpDeskInput,

@@ -1,11 +1,6 @@
 import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import {
-  Link,
-  useLocation,
-  PathMatch,
-  matchPath,
-} from 'react-router-dom-v5-compat'
+import { Link, useLocation, PathMatch, matchPath } from 'react-router-dom'
 
 import {
   Box,

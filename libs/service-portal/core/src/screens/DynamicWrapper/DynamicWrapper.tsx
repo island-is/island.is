@@ -3,7 +3,7 @@ import { NotFound } from '../NotFound/NotFound'
 
 import { useDynamicRoutes } from '../../hooks/useDynamicRoutes/useDynamicRoutes'
 import { SkeletonLoader } from '@island.is/island-ui/core'
-import { matchPath, useLocation } from 'react-router-dom-v5-compat'
+import { matchPath, useLocation } from 'react-router-dom'
 
 interface Props {
   children: ReactNode

@@ -1,9 +1,4 @@
-import {
-  BrowserRouter,
-  CompatRouter,
-  Routes,
-  Route,
-} from 'react-router-dom-v5-compat'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
@@ -31,31 +26,29 @@ export const App = () => {
         <LocaleProvider locale={defaultLanguage} messages={{}}>
           <ApplicationErrorBoundary>
             <BrowserRouter basename={ServicePortalPaths.Base}>
-              <CompatRouter>
-                <Authenticator>
-                  <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                    <PortalProvider
-                      modules={modules}
-                      meta={{
-                        basePath: ServicePortalPaths.Base,
-                        portalType: 'my-pages',
-                      }}
-                    >
-                      <UserProfileLocale />
-                      <Layout>
-                        <Routes>
-                          <Route
-                            index
-                            path={ServicePortalPaths.Root}
-                            element={<Dashboard />}
-                          />
-                          <Route path="*" element={<Modules />} />
-                        </Routes>
-                      </Layout>
-                    </PortalProvider>
-                  </FeatureFlagProvider>
-                </Authenticator>
-              </CompatRouter>
+              <Authenticator>
+                <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                  <PortalProvider
+                    modules={modules}
+                    meta={{
+                      basePath: ServicePortalPaths.Base,
+                      portalType: 'my-pages',
+                    }}
+                  >
+                    <UserProfileLocale />
+                    <Layout>
+                      <Routes>
+                        <Route
+                          index
+                          path={ServicePortalPaths.Root}
+                          element={<Dashboard />}
+                        />
+                        <Route path="*" element={<Modules />} />
+                      </Routes>
+                    </Layout>
+                  </PortalProvider>
+                </FeatureFlagProvider>
+              </Authenticator>
             </BrowserRouter>
           </ApplicationErrorBoundary>
         </LocaleProvider>

@@ -1,7 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { Suspense, useEffect } from 'react'
-import { useLocation } from 'react-router-dom-v5-compat'
-import { Routes, Route } from 'react-router-dom-v5-compat'
+import { useLocation } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 
 import { Box } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'

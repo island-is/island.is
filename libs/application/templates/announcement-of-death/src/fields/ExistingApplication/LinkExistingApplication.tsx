@@ -11,7 +11,7 @@ import {
 } from '@island.is/application/types'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import { useNavigate } from 'react-router-dom-v5-compat'
+import { useNavigate } from 'react-router-dom'
 import { useDeleteApplication } from './hooks/useDeleteApplication'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { useMutation } from '@apollo/client'

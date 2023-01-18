@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom-v5-compat'
+import { useLocation } from 'react-router-dom'
 import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'

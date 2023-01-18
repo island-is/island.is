@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom-v5-compat'
+import { Link } from 'react-router-dom'
 
 import { Box, Icon, IconMapIcon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

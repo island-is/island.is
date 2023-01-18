@@ -1,4 +1,4 @@
-import { Link, Navigate } from 'react-router-dom-v5-compat'
+import { Link, Navigate } from 'react-router-dom'
 
 import {
   Box,

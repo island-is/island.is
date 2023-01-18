@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useLocation, matchPath } from 'react-router-dom-v5-compat'
+import { useLocation, matchPath } from 'react-router-dom'
 import {
   useApolloClient,
   NormalizedCacheObject,

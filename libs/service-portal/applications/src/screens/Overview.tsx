@@ -15,7 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useLocation } from 'react-router-dom-v5-compat'
+import { useLocation } from 'react-router-dom'
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 import { m } from '../lib/messages'
 import { m as coreMessage } from '@island.is/service-portal/core'

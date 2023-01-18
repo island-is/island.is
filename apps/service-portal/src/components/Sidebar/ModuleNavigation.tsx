@@ -5,7 +5,7 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { Box } from '@island.is/island-ui/core'
-import { useLocation } from 'react-router-dom-v5-compat'
+import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'

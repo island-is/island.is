@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { BrowserRouter } from 'react-router-dom-v5-compat'
+import { BrowserRouter } from 'react-router-dom'
 import {
   render,
   screen,

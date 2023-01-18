@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom-v5-compat'
+import { Link } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { Text, Box, Tiles, Inline, Tag } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'

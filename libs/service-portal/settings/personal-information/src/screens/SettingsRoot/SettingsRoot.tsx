@@ -3,7 +3,7 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 
-import { Navigate } from 'react-router-dom-v5-compat'
+import { Navigate } from 'react-router-dom'
 
 export const SettingsRoot: ServicePortalModuleComponent = () => {
   return <Navigate to={ServicePortalPath.SettingsPersonalInformation} replace />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom-v5-compat'
-import { useParams } from 'react-router-dom-v5-compat'
+import { useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
 import classNames from 'classnames'
 

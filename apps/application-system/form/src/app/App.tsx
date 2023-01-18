@@ -1,10 +1,5 @@
 import { ApolloProvider } from '@apollo/client'
-import {
-  BrowserRouter,
-  CompatRouter,
-  Routes,
-  Route,
-} from 'react-router-dom-v5-compat'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
@@ -24,26 +19,24 @@ export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
       <BrowserRouter basename="/umsoknir">
-        <CompatRouter>
-          <Authenticator>
-            <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-              <HeaderInfoProvider>
-                <UserProfileLocale />
-                <Layout>
-                  <Routes>
-                    <Route
-                      path="/tengjast-umsokn"
-                      element={<AssignApplication />}
-                    />
-                    <Route path="/:slug" element={<Applications />} />
-                    <Route path="/:slug/:id" element={<Application />} />
-                    <Route path="*" element={<ErrorShell />} />
-                  </Routes>
-                </Layout>
-              </HeaderInfoProvider>
-            </FeatureFlagProvider>
-          </Authenticator>
-        </CompatRouter>
+        <Authenticator>
+          <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+            <HeaderInfoProvider>
+              <UserProfileLocale />
+              <Layout>
+                <Routes>
+                  <Route
+                    path="/tengjast-umsokn"
+                    element={<AssignApplication />}
+                  />
+                  <Route path="/:slug" element={<Applications />} />
+                  <Route path="/:slug/:id" element={<Application />} />
+                  <Route path="*" element={<ErrorShell />} />
+                </Routes>
+              </Layout>
+            </HeaderInfoProvider>
+          </FeatureFlagProvider>
+        </Authenticator>
       </BrowserRouter>
     </LocaleProvider>
   </ApolloProvider>
