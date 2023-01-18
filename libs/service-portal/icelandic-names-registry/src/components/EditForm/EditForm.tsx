@@ -72,8 +72,7 @@ const EditForm: React.FC<PropTypes> = ({
     handleSubmit,
     reset,
     control,
-    errors,
-    formState: { isSubmitting, isSubmitted, isValid, isDirty },
+    formState: { isSubmitting, isSubmitted, isValid, isDirty, errors },
   } = hookFormData
 
   useEffect(() => {

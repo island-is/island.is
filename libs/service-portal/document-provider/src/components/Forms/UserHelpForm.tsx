@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Stack, Input, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -19,7 +19,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
 
   const { updateHelpDesk, loading } = useUpdateHelpDesk(organisationId)
 
-  const onSubmit = (formData: Helpdesk) => {
+  const onSubmit: SubmitHandler<any> = (formData: Helpdesk) => {
     if (formData) {
       const input: HelpDeskInput = { ...formData, id: helpDesk?.id }
       updateHelpDesk(input)
@@ -54,8 +54,8 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
               name={name}
               value={value}
               onChange={onChange}
-              hasError={errors.email}
-              errorMessage={errors.email?.message}
+              hasError={!!errors.email}
+              errorMessage={errors.email?.message as string}
             ></Input>
           )}
         />
@@ -85,8 +85,8 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
               name={name}
               value={value}
               onChange={onChange}
-              hasError={errors.phoneNumber}
-              errorMessage={errors.phoneNumber?.message}
+              hasError={!!errors.phoneNumber}
+              errorMessage={errors.phoneNumber?.message as string}
             ></Input>
           )}
         />

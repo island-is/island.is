@@ -63,7 +63,7 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(submitFormData)}>
+    <form onSubmit={handleSubmit(submitFormData as any)}>
       <Columns collapseBelow="sm" alignY="center">
         <Column width="content">
           <Box marginRight={3} display="flex" alignItems="center">

@@ -85,7 +85,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
     submitError
 
   return (
-    <form onSubmit={handleSubmit(submitFormData)}>
+    <form onSubmit={handleSubmit(submitFormData as any)}>
       <Box display="flex" flexWrap="wrap" alignItems="center">
         <Box marginRight={3} className={styles.formContainer}>
           <Columns collapseBelow="sm" alignY="center">
@@ -197,7 +197,10 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
           {bankInfoError ? (
             <Columns>
               <Column>
-                <InputError id="bank-info-error" errorMessage={bankInfoError} />
+                <InputError
+                  id="bank-info-error"
+                  errorMessage={bankInfoError as string}
+                />
               </Column>
             </Columns>
           ) : null}

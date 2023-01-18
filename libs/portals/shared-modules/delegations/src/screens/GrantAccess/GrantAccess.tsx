@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { FormProvider, useForm } from 'react-hook-form'
+import { Control, FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
@@ -203,7 +203,7 @@ const GrantAccess: PortalModuleComponent = ({ userInfo }) => {
                 )}
                 <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
-                    control={control}
+                    control={control as Control<FieldValues>}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
                     ref={inputRef}

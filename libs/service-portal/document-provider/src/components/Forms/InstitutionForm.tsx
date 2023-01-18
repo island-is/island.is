@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Input, Stack, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -30,7 +30,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
   const { formatMessage } = useLocale()
   const { updateOrganisation, loading } = useUpdateOrganisation()
 
-  const onSubmit = (formData: Organisation) => {
+  const onSubmit: SubmitHandler<any> = (formData: Organisation) => {
     if (formData) {
       const input: OrganisationInput = {
         ...formData,
@@ -63,8 +63,8 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               placeholder={formatMessage(m.SettingsEditInstitutionName)}
               value={value}
               onChange={onChange}
-              hasError={errors.name}
-              errorMessage={errors.name?.message}
+              hasError={!!errors.name}
+              errorMessage={errors.name?.message as string}
             />
           )}
         />
@@ -94,8 +94,8 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               value={value}
               placeholder={formatMessage(m.SettingsEditInstitutionNationalId)}
               onChange={onChange}
-              hasError={errors.nationalId}
-              errorMessage={errors.nationalId?.message}
+              hasError={!!errors.nationalId}
+              errorMessage={errors.nationalId?.message as string}
             ></Input>
           )}
         />
@@ -119,8 +119,8 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               value={value}
               placeholder={formatMessage(m.SettingsEditInstitutionAddress)}
               onChange={onChange}
-              hasError={errors.address}
-              errorMessage={errors.address?.message}
+              hasError={!!errors.address}
+              errorMessage={errors.address?.message as string}
             ></Input>
           )}
         />
@@ -150,8 +150,8 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               placeholder={formatMessage(m.SettingsEditInstitutionEmail)}
               value={value}
               onChange={onChange}
-              hasError={errors.email}
-              errorMessage={errors.email?.message}
+              hasError={!!errors.email}
+              errorMessage={errors.email?.message as string}
             ></Input>
           )}
         />
@@ -181,8 +181,8 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               placeholder={formatMessage(m.SettingsEditInstitutionTel)}
               value={value}
               onChange={onChange}
-              hasError={errors.phoneNumber}
-              errorMessage={errors.phoneNumber?.message}
+              hasError={!!errors.phoneNumber}
+              errorMessage={errors.phoneNumber?.message as string}
             ></Input>
           )}
         />

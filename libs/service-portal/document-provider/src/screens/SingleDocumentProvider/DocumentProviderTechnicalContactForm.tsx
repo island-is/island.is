@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
@@ -13,6 +13,7 @@ import {
   useCreateTechnicalContact,
   CreateContactInput,
 } from '../../shared/useCreateTechnicalContact'
+import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
   technicalContact?: Contact | null
@@ -41,7 +42,9 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
     loading: loadingCreate,
   } = useCreateTechnicalContact(organisationId, organisationNationalId)
 
-  const onSubmit = (data: { technicalContact: Contact }) => {
+  const onSubmit: SubmitHandler<any> = (data: {
+    technicalContact: Contact
+  }) => {
     if (data?.technicalContact && technicalContact) {
       const input: ContactInput = {
         ...data.technicalContact,
@@ -78,8 +81,13 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactNamePlaceholder,
             )}
-            hasError={errors.technicalContact?.name}
-            errorMessage={errors.technicalContact?.name?.message}
+            hasError={
+              getErrorViaPath(errors, 'technicalContact.name') !== undefined
+            }
+            errorMessage={getErrorViaPath(
+              errors,
+              'technicalContact.name.message',
+            )}
           />
           <DocumentProviderInput
             control={control}
@@ -103,8 +111,13 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactEmailPlaceholder,
             )}
-            hasError={errors.technicalContact?.email}
-            errorMessage={errors.technicalContact?.email?.message}
+            hasError={
+              getErrorViaPath(errors, 'technicalContact.email') !== undefined
+            }
+            errorMessage={getErrorViaPath(
+              errors,
+              'technicalContact.email.message',
+            )}
           />
           <DocumentProviderInput
             control={control}
@@ -142,8 +155,14 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactPhoneNumberPlaceholder,
             )}
-            hasError={errors.technicalContact?.phoneNumber}
-            errorMessage={errors.technicalContact?.phoneNumber?.message}
+            hasError={
+              getErrorViaPath(errors, 'technicalContact.phoneNumber') !==
+              undefined
+            }
+            errorMessage={getErrorViaPath(
+              errors,
+              'technicalContact.phoneNumber.message',
+            )}
           />
           <Box
             display="flex"

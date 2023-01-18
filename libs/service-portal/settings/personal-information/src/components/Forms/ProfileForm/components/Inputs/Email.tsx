@@ -188,7 +188,9 @@ export const InputEmail: FC<Props> = ({
     <Box>
       <form
         onSubmit={handleSubmit(
-          emailInternal ? handleSendEmailVerification : saveEmptyChange,
+          emailInternal
+            ? handleSendEmailVerification
+            : (saveEmptyChange as any),
         )}
       >
         <Box display="flex" flexWrap="wrap" alignItems="center">
@@ -219,7 +221,7 @@ export const InputEmail: FC<Props> = ({
                 checkSetPristineInput()
               }}
               placeholder="nafn@island.is"
-              error={errors.email?.message || formErrors.email}
+              error={(errors.email?.message as string) || formErrors.email}
               size="xs"
               defaultValue={email}
             />
@@ -286,7 +288,7 @@ export const InputEmail: FC<Props> = ({
             })}
           </Text>
 
-          <form onSubmit={handleSubmit(handleConfirmCode)}>
+          <form onSubmit={handleSubmit(handleConfirmCode as any)}>
             <Box display="flex" flexWrap="wrap" alignItems="flexStart">
               <Box className={styles.codeInput} marginRight={3}>
                 <InputController
@@ -298,7 +300,7 @@ export const InputEmail: FC<Props> = ({
                   label={formatMessage(m.verificationCode)}
                   placeholder="000000"
                   defaultValue=""
-                  error={errors.code?.message || formErrors.code}
+                  error={(errors.code?.message as string) || formErrors.code}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"

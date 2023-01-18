@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
@@ -15,6 +15,7 @@ import {
   useCreateHelpDesk,
   CreateHelpDeskInput,
 } from '../../shared/useCreateHelpDesk'
+import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
   helpDesk?: Helpdesk | null
@@ -41,7 +42,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
     organisationNationalId,
   )
 
-  const onSubmit = (data: { helpDesk: Helpdesk }) => {
+  const onSubmit: SubmitHandler<any> = (data: { helpDesk: Helpdesk }) => {
     if (data?.helpDesk && helpDesk) {
       const input: HelpDeskInput = { ...data.helpDesk, id: helpDesk.id }
       updateHelpDesk(input)
@@ -80,8 +81,8 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderUserHelpContactEmailPlaceholder,
             )}
-            hasError={errors.helpDesk?.email}
-            errorMessage={errors.helpDesk?.email?.message}
+            hasError={getErrorViaPath(errors, 'helpdesk.email') !== undefined}
+            errorMessage={getErrorViaPath(errors, 'helpDesk.email.message')}
           />
           <DocumentProviderInput
             control={control}
@@ -119,8 +120,13 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderUserHelpContactPhoneNumberPlaceholder,
             )}
-            hasError={errors.helpDesk?.phoneNumber}
-            errorMessage={errors.helpDesk?.phoneNumber?.message}
+            hasError={
+              getErrorViaPath(errors, 'helpDesk.phoneNumber') !== undefined
+            }
+            errorMessage={getErrorViaPath(
+              errors,
+              'helpDesk.phoneNumber.message',
+            )}
           />
           <Box
             display="flex"
