@@ -23,7 +23,7 @@
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn ts-node libs/localization/scripts/extract libs/portals/admin/icelandic-names-registry/src/lib/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/portals/admin/icelandic-names-registry/src/lib/messages.ts"
       }
     },
     "schemas/codegen": {
