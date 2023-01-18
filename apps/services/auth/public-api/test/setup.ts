@@ -120,6 +120,7 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
     },
   ],
   userInfoUrl: 'https://localhost:6001/connect/userinfo',
+  defaultValidityPeriodInDays: 365,
 }
 
 export const setupWithAuth = async ({
@@ -212,24 +213,19 @@ export const setupWithAuth = async ({
   return app
 }
 
-export const setupWithoutAuth = async (): Promise<TestApp> => {
-  const app = await testServer({
+export const setupWithoutAuth = async (): Promise<TestApp> =>
+  testServer({
     appModule: AppModule,
     hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
   })
 
-  return app
-}
-
 export const setupWithoutPermission = async (): Promise<TestApp> => {
   const user = createCurrentUser()
-  const app = await testServer({
+  return testServer({
     appModule: AppModule,
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
     ],
   })
-
-  return app
 }
