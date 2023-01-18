@@ -1,27 +1,25 @@
 import {
   defineTemplateApi,
-  NationalRegistryUserApi,
+  PaymentCatalogApi,
 } from '@island.is/application/types'
 
-export const EhicNationalRegistryUserApi = NationalRegistryUserApi.configure({
-  externalDataId: 'NationalRegistryUserApi',
-  order: 0,
-})
+import { IdentityApi as IdsApi } from '@island.is/application/types'
+const FISKISTOFA_NATIONAL_ID = '6608922069'
 
-export const EhicNationalRegistrySpouseApi = NationalRegistryUserApi.configure({
-  externalDataId: 'NationalRegistrySpouseApi',
-  order: 1,
-})
-
-export const EhicChildrenCustodyInformationApi = NationalRegistryUserApi.configure(
+export const DepartmentOfFisheriesPaymentCatalogApi = PaymentCatalogApi.configure(
   {
-    externalDataId: 'ChildrenCustodyInformationApi',
-    order: 2,
+    params: {
+      organizationId: FISKISTOFA_NATIONAL_ID,
+    },
+    externalDataId: 'feeInfoProvider',
   },
 )
 
-// export const EhicService = defineTemplateApi({
-//   order: 3,
-//   action: 'getCardResponse',
-//   externalDataId: 'ehicCardProvider',
-// })
+export const ShipRegistryApi = defineTemplateApi({
+  action: 'getShips',
+  externalDataId: 'directoryOfFisheries',
+})
+
+export const IdentityApi = IdsApi.configure({
+  externalDataId: 'identityRegistry',
+})

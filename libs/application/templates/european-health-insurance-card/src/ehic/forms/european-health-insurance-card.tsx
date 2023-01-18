@@ -25,27 +25,8 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
   title: '',
   mode: FormModes.DRAFT,
   children: [
-    sectionDataProviders,
-    // buildSection({
-    //   id: 'externalData',
-    //   title: 'section.externalData',
-    //   children: [
-    //     buildExternalDataProvider({
-    //       title: 'externalData.general.pageTitle',
-    //       id: 'approveExternalData',
-    //       subTitle: 'externalData.general.subTitle',
-    //       description: 'externalData.general.description',
-    //       checkboxLabel: 'externalData.general.checkboxLabel',
-    //       dataProviders: [
-    //         buildDataProviderItem({
-    //           provider: NationalRegistryUserApi,
-    //           title: 'externalData.labels.nationalRegistryTitle',
-    //           subTitle: 'externalData.labels.nationalRegistrySubTitle',
-    //         }),
-    //       ],
-    //     }),
-    //   ],
-    // }),
+    // sectionDataProviders,
+
     buildSection({
       id: 'intro',
       title: e.introScreen.sectionLabel,

@@ -15,31 +15,16 @@ import {
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
-import {
-  EhicChildrenCustodyInformationApi,
-  EhicNationalRegistrySpouseApi,
-  EhicNationalRegistryUserApi,
-} from '../dataProviders'
+import { Roles, States } from '../constants'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
-
-enum States {
-  DRAFT = 'draft',
-  APPROVED = 'approved',
-  PREREQUISITES = 'prerequisites',
-  SUBMITTED = 'submitted',
-  DECLINED = 'declined',
-}
-
-enum Roles {
-  APPLICANT = 'applicant',
-}
 
 enum TEMPLATE_API_ACTIONS {
   // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
   sendApplication = 'sendApplication',
 }
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
