@@ -48,7 +48,7 @@ export type TagVariant =
 export interface Option extends TestSupport {
   value: string
   label: FormText
-  subLabel?: string
+  subLabel?: FormText
   tooltip?: FormText
   excludeOthers?: boolean
   illustration?: React.FC

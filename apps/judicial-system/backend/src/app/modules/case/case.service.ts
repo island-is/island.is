@@ -28,6 +28,7 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
+  CaseTransition,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -51,6 +52,7 @@ import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { EventService } from '../event'
+import { transitionCase } from './state/case.state'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
@@ -438,6 +440,13 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  addMessagesForSubmittedIndicitmentCaseToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+      caseId: theCase.id,
+    })
+  }
+
   addMessagesForCompletedIndictmentCaseToQueue(theCase: Case): Promise<void> {
     return this.messageService.sendMessagesToQueue(
       this.getArchiveCaseFileMessages(theCase).concat([
@@ -450,6 +459,15 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(
       this.getArchiveCaseFileMessages(theCase),
     )
+  }
+
+  addReceivedByCourtMessageToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        caseId: theCase.id,
+      },
+    ])
   }
 
   async findById(caseId: string, allowDeleted = false): Promise<Case> {
@@ -529,6 +547,12 @@ export class CaseService {
   ): Promise<Case | undefined> {
     return this.sequelize
       .transaction(async (transaction) => {
+        if (update.courtCaseNumber && theCase.state === CaseState.SUBMITTED) {
+          const state = transitionCase(CaseTransition.RECEIVE, theCase.state)
+
+          update = { ...update, state } as UpdateCaseDto
+        }
+
         const [numberOfAffectedRows] = await this.caseModel.update(update, {
           where: { id: theCase.id },
           transaction,
@@ -552,12 +576,19 @@ export class CaseService {
           transaction,
         )
 
-        // Reset case file states if court case number is changed or removed
+        // Reset case file states if court case number is changed
         if (
           theCase.courtCaseNumber &&
+          update.courtCaseNumber &&
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
+        }
+
+        if (
+          (update as { [key: string]: string }).state === CaseState.RECEIVED
+        ) {
+          await this.addReceivedByCourtMessageToQueue(theCase)
         }
       })
       .then(async () => {

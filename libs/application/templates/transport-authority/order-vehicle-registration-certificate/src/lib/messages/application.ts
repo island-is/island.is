@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'ta.ovrc.application:name',
-    defaultMessage: 'Panta skráningarskírteini',
+    defaultMessage: 'Panta skráningarskírteini {value}',
     description: `Application's name`,
   },
   institutionName: {

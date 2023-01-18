@@ -25,10 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  titles,
-  icHearingArrangements as m,
-} from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlertMessage,
   RadioButton,
@@ -40,6 +37,8 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { icHearingArrangements as m } from './HearingArrangements.strings'
 
 const HearingArrangements = () => {
   const {
