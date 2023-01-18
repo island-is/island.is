@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import {
   Box,
