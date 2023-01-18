@@ -54,7 +54,7 @@ describe('useHistorySync', () => {
     })
   })
 
-  it('pushes transitions to history and supports history navigation', async () => {
+  it('pushes transitions to history and supports history navigation', () => {
     // Arrange
     const history = createMemoryHistory({ initialEntries: ['/'] })
 
