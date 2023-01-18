@@ -24,8 +24,7 @@ import {
   getAvailableRightsInDays,
   getExpectedDateOfBirth,
   getApplicationAnswers,
-  getVMSTPeriods,
-  syncVMSTPeriods,
+  synchronizeVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
@@ -78,9 +77,13 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     if (loading) {
       return
     }
-
-    const vMSTPeriods = getVMSTPeriods(data, periods, rights)
-    syncVMSTPeriods(vMSTPeriods!, setRepeaterItems, setFieldLoadingState)
+    synchronizeVMSTPeriods(
+      data,
+      rights,
+      periods,
+      setRepeaterItems,
+      setFieldLoadingState,
+    )
   }, [loading])
 
   useEffect(() => {

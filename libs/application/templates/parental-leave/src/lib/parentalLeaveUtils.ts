@@ -1336,7 +1336,7 @@ export const getStartDateDesc = (application: Application) => {
   }
   return parentalLeaveFormMessages.startDate.description
 }
-export const syncVMSTPeriods = async (
+const setLoadingStateAndRepeaterItems = async (
   VMSTPeriods: Period[],
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
   setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
@@ -1345,10 +1345,13 @@ export const syncVMSTPeriods = async (
   await setRepeaterItems(VMSTPeriods)
   setFieldLoadingState?.(false)
 }
-export const getVMSTPeriods = (
+
+export const synchronizeVMSTPeriods = (
   data: any,
-  periods: Period[],
   rights: number,
+  periods: Period[],
+  setRepeaterItems: RepeaterProps['setRepeaterItems'],
+  setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
 ) => {
   // If periods is not sync with VMST periods, sync it
   const newPeriods: Period[] = []
@@ -1407,9 +1410,17 @@ export const getVMSTPeriods = (
     let isMustSync = false
     if (periods.length !== newPeriods.length) {
       if (usedDayNewPeriods > rights) {
-        return temptVMSTPeriods
+        setLoadingStateAndRepeaterItems(
+          temptVMSTPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
       } else {
-        return newPeriods
+        setLoadingStateAndRepeaterItems(
+          newPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
       }
     } else if (
       newPeriods[0].rightCodePeriod &&
@@ -1433,9 +1444,17 @@ export const getVMSTPeriods = (
 
     if (isMustSync) {
       if (usedDayNewPeriods > rights) {
-        return temptVMSTPeriods
+        setLoadingStateAndRepeaterItems(
+          temptVMSTPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
       } else {
-        return newPeriods
+        setLoadingStateAndRepeaterItems(
+          newPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
       }
     }
   }
