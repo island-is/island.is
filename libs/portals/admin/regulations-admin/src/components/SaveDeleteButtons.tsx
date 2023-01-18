@@ -39,7 +39,7 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
           size="small"
           disabled={saving}
         >
-          {t(msg.save)}
+          {t(msg.saveAndClose)}
         </Button>
       </Box>
       {propose && (

@@ -31,11 +31,13 @@ export const EditBasics = () => {
     t(draft.type.value === 'amending' ? msg.type_amending : msg.type_base)
 
   useEffect(() => {
-    if (draft.type.value === 'base') {
-      updateState('title', 'Reglugerð um ')
-    }
-    if (draft.type.value === 'amending') {
-      updateState('title', 'Reglugerð um breytingu á reglugerð um ')
+    if (!draft.title) {
+      if (draft.type.value === 'base') {
+        updateState('title', 'Reglugerð um ')
+      }
+      if (draft.type.value === 'amending') {
+        updateState('title', 'Reglugerð um breytingu á reglugerð um ')
+      }
     }
   }, [draft.type.value])
 

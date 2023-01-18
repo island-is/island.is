@@ -268,6 +268,8 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             type: 'SAVING_STATUS_DONE',
             error: error && { message: buttonsMsgs.saveFailure, error },
           })
+
+          history.push(getHomeUrl())
         })
       },
 

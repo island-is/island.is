@@ -610,6 +610,10 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-savestatus',
     defaultMessage: 'Vista stöðu',
   },
+  saveAndClose: {
+    id: 'ap.regulations-admin:btn-savestatus-and-close',
+    defaultMessage: 'Vista og loka',
+  },
   saveSuccess: {
     id: 'ap.regulations-admin:btn-savestatus-success',
     defaultMessage: 'Staða vistuð',
