@@ -33,9 +33,9 @@ const EmployersOverview: FC<RepeaterProps> = ({
   const { formatMessage, locale } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const onDeleteEmployer = async (nationalId: string) => {
+  const onDeleteEmployer = async (email: string) => {
     const reducedEmployers = employers?.filter(
-      (e) => e.name.nationalId !== nationalId,
+      (e) => e.email !== email,
     )
     if (!reducedEmployers) {
       return
@@ -61,6 +61,15 @@ const EmployersOverview: FC<RepeaterProps> = ({
           formatMessage(parentalLeaveFormMessages.employer.addEmployerError),
         ]
       }
+
+      // const { errors } = await updateApplication({
+      //   variables: {
+      //     input: {
+      //       id: application.id,
+      //       answers: { employers: employers }
+      //     }
+      //   }
+      // })
 
       return [true, null]
     })

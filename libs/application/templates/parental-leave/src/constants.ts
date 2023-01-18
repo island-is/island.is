@@ -29,6 +29,7 @@ export enum ParentalRelations {
 export enum ApiModuleActions {
   assignOtherParent = 'assignOtherParent',
   assignEmployers = 'assignEmployers',
+  assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
   notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
   validateApplication = 'validateApplication',

@@ -569,13 +569,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.employer.registration,
                   isPartOfRepeater: true,
                   children: [
-                    buildCompanySearchField({
-                      id: 'name',
-                      title: parentalLeaveFormMessages.employer.name,
-                      placeholder:
-                        parentalLeaveFormMessages.employer
-                          .nameSearchPlaceholder,
-                    }),
+                    // buildCompanySearchField({
+                    //   id: 'name',
+                    //   title: parentalLeaveFormMessages.employer.name,
+                    //   placeholder:
+                    //     parentalLeaveFormMessages.employer
+                    //       .nameSearchPlaceholder,
+                    // }),
                     buildTextField({
                       id: 'email',
                       variant: 'email',

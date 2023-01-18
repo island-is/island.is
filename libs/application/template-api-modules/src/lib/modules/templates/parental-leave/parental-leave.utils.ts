@@ -8,6 +8,7 @@ import {
   Union,
   PensionFund,
   Attachment,
+  Employer,
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/types'
 import {
@@ -68,6 +69,30 @@ export const getPersonalAllowance = (
   }
 
   return Number(usageGetter)
+}
+
+export const getEmployer = (
+  application: Application,
+  isSelfEmployed = false,
+): Employer[] => {
+  const {
+    applicantEmail,
+    employers
+  } = getApplicationAnswers(application.answers)
+
+  if (isSelfEmployed){
+    return [
+      {
+        email: applicantEmail,
+        nationalRegistryId: application.applicant
+      }
+    ]
+  }
+
+  return employers.map(e => ({
+      email: e.email,
+      nationalRegistryId: e.companyNationalRegistryId ?? ''
+    }))
 }
 
 export const getPensionFund = (
@@ -248,9 +273,10 @@ export const transformApplicationToParentalLeaveDTO = (
   const {
     union,
     bank,
-    employers,
     applicationType,
     multipleBirths,
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -258,6 +284,8 @@ export const transformApplicationToParentalLeaveDTO = (
   )
 
   const { email, phoneNumber } = getApplicantContactInfo(application)
+  const selfEmployed = isSelfEmployed === YES
+  const reicivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
 
   const testData: string = onlyValidate!.toString()
 
@@ -289,10 +317,9 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
-    employers: employers.map(e => ({
-      email: e.email,
-      nationalRegistryId: e.name.nationalId
-    })),
+    employers: applicationType === PARENTAL_LEAVE && !reicivingUnemploymentBenefits
+    ? getEmployer(application, selfEmployed)
+    : [],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,

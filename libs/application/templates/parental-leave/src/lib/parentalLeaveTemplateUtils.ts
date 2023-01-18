@@ -6,7 +6,6 @@ import {
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
-  EmployerApprovalStates,
 } from '../constants'
 import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types';
@@ -15,7 +14,7 @@ import { getValueViaPath } from '@island.is/application/core';
 export function allEmployersHaveApproved(context: ApplicationContext) {
   const employers = getValueViaPath<EmployerRow[]>(context.application.answers, 'employers');
   if (!employers) { return false; }
-  return employers.every(e => e.status === EmployerApprovalStates.APPROVED);
+  return employers.every(e => !!e.isApproved);
 }
 
 export function hasEmployer(context: ApplicationContext) {

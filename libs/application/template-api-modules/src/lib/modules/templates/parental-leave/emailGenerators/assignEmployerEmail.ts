@@ -25,7 +25,7 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
 
   assignLinkEmployerSMS = assignLink
 
-  const employerEmail = get(application.answers, 'contact.email')
+  const employerEmail = get(application.answers, 'employers[0].email')
   const applicantName = get(application.externalData, 'person.data.fullName')
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
 

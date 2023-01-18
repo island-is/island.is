@@ -1277,25 +1277,40 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Netfang vinnuveitanda',
       description: 'Employer email',
     },
+    emailHeader: {
+      id: 'pl.application:employer.email.header',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
     phoneNumber: {
       id: 'pl.application:employer.phone.number',
       defaultMessage: 'Símanúmer vinnuveitanda',
-      description: 'Employer’s phone number',
+      description: "Employer's phone number",
+    },
+    phoneNumberHeader: {
+      id: 'pl.application:employer.phone.number.header',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
     },
     ratio: {
       id: 'pl.application:employer.ratio',
       defaultMessage: 'Starfshlutfall',
       description: 'Employment ratio',
     },
+    ratioHeader: {
+      id: 'pl.application:employer.ratio.header',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Ratio',
+    },
     ratioPlaceholder: {
       id: 'pl.application:employer.ratioPlaceholder',
       defaultMessage: 'Veldu starfshlutfall',
       description: 'Select an employment ratio',
     },
-    emailConfirm: {
-      id: 'pl.application:employer.email.confirm',
-      defaultMessage: 'Staðfestu netfang vinnuveitanda',
-      description: 'Confirm employer email',
+    approvedHeader: {
+      id: 'pl.application:employer.approved.header',
+      defaultMessage: 'Samþykkt',
+      description: 'Approved',
     },
     isReceivingUnemploymentBenefitsTitle: {
       id: 'pl.application:employer.isReceivingUnemploymentBenefits',

@@ -147,13 +147,10 @@ export interface PregnancyStatusAndRightsResults {
 }
 
 export interface EmployerRow {
-  name: {
-    label: string
-    nationalId: string
-  }
   email: string
-  phoneNumber: string
+  phoneNumber?: string
   ratio: string
-  token: string
-  status: string
+  isApproved?: boolean
+  reviewerNationalRegistryId?: string
+  companyNationalRegistryId?: string
 }
