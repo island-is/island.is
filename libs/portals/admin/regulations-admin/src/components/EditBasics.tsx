@@ -31,7 +31,7 @@ export const EditBasics = () => {
     t(draft.type.value === 'amending' ? msg.type_amending : msg.type_base)
 
   useEffect(() => {
-    if (!draft.title) {
+    if (!draft.title.value) {
       if (draft.type.value === 'base') {
         updateState('title', 'Reglugerð um ')
       }
