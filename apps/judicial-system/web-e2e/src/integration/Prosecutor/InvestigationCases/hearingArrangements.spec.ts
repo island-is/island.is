@@ -14,14 +14,14 @@ import {
 
 describe(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
       court: makeCourt(),
     }
 
-    cy.login(UserRole.PROSECUTOR)
+    cy.login(UserRole.Prosecutor)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
@@ -58,7 +58,7 @@ describe(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should show an error message if sending a notification failed', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),

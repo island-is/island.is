@@ -40,10 +40,10 @@ describe('Case Completed Guard', () => {
 
   each`
     state
-    ${CaseState.RECEIVED}
-    ${CaseState.ACCEPTED}
-    ${CaseState.REJECTED}
-    ${CaseState.DISMISSED}
+    ${CaseState.Received}
+    ${CaseState.Accepted}
+    ${CaseState.Rejected}
+    ${CaseState.Dismissed}
   `.describe('completed case', ({ state }) => {
     let then: Then
 
@@ -60,10 +60,10 @@ describe('Case Completed Guard', () => {
 
   each`
     state
-    ${CaseState.NEW}
-    ${CaseState.DRAFT}
-    ${CaseState.SUBMITTED}
-    ${CaseState.DELETED}
+    ${CaseState.New}
+    ${CaseState.Draft}
+    ${CaseState.Submitted}
+    ${CaseState.Deleted}
   `.describe('unreceived case', ({ state }) => {
     let then: Then
 

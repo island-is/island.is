@@ -51,11 +51,11 @@ function constructRestrictionRequestPdf(
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   let caseTypeText = ''
-  if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
+  if (theCase.type === CaseType.AdmissionToFacility) {
     caseTypeText = formatMessage(core.caseType.admissionToFacility)
-  } else if (theCase.type === CaseType.TRAVEL_BAN) {
+  } else if (theCase.type === CaseType.TravelBan) {
     caseTypeText = formatMessage(core.caseType.travelBan)
-  } else if (theCase.type === CaseType.CUSTODY) {
+  } else if (theCase.type === CaseType.Custody) {
     caseTypeText = formatMessage(core.caseType.custody)
   }
 
@@ -330,7 +330,7 @@ function constructInvestigationRequestPdf(
   addNormalText(
     doc,
     capitalize(
-      theCase.type === CaseType.OTHER
+      theCase.type === CaseType.Other
         ? formatMessage(core.caseType.investigate)
         : caseTypes[theCase.type],
     ),

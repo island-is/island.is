@@ -82,7 +82,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
     const theCase = {
       id: caseId,
-      type: CaseType.INDICTMENT,
+      type: CaseType.Indictment,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
       prosecutor,
@@ -110,7 +110,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
     const theCase = {
       id: caseId,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
       prosecutor,
@@ -139,7 +139,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
     const theCase = {
       id: caseId,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
       rulingModifiedHistory: 'Some modified ruling',
@@ -164,13 +164,13 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     })
   })
 
-  describe.each([CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY])(
+  describe.each([CaseDecision.Accepting, CaseDecision.AcceptingPartially])(
     'Custody - when case descision is %s',
     (decision) => {
       const caseId = uuid()
       const theCase = {
         id: caseId,
-        type: CaseType.CUSTODY,
+        type: CaseType.Custody,
         decision,
         courtCaseNumber: '007-2022-07',
         rulingDate: new Date('2021-07-01'),
@@ -213,14 +213,14 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   )
 
   describe.each([
-    CaseDecision.REJECTING,
-    CaseDecision.DISMISSING,
-    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+    CaseDecision.Rejecting,
+    CaseDecision.Dismissing,
+    CaseDecision.AcceptingAlternativeTravelBan,
   ])('Custody - when case descision is %s', (decision) => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       decision,
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
@@ -244,8 +244,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.ADMISSION_TO_FACILITY,
-      decision: CaseDecision.ACCEPTING,
+      type: CaseType.AdmissionToFacility,
+      decision: CaseDecision.Accepting,
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
@@ -268,8 +268,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.ADMISSION_TO_FACILITY,
-      decision: CaseDecision.ACCEPTING,
+      type: CaseType.AdmissionToFacility,
+      decision: CaseDecision.Accepting,
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
@@ -317,8 +317,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.ADMISSION_TO_FACILITY,
-      decision: CaseDecision.ACCEPTING,
+      type: CaseType.AdmissionToFacility,
+      decision: CaseDecision.Accepting,
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],

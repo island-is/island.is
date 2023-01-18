@@ -16,7 +16,7 @@ const renderRestrictionTags = (workingCase: Case) =>
 describe('<RestrictionTags />', () => {
   const selector = { selector: 'span' }
   test('should not render for investication cases', () => {
-    const theCase = { type: CaseType.BODY_SEARCH } as Case
+    const theCase = { type: CaseType.BodySearch } as Case
     const result = renderRestrictionTags(theCase)
 
     expect(result.container).toBeEmptyDOMElement()
@@ -25,7 +25,7 @@ describe('<RestrictionTags />', () => {
   test('should render isolation restrction when isCustodyIsolation=true', () => {
     const theCase = {
       isCustodyIsolation: true,
-      decision: CaseDecision.ACCEPTING,
+      decision: CaseDecision.Accepting,
     } as Case
     renderRestrictionTags(theCase)
 
@@ -35,7 +35,7 @@ describe('<RestrictionTags />', () => {
   test('should not render isolation restrction when decision not accepting', () => {
     const theCase = {
       isCustodyIsolation: true,
-      decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+      decision: CaseDecision.AcceptingAlternativeTravelBan,
     } as Case
     renderRestrictionTags(theCase)
 
@@ -44,8 +44,8 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted travel ban cases', () => {
     const theCase = {
-      type: CaseType.TRAVEL_BAN,
-      decision: CaseDecision.ACCEPTING,
+      type: CaseType.TravelBan,
+      decision: CaseDecision.Accepting,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.MEDIA,
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -63,8 +63,8 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted travel ban cases', () => {
     const theCase = {
-      type: CaseType.TRAVEL_BAN,
-      decision: CaseDecision.ACCEPTING,
+      type: CaseType.TravelBan,
+      decision: CaseDecision.Accepting,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
         CaseCustodyRestrictions.COMMUNICATION,
@@ -90,8 +90,8 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted custody cases', () => {
     const theCase = {
-      type: CaseType.CUSTODY,
-      decision: CaseDecision.ACCEPTING,
+      type: CaseType.Custody,
+      decision: CaseDecision.Accepting,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
         CaseCustodyRestrictions.COMMUNICATION,
@@ -119,8 +119,8 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted admission cases', () => {
     const theCase = {
-      type: CaseType.ADMISSION_TO_FACILITY,
-      decision: CaseDecision.ACCEPTING,
+      type: CaseType.AdmissionToFacility,
+      decision: CaseDecision.Accepting,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
         CaseCustodyRestrictions.COMMUNICATION,

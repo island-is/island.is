@@ -8,7 +8,7 @@ import { intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.CUSTODY)
+    const caseData = mockCase(CaseType.Custody)
 
     cy.stubAPIResponses()
     intercept(caseData)

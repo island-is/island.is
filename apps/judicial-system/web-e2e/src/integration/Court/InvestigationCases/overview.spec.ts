@@ -34,8 +34,8 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   const caseFilesComments = faker.lorem.words(5)
 
   beforeEach(() => {
-    cy.login(UserRole.JUDGE)
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    cy.login(UserRole.Judge)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition: Case = {
       ...caseData,
       demands,
@@ -51,7 +51,7 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       prosecutor: makeProsecutor(),
       creatingProsecutor: makeProsecutor(),
       requestedCourtDate: '2020-09-20T19:50:08.033Z',
-      state: CaseState.RECEIVED,
+      state: CaseState.Received,
       sessionArrangements: SessionArrangements.ALL_PRESENT,
       caseFiles: [makeCaseFile()],
       seenByDefender: '2020-09-20T19:50:08.033Z',

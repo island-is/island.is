@@ -14,7 +14,7 @@ import {
 
 describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INDICTMENT)
+    const caseData = mockCase(CaseType.Indictment)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
@@ -36,7 +36,7 @@ describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id`, () => {
 
 describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id submitted`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INDICTMENT)
+    const caseData = mockCase(CaseType.Indictment)
     const caseDataAddition = {
       ...caseData,
       courtCaseNumber: 'S-test/2023',

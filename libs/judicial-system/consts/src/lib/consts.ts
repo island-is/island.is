@@ -8,70 +8,70 @@ export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 export const InvestigationCaseTypes = [
   {
     label: 'Húsleit',
-    value: CaseType.SEARCH_WARRANT,
+    value: CaseType.SearchWarrant,
   },
   {
     label: 'Rof bankaleyndar',
-    value: CaseType.BANKING_SECRECY_WAIVER,
+    value: CaseType.BankingSecrecyWaiver,
   },
   {
     label: 'Símhlustun',
-    value: CaseType.PHONE_TAPPING,
+    value: CaseType.PhoneTapping,
   },
   {
     label: 'Upplýsingar um fjarskiptasamskipti',
-    value: CaseType.TELECOMMUNICATIONS,
+    value: CaseType.Telecommunications,
   },
   {
     label: 'Eftirfararbúnaður',
-    value: CaseType.TRACKING_EQUIPMENT,
+    value: CaseType.TrackingEquipment,
   },
   {
     label: '',
     options: [
       {
         label: 'Geðrannsókn',
-        value: CaseType.PSYCHIATRIC_EXAMINATION,
+        value: CaseType.PsychiatricExamination,
       },
       {
         label: 'Hljóðupptökubúnaði komið fyrir',
-        value: CaseType.SOUND_RECORDING_EQUIPMENT,
+        value: CaseType.SoundRecordingEquipment,
       },
       {
         label: 'Krufning',
-        value: CaseType.AUTOPSY,
+        value: CaseType.Autopsy,
       },
       {
         label: 'Leit og líkamsrannsókn',
-        value: CaseType.BODY_SEARCH,
+        value: CaseType.BodySearch,
       },
       {
         label: 'Myndupptökubúnaði komið fyrir',
-        value: CaseType.VIDEO_RECORDING_EQUIPMENT,
+        value: CaseType.VideoRecordingEquipment,
       },
       {
         label: 'Nálgunarbann',
-        value: CaseType.RESTRAINING_ORDER,
+        value: CaseType.RestrainingOrder,
       },
       {
         label: 'Nálgunarbann og brottvísun af heimili',
-        value: CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+        value: CaseType.RestrainingOrderAndExpulsionFromHome,
       },
       {
         label: 'Brottvísun af heimili',
-        value: CaseType.EXPULSION_FROM_HOME,
+        value: CaseType.ExpulsionFromHome,
       },
       {
         label: 'Rannsókn á rafrænum gögnum',
-        value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+        value: CaseType.ElectronicDataDiscoveryInvestigation,
       },
       {
         label: 'Upplýsingar um vefnotkun',
-        value: CaseType.INTERNET_USAGE,
+        value: CaseType.InternetUsage,
       },
       {
         label: 'Annað',
-        value: CaseType.OTHER,
+        value: CaseType.Other,
       },
     ],
   },

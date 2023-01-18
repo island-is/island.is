@@ -14,15 +14,15 @@ import {
 } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = mockCase(CaseType.Custody)
   const caseDataAddition = {
     ...caseData,
-    state: CaseState.RECEIVED,
+    state: CaseState.Received,
     court: makeCourt(),
   }
 
   beforeEach(() => {
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.Judge)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)

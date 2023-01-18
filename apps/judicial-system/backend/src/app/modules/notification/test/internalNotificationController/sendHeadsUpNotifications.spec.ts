@@ -47,7 +47,7 @@ describe('InternalNotificationController - Send heads up notification', () => {
 
   describe('notification sent', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, type: CaseType.CUSTODY, courtId } as Case
+    const theCase = { id: caseId, type: CaseType.Custody, courtId } as Case
     let then: Then
 
     beforeEach(async () => {

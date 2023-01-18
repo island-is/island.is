@@ -96,7 +96,7 @@ export const HearingArrangements: React.FC = () => {
       }
 
       const caseOpened =
-        workingCase.state === CaseState.NEW
+        workingCase.state === CaseState.New
           ? await transitionCase(
               workingCase.id,
               CaseTransition.OPEN,
@@ -106,8 +106,8 @@ export const HearingArrangements: React.FC = () => {
 
       if (caseOpened) {
         if (
-          (workingCase.state !== CaseState.NEW &&
-            workingCase.state !== CaseState.DRAFT) ||
+          (workingCase.state !== CaseState.New &&
+            workingCase.state !== CaseState.Draft) ||
           // TODO: Ignore failed notifications
           workingCase.notifications?.find(
             (notification) => notification.type === NotificationType.HEADS_UP,

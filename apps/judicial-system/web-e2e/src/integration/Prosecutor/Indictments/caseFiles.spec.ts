@@ -8,14 +8,14 @@ import { makeCourt, mockCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${INDICTMENTS_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INDICTMENT)
+    const caseData = mockCase(CaseType.Indictment)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
       court: makeCourt(),
     }
 
-    cy.login(UserRole.PROSECUTOR)
+    cy.login(UserRole.Prosecutor)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INDICTMENTS_CASE_FILES_ROUTE}/test_id`)

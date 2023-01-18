@@ -31,24 +31,24 @@ const Decision: React.FC<Props> = ({
           name="case-decision"
           id="case-decision-accepting"
           label={acceptedLabelText}
-          checked={workingCase.decision === CaseDecision.ACCEPTING}
+          checked={workingCase.decision === CaseDecision.Accepting}
           onChange={() => {
-            onChange(CaseDecision.ACCEPTING)
+            onChange(CaseDecision.Accepting)
           }}
           large
           backgroundColor="white"
           disabled={disabled}
         />
       </Box>
-      {workingCase.type !== CaseType.TRAVEL_BAN && (
+      {workingCase.type !== CaseType.TravelBan && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"
             id="case-decision-accepting-partially"
             label={partiallyAcceptedLabelText}
-            checked={workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY}
+            checked={workingCase.decision === CaseDecision.AcceptingPartially}
             onChange={() => {
-              onChange(CaseDecision.ACCEPTING_PARTIALLY)
+              onChange(CaseDecision.AcceptingPartially)
             }}
             large
             backgroundColor="white"
@@ -61,17 +61,17 @@ const Decision: React.FC<Props> = ({
           name="case-decision"
           id="case-decision-rejecting"
           label={rejectedLabelText}
-          checked={workingCase.decision === CaseDecision.REJECTING}
+          checked={workingCase.decision === CaseDecision.Rejecting}
           onChange={() => {
-            onChange(CaseDecision.REJECTING)
+            onChange(CaseDecision.Rejecting)
           }}
           large
           backgroundColor="white"
           disabled={disabled}
         />
       </Box>
-      {(workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
+      {(workingCase.type === CaseType.Custody ||
+        workingCase.type === CaseType.AdmissionToFacility) && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"
@@ -79,10 +79,10 @@ const Decision: React.FC<Props> = ({
             label={acceptingAlternativeTravelBanLabelText}
             checked={
               workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+              CaseDecision.AcceptingAlternativeTravelBan
             }
             onChange={() => {
-              onChange(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+              onChange(CaseDecision.AcceptingAlternativeTravelBan)
             }}
             large
             backgroundColor="white"
@@ -95,9 +95,9 @@ const Decision: React.FC<Props> = ({
           name="case-decision"
           id="case-decision-dismissing"
           label={dismissLabelText}
-          checked={workingCase.decision === CaseDecision.DISMISSING}
+          checked={workingCase.decision === CaseDecision.Dismissing}
           onChange={() => {
-            onChange(CaseDecision.DISMISSING)
+            onChange(CaseDecision.Dismissing)
           }}
           large
           backgroundColor="white"

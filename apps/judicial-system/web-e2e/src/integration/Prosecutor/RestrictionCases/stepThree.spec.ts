@@ -8,7 +8,7 @@ import { intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
   const interceptByType = (type: CaseType) => {
-    const caseData = mockCase(CaseType.CUSTODY)
+    const caseData = mockCase(CaseType.Custody)
 
     cy.stubAPIResponses()
     intercept({ ...caseData, type })
@@ -17,7 +17,7 @@ describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
 
   describe('Custody cases', () => {
     beforeEach(() => {
-      interceptByType(CaseType.CUSTODY)
+      interceptByType(CaseType.Custody)
     })
 
     it('should validate form', () => {
@@ -78,7 +78,7 @@ describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
 
   describe('Admission to facility', () => {
     beforeEach(() => {
-      interceptByType(CaseType.ADMISSION_TO_FACILITY)
+      interceptByType(CaseType.AdmissionToFacility)
     })
 
     it('should show custody restrictions', () => {
@@ -88,7 +88,7 @@ describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
 
   describe('Travel ban', () => {
     beforeEach(() => {
-      interceptByType(CaseType.TRAVEL_BAN)
+      interceptByType(CaseType.TravelBan)
     })
 
     it('should show travel ban restrictions', () => {

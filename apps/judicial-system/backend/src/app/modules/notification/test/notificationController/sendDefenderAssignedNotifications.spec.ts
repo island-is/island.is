@@ -251,7 +251,7 @@ describe('NotificationController - Send defender assigned notifications', () => 
     const defendants = [defender1, defender2] as Defendant[] | undefined
     const theCase = {
       id: caseId,
-      type: CaseType.INDICTMENT,
+      type: CaseType.Indictment,
       defendants,
     } as Case
     const user = {} as User
@@ -280,7 +280,7 @@ describe('NotificationController - Send defender assigned notifications', () => 
     const defendants = [defender1, defender1] as Defendant[] | undefined
     const theCase = {
       id: caseId,
-      type: CaseType.INDICTMENT,
+      type: CaseType.Indictment,
       defendants,
     } as Case
     const user = {} as User

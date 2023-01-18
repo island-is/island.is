@@ -37,8 +37,8 @@ const ArrestDate: React.FC<Props> = (props) => {
   const caseType = workingCase.type
   const isArrestTimeRequired = useMemo(
     () =>
-      caseType === CaseType.CUSTODY ||
-      caseType === CaseType.ADMISSION_TO_FACILITY,
+      caseType === CaseType.Custody ||
+      caseType === CaseType.AdmissionToFacility,
     [caseType],
   )
 

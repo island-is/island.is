@@ -22,7 +22,7 @@ export class CaseReceivedGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    if (![CaseState.RECEIVED, ...completedCaseStates].includes(theCase.state)) {
+    if (![CaseState.Received, ...completedCaseStates].includes(theCase.state)) {
       throw new ForbiddenException('Forbidden for unreceived cases')
     }
 

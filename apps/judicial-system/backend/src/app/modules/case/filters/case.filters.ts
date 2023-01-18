@@ -30,42 +30,42 @@ function getAllowedStates(
 ): CaseState[] {
   if (isProsecutionRole(role)) {
     return [
-      CaseState.NEW,
-      CaseState.DRAFT,
-      CaseState.SUBMITTED,
-      CaseState.RECEIVED,
-      CaseState.ACCEPTED,
-      CaseState.REJECTED,
-      CaseState.DISMISSED,
+      CaseState.New,
+      CaseState.Draft,
+      CaseState.Submitted,
+      CaseState.Received,
+      CaseState.Accepted,
+      CaseState.Rejected,
+      CaseState.Dismissed,
     ]
   }
 
-  if (institutionType === InstitutionType.COURT) {
-    if (role === UserRole.ASSISTANT || isIndictmentCase(caseType)) {
+  if (institutionType === InstitutionType.Court && caseType) {
+    if (role === UserRole.Assistant || isIndictmentCase(caseType)) {
       return [
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        CaseState.ACCEPTED,
-        CaseState.REJECTED,
-        CaseState.DISMISSED,
+        CaseState.Submitted,
+        CaseState.Received,
+        CaseState.Accepted,
+        CaseState.Rejected,
+        CaseState.Dismissed,
       ]
     }
 
     return [
-      CaseState.DRAFT,
-      CaseState.SUBMITTED,
-      CaseState.RECEIVED,
-      CaseState.ACCEPTED,
-      CaseState.REJECTED,
-      CaseState.DISMISSED,
+      CaseState.Draft,
+      CaseState.Submitted,
+      CaseState.Received,
+      CaseState.Accepted,
+      CaseState.Rejected,
+      CaseState.Dismissed,
     ]
   }
 
-  if (institutionType === InstitutionType.HIGH_COURT) {
-    return [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED]
+  if (institutionType === InstitutionType.HighCourt) {
+    return [CaseState.Accepted, CaseState.Rejected, CaseState.Dismissed]
   }
 
-  return [CaseState.ACCEPTED]
+  return [CaseState.Accepted]
 }
 
 function getBlockedStates(
@@ -102,34 +102,34 @@ function getAllowedTypes(
   forUpdate: boolean,
   institutionType?: InstitutionType,
 ): CaseType[] {
-  if (role === UserRole.ADMIN) {
+  if (role === UserRole.Admin) {
     return [] // admins should only handle user management
   }
 
-  if (role === UserRole.REPRESENTATIVE || role === UserRole.ASSISTANT) {
+  if (role === UserRole.Representative || role === UserRole.Assistant) {
     return indictmentCases
   }
 
   if (
     [
-      UserRole.JUDGE,
-      UserRole.REGISTRAR,
-      UserRole.PROSECUTOR,
-      UserRole.DEFENDER,
+      UserRole.Judge,
+      UserRole.Registrar,
+      UserRole.Prosecutor,
+      UserRole.Defender,
     ].includes(role)
   ) {
     return [...indictmentCases, ...investigationCases, ...restrictionCases]
   }
 
-  if (institutionType === InstitutionType.PRISON_ADMIN) {
+  if (institutionType === InstitutionType.PrisonAdmin) {
     return [
-      CaseType.CUSTODY,
-      CaseType.ADMISSION_TO_FACILITY,
-      ...(forUpdate ? [] : [CaseType.TRAVEL_BAN]),
+      CaseType.Custody,
+      CaseType.AdmissionToFacility,
+      ...(forUpdate ? [] : [CaseType.TravelBan]),
     ]
   }
 
-  return forUpdate ? [] : [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]
+  return forUpdate ? [] : [CaseType.Custody, CaseType.AdmissionToFacility]
 }
 
 function isTypeHiddenFromRole(
@@ -146,8 +146,8 @@ function isDecisionHiddenFromInstitution(
   institutionType?: InstitutionType,
 ): boolean {
   return (
-    institutionType === InstitutionType.PRISON &&
-    decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    institutionType === InstitutionType.Prison &&
+    decision === CaseDecision.AcceptingAlternativeTravelBan
   )
 }
 
@@ -179,7 +179,7 @@ function isCourtCaseHiddenFromUser(
     courtId !== user.institution?.id &&
     (forUpdate ||
       !hasCaseBeenAppealed ||
-      user.institution?.type !== InstitutionType.HIGH_COURT)
+      user.institution?.type !== InstitutionType.HighCourt)
   )
 }
 
@@ -207,10 +207,10 @@ export const oldFilter = {
         { type: [...restrictionCases, ...investigationCases] },
         {
           state: [
-            CaseState.NEW,
-            CaseState.DRAFT,
-            CaseState.SUBMITTED,
-            CaseState.RECEIVED,
+            CaseState.New,
+            CaseState.Draft,
+            CaseState.Submitted,
+            CaseState.Received,
           ],
         },
         { created: { [Op.lt]: lifetime } },
@@ -219,14 +219,14 @@ export const oldFilter = {
     {
       [Op.and]: [
         { type: restrictionCases },
-        { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+        { state: [CaseState.Rejected, CaseState.Dismissed] },
         { ruling_date: { [Op.lt]: lifetime } },
       ],
     },
     {
       [Op.and]: [
         { type: restrictionCases },
-        { state: CaseState.ACCEPTED },
+        { state: CaseState.Accepted },
         { valid_to_date: { [Op.lt]: lifetime } },
       ],
     },
@@ -256,16 +256,19 @@ export function isCaseBlockedFromUser(
     isStateHiddenFromRole(
       theCase.state,
       user.role,
-      user.institution?.type,
+      user.institution?.type as InstitutionType, // TODO REMOVE InstitutionType cast
       theCase.type,
     ) ||
     isTypeHiddenFromRole(
       theCase.type,
       user.role,
       forUpdate,
-      user.institution?.type,
+      user.institution?.type as InstitutionType,
     ) ||
-    isDecisionHiddenFromInstitution(theCase.decision, user.institution?.type) ||
+    isDecisionHiddenFromInstitution(
+      theCase.decision,
+      user.institution?.type as InstitutionType,
+    ) ||
     isProsecutorsOfficeCaseHiddenFromUser(
       user,
       forUpdate,
@@ -290,16 +293,16 @@ export function isCaseBlockedFromUser(
 function getStaffCasesQueryFilter(
   institutionType?: InstitutionType,
 ): WhereOptions {
-  return institutionType === InstitutionType.PRISON_ADMIN
+  return institutionType === InstitutionType.PrisonAdmin
     ? {
         [Op.and]: [
           { isArchived: false },
-          { state: CaseState.ACCEPTED },
+          { state: CaseState.Accepted },
           {
             type: [
-              CaseType.ADMISSION_TO_FACILITY,
-              CaseType.CUSTODY,
-              CaseType.TRAVEL_BAN,
+              CaseType.AdmissionToFacility,
+              CaseType.Custody,
+              CaseType.TravelBan,
             ],
           },
         ],
@@ -307,25 +310,27 @@ function getStaffCasesQueryFilter(
     : {
         [Op.and]: [
           { isArchived: false },
-          { state: CaseState.ACCEPTED },
-          { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+          { state: CaseState.Accepted },
+          { type: [CaseType.Custody, CaseType.AdmissionToFacility] },
           {
-            decision: [
-              CaseDecision.ACCEPTING,
-              CaseDecision.ACCEPTING_PARTIALLY,
-            ],
+            decision: [CaseDecision.Accepting, CaseDecision.AcceptingPartially],
           },
         ],
       }
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
-  if (user.role === UserRole.STAFF) {
-    return getStaffCasesQueryFilter(user.institution?.type)
+  if (user.role === UserRole.Staff) {
+    return getStaffCasesQueryFilter(user.institution?.type as InstitutionType)
   }
 
   const blockStates = {
-    [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
+    [Op.not]: {
+      state: getBlockedStates(
+        user.role,
+        user.institution?.type as InstitutionType,
+      ),
+    },
   }
 
   const blockInstitutions = isProsecutionRole(user.role)
@@ -336,11 +341,11 @@ export function getCasesQueryFilter(user: User): WhereOptions {
           { shared_with_prosecutors_office_id: user.institution?.id },
         ],
       }
-    : user.institution?.type === InstitutionType.HIGH_COURT
+    : user.institution?.type === InstitutionType.HighCourt
     ? {
         [Op.or]: [
-          { accused_appeal_decision: CaseAppealDecision.APPEAL },
-          { prosecutor_appeal_decision: CaseAppealDecision.APPEAL },
+          { accused_appeal_decision: CaseAppealDecision.Appeal },
+          { prosecutor_appeal_decision: CaseAppealDecision.Appeal },
           { accused_postponed_appeal_date: { [Op.not]: null } },
           { prosecutor_postponed_appeal_date: { [Op.not]: null } },
         ],
@@ -369,14 +374,14 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     ? [
         {
           [Op.not]: {
-            [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
+            [Op.and]: [{ state: CaseState.Draft }, { type: indictmentCases }],
           },
         },
       ]
     : []
 
   const restrictCaseTypes =
-    user.role === UserRole.REPRESENTATIVE || user.role === UserRole.ASSISTANT
+    user.role === UserRole.Representative || user.role === UserRole.Assistant
       ? [{ type: indictmentCases }]
       : []
 

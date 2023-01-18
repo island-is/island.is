@@ -23,8 +23,8 @@ const CaseDates: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const isTravelBan =
-    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    workingCase.type === CaseType.TRAVEL_BAN
+    workingCase.decision === CaseDecision.AcceptingAlternativeTravelBan ||
+    workingCase.type === CaseType.TravelBan
 
   return (
     <Box data-testid="caseDates">
@@ -32,7 +32,7 @@ const CaseDates: React.FC<Props> = (props) => {
         {workingCase.isValidToDateInThePast ? (
           <Text variant="h5">
             {formatMessage(caseDates.restrictionExpired, {
-              caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
+              caseType: isTravelBan ? CaseType.TravelBan : workingCase.type,
               date: `${formatDate(
                 workingCase.validToDate,
                 'PPP',
@@ -48,9 +48,7 @@ const CaseDates: React.FC<Props> = (props) => {
             <Box>
               <Text variant="h5">
                 {formatMessage(caseDates.restrictionValidTo, {
-                  caseType: isTravelBan
-                    ? CaseType.TRAVEL_BAN
-                    : workingCase.type,
+                  caseType: isTravelBan ? CaseType.TravelBan : workingCase.type,
                   date: `${formatDate(
                     workingCase.validToDate,
                     'PPP',

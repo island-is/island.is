@@ -150,26 +150,26 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.ADMIN
+        user?.role === UserRole.Admin
           ? formatMessage(pageLayout.adminRole.alertTitle)
-          : user?.role === UserRole.DEFENDER
+          : user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.ADMIN
+        user?.role === UserRole.Admin
           ? formatMessage(pageLayout.adminRole.alertMessage)
-          : user?.role === UserRole.DEFENDER
+          : user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
       link={
-        user?.role === UserRole.DEFENDER
+        user?.role === UserRole.Defender
           ? undefined
           : {
               href:
-                user?.role === UserRole.ADMIN
+                user?.role === UserRole.Admin
                   ? constants.USERS_ROUTE
                   : constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',

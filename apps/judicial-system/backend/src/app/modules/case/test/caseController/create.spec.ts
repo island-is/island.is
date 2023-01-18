@@ -71,7 +71,7 @@ describe('CaseController - Create', () => {
       const courtId = uuid()
       const user = {
         id: userId,
-        role: UserRole.PROSECUTOR,
+        role: UserRole.Prosecutor,
         institution: { defaultCourtId: courtId },
       } as TUser
       const caseToCreate = {
@@ -110,7 +110,7 @@ describe('CaseController - Create', () => {
     const courtId = uuid()
     const user = {
       id: userId,
-      role: UserRole.PROSECUTOR,
+      role: UserRole.Prosecutor,
       institution: { defaultCourtId: courtId },
     } as TUser
     const caseToCreate = {
@@ -129,7 +129,7 @@ describe('CaseController - Create', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
           ...caseToCreate,
-          state: CaseState.DRAFT,
+          state: CaseState.Draft,
           origin: CaseOrigin.RVG,
           creatingProsecutorId: userId,
           prosecutorId: userId,
@@ -222,7 +222,7 @@ describe('CaseController - Create', () => {
         where: {
           id: caseId,
           isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
+          state: { [Op.not]: CaseState.Deleted },
         },
       })
     })

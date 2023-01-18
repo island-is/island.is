@@ -83,7 +83,7 @@ export function getConclusionAutofill(
     '',
   )
 
-  return decision === CaseDecision.DISMISSING
+  return decision === CaseDecision.Dismissing
     ? formatMessage(m.sections.conclusion.dismissingAutofill, {
         defendantName: defendant.name,
         isExtended:
@@ -91,7 +91,7 @@ export function getConclusionAutofill(
           isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
-    : decision === CaseDecision.REJECTING
+    : decision === CaseDecision.Rejecting
     ? formatMessage(m.sections.conclusion.rejectingAutofill, {
         defendantName: defendant.name,
         defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
@@ -106,10 +106,10 @@ export function getConclusionAutofill(
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision) &&
-          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+          decision !== CaseDecision.AcceptingAlternativeTravelBan,
         caseType:
-          decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TRAVEL_BAN
+          decision === CaseDecision.AcceptingAlternativeTravelBan
+            ? CaseType.TravelBan
             : workingCase.type,
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
@@ -558,8 +558,8 @@ export const Ruling: React.FC = () => {
           </Box>
         </Box>
         {workingCase.decision &&
-          workingCase.decision !== CaseDecision.REJECTING &&
-          workingCase.decision !== CaseDecision.DISMISSING && (
+          workingCase.decision !== CaseDecision.Rejecting &&
+          workingCase.decision !== CaseDecision.Dismissing && (
             <Box
               component="section"
               marginBottom={7}
@@ -571,8 +571,8 @@ export const Ruling: React.FC = () => {
                     formatMessage(m.sections.decision.caseType, {
                       caseType:
                         workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? CaseType.TRAVEL_BAN
+                        CaseDecision.AcceptingAlternativeTravelBan
+                          ? CaseType.TravelBan
                           : workingCase.type,
                     }),
                   )}
@@ -587,8 +587,8 @@ export const Ruling: React.FC = () => {
                       formatMessage(m.sections.decision.caseType, {
                         caseType:
                           workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TRAVEL_BAN
+                          CaseDecision.AcceptingAlternativeTravelBan
+                            ? CaseType.TravelBan
                             : workingCase.type,
                       }),
                     ),
@@ -615,7 +615,7 @@ export const Ruling: React.FC = () => {
                     valid &&
                     (isAcceptingCaseDecision(workingCase.decision) ||
                       workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                        CaseDecision.AcceptingAlternativeTravelBan)
                   ) {
                     conclusion = getConclusionAutofill(
                       formatMessage,
@@ -646,8 +646,8 @@ export const Ruling: React.FC = () => {
               />
             </Box>
           )}
-        {(workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+        {(workingCase.type === CaseType.Custody ||
+          workingCase.type === CaseType.AdmissionToFacility) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={2}>
@@ -673,7 +673,7 @@ export const Ruling: React.FC = () => {
                         workingCase.defendants.length > 0 &&
                         (isAcceptingCaseDecision(workingCase.decision) ||
                           workingCase.decision ===
-                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                            CaseDecision.AcceptingAlternativeTravelBan)
                       ) {
                         conclusion = getConclusionAutofill(
                           formatMessage,
@@ -737,7 +737,7 @@ export const Ruling: React.FC = () => {
                       valid &&
                       (isAcceptingCaseDecision(workingCase.decision) ||
                         workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                          CaseDecision.AcceptingAlternativeTravelBan)
                     ) {
                       conclusion = getConclusionAutofill(
                         formatMessage,

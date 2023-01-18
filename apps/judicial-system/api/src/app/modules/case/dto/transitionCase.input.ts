@@ -3,7 +3,7 @@ import { Allow } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 
 import type {
-  CaseTransition,
+  xCaseTransition,
   TransitionCase,
 } from '@island.is/judicial-system/types'
 
@@ -15,5 +15,5 @@ export class TransitionCaseInput implements TransitionCase {
 
   @Allow()
   @Field(() => String)
-  readonly transition!: CaseTransition
+  readonly transition!: xCaseTransition
 }

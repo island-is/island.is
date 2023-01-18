@@ -112,7 +112,7 @@ export class Case extends Model {
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(CaseState),
-    defaultValue: CaseState.NEW,
+    defaultValue: CaseState.New,
   })
   @ApiProperty({ enum: CaseState })
   state!: CaseState

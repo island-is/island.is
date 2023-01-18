@@ -134,7 +134,7 @@ describe('formatGender', () => {
 describe('formatAppeal', () => {
   test('should format appeal', () => {
     // Arrange
-    const appealDecision = CaseAppealDecision.APPEAL
+    const appealDecision = CaseAppealDecision.Appeal
     const stakeholder = 'Aðili'
 
     // Act
@@ -148,7 +148,7 @@ describe('formatAppeal', () => {
 
   test('should format acceptance', () => {
     // Arrange
-    const appealDecision = CaseAppealDecision.ACCEPT
+    const appealDecision = CaseAppealDecision.Accept
     const stakeholder = 'Aðili'
 
     // Act
@@ -160,7 +160,7 @@ describe('formatAppeal', () => {
 
   test('should format postponement', () => {
     // Arrange
-    const appealDecision = CaseAppealDecision.POSTPONE
+    const appealDecision = CaseAppealDecision.Postpone
     const stakeholder = 'Aðilar'
 
     // Act

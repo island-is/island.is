@@ -42,7 +42,7 @@ const AppealSection: React.FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isHighCourt = user?.institution?.type === InstitutionType.HighCourt
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 
@@ -57,8 +57,8 @@ const AppealSection: React.FC<Props> = (props) => {
           {formatMessage(signedVerdictOverview.sections.appeal.title)}
         </Text>
       </Box>
-      {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
+      {(workingCase.accusedAppealDecision === CaseAppealDecision.Postpone ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.Postpone) &&
         workingCase.courtEndTime &&
         !isHighCourt && (
           <Box marginBottom={3}>
@@ -70,7 +70,7 @@ const AppealSection: React.FC<Props> = (props) => {
             </Text>
           </Box>
         )}
-      {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
+      {workingCase.accusedAppealDecision === CaseAppealDecision.Appeal && (
         <div className={styles.appealContainer}>
           <BlueBox>
             <InfoBox
@@ -89,7 +89,7 @@ const AppealSection: React.FC<Props> = (props) => {
           </BlueBox>
         </div>
       )}
-      {workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL && (
+      {workingCase.prosecutorAppealDecision === CaseAppealDecision.Appeal && (
         <div className={styles.appealContainer}>
           <BlueBox>
             <InfoBox
@@ -108,7 +108,7 @@ const AppealSection: React.FC<Props> = (props) => {
           </BlueBox>
         </div>
       )}
-      {workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+      {workingCase.accusedAppealDecision === CaseAppealDecision.Postpone &&
         (Boolean(workingCase.accusedPostponedAppealDate) ||
           !workingCase.isAppealGracePeriodExpired) && (
           <div className={styles.appealContainer}>
@@ -138,7 +138,7 @@ const AppealSection: React.FC<Props> = (props) => {
             </BlueBox>
           </div>
         )}
-      {workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
+      {workingCase.prosecutorAppealDecision === CaseAppealDecision.Postpone &&
         (Boolean(workingCase.prosecutorPostponedAppealDate) ||
           !workingCase.isAppealGracePeriodExpired) && (
           <div className={styles.appealContainer}>

@@ -183,7 +183,7 @@ export const StepOne: React.FC = () => {
                 setWorkingCase={setWorkingCase}
               />
             </Box>
-            {workingCase.type !== CaseType.TRAVEL_BAN && (
+            {workingCase.type !== CaseType.TravelBan && (
               <Box component="section" marginBottom={10}>
                 <Box
                   display="flex"

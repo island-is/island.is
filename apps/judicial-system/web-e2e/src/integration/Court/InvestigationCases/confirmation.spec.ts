@@ -10,14 +10,14 @@ describe(`${INVESTIGATION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   const conclusion = faker.lorem.sentence()
 
   it('should display the ruling', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition: Case = {
       ...caseData,
       conclusion,
       ruling,
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.Judge)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_CONFIRMATION_ROUTE}/test_id_stadfesting`)

@@ -69,8 +69,8 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
       </Box>
       <Box marginBottom={2}>
         <Text>
-          {workingCase.state !== CaseState.SUBMITTED &&
-          workingCase.state !== CaseState.RECEIVED
+          {workingCase.state !== CaseState.Submitted &&
+          workingCase.state !== CaseState.Received
             ? formatMessage(courtCaseNumber.explanationDisabled)
             : formatMessage(courtCaseNumber.explanation)}
         </Text>
@@ -84,8 +84,8 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 onClick={() => handleCreateCourtCase(workingCase)}
                 loading={isCreatingCourtCase}
                 disabled={Boolean(
-                  (workingCase.state !== CaseState.SUBMITTED &&
-                    workingCase.state !== CaseState.RECEIVED) ||
+                  (workingCase.state !== CaseState.Submitted &&
+                    workingCase.state !== CaseState.Received) ||
                     workingCase.courtCaseNumber,
                 )}
                 fluid
@@ -145,8 +145,8 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                   )
                 }}
                 disabled={
-                  workingCase.state !== CaseState.SUBMITTED &&
-                  workingCase.state !== CaseState.RECEIVED
+                  workingCase.state !== CaseState.Submitted &&
+                  workingCase.state !== CaseState.Received
                 }
                 required
               />

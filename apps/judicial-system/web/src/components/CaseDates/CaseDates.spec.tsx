@@ -17,7 +17,7 @@ describe('<CaseDates /> expired', () => {
   test('should render expired custody case', () => {
     const theCase = {
       isValidToDateInThePast: true,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -30,7 +30,7 @@ describe('<CaseDates /> expired', () => {
   test('should render expired admission case', () => {
     const theCase = {
       isValidToDateInThePast: true,
-      type: CaseType.ADMISSION_TO_FACILITY,
+      type: CaseType.AdmissionToFacility,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -43,7 +43,7 @@ describe('<CaseDates /> expired', () => {
   test('should render expired travel ban case', () => {
     const theCase = {
       isValidToDateInThePast: true,
-      type: CaseType.TRAVEL_BAN,
+      type: CaseType.TravelBan,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -57,7 +57,7 @@ describe('<CaseDates /> expired', () => {
 describe('<CaseDates /> still valid', () => {
   test('should render valid custody case', () => {
     const theCase = {
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -69,7 +69,7 @@ describe('<CaseDates /> still valid', () => {
 
   test('should render valid travel ban case', () => {
     const theCase = {
-      type: CaseType.TRAVEL_BAN,
+      type: CaseType.TravelBan,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -81,7 +81,7 @@ describe('<CaseDates /> still valid', () => {
 
   test('should render valid admission case', () => {
     const theCase = {
-      type: CaseType.ADMISSION_TO_FACILITY,
+      type: CaseType.AdmissionToFacility,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -93,7 +93,7 @@ describe('<CaseDates /> still valid', () => {
 
   test('should render valid custody case with isolation', () => {
     const theCase = {
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       isCustodyIsolation: true,
       validToDate: '2022-06-15T19:50:08.033Z',
       isolationToDate: '2022-06-15T19:50:08.033Z',

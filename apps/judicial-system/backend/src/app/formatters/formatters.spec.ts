@@ -47,14 +47,14 @@ export const makeProsecutor = (): User => {
     nationalId: '000000-0000',
     mobileNumber: '000-0000',
     email: 'prosecutor@law.is',
-    role: UserRole.PROSECUTOR,
+    role: UserRole.Prosecutor,
     active: true,
     title: 'aðstoðarsaksóknari',
     institution: {
       id: '',
       created: '',
       modified: '',
-      type: InstitutionType.PROSECUTORS_OFFICE,
+      type: InstitutionType.ProsecutorsOffice,
       name: 'Lögreglan á Höfuðborgarsvæðinu',
       active: true,
     },
@@ -166,7 +166,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
   test('should format heads up notification', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const prosecutorName = 'Árni Ákærandi'
     const arrestDate = new Date('2020-11-24T13:22')
     const requestedCourtDate = new Date('2020-11-25T09:15')
@@ -188,7 +188,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
   test('should format heads up notification with missing dates', () => {
     // Arrange
-    const type = CaseType.TRAVEL_BAN
+    const type = CaseType.TravelBan
     const prosecutorName = 'Árni Ákærandi'
 
     // Act
@@ -206,7 +206,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
   test('should format heads up notification with missing prosecutor', () => {
     // Arrange
-    const type = CaseType.ADMISSION_TO_FACILITY
+    const type = CaseType.AdmissionToFacility
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
@@ -225,7 +225,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
   test('should format heads up notification for travel ban', () => {
     // Arrange
-    const type = CaseType.TRAVEL_BAN
+    const type = CaseType.TravelBan
     const prosecutorName = 'Ákærandinn'
     const arrestDate = new Date('2021-01-24T13:00')
     const requestedCourtDate = new Date('2021-01-25T19:15')
@@ -247,7 +247,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
   test('should format heads up notification for investigation', () => {
     // Arrange
-    const type = CaseType.BODY_SEARCH
+    const type = CaseType.BodySearch
     const prosecutorName = 'Al Coe'
     const arrestDate = new Date('2021-01-24T13:00')
     const requestedCourtDate = new Date('2021-06-20T10:00')
@@ -269,7 +269,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
   test('should format heads up notification for investigation of type OTHER', () => {
     // Arrange
-    const type = CaseType.OTHER
+    const type = CaseType.Other
     const prosecutorName = 'Al Coe'
     const arrestDate = new Date('2021-01-24T13:00')
     const requestedCourtDate = new Date('2021-06-20T10:00')
@@ -299,7 +299,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
   test('should format ready for court SMS notification', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const prosecutorName = 'Árni Ákærandi'
     const prosecutorInstution = 'Héraðssaksóknari'
 
@@ -319,7 +319,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
   test('should format ready for court SMS notification with missing prosecutor and court', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
@@ -337,7 +337,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
   test('should format ready for court SMS notification for travel ban', () => {
     // Arrange
-    const type = CaseType.TRAVEL_BAN
+    const type = CaseType.TravelBan
     const prosecutorName = 'Árni Ákærandi'
     const prosecutorInstution = 'Ríkissaksóknari'
 
@@ -357,7 +357,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
   test('should format ready for court SMS notification for admission to facility', () => {
     // Arrange
-    const type = CaseType.ADMISSION_TO_FACILITY
+    const type = CaseType.AdmissionToFacility
     const prosecutorName = 'Árni Ákærandi'
     const prosecutorInstution = 'Héraðssaksóknari'
 
@@ -377,7 +377,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
   test('should format ready for court SMS notification for investigation', () => {
     // Arrange
-    const type = CaseType.INTERNET_USAGE
+    const type = CaseType.InternetUsage
     const prosecutorName = 'Árni Ákærandi'
     const prosecutorInstution = 'Héraðssaksóknari'
 
@@ -397,7 +397,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
   test('should format ready for court SMS notification for investigation of type OTHER', () => {
     // Arrange
-    const type = CaseType.OTHER
+    const type = CaseType.Other
     const prosecutorName = 'Árni Ákærandi'
 
     // Act
@@ -508,7 +508,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
   test('should format received by court notification for custody', () => {
     // Arranged
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
@@ -528,7 +528,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
   test('should format received by court notification for travel ban', () => {
     // Arranged
-    const type = CaseType.TRAVEL_BAN
+    const type = CaseType.TravelBan
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
@@ -548,7 +548,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
   test('should format received by court notification for admission to facility', () => {
     // Arranged
-    const type = CaseType.ADMISSION_TO_FACILITY
+    const type = CaseType.AdmissionToFacility
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
@@ -568,7 +568,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
   test('should format received by court notification for investigation', () => {
     // Arranged
-    const type = CaseType.SEARCH_WARRANT
+    const type = CaseType.SearchWarrant
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
@@ -588,7 +588,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
   test('should format received by court notification for investigation of type OTHER', () => {
     // Arranged
-    const type = CaseType.OTHER
+    const type = CaseType.Other
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
@@ -608,7 +608,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
   test('should format received by court notification for an indictment', () => {
     // Arranged
-    const type = CaseType.INDICTMENT
+    const type = CaseType.Indictment
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
@@ -660,7 +660,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
@@ -692,7 +692,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification with no judge, registrar and defender', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
@@ -720,7 +720,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification for travel ban', () => {
     // Arrange
-    const type = CaseType.TRAVEL_BAN
+    const type = CaseType.TravelBan
     const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
@@ -751,7 +751,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification for admission to facility', () => {
     // Arrange
-    const type = CaseType.ADMISSION_TO_FACILITY
+    const type = CaseType.AdmissionToFacility
     const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
@@ -782,7 +782,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification for investigation', () => {
     // Arrange
-    const type = CaseType.SOUND_RECORDING_EQUIPMENT
+    const type = CaseType.SoundRecordingEquipment
     const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
@@ -813,7 +813,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification for investigation of type OTHER', () => {
     // Arrange
-    const type = CaseType.OTHER
+    const type = CaseType.Other
     const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
@@ -844,7 +844,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification for indictments', () => {
     // Arrange
-    const type = CaseType.INDICTMENT
+    const type = CaseType.Indictment
     const courtCaseNumber = 'S-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
@@ -872,7 +872,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification when defender will not attend', () => {
     // Arrange
-    const type = CaseType.OTHER
+    const type = CaseType.Other
     const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
@@ -903,7 +903,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification when courtroom is not set', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
@@ -940,7 +940,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -976,7 +976,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with unknown gender', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -1012,7 +1012,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with no isolation', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -1048,7 +1048,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with undefined isolation', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -1084,7 +1084,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with no defender', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -1120,7 +1120,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification for extension requests', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
@@ -1156,7 +1156,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format request for admission to facility', () => {
     // Arrange
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
@@ -1391,7 +1391,7 @@ describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification for custody', () => {
     // Arrange
     const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1409,7 +1409,7 @@ describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification when date is missing', () => {
     // Arrange
     const courtEndTime = undefined
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1427,7 +1427,7 @@ describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification for admission to facility', () => {
     // Arrange
     const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1452,7 +1452,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
   test('should format revoked sms with court date', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const prosecutorName = 'Kiddi Kærari'
     const requestedCourtDate = new Date('2021-01-20T11:10')
     const courtDate = new Date('2021-12-20T11:30')
@@ -1474,7 +1474,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
   test('should format revoked sms without court date', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const prosecutorName = 'Kiddi Kærari'
     const requestedCourtDate = new Date('2021-01-20T11:10')
 
@@ -1495,7 +1495,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
   test('should format revoked sms without any info', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
 
     // Act
     const res = formatCourtRevokedSmsNotification(
@@ -1512,7 +1512,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
   test('should format revoked sms for travel ban', () => {
     // Arrange
-    const type = CaseType.TRAVEL_BAN
+    const type = CaseType.TravelBan
     const prosecutorName = 'Kiddi Kærari'
     const requestedCourtDate = new Date('2021-01-20T11:10')
     const courtDate = new Date('2021-12-20T11:30')
@@ -1534,7 +1534,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
   test('should format revoked sms for admission to facility', () => {
     // Arrange
-    const type = CaseType.ADMISSION_TO_FACILITY
+    const type = CaseType.AdmissionToFacility
     const prosecutorName = 'Kiddi Kærari'
     const requestedCourtDate = new Date('2021-01-20T11:10')
     const courtDate = new Date('2021-12-20T11:30')
@@ -1564,7 +1564,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
   test('should format revoked notification for custody', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const prosecutorOffice = 'Aðalsaksóknari'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
@@ -1592,7 +1592,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
   test('should format revoked notification for admission to facility', () => {
     // Arrange
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
     const prosecutorOffice = 'Aðalsaksóknari'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
@@ -1628,7 +1628,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
   test('should format revoked notification', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const defendantNationalId = '0000001111'
     const defendantName = 'Gaui Glæpon'
     const defendantNoNationalId = false
@@ -1654,7 +1654,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
   test('should format revoked notification for travel ban', () => {
     // Arrange
-    const type = CaseType.TRAVEL_BAN
+    const type = CaseType.TravelBan
     const defendantNationalId = '1111001111'
     const defendantName = 'Gaui Glæpon'
     const defendantNoNationalId = false
@@ -1680,7 +1680,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
   test('should format revoked notification for admission to facility', () => {
     // Arrange
-    const type = CaseType.ADMISSION_TO_FACILITY
+    const type = CaseType.AdmissionToFacility
     const defendantNationalId = undefined
     const defendantName = undefined
     const defendantNoNationalId = false
@@ -1706,7 +1706,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
   test('should format revoked notification for investigation', () => {
     // Arrange
-    const type = CaseType.BANKING_SECRECY_WAIVER
+    const type = CaseType.BankingSecrecyWaiver
     const defendantNationalId = '1111001111'
     const defendantName = 'Gaui Glæpon'
     const defendantNoNationalId = false
@@ -1732,7 +1732,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
   test('should format revoked notification when defendant does not have a national id', () => {
     // Arrange
-    const type = CaseType.OTHER
+    const type = CaseType.Other
     const defendantNationalId = '01.01.2022'
     const defendantName = 'Gaui Glæpon'
     const defendantNoNationalId = true
@@ -1758,7 +1758,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
   test('should format revoked notification for indictments', () => {
     // Arrange
-    const type = CaseType.INDICTMENT
+    const type = CaseType.Indictment
     const defendantNationalId = '01.01.2022'
     const defendantName = 'Gaui Glæpon'
     const defendantNoNationalId = true
@@ -1826,7 +1826,7 @@ describe('formatCustodyRestrictions', () => {
     )
 
   test('should format custody without further restrictions', () => {
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const requestedRestrictions = [] as CaseCustodyRestrictions[]
     const isCustodyIsolation = false
 
@@ -1839,7 +1839,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should format admission case without further restrictions', () => {
     // Arrange
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
     const requestedRestrictions = [] as CaseCustodyRestrictions[]
     const isCustodyIsolation = false
 
@@ -1852,7 +1852,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should format custody with isolation, without further restrictions', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const requestedRestrictions = [] as CaseCustodyRestrictions[]
     const isCustodyIsolation = true
 
@@ -1867,7 +1867,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const requestedRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
@@ -1885,7 +1885,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted message for admission cases with two additional restrictions', () => {
     // Arrange
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
     const requestedRestrictions = [
       CaseCustodyRestrictions.COMMUNICATION,
       CaseCustodyRestrictions.MEDIA,
@@ -1903,7 +1903,7 @@ describe('formatCustodyRestrictions', () => {
 
   test('should return formatted restrictions for all but isolation', () => {
     // Arrange
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const requestedRestrictions = [
       CaseCustodyRestrictions.NECESSITIES,
       CaseCustodyRestrictions.WORKBAN,

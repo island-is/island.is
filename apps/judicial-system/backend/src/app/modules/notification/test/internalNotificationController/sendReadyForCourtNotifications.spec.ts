@@ -44,8 +44,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
   const courtCaseNumber = uuid()
   const theCase = {
     id: caseId,
-    type: CaseType.CUSTODY,
-    state: CaseState.RECEIVED,
+    type: CaseType.Custody,
+    state: CaseState.Received,
     policeCaseNumbers: [policeCaseNumber],
     prosecutor: {
       name: 'Derrick',
@@ -270,8 +270,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
     const theCase = ({
       id: caseId,
-      type: CaseType.INDICTMENT,
-      state: CaseState.RECEIVED,
+      type: CaseType.Indictment,
+      state: CaseState.Received,
       policeCaseNumbers,
       indictmentSubtypes: {
         [policeCaseNumbers[0]]: [IndictmentSubtype.MURDER],
@@ -320,8 +320,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
     const theCase = ({
       id: caseId,
-      type: CaseType.INDICTMENT,
-      state: CaseState.RECEIVED,
+      type: CaseType.Indictment,
+      state: CaseState.Received,
       policeCaseNumbers,
       indictmentSubtypes: {
         [policeCaseNumbers[0]]: [

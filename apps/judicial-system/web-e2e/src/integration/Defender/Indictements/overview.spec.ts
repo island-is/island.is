@@ -16,7 +16,7 @@ import {
 } from '../../../utils'
 
 describe('Indictment case overview for defenders', () => {
-  const theCase = mockCase(CaseType.INDICTMENT, IndictmentSubtype.MURDER)
+  const theCase = mockCase(CaseType.Indictment, IndictmentSubtype.MURDER)
   const prosecutor = makeProsecutor()
   const judge = makeJudge()
 
@@ -24,7 +24,7 @@ describe('Indictment case overview for defenders', () => {
     beforeEach(() => {
       const caseDataAddition: Case = {
         ...theCase,
-        state: CaseState.ACCEPTED,
+        state: CaseState.Accepted,
         courtCaseNumber: 'S-202/2020',
         prosecutor,
         judge,
@@ -68,7 +68,7 @@ describe('Indictment case overview for defenders', () => {
     beforeEach(() => {
       const caseDataAddition: Case = {
         ...theCase,
-        state: CaseState.RECEIVED,
+        state: CaseState.Received,
         prosecutor,
         caseFiles: [
           makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),

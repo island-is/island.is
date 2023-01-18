@@ -63,16 +63,16 @@ const AppealSections: React.FC<Props> = (props) => {
                     }),
                   ),
                 })}
-                value={CaseAppealDecision.APPEAL}
+                value={CaseAppealDecision.Appeal}
                 checked={
                   workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.APPEAL
+                  CaseAppealDecision.Appeal
                 }
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        accusedAppealDecision: CaseAppealDecision.APPEAL,
+                        accusedAppealDecision: CaseAppealDecision.Appeal,
                         force: true,
                       },
                       {
@@ -100,16 +100,16 @@ const AppealSections: React.FC<Props> = (props) => {
                 name="accused-appeal-decision"
                 id="accused-accept"
                 label={formatMessage(m.defendantAcceptV2)}
-                value={CaseAppealDecision.ACCEPT}
+                value={CaseAppealDecision.Accept}
                 checked={
                   workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.ACCEPT
+                  CaseAppealDecision.Accept
                 }
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                        accusedAppealDecision: CaseAppealDecision.Accept,
                         force: true,
                       },
                       {
@@ -130,16 +130,16 @@ const AppealSections: React.FC<Props> = (props) => {
                 name="accused-appeal-decision"
                 id="accused-postpone"
                 label={formatMessage(m.defendantPostponeV2)}
-                value={CaseAppealDecision.POSTPONE}
+                value={CaseAppealDecision.Postpone}
                 checked={
                   workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.POSTPONE
+                  CaseAppealDecision.Postpone
                 }
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                        accusedAppealDecision: CaseAppealDecision.Postpone,
                         force: true,
                       },
                       {
@@ -158,17 +158,16 @@ const AppealSections: React.FC<Props> = (props) => {
                 name="accused-appeal-decision"
                 id="accused-not-applicable"
                 label={formatMessage(m.defendantNotApplicableV2)}
-                value={CaseAppealDecision.NOT_APPLICABLE}
+                value={CaseAppealDecision.NotApplicable}
                 checked={
                   workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.NOT_APPLICABLE
+                  CaseAppealDecision.NotApplicable
                 }
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        accusedAppealDecision:
-                          CaseAppealDecision.NOT_APPLICABLE,
+                        accusedAppealDecision: CaseAppealDecision.NotApplicable,
                         force: true,
                       },
                       {
@@ -230,16 +229,16 @@ const AppealSections: React.FC<Props> = (props) => {
               name="prosecutor-appeal-decision"
               id="prosecutor-appeal"
               label={formatMessage(m.prosecutorAppealV2)}
-              value={CaseAppealDecision.APPEAL}
+              value={CaseAppealDecision.Appeal}
               checked={
                 workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.APPEAL
+                CaseAppealDecision.Appeal
               }
               onChange={() => {
                 setAndSendCaseToServer(
                   [
                     {
-                      prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+                      prosecutorAppealDecision: CaseAppealDecision.Appeal,
                       force: true,
                     },
                     {
@@ -261,16 +260,16 @@ const AppealSections: React.FC<Props> = (props) => {
               name="prosecutor-appeal-decision"
               id="prosecutor-accept"
               label={formatMessage(m.prosecutorAcceptV2)}
-              value={CaseAppealDecision.ACCEPT}
+              value={CaseAppealDecision.Accept}
               checked={
                 workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.ACCEPT
+                CaseAppealDecision.Accept
               }
               onChange={() => {
                 setAndSendCaseToServer(
                   [
                     {
-                      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+                      prosecutorAppealDecision: CaseAppealDecision.Accept,
                       force: true,
                     },
                     {
@@ -291,16 +290,16 @@ const AppealSections: React.FC<Props> = (props) => {
               name="prosecutor-appeal-decision"
               id="prosecutor-postpone"
               label={formatMessage(m.prosecutorPostponeV2)}
-              value={CaseAppealDecision.POSTPONE}
+              value={CaseAppealDecision.Postpone}
               checked={
                 workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.POSTPONE
+                CaseAppealDecision.Postpone
               }
               onChange={() => {
                 setAndSendCaseToServer(
                   [
                     {
-                      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+                      prosecutorAppealDecision: CaseAppealDecision.Postpone,
                       force: true,
                     },
                     {
@@ -320,17 +319,17 @@ const AppealSections: React.FC<Props> = (props) => {
               name="prosecutor-appeal-decision"
               id="prosecutor-not-applicable"
               label={formatMessage(m.prosecutorNotApplicableV2)}
-              value={CaseAppealDecision.NOT_APPLICABLE}
+              value={CaseAppealDecision.NotApplicable}
               checked={
                 workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.NOT_APPLICABLE
+                CaseAppealDecision.NotApplicable
               }
               onChange={() => {
                 setAndSendCaseToServer(
                   [
                     {
                       prosecutorAppealDecision:
-                        CaseAppealDecision.NOT_APPLICABLE,
+                        CaseAppealDecision.NotApplicable,
                       force: true,
                     },
                     {

@@ -15,17 +15,17 @@ describe('Signed verdict overview - Staff - Restriction case', () => {
   const caseFile = makeCaseFile('caseId', 'caseFileName')
 
   beforeEach(() => {
-    const caseData = mockCase(CaseType.CUSTODY)
+    const caseData = mockCase(CaseType.Custody)
     const caseDataAddition: Case = {
       ...caseData,
-      state: CaseState.ACCEPTED,
+      state: CaseState.Accepted,
       court: makeCourt(),
-      decision: CaseDecision.ACCEPTING,
+      decision: CaseDecision.Accepting,
       conclusion,
       caseFiles: [caseFile],
     }
 
-    cy.login(UserRole.STAFF)
+    cy.login(UserRole.Staff)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)

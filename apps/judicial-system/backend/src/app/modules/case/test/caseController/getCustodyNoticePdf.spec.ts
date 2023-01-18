@@ -42,8 +42,8 @@ describe('CaseController - Get custody pdf', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.CUSTODY,
-      state: CaseState.ACCEPTED,
+      type: CaseType.Custody,
+      state: CaseState.Accepted,
     } as Case
     const res = {} as Response
 
@@ -63,8 +63,8 @@ describe('CaseController - Get custody pdf', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.CUSTODY,
-      state: CaseState.ACCEPTED,
+      type: CaseType.Custody,
+      state: CaseState.Accepted,
     } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
@@ -85,8 +85,8 @@ describe('CaseController - Get custody pdf', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.ADMISSION_TO_FACILITY,
-      state: CaseState.ACCEPTED,
+      type: CaseType.AdmissionToFacility,
+      state: CaseState.Accepted,
     } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
@@ -107,8 +107,8 @@ describe('CaseController - Get custody pdf', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.CUSTODY,
-      state: CaseState.ACCEPTED,
+      type: CaseType.Custody,
+      state: CaseState.Accepted,
     } as Case
     let then: Then
     const res = {} as Response
@@ -130,8 +130,8 @@ describe('CaseController - Get custody pdf', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.CUSTODY,
-      state: CaseState.SUBMITTED,
+      type: CaseType.Custody,
+      state: CaseState.Submitted,
     } as Case
     let then: Then
     const res = {} as Response

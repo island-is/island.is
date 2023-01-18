@@ -7,7 +7,7 @@ import {
 import { makeProsecutor, intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = mockCase(CaseType.Custody)
   const caseDataAddition: Case = {
     ...caseData,
     prosecutor: makeProsecutor(),
@@ -17,7 +17,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
     describe('Cases with accepting decision', () => {
       beforeEach(() => {
         cy.stubAPIResponses()
-        intercept({ ...caseDataAddition, decision: CaseDecision.ACCEPTING })
+        intercept({ ...caseDataAddition, decision: CaseDecision.Accepting })
         cy.visit(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
       })
 
@@ -54,7 +54,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
           intercept({
             ...caseDataAddition,
             courtDate: '2021-12-16T10:50:04.033Z',
-            decision: CaseDecision.ACCEPTING,
+            decision: CaseDecision.Accepting,
             ruling: 'lorem',
             conclusion: 'lorem',
           })
@@ -117,7 +117,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
           beforeEach(() => {
             intercept({
               ...caseDataAddition,
-              decision: CaseDecision.ACCEPTING,
+              decision: CaseDecision.Accepting,
               ruling: 'lorem',
               conclusion: undefined,
             })
@@ -131,7 +131,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
           beforeEach(() => {
             intercept({
               ...caseDataAddition,
-              decision: CaseDecision.ACCEPTING,
+              decision: CaseDecision.Accepting,
               ruling: undefined,
               conclusion: 'lorem',
             })
@@ -163,8 +163,8 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
           cy.stubAPIResponses()
           intercept({
             ...caseDataAddition,
-            decision: CaseDecision.ACCEPTING,
-            type: CaseType.TRAVEL_BAN,
+            decision: CaseDecision.Accepting,
+            type: CaseType.TravelBan,
             requestedOtherRestrictions: 'other restrictions',
           })
           cy.visit(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)

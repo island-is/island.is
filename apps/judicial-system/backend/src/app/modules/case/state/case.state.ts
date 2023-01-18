@@ -1,71 +1,71 @@
 import { ForbiddenException } from '@nestjs/common'
 
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import { CaseState, xCaseTransition } from '@island.is/judicial-system/types'
 
 interface Rule {
   from: CaseState[]
   to: CaseState
 }
 
-const caseStateMachine: Map<CaseTransition, Rule> = new Map([
+const caseStateMachine: Map<xCaseTransition, Rule> = new Map([
   [
-    CaseTransition.OPEN,
+    xCaseTransition.OPEN,
     {
-      from: [CaseState.NEW],
-      to: CaseState.DRAFT,
+      from: [CaseState.New],
+      to: CaseState.Draft,
     },
   ],
   [
-    CaseTransition.SUBMIT,
+    xCaseTransition.SUBMIT,
     {
-      from: [CaseState.DRAFT],
-      to: CaseState.SUBMITTED,
+      from: [CaseState.Draft],
+      to: CaseState.Submitted,
     },
   ],
   [
-    CaseTransition.RECEIVE,
+    xCaseTransition.RECEIVE,
     {
-      from: [CaseState.SUBMITTED],
-      to: CaseState.RECEIVED,
+      from: [CaseState.Submitted],
+      to: CaseState.Received,
     },
   ],
   [
-    CaseTransition.DISMISS,
+    xCaseTransition.DISMISS,
     {
-      from: [CaseState.RECEIVED],
-      to: CaseState.DISMISSED,
+      from: [CaseState.Received],
+      to: CaseState.Dismissed,
     },
   ],
   [
-    CaseTransition.ACCEPT,
+    xCaseTransition.ACCEPT,
     {
-      from: [CaseState.RECEIVED],
-      to: CaseState.ACCEPTED,
+      from: [CaseState.Received],
+      to: CaseState.Accepted,
     },
   ],
   [
-    CaseTransition.REJECT,
+    xCaseTransition.REJECT,
     {
-      from: [CaseState.RECEIVED],
-      to: CaseState.REJECTED,
+      from: [CaseState.Received],
+      to: CaseState.Rejected,
     },
   ],
   [
-    CaseTransition.DELETE,
+    xCaseTransition.DELETE,
     {
       from: [
-        CaseState.NEW,
-        CaseState.DRAFT,
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
+        CaseState.New,
+        CaseState.Draft,
+        CaseState.Submitted,
+        CaseState.Received,
       ],
-      to: CaseState.DELETED,
+      to: CaseState.Deleted,
     },
   ],
 ])
 
 export const transitionCase = function (
-  transition: CaseTransition,
+  transition: xCaseTransition,
   currentState: CaseState,
 ): CaseState {
   const rule = caseStateMachine.get(transition)

@@ -154,7 +154,7 @@ export const isDefendantStepValidRC = (
       ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
-      workingCase.type === CaseType.TRAVEL_BAN
+      workingCase.type === CaseType.TravelBan
         ? 'valid'
         : [workingCase.leadInvestigator, ['empty']],
     ]).isValid
@@ -209,7 +209,7 @@ export const isHearingArrangementsStepValidRC = (
       workingCase.court &&
       validate([
         [workingCase.requestedCourtDate, ['empty', 'date-format']],
-        workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
+        workingCase.type !== CaseType.TravelBan && !workingCase.parentCase
           ? [workingCase.arrestDate, ['empty', 'date-format']]
           : 'valid',
       ]).isValid) ||

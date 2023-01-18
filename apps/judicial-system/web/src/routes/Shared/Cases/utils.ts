@@ -18,10 +18,10 @@ import { cases as m } from './Cases.strings'
 export const displayCaseType = (
   formatMessage: IntlShape['formatMessage'],
   caseType: CaseType,
-  decision?: CaseDecision,
+  decision?: CaseDecision | null,
 ) => {
-  if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
-    return capitalize(caseTypes[CaseType.TRAVEL_BAN])
+  if (decision === CaseDecision.AcceptingAlternativeTravelBan) {
+    return capitalize(caseTypes[CaseType.TravelBan])
   }
 
   const type = isIndictmentCase(caseType)
@@ -36,23 +36,23 @@ export const mapCaseStateToTagVariant = (
   state: CaseState,
   isCourtRole: boolean,
   caseType: CaseType,
-  isValidToDateInThePast?: boolean,
-  courtDate?: string,
+  isValidToDateInThePast?: boolean | null,
+  courtDate?: string | null,
 ): { color: TagVariant; text: string } => {
   switch (state) {
-    case CaseState.NEW:
-    case CaseState.DRAFT:
+    case CaseState.New:
+    case CaseState.Draft:
       return { color: 'red', text: formatMessage(m.tags.draft) }
-    case CaseState.SUBMITTED:
+    case CaseState.Submitted:
       return {
         color: 'purple',
         text: formatMessage(isCourtRole ? m.tags.new : m.tags.sent),
       }
-    case CaseState.RECEIVED:
+    case CaseState.Received:
       return courtDate
         ? { color: 'mint', text: formatMessage(m.tags.scheduled) }
         : { color: 'blueberry', text: formatMessage(m.tags.received) }
-    case CaseState.ACCEPTED:
+    case CaseState.Accepted:
       return isIndictmentCase(caseType) || isValidToDateInThePast
         ? { color: 'darkerBlue', text: formatMessage(m.tags.inactive) }
         : {
@@ -62,9 +62,9 @@ export const mapCaseStateToTagVariant = (
             ),
           }
 
-    case CaseState.REJECTED:
+    case CaseState.Rejected:
       return { color: 'rose', text: formatMessage(m.tags.rejected) }
-    case CaseState.DISMISSED:
+    case CaseState.Dismissed:
       return { color: 'dark', text: formatMessage(m.tags.dismissed) }
     default:
       return { color: 'white', text: formatMessage(m.tags.unknown) }
@@ -79,8 +79,8 @@ export const getAppealDate = (
   rulingDate: string,
 ) => {
   if (
-    prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-    accusedAppealDecision === CaseAppealDecision.APPEAL
+    prosecutorAppealDecision === CaseAppealDecision.Appeal ||
+    accusedAppealDecision === CaseAppealDecision.Appeal
   ) {
     return rulingDate
   } else if (accusedPostponedAppealDate && !prosecutorPostponedAppealDate) {

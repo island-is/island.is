@@ -71,7 +71,7 @@ describe('Restricted Case Exists Guard', () => {
         order,
         where: {
           id: caseId,
-          state: { [Op.not]: CaseState.DELETED },
+          state: { [Op.not]: CaseState.Deleted },
           isArchived: false,
         },
       })

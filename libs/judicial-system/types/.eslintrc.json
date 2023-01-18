@@ -1,7 +1,7 @@
 {
   "extends": "../../../.eslintrc.json",
   "rules": {},
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx"],
   "overrides": [
     { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
     { "files": ["*.ts", "*.tsx"], "rules": {} },

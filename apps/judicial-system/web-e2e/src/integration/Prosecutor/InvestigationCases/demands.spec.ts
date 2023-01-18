@@ -10,7 +10,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 
 describe(`${INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
 
     cy.stubAPIResponses()
     intercept(caseData)

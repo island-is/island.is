@@ -1,4 +1,4 @@
-import type { Case, User } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -74,10 +74,6 @@ export interface CaseData {
 
 export interface LimitedAccessCaseData {
   limitedAccessCase?: Case
-}
-
-export interface UserData {
-  users: User[]
 }
 
 interface NationalRegistryPerson {

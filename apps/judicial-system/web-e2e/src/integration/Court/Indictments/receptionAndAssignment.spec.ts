@@ -21,17 +21,17 @@ import {
 describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = mockCase(
-      CaseType.INDICTMENT,
+      CaseType.Indictment,
       IndictmentSubtype.MAJOR_ASSAULT,
     )
 
     const caseDataAddition = {
       ...caseData,
-      state: CaseState.RECEIVED,
+      state: CaseState.Received,
       court: makeCourt(),
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.Judge)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)

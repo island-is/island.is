@@ -1,5 +1,5 @@
 import { ApolloError, useMutation } from '@apollo/client'
-import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
+import { UploadFileToCourtGql } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
   CaseFile as TCaseFile,
@@ -36,7 +36,7 @@ export const useCourtUpload = (
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
-  const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
+  const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtGql)
 
   const setFileUploadStatus = useCallback(
     (theCase: Case, file: CaseFile, status: CaseFileStatus) => {

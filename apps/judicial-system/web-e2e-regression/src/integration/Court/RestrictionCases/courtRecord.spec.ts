@@ -17,7 +17,7 @@ describe(RESTRICTION_CASE_COURT_RECORD_ROUTE, () => {
   let caseId = ''
 
   before(() => {
-    loginAndCreateCase(CaseType.CUSTODY, ['007-2020-0101'])
+    loginAndCreateCase(CaseType.Custody, ['007-2020-0101'])
       .then((id) => {
         caseId = id
       })
@@ -36,7 +36,7 @@ describe(RESTRICTION_CASE_COURT_RECORD_ROUTE, () => {
           courtLocation: faker.lorem.word(),
           conclusion: faker.lorem.sentence(),
           ruling: faker.lorem.sentence(),
-          decision: CaseDecision.ACCEPTING,
+          decision: CaseDecision.Accepting,
         })
       })
       .then(() =>

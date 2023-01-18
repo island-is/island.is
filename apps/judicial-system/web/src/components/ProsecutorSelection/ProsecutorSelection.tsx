@@ -47,7 +47,7 @@ const ProsecutorSelection: React.FC<Props> = (props) => {
     return (data?.users as User[])
       .filter(
         (aUser) =>
-          aUser.role === UserRole.PROSECUTOR &&
+          aUser.role === UserRole.Prosecutor &&
           ((!workingCase.creatingProsecutor &&
             aUser.institution?.id === user?.institution?.id) ||
             (workingCase.creatingProsecutor &&

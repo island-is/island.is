@@ -69,7 +69,7 @@ describe('CaseController - Get custody notice pdf guards', () => {
     it('should have CaseTypeGuard as quard 4', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
-        allowedCaseTypes: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY],
+        allowedCaseTypes: [CaseType.Custody, CaseType.AdmissionToFacility],
       })
     })
   })

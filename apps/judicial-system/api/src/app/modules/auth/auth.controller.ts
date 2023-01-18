@@ -176,7 +176,7 @@ export class AuthController {
         jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
         redirectRoute: requestedRedirectRoute
           ? requestedRedirectRoute
-          : user.role === UserRole.ADMIN
+          : user.role === UserRole.Admin
           ? USERS_ROUTE
           : CASES_ROUTE,
       }

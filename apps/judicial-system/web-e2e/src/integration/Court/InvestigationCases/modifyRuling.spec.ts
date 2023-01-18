@@ -8,14 +8,14 @@ import { intercept, mockCase } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
       legalArguments: 'lorem ipsum',
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-      decision: CaseDecision.ACCEPTING,
+      decision: CaseDecision.Accepting,
     }
 
     cy.stubAPIResponses()

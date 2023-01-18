@@ -99,29 +99,28 @@ export const laws = {
 type CaseTypes = { [c in CaseType]: string }
 export const caseTypes: CaseTypes = {
   // Indicitment cases
-  INDICTMENT: 'ákæra',
+  Indictment: 'ákæra',
   // Restriction cases
-  CUSTODY: 'gæsluvarðhald',
-  TRAVEL_BAN: 'farbann',
-  ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
+  Custody: 'gæsluvarðhald',
+  TravelBan: 'farbann',
+  AdmissionToFacility: 'vistun á viðeigandi stofnun',
   // Investigation Cases
-  SEARCH_WARRANT: 'húsleit',
-  BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
-  PHONE_TAPPING: 'símhlustun',
-  TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
-  TRACKING_EQUIPMENT: 'eftirfararbúnaður',
-  PSYCHIATRIC_EXAMINATION: 'geðrannsókn',
-  SOUND_RECORDING_EQUIPMENT: 'hljóðupptökubúnaði komið fyrir',
-  AUTOPSY: 'krufning',
-  BODY_SEARCH: 'leit og líkamsrannsókn',
-  INTERNET_USAGE: 'upplýsingar um vefnotkun',
-  RESTRAINING_ORDER: 'nálgunarbann',
-  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME:
-    'nálgunarbann og brottvísun af heimili',
-  EXPULSION_FROM_HOME: 'brottvísun af heimili',
-  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
-  VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
-  OTHER: 'annað',
+  SearchWarrant: 'húsleit',
+  BankingSecrecyWaiver: 'rof bankaleyndar',
+  PhoneTapping: 'símhlustun',
+  Telecommunications: 'upplýsingar um fjarskiptasamskipti',
+  TrackingEquipment: 'eftirfararbúnaður',
+  PsychiatricExamination: 'geðrannsókn',
+  SoundRecordingEquipment: 'hljóðupptökubúnaði komið fyrir',
+  Autopsy: 'krufning',
+  BodySearch: 'leit og líkamsrannsókn',
+  InternetUsage: 'upplýsingar um vefnotkun',
+  RestrainingOrder: 'nálgunarbann',
+  RestrainingOrderAndExpulsionFromHome: 'nálgunarbann og brottvísun af heimili',
+  ExpulsionFromHome: 'brottvísun af heimili',
+  ElectronicDataDiscoveryInvestigation: 'rannsókn á rafrænum gögnum',
+  VideoRecordingEquipment: 'myndupptökubúnaði komið fyrir',
+  Other: 'annað',
 }
 
 type IndictmentSubtypes = { [c in IndictmentSubtype]: string }
@@ -242,17 +241,17 @@ export function formatAppeal(
   const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
 
   switch (appealDecision) {
-    case CaseAppealDecision.APPEAL:
+    case CaseAppealDecision.Appeal:
       return `${stakeholder} ${
         isMultipleDefendants ? 'lýsa' : 'lýsir'
       } því yfir að ${
         isMultipleDefendants ? 'þeir' : 'hann'
       } kæri úrskurðinn til Landsréttar.`
-    case CaseAppealDecision.ACCEPT:
+    case CaseAppealDecision.Accept:
       return `${stakeholder} ${
         isMultipleDefendants ? 'una' : 'unir'
       } úrskurðinum.`
-    case CaseAppealDecision.POSTPONE:
+    case CaseAppealDecision.Postpone:
       return `${stakeholder} ${
         isMultipleDefendants ? 'lýsa' : 'lýsir'
       } því yfir að ${
@@ -265,17 +264,17 @@ export function formatAppeal(
 
 export function formatRequestCaseType(type: CaseType): string {
   return isRestrictionCase(type) ||
-    type === CaseType.RESTRAINING_ORDER ||
-    type === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
-    type === CaseType.EXPULSION_FROM_HOME ||
-    type === CaseType.PSYCHIATRIC_EXAMINATION
+    type === CaseType.RestrainingOrder ||
+    type === CaseType.RestrainingOrderAndExpulsionFromHome ||
+    type === CaseType.ExpulsionFromHome ||
+    type === CaseType.PsychiatricExamination
     ? caseTypes[type]
     : 'rannsóknarheimild'
 }
 
 export const formatDOB = (
-  nationalId?: string,
-  noNationalId?: boolean,
+  nationalId?: string | null,
+  noNationalId?: boolean | null,
   fallback = '-',
 ) => {
   if (!nationalId) {

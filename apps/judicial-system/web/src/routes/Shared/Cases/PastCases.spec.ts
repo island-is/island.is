@@ -10,8 +10,8 @@ const date4 = '2022-12-24T18:00:00.033Z'
 describe('getDurationDate', () => {
   test.each`
     state
-    ${CaseState.REJECTED}
-    ${CaseState.DISMISSED}
+    ${CaseState.Rejected}
+    ${CaseState.Dismissed}
   `('should return null if state is REJECTED or DISMISSED', ({ state }) => {
     expect(getDurationDate(state, date1, date2, date3, date4)).toBe(null)
   })
@@ -21,7 +21,7 @@ describe('getDurationDate', () => {
     const validToDate = date2
 
     const res = getDurationDate(
-      CaseState.ACCEPTED,
+      CaseState.Accepted,
       validToDate,
       initialRulingDate,
     )
@@ -35,7 +35,7 @@ describe('getDurationDate', () => {
     const validToDate = date3
 
     const res = getDurationDate(
-      CaseState.ACCEPTED,
+      CaseState.Accepted,
       validToDate,
       initialRulingDate,
       rulingDate,
@@ -50,7 +50,7 @@ describe('getDurationDate', () => {
     const validToDate = date3
 
     const res = getDurationDate(
-      CaseState.ACCEPTED,
+      CaseState.Accepted,
       validToDate,
       initialRulingDate,
       rulingDate,
@@ -66,7 +66,7 @@ describe('getDurationDate', () => {
     const validToDate = date4
 
     const res = getDurationDate(
-      CaseState.ACCEPTED,
+      CaseState.Accepted,
       validToDate,
       initialRulingDate,
       rulingDate,
@@ -83,7 +83,7 @@ describe('getDurationDate', () => {
     const validToDate = date4
 
     const res = getDurationDate(
-      CaseState.ACCEPTED,
+      CaseState.Accepted,
       validToDate,
       initialRulingDate,
       rulingDate,
@@ -100,7 +100,7 @@ describe('getDurationDate', () => {
     const validToDate = undefined
 
     const res = getDurationDate(
-      CaseState.ACCEPTED,
+      CaseState.Accepted,
       validToDate,
       initialRulingDate,
       rulingDate,

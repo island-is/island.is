@@ -349,7 +349,7 @@ export class InternalCaseService {
         caseToCreate.prosecutorNationalId,
       )
 
-      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+      if (!prosecutor || prosecutor.role !== UserRole.Prosecutor) {
         throw new BadRequestException(
           `User ${
             prosecutor?.id ?? 'unknown'
@@ -367,7 +367,7 @@ export class InternalCaseService {
           {
             ...caseToCreate,
             state: isIndictmentCase(caseToCreate.type)
-              ? CaseState.DRAFT
+              ? CaseState.Draft
               : undefined,
             origin: CaseOrigin.LOKE,
             creatingProsecutorId: prosecutorId,
@@ -422,7 +422,7 @@ export class InternalCaseService {
       ],
       where: {
         isArchived: false,
-        [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+        [Op.or]: [{ state: CaseState.Deleted }, oldFilter],
       },
     })
 

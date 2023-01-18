@@ -10,8 +10,8 @@ export const RulingSignatureConfirmationGql = gql`
   }
 `
 
-export const CasesQuery = gql`
-  query CaseListQuery {
+export const CasesGql = gql`
+  query CaseList {
     cases {
       id
       created
@@ -53,8 +53,8 @@ export const CasesQuery = gql`
   }
 `
 
-export const CreateUserMutation = gql`
-  mutation CreateUserMutation($input: CreateUserInput!) {
+export const CreateUserGql = gql`
+  mutation CreateUser($input: CreateUserInput!) {
     createUser(input: $input) {
       id
       name
@@ -73,8 +73,8 @@ export const CreateUserMutation = gql`
   }
 `
 
-export const UsersQuery = gql`
-  query UsersQuery {
+export const UsersGql = gql`
+  query Users {
     users {
       id
       name
@@ -93,8 +93,8 @@ export const UsersQuery = gql`
   }
 `
 
-export const UserQuery = gql`
-  query UserQuery($input: UserQueryInput!) {
+export const UserGql = gql`
+  query User($input: UserQueryInput!) {
     user(input: $input) {
       id
       name
@@ -113,8 +113,8 @@ export const UserQuery = gql`
   }
 `
 
-export const UpdateUserMutation = gql`
-  mutation UpdateUserMutation($input: UpdateUserInput!) {
+export const UpdateUserGql = gql`
+  mutation UpdateUser($input: UpdateUserInput!) {
     updateUser(input: $input) {
       id
       modified
@@ -122,8 +122,8 @@ export const UpdateUserMutation = gql`
   }
 `
 
-export const InstitutionsQuery = gql`
-  query InstitutionsQuery {
+export const InstitutionsGql = gql`
+  query Institutions {
     institutions {
       id
       type

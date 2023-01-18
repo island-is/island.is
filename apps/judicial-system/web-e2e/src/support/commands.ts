@@ -24,11 +24,11 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       }
     } else if (graphqlRequest.body.query.includes('CurrentUserQuery')) {
       if (
-        graphqlRequest.headers.cookie.includes(UserRole.JUDGE) ||
-        graphqlRequest.headers.cookie.includes(UserRole.REGISTRAR)
+        graphqlRequest.headers.cookie.includes(UserRole.Judge) ||
+        graphqlRequest.headers.cookie.includes(UserRole.Registrar)
       ) {
         return { fixture: 'judgeUser' }
-      } else if (graphqlRequest.headers.cookie.includes(UserRole.STAFF)) {
+      } else if (graphqlRequest.headers.cookie.includes(UserRole.Staff)) {
         return { fixture: 'staffUser' }
       } else if (graphqlRequest.headers.referer.includes('/domur')) {
         return { fixture: 'judgeUser' }

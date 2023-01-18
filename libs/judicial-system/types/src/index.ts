@@ -8,7 +8,7 @@ export type {
   DeleteDefendantResponse,
 } from './lib/defendant'
 
-export { InstitutionType } from './lib/institution'
+// export { InstitutionType } from './lib/institution'
 export type { Institution } from './lib/institution'
 
 export { NotificationType } from './lib/notification'
@@ -36,26 +36,20 @@ export type {
 } from './lib/file'
 
 export {
-  UserRole,
   prosecutionRoles,
   isProsecutionRole,
   courtRoles,
   isCourtRole,
-  extendedCourtRoles,
   isExtendedCourtRole,
 } from './lib/user'
-export type { User, CreateUser, UpdateUser } from './lib/user'
+export type { CreateUser, UpdateUser } from './lib/user'
 
 export {
   CaseOrigin,
-  CaseType,
   IndictmentSubtype,
-  CaseState,
-  CaseTransition,
+  xCaseTransition,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
-  CaseAppealDecision,
-  CaseDecision,
   SessionArrangements,
   restrictionCases,
   investigationCases,
@@ -70,7 +64,6 @@ export {
 } from './lib/case'
 export type {
   Case,
-  CaseListEntry,
   CrimeScene,
   CrimeSceneMap,
   IndictmentSubtypeMap,
@@ -88,3 +81,14 @@ export type {
 } from './lib/policeFile'
 
 export type { CourtDocument } from './lib/courtDocument'
+
+export {
+  UserRole,
+  CaseType,
+  CaseState,
+  CaseDecision,
+  CaseAppealDecision,
+  InstitutionType,
+} from './lib/graphql/schema'
+
+export type { CaseListQuery, CaseListEntry, User } from './lib/graphql/schema'

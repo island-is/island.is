@@ -15,7 +15,7 @@ import {
 
 describe(`${INDICTMENTS_POLICE_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INDICTMENT)
+    const caseData = mockCase(CaseType.Indictment)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
@@ -27,14 +27,14 @@ describe(`${INDICTMENTS_POLICE_CASE_FILES_ROUTE}/:id`, () => {
       ],
     }
 
-    cy.login(UserRole.PROSECUTOR)
+    cy.login(UserRole.Prosecutor)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INDICTMENTS_CASE_FILE_ROUTE}/test_id`)
   })
 
   it('should show an success alert if all files have been moved under chapters', () => {
-    const caseData = mockCase(CaseType.INDICTMENT)
+    const caseData = mockCase(CaseType.Indictment)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),

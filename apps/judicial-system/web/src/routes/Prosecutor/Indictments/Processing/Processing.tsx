@@ -67,7 +67,7 @@ const Processing: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (workingCase.state === CaseState.NEW) {
+      if (workingCase.state === CaseState.New) {
         await transitionCase(
           workingCase.id,
           CaseTransition.OPEN,

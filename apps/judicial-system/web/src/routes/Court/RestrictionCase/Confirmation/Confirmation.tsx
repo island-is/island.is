@@ -62,9 +62,9 @@ export const Confirmation: React.FC = () => {
       completedCaseStates.includes(workingCase.state) ||
       (await transitionCase(
         workingCase.id,
-        workingCase.decision === CaseDecision.REJECTING
+        workingCase.decision === CaseDecision.Rejecting
           ? CaseTransition.REJECT
-          : workingCase.decision === CaseDecision.DISMISSING
+          : workingCase.decision === CaseDecision.Dismissing
           ? CaseTransition.DISMISS
           : CaseTransition.ACCEPT,
         setWorkingCase,
@@ -139,27 +139,25 @@ export const Confirmation: React.FC = () => {
           previousUrl={`${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextUrl={constants.CASES_ROUTE}
           nextButtonText={formatMessage(
-            workingCase.decision === CaseDecision.ACCEPTING
+            workingCase.decision === CaseDecision.Accepting
               ? strings.continueButtonTextAccepting
-              : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+              : workingCase.decision === CaseDecision.AcceptingPartially
               ? strings.continueButtonTextAcceptingPartially
-              : workingCase.decision === CaseDecision.REJECTING
+              : workingCase.decision === CaseDecision.Rejecting
               ? strings.continueButtonTextRejecting
-              : workingCase.decision === CaseDecision.DISMISSING
+              : workingCase.decision === CaseDecision.Dismissing
               ? strings.continueButtonTextDismissing
               : strings.continueButtonTextAcceptingAlternativeTravelBan,
           )}
           nextButtonIcon={
             isAcceptingCaseDecision(workingCase.decision) ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            workingCase.decision === CaseDecision.AcceptingAlternativeTravelBan
               ? 'checkmark'
               : 'close'
           }
           nextButtonColorScheme={
             isAcceptingCaseDecision(workingCase.decision) ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            workingCase.decision === CaseDecision.AcceptingAlternativeTravelBan
               ? 'default'
               : 'destructive'
           }

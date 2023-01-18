@@ -5,11 +5,11 @@ import { intercept, makeProsecutor, mockCase } from '../../../utils'
 
 describe('Signed verdict overview - Prosecutor - Investigation cases', () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
-      state: CaseState.ACCEPTED,
+      state: CaseState.Accepted,
     }
 
     cy.stubAPIResponses()

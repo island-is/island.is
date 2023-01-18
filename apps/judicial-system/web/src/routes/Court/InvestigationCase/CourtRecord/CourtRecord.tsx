@@ -173,17 +173,16 @@ const CourtRecord = () => {
                 ? autofillAttendees.join('')
                 : undefined,
             sessionBookings:
-              workingCase.type === CaseType.RESTRAINING_ORDER ||
-              workingCase.type ===
-                CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME
+              workingCase.type === CaseType.RestrainingOrder ||
+              workingCase.type === CaseType.RestrainingOrderAndExpulsionFromHome
                 ? formatMessage(
                     m.sections.sessionBookings.autofillRestrainingOrder,
                   )
-                : workingCase.type === CaseType.EXPULSION_FROM_HOME
+                : workingCase.type === CaseType.ExpulsionFromHome
                 ? formatMessage(
                     m.sections.sessionBookings.autofillExpulsionFromHome,
                   )
-                : workingCase.type === CaseType.AUTOPSY
+                : workingCase.type === CaseType.Autopsy
                 ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
                 : workingCase.sessionArrangements ===
                   SessionArrangements.ALL_PRESENT

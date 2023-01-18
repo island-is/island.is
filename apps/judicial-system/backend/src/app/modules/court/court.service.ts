@@ -22,7 +22,7 @@ export enum CourtDocumentFolder {
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
 }
 
-export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
+export type Subtype = Exclude<CaseType, CaseType.Indictment> | IndictmentSubtype
 
 type CourtSubtypes = {
   [c in Subtype]: string | [string, string]
@@ -66,40 +66,40 @@ export const courtSubtypes: CourtSubtypes = {
   THEFT: 'Þjófnaður',
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
-  OTHER: 'Annað',
-  TRACKING_EQUIPMENT: 'Eftirfararbúnaður',
-  TRAVEL_BAN: ['Farbann', 'Framlenging farbanns'],
+  Other: 'Annað',
+  TrackingEquipment: 'Eftirfararbúnaður',
+  TravelBan: ['Farbann', 'Framlenging farbanns'],
   // 'Framlenging frests',
   // 'Framsalsmál',
   // 'Frestur',
-  CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
-  ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
-  PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
+  Custody: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
+  AdmissionToFacility: 'Vistun á viðeigandi stofnun',
+  PsychiatricExamination: 'Geðrannsókn',
   // 'Handtaka',
-  SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
-  SEARCH_WARRANT: 'Húsleit',
-  AUTOPSY: 'Krufning',
+  SoundRecordingEquipment: 'Hljóðupptökubúnaði komið fyrir',
+  SearchWarrant: 'Húsleit',
+  Autopsy: 'Krufning',
   // 'Lausn út öryggisgæslu',
-  BODY_SEARCH: 'Leit og líkamsrannsókn',
+  BodySearch: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
-  RESTRAINING_ORDER: 'Nálgunarbann',
-  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME: 'Nálgunarbann', // this mapping to Nálgunarbann is indented
-  EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
+  RestrainingOrder: 'Nálgunarbann',
+  RestrainingOrderAndExpulsionFromHome: 'Nálgunarbann', // this mapping to Nálgunarbann is indented
+  ExpulsionFromHome: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
   // 'Rof á reynslulausn',
-  BANKING_SECRECY_WAIVER: 'Rof bankaleyndar',
+  BankingSecrecyWaiver: 'Rof bankaleyndar',
   // 'Sekt vitnis',
   // 'Sektir málflytjenda',
-  PHONE_TAPPING: 'Símhlerun',
+  PhoneTapping: 'Símhlerun',
   // 'Skýrslutaka brotaþola eldri en 18 ára',
   // 'Skýrslutaka brotaþola yngri en 18 ára',
   // 'Skýrslutaka fyrir dómi',
-  TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
-  INTERNET_USAGE: 'Upplýsingar um vefnotkun',
-  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
+  Telecommunications: 'Upplýsingar um fjarskiptasamskipti',
+  InternetUsage: 'Upplýsingar um vefnotkun',
+  ElectronicDataDiscoveryInvestigation: 'Rannsókn á rafrænum gögnum',
   // TODO: replace with appropriate type when it has been created in the court system
-  VIDEO_RECORDING_EQUIPMENT: 'Annað',
+  VideoRecordingEquipment: 'Annað',
 }
 
 @Injectable()
@@ -134,7 +134,7 @@ export class CourtService {
   ): string {
     let subtype: Subtype
 
-    if (type === CaseType.INDICTMENT) {
+    if (type === CaseType.Indictment) {
       if (
         policeCaseNumbers.length === 0 ||
         !indictmentSubtypes ||

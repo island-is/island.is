@@ -16,18 +16,18 @@ import {
 describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
   const caseFile = makeCaseFile({ name: 'caseFileName' })
   beforeEach(() => {
-    const caseData = mockCase(CaseType.CUSTODY)
+    const caseData = mockCase(CaseType.Custody)
     const prosecutor = makeProsecutor()
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor,
-      state: CaseState.ACCEPTED,
+      state: CaseState.Accepted,
       validToDate: '2022-06-16T19:51:39.466Z',
       creatingProsecutor: prosecutor,
       caseFiles: [caseFile],
     }
 
-    cy.login(UserRole.PROSECUTOR)
+    cy.login(UserRole.Prosecutor)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)

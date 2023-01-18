@@ -144,7 +144,7 @@ describe('CaseController - Create court case', () => {
         where: {
           id: caseId,
           isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
+          state: { [Op.not]: CaseState.Deleted },
         },
       })
     })

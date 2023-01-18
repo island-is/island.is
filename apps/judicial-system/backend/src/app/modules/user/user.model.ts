@@ -8,7 +8,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-
 import { ApiProperty } from '@nestjs/swagger'
 
 import { UserRole } from '@island.is/judicial-system/types'

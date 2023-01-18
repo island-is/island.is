@@ -205,7 +205,7 @@ export function formatProsecutorReceivedByCourtSmsNotification(
     ? 'indictmentCase'
     : isRestrictionCase(type)
     ? 'restrictionCase'
-    : type === CaseType.OTHER
+    : type === CaseType.Other
     ? 'otherInvestigationCase'
     : 'investigationCase'
 
@@ -235,7 +235,7 @@ export function formatProsecutorCourtDateEmailNotification(
     : formatMessage(cf.scheduledCase, {
         court,
         investigationPrefix:
-          type === CaseType.OTHER
+          type === CaseType.Other
             ? 'onlyPrefix'
             : isInvestigationCase(type)
             ? 'withPrefix'
@@ -570,7 +570,7 @@ export function formatDefenderRevokedEmailNotification(
         courtText,
         courtDateText,
         investigationPrefix:
-          type === CaseType.OTHER
+          type === CaseType.Other
             ? 'onlyPrefix'
             : isInvestigationCase(type)
             ? 'withPrefix'

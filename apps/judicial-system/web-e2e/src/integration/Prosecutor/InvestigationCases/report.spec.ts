@@ -12,7 +12,7 @@ describe(`${INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
 
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition: Case = {
       ...caseData,
       demands,

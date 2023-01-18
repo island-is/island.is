@@ -39,13 +39,13 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
   const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
-      if (user?.role === UserRole.PROSECUTOR) {
+      if (user?.role === UserRole.Prosecutor) {
         return accused.sections.defenderInfo.heading
       } else {
         return rcHearingArrangements.sections.defender.title
       }
     } else {
-      if (user?.role === UserRole.PROSECUTOR) {
+      if (user?.role === UserRole.Prosecutor) {
         return defendant.sections.defenderInfo.heading
       } else {
         return icHearingArrangements.sections.defender.title
@@ -102,7 +102,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
-        {user?.role === UserRole.PROSECUTOR && (
+        {user?.role === UserRole.Prosecutor && (
           <Box marginTop={2}>
             <Checkbox
               name="sendRequestToDefender"

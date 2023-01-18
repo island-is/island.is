@@ -14,9 +14,9 @@ describe('Defender case overview', () => {
       id: 'test_id',
       created: '2020-09-16T19:50:08.033Z',
       modified: '2020-09-16T19:51:39.466Z',
-      state: CaseState.ACCEPTED,
+      state: CaseState.Accepted,
       origin: CaseOrigin.RVG,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       policeCaseNumbers: ['007-2021-202000'],
       defendantWaivesRightToCounsel: false,
     }

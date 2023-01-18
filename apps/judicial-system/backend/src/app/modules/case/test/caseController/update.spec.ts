@@ -135,7 +135,7 @@ describe('CaseController - Update', () => {
 
   describe('court case number added', () => {
     const caseToUpdate = {
-      state: CaseState.RECEIVED,
+      state: CaseState.Received,
       courtCaseNumber: 'R-2020-1234',
     } as UpdateCaseDto
 
@@ -147,7 +147,7 @@ describe('CaseController - Update', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         {
           courtCaseNumber: caseToUpdate.courtCaseNumber,
-          state: CaseState.RECEIVED,
+          state: CaseState.Received,
         },
         { where: { id: caseId }, transaction },
       )
@@ -279,7 +279,7 @@ describe('CaseController - Update', () => {
       const mockFindById = mockUserService.findById as jest.Mock
       mockFindById.mockResolvedValueOnce({
         id: prosecutorId,
-        role: UserRole.PROSECUTOR,
+        role: UserRole.Prosecutor,
       })
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)

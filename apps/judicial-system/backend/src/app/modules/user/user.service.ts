@@ -19,7 +19,7 @@ export class UserService {
   ) {}
 
   async getAll(user: User): Promise<User[]> {
-    if (user.role === UserRole.ADMIN) {
+    if (user.role === UserRole.Admin) {
       return this.userModel.findAll({
         order: ['name'],
         include: [{ model: Institution, as: 'institution' }],
@@ -57,7 +57,7 @@ export class UserService {
           ...admin,
           mobileNumber: '',
           email: '',
-          role: UserRole.ADMIN,
+          role: UserRole.Admin,
           active: true,
         } as User
       }

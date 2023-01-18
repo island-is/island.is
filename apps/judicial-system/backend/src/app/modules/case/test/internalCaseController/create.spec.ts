@@ -97,7 +97,7 @@ describe('InternalCaseController - Create', () => {
 
   describe('case created without a prosecutor', () => {
     const caseToCreate = {
-      type: CaseType.AUTOPSY,
+      type: CaseType.Autopsy,
       policeCaseNumbers: ['007-2021-777'],
       accusedNationalId: '1234567890',
       accusedName: 'John Doe',
@@ -123,7 +123,7 @@ describe('InternalCaseController - Create', () => {
   describe('case created with a prosecutor', () => {
     const prosecutorNationalId = '1234567890'
     const caseToCreate = {
-      type: CaseType.AUTOPSY,
+      type: CaseType.Autopsy,
       policeCaseNumbers: ['007-2021-777'],
       prosecutorNationalId,
       accusedNationalId: '1234567890',
@@ -136,7 +136,7 @@ describe('InternalCaseController - Create', () => {
     const courtId = uuid()
     const user = {
       id: userId,
-      role: UserRole.PROSECUTOR,
+      role: UserRole.Prosecutor,
       institution: { defaultCourtId: courtId },
     } as User
 

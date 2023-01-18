@@ -41,7 +41,7 @@ describe('AppController - Greate', () => {
   describe('remote call', () => {
     const caseToCreate: CreateCaseDto = {
       policeCaseNumber: '007-2022-1',
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       accusedNationalId: '00000000000',
     }
 

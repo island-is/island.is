@@ -14,19 +14,17 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
-  CaseTransition,
+  xCaseTransition,
   InstitutionType,
   NotificationType,
   isRestrictionCase,
-  UserRole,
   Feature,
   isInvestigationCase,
   isIndictmentCase,
-  isExtendedCourtRole,
-  User,
   CaseListEntry,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { CasesGql } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -34,7 +32,11 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
-import type { Case } from '@island.is/judicial-system/types'
+import type { Case, CaseListQuery } from '@island.is/judicial-system/types'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ActiveCases from './ActiveCases'
@@ -51,7 +53,7 @@ const CreateCaseButton: React.FC<{
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
-    if (user.role === UserRole.REPRESENTATIVE) {
+    if (user.role === UserRole.Representative) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -60,7 +62,7 @@ const CreateCaseButton: React.FC<{
       ]
     }
 
-    if (user.role === UserRole.PROSECUTOR) {
+    if (user.role === UserRole.Prosecutor) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -82,7 +84,7 @@ const CreateCaseButton: React.FC<{
     }
 
     return []
-  }, [formatMessage, user?.role])
+  }, [formatMessage, user.role])
 
   // TODO Remove procecutor office id check when indictments are ready
   const itemsFiltered = useMemo(() => {
@@ -124,16 +126,14 @@ export const Cases: React.FC = () => {
 
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
-  const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isProsecutor = user?.role === UserRole.Prosecutor
+  const isRepresentative = user?.role === UserRole.Representative
+  const isHighCourtUser = user?.institution?.type === InstitutionType.HighCourt
   const isPrisonAdminUser =
-    user?.institution?.type === InstitutionType.PRISON_ADMIN
-  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
+    user?.institution?.type === InstitutionType.PrisonAdmin
+  const isPrisonUser = user?.institution?.type === InstitutionType.Prison
 
-  const { data, error, loading, refetch } = useQuery<{
-    cases?: CaseListEntry[]
-  }>(CasesQuery, {
+  const { data, error, loading, refetch } = useQuery<CaseListQuery>(CasesGql, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -167,19 +167,19 @@ export const Cases: React.FC = () => {
   const resCases = data?.cases
 
   const [allActiveCases, allPastCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
+    CaseListQuery['cases'],
+    CaseListQuery['cases'],
   ] = useMemo(() => {
     if (!resCases) {
       return [[], []]
     }
 
-    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
-      return c.state !== CaseState.DELETED
+    const casesWithoutDeleted = resCases.filter((c) => {
+      return c.state !== CaseState.Deleted
     })
 
     return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
+      if (isIndictmentCase(c.type) && c.state === CaseState.Accepted) {
         return false
       } else if (isPrisonAdminUser || isPrisonUser) {
         return !c.isValidToDateInThePast && c.rulingDate
@@ -199,13 +199,13 @@ export const Cases: React.FC = () => {
 
   const deleteCase = async (caseToDelete: CaseListEntry) => {
     if (
-      caseToDelete.state === CaseState.NEW ||
-      caseToDelete.state === CaseState.DRAFT ||
-      caseToDelete.state === CaseState.SUBMITTED ||
-      caseToDelete.state === CaseState.RECEIVED
+      caseToDelete.state === CaseState.New ||
+      caseToDelete.state === CaseState.Draft ||
+      caseToDelete.state === CaseState.Submitted ||
+      caseToDelete.state === CaseState.Received
     ) {
       await sendNotification(caseToDelete.id, NotificationType.REVOKED)
-      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
+      await transitionCase(caseToDelete.id, xCaseTransition.DELETE)
       refetch()
     }
   }
@@ -220,9 +220,9 @@ export const Cases: React.FC = () => {
     let routeTo = null
 
     if (
-      caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED ||
-      caseToOpen.state === CaseState.DISMISSED
+      caseToOpen.state === CaseState.Accepted ||
+      caseToOpen.state === CaseState.Rejected ||
+      caseToOpen.state === CaseState.Dismissed
     ) {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
@@ -319,7 +319,7 @@ export const Cases: React.FC = () => {
                 )}
               />
               <Box marginBottom={[5, 5, 12]}>
-                {activeCases.length > 0 ? (
+                {(activeCases || []).length > 0 ? (
                   isPrisonUser || isPrisonAdminUser ? (
                     <PastCases
                       cases={activeCases}
@@ -368,7 +368,7 @@ export const Cases: React.FC = () => {
               : m.pastRequests.title,
           )}
         />
-        {pastCases.length > 0 ? (
+        {(pastCases || []).length > 0 ? (
           <PastCases
             cases={pastCases}
             onRowClick={handleRowClick}

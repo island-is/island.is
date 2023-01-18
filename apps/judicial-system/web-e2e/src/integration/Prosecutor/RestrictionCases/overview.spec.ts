@@ -20,7 +20,7 @@ import {
 } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = mockCase(CaseType.Custody)
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
   const defenderPhoneNumber = faker.phone.phoneNumber()
@@ -45,7 +45,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
     defenderName,
     defenderEmail,
     defenderPhoneNumber,
-    state: CaseState.RECEIVED,
+    state: CaseState.Received,
   }
   const interceptByState = (state: CaseState, forceFail?: Operation) => {
     cy.stubAPIResponses()
@@ -56,7 +56,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   describe('Happy path', () => {
     describe('Cases with status RECEIVED', () => {
       beforeEach(() => {
-        interceptByState(CaseState.RECEIVED)
+        interceptByState(CaseState.Received)
       })
 
       it('should have a info panel about how to resend a case', () => {
@@ -66,7 +66,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
 
     describe('Cases with status DRAFT', () => {
       beforeEach(() => {
-        interceptByState(CaseState.DRAFT)
+        interceptByState(CaseState.Draft)
       })
 
       it('should let the user know if the assigned defender has viewed the case', () => {
@@ -126,7 +126,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       describe('Sending notification fails', () => {
         beforeEach(() => {
           const forceFail = Operation.SendNotificationMutation
-          interceptByState(CaseState.DRAFT, forceFail)
+          interceptByState(CaseState.Draft, forceFail)
         })
 
         it('should show an error message', () => {

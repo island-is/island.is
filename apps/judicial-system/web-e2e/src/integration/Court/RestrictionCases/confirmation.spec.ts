@@ -4,7 +4,7 @@ import { RESTRICTION_CASE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/
 import { intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = mockCase(CaseType.Custody)
   const caseDataAddition: Case = {
     ...caseData,
     conclusion:
@@ -36,7 +36,7 @@ describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   describe('Cases with ACCEPTING decision', () => {
-    beforeEach(() => interceptByDecision(CaseDecision.ACCEPTING))
+    beforeEach(() => interceptByDecision(CaseDecision.Accepting))
 
     it('should have the correct "confirm" button if decision is "ACCEPTING" in custody and travel ban cases', () => {
       cy.getByTestid('continueButton')
@@ -47,7 +47,7 @@ describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   describe('Cases with REJECTING decision', () => {
-    beforeEach(() => interceptByDecision(CaseDecision.REJECTING))
+    beforeEach(() => interceptByDecision(CaseDecision.Rejecting))
 
     it('should have the correct "confirm" button if decision is "REJECTING" in custody and travel ban cases', () => {
       cy.getByTestid('continueButton')
@@ -58,7 +58,7 @@ describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   describe('Cases with DISMISSING decision', () => {
-    beforeEach(() => interceptByDecision(CaseDecision.DISMISSING))
+    beforeEach(() => interceptByDecision(CaseDecision.Dismissing))
 
     it('should have the correct "confirm" button if decision is "DISMISSING" in custody and travel ban cases', () => {
       cy.getByTestid('continueButton')
@@ -70,7 +70,7 @@ describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
 
   describe('Cases with ACCEPTING_ALTERNATIVE_TRAVEL_BAN decision', () => {
     beforeEach(() =>
-      interceptByDecision(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN),
+      interceptByDecision(CaseDecision.AcceptingAlternativeTravelBan),
     )
 
     it('should have the correct "confirm" button if decision is "ACCEPTING_ALTERNATIVE_TRAVEL_BAN" in custody and travel ban cases', () => {

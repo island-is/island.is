@@ -37,15 +37,15 @@ const CourtDocuments: FC<Props> = (props) => {
 
   const whoFiledOptions = [
     {
-      value: UserRole.PROSECUTOR,
+      value: UserRole.Prosecutor,
       label: formatMessage(courtDocuments.whoFiled.prosecutor),
     },
     {
-      value: UserRole.DEFENDER,
+      value: UserRole.Defender,
       label: formatMessage(courtDocuments.whoFiled.defendant),
     },
     {
-      value: UserRole.JUDGE,
+      value: UserRole.Judge,
       label: formatMessage(courtDocuments.whoFiled.court),
     },
   ]

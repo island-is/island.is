@@ -3,7 +3,6 @@ import { Inject, UseGuards } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
@@ -30,7 +29,7 @@ export class UserResolver {
   @UseGuards(JwtGraphQlAuthGuard)
   @Query(() => [User], { nullable: true })
   users(
-    @CurrentGraphQlUser() user: TUser,
+    @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User[]> {
     this.logger.debug('Getting all users')
@@ -39,7 +38,7 @@ export class UserResolver {
       user.id,
       AuditedAction.GET_USERS,
       backendApi.getUsers(),
-      (users: TUser[]) => users.map((user) => user.id),
+      (users: User[]) => users.map((user) => user.id),
     )
   }
 
@@ -48,7 +47,7 @@ export class UserResolver {
   async user(
     @Args('input', { type: () => UserQueryInput })
     input: UserQueryInput,
-    @CurrentGraphQlUser() user: TUser,
+    @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User | undefined> {
     this.logger.debug(`Getting user ${input.id}`)
@@ -57,14 +56,14 @@ export class UserResolver {
       user.id,
       AuditedAction.GET_USER,
       backendApi.getUser(input.id),
-      (user: TUser) => user.id,
+      (user: User) => user.id,
     )
   }
 
   @UseGuards(new JwtGraphQlAuthGuard(true))
   @Query(() => User, { nullable: true })
   async currentUser(
-    @CurrentGraphQlUser() user: TUser,
+    @CurrentGraphQlUser() user: User,
   ): Promise<User | undefined> {
     this.logger.debug('Getting current user')
 

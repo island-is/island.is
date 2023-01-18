@@ -409,7 +409,7 @@ export class NotificationService {
       where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
     })
     if (notification) {
-      if (theCase.state === CaseState.RECEIVED) {
+      if (theCase.state === CaseState.Received) {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
@@ -683,8 +683,8 @@ export class NotificationService {
     }
 
     if (
-      theCase.type === CaseType.CUSTODY ||
-      theCase.type === CaseType.ADMISSION_TO_FACILITY
+      theCase.type === CaseType.Custody ||
+      theCase.type === CaseType.AdmissionToFacility
     ) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
@@ -887,12 +887,12 @@ export class NotificationService {
     }
 
     if (
-      CaseDecision.ACCEPTING === theCase.decision ||
-      CaseDecision.ACCEPTING_PARTIALLY === theCase.decision
+      CaseDecision.Accepting === theCase.decision ||
+      CaseDecision.AcceptingPartially === theCase.decision
     ) {
-      if (theCase.type === CaseType.CUSTODY) {
+      if (theCase.type === CaseType.Custody) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
-      } else if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
+      } else if (theCase.type === CaseType.AdmissionToFacility) {
         const inCustody = await this.defendantService.isDefendantInActiveCustody(
           theCase.defendants,
         )
@@ -963,8 +963,8 @@ export class NotificationService {
     ]
 
     if (
-      theCase.type === CaseType.CUSTODY ||
-      theCase.type === CaseType.ADMISSION_TO_FACILITY
+      theCase.type === CaseType.Custody ||
+      theCase.type === CaseType.AdmissionToFacility
     ) {
       const custodyNoticePdf = await getCustodyNoticePdfAsString(
         theCase,
@@ -1137,8 +1137,8 @@ export class NotificationService {
     }
 
     const prisonWasNotified =
-      (theCase.type === CaseType.CUSTODY ||
-        theCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+      (theCase.type === CaseType.Custody ||
+        theCase.type === CaseType.AdmissionToFacility) &&
       (await this.existsRevokableNotification(
         theCase.id,
         this.config.email.prisonEmail,
@@ -1380,7 +1380,7 @@ export class NotificationService {
       },
     ]
 
-    if (theCase.state === CaseState.RECEIVED) {
+    if (theCase.state === CaseState.Received) {
       messages.push({
         type: MessageType.DELIVER_REQUEST_TO_COURT,
         caseId: theCase.id,

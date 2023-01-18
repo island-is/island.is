@@ -16,16 +16,14 @@ import {
   ReactSelectOption,
   RestrictionCaseCourtSubsections,
   Sections,
-  UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
   Case,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
-  User,
 } from '@island.is/judicial-system/types'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { UsersGql } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
@@ -35,6 +33,8 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
+import { UsersQuery } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type RegistrarSelectOption = ReactSelectOption & { registrar: User }
@@ -61,8 +61,8 @@ const ReceptionAndAssignment = () => {
     setAndSendCaseToServer,
   } = useCase()
 
-  const { data: userData, loading: userLoading } = useQuery<UserData>(
-    UsersQuery,
+  const { data: userData, loading: userLoading } = useQuery<UsersQuery>(
+    UsersGql,
     {
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
@@ -169,7 +169,7 @@ const ReceptionAndAssignment = () => {
             ) =>
               setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
             }
-            users={userData?.users}
+            users={userData?.users as User[]}
           />
         </Box>
       </FormContentContainer>

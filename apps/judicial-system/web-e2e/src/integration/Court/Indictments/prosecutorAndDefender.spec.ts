@@ -13,7 +13,7 @@ import {
 } from '../../../utils'
 
 describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.INDICTMENT)
+  const caseData = mockCase(CaseType.Indictment)
   const defendant1 = makeDefendant(caseData.id)
   const defendant2 = makeDefendant(caseData.id)
 
@@ -38,7 +38,7 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.Judge)
     cy.visit(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/test_id`)
   })
 

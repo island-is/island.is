@@ -72,7 +72,7 @@ describe('CaseController - Extend', () => {
     const user = { id: userId } as TUser
     const caseId = uuid()
     const origin = randomEnum(CaseOrigin)
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const description = 'Some details'
     const policeCaseNumbers = ['007-2021-777']
     const defenderName = 'John Doe'
@@ -156,7 +156,7 @@ describe('CaseController - Extend', () => {
     const user = { id: userId } as TUser
     const caseId = uuid()
     const origin = randomEnum(CaseOrigin)
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const description = 'Some details'
     const policeCaseNumbers = ['007-2021-777']
     const defenderName = 'John Doe'
@@ -341,7 +341,7 @@ describe('CaseController - Extend', () => {
         where: {
           id: extendedCaseId,
           isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
+          state: { [Op.not]: CaseState.Deleted },
         },
       })
     })

@@ -41,7 +41,7 @@ const Overview: React.FC = () => {
   const { transitionCase } = useCase()
 
   const isNewIndictment =
-    workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
+    workingCase.state === CaseState.New || workingCase.state === CaseState.Draft
 
   const caseHasBeenReceivedByCourt =
     workingCase.courtCaseNumber !== undefined &&

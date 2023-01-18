@@ -108,7 +108,7 @@ export class LimitedAccessCaseService {
       order,
       where: {
         id: caseId,
-        state: { [Op.not]: CaseState.DELETED },
+        state: { [Op.not]: CaseState.Deleted },
         isArchived: false,
       },
     })
@@ -143,7 +143,7 @@ export class LimitedAccessCaseService {
       title: 'verjandi',
       mobileNumber: theCase.defenderPhoneNumber ?? '',
       email: theCase.defenderEmail ?? '',
-      role: UserRole.DEFENDER,
+      role: UserRole.Defender,
       active: true,
     } as User
   }

@@ -16,7 +16,7 @@ import {
 import { makeProsecutor, intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = mockCase(CaseType.Custody)
   const demands = faker.lorem.paragraph()
   const lawsBroken = faker.lorem.words(5)
   const legalBasis = faker.lorem.words(5)
@@ -31,7 +31,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
       prosecutor: makeProsecutor(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       arrestDate: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
+      state: CaseState.Received,
       demands,
       lawsBroken,
       legalBasis,

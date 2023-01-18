@@ -74,7 +74,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         title: 'verjandi',
         mobileNumber: phoneNumber,
         email,
-        role: UserRole.DEFENDER,
+        role: UserRole.Defender,
         active: true,
       })
     })

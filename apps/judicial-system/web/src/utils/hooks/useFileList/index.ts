@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 
-import { GetSignedUrlQuery } from '@island.is/judicial-system-web/graphql/sharedGql'
+import { GetSignedUrlGql } from '@island.is/judicial-system-web/graphql/sharedGql'
 import { CaseFileState } from '@island.is/judicial-system/types'
 import {
-  GetSignedUrlQueryQuery,
-  GetSignedUrlQueryQueryVariables,
+  GetSignedUrlQuery,
+  GetSignedUrlQueryVariables,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 
@@ -18,9 +18,9 @@ const useFileList = ({ caseId }: Parameters) => {
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
   const [getSignedUrl, { error, variables }] = useLazyQuery<
-    GetSignedUrlQueryQuery,
-    GetSignedUrlQueryQueryVariables
-  >(GetSignedUrlQuery, {
+    GetSignedUrlQuery,
+    GetSignedUrlQueryVariables
+  >(GetSignedUrlGql, {
     fetchPolicy: 'no-cache',
     onCompleted(data) {
       if (data?.getSignedUrl?.url) {

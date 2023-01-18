@@ -35,8 +35,8 @@ const RestrictionTags: React.FC<Props> = (props) => {
         )}
       {
         // Custody restrictions
-        (workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+        (workingCase.type === CaseType.Custody ||
+          workingCase.type === CaseType.AdmissionToFacility) &&
           isAcceptingCaseDecision(workingCase.decision) &&
           workingCase.requestedCustodyRestrictions
             ?.filter((restriction) =>
@@ -62,7 +62,7 @@ const RestrictionTags: React.FC<Props> = (props) => {
       }
       {
         // Travel ban restrictions
-        workingCase.type === CaseType.TRAVEL_BAN &&
+        workingCase.type === CaseType.TravelBan &&
           isAcceptingCaseDecision(workingCase.decision) &&
           workingCase.requestedCustodyRestrictions
             ?.filter(

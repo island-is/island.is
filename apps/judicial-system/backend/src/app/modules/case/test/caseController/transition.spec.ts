@@ -88,16 +88,16 @@ describe('CaseController - Transition', () => {
 
   each`
       transition                | oldState               | newState
-      ${CaseTransition.OPEN}    | ${CaseState.NEW}       | ${CaseState.DRAFT}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DRAFT}     | ${CaseState.SUBMITTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.SUBMITTED} | ${CaseState.RECEIVED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.RECEIVED}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.REJECT}  | ${CaseState.RECEIVED}  | ${CaseState.REJECTED}
-      ${CaseTransition.DISMISS} | ${CaseState.RECEIVED}  | ${CaseState.DISMISSED}
-      ${CaseTransition.DELETE}  | ${CaseState.NEW}       | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.DRAFT}     | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
+      ${CaseTransition.OPEN}    | ${CaseState.New}       | ${CaseState.Draft}
+      ${CaseTransition.SUBMIT}  | ${CaseState.Draft}     | ${CaseState.Submitted}
+      ${CaseTransition.RECEIVE} | ${CaseState.Submitted} | ${CaseState.Received}
+      ${CaseTransition.ACCEPT}  | ${CaseState.Received}  | ${CaseState.Accepted}
+      ${CaseTransition.REJECT}  | ${CaseState.Received}  | ${CaseState.Rejected}
+      ${CaseTransition.DISMISS} | ${CaseState.Received}  | ${CaseState.Dismissed}
+      ${CaseTransition.DELETE}  | ${CaseState.New}       | ${CaseState.Deleted}
+      ${CaseTransition.DELETE}  | ${CaseState.Draft}     | ${CaseState.Deleted}
+      ${CaseTransition.DELETE}  | ${CaseState.Submitted} | ${CaseState.Deleted}
+      ${CaseTransition.DELETE}  | ${CaseState.Received}  | ${CaseState.Deleted}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -171,7 +171,7 @@ describe('CaseController - Transition', () => {
                 { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
               ],
             )
-          } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
+          } else if (isIndictmentCase(type) && newState === CaseState.Deleted) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
@@ -188,13 +188,13 @@ describe('CaseController - Transition', () => {
             )
           } else if (
             isIndictmentCase(type) &&
-            newState === CaseState.SUBMITTED
+            newState === CaseState.Submitted
           ) {
             expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
               type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
               caseId,
             })
-          } else if (newState === CaseState.RECEIVED) {
+          } else if (newState === CaseState.Received) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
@@ -217,7 +217,7 @@ describe('CaseController - Transition', () => {
               order,
               where: {
                 id: caseId,
-                state: { [Op.not]: CaseState.DELETED },
+                state: { [Op.not]: CaseState.Deleted },
                 isArchived: false,
               },
             })

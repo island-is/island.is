@@ -147,8 +147,8 @@ export const CourtRecord: React.FC = () => {
       )
 
       if (
-        workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.ADMISSION_TO_FACILITY
+        workingCase.type === CaseType.Custody ||
+        workingCase.type === CaseType.AdmissionToFacility
       ) {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
@@ -159,7 +159,7 @@ export const CourtRecord: React.FC = () => {
 
         if (
           isAcceptingCaseDecision(workingCase.decision) ||
-          workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+          workingCase.decision === CaseDecision.AcceptingAlternativeTravelBan
         ) {
           if (isAcceptingCaseDecision(workingCase.decision)) {
             const formattedRestrictions = formatCustodyRestrictions(
@@ -177,13 +177,13 @@ export const CourtRecord: React.FC = () => {
             formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
               caseType:
                 workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? CaseType.TRAVEL_BAN
+                CaseDecision.AcceptingAlternativeTravelBan
+                  ? CaseType.TravelBan
                   : workingCase.type,
             }),
           )
         }
-      } else if (workingCase.type === CaseType.TRAVEL_BAN) {
+      } else if (workingCase.type === CaseType.TravelBan) {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
             m.sections.sessionBookings.autofillPresentationsTravelBan,

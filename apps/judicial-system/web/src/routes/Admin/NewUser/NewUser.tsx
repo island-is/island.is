@@ -24,7 +24,7 @@ const user: User = {
   title: '',
   mobileNumber: '',
   email: '',
-  role: UserRole.PROSECUTOR,
+  role: UserRole.Prosecutor,
   institution: undefined,
   active: true,
 }

@@ -40,9 +40,9 @@ describe('Case Scheduled Guard', () => {
 
   each`
     state
-    ${CaseState.ACCEPTED}
-    ${CaseState.REJECTED}
-    ${CaseState.DISMISSED}
+    ${CaseState.Accepted}
+    ${CaseState.Rejected}
+    ${CaseState.Dismissed}
   `.describe('completed case', ({ state }) => {
     let then: Then
 
@@ -62,7 +62,7 @@ describe('Case Scheduled Guard', () => {
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
-        case: { state: CaseState.RECEIVED, courtDate: new Date() },
+        case: { state: CaseState.Received, courtDate: new Date() },
       }))
 
       then = givenWhenThen()
@@ -75,11 +75,11 @@ describe('Case Scheduled Guard', () => {
 
   each`
     state
-    ${CaseState.NEW}
-    ${CaseState.DRAFT}
-    ${CaseState.SUBMITTED}
-    ${CaseState.RECEIVED}
-    ${CaseState.DELETED}
+    ${CaseState.New}
+    ${CaseState.Draft}
+    ${CaseState.Submitted}
+    ${CaseState.Received}
+    ${CaseState.Deleted}
   `.describe('unscheduled case', ({ state }) => {
     let then: Then
 

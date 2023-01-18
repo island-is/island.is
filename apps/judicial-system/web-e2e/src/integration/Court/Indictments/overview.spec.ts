@@ -20,7 +20,7 @@ import {
 
 describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const caseData = mockCase(
-    CaseType.INDICTMENT,
+    CaseType.Indictment,
     IndictmentSubtype.TAX_VIOLATION,
   )
   const prosecutor = makeProsecutor('Assigned Prosecutor')
@@ -31,7 +31,7 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
       ...caseData,
       creatingProsecutor,
       prosecutor,
-      state: CaseState.RECEIVED,
+      state: CaseState.Received,
       caseFiles: [
         makeCaseFile({ caseId: caseData.id, name: 'test.pdf' }),
         makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
@@ -45,7 +45,7 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.Judge)
     cy.visit(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/test_id_stadfest`)
   })
 

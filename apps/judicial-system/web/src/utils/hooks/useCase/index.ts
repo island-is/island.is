@@ -10,7 +10,7 @@ import type {
   NotificationType,
   SendNotificationResponse,
   Case,
-  CaseTransition,
+  xCaseTransition,
   RequestSignatureResponse,
   UpdateCase,
   CreateCase,
@@ -272,7 +272,7 @@ const useCase = () => {
   const transitionCase = useMemo(
     () => async (
       caseId: string,
-      transition: CaseTransition,
+      transition: xCaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
       try {

@@ -87,7 +87,7 @@ describe('InternalCaseController - Archive', () => {
         ],
         where: {
           isArchived: false,
-          [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+          [Op.or]: [{ state: CaseState.Deleted }, oldFilter],
         },
       })
     })
@@ -114,8 +114,8 @@ describe('InternalCaseController - Archive', () => {
       courtAttendees: 'original_courtAttendees',
       prosecutorDemands: 'original_prosecutorDemands',
       courtDocuments: [
-        { name: 'original_courtDocument1', submittedBy: UserRole.PROSECUTOR },
-        { name: 'original_courtDocument2', submittedBy: UserRole.DEFENDER },
+        { name: 'original_courtDocument1', submittedBy: UserRole.Prosecutor },
+        { name: 'original_courtDocument2', submittedBy: UserRole.Defender },
       ],
       sessionBookings: 'original_sessionBookings',
       courtCaseFacts: 'original_courtCaseFacts',
@@ -174,9 +174,9 @@ describe('InternalCaseController - Archive', () => {
       courtDocuments: [
         {
           name: 'original_courtDocument1',
-          submittedBy: UserRole.PROSECUTOR,
+          submittedBy: UserRole.Prosecutor,
         },
-        { name: 'original_courtDocument2', submittedBy: UserRole.DEFENDER },
+        { name: 'original_courtDocument2', submittedBy: UserRole.Defender },
       ],
       sessionBookings: 'original_sessionBookings',
       courtCaseFacts: 'original_courtCaseFacts',

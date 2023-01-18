@@ -3,7 +3,7 @@ import { NotificationType, UserRole } from '@island.is/judicial-system/types'
 
 // Allows prosecutors to send notifications
 export const prosecutorNotificationRule = {
-  role: UserRole.PROSECUTOR,
+  role: UserRole.Prosecutor,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
@@ -16,7 +16,7 @@ export const prosecutorNotificationRule = {
 
 // Allows representatives to send notifications
 export const representativeNotificationRule = {
-  role: UserRole.REPRESENTATIVE,
+  role: UserRole.Representative,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [NotificationType.REVOKED],
@@ -24,7 +24,7 @@ export const representativeNotificationRule = {
 
 // Allows judges to send notifiications
 export const judgeNotificationRule = {
-  role: UserRole.JUDGE,
+  role: UserRole.Judge,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
@@ -37,7 +37,7 @@ export const judgeNotificationRule = {
 
 // Allows registrars to send notifications
 export const registrarNotificationRule = {
-  role: UserRole.REGISTRAR,
+  role: UserRole.Registrar,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
@@ -50,7 +50,7 @@ export const registrarNotificationRule = {
 
 // Allows assistants to send notifications
 export const assistantNotificationRule = {
-  role: UserRole.ASSISTANT,
+  role: UserRole.Assistant,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [

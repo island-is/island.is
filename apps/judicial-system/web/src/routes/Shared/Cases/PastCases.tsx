@@ -8,12 +8,12 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseListEntry,
+  CaseListQuery,
   CaseState,
   CaseType,
   Defendant,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   capitalize,
   displayFirstPlusRemaining,
@@ -37,20 +37,20 @@ import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
 
 interface Props {
-  cases: CaseListEntry[]
+  cases?: CaseListQuery['cases'] | null
   onRowClick: (id: string) => void
   isHighCourtUser: boolean
 }
 
 export function getDurationDate(
-  state: Case['state'],
-  validToDate?: Case['validToDate'],
-  initialRulingDate?: Case['initialRulingDate'],
-  rulingDate?: Case['rulingDate'],
-  courtEndTime?: Case['courtEndTime'],
+  state: CaseListEntry['state'],
+  validToDate?: CaseListEntry['validToDate'],
+  initialRulingDate?: CaseListEntry['initialRulingDate'],
+  rulingDate?: CaseListEntry['rulingDate'],
+  courtEndTime?: CaseListEntry['courtEndTime'],
 ): string | null {
   if (
-    [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
+    [CaseState.Rejected, CaseState.Dismissed].includes(state) ||
     !validToDate
   ) {
     return null
@@ -283,21 +283,18 @@ const PastCases: React.FC<Props> = (props) => {
   }, [formatMessage, isHighCourtUser, user?.role])
 
   const pastCasesData = useMemo(
-    () =>
-      cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        b['created'].localeCompare(a['created']),
-      ),
+    () => cases?.sort((a, b) => b['created'].localeCompare(a['created'])),
     [cases],
   )
 
   const { width } = useViewport()
 
-  return width < theme.breakpoints.md ? (
+  return width < theme.breakpoints.md && pastCasesData ? (
     <>
       {pastCasesData.map((theCase) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            theCase={theCase}
+            theCase={theCase as CaseListEntry}
             onClick={() => onRowClick(theCase.id)}
             isCourtRole={false}
           >

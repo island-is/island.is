@@ -23,7 +23,7 @@ export class CaseScheduledGuard implements CanActivate {
     }
 
     if (
-      !(theCase.state === CaseState.RECEIVED && theCase.courtDate) &&
+      !(theCase.state === CaseState.Received && theCase.courtDate) &&
       !completedCaseStates.includes(theCase.state)
     ) {
       throw new ForbiddenException('Forbidden for unscheduled cases')

@@ -94,8 +94,8 @@ function showCustodyNotice(
   decision?: CaseDecision,
 ) {
   return (
-    (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
-    state === CaseState.ACCEPTED &&
+    (type === CaseType.Custody || type === CaseType.AdmissionToFacility) &&
+    state === CaseState.Accepted &&
     isAcceptingCaseDecision(decision)
   )
 }
@@ -105,10 +105,10 @@ export const titleForCase = (
   theCase: Case,
 ) => {
   const isTravelBan =
-    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    theCase.type === CaseType.TRAVEL_BAN
+    theCase.decision === CaseDecision.AcceptingAlternativeTravelBan ||
+    theCase.type === CaseType.TravelBan
 
-  if (theCase.state === CaseState.REJECTED) {
+  if (theCase.state === CaseState.Rejected) {
     if (isInvestigationCase(theCase.type)) {
       return 'Kröfu um rannsóknarheimild hafnað'
     } else {
@@ -116,20 +116,20 @@ export const titleForCase = (
     }
   }
 
-  if (theCase.state === CaseState.DISMISSED) {
+  if (theCase.state === CaseState.Dismissed) {
     return formatMessage(m.dismissedTitle)
   }
 
   if (theCase.isValidToDateInThePast) {
     return formatMessage(m.validToDateInThePast, {
-      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+      caseType: isTravelBan ? CaseType.TravelBan : theCase.type,
     })
   }
 
   return isInvestigationCase(theCase.type)
     ? formatMessage(m.investigationAccepted)
     : formatMessage(m.restrictionActive, {
-        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+        caseType: isTravelBan ? CaseType.TravelBan : theCase.type,
       })
 }
 
@@ -146,10 +146,10 @@ export const rulingDateLabel = (
 }
 
 export const shouldHideNextButton = (workingCase: Case, user?: User) =>
-  user?.role !== UserRole.PROSECUTOR ||
-  workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-  workingCase.state === CaseState.REJECTED ||
-  workingCase.state === CaseState.DISMISSED ||
+  user?.role !== UserRole.Prosecutor ||
+  workingCase.decision === CaseDecision.AcceptingAlternativeTravelBan ||
+  workingCase.state === CaseState.Rejected ||
+  workingCase.state === CaseState.Dismissed ||
   workingCase.isValidToDateInThePast ||
   Boolean(workingCase.childCase)
 
@@ -158,7 +158,7 @@ export const getExtensionInfoText = (
   workingCase: Case,
   user?: User,
 ): string | undefined => {
-  if (user?.role !== UserRole.PROSECUTOR) {
+  if (user?.role !== UserRole.Prosecutor) {
     // Only prosecutors should see the explanation.
     return undefined
   }
@@ -171,12 +171,12 @@ export const getExtensionInfoText = (
     | 'hasChildCase'
     | 'none' = 'none'
 
-  if (workingCase.state === CaseState.REJECTED) {
+  if (workingCase.state === CaseState.Rejected) {
     rejectReason = 'rejected'
-  } else if (workingCase.state === CaseState.DISMISSED) {
+  } else if (workingCase.state === CaseState.Dismissed) {
     rejectReason = 'dismissed'
   } else if (
-    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    workingCase.decision === CaseDecision.AcceptingAlternativeTravelBan
   ) {
     rejectReason = 'acceptingAlternativeTravelBan'
   } else if (workingCase.childCase) {
@@ -270,10 +270,10 @@ export const SignedVerdictOverview: React.FC = () => {
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
-      ([UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
+      ([UserRole.Judge, UserRole.Registrar, UserRole.Prosecutor].includes(
         user.role,
       ) ||
-        user.institution?.type === InstitutionType.PRISON_ADMIN) &&
+        user.institution?.type === InstitutionType.PrisonAdmin) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
@@ -453,7 +453,7 @@ export const SignedVerdictOverview: React.FC = () => {
           sharedWithProsecutorsOffice: {
             id: (institution as ReactSelectOption).value as string,
             name: (institution as ReactSelectOption).label,
-            type: InstitutionType.PROSECUTORS_OFFICE,
+            type: InstitutionType.ProsecutorsOffice,
             created: new Date().toString(),
             modified: new Date().toString(),
             active: true,
@@ -533,8 +533,8 @@ export const SignedVerdictOverview: React.FC = () => {
           </Box>
           {isRestrictionCase(workingCase.type) &&
             workingCase.decision !==
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
-            workingCase.state === CaseState.ACCEPTED && (
+              CaseDecision.AcceptingAlternativeTravelBan &&
+            workingCase.state === CaseState.Accepted && (
               <CaseDates
                 workingCase={workingCase}
                 button={
@@ -649,14 +649,14 @@ export const SignedVerdictOverview: React.FC = () => {
             ]}
           />
         </Box>
-        {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-          workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+        {(workingCase.accusedAppealDecision === CaseAppealDecision.Postpone ||
+          workingCase.accusedAppealDecision === CaseAppealDecision.Appeal ||
           workingCase.prosecutorAppealDecision ===
-            CaseAppealDecision.POSTPONE ||
-          workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
+            CaseAppealDecision.Postpone ||
+          workingCase.prosecutorAppealDecision === CaseAppealDecision.Appeal) &&
           user?.role &&
           isCourtRole(user.role) &&
-          user?.institution?.type !== InstitutionType.HIGH_COURT && (
+          user?.institution?.type !== InstitutionType.HighCourt && (
             <Box marginBottom={7}>
               <AppealSection
                 workingCase={workingCase}
@@ -667,7 +667,7 @@ export const SignedVerdictOverview: React.FC = () => {
               />
             </Box>
           )}
-        {user?.role !== UserRole.STAFF && (
+        {user?.role !== UserRole.Staff && (
           <>
             <Box marginBottom={5} data-testid="accordionItems">
               <Accordion>
@@ -713,7 +713,7 @@ export const SignedVerdictOverview: React.FC = () => {
           </Text>
           <Box marginBottom={2}>
             <Stack space={2} dividers>
-              {user?.role !== UserRole.STAFF && (
+              {user?.role !== UserRole.Staff && (
                 <PdfButton
                   renderAs="row"
                   caseId={workingCase.id}
@@ -762,7 +762,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     <Text>{formatMessage(m.unsignedDocument)}</Text>
                   ))}
               </PdfButton>
-              {user?.role !== UserRole.STAFF && (
+              {user?.role !== UserRole.Staff && (
                 <PdfButton
                   renderAs="row"
                   caseId={workingCase.id}
@@ -815,7 +815,7 @@ export const SignedVerdictOverview: React.FC = () => {
           </Box>
           <Divider />
         </Box>
-        {user?.role === UserRole.PROSECUTOR &&
+        {user?.role === UserRole.Prosecutor &&
           user.institution?.id ===
             workingCase.creatingProsecutor?.institution?.id &&
           isRestrictionCase(workingCase.type) && (

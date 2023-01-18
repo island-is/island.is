@@ -21,7 +21,7 @@ describe(RESTRICTION_CASE_CONFIRMATION_ROUTE, () => {
       }
     })
 
-    loginAndCreateCase(CaseType.CUSTODY, ['007-2020-0101'])
+    loginAndCreateCase(CaseType.Custody, ['007-2020-0101'])
       .then((id) => {
         caseId = id
       })
@@ -37,7 +37,7 @@ describe(RESTRICTION_CASE_CONFIRMATION_ROUTE, () => {
       .then(() => {
         updateCase(caseId, {
           judgeId: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
-          decision: CaseDecision.ACCEPTING,
+          decision: CaseDecision.Accepting,
         })
       })
       .then(() => transitionCase(caseId, CaseTransition.RECEIVE))

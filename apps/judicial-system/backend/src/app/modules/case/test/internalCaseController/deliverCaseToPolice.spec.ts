@@ -47,8 +47,8 @@ describe('InternalCaseController - Deliver case to police', () => {
 
   describe('deliver case to police', () => {
     const caseId = uuid()
-    const caseType = CaseType.CUSTODY
-    const caseState = CaseState.ACCEPTED
+    const caseType = CaseType.Custody
+    const caseState = CaseState.Accepted
     const policeCaseNumber = uuid()
     const defendantNationalId = uuid()
     const caseConclusion = 'test conclusion'

@@ -13,18 +13,18 @@ import { intercept, makeCourt, makeJudge, mockCase } from '../../../utils'
 
 describe('Signed verdict overview - Court - Accepted restriction cases', () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.CUSTODY)
+    const caseData = mockCase(CaseType.Custody)
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
-      state: CaseState.ACCEPTED,
+      state: CaseState.Accepted,
       isValidToDateInThePast: false,
       validToDate: '2022-06-13T19:51:39.466Z',
       isolationToDate: '2022-06-13T19:51:39.466Z',
       judge: makeJudge(),
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.Judge)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
@@ -74,18 +74,18 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
 
 describe('Signed verdict overview - Court - Not the assigned judge', () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.CUSTODY)
+    const caseData = mockCase(CaseType.Custody)
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
-      state: CaseState.ACCEPTED,
+      state: CaseState.Accepted,
       isValidToDateInThePast: false,
       validToDate: '2022-06-13T19:51:39.466Z',
       isolationToDate: '2022-06-13T19:51:39.466Z',
       judge: { ...makeJudge(), id: 'some_other_judge_id' },
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.Judge)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)

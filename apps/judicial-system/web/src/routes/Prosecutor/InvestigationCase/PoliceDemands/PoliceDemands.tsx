@@ -78,7 +78,7 @@ const PoliceDemands: React.FC = () => {
         }
       >
     > = {
-      [CaseType.SEARCH_WARRANT]: {
+      [CaseType.SearchWarrant]: {
         text: icDemands.sections.demands.prefill.searchWarrant2,
         format: {
           court: true,
@@ -88,23 +88,23 @@ const PoliceDemands: React.FC = () => {
           live: true,
         },
       },
-      [CaseType.BANKING_SECRECY_WAIVER]: {
+      [CaseType.BankingSecrecyWaiver]: {
         text: icDemands.sections.demands.prefill.bankingSecrecyWaiver2,
         format: { court: true, accused: true },
       },
-      [CaseType.PHONE_TAPPING]: {
+      [CaseType.PhoneTapping]: {
         text: icDemands.sections.demands.prefill.phoneTapping2,
         format: { court: true, institution: true, accused: true },
       },
-      [CaseType.TELECOMMUNICATIONS]: {
+      [CaseType.Telecommunications]: {
         text: icDemands.sections.demands.prefill.teleCommunications2,
         format: { court: true, institution: true, accused: true },
       },
-      [CaseType.TRACKING_EQUIPMENT]: {
+      [CaseType.TrackingEquipment]: {
         text: icDemands.sections.demands.prefill.trackingEquipment2,
         format: { court: true, institution: true, accused: true },
       },
-      [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
+      [CaseType.ElectronicDataDiscoveryInvestigation]: {
         text:
           icDemands.sections.demands.prefill
             .electronicDataDiscoveryInvestigation,

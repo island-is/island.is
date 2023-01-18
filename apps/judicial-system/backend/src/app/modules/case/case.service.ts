@@ -183,7 +183,7 @@ export class CaseService {
           {
             ...caseToCreate,
             state: isIndictmentCase(caseToCreate.type)
-              ? CaseState.DRAFT
+              ? CaseState.Draft
               : undefined,
           },
           { transaction },
@@ -474,7 +474,7 @@ export class CaseService {
       order,
       where: {
         id: caseId,
-        ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
+        ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.Deleted } }),
         isArchived: false,
       },
     })
@@ -524,7 +524,7 @@ export class CaseService {
             origin: CaseOrigin.RVG,
             creatingProsecutorId: user.id,
             prosecutorId:
-              user.role === UserRole.PROSECUTOR ? user.id : undefined,
+              user.role === UserRole.Prosecutor ? user.id : undefined,
             courtId: user.institution?.defaultCourtId,
           } as CreateCaseDto,
           transaction,
@@ -577,7 +577,7 @@ export class CaseService {
         }
 
         if (
-          (update as { [key: string]: string }).state === CaseState.RECEIVED
+          (update as { [key: string]: string }).state === CaseState.Received
         ) {
           await this.addReceivedByCourtMessageToQueue(theCase)
         }

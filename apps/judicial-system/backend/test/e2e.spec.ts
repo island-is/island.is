@@ -154,7 +154,7 @@ afterAll(async () => {
 })
 
 const minimalCaseData = {
-  type: CaseType.CUSTODY,
+  type: CaseType.Custody,
   policeCaseNumbers: ['Case Number'],
 }
 
@@ -212,13 +212,13 @@ function remainingJudgeCaseData() {
     courtCaseFacts: 'Court Case Facts',
     courtLegalArguments: 'Court Legal Arguments',
     ruling: 'Ruling',
-    decision: CaseDecision.ACCEPTING,
+    decision: CaseDecision.Accepting,
     validToDate: '2021-09-28T12:00:00.000Z',
     isolationToDate: '2021-09-10T12:00:00.000Z',
     conclusion: 'Addition to Conclusion',
-    accusedAppealDecision: CaseAppealDecision.APPEAL,
+    accusedAppealDecision: CaseAppealDecision.Appeal,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
-    prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+    prosecutorAppealDecision: CaseAppealDecision.Accept,
     prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
     accusedPostponedAppealDate: '2020-09-30T12:00:00.000Z',
     prosecutorPostponedAppealDate: '2020-09-29T12:00:00.000Z',
@@ -525,7 +525,7 @@ describe('User', () => {
       title: 'The Title',
       mobileNumber: '1234567',
       email: 'user@dmr.is',
-      role: UserRole.JUDGE,
+      role: UserRole.Judge,
       institutionId: 'a38666f3-0444-4e44-9654-b83f39f4db11',
       active: true,
     }
@@ -569,7 +569,7 @@ describe('User', () => {
       title: 'The Modified Title',
       mobileNumber: '7654321',
       email: 'modifieduser@dmr.is',
-      role: UserRole.PROSECUTOR,
+      role: UserRole.Prosecutor,
       institutionId: '7b261673-8990-46b4-a310-5412ad77686a',
       active: false,
     }
@@ -588,7 +588,7 @@ describe('User', () => {
           title: 'The Title',
           mobileNumber: '1234567',
           email: 'user@dmr.is',
-          role: UserRole.JUDGE,
+          role: UserRole.Judge,
           institutionId: 'a38666f3-0444-4e44-9654-b83f39f4db11',
           active: true,
         })
@@ -721,7 +721,7 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(),
       origin: CaseOrigin.RVG,
-      state: CaseState.DRAFT,
+      state: CaseState.Draft,
     })
       .then((value) => {
         dbCase = caseToCCase(value)
@@ -760,7 +760,7 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true, true),
       origin: CaseOrigin.RVG,
-      state: CaseState.RECEIVED,
+      state: CaseState.Received,
     })
       .then((value) => {
         dbCase = caseToCCase(value)
@@ -784,7 +784,7 @@ describe('Case', () => {
         expectCasesToMatch(apiCase, {
           ...dbCase,
           modified: apiCase.modified,
-          state: CaseState.ACCEPTED,
+          state: CaseState.Accepted,
           court,
           prosecutor,
           sharedWithProsecutorsOffice,
@@ -840,7 +840,7 @@ describe('Notification', () => {
 
     await Case.create({
       origin: CaseOrigin.RVG,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       policeCaseNumbers: ['Case Number'],
     })
       .then((value) => {

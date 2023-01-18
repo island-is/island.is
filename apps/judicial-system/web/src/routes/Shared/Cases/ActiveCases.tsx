@@ -16,8 +16,9 @@ import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
   CaseListEntry,
   CaseState,
-  isExtendedCourtRole,
   isProsecutionRole,
+  isExtendedCourtRole,
+  CaseListQuery,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
@@ -39,7 +40,7 @@ import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
 
 interface Props {
-  cases: CaseListEntry[]
+  cases?: CaseListQuery['cases'] | null
   onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
@@ -72,7 +73,7 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   useMemo(() => {
     if (cases && sortConfig) {
-      cases.sort((a: CaseListEntry, b: CaseListEntry) => {
+      cases.sort((a, b) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? (sortConfig.column === 'defendant' &&
@@ -125,13 +126,13 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   const { width } = useViewport()
 
-  return width < theme.breakpoints.md ? (
+  return width < theme.breakpoints.md && cases ? (
     <>
-      {cases.map((theCase: CaseListEntry) => (
+      {cases.map((theCase) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
-            theCase={theCase}
+            theCase={theCase as CaseListEntry}
             isCourtRole={isCourt}
           >
             {theCase.courtDate ? (
@@ -234,7 +235,7 @@ const ActiveCases: React.FC<Props> = (props) => {
       <LayoutGroup>
         <tbody>
           <AnimatePresence>
-            {cases.map((c, i) => (
+            {cases?.map((c, i) => (
               <motion.tr
                 key={c.id}
                 animate={controls}
@@ -366,10 +367,10 @@ const ActiveCases: React.FC<Props> = (props) => {
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
                   {isProsecution &&
-                    (c.state === CaseState.NEW ||
-                      c.state === CaseState.DRAFT ||
-                      c.state === CaseState.SUBMITTED ||
-                      c.state === CaseState.RECEIVED) && (
+                    (c.state === CaseState.New ||
+                      c.state === CaseState.Draft ||
+                      c.state === CaseState.Submitted ||
+                      c.state === CaseState.Received) && (
                       <Box
                         data-testid="deleteCase"
                         component="button"
@@ -402,7 +403,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                       if (onDeleteCase) {
                         evt.stopPropagation()
 
-                        await onDeleteCase(cases[i])
+                        await onDeleteCase(cases[i] as CaseListEntry)
 
                         controls.start('isNotDeleting').then(() => {
                           setRequestToRemoveIndex(undefined)

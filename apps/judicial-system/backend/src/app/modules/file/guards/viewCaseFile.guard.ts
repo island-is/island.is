@@ -43,8 +43,8 @@ export class ViewCaseFileGuard implements CanActivate {
     if (
       isExtendedCourtRole(user.role) &&
       [
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
+        CaseState.Submitted,
+        CaseState.Received,
         ...completedCaseStates,
       ].includes(theCase.state)
     ) {

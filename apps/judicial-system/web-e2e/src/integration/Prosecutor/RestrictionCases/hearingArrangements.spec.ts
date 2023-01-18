@@ -13,12 +13,12 @@ import {
 } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = mockCase(CaseType.Custody)
   const caseDataAddition: Case = {
     ...caseData,
     prosecutor: makeProsecutor(),
     court: makeCourt(),
-    state: CaseState.RECEIVED,
+    state: CaseState.Received,
   }
 
   describe('Happy path', () => {
@@ -87,7 +87,7 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     beforeEach(() => {
       const shouldFail = Operation.SendNotificationMutation
       cy.stubAPIResponses()
-      intercept({ ...caseDataAddition, state: CaseState.DRAFT }, shouldFail)
+      intercept({ ...caseDataAddition, state: CaseState.Draft }, shouldFail)
       cy.visit(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
     })
 

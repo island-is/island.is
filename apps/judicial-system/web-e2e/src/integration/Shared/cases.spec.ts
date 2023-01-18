@@ -13,7 +13,7 @@ describe(CASES_ROUTE, () => {
         })
       }
     })
-    cy.login(UserRole.PROSECUTOR)
+    cy.login(UserRole.Prosecutor)
     cy.visit(CASES_ROUTE)
   })
 

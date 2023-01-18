@@ -80,8 +80,8 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
             model: Case,
             as: 'case',
             where: {
-              state: CaseState.ACCEPTED,
-              type: CaseType.CUSTODY,
+              state: CaseState.Accepted,
+              type: CaseType.Custody,
               valid_to_date: { [Op.gte]: literal('current_date') },
             },
           },
@@ -112,8 +112,8 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
             model: Case,
             as: 'case',
             where: {
-              state: CaseState.ACCEPTED,
-              type: CaseType.CUSTODY,
+              state: CaseState.Accepted,
+              type: CaseType.Custody,
               valid_to_date: { [Op.gte]: literal('current_date') },
             },
           },

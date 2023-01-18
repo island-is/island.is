@@ -1,4 +1,4 @@
-import { UserRole } from './user'
+import { UserRole } from '@island.is/judicial-system/types'
 
 export interface CourtDocument {
   name: string

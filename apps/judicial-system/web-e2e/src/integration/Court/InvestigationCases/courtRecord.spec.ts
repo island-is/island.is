@@ -19,7 +19,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill court attendees', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -35,7 +35,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in restraining order cases', () => {
-    const caseData = mockCase(CaseType.RESTRAINING_ORDER)
+    const caseData = mockCase(CaseType.RestrainingOrder)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -51,9 +51,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in restraining order and expulsion from home cases', () => {
-    const caseData = mockCase(
-      CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-    )
+    const caseData = mockCase(CaseType.RestrainingOrderAndExpulsionFromHome)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -69,7 +67,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in expulsion from home cases', () => {
-    const caseData = mockCase(CaseType.EXPULSION_FROM_HOME)
+    const caseData = mockCase(CaseType.ExpulsionFromHome)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -85,7 +83,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in autopsy cases', () => {
-    const caseData = mockCase(CaseType.AUTOPSY)
+    const caseData = mockCase(CaseType.Autopsy)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -101,7 +99,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when defendant is present in court', () => {
-    const caseData = mockCase(CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION)
+    const caseData = mockCase(CaseType.ElectronicDataDiscoveryInvestigation)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -118,7 +116,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when a spokesperson is present in court', () => {
-    const caseData = mockCase(CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION)
+    const caseData = mockCase(CaseType.ElectronicDataDiscoveryInvestigation)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -135,7 +133,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when a prosecutor is present in court', () => {
-    const caseData = mockCase(CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION)
+    const caseData = mockCase(CaseType.ElectronicDataDiscoveryInvestigation)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -152,13 +150,13 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should not allow users to continue if conclusion is not set', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
 
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
       courtDate: '2021-12-16T10:50:04.033Z',
-      decision: CaseDecision.ACCEPTING,
+      decision: CaseDecision.Accepting,
       conclusion: undefined,
     }
 
@@ -174,7 +172,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should not allow users to continue if decision is not set', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -196,13 +194,13 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should not allow users to continue if ruling is not set', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
       courtDate: '2021-12-16T10:50:04.033Z',
       conclusion: faker.lorem.words(5),
-      decision: CaseDecision.ACCEPTING,
+      decision: CaseDecision.Accepting,
       ruling: undefined,
     }
 
@@ -216,13 +214,13 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
 
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
       courtDate: '2021-12-16T10:50:04.033Z',
-      decision: CaseDecision.ACCEPTING,
+      decision: CaseDecision.Accepting,
       conclusion: faker.lorem.words(5),
       ruling: faker.lorem.words(5),
     }

@@ -79,7 +79,7 @@ describe('CourtService - Create court case', () => {
     }
   })
 
-  describe.each([...investigationCases, CaseType.ADMISSION_TO_FACILITY])(
+  describe.each([...investigationCases, CaseType.AdmissionToFacility])(
     'court case created for %s',
     (type) => {
       const user = {} as User
@@ -120,7 +120,7 @@ describe('CourtService - Create court case', () => {
     (indictmentSubtype) => {
       const user = {} as User
       const caseId = uuid()
-      const type = CaseType.INDICTMENT
+      const type = CaseType.Indictment
       const courtId = uuid()
       const policeCaseNumber = uuid()
       const indictmentSubtypes = { [policeCaseNumber]: [indictmentSubtype] }
@@ -157,8 +157,8 @@ describe('CourtService - Create court case', () => {
 
   each`
     type
-    ${CaseType.CUSTODY}
-    ${CaseType.TRAVEL_BAN}
+    ${CaseType.Custody}
+    ${CaseType.TravelBan}
   `.describe('extendable court case created for $type', ({ type }) => {
     const user = {} as User
     const caseId = uuid()
@@ -191,8 +191,8 @@ describe('CourtService - Create court case', () => {
 
   each`
     type
-    ${CaseType.CUSTODY}
-    ${CaseType.TRAVEL_BAN}
+    ${CaseType.Custody}
+    ${CaseType.TravelBan}
   `.describe('extended court case created for $type', ({ type }) => {
     const user = {} as User
     const caseId = uuid()

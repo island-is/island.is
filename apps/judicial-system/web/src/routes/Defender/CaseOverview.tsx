@@ -49,24 +49,24 @@ export const CaseOverview: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const titleForCase = (theCase: Case) => {
-    if (theCase.state === CaseState.REJECTED) {
+    if (theCase.state === CaseState.Rejected) {
       return isInvestigationCase(theCase.type)
         ? formatMessage(m.title.investigationCaseRejected)
         : formatMessage(m.title.restrictionCaseRejected)
     }
 
-    if (theCase.state === CaseState.DISMISSED) {
+    if (theCase.state === CaseState.Dismissed) {
       return formatMessage(m.title.caseDismissed)
     }
 
-    if (theCase.state === CaseState.ACCEPTED) {
+    if (theCase.state === CaseState.Accepted) {
       if (isInvestigationCase(theCase.type)) {
         return formatMessage(m.title.investigationCaseAccepted)
       }
 
       const caseType =
-        theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-          ? CaseType.TRAVEL_BAN
+        theCase.decision === CaseDecision.AcceptingAlternativeTravelBan
+          ? CaseType.TravelBan
           : theCase.type
 
       if (theCase.isValidToDateInThePast) {
@@ -133,7 +133,7 @@ export const CaseOverview: React.FC = () => {
           </Box>
           {completedCaseStates.includes(workingCase.state) &&
             isRestrictionCase(workingCase.type) &&
-            workingCase.state === CaseState.ACCEPTED && (
+            workingCase.state === CaseState.Accepted && (
               <CaseDates workingCase={workingCase} />
             )}
         </Box>

@@ -20,7 +20,6 @@ import type {
   TransitionCase,
   UpdateCase,
   Institution,
-  User,
   CreateUser,
   UpdateUser,
   Notification,
@@ -34,11 +33,12 @@ import type {
   Defendant,
   UpdateDefendant,
   DeleteDefendantResponse,
-  CaseListEntry,
 } from '@island.is/judicial-system/types'
 
+import { CaseListEntry } from '../modules/caseList/models/caseList.model'
 import { environment } from '../../environments'
 import { UpdateFilesResponse } from '../modules/file/models/updateFiles.response'
+import { User } from '../modules/user/user.model'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {

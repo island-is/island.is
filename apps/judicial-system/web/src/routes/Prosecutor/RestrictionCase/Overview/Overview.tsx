@@ -83,7 +83,7 @@ export const Overview: React.FC = () => {
       return
     }
 
-    const shouldSubmitCase = workingCase.state === CaseState.DRAFT
+    const shouldSubmitCase = workingCase.state === CaseState.Draft
 
     const caseSubmitted = shouldSubmitCase
       ? await transitionCase(
@@ -91,7 +91,7 @@ export const Overview: React.FC = () => {
           CaseTransition.SUBMIT,
           setWorkingCase,
         )
-      : workingCase.state !== CaseState.NEW
+      : workingCase.state !== CaseState.New
 
     const notificationSent = caseSubmitted
       ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
@@ -104,7 +104,7 @@ export const Overview: React.FC = () => {
       setModalText(formatMessage(m.sections.modal.notificationNotSent))
     }
 
-    if (workingCase.state === CaseState.RECEIVED) {
+    if (workingCase.state === CaseState.Received) {
       updateCase(workingCase.id, {
         caseResentExplanation: createCaseResentExplanation(
           workingCase,
@@ -132,7 +132,7 @@ export const Overview: React.FC = () => {
         title={formatMessage(titles.prosecutor.restrictionCases.overview)}
       />
       <FormContentContainer>
-        {workingCase.state === CaseState.RECEIVED && (
+        {workingCase.state === CaseState.Received && (
           <Box
             marginBottom={workingCase.seenByDefender ? 3 : 5}
             data-testid="rc-overview-info-panel"
@@ -410,16 +410,16 @@ export const Overview: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
-            workingCase.state === CaseState.NEW ||
-            workingCase.state === CaseState.DRAFT
+            workingCase.state === CaseState.New ||
+            workingCase.state === CaseState.Draft
               ? 'Senda kröfu á héraðsdóm'
               : 'Endursenda kröfu á héraðsdóm'
           }
           nextIsLoading={
-            workingCase.state !== CaseState.RECEIVED && isSendingNotification
+            workingCase.state !== CaseState.Received && isSendingNotification
           }
           onNextButtonClick={
-            workingCase.state === CaseState.RECEIVED
+            workingCase.state === CaseState.Received
               ? () => {
                   setModal('caseResubmitModal')
                 }

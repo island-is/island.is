@@ -18,9 +18,9 @@ import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.st
 import { useFileList } from '../../utils/hooks'
 import { UserContext } from '../UserProvider/UserProvider'
 import SectionHeading from '../SectionHeading/SectionHeading'
-import * as styles from './IndictmentCaseFilesList.css'
 import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
 import Modal from '../Modal/Modal'
+import * as styles from './IndictmentCaseFilesList.css'
 
 interface Props {
   workingCase: Case

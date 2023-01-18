@@ -408,7 +408,7 @@ const Ruling = () => {
                   [
                     {
                       conclusion:
-                        decision === CaseDecision.ACCEPTING
+                        decision === CaseDecision.Accepting
                           ? workingCase.demands
                           : workingCase.conclusion,
                     },

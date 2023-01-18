@@ -26,7 +26,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
   const defenderPhoneNumber = faker.phone.phoneNumber()
-  const caseData = mockCase(CaseType.INTERNET_USAGE)
+  const caseData = mockCase(CaseType.InternetUsage)
 
   const caseDataAddition: Case = {
     ...caseData,
@@ -36,14 +36,14 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     defenderPhoneNumber,
     demands,
     seenByDefender: '2020-09-16T19:50:08.033Z',
-    state: CaseState.SUBMITTED,
+    state: CaseState.Submitted,
     prosecutor: makeProsecutor(),
     creatingProsecutor: makeProsecutor(),
     requestedCourtDate: '2020-09-20T19:50:08.033Z',
   }
 
   beforeEach(() => {
-    cy.login(UserRole.PROSECUTOR)
+    cy.login(UserRole.Prosecutor)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/test_id`)

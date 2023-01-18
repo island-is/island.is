@@ -23,9 +23,9 @@ describe('getDemandsAutofill', () => {
 
   it('should format custody case', () => {
     const props = {
-      caseType: CaseType.CUSTODY,
+      caseType: CaseType.Custody,
       defendant: baseDefendant,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       courtName,
       requestedValidToDate: '2020-01-01',
     } as DemandsAutofillProps
@@ -39,12 +39,12 @@ describe('getDemandsAutofill', () => {
 
   it('should format extended custody case', () => {
     const props = {
-      caseType: CaseType.CUSTODY,
+      caseType: CaseType.Custody,
       defendant: baseDefendant,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       courtName,
       requestedValidToDate: '2020-01-01',
-      parentCaseDecision: CaseDecision.ACCEPTING,
+      parentCaseDecision: CaseDecision.Accepting,
     } as DemandsAutofillProps
 
     const result = f(props)
@@ -56,9 +56,9 @@ describe('getDemandsAutofill', () => {
 
   it('should format custody case with isolation', () => {
     const props = {
-      caseType: CaseType.CUSTODY,
+      caseType: CaseType.Custody,
       defendant: baseDefendant,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       courtName,
       requestedValidToDate: '2020-01-01',
       requestedCustodyRestrictions: [CaseCustodyRestrictions.ISOLATION],
@@ -73,13 +73,13 @@ describe('getDemandsAutofill', () => {
 
   it('should format travel ban case', () => {
     const props = {
-      caseType: CaseType.TRAVEL_BAN,
+      caseType: CaseType.TravelBan,
       defendant: {
         ...baseDefendant,
         noNationalId: true,
         nationalId: '1991-01-01',
       },
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       courtName,
       requestedValidToDate: '2020-01-01',
     } as DemandsAutofillProps
@@ -93,9 +93,9 @@ describe('getDemandsAutofill', () => {
 
   it('should format admission to facility case', () => {
     const props = {
-      caseType: CaseType.ADMISSION_TO_FACILITY,
+      caseType: CaseType.AdmissionToFacility,
       defendant: baseDefendant,
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       courtName,
       requestedValidToDate: '2020-01-01',
     } as DemandsAutofillProps

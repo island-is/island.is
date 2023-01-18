@@ -155,8 +155,8 @@ export const SigningModal: React.FC<SigningModalProps> = ({
           <MarkdownWrapper
             markdown={formatMessage(m.successText, {
               summarySentToPrison:
-                workingCase.type === CaseType.CUSTODY ||
-                workingCase.type === CaseType.ADMISSION_TO_FACILITY,
+                workingCase.type === CaseType.Custody ||
+                workingCase.type === CaseType.AdmissionToFacility,
             })}
           />
         ) : (

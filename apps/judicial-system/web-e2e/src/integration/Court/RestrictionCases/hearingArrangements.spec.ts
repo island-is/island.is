@@ -9,7 +9,7 @@ import {
 import { makeCourt, intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = mockCase(CaseType.Custody)
   const comment = faker.lorem.sentence(1)
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe(`${RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       court: makeCourt(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       requestedValidToDate: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
+      state: CaseState.Received,
     }
 
     cy.stubAPIResponses()

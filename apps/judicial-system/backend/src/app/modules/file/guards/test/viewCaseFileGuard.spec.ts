@@ -62,21 +62,21 @@ describe('View Case File Guard', () => {
 
   each`
     role | state
-    ${UserRole.REGISTRAR} | ${CaseState.SUBMITTED}
-    ${UserRole.REGISTRAR} | ${CaseState.RECEIVED}
-    ${UserRole.REGISTRAR} | ${CaseState.ACCEPTED}
-    ${UserRole.REGISTRAR} | ${CaseState.REJECTED}
-    ${UserRole.REGISTRAR} | ${CaseState.DISMISSED}
-    ${UserRole.JUDGE} | ${CaseState.SUBMITTED}
-    ${UserRole.JUDGE} | ${CaseState.RECEIVED}
-    ${UserRole.JUDGE} | ${CaseState.ACCEPTED}
-    ${UserRole.JUDGE} | ${CaseState.REJECTED}
-    ${UserRole.JUDGE} | ${CaseState.DISMISSED}
-    ${UserRole.ASSISTANT} | ${CaseState.SUBMITTED}
-    ${UserRole.ASSISTANT} | ${CaseState.RECEIVED}
-    ${UserRole.ASSISTANT} | ${CaseState.ACCEPTED}
-    ${UserRole.ASSISTANT} | ${CaseState.REJECTED}
-    ${UserRole.ASSISTANT} | ${CaseState.DISMISSED}
+    ${UserRole.Registrar} | ${CaseState.Submitted}
+    ${UserRole.Registrar} | ${CaseState.Received}
+    ${UserRole.Registrar} | ${CaseState.Accepted}
+    ${UserRole.Registrar} | ${CaseState.Rejected}
+    ${UserRole.Registrar} | ${CaseState.Dismissed}
+    ${UserRole.Judge} | ${CaseState.Submitted}
+    ${UserRole.Judge} | ${CaseState.Received}
+    ${UserRole.Judge} | ${CaseState.Accepted}
+    ${UserRole.Judge} | ${CaseState.Rejected}
+    ${UserRole.Judge} | ${CaseState.Dismissed}
+    ${UserRole.Assistant} | ${CaseState.Submitted}
+    ${UserRole.Assistant} | ${CaseState.Received}
+    ${UserRole.Assistant} | ${CaseState.Accepted}
+    ${UserRole.Assistant} | ${CaseState.Rejected}
+    ${UserRole.Assistant} | ${CaseState.Dismissed}
   `.describe(
     'registrars and judges can view case files of completed cases',
     ({ role, state }) => {
@@ -98,12 +98,12 @@ describe('View Case File Guard', () => {
 
   each`
     role | state
-    ${UserRole.REGISTRAR} | ${CaseState.NEW}
-    ${UserRole.REGISTRAR} | ${CaseState.DRAFT}
-    ${UserRole.JUDGE} | ${CaseState.NEW}
-    ${UserRole.JUDGE} | ${CaseState.DRAFT}
-    ${UserRole.ASSISTANT} | ${CaseState.NEW}
-    ${UserRole.ASSISTANT} | ${CaseState.DRAFT}
+    ${UserRole.Registrar} | ${CaseState.New}
+    ${UserRole.Registrar} | ${CaseState.Draft}
+    ${UserRole.Judge} | ${CaseState.New}
+    ${UserRole.Judge} | ${CaseState.Draft}
+    ${UserRole.Assistant} | ${CaseState.New}
+    ${UserRole.Assistant} | ${CaseState.Draft}
   `.describe(
     'registrars and judges can not view case files of unreceived cases',
     ({ role, state }) => {
@@ -126,8 +126,8 @@ describe('View Case File Guard', () => {
 
   each`
     role
-    ${UserRole.ADMIN}
-    ${UserRole.STAFF}
+    ${UserRole.Admin}
+    ${UserRole.Staff}
   `.describe('other roles can not view case files', ({ role }) => {
     const user = { role } as User
     const theCase = {} as Case

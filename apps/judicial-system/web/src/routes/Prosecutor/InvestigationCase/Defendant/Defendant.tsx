@@ -415,11 +415,11 @@ const Defendant = () => {
           </Box>
           <AnimatePresence>
             {[
-              CaseType.RESTRAINING_ORDER,
-              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-              CaseType.EXPULSION_FROM_HOME,
-              CaseType.PSYCHIATRIC_EXAMINATION,
-              CaseType.OTHER,
+              CaseType.RestrainingOrder,
+              CaseType.RestrainingOrderAndExpulsionFromHome,
+              CaseType.ExpulsionFromHome,
+              CaseType.PsychiatricExamination,
+              CaseType.Other,
             ].includes(workingCase.type) && (
               <motion.section
                 initial={{ opacity: 0, y: 10 }}

@@ -9,8 +9,8 @@ import type {
 import * as constants from '@island.is/judicial-system/consts'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
-import * as validations from './validate'
 import { TUploadFile } from './hooks'
+import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,

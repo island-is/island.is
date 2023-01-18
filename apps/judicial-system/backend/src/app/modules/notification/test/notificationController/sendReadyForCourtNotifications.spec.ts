@@ -73,7 +73,7 @@ describe('NotificationController - Send ready for court notification', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         id: caseId,
-        state: CaseState.RECEIVED,
+        state: CaseState.Received,
       } as Case)
     })
 

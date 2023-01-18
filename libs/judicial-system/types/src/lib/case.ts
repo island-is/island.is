@@ -4,6 +4,12 @@ import type { Notification } from './notification'
 import type { CaseFile } from './file'
 import type { User } from './user'
 import type { CourtDocument } from './courtDocument'
+import {
+  CaseType,
+  CaseDecision,
+  CaseState,
+  CaseAppealDecision,
+} from './graphql/schema'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
@@ -11,7 +17,7 @@ export enum CaseOrigin {
   LOKE = 'LOKE',
 }
 
-export enum CaseType {
+export enum xCaseType {
   // Indictment cases
   INDICTMENT = 'INDICTMENT',
   // Restriction Cases
@@ -86,7 +92,7 @@ export interface CrimeSceneMap {
   [key: string]: CrimeScene
 }
 
-export enum CaseState {
+export enum xCaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
@@ -97,7 +103,7 @@ export enum CaseState {
   DISMISSED = 'DISMISSED',
 }
 
-export enum CaseTransition {
+export enum xCaseTransition {
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
   RECEIVE = 'RECEIVE',
@@ -127,21 +133,6 @@ export enum CaseCustodyRestrictions {
   MEDIA = 'MEDIA',
   ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
   WORKBAN = 'WORKBAN',
-}
-
-export enum CaseAppealDecision {
-  APPEAL = 'APPEAL',
-  ACCEPT = 'ACCEPT',
-  POSTPONE = 'POSTPONE',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
-export enum CaseDecision {
-  ACCEPTING = 'ACCEPTING',
-  REJECTING = 'REJECTING',
-  ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
-  ACCEPTING_PARTIALLY = 'ACCEPTING_PARTIALLY',
-  DISMISSING = 'DISMISSING',
 }
 
 export enum SessionArrangements {
@@ -361,7 +352,7 @@ export interface UpdateCase
 }
 
 export interface TransitionCase {
-  transition: CaseTransition
+  transition: xCaseTransition
 }
 
 export interface RequestSignatureResponse {
@@ -375,35 +366,35 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export const indictmentCases = [CaseType.INDICTMENT]
+export const indictmentCases = [CaseType.Indictment]
 
 export const restrictionCases = [
-  CaseType.ADMISSION_TO_FACILITY,
-  CaseType.CUSTODY,
-  CaseType.TRAVEL_BAN,
+  CaseType.AdmissionToFacility,
+  CaseType.Custody,
+  CaseType.TravelBan,
 ]
 
 export const investigationCases = [
-  CaseType.AUTOPSY,
-  CaseType.BANKING_SECRECY_WAIVER,
-  CaseType.BODY_SEARCH,
-  CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-  CaseType.EXPULSION_FROM_HOME,
-  CaseType.INTERNET_USAGE,
-  CaseType.OTHER,
-  CaseType.PHONE_TAPPING,
-  CaseType.PSYCHIATRIC_EXAMINATION,
-  CaseType.RESTRAINING_ORDER,
-  CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-  CaseType.SEARCH_WARRANT,
-  CaseType.SOUND_RECORDING_EQUIPMENT,
-  CaseType.TELECOMMUNICATIONS,
-  CaseType.TRACKING_EQUIPMENT,
-  CaseType.VIDEO_RECORDING_EQUIPMENT,
+  CaseType.Autopsy,
+  CaseType.BankingSecrecyWaiver,
+  CaseType.BodySearch,
+  CaseType.ElectronicDataDiscoveryInvestigation,
+  CaseType.ExpulsionFromHome,
+  CaseType.InternetUsage,
+  CaseType.Other,
+  CaseType.PhoneTapping,
+  CaseType.PsychiatricExamination,
+  CaseType.RestrainingOrder,
+  CaseType.RestrainingOrderAndExpulsionFromHome,
+  CaseType.SearchWarrant,
+  CaseType.SoundRecordingEquipment,
+  CaseType.Telecommunications,
+  CaseType.TrackingEquipment,
+  CaseType.VideoRecordingEquipment,
 ]
 
-export function isIndictmentCase(type?: CaseType): boolean {
-  return Boolean(type && indictmentCases.includes(type))
+export function isIndictmentCase(type: CaseType): boolean {
+  return Boolean(indictmentCases.includes(type))
 }
 
 export function isRestrictionCase(type?: CaseType): boolean {
@@ -419,21 +410,21 @@ export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
 }
 
 export const completedCaseStates = [
-  CaseState.ACCEPTED,
-  CaseState.REJECTED,
-  CaseState.DISMISSED,
+  CaseState.Accepted,
+  CaseState.Rejected,
+  CaseState.Dismissed,
 ]
 
 export const acceptedCaseDecisions = [
-  CaseDecision.ACCEPTING,
-  CaseDecision.ACCEPTING_PARTIALLY,
+  CaseDecision.Accepting,
+  CaseDecision.AcceptingPartially,
 ]
 
 export function hasCaseBeenAppealed(theCase: Case): boolean {
   return (
     completedCaseStates.includes(theCase.state) &&
-    (theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+    (theCase.accusedAppealDecision === CaseAppealDecision.Appeal ||
+      theCase.prosecutorAppealDecision === CaseAppealDecision.Appeal ||
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )

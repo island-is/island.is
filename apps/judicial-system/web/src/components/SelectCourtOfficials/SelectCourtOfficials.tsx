@@ -6,9 +6,9 @@ import { Box, Select, Option, Tooltip } from '@island.is/island-ui/core'
 import {
   Case,
   indictmentCases,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 import { ReactSelectOption } from '../../types'
@@ -19,7 +19,7 @@ interface Props {
   workingCase: Case
   handleJudgeChange: (value: ValueType<ReactSelectOption>) => void
   handleRegistrarChange: (value: ValueType<ReactSelectOption>) => void
-  users?: User[]
+  users?: User[] | null
 }
 
 const SelectCourtOfficials: React.FC<Props> = (props) => {
@@ -29,9 +29,9 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
   const judges = (users ?? [])
     .filter(
       (user: User) =>
-        (user.role === UserRole.JUDGE ||
+        (user.role === UserRole.Judge ||
           (indictmentCases.includes(workingCase.type) &&
-            user.role === UserRole.ASSISTANT)) &&
+            user.role === UserRole.Assistant)) &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((judge: User) => {
@@ -41,7 +41,7 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
   const registrars = (users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.REGISTRAR &&
+        user.role === UserRole.Registrar &&
         user.institution?.id === workingCase?.court?.id,
     )
     .map((registrar: User) => {

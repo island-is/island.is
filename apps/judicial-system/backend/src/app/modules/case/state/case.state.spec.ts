@@ -9,16 +9,16 @@ import { transitionCase } from './case.state'
 describe('Transition Case', () => {
   each`
       transition                | oldState               | newState
-      ${CaseTransition.OPEN}    | ${CaseState.NEW}       | ${CaseState.DRAFT}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DRAFT}     | ${CaseState.SUBMITTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.SUBMITTED} | ${CaseState.RECEIVED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.RECEIVED}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.REJECT}  | ${CaseState.RECEIVED}  | ${CaseState.REJECTED}
-      ${CaseTransition.DISMISS} | ${CaseState.RECEIVED}  | ${CaseState.DISMISSED}
-      ${CaseTransition.DELETE}  | ${CaseState.NEW}       | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.DRAFT}     | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
+      ${CaseTransition.OPEN}    | ${CaseState.New}       | ${CaseState.Draft}
+      ${CaseTransition.SUBMIT}  | ${CaseState.Draft}     | ${CaseState.Submitted}
+      ${CaseTransition.RECEIVE} | ${CaseState.Submitted} | ${CaseState.Received}
+      ${CaseTransition.ACCEPT}  | ${CaseState.Received}  | ${CaseState.Accepted}
+      ${CaseTransition.REJECT}  | ${CaseState.Received}  | ${CaseState.Rejected}
+      ${CaseTransition.DISMISS} | ${CaseState.Received}  | ${CaseState.Dismissed}
+      ${CaseTransition.DELETE}  | ${CaseState.New}       | ${CaseState.Deleted}
+      ${CaseTransition.DELETE}  | ${CaseState.Draft}     | ${CaseState.Deleted}
+      ${CaseTransition.DELETE}  | ${CaseState.Submitted} | ${CaseState.Deleted}
+      ${CaseTransition.DELETE}  | ${CaseState.Received}  | ${CaseState.Deleted}
     `.it(
     'should $transition $oldState case resulting in $newState case',
     ({ transition, oldState, newState }) => {
@@ -32,52 +32,52 @@ describe('Transition Case', () => {
 
   each`
       transition                | oldState
-      ${CaseTransition.OPEN}    | ${CaseState.DRAFT}
-      ${CaseTransition.OPEN}    | ${CaseState.SUBMITTED}
-      ${CaseTransition.OPEN}    | ${CaseState.RECEIVED}
-      ${CaseTransition.OPEN}    | ${CaseState.ACCEPTED}
-      ${CaseTransition.OPEN}    | ${CaseState.REJECTED}
-      ${CaseTransition.OPEN}    | ${CaseState.DISMISSED}
-      ${CaseTransition.OPEN}    | ${CaseState.DELETED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.NEW}
-      ${CaseTransition.SUBMIT}  | ${CaseState.SUBMITTED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.RECEIVED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.REJECTED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DISMISSED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DELETED}
-      ${CaseTransition.RECEIVE} | ${CaseState.NEW}
-      ${CaseTransition.RECEIVE} | ${CaseState.DRAFT}
-      ${CaseTransition.RECEIVE} | ${CaseState.RECEIVED}
-      ${CaseTransition.RECEIVE} | ${CaseState.ACCEPTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.REJECTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.DISMISSED}
-      ${CaseTransition.RECEIVE} | ${CaseState.DELETED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.NEW}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DRAFT}
-      ${CaseTransition.ACCEPT}  | ${CaseState.SUBMITTED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.REJECTED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DISMISSED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DELETED}
-      ${CaseTransition.REJECT}  | ${CaseState.NEW}
-      ${CaseTransition.REJECT}  | ${CaseState.DRAFT}
-      ${CaseTransition.REJECT}  | ${CaseState.SUBMITTED}
-      ${CaseTransition.REJECT}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.REJECT}  | ${CaseState.REJECTED}
-      ${CaseTransition.REJECT}  | ${CaseState.DISMISSED}
-      ${CaseTransition.REJECT}  | ${CaseState.DELETED}
-      ${CaseTransition.DISMISS} | ${CaseState.NEW}
-      ${CaseTransition.DISMISS} | ${CaseState.DRAFT}
-      ${CaseTransition.DISMISS} | ${CaseState.SUBMITTED}
-      ${CaseTransition.DISMISS} | ${CaseState.ACCEPTED}
-      ${CaseTransition.DISMISS} | ${CaseState.REJECTED}
-      ${CaseTransition.DISMISS} | ${CaseState.DISMISSED}
-      ${CaseTransition.DISMISS} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.DELETE}  | ${CaseState.REJECTED}
-      ${CaseTransition.DELETE}  | ${CaseState.DISMISSED}
-      ${CaseTransition.DELETE}  | ${CaseState.DELETED}
+      ${CaseTransition.OPEN}    | ${CaseState.Draft}
+      ${CaseTransition.OPEN}    | ${CaseState.Submitted}
+      ${CaseTransition.OPEN}    | ${CaseState.Received}
+      ${CaseTransition.OPEN}    | ${CaseState.Accepted}
+      ${CaseTransition.OPEN}    | ${CaseState.Rejected}
+      ${CaseTransition.OPEN}    | ${CaseState.Dismissed}
+      ${CaseTransition.OPEN}    | ${CaseState.Deleted}
+      ${CaseTransition.SUBMIT}  | ${CaseState.New}
+      ${CaseTransition.SUBMIT}  | ${CaseState.Submitted}
+      ${CaseTransition.SUBMIT}  | ${CaseState.Received}
+      ${CaseTransition.SUBMIT}  | ${CaseState.Accepted}
+      ${CaseTransition.SUBMIT}  | ${CaseState.Rejected}
+      ${CaseTransition.SUBMIT}  | ${CaseState.Dismissed}
+      ${CaseTransition.SUBMIT}  | ${CaseState.Deleted}
+      ${CaseTransition.RECEIVE} | ${CaseState.New}
+      ${CaseTransition.RECEIVE} | ${CaseState.Draft}
+      ${CaseTransition.RECEIVE} | ${CaseState.Received}
+      ${CaseTransition.RECEIVE} | ${CaseState.Accepted}
+      ${CaseTransition.RECEIVE} | ${CaseState.Rejected}
+      ${CaseTransition.RECEIVE} | ${CaseState.Dismissed}
+      ${CaseTransition.RECEIVE} | ${CaseState.Deleted}
+      ${CaseTransition.ACCEPT}  | ${CaseState.New}
+      ${CaseTransition.ACCEPT}  | ${CaseState.Draft}
+      ${CaseTransition.ACCEPT}  | ${CaseState.Submitted}
+      ${CaseTransition.ACCEPT}  | ${CaseState.Accepted}
+      ${CaseTransition.ACCEPT}  | ${CaseState.Rejected}
+      ${CaseTransition.ACCEPT}  | ${CaseState.Dismissed}
+      ${CaseTransition.ACCEPT}  | ${CaseState.Deleted}
+      ${CaseTransition.REJECT}  | ${CaseState.New}
+      ${CaseTransition.REJECT}  | ${CaseState.Draft}
+      ${CaseTransition.REJECT}  | ${CaseState.Submitted}
+      ${CaseTransition.REJECT}  | ${CaseState.Accepted}
+      ${CaseTransition.REJECT}  | ${CaseState.Rejected}
+      ${CaseTransition.REJECT}  | ${CaseState.Dismissed}
+      ${CaseTransition.REJECT}  | ${CaseState.Deleted}
+      ${CaseTransition.DISMISS} | ${CaseState.New}
+      ${CaseTransition.DISMISS} | ${CaseState.Draft}
+      ${CaseTransition.DISMISS} | ${CaseState.Submitted}
+      ${CaseTransition.DISMISS} | ${CaseState.Accepted}
+      ${CaseTransition.DISMISS} | ${CaseState.Rejected}
+      ${CaseTransition.DISMISS} | ${CaseState.Dismissed}
+      ${CaseTransition.DISMISS} | ${CaseState.Deleted}
+      ${CaseTransition.DELETE}  | ${CaseState.Accepted}
+      ${CaseTransition.DELETE}  | ${CaseState.Rejected}
+      ${CaseTransition.DELETE}  | ${CaseState.Dismissed}
+      ${CaseTransition.DELETE}  | ${CaseState.Deleted}
     `.it(
     'should not $transition $oldState case',
     ({ transition, oldState }) => {

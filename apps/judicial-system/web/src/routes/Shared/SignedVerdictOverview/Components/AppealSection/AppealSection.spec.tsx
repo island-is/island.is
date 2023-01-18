@@ -18,8 +18,8 @@ describe('Appeal section component', () => {
     id: 'test',
     created: new Date().toString(),
     modified: new Date().toString(),
-    type: CaseType.CUSTODY,
-    state: CaseState.ACCEPTED,
+    type: CaseType.Custody,
+    state: CaseState.Accepted,
     policeCaseNumbers: ['000'],
     defendants: [{ nationalId: '000000-0000' }] as Defendant[],
     origin: CaseOrigin.UNKNOWN,
@@ -35,7 +35,7 @@ describe('Appeal section component', () => {
               ...baseWorkingCase,
               isAppealDeadlineExpired: true,
               courtEndTime: '2020-09-16T19:50:00.000Z',
-              accusedAppealDecision: CaseAppealDecision.POSTPONE,
+              accusedAppealDecision: CaseAppealDecision.Postpone,
             }}
             setAccusedAppealDate={() => null}
             setProsecutorAppealDate={() => null}
@@ -65,7 +65,7 @@ describe('Appeal section component', () => {
               ...baseWorkingCase,
               isAppealDeadlineExpired: false,
               courtEndTime: `${dd}T19:50:00.000Z`,
-              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+              prosecutorAppealDecision: CaseAppealDecision.Postpone,
             }}
             setAccusedAppealDate={() => null}
             setProsecutorAppealDate={() => null}

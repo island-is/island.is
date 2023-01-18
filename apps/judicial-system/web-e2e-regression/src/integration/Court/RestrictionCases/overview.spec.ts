@@ -15,7 +15,7 @@ describe(RESTRICTION_CASE_COURT_OVERVIEW_ROUTE, () => {
       req.reply({ fixture: 'lawyersResponse' })
     }).as('laywers')
 
-    loginAndCreateCase(CaseType.CUSTODY, ['007-2020-0101'])
+    loginAndCreateCase(CaseType.Custody, ['007-2020-0101'])
       .then((id) => {
         caseId = id
       })

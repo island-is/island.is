@@ -28,7 +28,7 @@ import {
 } from '@island.is/dokobit-signing'
 import {
   CaseState,
-  CaseTransition,
+  xCaseTransition,
   CaseType,
   completedCaseStates,
   indictmentCases,
@@ -149,8 +149,8 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
-    if (caseToUpdate.courtCaseNumber && theCase.state === CaseState.SUBMITTED) {
-      const state = transitionCase(CaseTransition.RECEIVE, theCase.state)
+    if (caseToUpdate.courtCaseNumber && theCase.state === CaseState.Submitted) {
+      const state = transitionCase(xCaseTransition.RECEIVE, theCase.state)
 
       caseToUpdate = { ...caseToUpdate, state } as UpdateCaseDto
     }
@@ -159,7 +159,7 @@ export class CaseController {
     if (caseToUpdate.prosecutorId) {
       await this.validateAssignedUser(
         caseToUpdate.prosecutorId,
-        [UserRole.PROSECUTOR],
+        [UserRole.Prosecutor],
         theCase.creatingProsecutor?.institutionId,
       )
 
@@ -175,7 +175,7 @@ export class CaseController {
     if (caseToUpdate.judgeId) {
       await this.validateAssignedUser(
         caseToUpdate.judgeId,
-        [UserRole.JUDGE, UserRole.ASSISTANT],
+        [UserRole.Judge, UserRole.Assistant],
         theCase.courtId,
       )
     }
@@ -183,7 +183,7 @@ export class CaseController {
     if (caseToUpdate.registrarId) {
       await this.validateAssignedUser(
         caseToUpdate.registrarId,
-        [UserRole.REGISTRAR],
+        [UserRole.Registrar],
         theCase.courtId,
       )
     }
@@ -221,7 +221,7 @@ export class CaseController {
       rulingDate?: Date
     } = { state }
 
-    if (state === CaseState.DELETED) {
+    if (state === CaseState.Deleted) {
       update.parentCaseId = null
     }
 
@@ -233,11 +233,11 @@ export class CaseController {
       theCase,
       update as UpdateCaseDto,
       user,
-      state !== CaseState.DELETED,
+      state !== CaseState.Deleted,
     )
 
     if (isIndictmentCase(theCase.type)) {
-      if (state === CaseState.SUBMITTED) {
+      if (state === CaseState.Submitted) {
         await this.caseService.addMessagesForSubmittedIndicitmentCaseToQueue(
           theCase,
         )
@@ -246,7 +246,7 @@ export class CaseController {
         await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
           theCase,
         )
-      } else if (state === CaseState.DELETED) {
+      } else if (state === CaseState.Deleted) {
         // Indictment cases need some case file cleanup
         await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
           theCase,
@@ -433,7 +433,7 @@ export class CaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
+    new CaseTypeGuard([CaseType.Custody, CaseType.AdmissionToFacility]),
     CaseReadGuard,
   )
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
@@ -453,7 +453,7 @@ export class CaseController {
       `Getting the custody notice for case ${caseId} as a pdf document`,
     )
 
-    if (theCase.state !== CaseState.ACCEPTED) {
+    if (theCase.state !== CaseState.Accepted) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.state} cases`,
       )

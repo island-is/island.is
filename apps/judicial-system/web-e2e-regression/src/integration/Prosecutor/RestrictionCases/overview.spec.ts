@@ -10,7 +10,7 @@ describe(RESTRICTION_CASE_OVERVIEW_ROUTE, () => {
   let caseId = ''
 
   beforeEach(() => {
-    loginAndCreateCase(CaseType.CUSTODY, ['007-2020-0101'])
+    loginAndCreateCase(CaseType.Custody, ['007-2020-0101'])
       .then((id) => {
         caseId = id
       })

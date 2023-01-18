@@ -1,6 +1,6 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
-  CaseTransition,
+  xCaseTransition,
   UserRole,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -45,14 +45,14 @@ const prosecutorFields: (keyof UpdateCase)[] = [
 
 // Allows prosecutors to update a specific set of fields
 export const prosecutorUpdateRule = {
-  role: UserRole.PROSECUTOR,
+  role: UserRole.Prosecutor,
   type: RulesType.FIELD,
   dtoFields: prosecutorFields,
 } as RolesRule
 
 // Allows representatives to update a specific set of fields
 export const representativeUpdateRule = {
-  role: UserRole.REPRESENTATIVE,
+  role: UserRole.Representative,
   type: RulesType.FIELD,
   dtoFields: prosecutorFields,
 } as RolesRule
@@ -107,21 +107,21 @@ const staffFields: (keyof UpdateCase)[] = [
 
 // Allows judges to update a specific set of fields
 export const judgeUpdateRule = {
-  role: UserRole.JUDGE,
+  role: UserRole.Judge,
   type: RulesType.FIELD,
   dtoFields: courtFields,
 } as RolesRule
 
 // Allows registrars to update a specific set of fields
 export const registrarUpdateRule = {
-  role: UserRole.REGISTRAR,
+  role: UserRole.Registrar,
   type: RulesType.FIELD,
   dtoFields: courtFields,
 } as RolesRule
 
 // Allows assistants to update a specific set of fields
 export const assistantUpdateRule = {
-  role: UserRole.ASSISTANT,
+  role: UserRole.Assistant,
   type: RulesType.FIELD,
   dtoFields: courtFields,
 } as RolesRule
@@ -130,65 +130,65 @@ export const assistantUpdateRule = {
 // In practice, only prison admins will be able to update these fields,
 // as write access is blocked for other staff roles
 export const staffUpdateRule = {
-  role: UserRole.STAFF,
+  role: UserRole.Staff,
   type: RulesType.FIELD,
   dtoFields: staffFields,
 } as RolesRule
 
 // Allows prosecutors to open, submit and delete cases
 export const prosecutorTransitionRule = {
-  role: UserRole.PROSECUTOR,
+  role: UserRole.Prosecutor,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
-    CaseTransition.OPEN,
-    CaseTransition.SUBMIT,
-    CaseTransition.DELETE,
+    xCaseTransition.OPEN,
+    xCaseTransition.SUBMIT,
+    xCaseTransition.DELETE,
   ],
 } as RolesRule
 
 // Allows representatives to open, submit and delete cases
 export const representativeTransitionRule = {
-  role: UserRole.REPRESENTATIVE,
+  role: UserRole.Representative,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
-    CaseTransition.OPEN,
-    CaseTransition.SUBMIT,
-    CaseTransition.DELETE,
+    xCaseTransition.OPEN,
+    xCaseTransition.SUBMIT,
+    xCaseTransition.DELETE,
   ],
 } as RolesRule
 
 // Allows judges to receive, accept, reject and dismiss cases
 export const judgeTransitionRule = {
-  role: UserRole.JUDGE,
+  role: UserRole.Judge,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
-    CaseTransition.RECEIVE,
-    CaseTransition.ACCEPT,
-    CaseTransition.REJECT,
-    CaseTransition.DISMISS,
+    xCaseTransition.RECEIVE,
+    xCaseTransition.ACCEPT,
+    xCaseTransition.REJECT,
+    xCaseTransition.DISMISS,
   ],
 } as RolesRule
 
 // Allows registrars to receive cases
 export const registrarTransitionRule = {
-  role: UserRole.REGISTRAR,
+  role: UserRole.Registrar,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE],
+  dtoFieldValues: [xCaseTransition.RECEIVE],
 } as RolesRule
 
 // Allows assistants to receive, accept, reject and dismiss cases
 export const assistantTransitionRule = {
-  role: UserRole.ASSISTANT,
+  role: UserRole.Assistant,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
-    CaseTransition.RECEIVE,
-    CaseTransition.ACCEPT,
-    CaseTransition.REJECT,
-    CaseTransition.DISMISS,
+    xCaseTransition.RECEIVE,
+    xCaseTransition.ACCEPT,
+    xCaseTransition.REJECT,
+    xCaseTransition.DISMISS,
   ],
 } as RolesRule

@@ -62,9 +62,9 @@ const Confirmation = () => {
       completedCaseStates.includes(workingCase.state) ||
       (await transitionCase(
         workingCase.id,
-        workingCase.decision === CaseDecision.REJECTING
+        workingCase.decision === CaseDecision.Rejecting
           ? CaseTransition.REJECT
-          : workingCase.decision === CaseDecision.DISMISSING
+          : workingCase.decision === CaseDecision.Dismissing
           ? CaseTransition.DISMISS
           : CaseTransition.ACCEPT,
         setWorkingCase,
@@ -142,11 +142,11 @@ const Confirmation = () => {
               nextUrl={constants.CASES_ROUTE}
               nextIsLoading={isRequestingRulingSignature}
               nextButtonText={formatMessage(
-                workingCase.decision === CaseDecision.ACCEPTING
+                workingCase.decision === CaseDecision.Accepting
                   ? strings.continueButtonTextAccepting
-                  : workingCase.decision === CaseDecision.REJECTING
+                  : workingCase.decision === CaseDecision.Rejecting
                   ? strings.continueButtonTextRejecting
-                  : workingCase.decision === CaseDecision.DISMISSING
+                  : workingCase.decision === CaseDecision.Dismissing
                   ? strings.continueButtonTextDismissing
                   : strings.continueButtonTextAcceptingPartially,
               )}

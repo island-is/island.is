@@ -19,15 +19,15 @@ export const caseResult = (
   }
 
   const isAccepted =
-    workingCase.state === CaseState.ACCEPTED ||
-    workingCase?.parentCase?.state === CaseState.ACCEPTED
+    workingCase.state === CaseState.Accepted ||
+    workingCase?.parentCase?.state === CaseState.Accepted
 
   /**
    * No need to check the parent case state because you can't extend
    * travel ban cases, dissmissed or rejected cases
    */
-  const isRejected = workingCase?.state === CaseState.REJECTED
-  const isDismissed = workingCase.state === CaseState.DISMISSED
+  const isRejected = workingCase?.state === CaseState.Rejected
+  const isDismissed = workingCase.state === CaseState.Dismissed
   let caseType = workingCase.type
 
   if (isRejected) {
@@ -41,9 +41,9 @@ export const caseResult = (
       return formatMessage(m.caseResults.indictmentClosed)
     } else {
       const isAlternativeTravelBan =
-        workingCase.state === CaseState.ACCEPTED &&
-        workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-      caseType = isAlternativeTravelBan ? CaseType.TRAVEL_BAN : caseType
+        workingCase.state === CaseState.Accepted &&
+        workingCase.decision === CaseDecision.AcceptingAlternativeTravelBan
+      caseType = isAlternativeTravelBan ? CaseType.TravelBan : caseType
       return workingCase?.isValidToDateInThePast
         ? formatMessage(m.caseResults.restrictionOver, { caseType })
         : formatMessage(m.caseResults.restrictionActive, { caseType })

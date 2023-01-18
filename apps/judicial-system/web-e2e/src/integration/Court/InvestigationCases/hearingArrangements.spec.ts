@@ -17,18 +17,18 @@ describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   const comment = faker.lorem.sentence(1)
 
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.InternetUsage)
     const caseDataAddition: Case = {
       ...caseData,
       comments: comment,
       court: makeCourt(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
+      state: CaseState.Received,
       defenderName: 'Test Testesen',
       courtDate: '2020-09-16T19:50:08.033Z',
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.Judge)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(

@@ -13,9 +13,9 @@ import type { Case } from './case'
 describe('Case Type', () => {
   each`
     type
-    ${CaseType.CUSTODY}
-    ${CaseType.TRAVEL_BAN}
-    ${CaseType.ADMISSION_TO_FACILITY}
+    ${CaseType.Custody}
+    ${CaseType.TravelBan}
+    ${CaseType.AdmissionToFacility}
   `.it('should categorize $type as a restriction case', ({ type }) => {
     expect(isRestrictionCase(type)).toBe(true)
     expect(isInvestigationCase(type)).toBe(false)
@@ -23,22 +23,22 @@ describe('Case Type', () => {
 
   each`
     type
-    ${CaseType.SEARCH_WARRANT}
-    ${CaseType.BANKING_SECRECY_WAIVER}
-    ${CaseType.PHONE_TAPPING}
-    ${CaseType.TELECOMMUNICATIONS}
-    ${CaseType.TRACKING_EQUIPMENT}
-    ${CaseType.PSYCHIATRIC_EXAMINATION}
-    ${CaseType.SOUND_RECORDING_EQUIPMENT}
-    ${CaseType.AUTOPSY}
-    ${CaseType.BODY_SEARCH}
-    ${CaseType.INTERNET_USAGE}
-    ${CaseType.RESTRAINING_ORDER}
-    ${CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME}
-    ${CaseType.EXPULSION_FROM_HOME}
-    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
-    ${CaseType.VIDEO_RECORDING_EQUIPMENT}
-    ${CaseType.OTHER}
+    ${CaseType.SearchWarrant}
+    ${CaseType.BankingSecrecyWaiver}
+    ${CaseType.PhoneTapping}
+    ${CaseType.Telecommunications}
+    ${CaseType.TrackingEquipment}
+    ${CaseType.PsychiatricExamination}
+    ${CaseType.SoundRecordingEquipment}
+    ${CaseType.Autopsy}
+    ${CaseType.BodySearch}
+    ${CaseType.InternetUsage}
+    ${CaseType.RestrainingOrder}
+    ${CaseType.RestrainingOrderAndExpulsionFromHome}
+    ${CaseType.ExpulsionFromHome}
+    ${CaseType.ElectronicDataDiscoveryInvestigation}
+    ${CaseType.VideoRecordingEquipment}
+    ${CaseType.Other}
   `.it('should categorize $type as an investigation case', ({ type }) => {
     expect(isRestrictionCase(type)).toBe(false)
     expect(isInvestigationCase(type)).toBe(true)
@@ -54,7 +54,7 @@ describe('isAppealed', () => {
   it('should be true when the accuesed appealed in court', () => {
     // Arrange
     const theCase = {
-      accusedAppealDecision: CaseAppealDecision.APPEAL,
+      accusedAppealDecision: CaseAppealDecision.Appeal,
       state: CaseState.ACCEPTED,
     } as Case
 
@@ -68,7 +68,7 @@ describe('isAppealed', () => {
   it('should be true when the prosecutor appealed in court', () => {
     // Arrange
     const theCase = {
-      prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+      prosecutorAppealDecision: CaseAppealDecision.Appeal,
       state: CaseState.REJECTED,
     } as Case
 
@@ -110,8 +110,8 @@ describe('isAppealed', () => {
   it('should be false when noone has appealed', () => {
     // Arrange
     const theCase = {
-      accusedAppealDecision: CaseAppealDecision.POSTPONE,
-      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+      accusedAppealDecision: CaseAppealDecision.Postpone,
+      prosecutorAppealDecision: CaseAppealDecision.Accept,
       state: CaseState.ACCEPTED,
     } as Case
 
@@ -124,7 +124,7 @@ describe('isAppealed', () => {
 
   it('should be false when the case is not completed', () => {
     // Arrange
-    const theCase = { accusedAppealDecision: CaseAppealDecision.APPEAL } as Case
+    const theCase = { accusedAppealDecision: CaseAppealDecision.Appeal } as Case
 
     // Act
     const res = hasCaseBeenAppealed(theCase)
