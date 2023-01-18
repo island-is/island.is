@@ -41,6 +41,8 @@ export type ServiceErrorCode =
   | 3
   /** Request contains some field errors */
   | 4
+  /** Invalid pass */
+  | 5
   /** Missing PassTemplateId */
   | 10
   /** Fetch failed */
@@ -71,8 +73,12 @@ export interface VerifyPassData {
   pass?: Pass
 }
 
-export interface VoidPassData {
+export interface RevokePassData {
   success: boolean
+}
+
+export interface FindUserPassData {
+  pass: Pass
 }
 
 export interface ListPassesResponseData {
@@ -101,4 +107,8 @@ export interface ListTemplatesResponseData {
 
 export interface VoidPassResponseData {
   voidPass: boolean
+}
+
+export interface DeletePassResponseData {
+  deletePass: boolean
 }

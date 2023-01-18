@@ -131,13 +131,13 @@ export class GenericFirearmLicenseService
         : null,
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
     if (pass.ok) {
-      return pass.data
+      return pass.data.distributionUrl
     }
 
     /**
@@ -173,13 +173,13 @@ export class GenericFirearmLicenseService
         : null,
     }
 
-    const pass = await this.smartApi.generatePkPassQrCode(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
     if (pass.ok) {
-      return pass.data
+      return pass.data.distributionQRCode
     }
 
     /**

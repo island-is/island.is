@@ -6,9 +6,9 @@ import {
   Pass,
   PassDataInput,
   Result,
+  RevokePassData,
   SmartSolutionsApi,
   VerifyPassData,
-  VoidPassData,
 } from '@island.is/clients/smartsolutions'
 
 @Injectable()
@@ -25,9 +25,9 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     return await this.smartApi.updatePkPass(inputData, nationalId)
   }
 
-  async revoke(queryId: string): Promise<Result<VoidPassData>> {
+  async revoke(queryId: string): Promise<Result<RevokePassData>> {
     this.logger.debug('in revoke for Disability license')
-    return await this.smartApi.voidPkPass(queryId)
+    return await this.smartApi.revokePkPass(queryId)
   }
 
   /** We need to verify the pk pass AND the license itself! */

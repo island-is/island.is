@@ -134,13 +134,13 @@ export class GenericDisabilityLicenseService
       return null
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
     if (pass.ok) {
-      return pass.data
+      return pass.data.distributionUrl
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
@@ -155,13 +155,13 @@ export class GenericDisabilityLicenseService
     if (!payload) {
       return null
     }
-    const pass = await this.smartApi.generatePkPassQrCode(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
     if (pass.ok) {
-      return pass.data
+      return pass.data.distributionQRCode
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!

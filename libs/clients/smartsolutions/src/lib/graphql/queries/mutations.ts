@@ -4,6 +4,12 @@ export const VOID_PASS = `
   }
 `
 
+export const DELETE_PASS = `
+  mutation DeletePass($id: String!) {
+    deletePass(id: $id)
+  }
+`
+
 export const VERIFY_PKPASS = `
   mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
     updateStatusOnPassWithDynamicBarcode(dynamicBarcodeData: $dynamicBarcodeData) {

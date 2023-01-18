@@ -8,13 +8,15 @@ import {
   ServiceError,
   VerifyPassResponseData,
   VerifyPassData,
-  VoidPassData,
   LOG_CATEGORY,
   ListPassesResponseData,
   VoidPassResponseData,
   ListTemplatesResponseData,
   GetPassResponseData,
   UpsertPassResponseData,
+  DeletePassResponseData,
+  RevokePassData,
+  FindUserPassData,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
@@ -31,6 +33,7 @@ import {
   mergeInputFields,
 } from './typeMapper'
 import {
+  DELETE_PASS,
   GET_PASS,
   LIST_PASSES,
   LIST_PASS_STATUSES,
@@ -127,31 +130,6 @@ export class SmartSolutionsApi {
     return { apiResponse: json as ApiResponse }
   }
 
-  private filterExistingPasses(passes: Array<Pass>): Pass | undefined {
-    if (!(passes.length > 0)) {
-      return
-    }
-    if (
-      passes.some(
-        (p) =>
-          p.status === PassStatus.Active || p.status === PassStatus.Unclaimed,
-      )
-    ) {
-      const activePasses = passes.filter((p) => p.status === PassStatus.Active)
-      if (activePasses?.length) {
-        return activePasses[0]
-      }
-
-      const unclaimedPasses = passes?.filter(
-        (p) => p.status === PassStatus.Unclaimed,
-      )
-      if (unclaimedPasses?.length) {
-        return unclaimedPasses[0]
-      }
-    }
-    return
-  }
-
   private async query<T>(graphql: string): Promise<Result<T>> {
     const response = await this.fetch(graphql)
 
@@ -193,6 +171,36 @@ export class SmartSolutionsApi {
         code: 99,
         message: 'Unknown error',
       },
+    }
+  }
+
+  /**
+   *
+   * @param nationalId the user's national id
+   * @returns A pass if one was found, or undefined
+   */
+  private async findUserPass(
+    nationalId: string,
+  ): Promise<Result<Pass | undefined>> {
+    const listPassesQuery = JSON.stringify({
+      query: LIST_PASS_STATUSES,
+      variables: {
+        queryId: nationalId,
+        passTemplateId: this.config.passTemplateId,
+      },
+    })
+    const listRes = await this.query<ListPassesResponseData>(listPassesQuery)
+
+    if (!listRes.ok) {
+      //if failure, return the response
+      return listRes
+    }
+
+    const pass = listRes.data.passes?.data[0]
+
+    return {
+      ok: true,
+      data: pass,
     }
   }
 
@@ -254,27 +262,14 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    const listPassesQuery = JSON.stringify({
-      query: LIST_PASS_STATUSES,
-      variables: {
-        queryId: nationalId,
-        passTemplateId: this.config.passTemplateId,
-      },
-    })
-    //First, need to find a suitable pass to update
-    const listResponse = await this.query<ListPassesResponseData>(
-      listPassesQuery,
-    )
+    const findPassRes = await this.findUserPass(nationalId)
 
-    if (!listResponse.ok) {
-      //if failure, return the response
-      return listResponse
+    if (!findPassRes.ok) {
+      return findPassRes
     }
 
-    const pass = this.filterExistingPasses(listResponse.data.passes?.data ?? [])
-
     //check if existing pass was found
-    if (!pass) {
+    if (!findPassRes.data) {
       return {
         ok: false,
         error: {
@@ -284,7 +279,9 @@ export class SmartSolutionsApi {
       }
     }
 
-    //found a pass, use its id to retrieve the needed pass input data
+    const pass = findPassRes.data
+
+    //get the pass data
     const getPassQuery = JSON.stringify({
       query: GET_PASS,
       variables: {
@@ -292,14 +289,14 @@ export class SmartSolutionsApi {
       },
     })
 
-    const passRes = await this.query<GetPassResponseData>(getPassQuery)
+    const getPassRes = await this.query<GetPassResponseData>(getPassQuery)
 
-    if (!passRes.ok) {
+    if (!getPassRes.ok) {
       //if failure, return the response
-      return passRes
+      return getPassRes
     }
 
-    const passInputData = mapPassToPassDataInput(passRes.data.pass)
+    const passInputData = mapPassToPassDataInput(getPassRes.data.pass)
 
     const inputFieldValues = mergeInputFields(
       passInputData.inputFieldValues ?? undefined,
@@ -316,31 +313,39 @@ export class SmartSolutionsApi {
     return await this.upsertPkPass(updatedPassData)
   }
 
+  /**
+   *
+   * @param payload The new pass data
+   * @param nationalId the user's national id
+   * @returns the newly created pass, or an old one if a pass was previously created,
+   */
   async generatePkPass(
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    const listPassesQuery = JSON.stringify({
-      query: LIST_PASSES,
-      variables: {
-        queryId: nationalId,
-        passTemplateId: this.config.passTemplateId,
-      },
-    })
+    const findPassRes = await this.findUserPass(nationalId)
 
-    const existingPasses = await this.query<ListPassesResponseData>(
-      listPassesQuery,
-    )
+    if (!findPassRes.ok) {
+      return findPassRes
+    }
 
-    if (existingPasses.ok) {
-      const existingPass = this.filterExistingPasses(
-        existingPasses.data.passes?.data ?? [],
-      )
-      if (existingPass) {
+    const pass = findPassRes.data
+
+    if (pass) {
+      if (pass.status === PassStatus.Voided) {
+        //pass is voided, which is an invalid state
         return {
-          ok: true,
-          data: existingPass,
+          ok: false,
+          error: {
+            code: 5,
+            message: 'Pass is void',
+          },
         }
+      }
+      //pass is good
+      return {
+        ok: true,
+        data: pass,
       }
     }
     this.logger.debug('No active pkpass found for user, creating a new one')
@@ -349,36 +354,7 @@ export class SmartSolutionsApi {
     return await this.upsertPkPass(payload)
   }
 
-  async generatePkPassQrCode(
-    payload: PassDataInput,
-    nationalId: string,
-  ): Promise<Result<string>> {
-    const response = await this.generatePkPass(payload, nationalId)
-    if (response.ok) {
-      return {
-        ok: true,
-        data: response.data.distributionQRCode,
-      }
-    }
-
-    return response
-  }
-
-  async generatePkPassUrl(
-    payload: PassDataInput,
-    nationalId: string,
-  ): Promise<Result<string>> {
-    const response = await this.generatePkPass(payload, nationalId)
-    if (response.ok) {
-      return {
-        ok: true,
-        data: response.data.distributionUrl,
-      }
-    }
-    return response
-  }
-
-  async voidPkPass(nationalId: string): Promise<Result<VoidPassData>> {
+  async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
     const listPassIds = JSON.stringify({
       query: LIST_PASS_STATUSES,
       variables: {
@@ -386,13 +362,14 @@ export class SmartSolutionsApi {
         passTemplateId: this.config.passTemplateId,
       },
     })
-    const existingPasses = await this.query<ListPassesResponseData>(listPassIds)
+    const passResponse = await this.query<ListPassesResponseData>(listPassIds)
 
-    if (!existingPasses.ok) {
-      return existingPasses
+    if (!passResponse.ok) {
+      return passResponse
     }
 
-    const activePass = existingPasses.data.passes?.data.find(
+    //find the pass to update
+    const activePass = passResponse.data.passes?.data.find(
       (p) => p.status === PassStatus.Active,
     )
 
@@ -406,19 +383,87 @@ export class SmartSolutionsApi {
       }
     }
 
+    //find the proper pass and void it
+    const voidResponse = await this.voidPkPass(activePass.id)
+
+    if (!voidResponse.ok) {
+      return voidResponse
+    }
+
+    //pass is now voided, time to delete it
+    const deleteResponse = await this.deletePkPass(activePass.id)
+
+    if (!deleteResponse.ok) {
+      return deleteResponse
+    }
+
+    //deletion success
+    return {
+      ok: true,
+      data: { success: deleteResponse.data.deletePass },
+    }
+  }
+
+  private async deletePkPass(
+    passId: string,
+  ): Promise<Result<DeletePassResponseData>> {
+    const deletePassMutation = JSON.stringify({
+      query: DELETE_PASS,
+      variables: {
+        id: passId,
+      },
+    })
+
+    const response = await this.query<DeletePassResponseData>(
+      deletePassMutation,
+    )
+
+    if (response.ok) {
+      if (response.data.deletePass) {
+        return {
+          ok: true,
+          data: { deletePass: response.data.deletePass },
+        }
+      }
+      //if the deletion failed for some reason
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error, delete pass failed',
+        },
+      }
+    }
+
+    return response
+  }
+
+  private async voidPkPass(
+    passId: string,
+  ): Promise<Result<VoidPassResponseData>> {
     const voidPassMutation = JSON.stringify({
       query: VOID_PASS,
       variables: {
-        id: activePass.id,
+        id: passId,
       },
     })
 
     const response = await this.query<VoidPassResponseData>(voidPassMutation)
 
     if (response.ok) {
+      if (response.data.voidPass) {
+        return {
+          ok: true,
+          data: { voidPass: response.data.voidPass },
+        }
+      }
+      //if the voiding failed for some reason
       return {
-        ok: true,
-        data: { success: response.data.voidPass },
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error, void pass failed',
+        },
       }
     }
 
