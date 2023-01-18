@@ -18,7 +18,7 @@ const RightSideColumn: React.FC<RightSideColumnProps> = ({ chosenCase }) => {
       <Box padding={3}>
         <CategoryCard
           heading="Aðillar sem hafa fengið boð um samráð á máli."
-          text="Lorem ipsum......." // TODO
+          text="Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til að skrifa umsögn um málið"
         />
       </Box>
       <Box padding={3}>
