@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -15,14 +14,17 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
-  MockProviderApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
 import { m } from './messages'
 import { assign } from 'xstate'
 import { ApiActions } from '../shared'
-import { ReferenceDataApi, EphemiralApi } from '../dataProviders'
+import {
+  ReferenceDataApi,
+  EphemiralApi,
+  MyMockProvider,
+} from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
 
 const States = {
@@ -135,19 +137,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   },
                 }),
                 UserProfileApi,
-                MockProviderApi.configure({
-                  externalDataId: 'referenceMock',
-                  params: {
-                    mocked: true,
-                    mockObject: {
-                      mockString: 'This is a mocked string',
-                      mockArray: [
-                        'Need to mock providers?',
-                        'Use this handy templateApi',
-                      ],
-                    },
-                  },
-                }),
+                MyMockProvider,
                 EphemiralApi,
               ],
               delete: true,
