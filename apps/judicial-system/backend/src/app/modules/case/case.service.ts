@@ -28,6 +28,7 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
+  CaseTransition,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -51,6 +52,7 @@ import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { EventService } from '../event'
+import { transitionCase } from './state/case.state'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
@@ -545,6 +547,12 @@ export class CaseService {
   ): Promise<Case | undefined> {
     return this.sequelize
       .transaction(async (transaction) => {
+        if (update.courtCaseNumber && theCase.state === CaseState.SUBMITTED) {
+          const state = transitionCase(CaseTransition.RECEIVE, theCase.state)
+
+          update = { ...update, state } as UpdateCaseDto
+        }
+
         const [numberOfAffectedRows] = await this.caseModel.update(update, {
           where: { id: theCase.id },
           transaction,
@@ -568,9 +576,10 @@ export class CaseService {
           transaction,
         )
 
-        // Reset case file states if court case number is changed or removed
+        // Reset case file states if court case number is changed
         if (
           theCase.courtCaseNumber &&
+          update.courtCaseNumber &&
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)

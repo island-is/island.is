@@ -149,12 +149,15 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
+<<<<<<< HEAD
     if (caseToUpdate.courtCaseNumber && theCase.state === CaseState.Submitted) {
       const state = transitionCase(xCaseTransition.RECEIVE, theCase.state)
 
       caseToUpdate = { ...caseToUpdate, state } as UpdateCaseDto
     }
 
+=======
+>>>>>>> 62013404a06bca08ce70aaa666a118e29a222281
     // Make sure valid users are assigned to the case's roles
     if (caseToUpdate.prosecutorId) {
       await this.validateAssignedUser(
