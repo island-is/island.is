@@ -622,6 +622,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                 const slug = slugify(field.title)
                 return (
                   <InputFileUpload
+                    key={slug}
                     header={field.title}
                     description={field.placeholder}
                     buttonLabel={n('formSelectFiles', 'Veldu skrár')}
