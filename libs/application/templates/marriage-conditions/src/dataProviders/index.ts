@@ -9,3 +9,8 @@ export {
 export const MaritalStatusApi = defineTemplateApi({
   action: 'maritalStatus',
 })
+
+export const ReligionCodesApi = defineTemplateApi({
+  action: 'religionCodes',
+  externalDataId: 'religions',
+})

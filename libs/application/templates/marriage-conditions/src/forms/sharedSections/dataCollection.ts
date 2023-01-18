@@ -4,6 +4,7 @@ import {
   MaritalStatusApi,
   NationalRegistryUserApi,
   UserProfileApi,
+  ReligionCodesApi,
 } from '../../dataProviders'
 import { m } from '../../lib/messages'
 
@@ -33,8 +34,7 @@ export const dataCollection = [
     title: '',
   }),
   buildDataProviderItem({
-    id: 'religions',
-    type: 'ReligionsProvider',
+    provider: ReligionCodesApi,
     title: '',
     subTitle: '',
   }),
