@@ -2,11 +2,13 @@ import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'api'>
+  graphql: ServiceBuilder<'graphql'>
 }): ServiceBuilder<'web'> => {
   const web = service('web')
   web
     .namespace('islandis')
     .env({
+      dependantServ: ref((h) => `http://${h.svc(services.graphql)}`),
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
       TRACKING_DOMAIN: {
         dev: 'beta.dev01.devland.is',

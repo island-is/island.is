@@ -1942,6 +1942,7 @@ web:
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
+    dependantServ: 'http://web-api'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'api-catalogue'
