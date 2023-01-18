@@ -7,6 +7,7 @@ import {
   overview,
   payment,
   shipSelection,
+  fishingLicenseFurtherInformation,
 } from '../../lib/messages'
 import { externalDataSection } from './externalDataSection'
 
@@ -30,6 +31,11 @@ export const GeneralFishingLicensePrerequisitesForm: Form = buildForm({
     buildSection({
       id: 'fishingLicenseSection',
       title: fishingLicense.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'fishingLicenseFurtherInformationSection',
+      title: fishingLicenseFurtherInformation.general.sectionTitle,
       children: [],
     }),
     buildSection({
