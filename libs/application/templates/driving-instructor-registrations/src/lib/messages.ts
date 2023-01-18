@@ -149,6 +149,26 @@ export const m = defineMessages({
     defaultMessage: 'Kennslustundum lokið',
     description: 'Student complete hours',
   },
+  viewStudentPracticeDrivingTitle: {
+    id: 'dir.application:viewStudentPracticeDrivingTitle',
+    defaultMessage: 'Æfingarakstursleyfi',
+    description: 'Student complete hours',
+  },
+  viewStudentPracticeDrivingButton: {
+    id: 'dir.application:viewStudentPracticeDrivingButton',
+    defaultMessage: 'Veita æfingarakstursleyfi',
+    description: 'Student complete hours',
+  },
+  viewStudentYes: {
+    id: 'dir.application:viewStudentYes',
+    defaultMessage: 'Já',
+    description: 'Student complete hours',
+  },
+  viewStudentNo: {
+    id: 'dir.application:viewStudentNo',
+    defaultMessage: 'nei',
+    description: 'Student complete hours',
+  },
   viewStudentCompleteSchools: {
     id: 'dir.application:viewStudentCompleteSchools',
     defaultMessage: 'Ökuskólum lokið',
@@ -158,6 +178,21 @@ export const m = defineMessages({
     id: 'dir.application:viewStudentExamsComplete',
     defaultMessage: 'Skriflegum prófum lokið',
     description: 'Student complete exams',
+  },
+  viewStudentNoCompleteSchools: {
+    id: 'dir.application:viewStudentNoCompleteSchools',
+    defaultMessage: 'Engum ökuskóla lokið',
+    description: 'Student complete schools',
+  },
+  viewStudentNoExamsComplete: {
+    id: 'dir.application:viewStudentNoExamsComplete',
+    defaultMessage: 'Engu skriflegu prófi lokið',
+    description: 'Student complete exams',
+  },
+  viewStudentRegisterDrivingLesson: {
+    id: 'dir.application:viewStudentRegisterDrivingLesson',
+    defaultMessage: 'Skrá ökutíma',
+    description: 'Register mintutes',
   },
   viewStudentRegisterMinutes: {
     id: 'dir.application:viewStudentRegisterMinutes',

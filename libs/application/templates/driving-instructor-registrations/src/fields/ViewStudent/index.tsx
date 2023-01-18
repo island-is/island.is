@@ -24,6 +24,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import {
   DrivingLicenseBookStudentOverview,
   DrivingBookLesson,
+  DrivingSchoolExam,
 } from '../../types/schema'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
 import {
@@ -34,6 +35,7 @@ import {
 } from '../../graphql/mutations'
 import { Application } from '@island.is/application/types'
 import Skeleton from './Skeleton'
+import { format as formatKennitala } from 'kennitala'
 
 interface Props {
   application: Application
@@ -91,6 +93,9 @@ const ViewStudent = ({
       ? studentDataResponse.drivingLicenseBookStudentForTeacher
       : {},
   )
+  const [completedSchools, setCompletedSchools] = useState<DrivingSchoolExam[]>(
+    [],
+  )
 
   const userNationalId = (application.externalData.nationalRegistry?.data as {
     nationalId?: string
@@ -106,6 +111,18 @@ const ViewStudent = ({
         : {},
     )
   }, [studentDataResponse])
+
+  useEffect(() => {
+    const schools = [
+      ...new Map(
+        student?.book?.drivingSchoolExams.map((item: any) => [
+          JSON.stringify(item),
+          item,
+        ]),
+      ).values(),
+    ]
+    setCompletedSchools(schools)
+  }, [student])
 
   const goBack = useCallback(() => {
     setShowStudentOverview(true)
@@ -232,7 +249,9 @@ const ViewStudent = ({
             {/* nationalId */}
             <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">{formatMessage(m.viewStudentNationalId)}</Text>
-              <Text variant="default">{student.nationalId}</Text>
+              <Text variant="default">
+                {formatKennitala(student.nationalId)}
+              </Text>
             </GridColumn>
           </GridRow>
           <GridRow marginBottom={3}>
@@ -247,10 +266,13 @@ const ViewStudent = ({
             </GridColumn>
             {/* Practice driving */}
             <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
-              <Text variant="h4">Æfingarakstursleyfi</Text>
-
+              <Text variant="h4">
+                {formatMessage(m.viewStudentPracticeDrivingTitle)}
+              </Text>
               <Text variant="default">
-                {student.book?.practiceDriving ? 'Já' : 'Nei'}
+                {student.book?.practiceDriving
+                  ? formatMessage(m.viewStudentYes)
+                  : formatMessage(m.viewStudentNo)}
               </Text>
             </GridColumn>
           </GridRow>
@@ -260,8 +282,8 @@ const ViewStudent = ({
               <Text variant="h4">
                 {formatMessage(m.viewStudentCompleteSchools)}
               </Text>
-              {student.book?.drivingSchoolExams.length > 0 ? (
-                student.book?.drivingSchoolExams?.map((school, key) => {
+              {completedSchools.length > 0 ? (
+                completedSchools?.map((school, key) => {
                   const datePostfix = school.examDate
                     ? `- ${format(new Date(school.examDate), 'dd.MM.yyyy')}`
                     : ''
@@ -272,7 +294,9 @@ const ViewStudent = ({
                   )
                 })
               ) : (
-                <Text variant="default">Engum ökuskóla lokið</Text>
+                <Text variant="default">
+                  {formatMessage(m.viewStudentNoCompleteSchools)}
+                </Text>
               )}
             </GridColumn>
             {/* Exams */}
@@ -292,7 +316,9 @@ const ViewStudent = ({
                   )
                 })
               ) : (
-                <Text variant="default">Engu skriflegu prófi lokið</Text>
+                <Text variant="default">
+                  {formatMessage(m.viewStudentNoExamsComplete)}
+                </Text>
               )}
             </GridColumn>
           </GridRow>
@@ -303,9 +329,10 @@ const ViewStudent = ({
                 <GridColumn span={['12/12', '6/12']}>
                   <Button
                     fluid
+                    loading={loadingAllow}
                     onClick={() => allowPracticeDriving(student.nationalId)}
                   >
-                    Veita æfingarakstursleyfi
+                    {formatMessage(m.viewStudentPracticeDrivingButton)}
                   </Button>
                 </GridColumn>
               </GridRow>
@@ -314,7 +341,9 @@ const ViewStudent = ({
           {/* Minutes sections */}
           <GridRow marginBottom={5}>
             <GridColumn span={'12/12'} paddingBottom={2}>
-              <Text variant="h3">Skrá ökutíma</Text>
+              <Text variant="h3">
+                {formatMessage(m.viewStudentRegisterDrivingLesson)}
+              </Text>
             </GridColumn>
             <GridColumn span={'12/12'} paddingBottom={2}>
               <Text variant="h4">
