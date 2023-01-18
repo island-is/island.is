@@ -92,21 +92,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Skilyrði',
           progress: 0,
           status: 'draft',
-          onExit: [
-            defineTemplateApi({
-              action: ApiActions.createApplication,
-              order: 1,
-            }),
-            defineTemplateApi({
-              action: 'getAnotherReferenceData',
-              order: 2,
-            }),
-            defineTemplateApi({
-              action: 'doStuffThatFails',
-              throwOnError: true,
-              order: 3,
-            }),
-          ],
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
@@ -195,11 +180,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             defineTemplateApi({
               action: 'getAnotherReferenceData',
               order: 2,
-            }),
-            defineTemplateApi({
-              action: 'doStuffThatFails',
-              throwOnError: true,
-              order: 3,
             }),
           ],
           status: 'inprogress',
