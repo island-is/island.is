@@ -9,7 +9,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_ROUTE, USERS_ROUTE } from '@island.is/judicial-system/consts'
 
 import { CaseData, LimitedAccessCaseData } from '../../types'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
@@ -123,10 +123,13 @@ export const FormProvider = ({ children }: Props) => {
   })
 
   useEffect(() => {
-    if (state === 'fetch' || state === 'refresh') {
+    if (
+      !router.pathname.includes(USERS_ROUTE) &&
+      (state === 'fetch' || state === 'refresh')
+    ) {
       getCase({ variables: { input: { id } } })
     }
-  }, [getCase, id, state])
+  }, [getCase, id, router.pathname, state])
 
   useEffect(() => {
     let timeout: undefined | NodeJS.Timeout
