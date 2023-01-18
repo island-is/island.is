@@ -6,10 +6,17 @@ import {
   Divider,
   Button,
   AlertMessage,
+  InputError,
 } from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../types'
 import { useLocale } from '@island.is/localization'
-import { applicationCheck, overview, review } from '../../lib/messages'
+import {
+  applicationCheck,
+  overview,
+  review,
+  error as errorMsg,
+} from '../../lib/messages'
+import { States } from '../../lib/constants'
 import {
   VehicleSection,
   SellerSection,
@@ -48,7 +55,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     false,
   )
   const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
-  const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
+  const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
       return
@@ -102,6 +109,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const onRejectButtonClick = () => {
     setRejectModalVisibility(true)
   }
+
   const onApproveButtonClick = async () => {
     if (isBuyer && !insurance) {
       setNoInsuranceError(true)
@@ -199,6 +207,11 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           reviewerNationalId={reviewerNationalId}
           noInsuranceError={noInsuranceError}
         />
+        {error && (
+          <InputError
+            errorMessage={errorMsg.submitApplicationError.defaultMessage}
+          />
+        )}
         {data?.vehicleOwnerChangeValidation?.hasError &&
         data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
           <Box>
@@ -245,28 +258,29 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
             <Button variant="ghost" onClick={onBackButtonClick}>
               {formatMessage(review.buttons.back)}
             </Button>
-            {!hasReviewerApproved(reviewerNationalId, application.answers) && (
-              <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
-                <Box marginLeft={3}>
-                  <Button
-                    icon="close"
-                    colorScheme="destructive"
-                    onClick={onRejectButtonClick}
-                  >
-                    {formatMessage(review.buttons.reject)}
-                  </Button>
+            {!hasReviewerApproved(reviewerNationalId, application.answers) &&
+              application.state !== States.COMPLETED && (
+                <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
+                  <Box marginLeft={3}>
+                    <Button
+                      icon="close"
+                      colorScheme="destructive"
+                      onClick={onRejectButtonClick}
+                    >
+                      {formatMessage(review.buttons.reject)}
+                    </Button>
+                  </Box>
+                  <Box marginLeft={3}>
+                    <Button
+                      icon="checkmark"
+                      loading={loading}
+                      onClick={onApproveButtonClick}
+                    >
+                      {formatMessage(review.buttons.approve)}
+                    </Button>
+                  </Box>
                 </Box>
-                <Box marginLeft={3}>
-                  <Button
-                    icon="checkmark"
-                    loading={loading}
-                    onClick={onApproveButtonClick}
-                  >
-                    {formatMessage(review.buttons.approve)}
-                  </Button>
-                </Box>
-              </Box>
-            )}
+              )}
           </Box>
         </Box>
       </Box>
