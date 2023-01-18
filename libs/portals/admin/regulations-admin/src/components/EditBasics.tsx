@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import * as s from './EditBasics.css'
 import {
   Box,
@@ -30,48 +30,18 @@ export const EditBasics = () => {
     draft.type.value &&
     t(draft.type.value === 'amending' ? msg.type_amending : msg.type_base)
 
+  useEffect(() => {
+    if (draft.type.value === 'base') {
+      updateState('title', 'Reglugerð um ')
+    }
+    if (draft.type.value === 'amending') {
+      updateState('title', 'Reglugerð um breytingu á reglugerð um ')
+    }
+  }, [draft.type.value])
+
   return (
     <>
       <Box marginBottom={3}>
-        {!draft.title.value && (
-          <Box className={s.shortcuts} marginBottom={[2, 2, 3]}>
-            Flýtileiðir:
-            <Box className={s.shortcutsButton}>
-              <Button
-                onClick={() => updateState('title', 'Reglugerð um ')}
-                variant="text"
-                size="small"
-              >
-                {t(msg.type_base)}
-              </Button>
-            </Box>
-            <Box className={s.shortcutsButton}>
-              <Button
-                onClick={() =>
-                  updateState('title', 'Reglugerð um breytingu á reglugerð um ')
-                }
-                variant="text"
-                size="small"
-              >
-                {t(msg.type_amending)}
-              </Button>
-            </Box>
-            <Box className={s.shortcutsButton}>
-              <Button
-                onClick={() =>
-                  updateState(
-                    'title',
-                    'Reglugerð um brottfellingu reglugerðar um ',
-                  )
-                }
-                variant="text"
-                size="small"
-              >
-                {t(msg.type_repealing)}
-              </Button>
-            </Box>
-          </Box>
-        )}
         <MagicTextarea
           label={t(msg.title)}
           name="title"

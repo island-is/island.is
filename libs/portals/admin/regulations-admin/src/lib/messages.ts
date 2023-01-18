@@ -530,7 +530,7 @@ export const homeMessages = defineMessages({
   },
   createRegulation: {
     id: 'ap.regulations-admin:create-regulation-cta',
-    defaultMessage: 'Skrá nýja reglugerð',
+    defaultMessage: 'Skrá reglugerð',
   },
   taskList_draftTitleMissing: {
     id: 'ap.regulations-admin:tasklist-draft-title-missing',
