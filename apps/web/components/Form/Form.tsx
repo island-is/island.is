@@ -26,6 +26,7 @@ import {
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
+import { isValidNationalId } from '@island.is/web/utils/isValidNationalId'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as styles from './Form.css'
 
@@ -40,6 +41,7 @@ const CREATE_UPLOAD_URL = gql`
 
 enum FormFieldType {
   CHECKBOXES = 'checkboxes',
+  INPUT = 'input',
   EMAIL = 'email',
   ACCEPT_TERMS = 'acceptTerms',
   FILE = 'file',
@@ -67,8 +69,9 @@ export const FormField = ({
   onChange,
 }: FormFieldProps) => {
   switch (field.type) {
-    case 'input':
-    case 'email':
+    case FormFieldType.INPUT:
+    case FormFieldType.EMAIL:
+    case FormFieldType.NATIONAL_ID:
       return (
         <Input
           key={slug}
@@ -282,6 +285,16 @@ export const Form = ({ form, namespace }: FormProps) => {
           return {
             field: slug,
             error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
+          }
+        }
+
+        if (
+          field.type === FormFieldType.NATIONAL_ID &&
+          !isValidNationalId(data[slug])
+        ) {
+          return {
+            field: slug,
+            error: n('formInvalidNationalId', 'Þetta er ekki gild kennitala.'),
           }
         }
 
