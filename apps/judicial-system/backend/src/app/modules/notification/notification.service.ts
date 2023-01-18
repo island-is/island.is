@@ -844,6 +844,26 @@ export class NotificationService {
     )
   }
 
+  private async sendRejectedCustodyEmailToPrison(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const subject = this.formatMessage(
+      notifications.rejectedCustodyEmail.subject,
+      { courtCaseNumber: theCase.courtCaseNumber },
+    )
+    const body = this.formatMessage(notifications.rejectedCustodyEmail.body, {
+      court: theCase.court?.name,
+      courtCaseNumber: theCase.courtCaseNumber,
+    })
+
+    return this.sendEmail(
+      subject,
+      body,
+      'Gæsluvarðhaldsfangelsi',
+      this.config.email.prisonEmail,
+    )
+  }
+
   private async sendRulingNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -902,6 +922,20 @@ export class NotificationService {
         ) {
           promises.push(this.sendRulingEmailNotificationToPrison(theCase))
         }
+      }
+    } else if (
+      CaseType.CUSTODY === theCase.type &&
+      (CaseDecision.REJECTING === theCase.decision ||
+        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+    ) {
+      const prisonWasNotified = await this.hasReceivedNotification(
+        theCase.id,
+        NotificationType.COURT_DATE,
+        this.config.email.prisonEmail,
+      )
+
+      if (prisonWasNotified) {
+        promises.push(this.sendRejectedCustodyEmailToPrison(theCase))
       }
     }
 

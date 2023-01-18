@@ -410,6 +410,20 @@ export const notifications = {
         'Texti í pósti til fangelsis sem tilgreinir hver verjandi sakbornings er',
     },
   }),
+  rejectedCustodyEmail: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.rejected_custody_email.subject',
+      defaultMessage: '{courtCaseNumber} - Kröfu um gæsluvarðhald hafnað',
+      description: 'Fyrirsögn í pósti til fangelsis þegar kröfu er hafnað',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.rejected_custody_email.body',
+      defaultMessage:
+        '{court} hefur hafnað gæsluvarðhaldskröfu með málsnúmerið {courtCaseNumber}.',
+      description: 'Texti í pósti til fangelsis þegar kröfu er hafnað',
+    },
+  }),
   defenderCourtDateEmail: defineMessages({
     sessionArrangements: {
       id:
