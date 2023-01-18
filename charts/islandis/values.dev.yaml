@@ -2184,10 +2184,11 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'dev'
+    GRAPHQL_URL: 'http://web-api'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
+    SI_PUBLIC_GRAPHQL_API: '/api/graphql'
     TRACKING_DOMAIN: 'beta.dev01.devland.is'
-    dependantServ: 'http://web-api'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'api-catalogue'
