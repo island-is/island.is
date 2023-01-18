@@ -271,7 +271,7 @@ const useCase = () => {
 
   const transitionCase = useMemo(
     () => async (
-      workingCase: Case,
+      caseId: string,
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
@@ -279,7 +279,7 @@ const useCase = () => {
         const { data } = await transitionCaseMutation({
           variables: {
             input: {
-              id: workingCase.id,
+              id: caseId,
               transition,
             },
           },
