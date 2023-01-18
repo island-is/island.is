@@ -24,14 +24,14 @@ export const EphemiralApi = defineTemplateApi({
 export const MyMockProvider = MockProviderApi.configure({
   externalDataId: 'referenceMock',
   params: {
-    mocked: false,
+    mocked: true,
     mockObject: {
       mockString: 'This is a mocked string',
       mockArray: ['Need to mock providers?', 'Use this handy templateApi'],
     },
   },
 })
-console.log({ MyMockProvider })
+
 export interface MyParameterType {
   id: number
 }
