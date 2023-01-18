@@ -10,9 +10,9 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import {
-  EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { Features } from '@island.is/feature-flags'
@@ -29,12 +29,12 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { isRemovingOperatorOnly } from '../utils'
 
-const pruneInDaysAtTen = (application: Application, days: number) => {
+const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
   const pruneDate = new Date(date.toUTCString())
-  pruneDate.setHours(10, 0, 0)
-  return pruneDate // Time left of the day + 6 more days
+  pruneDate.setHours(23, 59, 59)
+  return pruneDate
 }
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
@@ -166,7 +166,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAtTen(application, 8),
+              pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
           /* onExit: defineTemplateApi({

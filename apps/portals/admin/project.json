@@ -33,18 +33,23 @@
           "extractLicenses": true,
           "vendorChunk": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
-    "serve": {
+    "generateDevIndexHTML": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src",
-          "yarn nx run portals-admin:serveReal"
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src"
         ]
       }
     },
-    "serveReal": {
+    "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "portals-admin:build",
@@ -55,7 +60,13 @@
           "buildTarget": "portals-admin:build:production",
           "hmr": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
