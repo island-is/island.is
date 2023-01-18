@@ -633,6 +633,38 @@ export const slices = gql`
     translations
   }
 
+  fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
+    __typename
+    id
+    link {
+      text
+      url
+    }
+    supportQNAs {
+      id
+      title
+      slug
+      answer {
+        ...BaseSlices
+      }
+      organization {
+        id
+        title
+        slug
+      }
+      category {
+        title
+        description
+        slug
+      }
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -675,6 +707,7 @@ export const slices = gql`
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+    ...FeaturedSupportQNAsFields
   }
 `
 

@@ -526,16 +526,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
             />
           )}
           {!inStepperView && <Webreader readId={null} readClass="rs_read" />}
-          {processEntry?.processLink && (
-            <Box
-              marginTop={3}
-              display={['none', 'none', 'block']}
-              printHidden
-              className="rs_read"
-            >
-              <ProcessEntry {...processEntry} />
-            </Box>
-          )}
           <Box marginTop={3}>
             <TableOfContents
               headings={[
@@ -565,6 +555,17 @@ const ArticleScreen: Screen<ArticleProps> = ({
               }}
             />
           </Box>
+
+          {processEntry?.processLink && (
+            <Box
+              marginTop={3}
+              display={['none', 'none', 'block']}
+              printHidden
+              className="rs_read"
+            >
+              <ProcessEntry {...processEntry} />
+            </Box>
+          )}
 
           {(subArticle
             ? subArticle.showTableOfContents

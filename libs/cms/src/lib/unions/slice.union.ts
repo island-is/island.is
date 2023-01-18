@@ -37,6 +37,7 @@ import {
   IPowerBiSlice,
   ITableSlice,
   IEmailSignup,
+  IFeaturedSupportQnAs,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -102,6 +103,10 @@ import { mapSidebarCard, SidebarCard } from '../models/sidebarCard.model'
 import { PowerBiSlice, mapPowerBiSlice } from '../models/powerBiSlice.model'
 import { mapTableSlice, TableSlice } from '../models/tableSlice.model'
 import { EmailSignup, mapEmailSignup } from '../models/emailSignup.model'
+import {
+  FeaturedSupportQNAs,
+  mapFeaturedSupportQNAs,
+} from '../models/featureSupportQNAs.model'
 
 type SliceTypes =
   | ITimeline
@@ -138,6 +143,7 @@ type SliceTypes =
   | IPowerBiSlice
   | ITableSlice
   | IEmailSignup
+  | IFeaturedSupportQnAs
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -179,6 +185,7 @@ export const SliceUnion = createUnionType({
     PowerBiSlice,
     TableSlice,
     EmailSignup,
+    FeaturedSupportQNAs,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -254,6 +261,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapTableSlice(slice as ITableSlice)
     case 'emailSignup':
       return mapEmailSignup(slice as IEmailSignup)
+    case 'featuredSupportQNAs':
+      return mapFeaturedSupportQNAs(slice as IFeaturedSupportQnAs)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
