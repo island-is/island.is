@@ -55,15 +55,10 @@ const template: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um Umsokn',
+          name: 'EhicApplication.Draft',
           status: States.DRAFT,
           progress: 0.43,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 600 * 1000, // 10 minutes
-          },
-          // lifecycle: DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -76,14 +71,14 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: 'Submit',
                   type: 'primary',
                 },
               ],
               api: [NationalRegistryUserApi],
-              // write: 'all',
+              write: 'all',
               read: 'all',
-              // delete: true,
+              delete: true,
             },
           ],
         },
