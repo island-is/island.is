@@ -23,7 +23,6 @@ import {
   MutationCreateUploadUrlArgs,
   PresignedPost,
 } from '@island.is/web/graphql/schema'
-import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
@@ -44,6 +43,7 @@ enum FormFieldType {
   EMAIL = 'email',
   ACCEPT_TERMS = 'acceptTerms',
   FILE = 'file',
+  NATIONAL_ID = 'nationalId (kennitala)',
 }
 
 interface FormFieldProps {
@@ -261,7 +261,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             }
           }
 
-          if (slug === 'email' && !isEmailValid(data['email'])) {
+          if (slug === 'email' && !isValidEmail.test(data['email'])) {
             return {
               field: slug,
               error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),

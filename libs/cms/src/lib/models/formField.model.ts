@@ -26,6 +26,7 @@ export class FormField {
     | 'email'
     | 'checkboxes'
     | 'file'
+    | 'nationalId (kennitala)'
 
   @Field()
   required!: boolean
