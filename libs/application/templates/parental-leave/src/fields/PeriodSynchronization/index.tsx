@@ -10,19 +10,10 @@ import {
   getAvailableRightsInDays,
   synchronizeVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
-import { FieldBaseProps, RepeaterProps } from '@island.is/application/types'
+import { RepeaterProps } from '@island.is/application/types'
 import { States } from '../../constants'
 
-type FieldProps = FieldBaseProps & {
-  field?: {
-    props?: {
-      showDescription: boolean
-    }
-  }
-}
-type ScreenProps = RepeaterProps & FieldProps
-
-const PeriodSynchronization: FC<ScreenProps> = ({
+const PeriodSynchronization: FC<RepeaterProps> = ({
   application,
   setRepeaterItems,
   setFieldLoadingState,
