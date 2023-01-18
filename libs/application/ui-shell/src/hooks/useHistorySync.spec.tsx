@@ -1,5 +1,4 @@
-import React, { FC } from 'react'
-import { ApplicationUIState } from '../reducer/ReducerTypes'
+import { ActionTypes, ApplicationUIState } from '../reducer/ReducerTypes'
 import { buildForm, buildTextField } from '@island.is/application/core'
 import {
   ApplicationStatus,
@@ -8,7 +7,7 @@ import {
 import { z } from 'zod'
 import { initializeReducer } from '../reducer/ApplicationFormReducer'
 import { useHistorySync } from './useHistorySync'
-import { Router } from 'react-router-dom'
+import { Router } from 'react-router-dom-v5-compat'
 import { createMemoryHistory } from 'history'
 import { act, renderHook } from '@testing-library/react-hooks'
 
@@ -55,17 +54,20 @@ describe('useHistorySync', () => {
     })
   })
 
-  it('pushes transitions to history and supports history navigation', () => {
+  it('pushes transitions to history and supports history navigation', async () => {
     // Arrange
-    const history = createMemoryHistory()
-    const wrapper: FC = ({ children }) => (
-      <Router history={history}>{children}</Router>
-    )
+    const history = createMemoryHistory({ initialEntries: ['/'] })
 
     // Act render application
-    const result = renderHook(
+    const { rerender } = renderHook(
       () => useHistorySync(applicationState, dispatch),
-      { wrapper },
+      {
+        wrapper: ({ children }) => (
+          <Router navigator={history} location={history.location}>
+            {children}
+          </Router>
+        ),
+      },
     )
 
     // Assert history sync
@@ -75,7 +77,7 @@ describe('useHistorySync', () => {
     // Act render next step
     applicationState.activeScreen = 1
     applicationState.historyReason = 'navigate'
-    result.rerender()
+    rerender()
 
     // Assert history push
     expect(history.entries).toHaveLength(2)
@@ -86,10 +88,16 @@ describe('useHistorySync', () => {
       history.goBack()
     })
 
+    rerender()
+
     // Assert dispatch.
     expect(dispatch).toHaveBeenLastCalledWith({
-      type: 'HISTORY_POP',
-      payload: { state: 'draft', screen: 0, historyReason: 'initial' },
+      type: ActionTypes.HISTORY_POP,
+      payload: {
+        state: 'draft',
+        screen: 0,
+        historyReason: 'initial',
+      },
     })
 
     // Act "click forward"
@@ -97,10 +105,16 @@ describe('useHistorySync', () => {
       history.goForward()
     })
 
+    rerender()
+
     // Assert dispatch.
     expect(dispatch).toHaveBeenLastCalledWith({
-      type: 'HISTORY_POP',
-      payload: { state: 'draft', screen: 1, historyReason: 'navigate' },
+      type: ActionTypes.HISTORY_POP,
+      payload: {
+        state: 'draft',
+        screen: 1,
+        historyReason: 'navigate',
+      },
     })
   })
 })
