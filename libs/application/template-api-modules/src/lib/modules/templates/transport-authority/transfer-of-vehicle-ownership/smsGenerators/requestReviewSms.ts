@@ -3,16 +3,23 @@ import { SmsMessage } from '../../../../../types'
 import { EmailRecipient } from '../types'
 import { Application } from '@island.is/application/types'
 import { getApplicationPruneDateStr } from '../transfer-of-vehicle-ownership.utils'
+import { ApplicationConfigurations } from '@island.is/application/types'
 
 export type RequestReviewSms = (
   application: Application,
+  options: {
+    clientLocationOrigin: string
+  },
   recipient: EmailRecipient,
 ) => SmsMessage
 
 export const generateRequestReviewSms: RequestReviewSms = (
   application,
+  options,
   recipient,
 ) => {
+  const { clientLocationOrigin } = options
+
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const permno = answers?.pickVehicle?.plate
 
@@ -25,6 +32,7 @@ export const generateRequestReviewSms: RequestReviewSms = (
     phoneNumber: recipient.phone || '',
     message:
       `Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} inn á island.is/umsoknir. ` +
-      `Til þess að eigendaskiptin verði skráð þarftu að samþykkja beiðnina fyrir ${pruneDateStr}.`,
+      `Til þess að eigendaskiptin verði skráð þarftu að samþykkja beiðnina fyrir ${pruneDateStr}. ` +
+      `Slóð á umsóknina: ${clientLocationOrigin}/${ApplicationConfigurations.TransferOfVehicleOwnership.slug}/${application.id}.`,
   }
 }

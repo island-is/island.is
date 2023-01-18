@@ -194,7 +194,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateRequestReviewSms(application, recipientList[i]),
+          (_, options) =>
+            generateRequestReviewSms(application, options, recipientList[i]),
           application,
         )
       }
@@ -296,8 +297,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       }
       if (newlyAddedRecipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () =>
-            generateRequestReviewSms(application, newlyAddedRecipientList[i]),
+          (_, options) =>
+            generateRequestReviewSms(
+              application,
+              options,
+              newlyAddedRecipientList[i],
+            ),
           application,
         )
       }
