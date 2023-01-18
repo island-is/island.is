@@ -1,6 +1,10 @@
 import { ApolloProvider } from '@apollo/client'
-import { BrowserRouter } from 'react-router-dom'
-import { CompatRouter, Routes, Route } from 'react-router-dom-v5-compat'
+import {
+  BrowserRouter,
+  CompatRouter,
+  Routes,
+  Route,
+} from 'react-router-dom-v5-compat'
 
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'

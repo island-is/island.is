@@ -2,7 +2,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react-hooks'
 import { ReactNode } from 'react'
 import { IntlProvider } from 'react-intl'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom-v5-compat'
 
 import { MockedAuthenticator } from '@island.is/auth/react'
 import { defaultLanguage } from '@island.is/shared/constants'
@@ -31,14 +31,14 @@ describe('useSingleNavigationItem hook', () => {
           }}
         >
           <MockedAuthenticator user={{ profile: { name: 'Peter' } }}>
-            <Router>
+            <BrowserRouter>
               <PortalProvider
                 meta={{ portalType: 'admin', basePath: '/' }}
                 modules={testModules}
               >
                 {children}
               </PortalProvider>
-            </Router>
+            </BrowserRouter>
           </MockedAuthenticator>
         </IntlProvider>
       </ApolloProvider>

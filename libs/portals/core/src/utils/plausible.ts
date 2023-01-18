@@ -1,4 +1,4 @@
-import { matchPath } from 'react-router-dom'
+import { matchPath } from 'react-router-dom-v5-compat'
 import { ParamType } from '@island.is/plausible'
 
 interface FormatPlausiblePathToParams {
@@ -21,12 +21,7 @@ export const formatPlausiblePathToParams = ({
   basePath,
   fileName,
 }: FormatPlausiblePathToParams): ParamType => {
-  const currentPath = matchPath(path, {
-    path: routes,
-    exact: true,
-    strict: true,
-  })?.path
-
+  const currentPath = routes.find((route) => matchPath(route, path))
   const pageOrigin = window.location.origin
   const absoluteUrl = `${pageOrigin}${basePath}${currentPath ?? ''}`
 

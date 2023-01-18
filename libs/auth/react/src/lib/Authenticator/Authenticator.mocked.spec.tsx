@@ -1,6 +1,6 @@
+import { FC } from 'react'
 import { render, screen } from '@testing-library/react'
-import React, { FC } from 'react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom-v5-compat'
 
 import { configureMock } from '../userManager'
 import { useAuth } from './AuthContext'

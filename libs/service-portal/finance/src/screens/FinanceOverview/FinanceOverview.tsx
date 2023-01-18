@@ -1,5 +1,4 @@
-import React from 'react'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom-v5-compat'
 import {
   ServicePortalPath,
   ServicePortalModuleComponent,
@@ -9,7 +8,7 @@ import { useNamespaces } from '@island.is/localization'
 export const FinanceOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance')
 
-  return <Redirect to={ServicePortalPath.FinanceStatus} />
+  return <Navigate to={ServicePortalPath.FinanceStatus} replace />
 }
 
 export default FinanceOverview

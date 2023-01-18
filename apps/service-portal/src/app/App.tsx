@@ -1,5 +1,9 @@
-import { BrowserRouter } from 'react-router-dom'
-import { CompatRouter, Routes, Route } from 'react-router-dom-v5-compat'
+import {
+  BrowserRouter,
+  CompatRouter,
+  Routes,
+  Route,
+} from 'react-router-dom-v5-compat'
 import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
