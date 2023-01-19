@@ -23,4 +23,5 @@ export interface IDocument {
   fileType: string
   url: string
   content?: string;
+  html?: string;
 }

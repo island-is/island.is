@@ -123,6 +123,9 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               error={!!error}
               noBorder
             />
+          </InputRow>
+
+          <InputRow>
             {item?.issuingDate ? (
               <Input
                 label={intl.formatMessage({ id: 'walletPassport.issuingDate' })}
@@ -130,11 +133,10 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                 loading={loading}
                 error={!!error}
                 noBorder
+                isCompact
+
               />) : null
             }
-          </InputRow>
-
-          <InputRow>
             {item?.expirationDate ? (
               <Input
                 label={intl.formatMessage({ id: 'walletPassport.expirationDate' })}

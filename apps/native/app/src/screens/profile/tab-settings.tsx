@@ -200,7 +200,7 @@ export function TabSettings() {
           accessory={
             <TouchableOpacity
               onPress={() => navigateTo(`/editphone`)}
-              style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10 }}
+              style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10, paddingRight: 16, marginRight: -16 }}
             >
               <Image
                 source={editIcon as any}
@@ -215,7 +215,10 @@ export function TabSettings() {
           })}
           subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
           accessory={
-            <TouchableOpacity onPress={() => navigateTo(`/editemail`)}>
+            <TouchableOpacity
+              onPress={() => navigateTo(`/editemail`)}
+              style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10, paddingRight: 16, marginRight: -16 }}
+            >
               <Image
                 source={editIcon as any}
                 style={{ width: 19, height: 19 }}
@@ -233,6 +236,7 @@ export function TabSettings() {
               onPress={() =>
                 navigateTo(`/editbankinfo`)
               }
+              style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10, paddingRight: 16, marginRight: -16 }}
             >
               <Image
                 source={editIcon as any}

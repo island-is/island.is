@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { theme, dynamicColor, Header, Loader } from '@island.is/island-ui-native'
+import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Animated, Platform, StyleSheet, View } from 'react-native'
@@ -7,7 +7,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear,
+  useNavigationComponentDidDisappear
 } from 'react-native-navigation-hooks/dist'
 import Pdf from 'react-native-pdf'
 import Share from 'react-native-share'
@@ -16,11 +16,11 @@ import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
 import {
   GetDocumentResponse,
-  GET_DOCUMENT_QUERY,
+  GET_DOCUMENT_QUERY
 } from '../../graphql/queries/get-document.query'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
+  LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { authStore } from '../../stores/auth-store'
@@ -122,7 +122,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       },
     },
   })
-
   const Document = {
     ...(docRes.data?.getDocument || {}),
     ...(res.data?.listDocuments?.find((d) => d.id === docId) || {}),
@@ -131,7 +130,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
-  const hasPdf = Document.fileType! === 'pdf'
+  const hasPdf = Document.fileType === 'pdf'
+  const isHtml = typeof Document.html === 'string' && Document.html !== ''
 
   useNavigationButtonPress(
     (e) => {
@@ -193,7 +193,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
-
   return (
     <>
       <Host>
@@ -219,17 +218,24 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               opacity: fadeAnim,
             }}
           >
-            {hasPdf ? (
+            {isHtml ? (
+              <WebView
+                source={{ html: Document.html ?? '' }}
+                scalesPageToFit
+                onLoadEnd={() => {
+                  setLoaded(true)
+                }}
+              />
+            ) : hasPdf ? (
               <PdfWrapper>
                 <PdfViewer
-                  url={Document.url}
+                  url={Document.url ?? ''}
                   body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                  onLoaded={(_, filePath) => {
+                  onLoaded={(_: any, filePath: any) => {
                     setPdfUrl(filePath)
                     setLoaded(true)
                   }}
                 />
-
               </PdfWrapper>
             ) : (
               <WebView

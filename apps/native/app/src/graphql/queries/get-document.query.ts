@@ -7,6 +7,7 @@ export const GET_DOCUMENT_QUERY = gql`
       fileType
       content
       url
+      html
     }
   }
 `

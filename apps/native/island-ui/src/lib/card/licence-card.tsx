@@ -215,10 +215,17 @@ export function LicenceCard({
               intl.formatMessage({ id: 'walletPass.lastUpdate' })
             }
             {': '}
-            <FormattedDate
-              value={date}
-              {...{ dateStyle: 'short', timeStyle: 'short' }}
-            />
+            {type === 'PASSPORT' ? (
+              <FormattedDate
+                value={date}
+                {...{ dateStyle: 'short' }}
+              />
+            ) : (
+              <FormattedDate
+                value={date}
+                {...{ dateStyle: 'short', timeStyle: 'short' }}
+              />
+            )}
           </TimeStamp>
         )}
       </Content>
