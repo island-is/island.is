@@ -20,12 +20,9 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   Case,
-  CaseState,
-  CaseTransition,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -61,9 +58,6 @@ const ReceptionAndAssignment = () => {
   const {
     createCourtCase,
     isCreatingCourtCase,
-    transitionCase,
-    isTransitioningCase,
-    sendNotification,
     setAndSendCaseToServer,
   } = useCase()
 
@@ -75,21 +69,6 @@ const ReceptionAndAssignment = () => {
     },
   )
 
-  const receiveCase = async (workingCase: Case) => {
-    if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
-      // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-      const received = await transitionCase(
-        workingCase.id,
-        CaseTransition.RECEIVE,
-        setWorkingCase,
-      )
-
-      if (received) {
-        sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
-      }
-    }
-  }
-
   const handleCreateCourtCase = async (workingCase: Case) => {
     const courtCaseNumber = await createCourtCase(
       workingCase,
@@ -99,7 +78,6 @@ const ReceptionAndAssignment = () => {
 
     if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
-      receiveCase(workingCase)
     }
   }
 
@@ -178,7 +156,6 @@ const ReceptionAndAssignment = () => {
             setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
             handleCreateCourtCase={handleCreateCourtCase}
             isCreatingCourtCase={isCreatingCourtCase}
-            receiveCase={receiveCase}
           />
         </Box>
         <Box component="section" marginBottom={10}>
