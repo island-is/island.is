@@ -1345,9 +1345,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setAdditionalFileSentVariable: assign((context) => {
         const { application } = context
         const answers = application.answers
-        const { additionalDocuments, commonFiles } = getApplicationAnswers(
-          answers,
-        )
+        const { additionalDocuments } = getApplicationAnswers(answers)
 
         const newAddDocs = additionalDocuments.map((v) => ({
           ...v,
