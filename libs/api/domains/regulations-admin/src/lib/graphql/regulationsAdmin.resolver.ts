@@ -35,9 +35,9 @@ import {
   DraftRegulationCancelModel,
   DraftRegulationChangeModel,
   DraftRegulationPdfDownloadModel,
-  DraftRegulationSummaryModel,
   DraftRegulationShippedModel,
 } from './models'
+import { CreateDraftRegulationInput } from './dto/createDraftRegulation.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -96,9 +96,10 @@ export class RegulationsAdminResolver {
 
   @Mutation(() => graphqlTypeJson)
   async createDraftRegulation(
+    @Args('input') input: CreateDraftRegulationInput,
     @CurrentUser() { authorization }: User,
   ): Promise<any> {
-    return this.regulationsAdminApiService.create(authorization)
+    return this.regulationsAdminApiService.create(authorization, input)
   }
 
   @Mutation(() => graphqlTypeJson)

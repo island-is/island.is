@@ -241,8 +241,13 @@ export const derivedUpdates: {
    */
   title: (state: DraftingState, newTitle) => {
     const { type, text } = state.draft
-    const derivedType = findRegulationType(newTitle)
-    updateFieldValue(type, derivedType)
+
+    /**
+     * Type is no longer derived. It is set on creation.
+     * */
+    // const derivedType = findRegulationType(newTitle)
+    // updateFieldValue(type, derivedType)
+
     if (!newTitle) {
       type.showError = undefined
     }

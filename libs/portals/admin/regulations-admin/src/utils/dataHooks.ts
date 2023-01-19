@@ -400,8 +400,8 @@ export const useLawChaptersQuery = (): QueryResult<Array<LawChapter>> => {
 // ---------------------------------------------------------------------------
 
 const CREATE_DRAFT_REGULATION_MUTATION = gql`
-  mutation CreateDraftRegulationMutation {
-    createDraftRegulation
+  mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
+    createDraftRegulation(input: $input)
   }
 `
 
@@ -426,7 +426,13 @@ export const useCreateRegulationDraft = () => {
         return
       }
       setStatus({ creating: true })
-      createDraftRegulation()
+      createDraftRegulation({
+        variables: {
+          input: {
+            type: regulationType,
+          },
+        },
+      })
         .then((res) => {
           const newDraft = res.data
             ? (res.data.createDraftRegulation as RegulationDraft)
@@ -436,11 +442,12 @@ export const useCreateRegulationDraft = () => {
           }
 
           setStatus({ creating: false })
+
           history.push({
-            pathname: getEditUrl(newDraft.id),
-            state: {
-              type: regulationType,
-            },
+            pathname: getEditUrl(
+              newDraft.id,
+              regulationType === 'amending' ? 'impacts' : undefined,
+            ),
           })
         })
         .catch((e) => {
