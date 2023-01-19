@@ -6,7 +6,11 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { NationalRegistryUserApi } from '@island.is/application/types'
+import {
+  ChildrenCustodyInformationApi,
+  NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
@@ -21,6 +25,16 @@ export const externalDataSection = buildSection({
       dataProviders: [
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
+          title: 'externalData.nationalRegistry.title',
+          subTitle: 'externalData.nationalRegistry.description',
+        }),
+        buildDataProviderItem({
+          provider: NationalRegistrySpouseApi,
+          title: 'externalData.nationalRegistry.title',
+          subTitle: 'externalData.nationalRegistry.description',
+        }),
+        buildDataProviderItem({
+          provider: ChildrenCustodyInformationApi,
           title: 'externalData.nationalRegistry.title',
           subTitle: 'externalData.nationalRegistry.description',
         }),

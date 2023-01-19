@@ -5,8 +5,10 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  ChildrenCustodyInformationApi,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 
@@ -65,7 +67,11 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [NationalRegistryUserApi],
+              api: [
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                ChildrenCustodyInformationApi,
+              ],
               write: 'all',
               read: 'all',
               delete: true,
