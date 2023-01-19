@@ -16,7 +16,7 @@ import {
   UpsertPassResponseData,
   DeletePassResponseData,
   RevokePassData,
-  FindUserPassData,
+  UnvoidPassResponseData,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
@@ -35,9 +35,9 @@ import {
 import {
   DELETE_PASS,
   GET_PASS,
-  LIST_PASSES,
   LIST_PASS_STATUSES,
   LIST_TEMPLATES,
+  UNVOID_PASS,
   UPSERT_PASS,
   VERIFY_PKPASS,
   VOID_PASS,
@@ -342,6 +342,16 @@ export class SmartSolutionsApi {
           },
         }
       }
+      if (pass.status === PassStatus.DeleteInProgress) {
+        //pass is being revoked
+        return {
+          ok: false,
+          error: {
+            code: 5,
+            message: 'Pass is being revoked',
+          },
+        }
+      }
       //pass is good
       return {
         ok: true,
@@ -355,43 +365,47 @@ export class SmartSolutionsApi {
   }
 
   async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
-    const listPassIds = JSON.stringify({
-      query: LIST_PASS_STATUSES,
-      variables: {
-        queryId: nationalId,
-        passTemplateId: this.config.passTemplateId,
-      },
-    })
-    const passResponse = await this.query<ListPassesResponseData>(listPassIds)
+    const findPassRes = await this.findUserPass(nationalId)
 
-    if (!passResponse.ok) {
-      return passResponse
+    if (!findPassRes.ok) {
+      return findPassRes
     }
 
-    //find the pass to update
-    const activePass = passResponse.data.passes?.data.find(
-      (p) => p.status === PassStatus.Active,
-    )
-
-    if (!activePass) {
+    //check if existing pass was found
+    if (!findPassRes.data) {
       return {
         ok: false,
         error: {
           code: 3,
-          message: 'No active pass for user, nothing to revoke',
+          message: 'No pass found for user',
         },
       }
     }
 
-    //find the proper pass and void it
-    const voidResponse = await this.voidPkPass(activePass.id)
+    const pass = findPassRes.data
 
-    if (!voidResponse.ok) {
-      return voidResponse
+    //if pass is being deleted, abort
+    if (pass.status === PassStatus.DeleteInProgress) {
+      return {
+        ok: false,
+        error: {
+          code: 5,
+          message: 'Invalid pass state, pass is already being revoked',
+        },
+      }
     }
 
-    //pass is now voided, time to delete it
-    const deleteResponse = await this.deletePkPass(activePass.id)
+    //find the proper pass and void it, if it isn't voided already
+    if (pass.status !== PassStatus.Voided) {
+      const voidResponse = await this.voidPkPass(pass.id)
+
+      if (!voidResponse.ok) {
+        return voidResponse
+      }
+    }
+
+    //pass is void, time to delete
+    const deleteResponse = await this.deletePkPass(pass.id)
 
     if (!deleteResponse.ok) {
       return deleteResponse
@@ -455,6 +469,40 @@ export class SmartSolutionsApi {
         return {
           ok: true,
           data: { voidPass: response.data.voidPass },
+        }
+      }
+      //if the voiding failed for some reason
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error, void pass failed',
+        },
+      }
+    }
+
+    return response
+  }
+
+  private async unvoidPkPass(
+    passId: string,
+  ): Promise<Result<UnvoidPassResponseData>> {
+    const unvoidPassMutation = JSON.stringify({
+      query: UNVOID_PASS,
+      variables: {
+        id: passId,
+      },
+    })
+
+    const response = await this.query<UnvoidPassResponseData>(
+      unvoidPassMutation,
+    )
+
+    if (response.ok) {
+      if (response.data.unvoidPass) {
+        return {
+          ok: true,
+          data: { unvoidPass: response.data.unvoidPass },
         }
       }
       //if the voiding failed for some reason

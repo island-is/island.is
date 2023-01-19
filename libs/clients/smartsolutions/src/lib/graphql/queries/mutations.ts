@@ -4,6 +4,12 @@ export const VOID_PASS = `
   }
 `
 
+export const UNVOID_PASS = `
+  mutation UnvoidPass($id: String!) {
+    unvoidPass(id: $id)
+  }
+`
+
 export const DELETE_PASS = `
   mutation DeletePass($id: String!) {
     deletePass(id: $id)
