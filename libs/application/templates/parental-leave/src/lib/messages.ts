@@ -1859,7 +1859,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     additionalDocumentRequired: {
       id: 'pl.application:attachmentscreen.additionalDocumentRequired',
       defaultMessage:
-        'Viðbótarskjöl eru nauðsynleg, á næstu síðu muntu geta hlaðið upp viðbótarskjölunum, til að byrja skaltu ýta á halda áfram.',
+        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögn á næstu síðu',
       description:
         'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
     },
