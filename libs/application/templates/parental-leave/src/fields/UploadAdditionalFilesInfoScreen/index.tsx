@@ -47,7 +47,7 @@ const UploadAdditionalFilesInfoScreen: FC<RepeaterProps> = ({
     <Box>
       <FieldDescription
         description={formatMessage(
-          parentalLeaveFormMessages.attachmentScreen.genericTitle,
+          parentalLeaveFormMessages.attachmentScreen.additionalDocumentRequired,
         )}
       />
     </Box>

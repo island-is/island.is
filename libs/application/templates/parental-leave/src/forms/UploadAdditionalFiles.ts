@@ -25,12 +25,12 @@ export const UploadAdditionalFiles: Form = buildForm({
       children: [
         buildCustomField({
           id: 'uploadAdditionalFilesInfoScreen',
-          title: parentalLeaveFormMessages.confirmation.title,
+          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
           component: 'UploadAdditionalFilesInfoScreen',
         }),
         buildMultiField({
           id: 'additionalDocumentsScreen',
-          title: parentalLeaveFormMessages.confirmation.title,
+          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
           description: parentalLeaveFormMessages.confirmation.description,
           children: [
             buildFileUploadField({

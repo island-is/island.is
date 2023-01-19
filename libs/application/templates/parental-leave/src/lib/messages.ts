@@ -1856,6 +1856,13 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vegna varanlegs fósturs þarf að skila inn staðfestingu frá sveitarfélagi. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'Permanent forstcare description',
     },
+    additionalDocumentRequired: {
+      id: 'pl.application:attachmentscreen.additionalDocumentRequired',
+      defaultMessage:
+        'Viðbótarskjöl eru nauðsynleg, á næstu síðu muntu geta hlaðið upp viðbótarskjölunum, til að byrja skaltu ýta á halda áfram.',
+      description:
+        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
+    },
     additionalDocumentsEditSubmit: {
       id: 'pl.application:attachmentscreen.additionalDocumentsEditSubmit',
       defaultMessage: 'Senda inn',
