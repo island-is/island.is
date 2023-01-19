@@ -26,6 +26,8 @@ import { messages as m } from '../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
 import { ModuleAlertBannerSection } from '@island.is/service-portal/core'
 import UsageTable from '../../components/UsageTable'
+import { formatDateWithTime } from '@island.is/service-portal/core'
+import { formatDate } from '@formatjs/intl'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
@@ -83,6 +85,9 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
   const airDiscounts = data?.airDiscountSchemeDiscounts
   const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
+  const connectionCodes = airDiscounts?.filter(
+    (x) => x.connectionDiscountCodes.length > 0,
+  )
 
   if (error && !loading) {
     return (
@@ -149,7 +154,7 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
       </Box>
       {loading && <CardLoader />}
       {data && (
-        <Box marginBottom={3}>
+        <Box marginBottom={5}>
           <Text paddingBottom={3} fontWeight="medium">
             {formatMessage(m.myRights)}
           </Text>
@@ -193,13 +198,50 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
           </Stack>
         </Box>
       )}
+      {connectionCodes && connectionCodes?.length > 0 && (
+        <Box marginBottom={5}>
+          <Text paddingBottom={3} fontWeight="medium">
+            {formatMessage(m.activeConnectionCodes)}
+          </Text>
+          <Stack space={2}>
+            {connectionCodes?.map((item) => {
+              return item.connectionDiscountCodes.map((code, codeIndex) => {
+                const isCopied = copiedCodes.find((x) => x.code === code.code)
+                  ?.copied
+                return (
+                  <ActionCard
+                    key={`loftbru-item-connection-code-${codeIndex}`}
+                    heading={item.user.name}
+                    text={formatMessage(m.flight) + ': ' + code.flightDesc}
+                    secondaryText={code.code}
+                    eyebrow={
+                      formatMessage(m.validTo) +
+                      ': ' +
+                      formatDateWithTime(code.validUntil)
+                    }
+                    backgroundColor="purple"
+                    cta={{
+                      label: isCopied
+                        ? formatMessage(m.copied)
+                        : formatMessage(m.copyCode),
+                      onClick: () => copy(item.discountCode),
+                      centered: true,
+                      icon: isCopied ? 'checkmark' : 'copy',
+                    }}
+                  />
+                )
+              })
+            })}
+          </Stack>
+        </Box>
+      )}
       {!loading && !error && airDiscounts?.length === 0 && (
         <Box marginY={8}>
           <EmptyState />
         </Box>
       )}
       {flightLegs && flightLegs.length > 0 && (
-        <Box marginY={3}>
+        <Box marginBottom={5}>
           <Text paddingBottom={3} fontWeight="medium">
             {formatMessage(m.airfaresUsage)}
           </Text>

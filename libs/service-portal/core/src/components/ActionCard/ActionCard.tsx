@@ -23,7 +23,7 @@ type ActionCardProps = {
   secondaryText?: string
   eyebrow?: string
   loading?: boolean
-  backgroundColor?: 'white' | 'blue' | 'red'
+  backgroundColor?: 'white' | 'blue' | 'red' | 'purple'
   tag?: {
     label: string
     variant?: TagVariant
@@ -61,6 +61,7 @@ const defaultCta = {
   icon: 'arrowForward',
   onClick: () => null,
 } as const
+
 const defaultTag = {
   variant: 'blue',
   outlined: true,
@@ -82,12 +83,28 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const tag = { ...defaultTag, ..._tag }
-  const bgr =
-    backgroundColor === 'white'
-      ? 'white'
-      : backgroundColor === 'red'
-      ? 'red100'
-      : 'blue100'
+
+  const getBackgroundColor = (color: string) => {
+    switch (color) {
+      case 'blue':
+        return 'blue100'
+        break
+      case 'red':
+        return 'red100'
+        break
+      case 'purple':
+        return 'purple100'
+        break
+      case 'white':
+        return 'white'
+        break
+      default:
+        return 'white'
+        break
+    }
+  }
+
+  const bgr = getBackgroundColor(backgroundColor)
 
   const renderImage = () => {
     if (!image) {
@@ -330,9 +347,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         </Box>
         <Box
           display="flex"
-          flexDirection="row"
+          flexDirection="column"
           justifyContent="spaceBetween"
-          alignItems="center"
+          alignItems="flexStart"
         >
           {secondaryText && <Text>{secondaryText}</Text>}
         </Box>

@@ -79,4 +79,12 @@ export const messages = defineMessages({
     id: 'sp.air-discount:date',
     defaultMessage: 'Dagsetning',
   },
+  activeConnectionCodes: {
+    id: 'sp.air-discount:active-connection-codes',
+    defaultMessage: 'Virkir afsláttarkóðar fyrir áframhaldandi flug',
+  },
+  validTo: {
+    id: 'sp.air-discount:valid-to',
+    defaultMessage: 'Gildir til',
+  },
 })
