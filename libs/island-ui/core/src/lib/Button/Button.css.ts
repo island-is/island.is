@@ -285,7 +285,7 @@ const utilityColors = (
   borderHoverWidth = 1,
   backgroundColor = theme.color.transparent,
 ) => ({
-  backgroundColor: backgroundColor ? backgroundColor : theme.color.transparent,
+  backgroundColor: backgroundColor,
   boxShadow: `inset 0 0 0 1px ${border}`,
   color: text,
   ':disabled': {
@@ -296,17 +296,13 @@ const utilityColors = (
     boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   },
   ':hover': {
-    backgroundColor: backgroundColor
-      ? backgroundColor
-      : theme.color.transparent,
+    backgroundColor: backgroundColor,
     boxShadow: `inset 0 0 0 ${borderHoverWidth}px ${borderHover}`,
     color: textHover,
   },
   selectors: {
     '&:focus:active': {
-      backgroundColor: backgroundColor
-        ? backgroundColor
-        : theme.color.transparent,
+      backgroundColor: backgroundColor,
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
   },
