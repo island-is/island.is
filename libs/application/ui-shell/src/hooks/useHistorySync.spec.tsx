@@ -56,7 +56,7 @@ describe('useHistorySync', () => {
 
   it('pushes transitions to history and supports history navigation', () => {
     // Arrange
-    const history = createMemoryHistory({ initialEntries: ['/'] })
+    const history = createMemoryHistory()
 
     // Act render application
     const { rerender } = renderHook(
@@ -70,27 +70,16 @@ describe('useHistorySync', () => {
       },
     )
 
-    // Assert history sync
-    expect(history.entries).toHaveLength(1)
-    expect(history.entries[0].state).toMatchObject({ screen: 0 })
-
-    // Act render next step
-    applicationState.activeScreen = 1
-    applicationState.historyReason = 'navigate'
-    rerender()
-
-    // Assert history push
-    expect(history.entries).toHaveLength(2)
-    expect(history.entries[1].state).toMatchObject({ screen: 1 })
-
-    // Act "click back"
-    act(() => {
-      history.goBack()
+    expect(history.location.state).toStrictEqual({
+      state: 'draft',
+      screen: 0,
+      historyReason: 'initial',
     })
 
     rerender()
 
     // Assert dispatch.
+    expect(dispatch).toHaveBeenCalledTimes(1)
     expect(dispatch).toHaveBeenLastCalledWith({
       type: ActionTypes.HISTORY_POP,
       payload: {
@@ -100,9 +89,30 @@ describe('useHistorySync', () => {
       },
     })
 
-    // Act "click forward"
+    // Act render next step
+    applicationState.activeScreen = 1
+    applicationState.historyReason = 'navigate'
+    rerender()
+
+    //Act "click back"
     act(() => {
-      history.goForward()
+      history.back()
+    })
+
+    rerender()
+
+    expect(dispatch).toHaveBeenLastCalledWith({
+      type: ActionTypes.HISTORY_POP,
+      payload: {
+        state: 'draft',
+        screen: 0,
+        historyReason: 'initial',
+      },
+    })
+
+    //Act "click back"
+    act(() => {
+      history.forward()
     })
 
     rerender()
