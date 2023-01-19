@@ -45,7 +45,7 @@ export const UserButton = ({
         ) : (
           <Button
             variant="utility"
-            colorScheme={isDelegation ? 'primary' : 'default'}
+            colorScheme={isDelegation ? 'primary' : 'white'}
             onClick={onClick}
             icon={isDelegation ? 'people' : 'person'}
             iconType="outline"
@@ -65,7 +65,7 @@ export const UserButton = ({
       <Hidden below="md">
         <Button
           variant="utility"
-          colorScheme={isDelegation ? 'primary' : 'default'}
+          colorScheme={isDelegation ? 'primary' : 'white'}
           onClick={onClick}
           icon="chevronDown"
           aria-label={formatMessage(userMessages.userButtonAria)}

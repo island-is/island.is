@@ -63,6 +63,7 @@ export const UserLanguageSwitcher = ({
     <Box paddingRight={2}>
       <Button
         variant="utility"
+        colorScheme="white"
         onClick={handleLanguageChange}
         aria-label={'switch language'}
         data-testid="language-switcher-button"

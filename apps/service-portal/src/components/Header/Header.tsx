@@ -82,7 +82,8 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                     <Box marginRight={[1, 1, 2]}>
                       <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
                         <Button
-                          variant="ghost"
+                          variant="utility"
+                          colorScheme="white"
                           size="small"
                           icon="mail"
                           iconType="outline"
@@ -114,11 +115,10 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                       <Box marginLeft={[1, 2]}>
                         <Button
                           variant="utility"
+                          colorScheme="white"
                           icon="menu"
                           onClick={() => setSideMenuOpen(true)}
-                        >
-                          {/* {formatMessage(m.menu)} */}
-                        </Button>
+                        />
                       </Box>
                     ) : (
                       <Box
