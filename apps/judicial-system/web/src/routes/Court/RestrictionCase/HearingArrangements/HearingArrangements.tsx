@@ -25,14 +25,13 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  rcHearingArrangements as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
 export const HearingArrangements: React.FC = () => {
   const {
@@ -241,6 +240,9 @@ export const HearingArrangements: React.FC = () => {
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}
           secondaryButtonText={formatMessage(
             m.modal.shared.secondaryButtonText,
+            {
+              courtDateHasChanged,
+            },
           )}
         />
       )}

@@ -21,7 +21,7 @@ export const shipSelection = {
   labels: defineMessages({
     withFishingLicenseTitle: {
       id: 'gfl.application:shipSelection.labels.withFishingLicenseTitle',
-      defaultMessage: 'Þessi fiskveiðiskip eru nú þegar með almennt veiðileyfi',
+      defaultMessage: 'Þessi fiskveiðiskip eru nú þegar með veiðileyfi',
       description: 'With fishing license title in ship selection',
     },
     shipNumber: {
@@ -98,15 +98,75 @@ export const shipSelection = {
       defaultMessage: 'Engin gild veiðileyfi fundust',
       description: 'No fishing license found tag',
     },
+    hookCatchLimit: {
+      id: 'gfl.application:shipSelection.tags.hookCatchLimit',
+      defaultMessage: 'Almennt veiðileyfi með krókaafla',
+      description: 'Hook catch limit tag',
+    },
+    fishWithDanishSeine: {
+      id: 'gfl.application:shipSelection.tags.fishWithDanishSeine',
+      defaultMessage: 'Dragnótaveiðileyfi',
+      description: 'Fishing with Danish seine',
+    },
+    // TODO!!!!
+    greyslepp: {
+      id: 'gfl.application:shipSelection.tags.greyslepp', // TODO
+      defaultMessage: 'Grásleppuveiðileyfi',
+      description: 'Grásleppuveiðileyfi', // TODO
+    },
+    // TODO!!!!
+    northIceOceanCod: {
+      id: 'gfl.application:shipSelection.tags.northIceOceanCod', // TODO
+      defaultMessage: 'Norðuríshafsþorskveiðileyfi í norskri lögsögu',
+      description: 'Norðuríshafsþorskveiðileyfi í norskri lögsögu', // TODO
+    },
     catchMark: {
       id: 'gfl.application:shipSelection.tags.catchMark',
       defaultMessage: 'Almennt veiðileyfi með aflamarki',
       description: 'Catch mark tag',
     },
-    hookCatchLimit: {
-      id: 'gfl.application:shipSelection.tags.hookCatchLimit',
-      defaultMessage: 'Almennt veiðileyfi með krókaafla',
-      description: 'Hook catch limit tag',
+    lumpfish: {
+      id: 'gfl.application:shipSelection.tags.lumpfish',
+      defaultMessage: 'Rauðmagaveiðileyfi',
+      description: 'Lumpfish',
+    },
+    costalFisheries: {
+      id: 'gfl.application:shipSelection.tags.costalFisheries',
+      defaultMessage: 'Strandveiðileyfi',
+      description: 'Costal fisheries',
+    },
+    // TODO!!!!
+    freetime: {
+      id: 'gfl.application:shipSelection.tags.freetime', // TODO
+      defaultMessage: 'Frístundaveiðar án aflaheimilda',
+      description: 'Frístundaveiðar án aflaheimilda', // TODO
+    },
+    // TODO!!!!
+    freetimeHook: {
+      id: 'gfl.application:shipSelection.tags.freetimeHook', // TODO
+      defaultMessage: 'Frístundaveiðar með aflamarki',
+      description: 'Frístundaveiðar með aflamarki', // TODO
+    },
+    // TODO!!!!
+    freetimeHookMed: {
+      id: 'gfl.application:shipSelection.tags.freetimeHookMed', // TODO
+      defaultMessage: 'Frístundaveiðar með aflamarki',
+      description: 'Frístundaveiðar með aflamarki', // TODO
+    },
+    commonWhelk: {
+      id: 'gfl.application:shipSelection.tags.commonWhelk',
+      defaultMessage: 'Beitukóngsveiðileyfi',
+      description: 'Common whelk',
+    },
+    oceanQuahogin: {
+      id: 'gfl.application:shipSelection.tags.oceanQuahogin',
+      defaultMessage: 'Kúfiskveiðileyfi',
+      description: 'Ocean Quahogin',
+    },
+    crustaceans: {
+      id: 'gfl.application:shipSelection.tags.crustaceans',
+      defaultMessage: 'Krabbaveiðileyfi',
+      description: 'Crustaceans',
     },
   }),
 }
