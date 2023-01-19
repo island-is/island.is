@@ -3,6 +3,7 @@ import { Box, Button, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { review } from '../../lib/messages'
+import { States } from '../../lib/constants'
 import { ReviewScreenProps } from '../../types'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
@@ -47,19 +48,21 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
             reviewer={step.reviewer}
             reviewerNationalId={reviewerNationalId}
             messageValue={step.messageValue}
+            isComplete={application.state === States.COMPLETED}
           />
         ))}
       </Box>
-      {!hasReviewerApproved(reviewerNationalId, application.answers) && (
-        <>
-          <Divider />
-          <Box display="flex" justifyContent="flexEnd" paddingY={5}>
-            <Button onClick={() => setStep && setStep('overview')}>
-              {formatMessage(review.status.openAgreement)}
-            </Button>
-          </Box>
-        </>
-      )}
+      {!hasReviewerApproved(reviewerNationalId, application.answers) &&
+        application.state !== States.COMPLETED && (
+          <>
+            <Divider />
+            <Box display="flex" justifyContent="flexEnd" paddingY={5}>
+              <Button onClick={() => setStep && setStep('overview')}>
+                {formatMessage(review.status.openAgreement)}
+              </Button>
+            </Box>
+          </>
+        )}
     </Box>
   )
 }

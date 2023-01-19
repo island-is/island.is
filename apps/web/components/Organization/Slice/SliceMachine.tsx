@@ -8,6 +8,7 @@ import {
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { RichText, EmailSignup } from '@island.is/web/components'
+import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -138,6 +139,8 @@ const renderSlice = (slice, namespace, slug, params) => {
       )
     case 'EmailSignup':
       return <EmailSignup slice={slice} marginLeft={[0, 0, 0, 6]} />
+    case 'ConnectedComponent':
+      return webRenderConnectedComponent(slice)
     default:
       return <RichText body={[slice]} />
   }
