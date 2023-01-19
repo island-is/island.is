@@ -102,6 +102,23 @@ export const notifications = {
         'Notaður sem texti í sms-i til þess að tilgreina að mál sé komið í vinnslu',
     },
   }),
+  indictmentCourtReadyForCourt: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.indictment_court_ready_for_court.subject',
+      defaultMessage: 'Ákæra tilbúin til afgreiðslu',
+      description:
+        'Notaður sem titill í pósti til dómstóla þegar ný ákæra er tilbúin til afgreiðslu',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.indictment_court_ready_for_court.body',
+      defaultMessage:
+        '{prosecutorName} hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: {indictmentSubtypes}. Ákæran og öll skjöl málsins eru {linkStart}aðgengileg í Réttarvörslugátt.{linkEnd}',
+      description:
+        'Notaður sem texti í pósti til dómstóla þegar ný ákæra er tilbúin til afgreiðslu',
+    },
+  }),
   courtReadyForCourt: defineMessages({
     submittedCase: {
       id:

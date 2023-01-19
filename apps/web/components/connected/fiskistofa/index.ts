@@ -26,3 +26,10 @@ export const SidebarShipSearchInput = dynamic(
     ssr: false,
   },
 )
+
+export const ShipSearchBoxedInput = dynamic(
+  () => import('./ShipSearchBoxedInput/ShipSearchBoxedInput'),
+  {
+    ssr: false,
+  },
+)
