@@ -30,6 +30,8 @@ export interface ActionCardMetaData {
     variant?: ActionCardTag
   }
   deleteButton?: boolean
+  draftTotalSteps?: number
+  draftFinishedSteps?: number
 }
 
 export interface Application<TAnswers = FormValue> {
