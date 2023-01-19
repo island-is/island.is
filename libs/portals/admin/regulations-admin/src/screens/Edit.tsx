@@ -103,9 +103,7 @@ const stepData: Record<
 
 const EditScreen = () => {
   const t = useLocale().formatMessage
-  const { error: errorSate, step: stepState, actions } = useDraftingState()
-  const history = useHistory<{ type: RegulationType }>()
-  const { updateState } = actions
+  const { error: errorSate, step: stepState } = useDraftingState()
   const step = stepData[stepState.name]
 
   useEffect(() => {
@@ -115,11 +113,6 @@ const EditScreen = () => {
       toast.error(t(message))
     }
   }, [errorSate, t])
-
-  useEffect(() => {
-    const regType = history.location?.state?.type
-    updateState('type', regType)
-  }, [history.location?.state?.type])
 
   return (
     <>

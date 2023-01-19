@@ -6,7 +6,6 @@ import {
   AccordionItem,
   Divider,
   Text,
-  Button,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../lib/messages'

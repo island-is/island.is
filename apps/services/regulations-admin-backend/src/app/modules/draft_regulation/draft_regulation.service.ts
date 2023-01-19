@@ -256,6 +256,7 @@ export class DraftRegulationService {
       title: '',
       text: '',
       drafting_notes: '',
+      type: create.type,
       authors: [user?.nationalId as Kennitala],
     }
 

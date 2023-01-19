@@ -202,7 +202,7 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
     draftingStatus: draft.draftingStatus,
     authors: f(draft.authors.map((author) => author.authorId)),
 
-    type: f(undefined /* draft.type */, errorMsgs.typeRequired), // NOTE: Regulation type is always a derived value
+    type: f(draft.type, errorMsgs.typeRequired),
     ministry: f(undefined /* draft.ministry */, true), // NOTE: The ministry is always a derived value
     signatureDate: fDate(
       undefined /* draft.signatureDate && new Date(draft.signatureDate) */,

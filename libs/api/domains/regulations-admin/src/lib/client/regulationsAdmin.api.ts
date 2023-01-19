@@ -15,6 +15,7 @@ import {
   CreateDraftRegulationChangeInput,
 } from '../graphql/dto'
 import { DraftImpact } from '@island.is/regulations/admin'
+import { CreateDraftRegulationInput } from '../graphql/dto/createDraftRegulation.input'
 
 export class RegulationsAdminApi extends RESTDataSource {
   constructor(
@@ -31,8 +32,11 @@ export class RegulationsAdminApi extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  create(authorization: string): Promise<any> {
-    return this.post(`/draft_regulation`, {}, { headers: { authorization } })
+  create(
+    authorization: string,
+    input: CreateDraftRegulationInput,
+  ): Promise<any> {
+    return this.post(`/draft_regulation`, input, { headers: { authorization } })
   }
 
   updateById(
