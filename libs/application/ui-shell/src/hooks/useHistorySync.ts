@@ -60,7 +60,6 @@ export const useHistorySync = (
 
   // Listen for browser navigation change.
   useEffect(() => {
-    console.log('navigationType', navigationType, location.state)
     if (
       navigationType === 'POP' &&
       location.state !== null &&
