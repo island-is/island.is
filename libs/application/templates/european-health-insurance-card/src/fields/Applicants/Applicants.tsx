@@ -8,6 +8,8 @@ import { institutionApplicationMessages as m } from '../../../../institution-col
 import { useLocale } from '@island.is/localization'
 
 const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
+  console.log(application)
+  console.log('check')
   const { formatMessage } = useLocale()
 
   const { answers } = application

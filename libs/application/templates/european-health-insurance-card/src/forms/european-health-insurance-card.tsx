@@ -16,8 +16,7 @@ import {
 } from '@island.is/application/core'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import styles from './european-health-insurance-card.module.scss'
-import { EhicNationalRegistryUserApi } from '../dataProviders'
-import { sectionDataProviders } from './sectionDataProviders'
+
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
 export const EuropeanHealthInsuranceCard: Form = buildForm({
@@ -25,57 +24,25 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
   title: '',
   mode: FormModes.DRAFT,
   children: [
-    sectionDataProviders,
     // buildSection({
     //   id: 'externalData',
-    //   title: 'section.externalData',
+    //   title: e.introScreen.sectionLabel,
     //   children: [
     //     buildExternalDataProvider({
-    //       title: 'externalData.general.pageTitle',
     //       id: 'approveExternalData',
-    //       subTitle: 'externalData.general.subTitle',
-    //       description: 'externalData.general.description',
-    //       checkboxLabel: 'externalData.general.checkboxLabel',
+    //       title: 'TODO: Gögn frá þjóðskrá',
+    //       subTitle: 'TODO: Samþykkja gögn',
+    //       checkboxLabel: 'TODO: Ég samþykki',
     //       dataProviders: [
     //         buildDataProviderItem({
     //           provider: NationalRegistryUserApi,
-    //           title: 'externalData.labels.nationalRegistryTitle',
-    //           subTitle: 'externalData.labels.nationalRegistrySubTitle',
+    //           title: 'externalData.nationalRegistry.title',
+    //           subTitle: 'externalData.nationalRegistry.description',
     //         }),
     //       ],
     //     }),
     //   ],
     // }),
-    buildSection({
-      id: 'intro',
-      title: e.introScreen.sectionLabel,
-      children: [
-        // buildExternalDataProvider({
-        //   title: 'externalData',
-        //   id: 'approveExternalData',
-        //   subTitle: 'externalData.general.subTitle',
-        //   description: 'externalData.general.description',
-        //   checkboxLabel: 'externalData.general.checkboxLabel',
-        //   dataProviders: [
-        //     buildDataProviderItem({
-        //       provider: NationalRegistryUserApi,
-        //       title: 'externalData.labels.nationalRegistryTitle',
-        //       subTitle: 'externalData.labels.nationalRegistrySubTitle',
-        //     }),
-        //   ],
-        // }),
-        buildCustomField(
-          {
-            id: 'introScreen',
-            title: e.introScreen.sectionTitle,
-            component: 'IntroScreen',
-          },
-          {
-            subTitle: e.introScreen.sectionDescription,
-          },
-        ),
-      ],
-    }),
     buildSection({
       id: 'applicants',
       title: e.applicants.sectionLabel,
