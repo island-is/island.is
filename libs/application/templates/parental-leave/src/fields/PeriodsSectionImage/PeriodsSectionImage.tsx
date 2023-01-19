@@ -92,7 +92,7 @@ const PeriodsSectionImage: FC<PeriodsSectionImageProp> = ({
       marginTop={marginTop || 8}
     >
       <BackgroundImage>
-        {children || <ManWithStrollerIllustration/>}
+        {children || <ManWithStrollerIllustration />}
       </BackgroundImage>
     </Box>
   )
