@@ -17,6 +17,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   DEFENDER_ROUTE,
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
@@ -59,17 +60,17 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
+  formatCourtIndictmentReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
-import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
+import { Defendant, DefendantService } from '../defendant'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { notificationModuleConfig } from './notification.config'
-import { Defendant, DefendantService } from '../defendant'
 
 interface Attachment {
   filename: string
@@ -85,7 +86,6 @@ export class NotificationService {
     @Inject(notificationModuleConfig.KEY)
     private readonly config: ConfigType<typeof notificationModuleConfig>,
     private readonly courtService: CourtService,
-    private readonly awsS3Service: AwsS3Service,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
@@ -369,17 +369,43 @@ export class NotificationService {
     return this.sendEmail(subject, body, prosecutor?.name, prosecutor?.email)
   }
 
+  private sendReadyForCourtEmailNotificationToCourt(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const email = theCase.court?.notificationEmail
+    const {
+      subject,
+      body,
+    } = formatCourtIndictmentReadyForCourtEmailNotification(
+      this.formatMessage,
+      theCase,
+      `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+    )
+    return this.sendEmail(subject, body, theCase.court?.name, email)
+  }
+
   private async sendReadyForCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
-    const notification = await this.notificationModel.findOne({
-      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
-    })
+    if (isIndictmentCase(theCase.type)) {
+      const recipient = await this.sendReadyForCourtEmailNotificationToCourt(
+        theCase,
+      )
+      return this.recordNotification(
+        theCase.id,
+        NotificationType.READY_FOR_COURT,
+        [recipient],
+      )
+    }
 
+    // Investigation and Restrction Cases
     const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
     ]
 
+    const notification = await this.notificationModel.findOne({
+      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
+    })
     if (notification) {
       if (theCase.state === CaseState.RECEIVED) {
         promises.push(
@@ -732,7 +758,7 @@ export class NotificationService {
             )}">`,
             linkEnd: '</a>',
           })
-        : this.formatMessage(notifications.signedRuling.defenderBodyV2, {
+        : this.formatMessage(notifications.signedRuling.defenderBodyV3, {
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
@@ -743,9 +769,6 @@ export class NotificationService {
               theCase.id,
             )}">`,
             linkEnd: '</a>',
-            signedVerdictAvailableInS3: await this.awsS3Service.objectExists(
-              `generated/${theCase.id}/ruling.pdf`,
-            ),
           }),
       defenderName ?? '',
       defenderEmail ?? '',
@@ -826,7 +849,7 @@ export class NotificationService {
         promises.push(
           this.sendRulingEmailNotificationToDefender(
             theCase,
-            undefined && defendant.defenderNationalId, // Temporarily dicable links in defender emails for indictments
+            defendant.defenderNationalId,
             defendant.defenderName,
             defendant.defenderEmail,
           ),
@@ -865,17 +888,13 @@ export class NotificationService {
       if (theCase.type === CaseType.CUSTODY) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
       } else if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
-        try {
-          const inCustody = await this.defendantService.isDefendantInActiveCustody(
-            theCase.defendants,
-          )
-          if (
-            inCustody ||
-            (theCase.defendants && theCase.defendants[0]?.noNationalId === true)
-          ) {
-            promises.push(this.sendRulingEmailNotificationToPrison(theCase))
-          }
-        } catch (_error) {
+        const inCustody = await this.defendantService.isDefendantInActiveCustody(
+          theCase.defendants,
+        )
+        if (
+          inCustody ||
+          (theCase.defendants && theCase.defendants[0]?.noNationalId === true)
+        ) {
           promises.push(this.sendRulingEmailNotificationToPrison(theCase))
         }
       }
@@ -929,19 +948,6 @@ export class NotificationService {
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
         })
 
-    const custodyNoticePdf = await getCustodyNoticePdfAsString(
-      theCase,
-      this.formatMessage,
-    )
-
-    const attachments = [
-      {
-        filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
-        content: custodyNoticePdf,
-        encoding: 'binary',
-      },
-    ]
-
     const promises = [
       this.sendEmail(
         subject,
@@ -949,14 +955,35 @@ export class NotificationService {
         'Fangelsismálastofnun',
         this.config.email.prisonAdminEmail,
       ),
-      this.sendEmail(
-        subject,
-        html,
-        'Gæsluvarðhaldsfangelsi',
-        this.config.email.prisonEmail,
-        attachments,
-      ),
     ]
+
+    if (
+      theCase.type === CaseType.CUSTODY ||
+      theCase.type === CaseType.ADMISSION_TO_FACILITY
+    ) {
+      const custodyNoticePdf = await getCustodyNoticePdfAsString(
+        theCase,
+        this.formatMessage,
+      )
+
+      const attachments = [
+        {
+          filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
+          content: custodyNoticePdf,
+          encoding: 'binary',
+        },
+      ]
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          'Gæsluvarðhaldsfangelsi',
+          this.config.email.prisonEmail,
+          attachments,
+        ),
+      )
+    }
 
     if (user.id !== theCase.prosecutorId) {
       promises.push(
@@ -1332,7 +1359,7 @@ export class NotificationService {
   private async addMessagesForHeadsUpNotificationToQueue(
     theCase: Case,
   ): Promise<void> {
-    this.messageService.sendMessageToQueue({
+    return this.messageService.sendMessageToQueue({
       type: MessageType.SEND_HEADS_UP_NOTIFICATION,
       caseId: theCase.id,
     })
@@ -1355,7 +1382,16 @@ export class NotificationService {
       })
     }
 
-    this.messageService.sendMessagesToQueue(messages)
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
+  private async addMessagesForReceivedByCourtNotificationToQueue(
+    theCase: Case,
+  ): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+      caseId: theCase.id,
+    })
   }
 
   /* API */
@@ -1411,6 +1447,9 @@ export class NotificationService {
           break
         case NotificationType.READY_FOR_COURT:
           await this.addMessagesForReadyForCourtNotificationToQueue(theCase)
+          break
+        case NotificationType.RECEIVED_BY_COURT:
+          await this.addMessagesForReceivedByCourtNotificationToQueue(theCase)
           break
         default:
           throw new InternalServerErrorException(

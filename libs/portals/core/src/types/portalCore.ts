@@ -88,9 +88,9 @@ export interface PortalRoute {
    */
   name: MessageDescriptor | string
   /**
-   * Describes the path or paths used to route to this component
+   * Describes the path used to route to this component
    */
-  path: string | string[]
+  path: string
   /**
    * Indicates if the user has access to the route
    */
