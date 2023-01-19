@@ -17,10 +17,20 @@ import {
 import { ReviewGroupProps } from './props'
 import { useFormContext } from 'react-hook-form'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
-import { NO, NO_PRIVATE_PENSION_FUND, NO_UNION, PARENTAL_LEAVE, YES } from '../../../constants'
+import {
+  NO,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  PARENTAL_LEAVE,
+  YES,
+} from '../../../constants'
 import { coreErrorMessages } from '@island.is/application/core'
 import { YesOrNo, parentalLeaveFormMessages } from '../../..'
-import { InputController, RadioController, SelectController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  RadioController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 import { useUnion as useUnionOptions } from '../../../hooks/useUnion'
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../../hooks/usePrivatePensionFund'
 import { usePensionFund as usePensionFundOptions } from '../../../hooks/usePensionFund'
@@ -30,7 +40,7 @@ export const Payments = ({
   application,
   editable,
   groupHasNoErrors,
-  hasError
+  hasError,
 }: ReviewGroupProps) => {
   const { formatMessage, locale } = useLocale()
   const { getValues, setValue } = useFormContext()

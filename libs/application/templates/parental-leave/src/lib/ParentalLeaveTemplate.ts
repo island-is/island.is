@@ -397,11 +397,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
-              cond: allEmployersHaveApproved
+              cond: allEmployersHaveApproved,
             },
             {
               target: States.EMPLOYER_WAITING_TO_ASSIGN,
-            }
+            },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
           [DefaultEvents.EDIT]: { target: States.DRAFT },
@@ -807,11 +807,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-              cond: allEmployersHaveApproved
+              cond: allEmployersHaveApproved,
             },
             {
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
-            }
+            },
           ],
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },

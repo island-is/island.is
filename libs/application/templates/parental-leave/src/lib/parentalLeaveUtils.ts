@@ -644,10 +644,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     '0',
   ) as string
 
-  const isSelfEmployed = getValueViaPath(
-    answers,
-    'isSelfEmployed',
-  ) as YesOrNo
+  const isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
 
   let isReceivingUnemploymentBenefits = getValueViaPath(
     answers,
@@ -718,7 +715,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
-  const employers = getValueViaPath(answers, 'employers') as EmployerRow[];
+  const employers = getValueViaPath(answers, 'employers') as EmployerRow[]
 
   const employerReviewerNationalRegistryId = getValueViaPath(
     answers,

@@ -1,5 +1,7 @@
 import { parentalLeaveFormMessages } from '@island.is/application/templates/parental-leave'
 import { Box, Icon, Table as T } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { EmployerRow } from '../../../types'
 
 interface EmployerTableProps {
@@ -13,19 +15,26 @@ export const EmployersTable = ({
   editable = false,
   onDeleteEmployer = () => undefined,
 }: EmployerTableProps) => {
+  const { formatMessage } = useLocale()
   return (
     <T.Table>
       <T.Head>
         <T.Row>
           {editable && <T.HeadData></T.HeadData>}
-          <T.HeadData>Netfang</T.HeadData>
-          {/* <T.HeadData>{parentalLeaveFormMessages.employer.emailHeader}</T.HeadData> */}
-          <T.HeadData>Símanumer</T.HeadData>
-          <T.HeadData>Hlutfall</T.HeadData>
-          <T.HeadData>Samþykkt</T.HeadData>
-          {/* <T.HeadData>{parentalLeaveFormMessages.employer.phoneNumber}</T.HeadData> */}
-          {/* <T.HeadData>{parentalLeaveFormMessages.employer.ratio}</T.HeadData> */}
-          {/* <T.HeadData>{parentalLeaveFormMessages.employer.confirmation}</T.HeadData> */}
+          <T.HeadData>
+            {formatMessage(parentalLeaveFormMessages.employer.emailHeader)}
+          </T.HeadData>
+          <T.HeadData>
+            {formatMessage(
+              parentalLeaveFormMessages.employer.phoneNumberHeader,
+            )}
+          </T.HeadData>
+          <T.HeadData>
+            {formatMessage(parentalLeaveFormMessages.employer.ratioHeader)}
+          </T.HeadData>
+          <T.HeadData>
+            {formatMessage(parentalLeaveFormMessages.employer.approvedHeader)}
+          </T.HeadData>
         </T.Row>
       </T.Head>
       <T.Body>
@@ -46,8 +55,11 @@ export const EmployersTable = ({
             <T.Data>{e.email}</T.Data>
             <T.Data>{e.phoneNumber}</T.Data>
             <T.Data>{e.ratio}%</T.Data>
-            <T.Data>{e.isApproved ? 'Já' : 'Nei'}</T.Data>
-            {/* <T.Data>{e.isApproved ? parentalLeaveFormMessages.shared.yesOptionLabel : parentalLeaveFormMessages.shared.noOptionLabel}</T.Data> */}
+            <T.Data>
+              {e.isApproved
+                ? formatMessage(parentalLeaveFormMessages.shared.yesOptionLabel)
+                : formatMessage(parentalLeaveFormMessages.shared.noOptionLabel)}
+            </T.Data>
           </T.Row>
         ))}
       </T.Body>

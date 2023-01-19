@@ -81,7 +81,7 @@ export enum States {
 
 export enum EmployerApprovalStates {
   APPROVED = 'approved',
-  DECLINED = 'declined'
+  DECLINED = 'declined',
 }
 
 export enum AnswerValidationConstants {

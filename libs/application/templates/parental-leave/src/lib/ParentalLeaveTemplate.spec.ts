@@ -229,9 +229,11 @@ describe('Parental Leave Application Template', () => {
                 otherParentObj: {
                   chooseOtherParent: SPOUSE,
                 },
-                employers: [{
-                  email: 'selfemployed@test.test',
-                }],
+                employers: [
+                  {
+                    email: 'selfemployed@test.test',
+                  },
+                ],
                 isSelfEmployed: YES,
                 isReceivingUnemploymentBenefits: 'no',
                 applicationType: {

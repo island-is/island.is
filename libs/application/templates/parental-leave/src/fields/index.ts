@@ -35,4 +35,4 @@ export { ApplicationType } from './ApplicationType'
 export { SelfEmployed } from './SelfEmployed'
 export { UnEmploymentBenefits } from './UnEmploymentBenefits'
 export { HasMultipleBirths } from './HasMultipleBirths'
-export { default as EmployersOverview } from './EmployersOverview';
+export { default as EmployersOverview } from './EmployersOverview'

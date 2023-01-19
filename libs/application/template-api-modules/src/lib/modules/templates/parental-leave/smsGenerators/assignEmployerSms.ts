@@ -1,6 +1,4 @@
-import {
-  getApplicationExternalData,
-} from '@island.is/application/templates/parental-leave'
+import { getApplicationExternalData } from '@island.is/application/templates/parental-leave'
 import { AssignmentSmsTemplateGenerator } from '../../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -8,7 +6,8 @@ export const generateAssignEmployerApplicationSms: AssignmentSmsTemplateGenerato
   application,
   assignLink,
 ) => {
-  const phoneNumber = getValueViaPath<string>(application.answers, 'contact.phoneNumber') ?? '';
+  const phoneNumber =
+    getValueViaPath<string>(application.answers, 'contact.phoneNumber') ?? ''
   const { applicantName } = getApplicationExternalData(application.externalData)
   const applicantId = application.applicant
 

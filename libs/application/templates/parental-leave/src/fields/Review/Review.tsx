@@ -4,22 +4,13 @@ import has from 'lodash/has'
 
 import { Application, RecordObject, Field } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
-import {
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { ReviewGroup } from '@island.is/application/ui-components'
 
-import {
-  getSelectedChild,
-} from '../../lib/parentalLeaveUtils'
+import { getSelectedChild } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
-import {
-  NO,
-  ParentalRelations,
-  PARENTAL_LEAVE,
-  SINGLE,
-} from '../../constants'
+import { NO, ParentalRelations, PARENTAL_LEAVE, SINGLE } from '../../constants'
 import { SummaryRights } from '../Rights/SummaryRights'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { BaseInformation } from './review-groups/BaseInformation'

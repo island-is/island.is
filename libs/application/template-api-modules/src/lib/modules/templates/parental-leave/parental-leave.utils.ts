@@ -75,24 +75,23 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const {
-    applicantEmail,
-    employers
-  } = getApplicationAnswers(application.answers)
+  const { applicantEmail, employers } = getApplicationAnswers(
+    application.answers,
+  )
 
-  if (isSelfEmployed){
+  if (isSelfEmployed) {
     return [
       {
         email: applicantEmail,
-        nationalRegistryId: application.applicant
-      }
+        nationalRegistryId: application.applicant,
+      },
     ]
   }
 
-  return employers.map(e => ({
-      email: e.email,
-      nationalRegistryId: e.companyNationalRegistryId ?? ''
-    }))
+  return employers.map((e) => ({
+    email: e.email,
+    nationalRegistryId: e.companyNationalRegistryId ?? '',
+  }))
 }
 
 export const getPensionFund = (
@@ -276,7 +275,7 @@ export const transformApplicationToParentalLeaveDTO = (
     applicationType,
     multipleBirths,
     isSelfEmployed,
-    isReceivingUnemploymentBenefits
+    isReceivingUnemploymentBenefits,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -317,9 +316,10 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
-    employers: applicationType === PARENTAL_LEAVE && !reicivingUnemploymentBenefits
-    ? getEmployer(application, selfEmployed)
-    : [],
+    employers:
+      applicationType === PARENTAL_LEAVE && !reicivingUnemploymentBenefits
+        ? getEmployer(application, selfEmployed)
+        : [],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,

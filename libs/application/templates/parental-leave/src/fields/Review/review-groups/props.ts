@@ -1,4 +1,4 @@
-import { Application, FormValue } from "@island.is/application/types"
+import { Application, FormValue } from '@island.is/application/types'
 
 export interface ReviewGroupProps {
   application: Application<FormValue>
@@ -6,4 +6,4 @@ export interface ReviewGroupProps {
   groupHasNoErrors: (ids: string[]) => boolean
   hasError: (id: string) => string
   goToScreen?: (id: string) => void
-};
+}

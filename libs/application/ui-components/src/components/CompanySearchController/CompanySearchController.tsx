@@ -56,7 +56,7 @@ export const CompanySearchController: FC<Props> = ({
     setCompanyIsValid(isValid)
     setValue(id, {
       ...currForm,
-      validEmployer: isValid
+      validEmployer: isValid,
     })
   }, [employerValidData?.isEmployerValid, getValues, id, setValue])
 

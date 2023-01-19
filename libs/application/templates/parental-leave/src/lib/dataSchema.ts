@@ -90,19 +90,22 @@ export const dataSchema = z.object({
         const intValue = parseInt(value)
         return intValue >= 0 && intValue <= 100
       }),
-      isApproved: z.boolean().refine((v) => v).optional(),
+      isApproved: z
+        .boolean()
+        .refine((v) => v)
+        .optional(),
       reviewerNationalRegistryId: z
-      .string()
-      .optional()
-      .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
-        params: errorMessages.employerNationalRegistryId,
-      }),
+        .string()
+        .optional()
+        .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
+          params: errorMessages.employerNationalRegistryId,
+        }),
       companyNationalRegistryId: z
-      .string()
-      .optional()
-      .refine((n) => !n || (kennitala.isValid(n) && kennitala.isCompany(n)), {
-        params: errorMessages.employerNationalRegistryId,
-      }),
+        .string()
+        .optional()
+        .refine((n) => !n || (kennitala.isValid(n) && kennitala.isCompany(n)), {
+          params: errorMessages.employerNationalRegistryId,
+        }),
     }),
   ),
   isReceivingUnemploymentBenefits: z.enum([YES, NO]),
