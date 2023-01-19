@@ -14,6 +14,7 @@ export type VariationProps = {
 
 export type BackgroundProps = VariationProps & {
   variation?: BackgroundVariations
+  namespace: Record<string, string>
 }
 
 export type TextModes = 'light' | 'dark' | 'blueberry'
