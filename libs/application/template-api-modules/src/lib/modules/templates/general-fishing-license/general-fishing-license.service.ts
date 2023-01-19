@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
-import { getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   FishingLicenseService,
   mapFishingLicenseToCode,
@@ -13,6 +13,8 @@ import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { error } from '@island.is/application/templates/general-fishing-license'
 
 @Injectable()
 export class GeneralFishingLicenseService extends BaseTemplateApiService {
@@ -160,6 +162,16 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
 
   async getShips({ auth }: TemplateApiModuleActionProps) {
     const ships = await this.fishingLicenceApi.getShips(auth.nationalId, auth)
+
+    if (!ships || ships.length < 1) {
+      throw new TemplateApiError(
+        {
+          title: error.noShipsFoundErrorTitle,
+          summary: error.noShipsFoundError,
+        },
+        400,
+      )
+    }
     return { ships }
   }
 }
