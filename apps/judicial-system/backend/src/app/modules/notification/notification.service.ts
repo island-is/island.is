@@ -922,7 +922,7 @@ export class NotificationService {
     } else if (
       CaseType.CUSTODY === theCase.type &&
       (CaseDecision.REJECTING === theCase.decision ||
-        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN === theCase.decision)
     ) {
       const prisonWasNotified = await this.hasReceivedNotification(
         theCase.id,
