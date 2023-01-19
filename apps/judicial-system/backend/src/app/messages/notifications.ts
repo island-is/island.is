@@ -334,18 +334,18 @@ export const notifications = {
       description:
         'Texti í pósti til fangeslis sem tilgreinir hversu lengi gæsluvarðhandls er krafist',
     },
-    bodyV2: {
+    bodyV3: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.body_v2',
+        'judicial.system.backend:notifications.prison_court_date_email.body_v3',
       defaultMessage:
-        '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, true {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistunar á viðeignadi stofnun} other {gæsluvarðhald}} til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}.',
+        '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, true {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistunar á viðeignadi stofnun} other {gæsluvarðhald}} til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}. Málsnúmer héraðsdóms er {courtCaseNumber}',
       description: 'Notaður sem beinagrind á í pósti til fangelsis',
     },
     subject: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.subject',
+        'judicial.system.backend:notifications.prison_court_date_email.subjectv2',
       defaultMessage:
-        'Krafa um {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhald}} í vinnslu',
+        '{courtCaseNumber} - Krafa um {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhald}} í vinnslu',
       description: 'Fyrirsögn í pósti til fangeslis þegar krafa fer í vinnslu',
     },
   }),
