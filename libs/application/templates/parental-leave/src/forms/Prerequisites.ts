@@ -395,7 +395,6 @@ export const PrerequisitesForm: Form = buildForm({
                   actions: [
                     {
                       event: 'SUBMIT',
-                      dataTestId: 'select-child',
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
                       condition: (answers) => isParentWithoutBirthParent(answers),

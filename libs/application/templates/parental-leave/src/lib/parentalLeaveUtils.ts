@@ -471,7 +471,7 @@ export const getSelectedChild = (
     `children.data.children[${selectedChildIndex}]`,
     null,
   ) as ChildInformation | null
-
+  
   return selectedChild
 }
 
@@ -589,6 +589,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
+
+  const noPrimaryParentBirthDate = getValueViaPath(answers, 'noPrimaryParent.birthDate') as string
 
   const hasMultipleBirths = getValueViaPath(
     answers,
@@ -815,6 +817,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
+    noPrimaryParentBirthDate,
     hasMultipleBirths,
     multipleBirths,
     multipleBirthsRequestDays: Number(multipleBirthsRequestDays),

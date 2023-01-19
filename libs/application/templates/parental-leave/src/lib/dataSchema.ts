@@ -47,6 +47,7 @@ export const dataSchema = z.object({
     questionOne: z.enum([YES, NO]),
     questionTwo: z.enum([YES, NO]),
     questionThree: z.enum([YES, NO]),
+    birthDate: z.string(),
   }),
   applicant: z.object({
     email: z.string().email(),

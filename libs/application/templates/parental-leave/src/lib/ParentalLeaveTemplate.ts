@@ -138,7 +138,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: 'clearAssignees',
+        entry: ['clearAssignees', 'setBirthDate'],
         exit: [
           'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
@@ -1079,17 +1079,24 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       setBirthDate: assign((context) => {
         const { application } = context
+        const answers = getApplicationAnswers(application.answers)
+        console.log('komst hingað')
+        console.log('ANS -- ', answers)
 
-        // tjékka hvernig umsókn er þetta??
-        // "hasRights": true,
-        // "remainingDays": 180,
-        // "parentalRelation": "primary",
-        // "expectedDateOfBirth": "2023-05-31"
+        let childRes: ChildInformation[] = []
+        let child: ChildInformation = {
+          hasRights: true,
+          remainingDays: 180, 
+          expectedDateOfBirth: answers.noPrimaryParentBirthDate,
+          parentalRelation: ParentalRelations.primary, // á þetta að vera svona?????
+          // primaryParentNationalRegistryId: ''
+        }
 
-        const childRes: ChildInformation[] = []
+        childRes.push(child)
+        console.log('CHILD RES -- ', childRes)
 
-        set(application.externalData, 'children.data.children', childRes)
-      
+        set(application.externalData, 'children.data.children', childRes[0])
+        console.log('EXT DATA -- ', application.externalData)
         return context
       }),
       setPrivatePensionValuesIfUsePrivatePensionFundIsNO: assign((context) => {
