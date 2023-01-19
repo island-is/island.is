@@ -2,7 +2,7 @@ import * as React from 'react'
 import cn from 'classnames'
 import { Box } from '../Box/Box'
 import * as styles from './DraftProgressMeter.css'
-import _ from 'lodash'
+import { times } from 'lodash'
 import { Text } from '../Text/Text'
 
 export type DraftProgressMeterVariant = 'blue' | 'red' | 'rose' | 'mint'
@@ -62,7 +62,7 @@ export const DraftProgressMeter: React.FC<DraftProgressMeterProps> = ({
           display="flex"
           columnGap={1}
         >
-          {_.times(draftTotalSteps ?? 1, (i) => {
+          {times(draftTotalSteps ?? 1, (i) => {
             return (
               <Box
                 key={`draft-progress-meter-${i}`}
