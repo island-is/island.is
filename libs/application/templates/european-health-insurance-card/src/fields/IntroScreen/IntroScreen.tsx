@@ -8,8 +8,8 @@ import { useLocale } from '@island.is/localization'
 
 const IntroScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  console.log(application)
   return (
-
     <Stack space={1}>
       <Box marginBottom={2} marginTop={2}>
         <Text lineHeight="lg">
@@ -21,9 +21,6 @@ const IntroScreen: FC<FieldBaseProps> = ({ application }) => {
         </Text>
       </Box>
     </Stack>
-
-
-
   )
 }
 export default IntroScreen

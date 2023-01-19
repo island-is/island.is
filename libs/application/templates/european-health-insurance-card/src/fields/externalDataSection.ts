@@ -7,7 +7,6 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { NationalRegistryUserApi } from '@island.is/application/types'
-import { IdentityApi } from '../dataProviders'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
@@ -39,19 +38,19 @@ export const externalDataSection = buildSection({
           titleVariant: 'h4',
           space: 'gutter',
         }),
-        buildSubmitField({
-          id: 'getDataSuccess.toDraft',
-          title: 'externalData.dataProvider.submitButton',
-          refetchApplicationAfterSubmit: true,
-          placement: 'footer',
-          actions: [
-            {
-              event: 'SUBMIT',
-              name: 'externalData.dataProvider.submitButton',
-              type: 'primary',
-            },
-          ],
-        }),
+        // buildSubmitField({
+        //   id: 'getDataSuccess.toDraft',
+        //   title: 'externalData.dataProvider.submitButton',
+        //   refetchApplicationAfterSubmit: true,
+        //   placement: 'footer',
+        //   actions: [
+        //     {
+        //       event: 'SUBMIT',
+        //       name: 'externalData.dataProvider.submitButton',
+        //       type: 'primary',
+        //     },
+        //   ],
+        // }),
       ],
     }),
     // Has to be here so that the submit button appears (does not appear if no screen is left).
