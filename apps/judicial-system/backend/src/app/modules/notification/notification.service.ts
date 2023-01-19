@@ -29,7 +29,6 @@ import {
   NotificationType,
   isRestrictionCase,
   SessionArrangements,
-  User,
   isInvestigationCase,
   isIndictmentCase,
   CaseState,
@@ -72,6 +71,7 @@ import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { notificationModuleConfig } from './notification.config'
 import { Defendant, DefendantService } from '../defendant'
+import { User } from '../user'
 
 interface Attachment {
   filename: string

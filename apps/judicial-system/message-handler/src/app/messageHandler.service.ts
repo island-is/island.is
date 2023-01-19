@@ -17,6 +17,10 @@ import { NotificationType } from '@island.is/judicial-system/types'
 import { InternalDeliveryService } from './internalDelivery.service'
 import { appModuleConfig } from './app.config'
 
+function assertUnreachable(x: never): never {
+  throw new Error('Unexpected object: ' + x)
+}
+
 @Injectable()
 export class MessageHandlerService implements OnModuleDestroy {
   private running!: boolean
@@ -137,8 +141,18 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.RULING },
         )
         break
+      case MessageType.SEND_MODIFIED_NOTIFICATION: {
+        const userMessage = message as UserMessage
+        handled = await this.internalDeliveryService.deliver(
+          userMessage.caseId,
+          'notification',
+          { type: NotificationType.MODIFIED, userId: userMessage.userId },
+        )
+        break
+      }
       default:
         this.logger.error('Unknown message type', { msg: message })
+        return assertUnreachable(message.type)
     }
 
     this.logger.debug(`Message ${handled ? 'handled' : 'not handled'}`, {
