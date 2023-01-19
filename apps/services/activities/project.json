@@ -1,0 +1,75 @@
+{
+  "root": "apps/services/activities",
+  "sourceRoot": "apps/services/activities/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/activities",
+        "main": "apps/services/activities/src/main.ts",
+        "tsConfig": "apps/services/activities/tsconfig.app.json",
+        "assets": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-activities:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/services/activities/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/services/activities"],
+      "options": {
+        "jestConfig": "apps/services/activities/jest.config.js",
+        "passWithNoTests": false
+      }
+    },
+    "dev-services": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "docker-compose up -d",
+        "cwd": "apps/services/activities"
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/activities/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/activities/tsconfig.app.json apps/services/activities/src/buildOpenApi.ts"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate",
+        "cwd": "apps/services/activities"
+      }
+    },
+    "migrate/generate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/services/activities"
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": []
+}

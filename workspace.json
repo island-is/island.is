@@ -265,6 +265,7 @@
     "service-portal-licenses": "libs/service-portal/licenses",
     "service-portal-settings-personal-information": "libs/service-portal/settings/personal-information",
     "service-portal-vehicles": "libs/service-portal/vehicles",
+    "services-activities": "apps/services/activities",
     "services-auth-admin-api": "apps/services/auth/admin-api",
     "services-auth-delegation-api": "apps/services/auth/delegation-api",
     "services-auth-ids-api": "apps/services/auth/ids-api",
