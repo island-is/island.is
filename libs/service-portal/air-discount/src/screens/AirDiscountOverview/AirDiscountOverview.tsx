@@ -214,12 +214,12 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
                     heading={item.user.name}
                     text={formatMessage(m.flight) + ': ' + code.flightDesc}
                     secondaryText={code.code}
-                    eyebrow={
-                      formatMessage(m.validTo) +
-                      ': ' +
-                      formatDateWithTime(code.validUntil)
-                    }
-                    backgroundColor="purple"
+                    tag={{
+                      label:
+                        formatMessage(m.validTo) +
+                        ': ' +
+                        formatDateWithTime(code.validUntil),
+                    }}
                     cta={{
                       label: isCopied
                         ? formatMessage(m.copied)
