@@ -65,13 +65,12 @@ import {
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
-import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
+import { Defendant, DefendantService } from '../defendant'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { notificationModuleConfig } from './notification.config'
-import { Defendant, DefendantService } from '../defendant'
 
 interface Attachment {
   filename: string
@@ -87,7 +86,6 @@ export class NotificationService {
     @Inject(notificationModuleConfig.KEY)
     private readonly config: ConfigType<typeof notificationModuleConfig>,
     private readonly courtService: CourtService,
-    private readonly awsS3Service: AwsS3Service,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
@@ -761,7 +759,7 @@ export class NotificationService {
             )}">`,
             linkEnd: '</a>',
           })
-        : this.formatMessage(notifications.signedRuling.defenderBodyV2, {
+        : this.formatMessage(notifications.signedRuling.defenderBodyV3, {
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
@@ -772,9 +770,6 @@ export class NotificationService {
               theCase.id,
             )}">`,
             linkEnd: '</a>',
-            signedVerdictAvailableInS3: await this.awsS3Service.objectExists(
-              `generated/${theCase.id}/ruling.pdf`,
-            ),
           }),
       defenderName ?? '',
       defenderEmail ?? '',
@@ -875,7 +870,7 @@ export class NotificationService {
         promises.push(
           this.sendRulingEmailNotificationToDefender(
             theCase,
-            undefined && defendant.defenderNationalId, // Temporarily dicable links in defender emails for indictments
+            defendant.defenderNationalId,
             defendant.defenderName,
             defendant.defenderEmail,
           ),
