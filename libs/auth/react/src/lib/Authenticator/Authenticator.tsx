@@ -195,7 +195,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         />
         <Route
           path={authSettings.redirectPathSilent as string}
-          element={OidcSilentSignIn}
+          element={<OidcSilentSignIn />}
         />
         <Route
           path="*"
