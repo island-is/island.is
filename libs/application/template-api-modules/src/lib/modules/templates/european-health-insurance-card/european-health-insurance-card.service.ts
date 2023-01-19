@@ -14,41 +14,41 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   constructor(
-    @Inject(EUROPEAN_HEALTH_INSURANCE_CARD_CONFIG)
-    private ehicConfig: EuropeanHealtInsuranceCardConfig,
-    private nationalRegistryApi: NationalRegistryClientService,
+    // @Inject(EUROPEAN_HEALTH_INSURANCE_CARD_CONFIG)
+    // private ehicConfig: EuropeanHealtInsuranceCardConfig,
+    // private nationalRegistryApi: NationalRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
   }
 
-  nationalRegistryApiWithAuth(auth: Auth) {
-    return this.nationalRegistryApi.withManualAuth(auth)
-  }
+  // nationalRegistryApiWithAuth(auth: Auth) {
+  //   return this.nationalRegistryApi.withManualAuth(auth)
+  // }
 
-  async getNationalRegistryPerson(
-    user: User,
-    nationalId: string,
-  ): Promise<unknown | null> {
-    const person = await this.nationalRegistryApiWithAuth(user).getIndividual(
-      nationalId,
-    )
+  // async getNationalRegistryPerson(
+  //   user: User,
+  //   nationalId: string,
+  // ): Promise<unknown | null> {
+  //   const person = await this.nationalRegistryApiWithAuth(user).getIndividual(
+  //     nationalId,
+  //   )
 
-    return (
-      person && {
-        nationalId: person.nationalId,
-        fullName: person.name,
-        address: person.legalDomicile && {
-          streetName: person.legalDomicile.streetAddress,
-          postalCode: person.legalDomicile.postalCode,
-          city: person.legalDomicile.locality,
-          municipalityCode: person.legalDomicile.municipalityNumber,
-        },
-        genderCode: person.genderCode,
-      }
-    )
-  }
+  //   return (
+  //     person && {
+  //       nationalId: person.nationalId,
+  //       fullName: person.name,
+  //       address: person.legalDomicile && {
+  //         streetName: person.legalDomicile.streetAddress,
+  //         postalCode: person.legalDomicile.postalCode,
+  //         city: person.legalDomicile.locality,
+  //         municipalityCode: person.legalDomicile.municipalityNumber,
+  //       },
+  //       genderCode: person.genderCode,
+  //     }
+  //   )
+  // }
 
   // async getSpouse(user: User, nationalId: string): Promise<UserSpouse | null> {
   //   const spouse = await this.nationalRegistryApiWithAuth(

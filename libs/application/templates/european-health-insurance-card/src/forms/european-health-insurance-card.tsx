@@ -1,7 +1,14 @@
-import { Comparators, Form, FormModes } from '@island.is/application/types'
+import {
+  Comparators,
+  Form,
+  FormModes,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 import {
   buildCompanySearchField,
   buildCustomField,
+  buildDataProviderItem,
+  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
@@ -11,15 +18,18 @@ import {
 
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import styles from './european-health-insurance-card.module.scss'
+import { externalDataSection } from '../fields/externalDataSection'
 
 /* eslint-disable-next-line */
-export interface EuropeanHealthInsuranceCardProps { }
+export interface EuropeanHealthInsuranceCardProps {}
 
 export const EuropeanHealthInsuranceCard: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
   mode: FormModes.DRAFT,
   children: [
+    externalDataSection,
+
     buildSection({
       id: 'intro',
       title: e.introScreen.sectionLabel,
@@ -29,9 +39,10 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
             id: 'introScreen',
             title: e.introScreen.sectionTitle,
             component: 'IntroScreen',
-          }, {
-          subTitle: e.introScreen.sectionDescription,
-        },
+          },
+          {
+            subTitle: e.introScreen.sectionDescription,
+          },
         ),
       ],
     }),
@@ -73,7 +84,6 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
         }),
       ],
     }),
-
 
     buildSection({
       id: 'applicationReviewSection',

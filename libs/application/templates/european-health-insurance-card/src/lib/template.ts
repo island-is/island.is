@@ -7,6 +7,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 
 import { DefaultStateLifeCycle } from '@island.is/application/core'
@@ -64,7 +65,9 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              api: [NationalRegistryUserApi],
               write: 'all',
+              read: 'all',
               delete: true,
             },
           ],
