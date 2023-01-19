@@ -118,7 +118,8 @@ export class LicenseService {
   ): Promise<VerifyLicenseResponse> {
     const service = await this.clientFactory(inputData.licenseId)
 
-    const verifyData = await service.verify(inputData.barcodeData)
+    const { barcodeData, nationalId } = inputData
+    const verifyData = await service.verify(barcodeData, nationalId)
 
     if (verifyData.ok) {
       return { valid: verifyData.data.valid }

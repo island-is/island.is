@@ -25,7 +25,10 @@ export interface GenericLicenseClient {
     nationalId: string,
   ) => Promise<Result<Pass | undefined>>
   revoke: (queryId: string) => Promise<Result<RevokePassData>>
-  verify: (inputData: string) => Promise<Result<VerifyPassData>>
+  verify: (
+    inputData: string,
+    nationalId: string,
+  ) => Promise<Result<VerifyPassData>>
 }
 
 export const CLIENT_FACTORY = 'client-factory'

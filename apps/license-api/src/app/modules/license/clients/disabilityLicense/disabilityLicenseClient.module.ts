@@ -15,4 +15,4 @@ import { DisabilityLicenseClientService } from './disabilityLicenseClient.servic
   providers: [DisabilityLicenseClientService],
   exports: [DisabilityLicenseClientService],
 })
-export class DisabilityLicenseClientModule {}
+export class DisabilityLicenseApiClientModule {}

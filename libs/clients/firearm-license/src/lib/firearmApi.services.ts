@@ -21,11 +21,33 @@ export class FirearmApi {
     return licenseInfo
   }
 
+  public async getVerificationLicenseInfo(
+    targetNationalId: string,
+  ): Promise<LicenseInfo | null> {
+    const licenseInfo = await this.api
+      .apiFirearmApplicationWithAPIKeyLicenseInfoSsnGet({
+        ssn: targetNationalId,
+      })
+      .catch(handle404)
+    return licenseInfo
+  }
+
+  public async getVerificationPropertyInfo(
+    targetNationalId: string,
+  ): Promise<LicenseInfo | null> {
+    const propertyInfo = await this.api
+      .apiFirearmApplicationWithAPIKeyPropertyInfoSsnGet({
+        ssn: targetNationalId,
+      })
+      .catch(handle404)
+    return propertyInfo
+  }
+
   public async getPropertyInfo(
     user: User,
   ): Promise<FirearmPropertyList | null> {
     const propertyInfo = await this.firearmApiWithAuth(user)
-      .apiFirearmApplicationPropertyInfoGet({ pageNumber: 1, pageSize: 50 })
+      .apiFirearmApplicationPropertyInfoGet()
       .catch(handle404)
     return propertyInfo
   }
