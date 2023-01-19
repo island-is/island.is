@@ -28,6 +28,11 @@ const Mannaudstorg = dynamic(
   },
 )
 
+const Sjukratryggingar = dynamic(
+  () => import('./Variations/Sjukratryggingar/Sjukratryggingar'),
+  { ssr: false },
+)
+
 export const Background = ({ variation, small }: BackgroundProps) => {
   const [component, setComponent] = useState<ReactNode | null>(null)
 
@@ -43,6 +48,10 @@ export const Background = ({ variation, small }: BackgroundProps) => {
         break
       case 'mannaudstorg':
         setComponent(<Mannaudstorg />)
+        break
+      case 'sjukratryggingar':
+      case 'icelandic-health-insurance':
+        setComponent(<Sjukratryggingar />)
         break
       case 'default':
       default:

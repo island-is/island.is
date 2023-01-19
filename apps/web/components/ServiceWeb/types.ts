@@ -1,8 +1,11 @@
 export type BackgroundVariations =
   | 'syslumenn'
+  | 'district-commissioner'
   | 'stafraent-island'
   | 'mannaudstorg'
   | 'default'
+  | 'sjukratryggingar'
+  | 'icelandic-health-insurance'
   | string
 
 export type VariationProps = {
@@ -13,7 +16,7 @@ export type BackgroundProps = VariationProps & {
   variation?: BackgroundVariations
 }
 
-export type TextModes = 'light' | 'dark'
+export type TextModes = 'light' | 'dark' | 'blueberry'
 
 export type Options = {
   textMode: TextModes
