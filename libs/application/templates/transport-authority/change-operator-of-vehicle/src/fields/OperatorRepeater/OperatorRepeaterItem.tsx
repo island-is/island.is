@@ -78,6 +78,7 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
             id={phoneField}
             name={phoneField}
             type="tel"
+            format="###-####"
             label={formatMessage(information.labels.operator.phone)}
             error={errors && getErrorViaPath(errors, phoneField)}
             backgroundColor="blue"
