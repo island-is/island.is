@@ -284,7 +284,7 @@ export const transformApplicationToParentalLeaveDTO = (
 
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
-  const reicivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
+  const receivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
 
   const testData: string = onlyValidate!.toString()
 
@@ -317,7 +317,7 @@ export const transformApplicationToParentalLeaveDTO = (
     },
     periods,
     employers:
-      applicationType === PARENTAL_LEAVE && !reicivingUnemploymentBenefits
+      applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits
         ? getEmployer(application, selfEmployed)
         : [],
     status: 'In Progress',

@@ -273,6 +273,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     // send confirmation sms to employer
     try {
       if (
+        // TODO: fix for multiple employers
         employers[0].phoneNumber &&
         this.checkIfPhoneNumberIsGSM(employers[0].phoneNumber)
       ) {
