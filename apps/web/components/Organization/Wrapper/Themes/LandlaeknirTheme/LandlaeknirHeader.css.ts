@@ -1,27 +1,31 @@
 import { style } from '@vanilla-extract/css'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
+
+const backgroundUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/1FB32FjyMGC1PfpDfB2Kj1/257dc1108da254359f8988dfef536936/Pattern_PP_Pattern_Circle_Blue_1.png'
+const illustrationUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg'
 
 export const headerBg = style({
   height: 385,
   marginTop: -130,
   paddingTop: 130,
-  backgroundRepeat: 'no-repeat',
-  backgroundPositionX: '80%',
-  backgroundPositionY: '500%',
-  borderBottom: `8px solid ${theme.color.blue600}`,
+  backgroundRepeat: 'no-repeat, no-repeat',
   ...themeUtils.responsiveStyle({
-    md: {
-      backgroundPositionX: '95%',
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
+    xs: {
+      backgroundSize: 'cover',
+      backgroundImage: `url(${backgroundUrl})`,
     },
     lg: {
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
+      backgroundPositionY: 'bottom',
+      backgroundPositionX: '120%, 0',
+      backgroundSize: 'unset',
+      backgroundImage: `url(${illustrationUrl}), url(${backgroundUrl})`,
     },
     xl: {
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
+      backgroundPosition: 'bottom right',
+      backgroundSize: 'contain, cover',
+      backgroundImage: `url(${illustrationUrl}), url(${backgroundUrl})`,
     },
   }),
 })

@@ -41,6 +41,7 @@ import {
   getMultipleBirthRequestDays,
   getMinimumStartDate,
   getLastDayOfLastMonth,
+  allowOtherParentToUsePersonalAllowance,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -144,14 +145,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   component: 'OtherParent',
                   id: 'otherParentObj.chooseOtherParent',
-                  // childInputIds: [
-                  //   'transferRights',
-                  //   'otherParentRightOfAccess',
-                  //   'requestRights.isRequestingRights',
-                  //   'requestRights.requestDays',
-                  //   'giveRights.isGivingRights',
-                  //   'giveRights.giveDays',
-                  // ],
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                 }),
                 buildTextField({
@@ -428,7 +421,8 @@ export const ParentalLeaveForm: Form = buildForm({
 
                 return (
                   selectedChild?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                    ParentalRelations.primary &&
+                  allowOtherParentToUsePersonalAllowance(answers)
                 )
               },
               children: [

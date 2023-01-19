@@ -22,17 +22,15 @@ export const ComplaintConfirmation: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Box marginTop={3}>
-      <Text>
-        {formatMessage(confirmation.labels.description, {
-          link: (
-            <Link href={formatMessage(confirmation.labels.link)} newTab>
-              <span className={styles.link}>
-                {formatMessage(confirmation.labels.linkName)}
-              </span>
-            </Link>
-          ),
-        })}
-      </Text>
+      {formatMessage(confirmation.labels.description, {
+        link: (
+          <Link href={formatMessage(confirmation.labels.link)} newTab>
+            <span className={styles.link}>
+              {formatMessage(confirmation.labels.linkName)}
+            </span>
+          </Link>
+        ),
+      })}
       <Box marginTop={5}>
         <Button
           colorScheme="default"
