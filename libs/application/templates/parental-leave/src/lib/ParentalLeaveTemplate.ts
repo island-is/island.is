@@ -521,40 +521,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DraftRequiresAction').then((val) =>
-                  Promise.resolve(val.DraftRequiresAction),
-                ),
-              read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.EDIT]: { target: States.ADDITIONAL_DOCUMENT_EDITS },
-        },
-      },
-      [States.ADDITIONAL_DOCUMENT_EDITS]: {
-        entry: 'assignToVMST',
-        meta: {
-          status: 'inprogress',
-          name: States.ADDITIONAL_DOCUMENT_EDITS,
-          actionCard: {
-            description: statesMessages.additionalDocumentRequiredDescription,
-          },
-          lifecycle: pruneAfterDays(970),
-          progress: 0.5,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
                 import('../forms/UploadAdditionalFiles').then((val) =>
                   Promise.resolve(val.UploadAdditionalFiles),
                 ),
