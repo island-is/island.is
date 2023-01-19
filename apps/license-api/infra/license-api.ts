@@ -60,3 +60,4 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
+    .grantNamespaces('nginx-ingress-internal')
