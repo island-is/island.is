@@ -13,7 +13,7 @@ import {
 import { RepeaterProps } from '@island.is/application/types'
 import { States } from '../../constants'
 
-const PeriodSynchronization: FC<RepeaterProps> = ({
+const UploadAdditionalFilesInfoScreen: FC<RepeaterProps> = ({
   application,
   setRepeaterItems,
   setFieldLoadingState,
@@ -54,4 +54,4 @@ const PeriodSynchronization: FC<RepeaterProps> = ({
   )
 }
 
-export default PeriodSynchronization
+export default UploadAdditionalFilesInfoScreen
