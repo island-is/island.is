@@ -1235,9 +1235,9 @@ license-api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: 'license-api-callback-xrd.internal.island.is'
+        - host: 'license-api-callback-xrd.island.is'
           paths:
             - '/license-api'
   namespace: 'license-api'
