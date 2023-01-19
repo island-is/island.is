@@ -116,7 +116,7 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     })
   })
 
-  // TODO: Run test wehen ready to send notifications
+  // TODO: Run test when ready to send notifications
   describe.skip('no national id', () => {
     beforeEach(async () => {
       await givenWhenThen(caseId, defendantId, { userId }, user, theCase, {
