@@ -1,22 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { GenericLicenseClient } from '../../license.types'
-import { FirearmApi } from '@island.is/clients/firearm-license'
+import { OpenFirearmApi } from '@island.is/clients/firearm-license'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  Pass,
-  PassDataInput,
-  Result,
-  RevokePassData,
   SmartSolutionsApi,
+  PassDataInput,
+  Pass,
+  RevokePassData,
   VerifyPassData,
+  Result,
 } from '@island.is/clients/smartsolutions'
 
 @Injectable()
 export class FirearmLicenseApiClientService implements GenericLicenseClient {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private firearmApi: FirearmApi,
+    private firearmApi: OpenFirearmApi,
     private smartApi: SmartSolutionsApi,
   ) {}
 
@@ -84,7 +84,6 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         },
       }
     }
-
     //now we compare the data
 
     return {

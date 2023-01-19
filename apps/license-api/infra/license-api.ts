@@ -11,6 +11,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     .env({
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
+      RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID',
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
