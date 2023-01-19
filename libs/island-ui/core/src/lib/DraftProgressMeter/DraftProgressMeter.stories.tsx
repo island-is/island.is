@@ -2,13 +2,13 @@ import React from 'react'
 import { DraftProgressMeter } from './DraftProgressMeter'
 
 export default {
-  title: 'Components/ProgressMeter',
+  title: 'Components/DraftProgressMeter',
   component: DraftProgressMeter,
   parameters: {
     docs: {
       description: {
         component:
-          'A progress meter that shows progress of a number from 0 to 1',
+          'A progress meter that shows the progress of a multi-step process.',
       },
     },
   },
