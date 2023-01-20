@@ -8,6 +8,7 @@ import { GET_OPERATOR_INFO } from '../../graphql/queries'
 import { information } from '../../lib/messages'
 import { OldOperatorInformation } from '../../shared'
 import { OldOperatorItem } from './OldOperatorItem'
+import { useLocale } from '@island.is/localization'
 
 export const OldOperators: FC<FieldBaseProps> = (props) => {
   const { application, setFieldLoadingState } = props
