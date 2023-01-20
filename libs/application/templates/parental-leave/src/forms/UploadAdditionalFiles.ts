@@ -31,7 +31,6 @@ export const UploadAdditionalFiles: Form = buildForm({
         buildMultiField({
           id: 'additionalDocumentsScreen',
           title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
-          description: parentalLeaveFormMessages.confirmation.description,
           children: [
             buildFileUploadField({
               id: 'fileUpload.additionalDocuments',
@@ -49,12 +48,16 @@ export const UploadAdditionalFiles: Form = buildForm({
             }),
             buildSubmitField({
               id: 'additionalDocumentsSubmit',
-              title: 'submit',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .additionalDocumentsEditSubmit,
               placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  name: 'Submit',
+                  name:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .additionalDocumentsEditSubmit,
                   type: 'primary',
                   event: 'APPROVE',
                 },
