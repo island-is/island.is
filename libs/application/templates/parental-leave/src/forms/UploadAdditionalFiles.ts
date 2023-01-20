@@ -36,7 +36,7 @@ export const UploadAdditionalFiles: Form = buildForm({
               id: 'fileUpload.additionalDocuments',
               title: parentalLeaveFormMessages.attachmentScreen.title,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.genericDescription,
+                parentalLeaveFormMessages.attachmentScreen.description,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,

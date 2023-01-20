@@ -849,8 +849,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod', 'setAdditionalFileSentVariable'],
-        exit: ['clearTemp'],
+        entry: ['assignToVMST', 'removeNullPeriod'],
+        exit: ['clearTemp', 'setAdditionalFileSentVariable'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
