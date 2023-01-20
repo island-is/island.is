@@ -181,9 +181,9 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
       )}
 
       {!loading && !error && filteredVehicles.length > 0 && (
-        <Box marginBottom={3} display="flex" flexDirection="row">
+        <Box marginBottom={3} display="flex" flexWrap="wrap">
           {modalFlagEnabled && !loading && ownershipPdf && (
-            <Box marginRight={2}>
+            <Box marginRight={2} marginBottom={[1, 1, 1, 0]}>
               <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
                 onGetExcel={() =>
@@ -197,7 +197,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
               />
             </Box>
           )}
-          <Box marginRight={2}>
+          <Box marginRight={2} marginBottom={[1, 1, 1, 0]}>
             <a
               href="/app/skilavottord/my-cars"
               target="_blank"
@@ -213,7 +213,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
               </Button>
             </a>
           </Box>
-          <Box>
+          <Box marginBottom={[1, 1, 1, 0]}>
             <a
               href={SAMGONGUSTOFA_LINK}
               target="_blank"

@@ -1,5 +1,5 @@
 import isNumber from 'lodash/isNumber'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
 import {
@@ -224,7 +224,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={6}>
+      <Box marginBottom={[2, 2, 6]}>
         <GridRow>
           <GridColumn span={['9/9', '9/9', '6/8', '6/8']}>
             <Stack space={2}>
@@ -254,7 +254,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <GridRow marginTop={6}>
             <GridColumn span="9/9">
               <Box display="flex" justifyContent="flexStart" printHidden>
-                <Box paddingRight={2}>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <Button
                     colorScheme="default"
                     icon="receipt"
@@ -267,7 +267,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
                 </Box>
-                <Box paddingRight={2}>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <a
                     href={SAMGONGUSTOFA_LINK}
                     target="_blank"
