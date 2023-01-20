@@ -5,9 +5,14 @@ import { DigitalTachographDriversCardClient } from '@island.is/clients/transport
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleMiniDto, VehicleSearchApi } from '@island.is/clients/vehicles'
-import { OwnerChangeAnswers, CheckTachoNetInput } from './graphql/dto'
+import {
+  OwnerChangeAnswers,
+  OperatorChangeAnswers,
+  CheckTachoNetInput,
+} from './graphql/dto'
 import {
   OwnerChangeValidation,
+  OperatorChangeValidation,
   CheckTachoNetExists,
   VehiclesCurrentVehicleWithOwnerchangeChecks,
   VehicleOwnerchangeChecksByPermno,
@@ -77,6 +82,36 @@ export class TransportAuthorityApi {
               : true,
         })),
       },
+    )
+
+    return result
+  }
+
+  async validateApplicationForOperatorChange(
+    user: User,
+    answers: OperatorChangeAnswers,
+  ): Promise<OperatorChangeValidation | null> {
+    // No need to continue with this validation in user is not owner
+    // (only time application data changes is on state change from that role)
+    const ownerSsn = answers?.owner?.nationalId
+    if (user.nationalId !== ownerSsn) {
+      return null
+    }
+
+    const permno = answers?.pickVehicle?.plate
+
+    const operators = (answers?.operators || []).map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        answers.operators && answers.operators?.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
+
+    const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
+      user,
+      permno,
+      operators,
     )
 
     return result

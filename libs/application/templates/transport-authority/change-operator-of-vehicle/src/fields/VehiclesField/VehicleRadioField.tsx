@@ -22,6 +22,7 @@ import { applicationCheck, information, error } from '../../lib/messages'
 interface Option {
   value: string
   label: React.ReactNode
+  disabled?: boolean
 }
 
 interface VehicleSearchFieldProps {
@@ -138,6 +139,7 @@ export const VehicleRadioField: FC<
             )}
           </Box>
         ),
+        disabled: disabled,
       })
     }
     return options

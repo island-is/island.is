@@ -13,6 +13,7 @@ import {
   OwnerChangeAnswers,
   CheckTachoNetInput,
   GetCurrentVehiclesInput,
+  OperatorChangeAnswers,
 } from './dto'
 import {
   OwnerChangeValidation,
@@ -21,6 +22,7 @@ import {
   VehicleOwnerchangeChecksByPermno,
   VehiclesCurrentVehicleWithOperatorChangeChecks,
   VehicleOperatorChangeChecksByPermno,
+  OperatorChangeValidation,
 } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -35,6 +37,18 @@ export class MainResolver {
     @Args('answers') answers: OwnerChangeAnswers,
   ) {
     return this.transportAuthorityApi.validateApplicationForOwnerChange(
+      user,
+      answers,
+    )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => OperatorChangeValidation, { nullable: true })
+  vehicleOperatorChangeValidation(
+    @CurrentUser() user: User,
+    @Args('answers') answers: OperatorChangeAnswers,
+  ) {
+    return this.transportAuthorityApi.validateApplicationForOperatorChange(
       user,
       answers,
     )
