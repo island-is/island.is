@@ -48,93 +48,80 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
     <div className={styles.placeholder}>
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header className={styles.header} style={{ top: position }}>
-        <Box width="full">
-          <GridContainer>
-            <GridColumn span="12/12">
+        <Box width="full" paddingX={6}>
+          {/* <GridContainer>
+            <GridColumn span="12/12"> */}
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            width="full"
+          >
+            <Link to={ServicePortalPath.MinarSidurRoot}>
+              <FocusableBox component="div">
+                <Hidden above="sm">
+                  <Logo width={24} height={22} iconOnly id="header-mobile" />
+                </Hidden>
+                <Hidden below="md">
+                  <Logo width={136} height={22} id="header" />
+                </Hidden>
+              </FocusableBox>
+            </Link>
+            <Hidden print>
               <Box
                 display="flex"
-                justifyContent="spaceBetween"
                 alignItems="center"
-                width="full"
+                flexWrap="nowrap"
+                marginLeft={[1, 1, 2]}
               >
-                <Link to={ServicePortalPath.MinarSidurRoot}>
-                  <FocusableBox component="div">
-                    <Hidden above="sm">
-                      <Logo
-                        width={24}
-                        height={22}
-                        iconOnly
-                        id="header-mobile"
-                      />
-                    </Hidden>
-                    <Hidden below="md">
-                      <Logo width={136} height={22} id="header" />
-                    </Hidden>
-                  </FocusableBox>
-                </Link>
-                <Hidden print>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    flexWrap="nowrap"
-                    marginLeft={[1, 1, 2]}
-                  >
-                    <Box marginRight={[1, 1, 2]}>
-                      <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
-                        <Button
-                          variant="utility"
-                          colorScheme="white"
-                          size="small"
-                          icon="mail"
-                          iconType="outline"
-                        >
-                          {formatMessage(m.documents)}
-                        </Button>
-                      </Link>
+                <Box marginRight={[1, 1, 2]}>
+                  <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
+                    <Button
+                      variant="utility"
+                      colorScheme="white"
+                      size="small"
+                      icon="mail"
+                      iconType="outline"
+                    >
+                      {formatMessage(m.documents)}
+                    </Button>
+                  </Link>
+                </Box>
+                <UserMenu
+                  fullscreen
+                  setUserMenuOpen={setUserMenuOpen}
+                  userMenuOpen={userMenuOpen}
+                />
+
+                {userMenuOpen && (
+                  <Hidden above="md">
+                    <Box display="flex" flexDirection="row" alignItems="center">
+                      {user && <UserLanguageSwitcher user={user} />}
+                      {closeButton()}
                     </Box>
-                    <UserMenu
-                      fullscreen
-                      setUserMenuOpen={setUserMenuOpen}
-                      userMenuOpen={userMenuOpen}
+                  </Hidden>
+                )}
+
+                {!sideMenuOpen ? (
+                  <Box marginLeft={[1, 2]}>
+                    <Button
+                      variant="utility"
+                      colorScheme="white"
+                      icon="menu"
+                      onClick={() => setSideMenuOpen(true)}
                     />
-
-                    {userMenuOpen && (
-                      <Hidden above="md">
-                        <Box
-                          display="flex"
-                          flexDirection="row"
-                          alignItems="center"
-                        >
-                          {user && <UserLanguageSwitcher user={user} />}
-                          {closeButton()}
-                        </Box>
-                      </Hidden>
-                    )}
-
-                    {!sideMenuOpen ? (
-                      <Box marginLeft={[1, 2]}>
-                        <Button
-                          variant="utility"
-                          colorScheme="white"
-                          icon="menu"
-                          onClick={() => setSideMenuOpen(true)}
-                        />
-                      </Box>
-                    ) : (
-                      <Box
-                        display="flex"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        {user && <UserLanguageSwitcher user={user} />}
-                        {closeButton()}
-                      </Box>
-                    )}
                   </Box>
-                </Hidden>
+                ) : (
+                  <Box display="flex" flexDirection="row" alignItems="center">
+                    {user && <UserLanguageSwitcher user={user} />}
+                    {closeButton()}
+                  </Box>
+                )}
               </Box>
-            </GridColumn>
-          </GridContainer>
+            </Hidden>
+          </Box>
+          {/* </GridColumn>
+          </GridContainer> */}
         </Box>
       </header>
     </div>
