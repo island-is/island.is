@@ -28,7 +28,18 @@ export class VehiclePlateOrderingClient {
     }))
   }
 
-  public async orderPlates(auth: User, plateOrder: PlateOrder): Promise<void> {
+  public async checkIfPlateOrderExists(
+    auth: User,
+    permno: string,
+  ): Promise<boolean> {
+    //TODOx waiting for endpoint
+    return true
+  }
+
+  public async savePlateOrders(
+    auth: User,
+    plateOrder: PlateOrder,
+  ): Promise<void> {
     await this.plateOrderingApiWithAuth(auth).orderplatesPost({
       apiVersion: '1.0',
       apiVersion2: '1.0',

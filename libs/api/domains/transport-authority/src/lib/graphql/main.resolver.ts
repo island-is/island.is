@@ -21,6 +21,8 @@ import {
   VehicleOwnerchangeChecksByPermno,
   VehiclesCurrentVehicleWithOperatorChangeChecks,
   VehicleOperatorChangeChecksByPermno,
+  VehiclesCurrentVehicleWithPlateOrderChecks,
+  VehiclePlateOrderChecksByPermno,
 } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -108,6 +110,38 @@ export class MainResolver {
     @CurrentUser() user: User,
   ) {
     return await this.transportAuthorityApi.getVehicleOperatorChangeChecksByPermno(
+      user,
+      permno,
+    )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => [VehiclesCurrentVehicleWithPlateOrderChecks], {
+    name: 'currentVehiclesWithPlateOrderChecks',
+    nullable: true,
+  })
+  async getCurrentVehiclesWithPlateOrderChecks(
+    @Args('input') input: GetCurrentVehiclesInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getCurrentVehiclesWithPlateOrderChecks(
+      user,
+      input.showOwned,
+      input.showCoOwned,
+      input.showOperated,
+    )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => VehiclePlateOrderChecksByPermno, {
+    name: 'vehiclePlateOrderChecksByPermno',
+    nullable: true,
+  })
+  async getVehiclePlateOrderChecksByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getVehiclePlateOrderChecksByPermno(
       user,
       permno,
     )
