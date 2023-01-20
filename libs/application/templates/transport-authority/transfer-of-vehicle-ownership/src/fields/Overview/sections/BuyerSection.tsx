@@ -5,6 +5,7 @@ import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { information, overview } from '../../../lib/messages'
+import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../types'
 import { hasReviewerApproved } from '../../../utils'
@@ -29,7 +30,9 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   return (
     <ReviewGroup
       editMessage={
-        isBuyer && !hasReviewerApproved(reviewerNationalId, answers)
+        isBuyer &&
+        !hasReviewerApproved(reviewerNationalId, answers) &&
+        application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addCoOwnerAndOperatorButton)
           : undefined
       }
