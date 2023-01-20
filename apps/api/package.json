@@ -50,7 +50,7 @@
     "@nestjs/terminus": "7.0.1",
     "@nestjs/websockets": "^8.0.0",
     "auth-nest-tools": "workspace:^",
-    "class-transformer/storage": "0.5.1",
+    "class-transformer": "0.3.1",
     "clients": "workspace:^",
     "cms": "workspace:^",
     "cms-translations": "workspace:^",
