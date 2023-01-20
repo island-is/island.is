@@ -87,10 +87,6 @@ export const serviceCenters: ServiceCenter[] = [
     number: 6400,
   },
   {
-    name: 'Seyðisfjörður',
-    number: 7000,
-  },
-  {
     name: 'Fjarðabyggð',
     number: 7300,
   },
@@ -109,14 +105,6 @@ export const serviceCenters: ServiceCenter[] = [
   {
     name: 'Kjósarhreppur',
     number: 1606,
-  },
-  {
-    name: 'Sandgerði',
-    number: 2503,
-  },
-  {
-    name: 'Sveitarfélagið Garður',
-    number: 2504,
   },
   {
     name: 'Sveitarfélagið Vogar',
@@ -215,18 +203,6 @@ export const serviceCenters: ServiceCenter[] = [
     number: 7505,
   },
   {
-    name: 'Borgarfjarðarhreppur',
-    number: 7509,
-  },
-  {
-    name: 'Djúpavogshreppur',
-    number: 7617,
-  },
-  {
-    name: 'Fljótsdalshérað',
-    number: 7620,
-  },
-  {
     name: 'Sveitarfélagið Hornafjörður',
     number: 7708,
   },
@@ -297,6 +273,14 @@ export const serviceCenters: ServiceCenter[] = [
   {
     name: 'Langanesbyggð',
     number: 6710,
+  },
+  {
+    name: 'Múlaþing',
+    number: 7400,
+  },
+  {
+    name: 'Suðurnesjabær',
+    number: 2510,
   },
 ]
 

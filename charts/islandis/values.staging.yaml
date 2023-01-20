@@ -16,7 +16,7 @@ air-discount-scheme-api:
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'islandis'
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -195,7 +195,7 @@ air-discount-scheme-web:
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'islandis'
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
