@@ -27,7 +27,7 @@ import copyToClipboard from 'copy-to-clipboard'
 import { ModuleAlertBannerSection } from '@island.is/service-portal/core'
 import UsageTable from '../../components/UsageTable'
 import { formatDateWithTime } from '@island.is/service-portal/core'
-import { formatDate } from '@formatjs/intl'
+import { AirDiscountSchemeDiscount } from '@island.is/service-portal/graphql'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
@@ -83,9 +83,12 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
   } = useQuery<Query>(AirDiscountFlightLegsQuery)
 
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
-  const airDiscounts = data?.airDiscountSchemeDiscounts
+  const airDiscounts: AirDiscountSchemeDiscount[] | undefined =
+    data?.airDiscountSchemeDiscounts
   const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
-  const connectionCodes = airDiscounts?.filter(
+  const connectionCodes:
+    | AirDiscountSchemeDiscount[]
+    | undefined = airDiscounts?.filter(
     (x) => x.connectionDiscountCodes.length > 0,
   )
 

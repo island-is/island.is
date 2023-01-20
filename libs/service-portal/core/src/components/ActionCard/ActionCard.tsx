@@ -336,7 +336,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           alignItems="flexStart"
         >
           {secondaryText && (
-            <Text paddingTop={tag ? 6 : 0}>{secondaryText}</Text>
+            <Text paddingTop={tag.label ? 6 : 0}>{secondaryText}</Text>
           )}
         </Box>
 
