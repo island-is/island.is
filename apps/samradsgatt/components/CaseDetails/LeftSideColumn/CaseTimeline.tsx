@@ -38,12 +38,29 @@ const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
     console.log('sections:', sections)
     const finalSections = []
 
+    let activeSection
+
     sections.map(({ section, index }) => {
       if (section === status) {
         finalSections.push(
           <Section
             key={index}
             isActive
+            section={section}
+            theme={FormStepperThemes.PURPLE}
+            sectionIndex={index}
+            subSections={[
+              <Text variant="medium" key="sub1">
+                frá case.updated
+              </Text>,
+            ]}
+          />,
+        )
+        activeSection = index
+      } else if (section !== status && index > activeSection) {
+        finalSections.push(
+          <Section
+            key={index}
             section={section}
             theme={FormStepperThemes.PURPLE}
             sectionIndex={index}
@@ -56,6 +73,7 @@ const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
             section={section}
             theme={FormStepperThemes.PURPLE}
             sectionIndex={index}
+            isComplete
           />,
         )
       }
@@ -68,42 +86,6 @@ const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
       <Text variant="h3" color="blue400">
         {'Tímalína máls'}
       </Text>
-      {/* <FormStepperV2
-        sections={[
-          <Section
-            key={0}
-            isComplete
-            section="Samráð fyrirhugað"
-            theme={FormStepperThemes.PURPLE}
-            sectionIndex={0}
-          />,
-
-          <Section
-            key={1}
-            isComplete
-            section="Til umsagnar"
-            theme={FormStepperThemes.PURPLE}
-            sectionIndex={1}
-            subSections={[<Text key="sub1">Dagsetning</Text>]} // TODO: change to fontsize 16
-          />,
-          <Section
-            key={2}
-            isComplete
-            section="Niðurstöður í vinnslu"
-            theme={FormStepperThemes.PURPLE}
-            sectionIndex={2}
-            isActive
-            subSections={[<Text key="sub1">Dagsetning</Text>]} // TODO: change to fontsize 16
-          />,
-          <Section
-            key={3}
-            isComplete
-            section="Niðurstöður birtar"
-            theme={FormStepperThemes.PURPLE}
-            sectionIndex={3}
-          />,
-        ]}
-      /> */}
       <FormStepperV2 sections={getSections(sections)} />
     </Box>
   )
