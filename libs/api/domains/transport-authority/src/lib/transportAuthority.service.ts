@@ -106,10 +106,10 @@ export class TransportAuthorityApi {
   ): Promise<
     VehiclesCurrentVehicleWithOwnerchangeChecks[] | null | ApolloError
   > {
-    // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
+    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     if (showOperated) {
       throw Error(
-        'You can only fetch the debt status for vehicles where you are either owner or co-owner',
+        'You can only fetch this information for vehicles where you are either owner or co-owner',
       )
     }
 
@@ -152,7 +152,7 @@ export class TransportAuthorityApi {
     auth: User,
     permno: string,
   ): Promise<VehicleOwnerchangeChecksByPermno | null | ApolloError> {
-    // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
+    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     const myVehicles = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,
@@ -196,10 +196,10 @@ export class TransportAuthorityApi {
   ): Promise<
     VehiclesCurrentVehicleWithOperatorChangeChecks[] | null | ApolloError
   > {
-    // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
+    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     if (showOperated) {
       throw Error(
-        'You can only fetch the debt status for vehicles where you are either owner or co-owner',
+        'You can only fetch this information for vehicles where you are either owner or co-owner',
       )
     }
 
@@ -242,7 +242,7 @@ export class TransportAuthorityApi {
     auth: User,
     permno: string,
   ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
-    // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
+    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     const myVehicles = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,
@@ -286,10 +286,10 @@ export class TransportAuthorityApi {
   ): Promise<
     VehiclesCurrentVehicleWithPlateOrderChecks[] | null | ApolloError
   > {
-    // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
+    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     if (showOperated) {
       throw Error(
-        'You can only fetch the debt status for vehicles where you are either owner or co-owner',
+        'You can only fetch this information for vehicles where you are either owner or co-owner',
       )
     }
 
@@ -302,7 +302,7 @@ export class TransportAuthorityApi {
           showOperated: showOperated,
         })
       )?.map(async (vehicle: VehicleMiniDto) => {
-        // Get debt status
+        // Check if plate order exists
         const exists = await this.vehiclePlateOrderingClient.checkIfPlateOrderExists(
           auth,
           vehicle.permno || '',
@@ -323,7 +323,7 @@ export class TransportAuthorityApi {
     auth: User,
     permno: string,
   ): Promise<VehiclePlateOrderChecksByPermno | null | ApolloError> {
-    // Make sure user is only fetching debt status for vehicles where he is either owner or co-owner
+    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     const myVehicles = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,
@@ -339,7 +339,7 @@ export class TransportAuthorityApi {
       )
     }
 
-    // Get debt status
+    // Check if plate order exists
     const exists = await this.vehiclePlateOrderingClient.checkIfPlateOrderExists(
       auth,
       permno,
