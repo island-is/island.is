@@ -29,11 +29,12 @@ import { DocumentProviderService } from '../document-provider.service'
 import { CreateProviderDto } from '../dto/createProvider.dto'
 import { UpdateProviderDto } from '../dto/updateProvider.dto'
 import { Provider } from '../models/provider.model'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 const namespace = `${environment.audit.defaultNamespace}/providers`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(AdminPortalScope.documentProvider)
 @ApiTags('providers')
 @ApiHeader({
   name: 'authorization',

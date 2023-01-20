@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
-import type { User } from '@island.is/auth-nest-tools'
+import { Scopes, User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -30,8 +30,8 @@ import {
   StatisticsInput,
 } from './dto'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
-import { AdminGuard } from './utils/admin.guard'
 import { AuditService } from '@island.is/nest/audit'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 const namespace = '@island.is/api/document-provider'
 
@@ -43,7 +43,7 @@ export class DocumentProviderResolver {
     private readonly auditService: AuditService,
   ) {}
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => [Organisation])
   async getProviderOrganisations(
     @CurrentUser() user: User,
@@ -51,7 +51,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.getOrganisations(user)
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => Organisation)
   async getProviderOrganisation(
     @Args('nationalId') nationalId: string,
@@ -71,7 +71,7 @@ export class DocumentProviderResolver {
     )
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => Organisation)
   async updateOrganisation(
     @Args('id') id: string,
@@ -85,7 +85,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.updateOrganisation(id, input, user)
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => Contact, { nullable: true })
   async createAdministrativeContact(
     @Args('organisationId') organisationId: string,
@@ -101,7 +101,7 @@ export class DocumentProviderResolver {
     )
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => Contact)
   async updateAdministrativeContact(
     @Args('organisationId') organisationId: string,
@@ -121,7 +121,7 @@ export class DocumentProviderResolver {
     )
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => Contact, { nullable: true })
   async createTechnicalContact(
     @Args('organisationId') organisationId: string,
@@ -137,7 +137,7 @@ export class DocumentProviderResolver {
     )
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => Contact)
   async updateTechnicalContact(
     @Args('organisationId') organisationId: string,
@@ -157,7 +157,7 @@ export class DocumentProviderResolver {
     )
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => Helpdesk, { nullable: true })
   async createHelpdesk(
     @Args('organisationId') organisationId: string,
@@ -173,7 +173,7 @@ export class DocumentProviderResolver {
     )
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => Helpdesk)
   async updateHelpdesk(
     @Args('organisationId') organisationId: string,
@@ -321,7 +321,7 @@ export class DocumentProviderResolver {
     )
   }
 
-  @UseGuards(AdminGuard)
+  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => ProviderStatistics)
   async getStatisticsTotal(
     @Args('input', { nullable: true }) input: StatisticsInput,

@@ -1,4 +1,4 @@
-import { ApiScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
 import {
   Body,
   Controller,
@@ -41,7 +41,7 @@ import { environment } from '../../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/organisations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(AdminPortalScope.documentProvider)
 @ApiTags('organisations')
 @ApiHeader({
   name: 'authorization',

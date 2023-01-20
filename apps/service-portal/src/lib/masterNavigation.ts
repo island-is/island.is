@@ -4,7 +4,6 @@ import { documentsNavigation } from '@island.is/service-portal/documents'
 import { financeNavigation } from '@island.is/service-portal/finance'
 import { applicationsNavigation } from '@island.is/service-portal/applications'
 import { assetsNavigation } from '@island.is/service-portal/assets'
-import { documentProviderNavigation } from '@island.is/service-portal/document-provider'
 import { educationNavigation } from '@island.is/service-portal/education'
 import {
   companyNavigation,
@@ -28,7 +27,6 @@ export const rootNavigationItem: PortalNavigationItem = {
 export const MAIN_NAVIGATION: PortalNavigationItem = {
   ...rootNavigationItem,
   children: [
-    documentProviderNavigation,
     documentsNavigation,
     applicationsNavigation,
     personalInformationNavigation,

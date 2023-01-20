@@ -1,11 +1,12 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/service-portal/core'
+import { m } from './messages'
 import { DocumentProviderPaths } from './paths'
 
 export const documentProviderNavigation: PortalNavigationItem = {
-  name: m.documentProvider,
+  name: m.rootName,
   path: DocumentProviderPaths.DocumentProviderRoot,
   icon: {
     icon: 'receipt',
   },
+  description: m.rootName,
 }

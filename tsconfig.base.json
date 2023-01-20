@@ -582,6 +582,9 @@
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/portals-admin-document-provider": [
+        "libs/portals/admin/document-provider/src/index.ts"
+      ],
       "@island.is/portals-admin-icelandic-names-registry": [
         "libs/portals/admin/icelandic-names-registry/src/index.ts"
       ],
@@ -610,9 +613,6 @@
       ],
       "@island.is/service-portal/core": [
         "libs/service-portal/core/src/index.ts"
-      ],
-      "@island.is/service-portal/document-provider": [
-        "libs/service-portal/document-provider/src/index.ts"
       ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"

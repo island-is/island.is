@@ -1,5 +1,5 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -7,6 +7,7 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/service-portal/document-provider',
-  displayName: 'service-portal-document-provider',
+  coverageDirectory:
+    '../../../../coverage/libs/portals/admin/document-provider',
+  displayName: 'portals-admin-document-provider',
 }
