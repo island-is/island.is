@@ -30,6 +30,8 @@ const devConfig = {
     regulationsApiUrl:
       process.env.REGULATIONS_API_URL ?? 'http://localhost:3000/api/v1',
     presignedKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED ?? '',
+    publishKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PUBLISH ?? '',
+    draftKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_DRAFT ?? '',
   },
 }
 
@@ -71,6 +73,8 @@ const prodConfig = {
     baseApiUrl: process.env.REGULATIONS_ADMIN_URL ?? '',
     regulationsApiUrl: process.env.REGULATIONS_API_URL ?? '',
     presignedKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED ?? '',
+    publishKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PUBLISH ?? '',
+    draftKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_DRAFT ?? '',
   },
 }
 

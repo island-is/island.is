@@ -16,12 +16,12 @@ import {
   RegDraftForm,
   StepNav,
 } from './types'
-import { errorMsgs } from '../messages'
+import { errorMsgs } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
 // ---------------------------------------------------------------------------
 
-export const steps: Record<Step, StepNav> = {
+export const stepsBase: Record<Step, StepNav> = {
   basics: {
     name: 'basics',
     next: 'signature',
@@ -44,6 +44,35 @@ export const steps: Record<Step, StepNav> = {
   review: {
     name: 'review',
     prev: 'impacts',
+  },
+  publish: {
+    name: 'publish',
+  },
+}
+
+export const stepsAmending: Record<Step, StepNav> = {
+  impacts: {
+    name: 'impacts',
+    next: 'basics',
+  },
+  basics: {
+    name: 'basics',
+    prev: 'impacts',
+    next: 'signature',
+  },
+  signature: {
+    name: 'signature',
+    prev: 'basics',
+    next: 'meta',
+  },
+  meta: {
+    name: 'meta',
+    prev: 'signature',
+    next: 'review',
+  },
+  review: {
+    name: 'review',
+    prev: 'meta',
   },
   publish: {
     name: 'publish',
@@ -173,7 +202,7 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
     draftingStatus: draft.draftingStatus,
     authors: f(draft.authors.map((author) => author.authorId)),
 
-    type: f(undefined /* draft.type */, errorMsgs.typeRequired), // NOTE: Regulation type is always a derived value
+    type: f(draft.type, errorMsgs.typeRequired),
     ministry: f(undefined /* draft.ministry */, true), // NOTE: The ministry is always a derived value
     signatureDate: fDate(
       undefined /* draft.signatureDate && new Date(draft.signatureDate) */,

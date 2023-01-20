@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { ActionCard, Box, Stack } from '@island.is/island-ui/core'
-import { homeMessages, statusMsgs } from '../messages'
+import { homeMessages, statusMsgs } from '../lib/messages'
 import { prettyName } from '@island.is/regulations'
 import { useLocale } from '@island.is/localization'
 import { getEditUrl } from '../utils/routing'
@@ -66,7 +66,8 @@ export const ShippedRegulations = (props: ShippedRegulationsProps) => {
                         history.push(getEditUrl(shipped.id, 'publish'))
                       },
                     }
-                  : (undefined as any)
+                  : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (undefined as any)
               }
             ></ActionCard>
           )

@@ -1,13 +1,13 @@
 import { Reducer, useReducer } from 'react'
 import { Step } from '../types'
 import { LawChapter, MinistryList } from '@island.is/regulations'
-import { Action, DraftingState } from './types'
+import { Action, DraftingState, RegDraftFormSimpleProps } from './types'
 import { produce, setAutoFreeze } from 'immer'
 import { DraftImpactId, RegulationDraft } from '@island.is/regulations/admin'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { derivedUpdates, validateState } from './validations'
-import { makeDraftForm, steps } from './makeFields'
+import { makeDraftForm, stepsAmending, stepsBase } from './makeFields'
 import { actionHandlers } from './actionHandlers'
 
 const draftingStateReducer: Reducer<DraftingState, Action> = (
@@ -48,7 +48,10 @@ export const useEditDraftReducer = (inputs: StateInputs) => {
     const draft = makeDraftForm(regulationDraft)
     const state: DraftingState = {
       draft,
-      step: steps[stepName],
+      step:
+        draft.type.value === 'amending'
+          ? stepsAmending[stepName]
+          : stepsBase[stepName],
       ministries,
       lawChapters: {
         list: lawChapters,
@@ -64,7 +67,7 @@ export const useEditDraftReducer = (inputs: StateInputs) => {
 
     // Derive all guesssed values on start.
     Object.entries(derivedUpdates).forEach(([prop, updaterFn]) => {
-      updaterFn!(
+      updaterFn(
         state,
         // @ts-expect-error  (because reasons)
         draft[prop as RegDraftFormSimpleProps].value,

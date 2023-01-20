@@ -3,7 +3,7 @@ import * as s from './impacts/Impacts.css'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useDraftingState } from '../state/useDraftingState'
-import { impactMsgs } from '../messages'
+import { impactMsgs } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   nameToSlug,

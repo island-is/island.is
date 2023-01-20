@@ -1,5 +1,5 @@
 import {} from '@island.is/regulations-tools/useTextWarnings'
-import { makeDraftAppendixForm, steps } from './makeFields'
+import { makeDraftAppendixForm, stepsBase, stepsAmending } from './makeFields'
 import { Action, ActionName, DraftingState } from './types'
 import {
   derivedUpdates,
@@ -17,14 +17,16 @@ export const actionHandlers: {
   ) => Draft<DraftingState> | void
 } = {
   CHANGE_STEP: (state, { stepName }) => {
+    const stepsSet =
+      state.draft.type.value === 'amending' ? stepsAmending : stepsBase
     if (
       isDraftLocked(state.draft) &&
       stepName !== 'review' &&
       stepName !== 'publish'
     ) {
-      state.step = steps.review
+      state.step = stepsSet.review
     }
-    state.step = steps[stepName]
+    state.step = stepsSet[stepName]
   },
 
   SAVING_STATUS: (state) => {

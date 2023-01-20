@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
@@ -18,7 +18,7 @@ import {
 } from '../utils/dataHooks'
 import { PortalModuleComponent } from '@island.is/portals/core'
 import { MessageDescriptor } from '@formatjs/intl'
-import { editorMsgs } from '../messages'
+import { editorMsgs } from '../lib/messages'
 import { EditBasics } from '../components/EditBasics'
 import { EditMeta } from '../components/EditMeta'
 import { EditSignature } from '../components/EditSignature'
@@ -35,6 +35,7 @@ import {
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import { DraftingNotes } from '../components/DraftingNotes'
 import { ButtonBar } from '../components/ButtonBar'
+import { RegulationType } from '@island.is/regulations'
 
 // ---------------------------------------------------------------------------
 
@@ -102,16 +103,16 @@ const stepData: Record<
 
 const EditScreen = () => {
   const t = useLocale().formatMessage
-  const state = useDraftingState()
-  const step = stepData[state.step.name]
+  const { error: errorSate, step: stepState } = useDraftingState()
+  const step = stepData[stepState.name]
 
   useEffect(() => {
-    if (state.error) {
-      const { message, error } = state.error
+    if (errorSate) {
+      const { message, error } = errorSate
       console.error(error || message)
       toast.error(t(message))
     }
-  }, [state.error, t])
+  }, [errorSate, t])
 
   return (
     <>
@@ -126,7 +127,7 @@ const EditScreen = () => {
         </GridColumn>
       </GridRow>
 
-      {state.step.name !== 'publish' && <SaveDeleteButtons wrap />}
+      {stepState.name !== 'publish' && <SaveDeleteButtons wrap />}
       <step.Component />
       <DraftingNotes />
       <ButtonBar />
@@ -140,11 +141,11 @@ const EditApp: PortalModuleComponent = ({ userInfo }) => {
   useNamespaces('ap.regulations-admin')
 
   const params = useParams<Record<string, string | undefined>>()
-  const draftId = assertDraftId(params.draftId)
-  const stepName = assertStep(params.stepName)
+  const draftId = assertDraftId(params['draftId'])
+  const stepName = assertStep(params['stepName'])
   const impactId =
-    stepName === 'impacts' && params.impact
-      ? assertImpactId(params.impact)
+    stepName === 'impacts' && params['impact']
+      ? assertImpactId(params['impact'])
       : undefined
 
   const regulationDraft = useRegulationDraftQuery(draftId)

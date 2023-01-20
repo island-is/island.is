@@ -530,7 +530,7 @@ export const homeMessages = defineMessages({
   },
   createRegulation: {
     id: 'ap.regulations-admin:create-regulation-cta',
-    defaultMessage: 'Skrá nýja reglugerð',
+    defaultMessage: 'Skrá reglugerð',
   },
   taskList_draftTitleMissing: {
     id: 'ap.regulations-admin:tasklist-draft-title-missing',
@@ -610,6 +610,10 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-savestatus',
     defaultMessage: 'Vista stöðu',
   },
+  saveAndClose: {
+    id: 'ap.regulations-admin:btn-savestatus-and-close',
+    defaultMessage: 'Vista og loka',
+  },
   saveSuccess: {
     id: 'ap.regulations-admin:btn-savestatus-success',
     defaultMessage: 'Staða vistuð',
@@ -641,7 +645,7 @@ export const buttonsMsgs = defineMessages({
   },
 })
 
-export const reviewMessagse = defineMessages({
+export const reviewMessages = defineMessages({
   confirmBeforePublish: {
     id: 'ap.regulations-admin:review-confirmmessage',
     defaultMessage: 'Ég hef yfirfarið að reglugerðin sé rétt skráð',

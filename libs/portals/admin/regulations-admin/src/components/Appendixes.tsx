@@ -3,7 +3,7 @@ import * as s from './Appendixes.css'
 import { EditorInput } from './EditorInput'
 import React, { MutableRefObject, useState } from 'react'
 import { MiniDiff } from './MiniDiff'
-import { editorMsgs as msg } from '../messages'
+import { editorMsgs as msg } from '../lib/messages'
 import { HTMLText, PlainText, Appendix } from '@island.is/regulations'
 import { RegulationDraft } from '@island.is/regulations/admin'
 import {

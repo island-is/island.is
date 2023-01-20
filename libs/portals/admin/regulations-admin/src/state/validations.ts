@@ -1,6 +1,6 @@
 import { HTMLText, PlainText } from '@island.is/regulations'
 import { makeHighAngstWarnings } from '@island.is/regulations-tools/useTextWarnings'
-import { errorMsgs } from '../messages'
+import { errorMsgs } from '../lib/messages'
 import {
   findAffectedRegulationsInText,
   findRegulationType,
@@ -241,8 +241,13 @@ export const derivedUpdates: {
    */
   title: (state: DraftingState, newTitle) => {
     const { type, text } = state.draft
-    const derivedType = findRegulationType(newTitle)
-    updateFieldValue(type, derivedType)
+
+    /**
+     * Type is no longer derived. It is set on creation.
+     * */
+    // const derivedType = findRegulationType(newTitle)
+    // updateFieldValue(type, derivedType)
+
     if (!newTitle) {
       type.showError = undefined
     }

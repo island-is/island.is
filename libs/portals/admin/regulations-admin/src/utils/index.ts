@@ -6,7 +6,7 @@ import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 
 import { Option } from '@island.is/island-ui/core'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { errorMsgs } from '../messages'
+import { errorMsgs } from '../lib/messages'
 
 // ---------------------------------------------------------------------------
 
@@ -91,7 +91,7 @@ export const getRSValue = (option: ValueType<OptionTypeBase>) => {
   const opt: OptionTypeBase | undefined | null = Array.isArray(option)
     ? (option as Array<OptionTypeBase>)[0]
     : option
-  return opt ? opt.value : undefined
+  return opt ? opt['value'] : undefined
 }
 
 export const emptyOption = (label?: string, disabled?: boolean): Option => ({

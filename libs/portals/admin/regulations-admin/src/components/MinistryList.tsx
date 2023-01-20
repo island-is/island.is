@@ -5,7 +5,7 @@ import {
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
-import { ministryMessages as msg } from '../messages'
+import { ministryMessages as msg } from '../lib/messages'
 import { useMinistriesQuery } from '../utils/dataHooks'
 import { useLocale } from '@island.is/localization'
 

@@ -17,6 +17,7 @@ import {
   RegName,
   Regulation,
   RegulationOptionList,
+  RegulationType,
 } from '@island.is/regulations'
 import { ShippedSummary } from '@island.is/regulations/admin'
 import { getEditUrl } from './routing'
@@ -160,7 +161,7 @@ export const useS3Upload = () => {
       })
       return
     }
-    uploadToS3(file, presignedPost.fields.key, presignedPost)
+    uploadToS3(file, presignedPost.fields['key'], presignedPost)
   }
 
   const onRetry = (file: File, regId: string) => {
@@ -399,10 +400,14 @@ export const useLawChaptersQuery = (): QueryResult<Array<LawChapter>> => {
 // ---------------------------------------------------------------------------
 
 const CREATE_DRAFT_REGULATION_MUTATION = gql`
-  mutation CreateDraftRegulationMutation {
-    createDraftRegulation
+  mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
+    createDraftRegulation(input: $input)
   }
 `
+
+type useRegulationProps = {
+  regulationType?: RegulationType
+}
 
 export const useCreateRegulationDraft = () => {
   type CreateStatus =
@@ -416,12 +421,18 @@ export const useCreateRegulationDraft = () => {
   return {
     ...status,
 
-    createNewDraft: () => {
+    createNewDraft: ({ regulationType }: useRegulationProps) => {
       if (status.creating) {
         return
       }
       setStatus({ creating: true })
-      createDraftRegulation()
+      createDraftRegulation({
+        variables: {
+          input: {
+            type: regulationType,
+          },
+        },
+      })
         .then((res) => {
           const newDraft = res.data
             ? (res.data.createDraftRegulation as RegulationDraft)
@@ -431,7 +442,13 @@ export const useCreateRegulationDraft = () => {
           }
 
           setStatus({ creating: false })
-          history.push(getEditUrl(newDraft.id))
+
+          history.push({
+            pathname: getEditUrl(
+              newDraft.id,
+              regulationType === 'amending' ? 'impacts' : undefined,
+            ),
+          })
         })
         .catch((e) => {
           const error = e instanceof Error ? e : new Error(String(e))
