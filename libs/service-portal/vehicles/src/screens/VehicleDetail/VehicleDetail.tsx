@@ -169,7 +169,7 @@ type UseParams = {
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { id } = useParams<keyof UseParams>() as UseParams
+  const { id } = useParams<UseParams>()
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {

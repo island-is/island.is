@@ -12,7 +12,7 @@ type UseParams = {
 }
 
 export const Application = () => {
-  const { slug, id } = useParams<keyof UseParams>() as UseParams
+  const { slug, id } = useParams<UseParams>()
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId

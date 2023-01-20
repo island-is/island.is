@@ -45,7 +45,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
 
-  const { nationalId } = useParams<keyof UseParams>() as UseParams
+  const { nationalId } = useParams<UseParams>()
 
   const person =
     nationalRegistryUser?.spouse?.nationalId === nationalId

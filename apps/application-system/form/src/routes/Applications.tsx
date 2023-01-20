@@ -42,7 +42,7 @@ type UseParams = {
 }
 
 export const Applications: FC = () => {
-  const { slug } = useParams<keyof UseParams>() as UseParams
+  const { slug } = useParams<UseParams>()
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)

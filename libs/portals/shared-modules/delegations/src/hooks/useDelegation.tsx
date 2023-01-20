@@ -15,7 +15,7 @@ type UseParams = {
  */
 export const useDelegation = (direction?: AuthDomainDirection) => {
   const { lang } = useLocale()
-  const { delegationId } = useParams<keyof UseParams>() as UseParams
+  const { delegationId } = useParams<UseParams>()
 
   const [
     getAuthScopeTreeQuery,

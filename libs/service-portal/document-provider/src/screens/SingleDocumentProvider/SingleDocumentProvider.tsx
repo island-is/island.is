@@ -27,7 +27,7 @@ type UseParams = {
 const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
-  const { nationalId } = useParams<keyof UseParams>() as UseParams
+  const { nationalId } = useParams<UseParams>()
   const location = useLocation()
   const organisationPreview = location.state as OrganisationPreview
   const { formatMessage } = useLocale()

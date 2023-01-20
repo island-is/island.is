@@ -323,7 +323,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = userProfile?.locale ?? 'is'
-  const { type } = useParams<keyof UseParams>() as UseParams
+  const { type } = useParams<UseParams>()
   const licenseType = type ? getTypeFromPath(type) : undefined
 
   const { data, loading: queryLoading, error } = useQuery<Query>(

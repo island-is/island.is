@@ -12,7 +12,7 @@ type UseParams = {
 }
 
 const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { nationalId } = useParams<keyof UseParams>() as UseParams
+  const { nationalId } = useParams<UseParams>()
   const { data, loading, error } = useQuery<Query>(
     NATIONAL_REGISTRY_FAMILY_DETAIL,
     {

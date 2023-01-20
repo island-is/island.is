@@ -68,7 +68,7 @@ type UseParams = {
 const PassportDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
-  const { id } = useParams<keyof UseParams>() as UseParams
+  const { id } = useParams<UseParams>()
 
   const { data: passportData, loading, error } = usePassport()
   const { data: childPassportData } = useChildrenPassport()
