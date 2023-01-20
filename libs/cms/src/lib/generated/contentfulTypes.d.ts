@@ -2216,7 +2216,6 @@ export interface IOrganizationPageFields {
         | ILifeEventPageListSlice
         | IBigBulletList
         | IDistricts
-        | IMailingListSignup
         | IEmailSignup
         | IEventSlice
         | IFeaturedArticles
@@ -2225,6 +2224,7 @@ export interface IOrganizationPageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | ISliceConnectedComponent
         | IStorySection
         | ITabSection
         | ITimeline
@@ -2324,7 +2324,6 @@ export interface IOrganizationSubpageFields {
         | IBigBulletList
         | IContactUs
         | IDistricts
-        | IMailingListSignup
         | IEmailSignup
         | IEventSlice
         | IFeaturedArticles
@@ -2582,7 +2581,7 @@ export interface IProjectPageFields {
         | IAccordionSlice
         | IBigBulletList
         | IContactUs
-        | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
         | IFaqList
         | IFeaturedArticles
@@ -2676,7 +2675,7 @@ export interface IProjectSubpageFields {
         | IBigBulletList
         | IContactUs
         | IDistricts
-        | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
         | IFaqList
         | IFeaturedArticles
@@ -2854,6 +2853,7 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/CatchQuotaCalculator'
     | 'Fiskistofa/StraddlingStockCalculator'
     | 'Fiskistofa/SelectedShip'
+    | 'Fiskistofa/ShipSearchBoxedInput'
     | undefined
 
   /** Localized JSON */

@@ -1,4 +1,5 @@
 import { Box, Text, Hidden } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 import { ServiceWebSearchInput } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { TextModes } from '../types'
@@ -22,8 +23,12 @@ export const SearchSection = ({
   searchPlaceholder,
   namespace,
 }: SearchSectionProps) => {
-  const dark = textMode === 'dark'
   const n = useNamespace(namespace)
+
+  const textProps: { color?: Colors } =
+    textMode === 'dark'
+      ? {}
+      : { color: textMode === 'light' ? 'white' : 'blueberry600' }
 
   return (
     <Box
@@ -46,18 +51,14 @@ export const SearchSection = ({
           {logoTitle && (
             <Hidden above="md">
               <Box marginBottom={3}>
-                <Text
-                  as="span"
-                  variant="eyebrow"
-                  {...(dark ? {} : { color: 'white' })}
-                >
+                <Text as="span" variant="eyebrow" {...textProps}>
                   {logoTitle}
                 </Text>
               </Box>
             </Hidden>
           )}
           <Box marginBottom={[4, 4, 4, 6]}>
-            <Text variant="h1" as="h1" {...(dark ? {} : { color: 'white' })}>
+            <Text variant="h1" as="h1" {...textProps}>
               {title}
             </Text>
           </Box>
