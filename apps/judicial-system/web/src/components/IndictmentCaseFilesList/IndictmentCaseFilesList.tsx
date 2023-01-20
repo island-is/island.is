@@ -8,6 +8,7 @@ import {
   CaseFileCategory,
   completedCaseStates,
   isExtendedCourtRole,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core, errors } from '@island.is/judicial-system-web/messages'
@@ -153,28 +154,30 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(strings.caseFileTitle)}
-          </Text>
-          {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
-            <Box
-              marginBottom={2}
-              key={`${policeCaseNumber}-${index}`}
-              className={styles.caseFileContainer}
-            >
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(strings.caseFileButtonText, {
-                  policeCaseNumber,
-                })}
-                pdfType="caseFiles"
-                policeCaseNumber={policeCaseNumber}
-                renderAs="row"
-              />
-            </Box>
-          ))}
-        </Box>
+        {user?.role !== UserRole.DEFENDER && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.caseFileTitle)}
+            </Text>
+            {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
+              <Box
+                marginBottom={2}
+                key={`${policeCaseNumber}-${index}`}
+                className={styles.caseFileContainer}
+              >
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(strings.caseFileButtonText, {
+                    policeCaseNumber,
+                  })}
+                  pdfType="caseFiles"
+                  policeCaseNumber={policeCaseNumber}
+                  renderAs="row"
+                />
+              </Box>
+            ))}
+          </Box>
+        )}
         {(user && isExtendedCourtRole(user.role)) ||
         completedCaseStates.includes(workingCase.state) ? (
           <>

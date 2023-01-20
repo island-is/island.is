@@ -65,6 +65,8 @@ import {
   FjarsyslaRikisinsHeader,
   FjarsyslaRikisinsFooter,
 } from './Themes/FjarsyslaRikisinsTheme'
+import HeilbrigdisstofnunSudurlandsFooter from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsFooter'
+import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsHeader'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -122,6 +124,7 @@ export const footerEnabled = [
   'landskjorstjorn',
 
   'hsn',
+  'hsu',
 
   'rikislogmadur',
   'office-of-the-attorney-general-civil-affairs',
@@ -176,6 +179,12 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
     case 'hsn':
       return (
         <HeilbrigdisstofnunNordurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'hsu':
+      return (
+        <HeilbrigdisstofnunSudurlandsHeader
           organizationPage={organizationPage}
         />
       )
@@ -318,6 +327,13 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'hsn':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunNordurlandsFooter
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'hsu':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunSudurlandsFooter
           footerItems={organization.footerItems}
         />
       )
