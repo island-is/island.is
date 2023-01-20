@@ -17,6 +17,7 @@ air-discount-scheme-api:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -101,6 +102,7 @@ air-discount-scheme-backend:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -196,6 +198,7 @@ air-discount-scheme-web:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
