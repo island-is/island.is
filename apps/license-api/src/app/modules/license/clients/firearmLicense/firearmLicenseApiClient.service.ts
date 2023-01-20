@@ -11,6 +11,8 @@ import {
   VerifyPassData,
   Result,
 } from '@island.is/clients/smartsolutions'
+import { createPkPassDataInput, formatNationalId } from './firearmLicenseMapper'
+import { format } from 'kennitala'
 
 @Injectable()
 export class FirearmLicenseApiClientService implements GenericLicenseClient {
@@ -20,11 +22,73 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async update(
+  async pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
-    return await this.smartApi.updatePkPass(inputData, nationalId)
+    return await this.smartApi.updatePkPass(
+      inputData,
+      formatNationalId(nationalId),
+    )
+  }
+
+  async pullUpdate(nationalId: string): Promise<Result<Pass | undefined>> {
+    let data
+    try {
+      data = await Promise.all([
+        this.firearmApi.getVerificationLicenseInfo(nationalId),
+        this.firearmApi.getVerificationPropertyInfo(nationalId),
+      ])
+    } catch (e) {
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'External service error',
+        },
+      }
+    }
+
+    const [licenseInfo, propertyInfo] = data
+    if (!licenseInfo) {
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No license info found for user',
+        },
+      }
+    }
+
+    const inputValues = createPkPassDataInput(
+      licenseInfo,
+      propertyInfo,
+      nationalId,
+    )
+
+    if (!inputValues) {
+      return {
+        ok: false,
+        error: {
+          code: 4,
+          message: 'Mapping failed, invalid data',
+        },
+      }
+    }
+
+    const thumbnail = licenseInfo.licenseImgBase64
+    const payload: PassDataInput = {
+      inputFieldValues: inputValues,
+      thumbnail: thumbnail
+        ? {
+            imageBase64String: thumbnail
+              .substring(thumbnail.indexOf(',') + 1)
+              .trim(),
+          }
+        : null,
+    }
+
+    return await this.smartApi.updatePkPass(payload, format(nationalId))
   }
 
   async revoke(queryId: string): Promise<Result<RevokePassData>> {
@@ -70,7 +134,6 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
       }
     }
 
-    //TODO: Verify license when endpoints are ready
     const licenseInfo = await this.firearmApi.getVerificationLicenseInfo(
       nationalId,
     )

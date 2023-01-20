@@ -18,11 +18,21 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async update(
+  async pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
     return await this.smartApi.updatePkPass(inputData, nationalId)
+  }
+
+  async pullUpdate(nationalId: string): Promise<Result<Pass | undefined>> {
+    return {
+      ok: false,
+      error: {
+        code: 99,
+        message: 'not implemented yet',
+      },
+    }
   }
 
   async revoke(queryId: string): Promise<Result<RevokePassData>> {

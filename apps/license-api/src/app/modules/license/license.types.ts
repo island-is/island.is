@@ -20,10 +20,11 @@ export enum LicenseId {
  * Only one license per client to start with.
  */
 export interface GenericLicenseClient {
-  update: (
+  pushUpdate: (
     inputData: PassDataInput,
     nationalId: string,
   ) => Promise<Result<Pass | undefined>>
+  pullUpdate: (nationalId: string) => Promise<Result<Pass | undefined>>
   revoke: (queryId: string) => Promise<Result<RevokePassData>>
   verify: (
     inputData: string,

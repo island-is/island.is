@@ -32,67 +32,80 @@ export class LicenseService {
     ) => Promise<GenericLicenseClient>,
   ) {}
 
+  private async pushUpdateLicense(
+    service: GenericLicenseClient,
+    expirationDate: string,
+    nationalId: string,
+    payload?: string,
+  ): Promise<Result<Pass | undefined>> {
+    let updatePayload: PassDataInput = {
+      expirationDate,
+    }
+
+    if (payload) {
+      let parsedInputPayload
+      try {
+        parsedInputPayload = JSON.parse(payload)
+      } catch (e) {
+        throw new BadRequestException('Unable to parse payload')
+      }
+      updatePayload = {
+        ...updatePayload,
+        ...parsedInputPayload,
+      }
+    }
+
+    return await service.pushUpdate(updatePayload, nationalId)
+  }
+
+  private async pullUpdateLicense(
+    service: GenericLicenseClient,
+    nationalId: string,
+  ): Promise<Result<Pass | undefined>> {
+    /** PULL - Update electronic license with pulled data from service
+     * 1. Fetch data from TR
+     * 2. Parse and validate license data
+     * 3. With good data, update the electronic license with the validated license data!
+     */
+
+    return await service.pullUpdate(nationalId)
+  }
+
   async updateLicense(
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
     const service = await this.clientFactory(inputData.licenseId)
 
-    //SPLIT INTO SEPARATE FUNCTIONS
-    let updateData: Result<Pass | undefined>
+    let updateRes: Result<Pass | undefined>
     if (inputData.licenseUpdateType === 'push') {
-      /** PUSH - Update electronic license with provided data
-       * 1. Parse and validate provided data
-       * 2. Map the data to the approriate type
-       * 3. Update the license with the mapped data
-       */
+      const { expiryDate, payload, nationalId } = inputData
 
-      if (!inputData.expiryDate)
+      if (!expiryDate)
         throw new BadRequestException(
           'Invalid request body, missing expiryDate',
         )
 
-      let updatePayload: PassDataInput = {
-        expirationDate: inputData.expiryDate,
-      }
-
-      if (inputData.payload) {
-        let parsedInputPayload
-        try {
-          parsedInputPayload = JSON.parse(inputData.payload)
-        } catch (e) {
-          throw new BadRequestException('Unable to parse payload')
-        }
-        updatePayload = {
-          ...updatePayload,
-          ...parsedInputPayload,
-        }
-      }
-
-      updateData = await service.update(updatePayload, inputData.nationalId)
+      updateRes = await this.pushUpdateLicense(
+        service,
+        expiryDate,
+        nationalId,
+        payload,
+      )
     } else {
-      /** PULL - Update electronic license with pulled data from service
-       * 1. Fetch data from TR
-       * 2. Parse and validate license data
-       * 3. With good data, update the electronic license with the validated license data!
-       */
-      updateData = {
-        ok: true,
-        data: undefined,
-      }
+      updateRes = await this.pullUpdateLicense(service, inputData.nationalId)
     }
-    if (updateData?.ok) {
+
+    if (updateRes.ok) {
       return {
         updateSuccess: true,
-        data: updateData.data,
+        data: updateRes.data,
       }
     }
-
-    const code = updateData.error.code
     // code < 10 means malformed request
-    if (code < 10) {
-      throw new BadRequestException(updateData.error.message)
+    if (updateRes.error.code < 10) {
+      throw new BadRequestException(updateRes.error.message)
     }
-    throw new InternalServerErrorException(updateData.error.message)
+    throw new InternalServerErrorException(updateRes.error.message)
   }
 
   async revokeLicense(
