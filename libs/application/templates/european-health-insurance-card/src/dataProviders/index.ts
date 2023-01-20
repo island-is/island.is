@@ -2,5 +2,25 @@ import { defineTemplateApi } from '@island.is/application/types'
 
 export const EhicCardResponseApi = defineTemplateApi({
   action: 'getCardResponse',
-  externalDataId: 'ehicCardResponse',
+  externalDataId: 'cardResponse',
+})
+
+export const EhicApplyForPhysicalCardApi = defineTemplateApi({
+  action: 'applyForPhysicalCard',
+  externalDataId: 'applyForPhysicalCardResponse',
+})
+
+export const EhicApplyForTemporaryCardApi = defineTemplateApi({
+  action: 'applyForTemporaryCard',
+  externalDataId: 'applyForTemporaryCardResponse',
+})
+
+export const EhicGetTemporaryCardApi = defineTemplateApi({
+  action: 'getTemporaryCard',
+  externalDataId: 'getTemporaryCardResponse',
+})
+
+export const EhicResendPhysicalCardApi = defineTemplateApi({
+  action: 'resendPhysicalCard',
+  externalDataId: 'resendPhysicalCardResponse',
 })

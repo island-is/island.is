@@ -8,6 +8,7 @@ export interface CardResponse {
 
 export interface CardInfo {
   id: number | string
+  nrid: string
   expires: Date
   issued: Date
   // When resent

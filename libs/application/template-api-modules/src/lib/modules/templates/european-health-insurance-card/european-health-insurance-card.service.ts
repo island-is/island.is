@@ -12,6 +12,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   CardResponse,
+  CardInfo,
   CardType,
   SentStatus,
 } from './dto/european-health-insurance-card.dtos'
@@ -46,5 +47,49 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
         },
       ],
     } as CardResponse
+  }
+
+  async applyForPhysicalCard({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    console.log(auth)
+    console.log(application)
+    return {
+      id: '5123459',
+      expires: new Date(),
+      reSent: new Date(),
+      issued: new Date(),
+      sentStatus: SentStatus.WAITING,
+      type: CardType.PHYSICAL,
+      nrid: '0000765589',
+    } as CardInfo
+  }
+
+  async resendPhysicalCard({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return {
+      id: '5123459',
+      nrid: '0000765589',
+      expires: new Date(),
+      reSent: new Date(),
+      issued: new Date(),
+      sentStatus: SentStatus.WAITING,
+      type: CardType.PHYSICAL,
+    } as CardInfo
+  }
+
+  async applyForTemporaryCard({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return 'applied for temp card'
+  }
+
+  async getTemporaryCard({ auth, application }: TemplateApiModuleActionProps) {
+    const byteArray = new Uint8Array(20)
+    return byteArray
   }
 }
