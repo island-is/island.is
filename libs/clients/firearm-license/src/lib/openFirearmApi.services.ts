@@ -1,4 +1,3 @@
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import { FirearmApplicationApi, LicenseInfo } from '../../gen/fetch'

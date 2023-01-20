@@ -179,7 +179,7 @@ export class SmartSolutionsApi {
    * @param nationalId the user's national id
    * @returns A pass if one was found, or undefined
    */
-  private async findUserPass(
+  private async findPass(
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
     const listPassesQuery = JSON.stringify({
@@ -262,7 +262,7 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    const findPassRes = await this.findUserPass(nationalId)
+    const findPassRes = await this.findPass(nationalId)
 
     if (!findPassRes.ok) {
       return findPassRes
@@ -323,7 +323,7 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    const findPassRes = await this.findUserPass(nationalId)
+    const findPassRes = await this.findPass(nationalId)
 
     if (!findPassRes.ok) {
       return findPassRes
@@ -365,7 +365,7 @@ export class SmartSolutionsApi {
   }
 
   async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
-    const findPassRes = await this.findUserPass(nationalId)
+    const findPassRes = await this.findPass(nationalId)
 
     if (!findPassRes.ok) {
       return findPassRes
