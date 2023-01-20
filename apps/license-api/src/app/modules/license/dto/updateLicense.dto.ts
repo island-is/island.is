@@ -1,8 +1,9 @@
-import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsBoolean,
   IsEnum,
   IsISO8601,
+  IsJSON,
   IsOptional,
   IsString,
 } from 'class-validator'
@@ -32,7 +33,7 @@ export class UpdateLicenseRequest {
 
   @ApiPropertyOptional({ description: 'Data to be updated' })
   @IsOptional()
-  @IsString()
+  @IsJSON()
   //will be validated in a specific service later! we do not care whats in here as of now, or will we?
   readonly payload?: string
 }
