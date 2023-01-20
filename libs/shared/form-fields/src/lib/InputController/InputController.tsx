@@ -239,7 +239,7 @@ export const InputController = forwardRef(
         control={control}
         rules={rules}
         {...(defaultValue !== undefined && { defaultValue })}
-        render={({ field }) => renderChildInput(field)}
+        render={renderChildInput as any}
       />
     )
   },
