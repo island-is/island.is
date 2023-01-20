@@ -51,7 +51,7 @@ export const AccessForm = ({
   const { formatMessage } = useLocale()
   const { basePath } = usePortalMeta()
   const routes = useRoutes()
-  const { delegationId } = useParams<UseParams>()
+  const { delegationId } = useParams() as UseParams
   const navigate = useNavigate()
   const { lg } = useBreakpoint()
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
@@ -101,7 +101,7 @@ export const AccessForm = ({
       const { data, errors } = await updateDelegation({
         variables: {
           input: {
-            delegationId,
+            delegationId: delegationId as string,
             scopes,
           },
         },

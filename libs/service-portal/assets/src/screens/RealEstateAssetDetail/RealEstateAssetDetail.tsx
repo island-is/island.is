@@ -92,7 +92,7 @@ type UseParams = {
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
-  const { id } = useParams<UseParams>()
+  const { id } = useParams() as UseParams
 
   const { loading, error, data } = useQuery<Query>(GET_SINGLE_PROPERTY_QUERY, {
     variables: {

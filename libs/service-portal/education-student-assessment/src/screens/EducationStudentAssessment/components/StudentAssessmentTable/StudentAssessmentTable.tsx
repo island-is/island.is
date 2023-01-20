@@ -78,7 +78,7 @@ type UseParams = {
 }
 
 const StudentAssessmentTable = () => {
-  const { familyIndex } = useParams<UseParams>()
+  const { familyIndex } = useParams() as UseParams
   const { data, loading: queryLoading } = useQuery<Query>(
     EducationExamResultQuery,
     {

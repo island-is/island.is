@@ -15,7 +15,7 @@ type UseParams = {
  */
 export const useDelegation = (direction?: AuthDomainDirection) => {
   const { lang } = useLocale()
-  const { delegationId } = useParams<UseParams>()
+  const { delegationId } = useParams() as UseParams
 
   const [
     getAuthScopeTreeQuery,
@@ -26,7 +26,7 @@ export const useDelegation = (direction?: AuthDomainDirection) => {
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        delegationId,
+        delegationId: delegationId as string,
       },
       lang,
     },

@@ -42,7 +42,7 @@ type UseParams = {
 }
 
 export const Applications: FC = () => {
-  const { slug } = useParams<UseParams>()
+  const { slug } = useParams() as UseParams
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
@@ -84,7 +84,9 @@ export const Applications: FC = () => {
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        navigate(`../${slug}/${createApplication.id}`)
+        if (slug) {
+          navigate(`../${slug}/${createApplication.id}`)
+        }
       },
     },
   )
@@ -130,7 +132,9 @@ export const Applications: FC = () => {
     const foundError = findProblemInApolloError(applicationsError as any, [
       ProblemType.BAD_SUBJECT,
     ])
+
     if (
+      slug &&
       foundError?.type === ProblemType.BAD_SUBJECT &&
       type &&
       !delegationsChecked
@@ -164,7 +168,7 @@ export const Applications: FC = () => {
     )
   }
 
-  if (!delegationsChecked && type) {
+  if (!delegationsChecked && type && slug) {
     return <DelegationsScreen checkDelegation={checkDelegation} slug={slug} />
   }
 
