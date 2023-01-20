@@ -3,7 +3,7 @@ import { uuid } from 'uuidv4'
 import { User } from '../../../user'
 import { CourtService } from '../../../court'
 import { Case } from '../../../case'
-import { DeliverProsecutorToCourtDto } from '../../dto/deliverProsecutorToCourt.dto'
+import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -14,7 +14,7 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
-  body: DeliverProsecutorToCourtDto,
+  body: DeliverDto,
   user: User,
   theCase: Case,
 ) => Promise<Then>
@@ -49,7 +49,7 @@ describe('InternalCaseController - Deliver prosecutor to court', () => {
 
     givenWhenThen = async (
       caseId: string,
-      body: DeliverProsecutorToCourtDto,
+      body: DeliverDto,
       user: User,
       theCase: Case,
     ) => {
