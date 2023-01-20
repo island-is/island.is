@@ -10,6 +10,12 @@ import {
 } from './config/europeanHealthInsuranceCardConfig'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import {
+  CardResponse,
+  CardType,
+  SentStatus,
+} from './dto/european-health-insurance-card.dtos'
+import { TemplateApiModuleActionProps } from '../../../types'
 
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
@@ -23,44 +29,22 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
   }
 
-  // nationalRegistryApiWithAuth(auth: Auth) {
-  //   return this.nationalRegistryApi.withManualAuth(auth)
-  // }
-
-  // async getNationalRegistryPerson(
-  //   user: User,
-  //   nationalId: string,
-  // ): Promise<unknown | null> {
-  //   const person = await this.nationalRegistryApiWithAuth(user).getIndividual(
-  //     nationalId,
-  //   )
-
-  //   return (
-  //     person && {
-  //       nationalId: person.nationalId,
-  //       fullName: person.name,
-  //       address: person.legalDomicile && {
-  //         streetName: person.legalDomicile.streetAddress,
-  //         postalCode: person.legalDomicile.postalCode,
-  //         city: person.legalDomicile.locality,
-  //         municipalityCode: person.legalDomicile.municipalityNumber,
-  //       },
-  //       genderCode: person.genderCode,
-  //     }
-  //   )
-  // }
-
-  // async getSpouse(user: User, nationalId: string): Promise<UserSpouse | null> {
-  //   const spouse = await this.nationalRegistryApiWithAuth(
-  //     user,
-  //   ).getCohabitationInfo(nationalId)
-
-  //   return (
-  //     spouse && {
-  //       nationalId: spouse.spouseNationalId,
-  //       name: spouse.spouseName,
-  //       maritalStatus: spouse.cohabitationCode,
-  //     }
-  //   )
-  // }
+  async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
+    console.log(auth)
+    console.log(application)
+    return {
+      isInsured: true,
+      nrid: '0004764579',
+      cards: [
+        {
+          id: '12346',
+          expires: new Date(),
+          reSent: new Date(),
+          issued: new Date(),
+          sentStatus: SentStatus.SENT,
+          type: CardType.PHYSICAL,
+        },
+      ],
+    } as CardResponse
+  }
 }

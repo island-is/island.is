@@ -15,6 +15,7 @@ import {
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
+import { EhicCardResponseApi } from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -71,6 +72,7 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 ChildrenCustodyInformationApi,
+                EhicCardResponseApi,
               ],
               write: 'all',
               read: 'all',

@@ -11,6 +11,7 @@ import {
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
+import { EhicCardResponseApi } from '../dataProviders'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
@@ -37,6 +38,11 @@ export const externalDataSection = buildSection({
           provider: ChildrenCustodyInformationApi,
           title: 'externalData.nationalRegistry.title',
           subTitle: 'externalData.nationalRegistry.description',
+        }),
+        buildDataProviderItem({
+          provider: EhicCardResponseApi,
+          title: 'EhicApi',
+          subTitle: 'EhicApi',
         }),
       ],
     }),
