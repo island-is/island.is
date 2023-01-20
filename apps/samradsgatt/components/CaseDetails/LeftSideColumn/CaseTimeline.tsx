@@ -13,7 +13,6 @@ interface CaseTimelineProps {
 }
 
 const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
-  status = 'Niðurstöður í vinnslu'
   const sections = [
     {
       section: 'Samráð fyrirhugað',
@@ -32,10 +31,10 @@ const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
       index: 3,
     },
   ]
-
   const getSections = (sections) => {
     console.log('in getSection')
-    console.log('sections:', sections)
+    console.log('status:', status)
+
     const finalSections = []
 
     let activeSection
