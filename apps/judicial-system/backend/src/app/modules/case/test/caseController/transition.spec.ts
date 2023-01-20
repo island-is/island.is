@@ -77,7 +77,7 @@ describe('CaseController - Transition', () => {
       try {
         then.result = await caseController.transition(
           caseId,
-          { id: uuid() } as User,
+          user,
           theCase,
           transition,
         )
@@ -173,7 +173,7 @@ describe('CaseController - Transition', () => {
                   caseId,
                   caseFileId: caseFileId2,
                 },
-                { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
+                { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
               ],
             )
           } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {

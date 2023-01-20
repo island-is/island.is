@@ -56,7 +56,7 @@ describe('InternalCaseController - Deliver prosecutor to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverProsecutorToCourt(caseId, body, user, theCase)
+        .deliverProsecutorToCourt(caseId, user, theCase, body)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

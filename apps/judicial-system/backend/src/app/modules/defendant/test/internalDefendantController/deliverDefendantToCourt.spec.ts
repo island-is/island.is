@@ -74,10 +74,10 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
         .deliverDefendantToCourt(
           caseId,
           defendantId,
-          body,
           user,
           theCase,
           defendant,
+          body,
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
