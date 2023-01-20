@@ -74,6 +74,7 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
           id={phoneField}
           name={phoneField}
           type="tel"
+          format="###-####"
           label={formatMessage(information.labels[userMessageId].phone)}
           error={errors && getErrorViaPath(errors, phoneField)}
           backgroundColor="blue"

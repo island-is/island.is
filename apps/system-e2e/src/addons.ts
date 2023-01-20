@@ -1,28 +1,26 @@
 import { expect, Locator, Page } from '@playwright/test'
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+import { sleep } from './support/utils'
 
 expect.extend({
   async toHaveCountGreaterThan(
     received: Locator,
     value: number,
-    options?: { timeoutMs?: number },
+    options: { timeout: number; sleepTime: number } = {
+      timeout: 10000,
+      sleepTime: 100,
+    },
   ) {
-    let count = 0
-    const oneSecondMs = 1000
-    const maxRetries = 60
-    for (let i = 0; i < maxRetries; i++) {
+    const initialTime = Date.now()
+    let count = -1
+    while (count <= value) {
       count = await received.count()
-      if (
-        !(count > value) &&
-        i * oneSecondMs < (options?.timeoutMs ?? 10 * oneSecondMs)
-      )
-        await sleep(oneSecondMs)
-      else break
+      if (Date.now() > initialTime + options.timeout)
+        return { message: () => 'Timeout', pass: false }
+      await sleep(options.sleepTime)
     }
     return {
-      message: () => (count > value ? 'passed' : 'failed'),
-      pass: count > value,
+      message: () => `Found ${count} elements`,
+      pass: true,
     }
   },
   async toBeApplication(received: string | Page, ofType = '\\w+') {

@@ -58,7 +58,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
 
   const identityRegistry = getValueViaPath(
     application.externalData,
-    'identityRegistry',
+    'identity',
   ) as IdentityResult
 
   // Applicant

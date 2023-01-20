@@ -43,7 +43,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
   }
 
-  async getInsuranceCompanyList({ auth }: TemplateApiModuleActionProps) {
+  async getInsuranceCompanyList() {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()
   }
 
@@ -71,7 +71,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       auth,
       {
-        permno: answers?.vehicle?.plate,
+        permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
           email: answers?.seller?.email,
@@ -123,12 +123,18 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     | undefined
   > {
     try {
+      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
+
+      const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
       const chargeItemCodes = getChargeItemCodes()
 
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         application.id,
+        SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
+        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
       return result
     } catch (exeption) {
@@ -157,7 +163,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
     if (!payment?.fulfilled) {
@@ -188,7 +194,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateRequestReviewSms(application, recipientList[i]),
+          (_, options) =>
+            generateRequestReviewSms(application, options, recipientList[i]),
           application,
         )
       }
@@ -290,8 +297,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       }
       if (newlyAddedRecipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () =>
-            generateRequestReviewSms(application, newlyAddedRecipientList[i]),
+          (_, options) =>
+            generateRequestReviewSms(
+              application,
+              options,
+              newlyAddedRecipientList[i],
+            ),
           application,
         )
       }
@@ -371,7 +382,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
     if (!payment?.fulfilled) {
@@ -402,7 +413,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
 
     await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
-      permno: answers?.vehicle?.plate,
+      permno: answers?.pickVehicle?.plate,
       seller: {
         ssn: answers?.seller?.nationalId,
         email: answers?.seller?.email,

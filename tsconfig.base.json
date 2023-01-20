@@ -179,15 +179,15 @@
       "@island.is/application/api/files": [
         "libs/application/api/files/src/index.ts"
       ],
+      "@island.is/application/api/payment": [
+        "libs/application/api/payment/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/messages": [
         "libs/application/core/src/lib/messages.ts"
       ],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
-      ],
-      "@island.is/application/data-providers": [
-        "libs/application/data-providers/src/index.ts"
       ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
@@ -240,6 +240,9 @@
       "@island.is/application/templates/estate": [
         "libs/application/templates/estate/src/index.ts"
       ],
+      "@island.is/application/templates/estate/types": [
+        "libs/application/templates/estate/src/types.ts"
+      ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
@@ -266,6 +269,12 @@
       ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
+      ],
+      "@island.is/application/templates/inheritance-report": [
+        "libs/application/templates/inheritance-report/src/index.ts"
+      ],
+      "@island.is/application/templates/inheritance-report/types": [
+        "libs/application/templates/inheritance-report/src/types.ts"
       ],
       "@island.is/application/templates/institution-collaboration": [
         "libs/application/templates/institution-collaboration/src/index.ts"
@@ -425,7 +434,6 @@
         "libs/clients/national-registry/v2/src/index.ts"
       ],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
-      "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
@@ -454,8 +462,14 @@
       "@island.is/clients/transport-authority/vehicle-infolocks": [
         "libs/clients/transport-authority/vehicle-infolocks/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/vehicle-operators": [
+        "libs/clients/transport-authority/vehicle-operators/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-plate-ordering": [
+        "libs/clients/transport-authority/vehicle-plate-ordering/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
@@ -638,9 +652,6 @@
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
-      ],
-      "@island.is/service-portal/settings/access-control": [
-        "libs/service-portal/settings/access-control/src/index.ts"
       ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"

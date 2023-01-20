@@ -1,4 +1,9 @@
-import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
+import {
+  EnvironmentVariables,
+  EnvironmentVariableValue,
+  Secrets,
+  XroadConfig,
+} from './types/input-types'
 import { json, ref } from './dsl'
 
 type XroadSectionConfig = {
@@ -17,6 +22,10 @@ export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
     return this.config.env || {}
   }
 
+  getEnvVarByName(name: keyof I['env']): EnvironmentVariableValue | undefined {
+    return this.config.env?.[name]
+  }
+
   getSecrets(): Secrets {
     return this.config.secrets || {}
   }
@@ -30,9 +39,9 @@ export const Base = new XroadConf({
   env: {
     XROAD_BASE_PATH: {
       dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
-      staging: 'http://securityserver.staging01.devland.is',
+      staging: ref((h) => h.svc('http://securityserver.staging01.devland.is')),
       prod: 'http://securityserver.island.is',
-      local: ref((h) => h.svc('http://localhost:8081')),
+      local: ref((h) => h.svc('http://localhost:8081')), // x-road proxy
     },
     XROAD_BASE_PATH_WITH_ENV: {
       dev: ref(
@@ -40,6 +49,7 @@ export const Base = new XroadConf({
       ),
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
+      local: ref((h) => `${h.svc('http://localhost:8081')}/r1/IS-DEV`), // x-road proxy
     },
     XROAD_TLS_BASE_PATH: {
       dev: 'https://securityserver.dev01.devland.is',
@@ -307,15 +317,11 @@ export const Labor = new XroadConf({
 
 export const PaymentSchedule = new XroadConf({
   env: {
-    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: {
-      dev: 'IS-DEV/GOV/10021/FJS-Public',
-      staging: 'IS-DEV/GOV/10021/FJS-Public',
-      prod: 'IS/GOV/5402697509/FJS-Public',
+    XROAD_PAYMENT_SCHEDULE_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1',
     },
-  },
-  secrets: {
-    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
-    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
   },
 })
 
@@ -448,6 +454,13 @@ export const TransportAuthority = new XroadConf({
       staging:
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
+    },
+    XROAD_VEHICLE_PLATE_ORDERING_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+      staging:
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+      prod:
+        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
