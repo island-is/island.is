@@ -126,10 +126,13 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     })
 
     it('should send email to court', () => {
-      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
-        caseId,
-      })
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+          userId,
+          caseId,
+        },
+      ])
     })
   })
 

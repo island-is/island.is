@@ -37,6 +37,9 @@ type GivenWhenThen = (
 
 describe('CaseController - Transition', () => {
   const date = randomDate()
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockMessageService: MessageService
   let transaction: Transaction
   let mockCaseModel: typeof Case
@@ -160,11 +163,13 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
                   caseId,
                   caseFileId: caseFileId2,
                 },
@@ -176,11 +181,13 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
                   caseId,
                   caseFileId: caseFileId2,
                 },
@@ -190,15 +197,21 @@ describe('CaseController - Transition', () => {
             isIndictmentCase(type) &&
             newState === CaseState.SUBMITTED
           ) {
-            expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-              type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
-              caseId,
-            })
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ],
+            )
           } else if (newState === CaseState.RECEIVED) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
                   type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+                  userId,
                   caseId,
                 },
               ],

@@ -1,11 +1,12 @@
+import { ICalendar } from 'datebook'
+import _uniqBy from 'lodash/uniqBy'
+
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { ICalendar } from 'datebook'
-import _uniqBy from 'lodash/uniqBy'
 
 import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -1358,19 +1359,25 @@ export class NotificationService {
 
   private async addMessagesForHeadsUpNotificationToQueue(
     theCase: Case,
+    user: User,
   ): Promise<void> {
-    return this.messageService.sendMessageToQueue({
-      type: MessageType.SEND_HEADS_UP_NOTIFICATION,
-      caseId: theCase.id,
-    })
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+        userId: user.id,
+        caseId: theCase.id,
+      },
+    ])
   }
 
   private async addMessagesForReadyForCourtNotificationToQueue(
     theCase: Case,
+    user: User,
   ): Promise<void> {
     const messages = [
       {
         type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+        userId: user.id,
         caseId: theCase.id,
       },
     ]
@@ -1378,6 +1385,7 @@ export class NotificationService {
     if (theCase.state === CaseState.RECEIVED) {
       messages.push({
         type: MessageType.DELIVER_REQUEST_TO_COURT,
+        userId: user.id,
         caseId: theCase.id,
       })
     }
@@ -1387,11 +1395,15 @@ export class NotificationService {
 
   private async addMessagesForReceivedByCourtNotificationToQueue(
     theCase: Case,
+    user: User,
   ): Promise<void> {
-    return this.messageService.sendMessageToQueue({
-      type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
-      caseId: theCase.id,
-    })
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        userId: user.id,
+        caseId: theCase.id,
+      },
+    ])
   }
 
   /* API */
@@ -1437,19 +1449,26 @@ export class NotificationService {
   }
 
   async addMessagesForNotificationToQueue(
-    theCase: Case,
     notification: SendNotificationDto,
+    theCase: Case,
+    user: User,
   ): Promise<SendNotificationResponse> {
     try {
       switch (notification.type) {
         case NotificationType.HEADS_UP:
-          await this.addMessagesForHeadsUpNotificationToQueue(theCase)
+          await this.addMessagesForHeadsUpNotificationToQueue(theCase, user)
           break
         case NotificationType.READY_FOR_COURT:
-          await this.addMessagesForReadyForCourtNotificationToQueue(theCase)
+          await this.addMessagesForReadyForCourtNotificationToQueue(
+            theCase,
+            user,
+          )
           break
         case NotificationType.RECEIVED_BY_COURT:
-          await this.addMessagesForReceivedByCourtNotificationToQueue(theCase)
+          await this.addMessagesForReceivedByCourtNotificationToQueue(
+            theCase,
+            user,
+          )
           break
         default:
           throw new InternalServerErrorException(

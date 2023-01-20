@@ -10,7 +10,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (message: CaseMessage) => Promise<Then>
+type GivenWhenThen = (message: CaseMessage[]) => Promise<Then>
 
 describe('MessageService - Send message to queue', () => {
   let setMocks: (mocks: unknown[]) => void
@@ -30,11 +30,11 @@ describe('MessageService - Send message to queue', () => {
     mockQueueUrl = queueUrl
     mockSqs = sqs
 
-    givenWhenThen = async (message: CaseMessage) => {
+    givenWhenThen = async (messages: CaseMessage[]) => {
       const then = {} as Then
 
       try {
-        then.result = await messageService.sendMessageToQueue(message, true)
+        then.result = await messageService.sendMessagesToQueue(messages, true)
       } catch (error) {
         then.error = error as Error
       }
@@ -53,7 +53,7 @@ describe('MessageService - Send message to queue', () => {
       beforeEach(async () => {
         setMocks([{ MessageId: messageId }])
 
-        await givenWhenThen(message)
+        await givenWhenThen([message])
       })
 
       it(`should post message ${type} to queue`, () => {
@@ -72,7 +72,7 @@ describe('MessageService - Send message to queue', () => {
     beforeEach(async () => {
       setMocks([])
 
-      then = await givenWhenThen(message)
+      then = await givenWhenThen([message])
     })
 
     it('should throw error', () => {
