@@ -1794,8 +1794,8 @@ export const parentalLeaveFormMessages: MessageDir = {
   }),
 
   attachmentScreen: defineMessages({
-    genericTitle: {
-      id: 'pl.application:attachmentscreen.genericTitle',
+    title: {
+      id: 'pl.application:attachmentscreen.title',
       defaultMessage: `Viðbótargögn með umsókn`,
       description: `Additional documentation for application `,
     },

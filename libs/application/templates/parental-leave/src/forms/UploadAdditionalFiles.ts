@@ -25,16 +25,16 @@ export const UploadAdditionalFiles: Form = buildForm({
       children: [
         buildCustomField({
           id: 'uploadAdditionalFilesInfoScreen',
-          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+          title: parentalLeaveFormMessages.attachmentScreen.title,
           component: 'UploadAdditionalFilesInfoScreen',
         }),
         buildMultiField({
           id: 'additionalDocumentsScreen',
-          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+          title: parentalLeaveFormMessages.attachmentScreen.title,
           children: [
             buildFileUploadField({
               id: 'fileUpload.additionalDocuments',
-              title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+              title: parentalLeaveFormMessages.attachmentScreen.title,
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.genericDescription,
               maxSize: FILE_SIZE_LIMIT,
