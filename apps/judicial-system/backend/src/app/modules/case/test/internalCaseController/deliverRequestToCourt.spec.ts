@@ -13,7 +13,7 @@ import { randomDate } from '../../../../test'
 import { nowFactory } from '../../../../factories'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { User } from '../../../User'
+import { User } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
 
