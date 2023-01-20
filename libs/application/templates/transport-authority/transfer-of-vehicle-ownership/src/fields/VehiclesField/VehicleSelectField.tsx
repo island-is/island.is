@@ -29,7 +29,7 @@ export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -90,6 +90,9 @@ export const VehicleSelectField: FC<
               ?.ownerChangeErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
+          setValue('vehicle.plate', currentVehicle.permno)
+          setValue('vehicle.type', currentVehicle.make)
+          setValue('vehicle.date', new Date().toISOString().substring(0, 10))
           setIsLoading(false)
         })
         .catch((error) => console.error(error))

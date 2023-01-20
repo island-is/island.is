@@ -513,7 +513,7 @@ export class InternalCaseService {
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
-        this.logger.error('failed to update case with defendant', { reason })
+        this.logger.error('Failed to update case with defendant', { reason })
 
         return { delivered: false }
       })
