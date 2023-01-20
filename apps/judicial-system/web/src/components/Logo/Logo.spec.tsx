@@ -1,6 +1,5 @@
 import React from 'react'
-import { Router } from 'react-router-dom'
-import { createMemoryHistory } from 'history'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
 
@@ -14,19 +13,27 @@ import Logo from './Logo'
 describe('Logo', () => {
   test('should display the current users institution', async () => {
     // Arrange
-    const history = createMemoryHistory()
-    history.push(constants.RESTRICTION_CASE_DEFENDANT_ROUTE)
+    const routes = [
+      {
+        path: constants.RESTRICTION_CASE_DEFENDANT_ROUTE,
+        element: (
+          <MockedProvider mocks={[...mockJudgeQuery]} addTypename={false}>
+            <UserProvider authenticated={true}>
+              <Logo />
+            </UserProvider>
+          </MockedProvider>
+        ),
+      },
+    ]
 
-    render(
-      <MockedProvider mocks={[...mockJudgeQuery]} addTypename={false}>
-        <Router history={history}>
-          <UserProvider authenticated={true}>
-            <Logo />
-          </UserProvider>
-        </Router>
-      </MockedProvider>,
-    )
+    const router = createMemoryRouter(routes, {
+      initialEntries: [constants.RESTRICTION_CASE_DEFENDANT_ROUTE],
+    })
 
+    // Act
+    render(<RouterProvider router={router} />)
+
+    // Assert
     expect(await screen.findByText('Héraðsdómur')).toBeInTheDocument()
     expect(await screen.findByText('Reykjavíkur')).toBeInTheDocument()
   })
