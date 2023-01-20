@@ -185,6 +185,14 @@ export async function checkIsAuthenticated() {
     return false
   }
 
+  if ("scopes" in authorizeResult) {
+    const hasRequiredScopes = appAuthConfig.scopes.every(scope => authorizeResult.scopes.includes(scope));
+    if (!hasRequiredScopes) {
+      await logout();
+      return false;
+    }
+  }
+
   fetchUserInfo().catch(async (err) => {
     await logout()
     await Navigation.dismissAllModals()
