@@ -22,6 +22,11 @@ export const payment = {
       defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
       description: 'Forwarding you to payment handler...',
     },
+    confirm: {
+      id: 'ta.ccov.application:payment.general.confirm',
+      defaultMessage: 'Staðfesta',
+      description: 'confirm',
+    },
   }),
   paymentChargeOverview: defineMessages({
     forPayment: {

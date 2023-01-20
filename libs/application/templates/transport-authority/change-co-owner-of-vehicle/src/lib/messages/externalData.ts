@@ -9,7 +9,7 @@ export const externalData = {
     },
     pageTitle: {
       id: 'ta.ccov.application:externalData.dataProvider.pageTitle',
-      defaultMessage: 'Tilkynning um eigendaskipti að ökutæki',
+      defaultMessage: 'Bæta við meðeiganda á ökutæki',
       description: `Application's name`,
     },
     subTitle: {
@@ -19,24 +19,8 @@ export const externalData = {
     },
     checkboxLabel: {
       id: 'ta.ccov.application:externalData.dataProvider.checkboxLabel',
-      defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
+      defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
       description: 'I understand',
-    },
-    getDataSuccess: {
-      id: 'ta.ccov.application:externalData.dataProvider.getDataSuccess',
-      defaultMessage: 'Tókst að sækja gögn',
-      description: 'Was able to get data',
-    },
-    getDataSuccessDescription: {
-      id:
-        'ta.ccov.application:externalData.dataProvider.getDataSuccessDescription',
-      defaultMessage: 'Með gagnaöflun tókst að sækja eftirfarandi gögn:',
-      description: 'Was able to get data description',
-    },
-    submitButton: {
-      id: 'ta.ccov.application:externalData.dataProvider.submitButton',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Continue to application',
     },
   }),
   nationalRegistry: defineMessages({
@@ -70,12 +54,12 @@ export const externalData = {
   currentVehicles: defineMessages({
     title: {
       id: 'ta.ccov.application:externalData.currentVehicles.title',
-      defaultMessage: 'Þín ökutæki úr ökutækjaskrá',
+      defaultMessage: 'Upplýsingar úr ökutækjaskrá',
       description: 'Your vehicles from the vehicle registry',
     },
     subTitle: {
       id: 'ta.ccov.application:externalData.currentVehicles.subTitle',
-      defaultMessage: 'Til þess að einfalda val á ökutæki',
+      defaultMessage: 'Skjal sem inniheldur þau ökuréttindi sem þú hefur',
       description: 'To make stuff easier',
     },
   }),

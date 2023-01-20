@@ -228,12 +228,10 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
-    const newCoOwners = answers?.coOwners
-      .filter((x) => !x.wasRemoved)
-      .map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
-      }))
+    const newCoOwners = answers?.coOwners.map((coOwner) => ({
+      ssn: coOwner.nationalId,
+      email: coOwner.email,
+    }))
 
     const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
       auth,
