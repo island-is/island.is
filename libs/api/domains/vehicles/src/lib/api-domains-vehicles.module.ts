@@ -4,18 +4,10 @@ import { VehiclesClientModule } from '@island.is/clients/vehicles'
 import { VehiclesResolver } from './api-domains-vehicles.resolver'
 import { VehiclesService } from './api-domains-vehicles.service'
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { ConfigModule } from '@nestjs/config'
 
 @Module({
   providers: [VehiclesResolver, VehiclesService],
-  imports: [
-    VehiclesClientModule,
-    AuthModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [],
-    }),
-  ],
+  imports: [VehiclesClientModule, AuthModule],
   exports: [VehiclesService],
 })
 export class VehiclesModule {}
