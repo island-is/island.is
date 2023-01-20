@@ -6,7 +6,7 @@ export const GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS = `
       color
       role
       isDebtLess
-      ownerChangeErrorMessages {
+      validationErrorMessages {
         errorNo
         defaultMessage
       }
@@ -18,7 +18,7 @@ export const GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO = `
   query GetVehicleOwnerchangeChecksByPermno($permno: String!) {
     vehicleOwnerchangeChecksByPermno(permno: $permno) {
       isDebtLess
-      ownerChangeErrorMessages {
+      validationErrorMessages {
         errorNo
         defaultMessage
       }

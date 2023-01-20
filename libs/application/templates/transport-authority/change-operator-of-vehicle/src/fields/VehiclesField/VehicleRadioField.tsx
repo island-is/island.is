@@ -14,8 +14,8 @@ import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { gql, useQuery } from '@apollo/client'
-import { GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS } from '../../graphql/queries'
-import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
+import { GET_CURRENT_VEHICLES_WITH_OPERATOR_CHANGE_CHECKS } from '../../graphql/queries'
+import { VehiclesCurrentVehicleWithOperatorChangeChecks } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { applicationCheck, information, error } from '../../lib/messages'
 
@@ -48,10 +48,9 @@ export const VehicleRadioField: FC<
       | undefined,
   )
 
-  // TODO: Add operator validation query once Samgöngustofa has finished it
   const { data, loading } = useQuery(
     gql`
-      ${GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS}
+      ${GET_CURRENT_VEHICLES_WITH_OPERATOR_CHANGE_CHECKS}
     `,
     {
       variables: {
@@ -72,13 +71,13 @@ export const VehicleRadioField: FC<
   }
 
   const vehicleOptions = (
-    vehicles: VehiclesCurrentVehicleWithOwnerchangeChecks[],
+    vehicles: VehiclesCurrentVehicleWithOperatorChangeChecks[],
   ) => {
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      const disabled = false
-      //   !vehicle.isDebtLess || !!vehicle.ownerChangeErrorMessages?.length
+      const disabled =
+        !vehicle.isDebtLess || !!vehicle.validationErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
@@ -108,8 +107,8 @@ export const VehicleRadioField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!vehicle.ownerChangeErrorMessages?.length &&
-                          vehicle.ownerChangeErrorMessages?.map((error) => {
+                        {!!vehicle.validationErrorMessages?.length &&
+                          vehicle.validationErrorMessages?.map((error) => {
                             const message = formatMessage(
                               getValueViaPath(
                                 applicationCheck.validation,
@@ -160,7 +159,7 @@ export const VehicleRadioField: FC<
           backgroundColor="blue"
           onSelect={onRadioControllerSelect}
           options={vehicleOptions(
-            data.currentVehiclesWithOwnerchangeChecks as VehiclesCurrentVehicleWithOwnerchangeChecks[],
+            data.currentVehiclesWithOperatorChangeChecks as VehiclesCurrentVehicleWithOperatorChangeChecks[],
           )}
         />
       )}
