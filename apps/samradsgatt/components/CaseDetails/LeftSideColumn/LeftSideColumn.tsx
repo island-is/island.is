@@ -1,14 +1,34 @@
 import React from 'react'
-import { Box, Text, GridContainer, Divider } from '@island.is/island-ui/core'
-import CaseBreadcrumbs from './CaseBreadcrumbs'
+import {
+  Box,
+  Text,
+  GridContainer,
+  Divider,
+  Breadcrumbs,
+} from '@island.is/island-ui/core'
 import CaseTimeline from './CaseTimeline'
 import SubscriptionBox from './SubscriptionBox'
+import { useLocation } from 'react-use'
 
-const LeftSideColumn = () => {
+interface LeftSideColumnProps {
+  caseNumber: string
+}
+
+// TODO: change caseNumber when we have data
+// TODO: add caseNumber to Timeline props
+const LeftSideColumn = ({ caseNumber }: LeftSideColumnProps) => {
+  const location = useLocation()
   return (
     <GridContainer>
       <Box>
-        <CaseBreadcrumbs />
+        <Box paddingY={3}>
+          <Breadcrumbs
+            items={[
+              { title: 'Öll mál', href: '/samradsgatt' },
+              { title: 'Mál nr. ' + caseNumber, href: location.href },
+            ]}
+          />
+        </Box>
         <Divider />
         <CaseTimeline />
       </Box>
