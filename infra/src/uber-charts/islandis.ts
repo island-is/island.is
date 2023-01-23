@@ -40,6 +40,8 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
+import { serviceSetup as activitiesServiceSetup } from '../../../apps/services/activities/infra/activities'
+
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
@@ -93,6 +95,8 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
+
+const activitiesService = activitiesServiceSetup()
 
 export const Services: EnvironmentServices = {
   prod: [
@@ -173,6 +177,7 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    activitiesService,
   ],
 }
 

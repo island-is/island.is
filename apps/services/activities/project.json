@@ -48,6 +48,16 @@
         "cwd": "apps/services/activities"
       }
     },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-activities:dev-services",
+          "yarn nx run services-activities:migrate"
+        ],
+        "parallel": false
+      }
+    },
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
@@ -65,7 +75,7 @@
     "migrate/generate": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "sequelize-cli migration:generate --name $(whoami)",
+        "command": "sequelize-cli migration:generate",
         "cwd": "apps/services/activities"
       }
     },

@@ -13,6 +13,6 @@ export class SessionsService {
   ) {}
 
   async findAll(user: User): Promise<Session[]> {
-    return this.sessionModel.findAll()
+    return []
   }
 }
