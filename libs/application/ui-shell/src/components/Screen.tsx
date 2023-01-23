@@ -229,7 +229,10 @@ const Screen: FC<ScreenProps> = ({
             answers: extractedAnswers,
             draftProgress: {
               // If there are no total draft screens, then we dont have any draft page info from the template.
-              stepsFinished: totalDraftScreens ?? activeScreenIndex + 1,
+              stepsFinished:
+                totalDraftScreens === undefined
+                  ? activeScreenIndex + 1
+                  : currentDraftScreen,
               totalSteps: totalDraftScreens ?? numberOfScreens - 1,
             },
           },
