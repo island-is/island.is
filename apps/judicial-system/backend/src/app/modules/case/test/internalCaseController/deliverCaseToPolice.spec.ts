@@ -9,6 +9,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCourtRecordPdfAsString } from '../../../../formatters'
 import { PoliceService } from '../../../police'
+import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -22,6 +23,9 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver case to police', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockPoliceService: PoliceService
   let givenWhenThen: GivenWhenThen
 
@@ -37,7 +41,7 @@ describe('InternalCaseController - Deliver case to police', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverCaseToPolice(caseId, theCase)
+        .deliverCaseToPolice(caseId, user, theCase, { userId })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -82,6 +86,7 @@ describe('InternalCaseController - Deliver case to police', () => {
 
     it('should update the police case', async () => {
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
+        user,
         caseId,
         caseType,
         caseState,

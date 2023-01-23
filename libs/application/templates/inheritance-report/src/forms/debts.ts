@@ -17,37 +17,13 @@ export const debts = buildSection({
   title: m.debtsTitle,
   children: [
     buildSubSection({
-      id: 'funeralCost',
-      title: m.funeralCostTitle,
-      children: [
-        buildMultiField({
-          id: 'funeralCost',
-          title: m.debtsTitle,
-          description: '',
-          children: [
-            buildDescriptionField({
-              id: 'funeralCostHeader',
-              title: m.funeralCostTitle,
-              titleVariant: 'h3',
-            }),
-            buildTextField({
-              id: 'funeralCostAmount',
-              title: m.amount,
-              width: 'half',
-              variant: 'currency',
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSubSection({
       id: 'domesticAndForeignDebts',
       title: m.debtsTitle,
       children: [
         buildMultiField({
           id: 'domesticAndForeignDebts',
           title: m.debtsAndFuneralCost,
-          description: '',
+          description: m.debtsAndFuneralCostDescription,
           children: [
             buildDescriptionField({
               id: 'domesticAndForeignDebtsHeader',
@@ -97,8 +73,8 @@ export const debts = buildSection({
       children: [
         buildMultiField({
           id: 'publicCharges',
-          title: m.publicChargesTitle,
-          description: '',
+          title: m.debtsAndFuneralCost,
+          description: m.debtsAndFuneralCostDescription,
           children: [
             buildDescriptionField({
               id: 'publicChargesHeader',
@@ -142,21 +118,8 @@ export const debts = buildSection({
         buildMultiField({
           id: 'debtsOverview',
           title: m.overview,
-          description: '',
+          description: m.overviewDescription,
           children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewFuneralCost',
-              title: m.funeralCostTitle,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.totalAmount,
-              value: ({ answers }) =>
-                formatCurrency(String(answers.funeralCostAmount)),
-            }),
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewDomesticAndForeignDebts',
@@ -195,7 +158,7 @@ export const debts = buildSection({
             }),
             buildTextField({
               id: 'debtsTotal',
-              title: 'Samtals alls',
+              title: m.overviewTotal,
               readOnly: true,
               width: 'half',
               variant: 'currency',
