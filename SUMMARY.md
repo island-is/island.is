@@ -111,6 +111,7 @@
 - [Samráðsgáttin](apps/samradsgatt/README.md)
 - [Service Portal](apps/service-portal/README.md)
 - [Services](apps/services/README.md)
+  - [Activities](apps/services/activities/README.md)
   - [Auth](apps/services/auth/README.md)
     - [Admin API](apps/services/auth/admin-api/README.md)
     - [Delegation API](apps/services/auth/delegation-api/README.md)
