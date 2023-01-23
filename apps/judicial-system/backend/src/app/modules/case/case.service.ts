@@ -455,10 +455,16 @@ export class CaseService {
     )
   }
 
-  addMessagesForDeletedIndictmentCaseToQueue(theCase: Case): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getArchiveCaseFileMessages(theCase),
-    )
+  addMessagesForDeletedCaseToQueue(theCase: Case): Promise<void> {
+    const messages: CaseMessage[] = [
+      { type: MessageType.SEND_REVOKED_NOTIFICATION, caseId: theCase.id },
+    ]
+    // Indictment cases need some case file cleanup
+    if (isIndictmentCase(theCase.type)) {
+      messages.push(...this.getArchiveCaseFileMessages(theCase))
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   addReceivedByCourtMessageToQueue(theCase: Case): Promise<void> {
@@ -592,12 +598,11 @@ export class CaseService {
         }
       })
       .then(async () => {
-        const updatedCase = await this.findById(theCase.id)
-
-        // Update the court case if necessary
-        await this.updateCourtCase(theCase, updatedCase, user)
-
         if (returnUpdatedCase) {
+          const updatedCase = await this.findById(theCase.id)
+
+          // Update the court case if necessary
+          await this.updateCourtCase(theCase, updatedCase, user)
           return updatedCase
         }
       })

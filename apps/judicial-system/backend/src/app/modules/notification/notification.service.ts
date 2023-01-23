@@ -1428,6 +1428,14 @@ export class NotificationService {
       caseId: theCase.id,
     })
   }
+  private async addMessagesForRevokedNotificationToQueue(
+    theCase: Case,
+  ): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_REVOKED_NOTIFICATION,
+      caseId: theCase.id,
+    })
+  }
 
   /* API */
 
@@ -1485,6 +1493,9 @@ export class NotificationService {
           break
         case NotificationType.RECEIVED_BY_COURT:
           await this.addMessagesForReceivedByCourtNotificationToQueue(theCase)
+          break
+        case NotificationType.REVOKED:
+          await this.addMessagesForRevokedNotificationToQueue(theCase)
           break
         default:
           throw new InternalServerErrorException(

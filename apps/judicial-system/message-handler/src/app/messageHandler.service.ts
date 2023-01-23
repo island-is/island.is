@@ -137,6 +137,13 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.RULING },
         )
         break
+      case MessageType.SEND_REVOKED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'notification',
+          { type: NotificationType.REVOKED },
+        )
+        break
       default:
         this.logger.error('Unknown message type', { msg: message })
     }

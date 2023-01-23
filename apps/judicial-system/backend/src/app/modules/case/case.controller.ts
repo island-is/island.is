@@ -240,12 +240,11 @@ export class CaseController {
         await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
           theCase,
         )
-      } else if (state === CaseState.DELETED) {
-        // Indictment cases need some case file cleanup
-        await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
-          theCase,
-        )
       }
+    }
+
+    if (state === CaseState.DELETED) {
+      await this.caseService.addMessagesForDeletedCaseToQueue(theCase)
     }
 
     // No need to wait
