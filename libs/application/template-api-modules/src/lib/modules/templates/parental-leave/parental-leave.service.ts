@@ -118,6 +118,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
+  // Check whether phoneNumber is GSM
+  checkIfPhoneNumberIsGSM(phoneNumber: string) {
+    const phoneNumberStartStr = ['6', '7', '8']
+    return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
+  }
+
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
     return this.childrenService.provideChildren(application, auth.nationalId)
   }
@@ -155,7 +161,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     try {
-      if (otherParentPhoneNumber) {
+      if (
+        otherParentPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(otherParentPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -186,7 +195,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     try {
-      if (applicantPhoneNumber) {
+      if (
+        applicantPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -218,7 +230,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     try {
-      if (applicantPhoneNumber) {
+      if (
+        applicantPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
           'clientLocationOrigin',
@@ -255,7 +270,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     // send confirmation sms to employer
     try {
-      if (employerPhoneNumber) {
+      if (
+        employerPhoneNumber &&
+        this.checkIfPhoneNumberIsGSM(employerPhoneNumber)
+      ) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
           application,

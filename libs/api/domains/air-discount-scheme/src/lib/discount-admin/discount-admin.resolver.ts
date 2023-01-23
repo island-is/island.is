@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
-import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsUserGuard,

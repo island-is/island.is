@@ -16,6 +16,7 @@ import {
   HttpException,
   Inject,
   ParseBoolPipe,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -77,6 +78,7 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 
@@ -227,20 +229,6 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
-    if (isIndictmentCase(theCase.type)) {
-      if (completedCaseStates.includes(state)) {
-        // Indictment cases are not signed
-        await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
-          theCase,
-        )
-      } else if (state === CaseState.DELETED) {
-        // Indictment cases need some case file cleanup
-        await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
-          theCase,
-        )
-      }
-    }
-
     // No need to wait
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
@@ -265,6 +253,7 @@ export class CaseController {
     isArray: true,
     description: 'Gets all existing cases',
   })
+  @UseInterceptors(CaseListInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
