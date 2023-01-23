@@ -216,6 +216,7 @@ const ApplicationList = ({
                     coreMessages.deleteApplicationDialogCancelLabel
                       .defaultMessage,
                 }}
+                status={application.status}
               />
             )
           })}

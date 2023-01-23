@@ -64,6 +64,7 @@ type ActionCardProps = {
     dialogConfirmLabel?: string
     dialogCancelLabel?: string
   }
+  status?: string
 }
 
 const defaultCta = {
@@ -114,6 +115,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   deleteButton: _delete,
   avatar,
   logo,
+  status,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -426,7 +428,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         alignItems={['stretch', 'stretch', alignWithDate]}
         flexDirection={['column', 'column', 'row']}
       >
-        {renderDraftProgressMeter()}
+        {status === 'draft' && renderDraftProgressMeter()}
         {renderProgressMeterButton()}
       </Box>
     </Box>

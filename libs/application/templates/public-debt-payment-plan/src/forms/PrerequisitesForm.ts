@@ -238,27 +238,32 @@ export const PrerequisitesForm: Form = buildForm({
       id: 'employer',
       title: section.employer,
       condition: isApplicantPerson,
+      draftPageNumber: 1,
       children: [],
     }),
     buildSection({
       id: 'disposableIncome',
       title: section.disposableIncome,
       condition: isApplicantPerson,
+      draftPageNumber: 1,
       children: [],
     }),
     buildSection({
       id: 'deptOverview',
       title: section.deptOverview,
+      draftPageNumber: 3,
       children: [],
     }),
     buildSection({
       id: 'paymentPlan',
       title: section.paymentPlan,
+      draftPageNumber: 4,
       children: [],
     }),
     buildSection({
       id: 'overview',
       title: section.overview,
+      draftPageNumber: 5,
       children: [],
     }),
     buildSection({

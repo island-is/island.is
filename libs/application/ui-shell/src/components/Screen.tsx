@@ -61,6 +61,8 @@ type ScreenProps = {
   expandRepeater(): void
   mode?: FormModes
   numberOfScreens: number
+  totalDraftScreens?: number
+  currentDraftScreen?: number
   prevScreen(): void
   screen: FormScreen
   renderLastScreenButton?: boolean
@@ -90,6 +92,8 @@ const Screen: FC<ScreenProps> = ({
   mode,
   numberOfScreens,
   prevScreen,
+  totalDraftScreens,
+  currentDraftScreen,
   renderLastScreenButton,
   renderLastScreenBackButton,
   screen,
@@ -224,10 +228,9 @@ const Screen: FC<ScreenProps> = ({
             id: applicationId,
             answers: extractedAnswers,
             draftProgress: {
-              // activeScreenIndex starts at 0, but numberOfScreens starts at 1
-              // So we add 1 to activeScreenIndex to get the correct step
-              stepsFinished: activeScreenIndex + 1,
-              totalSteps: numberOfScreens,
+              // If there are no total draft screens, then we dont have any draft page info from the template.
+              stepsFinished: totalDraftScreens ?? activeScreenIndex + 1,
+              totalSteps: totalDraftScreens ?? numberOfScreens - 1,
             },
           },
           locale,

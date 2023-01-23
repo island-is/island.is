@@ -85,6 +85,7 @@ export interface FormItem extends TestSupport {
 export interface Section extends FormItem {
   type: FormItemTypes.SECTION
   children: SectionChildren[]
+  draftPageNumber?: number
 }
 
 export interface SubSection extends FormItem {
