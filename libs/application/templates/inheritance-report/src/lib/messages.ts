@@ -174,6 +174,11 @@ export const m = defineMessages({
   },
 
   // Estate Properties
+  properties: {
+    id: 'ir.application:properties',
+    defaultMessage: 'Eignir',
+    description: '',
+  },
   propertiesTitle: {
     id: 'ir.application:propertiesTitle',
     defaultMessage: 'Innlendar og erlendar eignir á dánardegi hins látna',
@@ -594,7 +599,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  // Debts
+  // Debts and funeral cost
   debtsAndFuneralCost: {
     id: 'ir.application:debtsAndFuneralCost',
     defaultMessage: 'Innlendar og erlendar skuldir á dánardegi hins látna',
@@ -607,27 +612,32 @@ export const m = defineMessages({
     description: '',
   },
   domesticAndForeignDebts: {
-    id: 'es.application:debtsDescription',
+    id: 'ir.application:debtsDescription',
     defaultMessage: 'Skuldir',
     description: '',
   },
   domesticAndForeignDebtsDescription: {
-    id: 'es.application:domesticAndForeignDebtsDescription',
-    defaultMessage: 'Tilgreinið kennitölu ef um einstakling er að ræða',
+    id: 'ir.application:domesticAndForeignDebtsDescription',
+    defaultMessage: 'Tilgreindu kennitölu ef um einstakling er að ræða.',
     description: '',
   },
   funeralCostTitle: {
-    id: 'es.application:funeralCostTitle',
+    id: 'ir.application:funeralCostTitle',
     defaultMessage: 'Útfarakostnaður',
     description: '',
   },
+  funeralCostDescription: {
+    id: 'ir.application:funeralCostDescription',
+    defaultMessage: 'Útfarakostnaður samkvæmt yfirlit um útfarakostnað.',
+    description: '',
+  },
   amount: {
-    id: 'es.application:funeralCostAmount',
+    id: 'ir.application:funeralCostAmount',
     defaultMessage: 'Fjárhæð',
     description: '',
   },
   debtsTitle: {
-    id: 'es.application:debtsTitle',
+    id: 'ir.application:debtsTitle',
     defaultMessage: 'Skuldir',
     description: '',
   },

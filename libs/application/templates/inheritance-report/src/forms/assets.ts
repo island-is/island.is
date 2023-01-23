@@ -14,7 +14,7 @@ import { Application } from '@island.is/api/schema'
 
 export const assets = buildSection({
   id: 'estateProperties',
-  title: m.propertiesTitle,
+  title: m.properties,
   children: [
     buildSubSection({
       id: 'realEstate',
