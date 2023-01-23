@@ -28,7 +28,7 @@ export const Dashboard = () => {
   const { md } = useBreakpoint()
   const topNavigation = useNavigation(TOP_NAVIGATION)
   const bottomNavigation = useNavigation(BOTTOM_NAVIGATION)
-  const navigationItem = useSingleNavigationItem(
+  const { navigationItem } = useSingleNavigationItem(
     TOP_NAVIGATION,
     BOTTOM_NAVIGATION,
   )

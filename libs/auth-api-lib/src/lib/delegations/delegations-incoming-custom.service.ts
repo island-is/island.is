@@ -12,7 +12,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
 import { isDefined } from '@island.is/shared/utils'
 
-import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
@@ -21,6 +20,9 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
+import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
+import { Op } from 'sequelize'
+import { ApiScopeInfo } from './delegations-incoming.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -33,8 +35,8 @@ export class DelegationsIncomingCustomService {
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
-    @InjectModel(ClientAllowedScope)
-    private clientAllowedScopeModel: typeof ClientAllowedScope,
+    @InjectModel(ApiScopeUserAccess)
+    private apiScopeUserAccessModel: typeof ApiScopeUserAccess,
     private nationalRegistryClient: NationalRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -63,25 +65,54 @@ export class DelegationsIncomingCustomService {
     })
   }
 
-  async findAllAvailableIncoming(user: User): Promise<MergedDelegationDTO[]> {
+  async findAllAvailableIncoming(
+    user: User,
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes?: boolean,
+  ): Promise<MergedDelegationDTO[]> {
+    const customApiScopes = clientAllowedApiScopes.filter(
+      (s) => s.allowExplicitDelegationGrant,
+    )
+    if (requireApiScopes && !(customApiScopes && customApiScopes.length > 0)) {
+      return []
+    }
+
     const { delegations, fromNameInfo } = await this.findAllIncoming(
       user,
       DelegationValidity.NOW,
     )
 
-    const allowedScopes = await this.getClientAllowedScopes(user)
-
-    const allowedDelegations = delegations
+    const validDelegations = delegations
       .map((d) => {
         d.delegationScopes = d.delegationScopes?.filter((s) =>
-          this.checkIfScopeAllowed(s, allowedScopes),
+          this.checkIfScopeIsValid(s, customApiScopes),
+        )
+        return d
+      })
+      .filter((d) => d.delegationScopes && d.delegationScopes.length > 0)
+
+    const protectedScopes = customApiScopes.filter((s) => s.isAccessControlled)
+
+    const accessControlList = await this.findAccessControlList(
+      delegations,
+      protectedScopes,
+    )
+    const allowedDelegations = validDelegations
+      .map((d) => {
+        d.delegationScopes = d.delegationScopes?.filter((s) =>
+          this.checkIfScopeAllowed(
+            s,
+            customApiScopes,
+            accessControlList,
+            d.fromNationalId,
+          ),
         )
         return d
       })
       .filter(
         (d) =>
-          // The requesting client must have access to at least one scope for the delegation to be relevant.
-          d.delegationScopes && d.delegationScopes.length > 0,
+          !requireApiScopes ||
+          (d.delegationScopes && d.delegationScopes.length > 0),
       )
 
     const mergedDelegationDTOs = uniqBy(
@@ -156,21 +187,36 @@ export class DelegationsIncomingCustomService {
     return { delegations: aliveDelegations, fromNameInfo }
   }
 
-  private checkIfScopeAllowed(
+  private checkIfScopeIsValid(
     scope: DelegationScope,
-    allowedScopes: string[],
+    customApiScopes: ApiScopeInfo[],
   ): boolean {
-    return allowedScopes.includes(scope.scopeName)
+    return customApiScopes.some((s) => s.name === scope.scopeName)
   }
 
-  private async getClientAllowedScopes(user: User) {
-    return (
-      await this.clientAllowedScopeModel.findAll({
-        where: {
-          clientId: user.client,
-        },
-      })
-    ).map((s) => s.scopeName)
+  private checkIfScopeAllowed(
+    scope: DelegationScope,
+    customApiScopes: ApiScopeInfo[],
+    accesses: ApiScopeUserAccess[],
+    fromNationalId: string,
+  ): boolean {
+    const protectedScope = customApiScopes.find(
+      (s) => s.name === scope.scopeName && s.isAccessControlled,
+    )
+
+    if (!protectedScope) {
+      return true
+    }
+
+    const access = accesses.find(
+      (a) => a.scope === scope.scopeName && a.nationalId === fromNationalId,
+    )
+
+    if (access) {
+      return kennitala.isCompany(fromNationalId)
+    }
+
+    return false
   }
 
   /**
@@ -264,5 +310,29 @@ export class DelegationsIncomingCustomService {
     nationalId: string,
   ) {
     return persons.find((person) => person?.nationalId === nationalId)
+  }
+
+  private async findAccessControlList(
+    delegations: Delegation[],
+    protectedScopes: ApiScopeInfo[],
+  ): Promise<ApiScopeUserAccess[]> {
+    if (
+      !delegations ||
+      delegations.length === 0 ||
+      !protectedScopes ||
+      protectedScopes.length === 0
+    )
+      return []
+
+    const nationalIds = delegations.map((d) => d.fromNationalId)
+
+    return await this.apiScopeUserAccessModel.findAll({
+      where: {
+        [Op.and]: [
+          { nationalId: { [Op.in]: nationalIds } },
+          { scope: { [Op.in]: protectedScopes.map((s) => s.name) } },
+        ],
+      },
+    })
   }
 }

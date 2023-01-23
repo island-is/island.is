@@ -107,7 +107,12 @@ export abstract class BaseTemplateApiApplicationService {
   ): Promise<string>
 }
 
-export type SmsTemplateGenerator = (application: Application) => SmsMessage
+export type SmsTemplateGenerator = (
+  application: Application,
+  options: {
+    clientLocationOrigin: string
+  },
+) => SmsMessage
 
 export type AssignmentSmsTemplateGenerator = (
   application: Application,

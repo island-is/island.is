@@ -6,7 +6,6 @@ import { FinancePaths } from './lib/paths'
 
 export const financeModule: PortalModule = {
   name: 'Fjármál',
-  widgets: () => [],
   routes: ({ userInfo }) => {
     const routes: PortalRoute[] = [
       {
