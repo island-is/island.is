@@ -8,6 +8,7 @@ import { information, overview } from '../../../lib/messages'
 import { UserInformation } from '../../../types'
 import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
+import { formatPhoneNumber } from '../../../utils'
 
 export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -18,6 +19,7 @@ export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
     'sellerCoOwner',
     [],
   ) as UserInformation[]
+  const phonenumber = getValueViaPath(answers, 'seller.phone', '') as string
 
   return (
     <ReviewGroup isLast>
@@ -34,7 +36,7 @@ export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
             )}
           </Text>
           <Text>{getValueViaPath(answers, 'seller.email', '') as string}</Text>
-          <Text>{getValueViaPath(answers, 'seller.phone', '') as string}</Text>
+          <Text>{formatPhoneNumber(phonenumber)}</Text>
         </GridColumn>
         {coOwners?.map(({ name, nationalId, email, phone }, index: number) => {
           return (
@@ -50,7 +52,7 @@ export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
                 <Text>{name}</Text>
                 <Text>{nationalId}</Text>
                 <Text>{email}</Text>
-                <Text>{phone}</Text>
+                <Text>{formatPhoneNumber(phone)}</Text>
               </Box>
             </GridColumn>
           )

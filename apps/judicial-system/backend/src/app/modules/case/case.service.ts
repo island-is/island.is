@@ -22,7 +22,6 @@ import {
   CaseMessage,
   MessageService,
   MessageType,
-  UserMessage,
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
@@ -539,11 +538,13 @@ export class CaseService {
     caseId: string,
     userId: string,
   ): Promise<void> {
-    return this.messageService.sendMessageToQueue(({
-      type: MessageType.SEND_MODIFIED_NOTIFICATION,
-      caseId,
-      userId,
-    } as UserMessage) as CaseMessage)
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_MODIFIED_NOTIFICATION,
+        caseId,
+        userId,
+      },
+    ])
   }
 
   async findById(caseId: string, allowDeleted = false): Promise<Case> {
