@@ -257,6 +257,7 @@ api:
   env:
     AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
+    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
@@ -1275,6 +1276,7 @@ portals-admin:
 search-indexer-service:
   enabled: true
   env:
+    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
     APPLICATION_URL: 'http://search-indexer-service'
     CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
     CONTENTFUL_ENVIRONMENT: 'master'
@@ -1353,6 +1355,7 @@ search-indexer-service:
             cpu: '100m'
             memory: '512Mi'
     env:
+      AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
       APPLICATION_URL: 'http://search-indexer-service'
       CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
       CONTENTFUL_ENVIRONMENT: 'master'
@@ -1942,6 +1945,7 @@ user-notification-worker:
 web:
   enabled: true
   env:
+    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
     API_URL: 'http://web-api'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
