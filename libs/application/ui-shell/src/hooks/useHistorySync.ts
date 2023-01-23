@@ -19,7 +19,9 @@ export const useHistorySync = (
   const navigate = useNavigate()
   const navigationType = useNavigationType()
   const location = useLocation()
-  const locationRef = useRef(location)
+  const urlRef = useRef(
+    `${location.pathname}${location.search}${location.hash}`,
+  )
 
   // Set up history state.
   const [lastHistoryState, setLastHistoryState] = useState<HistoryState>({
@@ -42,24 +44,24 @@ export const useHistorySync = (
 
   // Act on history state.
   useEffect(() => {
-    const { pathname, search, hash } = locationRef.current
-    const url = `${pathname}${search}${hash}`
     const { historyReason } = lastHistoryState
 
     if (historyReason === 'navigate' || historyReason === 'initial') {
-      navigate(url, {
+      navigate(urlRef.current, {
         state: lastHistoryState,
         replace: historyReason === 'initial',
       })
     }
-  }, [lastHistoryState, locationRef, navigate])
+  }, [lastHistoryState, urlRef, navigate])
 
   // Listen for browser navigation change.
   useEffect(() => {
-    const { state } = locationRef.current
-
-    if (navigationType === 'POP' && state !== null && state.screen !== null) {
-      dispatch({ type: ActionTypes.HISTORY_POP, payload: state })
+    if (
+      navigationType === 'POP' &&
+      location.state !== null &&
+      location.state.screen !== null
+    ) {
+      dispatch({ type: ActionTypes.HISTORY_POP, payload: location.state })
     }
-  }, [navigationType, dispatch, state])
+  }, [navigationType, dispatch, location.state])
 }
