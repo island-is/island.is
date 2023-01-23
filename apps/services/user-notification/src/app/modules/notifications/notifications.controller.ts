@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common'
+import { Get, Inject } from '@nestjs/common'
 import {
   Controller,
   Post,
@@ -60,6 +60,16 @@ export class NotificationsController {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService, //notifications
   ) {}
+
+
+  @Get("/test")
+  async test (
+    @Req() req: Request,
+  ): Promise<any> {
+    return { id: "test", date: new Date().toISOString() }
+  }
+
+
 
   @Post()
   @ApiBody({
