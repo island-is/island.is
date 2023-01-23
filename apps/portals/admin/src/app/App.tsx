@@ -32,7 +32,6 @@ export const App = () => {
                   <Layout>
                     <Routes>
                       <Route
-                        index
                         path={AdminPortalPaths.Root}
                         element={<Dashboard />}
                       />
