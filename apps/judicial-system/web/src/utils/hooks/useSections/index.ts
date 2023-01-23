@@ -3,10 +3,8 @@ import { useRouter } from 'next/router'
 
 import {
   Case,
-  CaseState,
   CaseType,
   Gender,
-  InstitutionType,
   isInvestigationCase,
   isRestrictionCase,
   User,
@@ -14,10 +12,11 @@ import {
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,

@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import InputMask from 'react-input-mask'
+import { ValueType } from 'react-select/src/types'
+
 import {
   Box,
   Checkbox,
@@ -7,19 +10,19 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
 import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  InstitutionType,
   isCourtRole,
   isProsecutionRole,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Institution, User } from '@island.is/judicial-system/types'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import * as constants from '@island.is/judicial-system/consts'
+
 import { ReactSelectOption } from '../../../types'
 import {
   isAdminUserFormValid,
@@ -27,7 +30,7 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import * as constants from '@island.is/judicial-system/consts'
+
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {

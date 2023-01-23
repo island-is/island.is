@@ -11,7 +11,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  InstitutionType,
   isInvestigationCase,
   isRestrictionCase,
   NotificationType,
@@ -76,6 +75,7 @@ import {
   signedVerdictOverview as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'

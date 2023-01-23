@@ -15,7 +15,6 @@ import {
 import {
   CaseState,
   CaseTransition,
-  InstitutionType,
   NotificationType,
   isRestrictionCase,
   UserRole,
@@ -34,6 +33,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 

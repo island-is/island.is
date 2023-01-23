@@ -1,9 +1,9 @@
 export enum InstitutionType {
-  ProsecutorsOffice = 'PROSECUTORS_OFFICE',
-  Court = 'COURT',
-  HighCourt = 'HIGH_COURT',
-  Prison = 'PRISON',
-  PrisonAdmin = 'PRISON_ADMIN',
+  ProsecutorsOffice = 'ProsecutorsOffice',
+  Court = 'Court',
+  HighCourt = 'HighCourt',
+  Prison = 'Prison',
+  PrisonAdmin = 'PrisonAdmin',
 }
 
 export interface Institution {
