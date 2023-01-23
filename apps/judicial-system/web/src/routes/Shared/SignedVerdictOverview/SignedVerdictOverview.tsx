@@ -273,7 +273,7 @@ export const SignedVerdictOverview: React.FC = () => {
       ([UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
         user.role,
       ) ||
-        user.institution?.type === InstitutionType.PRISON_ADMIN) &&
+        user.institution?.type === InstitutionType.PrisonAdmin) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
@@ -453,7 +453,7 @@ export const SignedVerdictOverview: React.FC = () => {
           sharedWithProsecutorsOffice: {
             id: (institution as ReactSelectOption).value as string,
             name: (institution as ReactSelectOption).label,
-            type: InstitutionType.PROSECUTORS_OFFICE,
+            type: InstitutionType.ProsecutorsOffice,
             created: new Date().toString(),
             modified: new Date().toString(),
             active: true,
@@ -656,7 +656,7 @@ export const SignedVerdictOverview: React.FC = () => {
           workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
           user?.role &&
           isCourtRole(user.role) &&
-          user?.institution?.type !== InstitutionType.HIGH_COURT && (
+          user?.institution?.type !== InstitutionType.HighCourt && (
             <Box marginBottom={7}>
               <AppealSection
                 workingCase={workingCase}

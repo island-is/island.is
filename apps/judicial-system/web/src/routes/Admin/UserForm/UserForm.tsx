@@ -78,15 +78,15 @@ export const UserForm: React.FC<Props> = (props) => {
     }
 
     return isProsecutionRole(user.role)
-      ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
+      ? user.institution?.type === InstitutionType.ProsecutorsOffice
       : isCourtRole(user.role)
-      ? user.institution?.type === InstitutionType.COURT ||
-        user.institution?.type === InstitutionType.HIGH_COURT
+      ? user.institution?.type === InstitutionType.Court ||
+        user.institution?.type === InstitutionType.HighCourt
       : user.role === UserRole.ASSISTANT
-      ? user.institution?.type === InstitutionType.COURT
+      ? user.institution?.type === InstitutionType.Court
       : user.role === UserRole.STAFF
-      ? user.institution?.type === InstitutionType.PRISON ||
-        user.institution?.type === InstitutionType.PRISON_ADMIN
+      ? user.institution?.type === InstitutionType.Prison ||
+        user.institution?.type === InstitutionType.PrisonAdmin
       : false
   }
 

@@ -8,7 +8,8 @@ export type {
   DeleteDefendantResponse,
 } from './lib/defendant'
 
-export { InstitutionType } from './lib/institution'
+export { InstitutionType } from './graphql/schema'
+// export { InstitutionType as InsitutionTypeGenerated } from './graphql/schema'
 export type { Institution } from './lib/institution'
 
 export { NotificationType } from './lib/notification'

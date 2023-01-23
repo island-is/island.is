@@ -32,23 +32,23 @@ const useInstitution = (skip = false) => {
     rawInstitutions = data.institutions
 
     institutions.courts = rawInstitutions.filter(
-      (institution) => institution.type === InstitutionType.COURT,
+      (institution) => institution.type === InstitutionType.Court,
     )
 
     institutions.allCourts = rawInstitutions.filter(
       (institution) =>
-        institution.type === InstitutionType.COURT ||
-        institution.type === InstitutionType.HIGH_COURT,
+        institution.type === InstitutionType.Court ||
+        institution.type === InstitutionType.HighCourt,
     )
 
     institutions.prosecutorsOffices = rawInstitutions.filter(
-      (institution) => institution.type === InstitutionType.PROSECUTORS_OFFICE,
+      (institution) => institution.type === InstitutionType.ProsecutorsOffice,
     )
 
     institutions.prisonInstitutions = rawInstitutions.filter(
       (institution) =>
-        institution.type === InstitutionType.PRISON ||
-        institution.type === InstitutionType.PRISON_ADMIN,
+        institution.type === InstitutionType.Prison ||
+        institution.type === InstitutionType.PrisonAdmin,
     )
     institutions.loaded = true
   }

@@ -126,10 +126,10 @@ export const Cases: React.FC = () => {
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isRepresentative = user?.role === UserRole.REPRESENTATIVE
-  const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isHighCourtUser = user?.institution?.type === InstitutionType.HighCourt
   const isPrisonAdminUser =
-    user?.institution?.type === InstitutionType.PRISON_ADMIN
-  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
+    user?.institution?.type === InstitutionType.PrisonAdmin
+  const isPrisonUser = user?.institution?.type === InstitutionType.Prison
 
   const { data, error, loading, refetch } = useQuery<{
     cases?: CaseListEntry[]
@@ -204,8 +204,8 @@ export const Cases: React.FC = () => {
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED
     ) {
-      await sendNotification(caseToDelete.id, NotificationType.REVOKED)
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
+      await sendNotification(caseToDelete.id, NotificationType.REVOKED)
       refetch()
     }
   }

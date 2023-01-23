@@ -57,7 +57,7 @@ const useSections = (
         caseType: type,
       }),
       children:
-        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+        user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
           : [
               {
@@ -188,7 +188,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
       children:
-        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+        user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
           : [
               {
@@ -455,7 +455,7 @@ const useSections = (
     return {
       name: formatMessage(sections.courtSection.title),
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.Court
           ? []
           : [
               {
@@ -585,7 +585,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.Court
           ? []
           : [
               {
@@ -806,7 +806,7 @@ const useSections = (
     return {
       name: formatMessage(sections.extensionSection.title),
       children:
-        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+        user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
           : [
               {
@@ -882,7 +882,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
       children:
-        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+        user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
           : [
               {

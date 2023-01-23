@@ -54,7 +54,7 @@ export const makeProsecutor = (): User => {
       id: '',
       created: '',
       modified: '',
-      type: InstitutionType.PROSECUTORS_OFFICE,
+      type: InstitutionType.ProsecutorsOffice,
       name: 'Lögreglan á Höfuðborgarsvæðinu',
       active: true,
     },

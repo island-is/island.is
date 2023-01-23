@@ -12,19 +12,19 @@ import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/
 
 export const mockCourt = {
   id: 'court_id',
-  type: InstitutionType.COURT,
+  type: InstitutionType.Court,
   name: 'Héraðsdómur Reykjavíkur',
 }
 
 export const mockHighCourt = {
   id: 'high_court_id',
-  type: InstitutionType.HIGH_COURT,
+  type: InstitutionType.HighCourt,
   name: 'Landsréttur',
 }
 
 export const mockPrison = {
   id: 'prison_id',
-  type: InstitutionType.PRISON,
+  type: InstitutionType.Prison,
   name: 'Stóra Hraun',
 }
 

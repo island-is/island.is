@@ -456,9 +456,13 @@ export class CaseService {
   }
 
   addMessagesForDeletedIndictmentCaseToQueue(theCase: Case): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getArchiveCaseFileMessages(theCase),
-    )
+    return this.messageService.sendMessagesToQueue([
+      ...this.getArchiveCaseFileMessages(theCase),
+      {
+        type: MessageType.SEND_REVOKED_NOTIFICATION,
+        caseId: theCase.id,
+      },
+    ])
   }
 
   addReceivedByCourtMessageToQueue(theCase: Case): Promise<void> {
@@ -592,12 +596,12 @@ export class CaseService {
         }
       })
       .then(async () => {
-        const updatedCase = await this.findById(theCase.id)
-
-        // Update the court case if necessary
-        await this.updateCourtCase(theCase, updatedCase, user)
-
         if (returnUpdatedCase) {
+          const updatedCase = await this.findById(theCase.id)
+
+          // Update the court case if necessary
+          await this.updateCourtCase(theCase, updatedCase, user)
+
           return updatedCase
         }
       })
