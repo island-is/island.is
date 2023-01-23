@@ -546,6 +546,12 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit',
     description: '',
   },
+  overviewDescription: {
+    id: 'ir.application:overviewDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
   assetOverview: {
     id: 'ir.application:assetOverview',
     defaultMessage: 'Yfirlit eigna',
@@ -591,12 +597,18 @@ export const m = defineMessages({
   // Debts
   debtsAndFuneralCost: {
     id: 'ir.application:debtsAndFuneralCost',
-    defaultMessage: 'Skuldir og útfararkostnaður',
+    defaultMessage: 'Innlendar og erlendar skuldir á dánardegi hins látna',
+    description: '',
+  },
+  debtsAndFuneralCostDescription: {
+    id: 'ir.application:debtsAndFuneralCostDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar skuldir beggja hjóna utan einstaklingsatvinnurekstrar. Ef hinn látni átti ekki neinar skuldir vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
   domesticAndForeignDebts: {
     id: 'es.application:debtsDescription',
-    defaultMessage: 'Innlendar og erlendar skuldir',
+    defaultMessage: 'Skuldir',
     description: '',
   },
   domesticAndForeignDebtsDescription: {
@@ -895,6 +907,11 @@ export const m = defineMessages({
   totalPercentage: {
     id: 'ir.application:totalPercentage',
     defaultMessage: 'Samtals arfshlutfall',
+    description: '',
+  },
+  overviewTotal: {
+    id: 'ir.application:overviewTotal',
+    defaultMessage: 'Samtals alls',
     description: '',
   },
 

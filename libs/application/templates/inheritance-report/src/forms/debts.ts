@@ -47,7 +47,7 @@ export const debts = buildSection({
         buildMultiField({
           id: 'domesticAndForeignDebts',
           title: m.debtsAndFuneralCost,
-          description: '',
+          description: m.debtsAndFuneralCostDescription,
           children: [
             buildDescriptionField({
               id: 'domesticAndForeignDebtsHeader',
@@ -97,8 +97,8 @@ export const debts = buildSection({
       children: [
         buildMultiField({
           id: 'publicCharges',
-          title: m.publicChargesTitle,
-          description: '',
+          title: m.debtsAndFuneralCost,
+          description: m.debtsAndFuneralCostDescription,
           children: [
             buildDescriptionField({
               id: 'publicChargesHeader',
@@ -142,7 +142,7 @@ export const debts = buildSection({
         buildMultiField({
           id: 'debtsOverview',
           title: m.overview,
-          description: '',
+          description: m.overviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -195,7 +195,7 @@ export const debts = buildSection({
             }),
             buildTextField({
               id: 'debtsTotal',
-              title: 'Samtals alls',
+              title: m.overviewTotal,
               readOnly: true,
               width: 'half',
               variant: 'currency',
