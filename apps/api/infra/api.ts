@@ -52,6 +52,16 @@ export const serviceSetup = (services: {
       AIR_DISCOUNT_SCHEME_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
+      AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
+        dev: ref(
+          (ctx) =>
+            `${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }loftbru.dev01.devland.is`,
+        ),
+        staging: 'loftbru.staging01.devland.is',
+        prod: 'loftbru.island.is',
+      },
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
         staging: 'island-is-staging-upload-api',
