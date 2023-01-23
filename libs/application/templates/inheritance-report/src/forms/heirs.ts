@@ -15,7 +15,7 @@ import { m } from '../lib/messages'
 
 export const heirs = buildSection({
   id: 'heirs',
-  title: m.propertyForExchange,
+  title: m.propertyForExchangeAndHeirs,
   children: [
     buildSubSection({
       id: 'spouse',
