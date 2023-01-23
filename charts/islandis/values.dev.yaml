@@ -2188,7 +2188,6 @@ user-notification-worker:
 web:
   enabled: true
   env:
-    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
     API_URL: 'http://web-api'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
