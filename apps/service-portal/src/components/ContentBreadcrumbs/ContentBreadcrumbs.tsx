@@ -55,7 +55,13 @@ const ContentBreadcrumbs: FC = () => {
     if (navItem) {
       // Check if the current navItem is the active browser path
       const activePath = navItem.path
-        ? matchPath(navItem.path, location.pathname)
+        ? matchPath(
+            {
+              path: navItem.path,
+              end: true,
+            },
+            location.pathname,
+          )
         : null
 
       // Push the nav item to the current array as we are currently located here in our search
