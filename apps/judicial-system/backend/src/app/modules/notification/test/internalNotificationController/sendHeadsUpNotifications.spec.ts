@@ -15,6 +15,7 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalNotificationController - Send heads up notification', () => {
+  const userId = uuid()
   const courtId = uuid()
   const mobileNumber = uuid()
 
@@ -36,6 +37,7 @@ describe('InternalNotificationController - Send heads up notification', () => {
 
       await internalNotificationController
         .sendCaseNotification(caseId, theCase, {
+          userId,
           type: NotificationType.HEADS_UP,
         })
         .then((result) => (then.result = result))
