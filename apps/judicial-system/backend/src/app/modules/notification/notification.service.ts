@@ -65,13 +65,12 @@ import {
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
-import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
+import { Defendant, DefendantService } from '../defendant'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { notificationModuleConfig } from './notification.config'
-import { Defendant, DefendantService } from '../defendant'
 
 interface Attachment {
   filename: string
@@ -87,7 +86,6 @@ export class NotificationService {
     @Inject(notificationModuleConfig.KEY)
     private readonly config: ConfigType<typeof notificationModuleConfig>,
     private readonly courtService: CourtService,
-    private readonly awsS3Service: AwsS3Service,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
@@ -551,7 +549,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonCourtDateEmail.subject,
-      { caseType: theCase.type },
+      { caseType: theCase.type, courtCaseNumber: theCase.courtCaseNumber },
     )
     // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
@@ -573,6 +571,7 @@ export class NotificationService {
       theCase.defenderName,
       Boolean(theCase.parentCase),
       theCase.sessionArrangements,
+      theCase.courtCaseNumber,
     )
 
     return this.sendEmail(
@@ -760,7 +759,7 @@ export class NotificationService {
             )}">`,
             linkEnd: '</a>',
           })
-        : this.formatMessage(notifications.signedRuling.defenderBodyV2, {
+        : this.formatMessage(notifications.signedRuling.defenderBodyV3, {
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
@@ -771,9 +770,6 @@ export class NotificationService {
               theCase.id,
             )}">`,
             linkEnd: '</a>',
-            signedVerdictAvailableInS3: await this.awsS3Service.objectExists(
-              `generated/${theCase.id}/ruling.pdf`,
-            ),
           }),
       defenderName ?? '',
       defenderEmail ?? '',
@@ -844,6 +840,26 @@ export class NotificationService {
     )
   }
 
+  private async sendRejectedCustodyEmailToPrison(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const subject = this.formatMessage(
+      notifications.rejectedCustodyEmail.subject,
+      { courtCaseNumber: theCase.courtCaseNumber },
+    )
+    const body = this.formatMessage(notifications.rejectedCustodyEmail.body, {
+      court: theCase.court?.name,
+      courtCaseNumber: theCase.courtCaseNumber,
+    })
+
+    return this.sendEmail(
+      subject,
+      body,
+      'Gæsluvarðhaldsfangelsi',
+      this.config.email.prisonEmail,
+    )
+  }
+
   private async sendRulingNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -854,7 +870,7 @@ export class NotificationService {
         promises.push(
           this.sendRulingEmailNotificationToDefender(
             theCase,
-            undefined && defendant.defenderNationalId, // Temporarily dicable links in defender emails for indictments
+            defendant.defenderNationalId,
             defendant.defenderName,
             defendant.defenderEmail,
           ),
@@ -902,6 +918,20 @@ export class NotificationService {
         ) {
           promises.push(this.sendRulingEmailNotificationToPrison(theCase))
         }
+      }
+    } else if (
+      CaseType.CUSTODY === theCase.type &&
+      (CaseDecision.REJECTING === theCase.decision ||
+        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN === theCase.decision)
+    ) {
+      const prisonWasNotified = await this.hasReceivedNotification(
+        theCase.id,
+        NotificationType.COURT_DATE,
+        this.config.email.prisonEmail,
+      )
+
+      if (prisonWasNotified) {
+        promises.push(this.sendRejectedCustodyEmailToPrison(theCase))
       }
     }
 

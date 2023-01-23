@@ -11,12 +11,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../graphql/queries'
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
 
-export const MainOwner: FC<FieldBaseProps> = ({ application }) => {
+export const MainOwner: FC<FieldBaseProps> = (props) => {
+  const { application, setFieldLoadingState } = props
+
   const { formatMessage } = useLocale()
 
   const vehicle = getSelectedVehicle(
@@ -24,7 +26,7 @@ export const MainOwner: FC<FieldBaseProps> = ({ application }) => {
     application.answers,
   ) as VehiclesCurrentVehicle
 
-  const { data, loading } = useQuery(
+  const { data, loading, error } = useQuery(
     gql`
       ${GET_VEHICLE_INFORMATION}
     `,
@@ -40,6 +42,10 @@ export const MainOwner: FC<FieldBaseProps> = ({ application }) => {
   )
 
   const owner = data?.vehiclesDetail?.currentOwnerInfo
+
+  useEffect(() => {
+    setFieldLoadingState?.(loading || !!error)
+  }, [loading, error])
 
   return loading ? (
     <Box marginTop={3}>
@@ -99,6 +105,13 @@ export const MainOwner: FC<FieldBaseProps> = ({ application }) => {
           />
         </Box>
       </Box>
+    </Box>
+  ) : error ? (
+    <Box marginTop={3}>
+      <AlertMessage
+        type="error"
+        title={formatMessage(information.labels.owner.error)}
+      />
     </Box>
   ) : null
 }

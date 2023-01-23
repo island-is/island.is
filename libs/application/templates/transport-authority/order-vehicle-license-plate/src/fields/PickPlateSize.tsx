@@ -1,6 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import { FC, useState } from 'react'
+import {
+  AlertMessage,
+  Box,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
+import { FC, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
@@ -12,7 +17,7 @@ import { getSelectedVehicle } from '../utils'
 
 export const PickPlateSize: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
-  const { application, errors } = props
+  const { application, errors, setFieldLoadingState } = props
 
   const [frontPlateSize, setFrontPlateSize] = useState<string>(
     getValueViaPath(
@@ -35,7 +40,7 @@ export const PickPlateSize: FC<FieldBaseProps> = (props) => {
     application.answers,
   ) as VehiclesCurrentVehicle
 
-  const { data, loading } = useQuery(
+  const { data, loading, error } = useQuery(
     gql`
       ${GET_VEHICLE_INFORMATION}
     `,
@@ -58,9 +63,20 @@ export const PickPlateSize: FC<FieldBaseProps> = (props) => {
   const currentPlateTypeRear =
     data?.vehiclesDetail?.registrationInfo?.plateTypeRear
 
+  useEffect(() => {
+    setFieldLoadingState?.(loading || !!error)
+  }, [loading, error])
+
   return (
     <Box paddingTop={2}>
-      {!loading ? (
+      {loading ? (
+        <SkeletonLoader
+          height={100}
+          space={2}
+          repeat={2}
+          borderRadius="large"
+        />
+      ) : !error ? (
         <>
           <Text variant="h5" marginTop={2} marginBottom={1}>
             {formatMessage(information.labels.plateSize.frontPlateSubtitle)}
@@ -114,12 +130,12 @@ export const PickPlateSize: FC<FieldBaseProps> = (props) => {
           />
         </>
       ) : (
-        <SkeletonLoader
-          height={100}
-          space={2}
-          repeat={2}
-          borderRadius="large"
-        />
+        <Box marginTop={3}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(information.labels.plateSize.error)}
+          />
+        </Box>
       )}
     </Box>
   )

@@ -22,7 +22,7 @@ const LandingPageFooter: React.FC<LandingPageFooterProps> = ({
         <Box className={styles.container}>
           {footerItems.map((item, index) =>
             index === 0 ? (
-              <Box className={styles.item}>
+              <Box key={`${item.id}-${index}`} className={styles.item}>
                 <Text fontWeight="semiBold">{item.title}</Text>
               </Box>
             ) : (
