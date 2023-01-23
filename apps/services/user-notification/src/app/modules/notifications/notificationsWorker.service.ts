@@ -33,7 +33,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     await this.worker.run<Message>(
       async (message, job): Promise<void> => {
         const messageId = job.id
-        this.logger.info('Message received by worker', { messageId })
+        this.logger.info('Message received by worker -- TARGET THIS', { messageId })
 
         const profile = await this.userProfileApi.userTokenControllerFindOneByNationalId(
           {
