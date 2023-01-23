@@ -1,4 +1,5 @@
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { DocumentProviderService } from '../document-provider.service'
