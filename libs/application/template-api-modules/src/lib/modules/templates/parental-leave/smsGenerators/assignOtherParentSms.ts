@@ -20,7 +20,7 @@ export const generateAssignOtherParentApplicationSms: AssingOtherParentGenerator
 
   return {
     phoneNumber: otherParentPhoneNumber,
-    message: `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem maka í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
+    message: `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem foreldri í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
       Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
       ${link}`,
   }

@@ -13,7 +13,7 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
-
+import { serviceSetup as samradsgattSetup } from '../../../apps/samradsgatt/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
@@ -53,8 +53,8 @@ const appSystemApi = appSystemApiSetup({
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
-const servicePortal = servicePortalSetup({})
 const adminPortal = adminPortalSetup()
+const samradsgatt = samradsgattSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
@@ -69,6 +69,7 @@ const api = apiSetup({
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
 })
+const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
@@ -150,6 +151,7 @@ export const Services: EnvironmentServices = {
     servicePortal,
     servicePortalApi,
     adminPortal,
+    samradsgatt,
     api,
     web,
     searchIndexer,

@@ -4,7 +4,7 @@ export const UserInformationSchema = z.object({
   nationalId: z.string().min(1),
   name: z.string().min(1),
   email: z.string().min(1),
-  phone: z.string().optional(),
+  phone: z.string().min(7),
   approved: z.boolean().optional(),
 })
 
@@ -12,7 +12,7 @@ export const CoOwnerAndOperatorSchema = z.object({
   nationalId: z.string().min(1),
   name: z.string().min(1),
   email: z.string().min(1),
-  phone: z.string().optional(),
+  phone: z.string().min(7),
   approved: z.boolean().optional(),
   type: z.enum(['operator', 'coOwner']),
 })
@@ -36,7 +36,6 @@ export const TransferOfVehicleOwnershipSchema = z.object({
     type: z.string().min(1),
     salePrice: z.string().optional(),
     date: z.string().min(1),
-    isOutOfCommission: z.boolean().optional(),
   }),
   seller: UserInformationSchema,
   sellerCoOwner: z.array(UserInformationSchema),

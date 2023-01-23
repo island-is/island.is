@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { User } from '../user'
 import { CourtService } from '../court'
@@ -153,7 +153,7 @@ export class DefendantService {
         return { delivered: true }
       })
       .catch((reason) => {
-        this.logger.error('failed to update case with defendant', { reason })
+        this.logger.error('Failed to update case with defendant', { reason })
 
         return { delivered: false }
       })

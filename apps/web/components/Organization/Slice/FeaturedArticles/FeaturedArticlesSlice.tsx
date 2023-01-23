@@ -12,8 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 
 interface SliceProps {
   slice: FeaturedArticles
@@ -26,8 +24,6 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
   const labelId = 'sliceTitle-' + slice.id
 
   const sortedArticles =
@@ -72,12 +68,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
               }) => {
                 const url = linkResolver('Article' as LinkType, [slug])
                 return (
-                  <FocusableBox
-                    key={slug}
-                    borderRadius="large"
-                    href={url.href}
-                    target={isMobile ? '' : '_blank'}
-                  >
+                  <FocusableBox key={slug} borderRadius="large" href={url.href}>
                     <TopicCard
                       tag={
                         (!!processEntry || processEntryButtonText) &&

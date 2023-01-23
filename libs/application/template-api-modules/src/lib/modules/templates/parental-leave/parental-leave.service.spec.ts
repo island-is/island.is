@@ -43,7 +43,8 @@ import {
 import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
-import { ApplicationApiCoreModule } from '@island.is/application/api/core'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { PaymentService } from '@island.is/application/api/payment'
 
 const nationalId = '1234564321'
 let id = 0
@@ -142,7 +143,15 @@ describe('ParentalLeaveService', () => {
       providers: [
         ParentalLeaveService,
         {
+          provide: PaymentService,
+          useValue: {}, //not used
+        },
+        {
           provide: ChildrenService,
+          useValue: {},
+        },
+        {
+          provide: NationalRegistryClientService,
           useValue: {},
         },
         {
@@ -260,7 +269,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -290,7 +299,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.artificialInseminationRightsId,
@@ -325,7 +334,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -369,7 +378,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2022-05-17',
           to: '2022-07-09',
-          ratio: '100',
+          ratio: 'D53',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.multipleBirthsOrlofRightsId,
@@ -412,7 +421,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2022-02-17',
           to: '2022-04-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,

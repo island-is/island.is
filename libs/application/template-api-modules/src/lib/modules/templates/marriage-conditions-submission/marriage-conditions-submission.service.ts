@@ -59,6 +59,10 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     return ALLOWED_MARITAL_STATUSES.includes(maritalCode)
   }
 
+  async religionCodes() {
+    return await this.nationalRegistryService.getReligions()
+  }
+
   private handleReturn(maritalStatus: string) {
     if (this.allowedCodes(maritalStatus)) {
       return Promise.resolve({
@@ -79,9 +83,12 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     application: { id },
     auth,
   }: TemplateApiModuleActionProps) {
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
+      SYSLUMADUR_NATIONAL_ID,
       ['AY129'],
     )
 
@@ -95,7 +102,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
 
   async assignSpouse({ application, auth }: TemplateApiModuleActionProps) {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

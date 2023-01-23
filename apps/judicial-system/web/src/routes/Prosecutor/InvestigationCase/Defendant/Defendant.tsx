@@ -246,7 +246,7 @@ const Defendant = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_ONE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
@@ -415,10 +415,11 @@ const Defendant = () => {
           </Box>
           <AnimatePresence>
             {[
-              CaseType.RESTRAINING_ORDER,
-              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+              CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
               CaseType.EXPULSION_FROM_HOME,
               CaseType.PSYCHIATRIC_EXAMINATION,
+              CaseType.RESTRAINING_ORDER,
+              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
               CaseType.OTHER,
             ].includes(workingCase.type) && (
               <motion.section

@@ -79,7 +79,7 @@ const HearingArrangements = () => {
       const caseOpened =
         workingCase.state === CaseState.NEW
           ? await transitionCase(
-              workingCase,
+              workingCase.id,
               CaseTransition.OPEN,
               setWorkingCase,
             )
@@ -132,7 +132,9 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_TWO}
+      activeSubSection={
+        RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}

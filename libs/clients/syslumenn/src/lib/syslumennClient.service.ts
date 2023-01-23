@@ -32,6 +32,7 @@ import {
   mapEstateInfo,
   mapRealEstateAgent,
   mapLawyer,
+  cleanPropertyNumber,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -223,7 +224,10 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
-    const response = await api.syslMottakaGognPost(payload)
+    const response = await api.syslMottakaGognPost(payload).catch((e) => {
+      throw new Error(`Syslumenn-client: uploadData failed ${e.type}`)
+    })
+
     const success = response.skilabod === UPLOAD_DATA_SUCCESS
     if (!success) {
       throw new Error(`POST uploadData was not successful`)
@@ -273,7 +277,7 @@ export class SyslumennService {
       .vedbokavottordRegluverkiPost({
         skilabod: {
           audkenni: id,
-          fastanumer: assetId,
+          fastanumer: cleanPropertyNumber(assetId),
           tegundAndlags: assetType as number,
         },
       })
@@ -303,10 +307,7 @@ export class SyslumennService {
     const res = await api.vedbokarvottordPost({
       skilabod: {
         audkenni: id,
-        fastanumer:
-          propertyNumber[0] == 'F'
-            ? propertyNumber.substring(1, propertyNumber.length)
-            : propertyNumber,
+        fastanumer: cleanPropertyNumber(propertyNumber),
         tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
@@ -356,14 +357,10 @@ export class SyslumennService {
     const res = await api.vedbokavottordRegluverkiPost({
       skilabod: {
         audkenni: id,
-        fastanumer:
-          propertyNumber[0] == 'F'
-            ? propertyNumber.substring(1, propertyNumber.length)
-            : propertyNumber,
+        fastanumer: cleanPropertyNumber(propertyNumber),
         tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
-
     if (res.length > 0) {
       return {
         propertyNumber: propertyNumber,

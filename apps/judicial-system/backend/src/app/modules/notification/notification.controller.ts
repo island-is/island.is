@@ -11,6 +11,7 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { NotificationType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -76,6 +77,20 @@ export class NotificationController {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${caseId}`,
     )
+
+    if (
+      [
+        NotificationType.HEADS_UP,
+        NotificationType.READY_FOR_COURT,
+        NotificationType.RECEIVED_BY_COURT,
+      ].includes(notification.type)
+    ) {
+      // Notifications put on queue will call the internal notification controller
+      return this.notificationService.addMessagesForNotificationToQueue(
+        theCase,
+        notification,
+      )
+    }
 
     return this.notificationService.sendCaseNotification(
       notification,

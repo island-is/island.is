@@ -71,7 +71,7 @@ export const delimitation = {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletTwo',
       defaultMessage:
-        'Ef Persónuvernd telur nauðsynlegt að upplýsa málið betur getur stofnunin óskað eftir frekari gögnum eða upplýsingum frá öllum aðilum, eftir því sem við á hverju sinni.',
+        'Ef Persónuvernd telur nauðsynlegt að upplýsa málið betur getur stofnunin óskað eftir frekari gögnum eða upplýsingum frá öllum málsaðilum, eftir því sem við á hverju sinni.',
       description: 'Agreement description bullet Two',
     },
     agreementDescriptionBulletTwoLink: {

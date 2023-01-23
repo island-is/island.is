@@ -104,11 +104,13 @@ const CourtRecord = () => {
     setSessionBookingsMessage,
   ] = useState<string>('')
 
-  useDeb(workingCase, 'courtAttendees')
-  useDeb(workingCase, 'sessionBookings')
-  useDeb(workingCase, 'accusedAppealAnnouncement')
-  useDeb(workingCase, 'prosecutorAppealAnnouncement')
-  useDeb(workingCase, 'endOfSessionBookings')
+  useDeb(workingCase, [
+    'courtAttendees',
+    'sessionBookings',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealAnnouncement',
+    'endOfSessionBookings',
+  ])
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {

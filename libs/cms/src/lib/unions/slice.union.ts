@@ -4,7 +4,6 @@ import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 import { logger } from '@island.is/logging'
 import {
   ITimeline,
-  IMailingListSignup,
   ISectionHeading,
   ICardSection,
   IStorySection,
@@ -40,10 +39,6 @@ import {
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
-import {
-  MailingListSignupSlice,
-  mapMailingListSignup,
-} from '../models/mailingListSignupSlice.model'
 import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
 import { mapStorySlice, StorySlice } from '../models/storySlice.model'
@@ -105,7 +100,6 @@ import { EmailSignup, mapEmailSignup } from '../models/emailSignup.model'
 
 type SliceTypes =
   | ITimeline
-  | IMailingListSignup
   | ISectionHeading
   | ICardSection
   | IStorySection
@@ -143,7 +137,6 @@ export const SliceUnion = createUnionType({
   name: 'Slice',
   types: () => [
     TimelineSlice,
-    MailingListSignupSlice,
     HeadingSlice,
     LinkCardSlice,
     StorySlice,
@@ -188,8 +181,6 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
   switch (contentType) {
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
-    case 'mailingListSignup':
-      return mapMailingListSignup(slice as IMailingListSignup)
     case 'sectionHeading':
       return mapHeadingSlice(slice as ISectionHeading)
     case 'cardSection':

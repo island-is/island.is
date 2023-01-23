@@ -18,6 +18,7 @@ import {
   UserRole,
   Case,
   isIndictmentCase,
+  User,
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import {
@@ -32,20 +33,6 @@ import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
 import { stepValidationsType } from '../../utils/formHelper'
-
-interface PageProps {
-  children: ReactNode
-  workingCase?: Case
-  activeSection?: number
-  isLoading: boolean
-  notFound: boolean
-  isExtension?: boolean
-  showSidepanel?: boolean
-  // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
-  activeSubSection?: number
-  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
-  isValid?: boolean
-}
 
 export interface RouteSection {
   name: string
@@ -84,13 +71,18 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
       isComplete={activeSection ? index < activeSection : false}
       subSections={section.children.map((subSection, index) =>
         subSection.href && activeSubSection && activeSubSection > index ? (
-          <LinkV2 href={subSection.href} underline="small">
+          <LinkV2
+            href={subSection.href}
+            underline="small"
+            key={`${subSection.name}-${index}`}
+          >
             <SubsectionChild isActive={index === activeSubSection}>
               {subSection.name}
             </SubsectionChild>
           </LinkV2>
         ) : subSection.onClick ? (
           <Box
+            key={`${subSection.name}-${index}`}
             component="button"
             onClick={subSection.onClick}
             className={cn(
@@ -103,13 +95,89 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
             </SubsectionChild>
           </Box>
         ) : (
-          <SubsectionChild isActive={index === activeSubSection}>
+          <SubsectionChild
+            key={`${subSection.name}-${index}`}
+            isActive={index === activeSubSection}
+          >
             {subSection.name}
           </SubsectionChild>
         ),
       )}
     />
   )
+}
+
+interface SidePanelProps {
+  user: User | undefined
+  workingCase?: Case
+  activeSection?: number
+  activeSubSection?: number
+  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
+  isValid?: boolean
+}
+
+const SidePanel: React.FC<SidePanelProps> = ({
+  user,
+  isValid,
+  onNavigationTo,
+  activeSection,
+  workingCase,
+  activeSubSection,
+}) => {
+  const { getSections } = useSections(isValid, onNavigationTo)
+  const { formatMessage } = useIntl()
+  // Remove the extension parts of the formstepper if the user is not applying for an extension
+  const sections =
+    activeSection === Sections.EXTENSION ||
+    activeSection === Sections.JUDGE_EXTENSION
+      ? getSections(workingCase, user)
+      : getSections(workingCase, user).filter((_, index) => index <= 2)
+
+  return (
+    <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
+      <div className={styles.formStepperContainer}>
+        <Box marginLeft={[0, 0, 2]}>
+          <Box marginBottom={7} display={['none', 'none', 'block']}>
+            <Logo defaultInstitution={workingCase?.court?.name} />
+          </Box>
+          <Box marginBottom={6}>
+            <Text variant="h3" as="h3">
+              {formatMessage(
+                isIndictmentCase(workingCase?.type)
+                  ? formStepperSections.indictmentTitle
+                  : formStepperSections.title,
+                { caseType: workingCase?.type },
+              )}
+            </Text>
+          </Box>
+          <FormStepperV2
+            sections={sections.map((section, index) => (
+              <DisplaySection
+                key={`${section.name}-${index}`}
+                section={section}
+                index={index}
+                activeSection={activeSection}
+                activeSubSection={activeSubSection}
+              />
+            ))}
+          />
+        </Box>
+      </div>
+    </GridColumn>
+  )
+}
+interface PageProps {
+  children: ReactNode
+  workingCase?: Case
+  activeSection?: number
+  isLoading: boolean
+  notFound: boolean
+  isExtension?: boolean
+  showSidepanel?: boolean
+  // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
+  activeSubSection?: number
+  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
+  isValid?: boolean
 }
 
 const PageLayout: React.FC<PageProps> = ({
@@ -124,14 +192,9 @@ const PageLayout: React.FC<PageProps> = ({
   isValid,
 }) => {
   const { user } = useContext(UserContext)
-  const { getSections } = useSections(isValid, onNavigationTo)
+
   const { formatMessage } = useIntl()
   // Remove the extension parts of the formstepper if the user is not applying for an extension
-  const sections =
-    activeSection === Sections.EXTENSION ||
-    activeSection === Sections.JUDGE_EXTENSION
-      ? getSections(workingCase, user)
-      : getSections(workingCase, user).filter((_, index) => index <= 2)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -188,35 +251,14 @@ const PageLayout: React.FC<PageProps> = ({
             </Box>
           </GridColumn>
           {showSidepanel && (
-            <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
-              <div className={styles.formStepperContainer}>
-                <Box marginLeft={[0, 0, 2]}>
-                  <Box marginBottom={7} display={['none', 'none', 'block']}>
-                    <Logo defaultInstitution={workingCase?.court?.name} />
-                  </Box>
-                  <Box marginBottom={6}>
-                    <Text variant="h3" as="h3">
-                      {formatMessage(
-                        isIndictmentCase(workingCase?.type)
-                          ? formStepperSections.indictmentTitle
-                          : formStepperSections.title,
-                        { caseType: workingCase?.type },
-                      )}
-                    </Text>
-                  </Box>
-                  <FormStepperV2
-                    sections={sections.map((section, index) => (
-                      <DisplaySection
-                        section={section}
-                        index={index}
-                        activeSection={activeSection}
-                        activeSubSection={activeSubSection}
-                      />
-                    ))}
-                  />
-                </Box>
-              </div>
-            </GridColumn>
+            <SidePanel
+              user={user}
+              isValid={isValid}
+              onNavigationTo={onNavigationTo}
+              activeSection={activeSection}
+              workingCase={workingCase}
+              activeSubSection={activeSubSection}
+            />
           )}
         </GridRow>
       </GridContainer>

@@ -22,6 +22,9 @@ import { ALL_DOMAINS } from '../../../constants/domain'
 import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 
+const prepareDomainName = (domainName: string | null) =>
+  domainName === ALL_DOMAINS ? null : domainName
+
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [searchValue, setSearchValue] = useState('')
@@ -33,13 +36,13 @@ export const DelegationsOutgoing = () => {
 
   const { data, loading, refetch, error } = useAuthDelegationsOutgoingQuery({
     variables: {
+      lang,
       input: {
-        domain: domainName,
+        domain: prepareDomainName(domainName),
         direction: AuthDelegationDirection.outgoing,
       },
-      lang,
     },
-    skip: !domainName || !lang || !AuthDelegationDirection.outgoing,
+    skip: !domainName || !lang,
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
@@ -61,7 +64,7 @@ export const DelegationsOutgoing = () => {
     // The service takes null as a value for all domains.
     refetch({
       input: {
-        domain: option.value === ALL_DOMAINS ? null : option.value,
+        domain: prepareDomainName(option.value),
       },
     })
   }
@@ -96,7 +99,7 @@ export const DelegationsOutgoing = () => {
           onSearchChange={setSearchValue}
         />
         <div>
-          {loading ? (
+          {loading || domainName === null ? (
             <SkeletonLoader width="100%" height={191} />
           ) : error && !delegations ? (
             <AlertBanner
@@ -134,7 +137,7 @@ export const DelegationsOutgoing = () => {
           setDelegation(null)
           refetch({
             input: {
-              domain: domainName,
+              domain: prepareDomainName(domainName),
             },
           })
         }}

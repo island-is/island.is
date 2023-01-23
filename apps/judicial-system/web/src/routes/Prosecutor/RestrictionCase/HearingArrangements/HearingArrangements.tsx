@@ -98,7 +98,7 @@ export const HearingArrangements: React.FC = () => {
       const caseOpened =
         workingCase.state === CaseState.NEW
           ? await transitionCase(
-              workingCase,
+              workingCase.id,
               CaseTransition.OPEN,
               setWorkingCase,
             )
@@ -133,7 +133,9 @@ export const HearingArrangements: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_TWO}
+      activeSubSection={
+        RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
+      }
       isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}

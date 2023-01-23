@@ -7,10 +7,13 @@ import {
   BreadcrumbsDeprecated as Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import {
+  ServicePortalNavigationItem,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 
-import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { isDefined } from '@island.is/shared/utils'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
 interface ContentBreadcrumb {
   name: string | MessageDescriptor
@@ -40,13 +43,13 @@ const parseNavItemName = (
  * match as the Breadcrumbs to render.
  */
 const ContentBreadcrumbs: FC = () => {
-  const navigation = useNavigation()
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const location = useLocation()
   const { formatMessage } = useLocale()
   let items: ContentBreadcrumb[] = []
 
   const findBreadcrumbsPath = (
-    navItem: ServicePortalNavigationItem,
+    navItem: ServicePortalNavigationItem | undefined,
     currentBreadcrumbs: ContentBreadcrumb[],
   ) => {
     if (navItem) {
@@ -80,12 +83,12 @@ const ContentBreadcrumbs: FC = () => {
     }
   }
 
-  findBreadcrumbsPath(navigation[0], [])
+  findBreadcrumbsPath(navigation, [])
 
   if (items.length < 2) return null
 
   return (
-    <Box paddingTop={[0, 3]} paddingBottom={[2, 3]}>
+    <Box paddingTop={0} paddingBottom={[2, 3]}>
       <Breadcrumbs color="blue400" separatorColor="blue400">
         {items.map((item, index) =>
           isDefined(item.path) && !item.hidden ? (

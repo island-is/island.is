@@ -1,6 +1,7 @@
 import { Op } from 'sequelize'
 import CryptoJS from 'crypto-js'
 import { Sequelize } from 'sequelize-typescript'
+import format from 'date-fns/format'
 
 import {
   BadRequestException,
@@ -25,7 +26,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
-import { uuidFactory } from '../../factories'
+import { uuidFactory, nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -195,11 +196,10 @@ export class InternalCaseService {
         courtCaseNumber: theCase.courtCaseNumber,
       })
 
-      await this.courtService.createDocument(
+      await this.courtService.createCourtRecord(
         theCase.id,
         theCase.courtId,
         theCase.courtCaseNumber,
-        CourtDocumentFolder.COURT_DOCUMENTS,
         fileName,
         `${fileName}.pdf`,
         'application/pdf',
@@ -223,7 +223,7 @@ export class InternalCaseService {
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.request, {
           caseType: caseTypes[theCase.type],
-          date: '',
+          date: ` ${format(nowFactory(), 'yyyy-MM-dd HH:mm')}`,
         })
 
         return this.courtService.createDocument(
@@ -513,7 +513,7 @@ export class InternalCaseService {
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
-        this.logger.error('failed to update case with defendant', { reason })
+        this.logger.error('Failed to update case with defendant', { reason })
 
         return { delivered: false }
       })
