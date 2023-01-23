@@ -143,6 +143,9 @@ const CaseQuery = gql`
       }
       notifications {
         type
+        recipients {
+          success
+        }
       }
       caseFiles {
         id
