@@ -15,19 +15,7 @@ export const line = style({
   borderBottom: `1px solid ${theme.color.blue100}`,
 })
 
-export const button = style({
-  color: theme.color.blue400,
-  fontSize: 16,
-  fontWeight: theme.typography.regular,
-  lineHeight: 1.5,
-  textAlign: 'left',
-  ':hover': {
-    textDecoration: 'underline',
-  },
-  ':focus': {
-    outline: 'none',
-  },
-})
+export const button = style({})
 
 export const unopened = style({
   fontWeight: theme.typography.semiBold,
@@ -45,9 +33,9 @@ export const sender = style({
 })
 
 export const image = style({
-  width: 30,
-  height: 30,
-  marginRight: theme.spacing[2],
+  width: 34,
+  height: 34,
+  // margin: theme.spacing[2],
 })
 
 export const icon = style({
@@ -55,8 +43,10 @@ export const icon = style({
 })
 
 export const imageContainer = style({
-  minWidth: 30,
-  minHeight: 30,
+  minWidth: 66,
+  minHeight: 66,
+  maxHeight: 66,
+  maxWidth: 66,
 })
 
 export const linkWrapper = style({

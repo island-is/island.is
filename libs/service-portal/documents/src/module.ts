@@ -17,7 +17,7 @@ export const documentsModule: PortalModule = {
       name: rootName,
       path: DocumentsPaths.ElectronicDocumentsRoot,
       enabled: userInfo.scopes?.includes(DocumentsScope.main),
-      render: () => lazy(() => import('./screens/Overview/Overview')),
+      render: () => lazy(() => import('./screens/Overview/NewOverview')),
     },
   ],
 }

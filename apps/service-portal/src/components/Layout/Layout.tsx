@@ -44,7 +44,8 @@ const Layout: FC = ({ children }) => {
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
   const { width } = useWindowSize()
-  const [isDashboard, setIsDashboard] = useState(true) // TODO REVERT TO TRUE
+  const [isDashboard, setIsDashboard] = useState(true)
+  const [isMailbox, setIsMailbox] = useState(false)
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [currentOrganization, setCurrentOrganization] = useState<
     Organization | undefined
@@ -105,6 +106,14 @@ const Layout: FC = ({ children }) => {
   }, [pathname])
 
   useEffect(() => {
+    if (pathname === ServicePortalPath.ElectronicDocumentsRoot) {
+      setIsMailbox(true)
+    } else {
+      setIsMailbox(false)
+    }
+  }, [pathname])
+
+  useEffect(() => {
     const organizations = orgData?.getOrganizations?.items || {}
     const activeItem = activeParent?.children?.find(
       (item: PortalNavigationItem) => item.active,
@@ -132,7 +141,7 @@ const Layout: FC = ({ children }) => {
           sideMenuOpen={sideMenuOpen}
           position={height ? height : 0}
         />
-        {!isDashboard && (
+        {!isDashboard && !isMailbox && (
           <SidebarLayout
             isSticky={true}
             sidebarContent={
@@ -189,7 +198,8 @@ const Layout: FC = ({ children }) => {
             </Box>
           </SidebarLayout>
         )}
-        {isDashboard && (
+
+        {(isDashboard || isMailbox) && (
           <Box as="main" component="main" style={{ marginTop: height }}>
             <ContentBreadcrumbs />
             {children}

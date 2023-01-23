@@ -67,4 +67,13 @@ export const messages = defineMessages({
     defaultMessage:
       'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess, {senderName}',
   },
+  pickDocument: {
+    id: 'sp,documents:pick-document',
+    defaultMessage: 'Veldu skjal til að lesa',
+  },
+  pickDocumentText: {
+    id: 'sp,documents:pick-document-text',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.',
+  },
 })
