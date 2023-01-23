@@ -436,11 +436,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should post modified notification to queue', async () => {
-      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.SEND_MODIFIED_NOTIFICATION,
-        caseId,
-        userId: user.id,
-      })
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.SEND_MODIFIED_NOTIFICATION,
+          userId,
+          caseId,
+        },
+      ])
     })
   })
 
@@ -451,11 +453,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should post modified notification to queue', async () => {
-      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.SEND_MODIFIED_NOTIFICATION,
-        caseId,
-        userId: user.id,
-      })
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.SEND_MODIFIED_NOTIFICATION,
+          userId,
+          caseId,
+        },
+      ])
     })
   })
 
@@ -466,11 +470,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should post modified notification to queue', async () => {
-      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.SEND_MODIFIED_NOTIFICATION,
-        caseId,
-        userId: user.id,
-      })
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.SEND_MODIFIED_NOTIFICATION,
+          userId,
+          caseId,
+        },
+      ])
     })
   })
 })
