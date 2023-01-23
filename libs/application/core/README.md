@@ -413,6 +413,60 @@ template: {
 This will then return the name for the application depending on the answers provided in the overview and at the top of the application shell.
 Keep in mind when using dynamic names that there should not be any personal information in the name.
 
+## Draft status bar for application action cards
+
+Default behaviour and custom behavior is explained below.  
+The reason default behavior does not work for all applications is because it counts all screens, including the dynamic ones, which results in too many screens listed for some applications.
+
+### Default draft status bar behavior
+
+- draftFinishedSteps
+  - Uses form screens, current active index as default value
+- draftTotalSteps
+  - Uses form screens.length as default value
+
+### Custom draft status bar behavior
+
+- draftFinishedSteps
+  - Uses the draftPageNumber for the current section
+- draftTotalSteps
+  - Searches all sections, returns the max value for draftPageNumber
+- You can add the page number for each section in the form builder which overrides the default behavior.
+  - If you have for example 10 screens that are dynamic, and only one of them is shown during the application fill out process (some logic chooses between them). Then you can put the same draftPageNumber to all of them.
+
+```diff
+  buildSection({
+    id: 'id-1',
+    title: 'demo-title',
++   draftPageNumber: 1,
+  children: [],
+  }),
+  buildSection({
+    id: 'id-2',
+    title: 'demo-title',
++   draftPageNumber: 2,
+    children: [],
+  }),
+  buildSection({
+    id: 'id-3',
+    title: 'payment-transcation',
++   draftPageNumber: 3,
+    children: [],
+    condition: (_formValue) => {
+      _formValue.payment = "TRANSACTION"
+    }
+  }),
+  buildSection({
+    id: 'id-4',
+    title: 'payment-visa',
++   draftPageNumber: 3,
+    children: [],
+    condition: (_formValue) => {
+      _formValue.payment = "VISA"
+    }
+  }),
+```
+
 ## Code owners and maintainers
 
 - [Sendiradid](https://github.com/orgs/island-is/teams/sendiradid-applications/members)
