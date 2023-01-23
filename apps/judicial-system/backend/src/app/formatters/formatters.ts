@@ -301,6 +301,7 @@ export function formatPrisonCourtDateEmailNotification(
   defenderName?: string,
   isExtension?: boolean,
   sessionArrangements?: SessionArrangements,
+  courtCaseNumber?: string,
 ): string {
   const courtText = formatMessage(
     notifications.prisonCourtDateEmail.courtText,
@@ -348,7 +349,7 @@ export function formatPrisonCourtDateEmailNotification(
     sessionArrangements,
   })
 
-  return formatMessage(notifications.prisonCourtDateEmail.bodyV2, {
+  return formatMessage(notifications.prisonCourtDateEmail.bodyV3, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
@@ -358,6 +359,7 @@ export function formatPrisonCourtDateEmailNotification(
     isolationText,
     defenderText,
     sessionArrangements,
+    courtCaseNumber,
   })
 }
 
