@@ -58,7 +58,7 @@ const validateMessage = async (body: Request['body']): Promise<Message> => {
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @InjectQueue('feature-deploy-queue') private queue: QueueService, //notifications
+    @InjectQueue('notifications') private queue: QueueService, //notifications
   ) {}
 
   @Post()
