@@ -18,7 +18,9 @@ export const formatPlausiblePathToParams = (
   fileName?: string,
 ) => {
   const routes = Object.values(ServicePortalPath)
-  const currentPath = routes.find((route) => matchPath(route, path))
+  const currentPath = routes.find((route) =>
+    matchPath({ path: route, end: true }, path),
+  )
   const pageOrigin = window.location.origin
   const rootPath = ServicePortalPath.MinarSidurPath
   const absoluteUrl = `${pageOrigin}${rootPath}${currentPath ?? ''}`
