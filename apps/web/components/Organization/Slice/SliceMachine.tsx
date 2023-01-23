@@ -66,10 +66,6 @@ const EventSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.EventSlice),
 )
 
-const MailingListSignupSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.MailingListSignupSlice),
-)
-
 const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
@@ -88,12 +84,7 @@ interface SliceMachineProps {
   paddingTop?: ResponsiveSpace
 }
 
-const fullWidthSlices = [
-  'TimelineSlice',
-  'LogoListSlice',
-  'MailingListSignupSlice',
-  'EmailSignup',
-]
+const fullWidthSlices = ['TimelineSlice', 'LogoListSlice', 'EmailSignup']
 
 const renderSlice = (slice, namespace, slug, params) => {
   switch (slice.__typename) {
@@ -127,8 +118,6 @@ const renderSlice = (slice, namespace, slug, params) => {
       return <EventSlice slice={slice} />
     case 'LatestNewsSlice':
       return <LatestNewsSlice slice={slice} slug={slug} {...params} />
-    case 'MailingListSignupSlice':
-      return <MailingListSignupSlice slice={slice} namespace={namespace} />
     case 'LifeEventPageListSlice':
       return (
         <LifeEventPageListSlice
