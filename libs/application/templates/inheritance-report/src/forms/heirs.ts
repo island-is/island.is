@@ -191,7 +191,6 @@ export const heirs = buildSection({
         buildMultiField({
           id: 'heirsOverview',
           title: m.overview,
-          description: m.heirsOverviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
