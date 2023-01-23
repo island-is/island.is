@@ -23,7 +23,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutAssests.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
@@ -45,20 +48,20 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: 'Fastanúmer',
+                    title: m.assetNumber.defaultMessage,
                     id: 'assetNumber',
                   },
                   {
-                    title: 'Lögheimili',
+                    title: m.assetAddress.defaultMessage,
                     id: 'description',
                   },
                   {
-                    title: 'Fasteignamat á dánardegi',
+                    title: m.propertyValuation.defaultMessage,
                     id: 'propertyValuation',
                   },
                 ],
-                repeaterButtonText: m.addInventory.defaultMessage,
-                repeaterHeaderText: m.inventoryTitle.defaultMessage,
+                repeaterButtonText: m.addRealEstate.defaultMessage,
+                repeaterHeaderText: m.realEstateRepeaterHeader.defaultMessage,
                 fromExternalData: 'assets',
                 sumField: 'propertyValuation',
               },
@@ -74,7 +77,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'vehicles',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutVehicles.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'vehiclesTitle',
@@ -96,20 +102,20 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: 'Fastanúmer',
+                    title: m.assetNumber.defaultMessage,
                     id: 'assetNumber',
                   },
                   {
-                    title: 'Tegund',
+                    title: m.vehicleType.defaultMessage,
                     id: 'description',
                   },
                   {
-                    title: 'Markaðsverð á dánardegi',
+                    title: m.vehicleValuation.defaultMessage,
                     id: 'propertyValuation',
                   },
                 ],
-                repeaterButtonText: m.addInventory.defaultMessage,
-                repeaterHeaderText: m.inventoryTitle.defaultMessage,
+                repeaterButtonText: m.addVehicle.defaultMessage,
+                repeaterHeaderText: m.vehicles.defaultMessage,
                 fromExternalData: 'vehicles',
                 sumField: 'propertyValuation',
               },
@@ -125,7 +131,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'inventory',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutInnventory.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'inventoryTitle',
@@ -177,7 +186,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'estateBankInfo',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutBankAccounts.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'estateBankInfoTitle',
@@ -225,7 +237,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'claims',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutClaims.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'claimsTitle',
@@ -272,7 +287,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'stocks',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutStocks.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'stocksTitle',
