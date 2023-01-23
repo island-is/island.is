@@ -1,30 +1,18 @@
 import { useQuery } from '@apollo/client'
 import {
   EmptyList,
-  ListButton,
-  SearchHeader,
-  TopLine,
+  ListButton, TopLine
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
-  Animated,
-  AppState,
-  AppStateStatus,
-  FlatList,
-  Image,
-  Platform,
-  View,
+  Animated, FlatList,
+  Image, RefreshControl,
+  View
 } from 'react-native'
-import KeyboardManager from 'react-native-keyboard-manager'
 import {
-  Navigation,
-  NavigationFunctionComponent,
+  NavigationFunctionComponent
 } from 'react-native-navigation'
-import {
-  useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
-} from 'react-native-navigation-hooks/dist'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
@@ -33,8 +21,6 @@ import { LIST_SEARCH_QUERY } from '../../graphql/queries/list-search.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { openBrowser } from '../../lib/rn-island'
-import { useUiStore } from '../../stores/ui-store'
-import { ComponentRegistry } from '../../utils/component-registry'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
@@ -48,27 +34,9 @@ const {
         text: intl.formatMessage({ id: 'applications.title' }),
       },
       searchBar: {
-        placeholder: intl.formatMessage({
-          id: 'applications.searchPlaceholder',
-        }),
-        tintColor: theme.color.blue400,
-        backgroundColor: 'transparent',
+        visible: false,
       },
       rightButtons: initialized ? getRightButtons({ theme } as any) : [],
-      background: {
-        component:
-          Platform.OS === 'android'
-            ? {
-                name: ComponentRegistry.AndroidSearchBar,
-                passProps: {
-                  queryKey: 'applicationQuery',
-                  placeholder: intl.formatMessage({
-                    id: 'applications.searchPlaceholder',
-                  }),
-                },
-              }
-            : undefined,
-      },
     },
     bottomTab: {
       iconColor: theme.color.blue400,
@@ -79,12 +47,6 @@ const {
   }),
   {
     topBar: {
-      elevation: 0,
-      height: 120,
-      searchBar: {
-        visible: true,
-        hideTopBarOnFocus: true,
-      },
       largeTitle: {
         visible: true,
       },
@@ -113,17 +75,14 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const CONTENTFUL_FILTER = 'umsokn';
   const QUERY_STRING_DEFAULT = '*'
 
-  const ui = useUiStore()
   const flatListRef = useRef<FlatList>(null)
-  const [searchLoading, setSearchLoading] = useState(false)
-  const [queryString, setQueryString] = useState(QUERY_STRING_DEFAULT)
-  const keyboardRef = useRef(false)
+  const [loading, setLoading] = useState(false)
   const intl = useIntl()
   const [items, setItems] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current
 
   const input = {
-    queryString: queryString,
+    queryString: QUERY_STRING_DEFAULT,
     types: [SEARCH_QUERY_TYPE],
     contentfulTags: [CONTENTFUL_FILTER],
     size: SEARCH_QUERY_SIZE,
@@ -175,86 +134,21 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     )
   }, [])
 
-  const onAppStateBlur = useCallback((status: AppStateStatus) => {
-    if (status !== 'inactive') {
-      if (keyboardRef.current) {
-        Navigation.mergeOptions(componentId, {
-          topBar: {
-            searchBar: {
-              visible: true,
-              focus: true,
-              placeholder: intl.formatMessage({
-                id: 'applications.searchPlaceholder',
-              }),
-            },
-          },
-        })
-      }
-    } else {
-      KeyboardManager.isKeyboardShowing().then((value) => {
-        if (value === true) {
-          keyboardRef.current = value
-          Navigation.mergeOptions(componentId, {
-            topBar: {
-              searchBar: {
-                visible: false,
-                placeholder: intl.formatMessage({
-                  id: 'applications.searchPlaceholder',
-                }),
-              },
-            },
-          })
-        }
-      })
-    }
-  }, [])
-
   useActiveTabItemPress(3, () => {
     flatListRef.current?.scrollToOffset({
-      offset: -200,
+      offset: -150,
       animated: true,
     })
   })
 
-  useNavigationSearchBarUpdate((e) => {
-    if (e.text !== ui.applicationQuery) {
-      setSearchLoading(true)
-    }
-    ui.setApplicationQuery(e.text)
-  })
-
-  useNavigationSearchBarCancelPress(() => {
-    setSearchLoading(true)
-    ui.setApplicationQuery('')
-  })
-
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      AppState.addEventListener('change', onAppStateBlur)
-      return () => {
-        AppState.removeEventListener('change', onAppStateBlur)
-      }
-    }
-  }, [])
-
-  // search query updates
-  useEffect(() => {
-    setSearchLoading(false)
-    const q = ui.applicationQuery.trim()
-
-    if (q !== '') {
-      setQueryString(q)
-    } else {
-      setQueryString(QUERY_STRING_DEFAULT)
-    }
-  }, [ui.applicationQuery])
-
   const keyExtractor = useCallback((item: IArticleSearchResults) => item.id, [])
 
-  const isSearch = ui.applicationQuery.length > 0
+  const isFirstLoad = !res.data
+  const isError = !!res.error
   const isLoading = res.loading
   const isEmpty = (items ?? []).length === 0
-  const isEmptyView = !isLoading && isEmpty && !isSearch
+  const isSkeltonView = isLoading && isFirstLoad && !isError
+  const isEmptyView = !loading && isEmpty
 
   const emptyItem = [{ id: '0', type: 'empty' }]
   const skeletonItems = Array.from({ length: 8 }).map((_, id) => ({
@@ -277,36 +171,32 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         )}
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
-        ListHeaderComponent={
-          isSearch ? (
-            <SearchHeader
-              loadingText={intl.formatMessage({
-                id: 'applications.loadingText',
-              })}
-              resultText={
-                items.length === 0
-                  ? intl.formatMessage({ id: 'applications.noResultText' })
-                  : items.length === 1
-                  ? intl.formatMessage({
-                      id: 'applications.singleResultText',
-                    })
-                  : intl.formatMessage({ id: 'applications.resultText' })
-              }
-              count={items.length}
-              loading={searchLoading}
-              isAndroid={Platform.OS === 'android'}
-            />
-          ) : (
-            <View />
-          )
-        }
-        data={isLoading ? skeletonItems : isEmptyView ? emptyItem : items}
+        data={isSkeltonView ? skeletonItems : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
-        refreshing={res?.networkStatus === 4}
-        onRefresh={() => res?.refetch?.()}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => {
+              setLoading(true)
+              try {
+                res
+                  ?.refetch?.()
+                  ?.then(() => {
+                    setLoading(false)
+                  })
+                  .catch((err) => {
+                    setLoading(false)
+                  })
+              } catch (err) {
+                // noop
+                setLoading(false)
+              }
+            }}
+          />
+        }
       />
       <BottomTabsIndicator index={3} total={5} />
-      {!isSearch && <TopLine scrollY={scrollY} />}
+      <TopLine scrollY={scrollY} />
     </>
   )
 }
