@@ -36,6 +36,8 @@ const throwIfError = (errors: ValidationError[]): void => {
   }
 }
 
+import { createRedisCluster } from '@island.is/cache'
+
 // Validates the message POST parameter. The top-level message object has a
 // `type` attribute that defines how the rest of the object is validated.
 // class-validator doesn't seem to support that and this is the best solution
@@ -75,7 +77,7 @@ export class NotificationsController {
   ): Promise<CreateNotificationResponse> {
     const message = await validateMessage(req.body)
     const id = await this.queue.add(message)
-    this.logger.info('Message queued', { messageId: id, ...message })
+    this.logger.info('Message queued --- TARGET THIS', { messageId: id, ...message })
     return { id }
   }
 }
