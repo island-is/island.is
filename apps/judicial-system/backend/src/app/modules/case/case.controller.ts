@@ -181,21 +181,7 @@ export class CaseController {
       )
     }
 
-    const updatedCase = this.caseService.update(
-      theCase,
-      caseToUpdate,
-      user,
-    ) as Promise<Case> // Never returns undefined
-
-    if (
-      caseToUpdate.validToDate ||
-      caseToUpdate.isolationToDate ||
-      caseToUpdate.caseModifiedExplanation
-    ) {
-      this.caseService.addMessagesForModifiedCaseToQueue(theCase.id, user.id)
-    }
-
-    return updatedCase
+    return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)

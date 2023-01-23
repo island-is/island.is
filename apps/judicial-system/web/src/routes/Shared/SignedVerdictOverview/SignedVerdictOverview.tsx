@@ -481,12 +481,7 @@ export const SignedVerdictOverview: React.FC = () => {
       return false
     }
 
-    await sendNotification(workingCase.id, NotificationType.MODIFIED)
-
-    setWorkingCase({
-      ...workingCase,
-      ...(update as Case),
-    })
+    setWorkingCase((theCase) => ({ ...theCase, ...update }))
 
     return true
   }

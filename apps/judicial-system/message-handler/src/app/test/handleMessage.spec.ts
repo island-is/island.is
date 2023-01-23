@@ -483,4 +483,31 @@ describe('MessageHandlerService - Handle message', () => {
       expect(then.result).toBe(true)
     })
   })
+
+  describe('send ruling notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_MODIFIED_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a ruling notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: NotificationType.MODIFIED, userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
 })
