@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { Box } from '@island.is/island-ui/core'
-
-import { InstitutionType } from '@island.is/judicial-system/types'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import LandWightsLogo from './LandWightsLogo'
