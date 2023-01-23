@@ -7,6 +7,11 @@ import {
 } from '@nestjs/common'
 
 import { CaseDefenderGuard } from '../caseDefender.guard'
+import {
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 
 interface Then {
   result: boolean
@@ -36,17 +41,33 @@ describe('Case Defender Guard', () => {
     }
   })
 
-  describe('user is defender', () => {
+  describe.each([...restrictionCases, ...investigationCases])(
+    'user is defender in %s case',
+    (type) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { nationalId: '123456789' },
+          case: { type, defenderNationalId: '123456789' },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    },
+  )
+
+  describe.each([...indictmentCases])('user is defender in %s case', (type) => {
     let then: Then
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
-        user: {
-          nationalId: '123456789',
-        },
-        case: {
-          defenderNationalId: '123456789',
-        },
+        user: { nationalId: '123456789' },
+        case: { type, defendants: [{ defenderNationalId: '123456789' }] },
       }))
 
       then = givenWhenThen()
@@ -64,14 +85,8 @@ describe('Case Defender Guard', () => {
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
-        user: {
-          id: userId,
-          nationalId: '123456789',
-        },
-        case: {
-          id: caseId,
-          defenderNationalId: '987654321',
-        },
+        user: { id: userId, nationalId: '123456789' },
+        case: { id: caseId },
       }))
 
       then = givenWhenThen()

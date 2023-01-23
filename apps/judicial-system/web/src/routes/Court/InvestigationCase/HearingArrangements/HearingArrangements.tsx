@@ -342,7 +342,9 @@ const HearingArrangements = () => {
                 router.push(`${navigateTo}/${workingCase.id}`)
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
-              secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
+              secondaryButtonText={formatMessage(m.modal.secondaryButtonText, {
+                courtDateHasChanged,
+              })}
               isPrimaryButtonLoading={isSendingNotification}
             />
           )}

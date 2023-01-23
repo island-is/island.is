@@ -43,7 +43,7 @@ describe('FileController - Create case file', () => {
       const then = {} as Then
 
       await fileController
-        .createCaseFile(caseId, createCaseFile, theCase)
+        .createCaseFile(caseId, theCase, createCaseFile)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
