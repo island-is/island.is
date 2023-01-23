@@ -3,8 +3,33 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 
 @Module({
   imports: [
-    // CacheModule.register({isGlobal:true}),// redis talk to andes look at others - simple basic cache in memory
-
-    NotificationsModule], // isglobal wtf how ... redis?
+    // CacheModule.register({
+    //   ttl: 5, // seconds
+    //   max: 1000, // maximum number of items in cache
+    // }),
+    NotificationsModule
+  ],
+ 
 })
 export class AppModule {}
+
+
+
+
+
+
+
+
+
+/// WRONG PLACE ?'???????????????????????????'
+
+// import { CacheModule, Module, CacheInterceptor } from '@nestjs/common'
+// import { NotificationsController } from './modules/notifications/notifications.controller'
+// import { APP_INTERCEPTOR } from '@nestjs/core'
+// import { NotificationsModule } from './modules/notifications/notifications.module'
+
+// @Module({
+//   imports: [NotificationsModule, CacheModule.register({ isGlobal: true })],
+//   controllers: [NotificationsController],
+// })
+// export class AppModule {}
