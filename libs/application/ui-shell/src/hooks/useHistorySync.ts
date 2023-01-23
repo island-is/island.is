@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useState } from 'react'
+import { Dispatch, useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import {
   Action,
@@ -19,6 +19,7 @@ export const useHistorySync = (
   const navigate = useNavigate()
   const navigationType = useNavigationType()
   const location = useLocation()
+  const locationRef = useRef(location)
 
   // Set up history state.
   const [lastHistoryState, setLastHistoryState] = useState<HistoryState>({
@@ -41,7 +42,8 @@ export const useHistorySync = (
 
   // Act on history state.
   useEffect(() => {
-    const url = `${location.pathname}${location.search}${location.hash}`
+    const { pathname, search, hash } = locationRef.current
+    const url = `${pathname}${search}${hash}`
     const { historyReason } = lastHistoryState
 
     if (historyReason === 'navigate' || historyReason === 'initial') {
@@ -50,22 +52,14 @@ export const useHistorySync = (
         replace: historyReason === 'initial',
       })
     }
-  }, [
-    lastHistoryState,
-    location.hash,
-    location.pathname,
-    location.search,
-    navigate,
-  ])
+  }, [lastHistoryState, locationRef, navigate])
 
   // Listen for browser navigation change.
   useEffect(() => {
-    if (
-      navigationType === 'POP' &&
-      location.state !== null &&
-      location.state.screen !== null
-    ) {
-      dispatch({ type: ActionTypes.HISTORY_POP, payload: location.state })
+    const { state } = locationRef.current
+
+    if (navigationType === 'POP' && state !== null && state.screen !== null) {
+      dispatch({ type: ActionTypes.HISTORY_POP, payload: state })
     }
-  }, [navigationType, dispatch, location.state])
+  }, [navigationType, dispatch, state])
 }

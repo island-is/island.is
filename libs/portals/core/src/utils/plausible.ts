@@ -21,7 +21,9 @@ export const formatPlausiblePathToParams = ({
   basePath,
   fileName,
 }: FormatPlausiblePathToParams): ParamType => {
-  const currentPath = routes.find((route) => matchPath(route, path))
+  const currentPath = routes.find((route) =>
+    matchPath({ path: route, end: true }, path),
+  )
   const pageOrigin = window.location.origin
   const absoluteUrl = `${pageOrigin}${basePath}${currentPath ?? ''}`
 

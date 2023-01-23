@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import { FC, useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { Location, Routes, useLocation, Route } from 'react-router-dom'
 import type { User } from 'oidc-client-ts'
 
@@ -31,6 +31,7 @@ const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
 
 export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   const location = useLocation()
+  const locationRef = useRef(location)
   const reducerInstance = useReducer(reducer, initialState)
   const [state, dispatch] = reducerInstance
   const userManager = getUserManager()
@@ -42,11 +43,11 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.SIGNIN_START,
       })
       return userManager.signinRedirect({
-        state: getReturnUrl(location, authSettings),
+        state: getReturnUrl(locationRef.current, authSettings),
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, authSettings, location],
+    [dispatch, userManager, authSettings, locationRef],
   )
 
   const signInSilent = useCallback(
@@ -92,12 +93,12 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       return userManager.signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
-          getReturnUrl(location, authSettings),
+          getReturnUrl(locationRef.current, authSettings),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch, location, authSettings],
+    [userManager, dispatch, authSettings, locationRef],
   )
 
   const signOut = useCallback(

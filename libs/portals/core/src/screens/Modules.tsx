@@ -1,7 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { Suspense, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 
 import { Box } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
@@ -69,7 +68,11 @@ const RouteLoader = React.memo(
     <Routes>
       {routes.map((route) =>
         route.enabled === false ? (
-          <Route path={route.path} key={route.path} element={AccessDenied} />
+          <Route
+            path={route.path}
+            key={route.path}
+            element={<AccessDenied />}
+          />
         ) : (
           <Route
             path={route.path}
