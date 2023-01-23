@@ -14,7 +14,7 @@ interface Then {
 
 type GivenWhenThen = (caseId: string) => Promise<Then>
 
-describe('NotificationController - Send heads up notification', () => {
+describe('NotificationController - Send court date notification', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
@@ -37,7 +37,7 @@ describe('NotificationController - Send heads up notification', () => {
 
       await notificationController
         .sendCaseNotification(caseId, user, { id: caseId } as Case, {
-          type: NotificationType.HEADS_UP,
+          type: NotificationType.COURT_DATE,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -57,7 +57,7 @@ describe('NotificationController - Send heads up notification', () => {
     it('should send message to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+          type: MessageType.SEND_COURT_DATE_NOTIFICATION,
           userId,
           caseId,
         },
