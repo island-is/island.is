@@ -48,10 +48,10 @@ export class InternalDefendantController {
   deliverDefendantToCourt(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
-    @Body() _: DeliverDefendantToCourtDto,
     @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
+    @Body() _: DeliverDefendantToCourtDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
       `Delivering defendant ${defendantId} of case ${caseId} to court`,

@@ -19,6 +19,9 @@ interface Then {
 type GivenWhenThen = (theCase: Case) => Promise<Then>
 
 describe('NotificationController - Send ready for court notification', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockMessageService: MessageService
   let givenWhenThen: GivenWhenThen
 
@@ -30,14 +33,14 @@ describe('NotificationController - Send ready for court notification', () => {
 
     mockMessageService = messageService
 
-    const mockSendMessageToQueue = messageService.sendMessageToQueue as jest.Mock
-    mockSendMessageToQueue.mockResolvedValue(undefined)
+    const mockSendMessagesToQueue = messageService.sendMessagesToQueue as jest.Mock
+    mockSendMessagesToQueue.mockResolvedValue(undefined)
 
     givenWhenThen = async (theCase) => {
       const then = {} as Then
 
       await notificationController
-        .sendCaseNotification(theCase.id, { id: uuid() } as User, theCase, {
+        .sendCaseNotification(theCase.id, user, theCase, {
           type: NotificationType.READY_FOR_COURT,
         })
         .then((result) => (then.result = result))
@@ -59,6 +62,7 @@ describe('NotificationController - Send ready for court notification', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+          userId,
           caseId,
         },
       ])
@@ -81,9 +85,10 @@ describe('NotificationController - Send ready for court notification', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+          userId,
           caseId,
         },
-        { type: MessageType.DELIVER_REQUEST_TO_COURT, caseId },
+        { type: MessageType.DELIVER_REQUEST_TO_COURT, userId, caseId },
       ])
       expect(then.result).toEqual({ notificationSent: true })
     })
