@@ -1,4 +1,10 @@
-import { InstitutionType } from '../graphql/schema'
+export enum InstitutionType {
+  ProsecutorsOffice = 'PROSECUTORS_OFFICE',
+  Court = 'COURT',
+  HighCourt = 'HIGH_COURT',
+  Prison = 'PRISON',
+  PrisonAdmin = 'PRISON_ADMIN',
+}
 
 export interface Institution {
   id: string
