@@ -312,9 +312,9 @@ export const notifications = {
     },
     requestText: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.request_text',
+        'judicial.system.backend:notifications.prison_court_date_email.request_textv2',
       defaultMessage:
-        'Nafn sakbornings: {accusedName, select, NONE {Ekki skráð} other {{accusedName}}}.<br /><br />Kyn sakbornings: {gender, select, MALE {Karl} FEMALE {Kona} other {Kynsegin/Annað}}.<br /><br />Krafist er {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}} til {requestedValidToDateText}.',
+        'Kyn sakbornings: {gender, select, MALE {Karl} FEMALE {Kona} other {Kynsegin/Annað}}.<br /><br />Krafist er {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}} til {requestedValidToDateText}.',
       description:
         'Texti í pósti til fangeslis sem tilgreinir hver sakborningur er',
     },
@@ -336,7 +336,7 @@ export const notifications = {
     },
     bodyV3: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.body_v3',
+        'judicial.system.backend:notifications.prison_court_date_email.body_v4',
       defaultMessage:
         '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, true {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistunar á viðeignadi stofnun} other {gæsluvarðhald}} til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}.<br /><br />Málsnúmer héraðsdóms er {courtCaseNumber}.',
       description: 'Notaður sem beinagrind á í pósti til fangelsis',
