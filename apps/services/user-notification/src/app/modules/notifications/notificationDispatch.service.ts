@@ -85,7 +85,7 @@ export class NotificationDispatchService {
         ...(notification.appURI && { url: notification.appURI }),
       },
     }
-    this.logger.info("payload",payload)
+    this.logger.info('payload', payload)
 
     const {
       responses,
