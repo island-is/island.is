@@ -17,14 +17,13 @@ export enum MessageType {
 
 export type CaseMessage = {
   type: MessageType
+  userId: string
   caseId: string
   numberOfRetries?: number
   nextRetry?: number
 }
 
-export type UserMessage = CaseMessage & { userId: string }
-
-export type DefendantMessage = UserMessage & { defendantId: string }
+export type DefendantMessage = CaseMessage & { defendantId: string }
 
 export type CaseFileMessage = CaseMessage & { caseFileId: string }
 

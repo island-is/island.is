@@ -87,8 +87,9 @@ export class NotificationController {
     ) {
       // Notifications put on queue will call the internal notification controller
       return this.notificationService.addMessagesForNotificationToQueue(
-        theCase,
         notification,
+        theCase,
+        user,
       )
     }
 
