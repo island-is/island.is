@@ -33,9 +33,12 @@ type RepeaterProps = {
 
 export const ReportFieldsRepeater: FC<
   FieldBaseProps<Answers> & RepeaterProps
-> = ({ application, field }) => {
+> = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
+  const error = errors
+    ? (errors[id.replace('.data', '')] as any)?.data
+    : undefined
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
@@ -218,6 +221,12 @@ export const ReportFieldsRepeater: FC<
                       type={field.type}
                       textarea={field.variant}
                       rows={field.rows}
+                      required={field.required}
+                      error={
+                        error && error[index]
+                          ? error[index][field.id]
+                          : undefined
+                      }
                       onChange={(elem) => {
                         // heirs
                         if (field.id === 'heirsPercentage') {

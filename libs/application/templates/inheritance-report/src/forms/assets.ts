@@ -58,6 +58,7 @@ export const assets = buildSection({
                   {
                     title: m.propertyValuation.defaultMessage,
                     id: 'propertyValuation',
+                    required: true,
                   },
                 ],
                 repeaterButtonText: m.addRealEstate.defaultMessage,
@@ -112,6 +113,7 @@ export const assets = buildSection({
                   {
                     title: m.vehicleValuation.defaultMessage,
                     id: 'propertyValuation',
+                    required: true,
                   },
                 ],
                 repeaterButtonText: m.addVehicle.defaultMessage,
