@@ -104,7 +104,7 @@ export const HearingArrangements: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const hasSentNotification = workingCase?.notifications?.find(
+      const hasSentNotification = workingCase.notifications?.find(
         (notification) =>
           notification.type === NotificationType.COURT_DATE &&
           notification.recipients.every((recipient) => recipient.success),

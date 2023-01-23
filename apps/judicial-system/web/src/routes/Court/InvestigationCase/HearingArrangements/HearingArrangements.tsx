@@ -98,11 +98,13 @@ const HearingArrangements = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const hasSentNotification = workingCase?.notifications?.find(
-        (notification) => notification.type === NotificationType.COURT_DATE,
+      const hasSentNotification = workingCase.notifications?.find(
+        (notification) =>
+          notification.type === NotificationType.COURT_DATE &&
+          notification.recipients.every((recipient) => recipient.success),
       )
 
-      setAndSendCaseToServer(
+      await setAndSendCaseToServer(
         [
           {
             courtDate: courtDate
