@@ -1,9 +1,11 @@
 module.exports = {
   displayName: 'clients-electronic-registration-statistics',
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   testEnvironment: 'node',

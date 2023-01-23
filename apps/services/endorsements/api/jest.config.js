@@ -1,17 +1,19 @@
 module.exports = {
   displayName: 'services-endorsements-api',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   testEnvironment: 'jest-environment-node',
-  coverageDirectory: '../../../../coverage/apps/services/endorsements/api',
-  setupFiles: ['./test/environment.jest.ts'],
-  setupFilesAfterEnv: ['./test/setup.ts'],
-  globalSetup: './test/globalSetup.ts',
-  globalTeardown: './test/globalTeardown.ts',
+  coverageDirectory: '<rootDir>/coverage/apps/services/endorsements/api',
+  setupFiles: [`${__dirname}/test/environment.jest.ts`],
+  setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
+  globalSetup: `${__dirname}/test/globalSetup.ts`,
+  globalTeardown: `${__dirname}/test/globalTeardown.ts`,
 }

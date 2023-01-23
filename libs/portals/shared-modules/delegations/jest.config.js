@@ -1,6 +1,8 @@
 module.exports = {
   displayName: 'portals-shared-modules-delegations',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },

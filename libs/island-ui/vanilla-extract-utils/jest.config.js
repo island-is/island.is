@@ -1,12 +1,14 @@
 module.exports = {
   displayName: 'island-ui-vanilla-extract-utils',
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/island-ui/vanilla-extract-utils',
+  coverageDirectory: '<rootDir>/coverage/libs/island-ui/vanilla-extract-utils',
 }

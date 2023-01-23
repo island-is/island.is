@@ -1,15 +1,15 @@
 module.exports = {
   displayName: 'application-templates-no-debt-certificate',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
-  transform: {
-    '^.+\\.[tj]sx?$': 'ts-jest',
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  moduleFileExtensions: ['ts', 'js'],
+  testEnvironment: 'node',
   coverageDirectory:
-    '../../../../coverage/libs/application/templates/no-debt-certificate',
+    '<rootDir>/coverage/libs/application/templates/no-debt-certificate',
 }

@@ -1,9 +1,11 @@
 module.exports = {
   displayName: 'clients-rsk-personal-tax-return',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   testEnvironment: 'node',
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',

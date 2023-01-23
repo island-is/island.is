@@ -1,7 +1,9 @@
 module.exports = {
   displayName:
     'application-templates-transport-authority-digital-tachograph-drivers-card',
-  preset: '../../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../../..',
+  roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
