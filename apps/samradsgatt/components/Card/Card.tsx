@@ -1,5 +1,6 @@
 import { Tag, Box, Divider, Text, ArrowLink } from '@island.is/island-ui/core'
 import getTagVariants from '../../utils/helpers/getTagVariants'
+
 type CardProps = {
   caseNumber: string
   status: string
@@ -84,9 +85,7 @@ export const Card = (caseData: CardProps) => {
         </Text>
       </Box>
 
-      <Box className="ArrowLinkContainer">
-        <ArrowLink href={`case/${caseData.id}`}>Skoða mál</ArrowLink>
-      </Box>
+      <ArrowLink href={`case/${caseData.id}`}>Skoða mál</ArrowLink>
     </Box>
   )
 }
