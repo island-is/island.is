@@ -1,56 +1,21 @@
-import { PortalNavigationItem, m, PortalPaths } from '@island.is/portals/core'
+import { PortalNavigationItem, m } from '@island.is/portals/core'
 import { ServicePortalPaths } from './paths'
-import {
-  documentsNavigation,
-  DocumentsPaths,
-} from '@island.is/service-portal/documents'
-import {
-  financeNavigation,
-  FinancePaths,
-} from '@island.is/service-portal/finance'
-import {
-  applicationsNavigation,
-  ApplicationsPaths,
-} from '@island.is/service-portal/applications'
-import { assetsNavigation, AssetsPaths } from '@island.is/service-portal/assets'
-import {
-  documentProviderNavigation,
-  DocumentProviderPaths,
-} from '@island.is/service-portal/document-provider'
-import {
-  educationNavigation,
-  EducationPaths,
-} from '@island.is/service-portal/education'
-import {
-  icelandicNamesRegistryNavigation,
-  IcelandicNamesRegistryPaths,
-} from '@island.is/service-portal/icelandic-names-registry'
+import { documentsNavigation } from '@island.is/service-portal/documents'
+import { financeNavigation } from '@island.is/service-portal/finance'
+import { applicationsNavigation } from '@island.is/service-portal/applications'
+import { assetsNavigation } from '@island.is/service-portal/assets'
+import { documentProviderNavigation } from '@island.is/service-portal/document-provider'
+import { educationNavigation } from '@island.is/service-portal/education'
+import { icelandicNamesRegistryNavigation } from '@island.is/service-portal/icelandic-names-registry'
 import {
   companyNavigation,
   informationNavigation,
-  InformationPaths,
 } from '@island.is/service-portal/information'
-import {
-  licenseNavigation,
-  LicensePaths,
-} from '@island.is/service-portal/licenses'
-import {
-  educationLicenseNavigation,
-  EducationLicensePaths,
-} from '@island.is/service-portal/education-license'
-import {
-  TransportPaths,
-  transportsNavigation,
-} from '@island.is/service-portal/transports'
-import {
-  personalInformationNavigation,
-  PersonalInformationPaths,
-} from '@island.is/service-portal/settings/personal-information'
-import {
-  DelegationPaths,
-  delegationsNavigation,
-} from '@island.is/portals/shared-modules/delegations'
-import { PetitionPaths } from '@island.is/service-portal/endorsements'
+import { licenseNavigation } from '@island.is/service-portal/licenses'
+import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
+import { transportsNavigation } from '@island.is/service-portal/transports'
+import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
+import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
