@@ -19,7 +19,6 @@
     "http-errors",
     "graphql",
     "pg",
-    "lodash.includes",
     "winston",
     "source-map-resolve",
     "atob",
