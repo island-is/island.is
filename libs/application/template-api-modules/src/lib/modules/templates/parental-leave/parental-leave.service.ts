@@ -1274,7 +1274,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         attachments,
         true,
       )
-      console.log('PDTO -- ', parentalLeaveDTO)
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes

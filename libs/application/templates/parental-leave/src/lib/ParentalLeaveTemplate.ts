@@ -752,7 +752,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: ['children', 'noPrimaryChildren', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [

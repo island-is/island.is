@@ -123,15 +123,10 @@ export class ChildrenService {
       })
     }
 
-    // if (children.length <= 0 && existingApplications.length <= 0) {
-    if(useMockData === false) {
+    if (children.length <= 0 && existingApplications.length <= 0) {
       // Instead of throwing error, ask applicant questions 
-      // father without mother
-      
-      // throw new TemplateApiError(
-      //   parentalLeaveFormMessages.shared.childrenError,
-      //   500,
-      // )
+      // father without mother application
+
       return {
         children: [],
         existingApplications: []
