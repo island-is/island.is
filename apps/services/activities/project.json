@@ -41,6 +41,13 @@
         "passWithNoTests": false
       }
     },
+    "worker": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-activities:build",
+        "args": ["--job", "worker"]
+      }
+    },
     "dev-services": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

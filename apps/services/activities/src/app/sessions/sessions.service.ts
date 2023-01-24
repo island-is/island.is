@@ -15,4 +15,8 @@ export class SessionsService {
   async findAll(user: User): Promise<Session[]> {
     return []
   }
+
+  async create(session: Session): Promise<Session> {
+    return this.sessionModel.create(session)
+  }
 }

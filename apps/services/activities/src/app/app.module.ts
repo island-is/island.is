@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { AuditModule } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
@@ -12,6 +13,7 @@ import { SessionsModule } from './sessions/sessions.module'
   imports: [
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
+    ProblemModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

@@ -21,28 +21,53 @@ export class Session extends Model<
   InferCreationAttributes<Session>
 > {
   @PrimaryKey
-  @Column(DataType.STRING)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
   id!: CreationOptional<string>
 
-  @Column
-  actor!: string
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  actorNationalId!: string
 
-  @Column
-  subject!: string
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  subjectNationalId!: string
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   clientId!: string
 
-  @Column
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
   timestamp!: string
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   sessionId!: string
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   userAgent!: string
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   ip!: string
 
   @CreatedAt

@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'services-activities'
 
@@ -15,6 +15,18 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      REDIS_URL_NODE_01: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      REDIS_USE_SSL: 'true',
     })
     .readiness('/liveness')
     .liveness('/liveness')
