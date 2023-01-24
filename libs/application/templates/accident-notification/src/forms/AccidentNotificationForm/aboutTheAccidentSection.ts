@@ -84,6 +84,7 @@ export const aboutTheAccidentSection = buildSection({
               ],
               width: 'half',
               largeButtons: true,
+              required: true,
             }),
             buildCustomField({
               component: 'FieldAlertMessage',
@@ -108,6 +109,7 @@ export const aboutTheAccidentSection = buildSection({
               ],
               width: 'half',
               largeButtons: true,
+              required: true,
             }),
             buildCustomField({
               component: 'FieldAlertMessage',
@@ -528,6 +530,7 @@ export const aboutTheAccidentSection = buildSection({
               title: '',
               backgroundColor: 'blue',
               width: 'half',
+              required: true,
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
                 { value: NO, label: application.general.noOptionLabel },
@@ -618,6 +621,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'injuryCertificate.answer',
               title: '',
               description: attachments.general.description,
+              required: true,
               options: (application) =>
                 isRepresentativeOfCompanyOrInstitute(application.answers)
                   ? [
@@ -690,6 +694,7 @@ export const aboutTheAccidentSection = buildSection({
               title: '',
               backgroundColor: 'blue',
               width: 'half',
+              required: true,
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
                 { value: NO, label: application.general.noOptionLabel },
@@ -709,6 +714,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'fatalAccidentUploadDeathCertificateNow',
               title: '',
               backgroundColor: 'blue',
+              required: true,
               options: [
                 {
                   value: YES,
@@ -767,6 +773,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'additionalAttachments.answer',
               title: '',
               description: attachments.general.additionalAttachmentDescription,
+              required: true,
               options: () => [
                 {
                   value: AttachmentsEnum.ADDITIONALNOW,
