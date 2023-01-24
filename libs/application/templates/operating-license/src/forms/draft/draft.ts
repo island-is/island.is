@@ -15,7 +15,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  PaymentCatalogApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { applicationInfo } from './sectionApplicationInfo'
@@ -24,7 +23,11 @@ import { subSectionPropertyRepeater } from './subSectionPropertyRepeater'
 import { subSectionOpeningHours } from './subSectionOpeningHours'
 import { subSectionOtherInfo } from './subSectionOtherInfo'
 import { sectionOverview } from './sectionOverview'
-import { CriminalRecordApi, NoDebtCertificateApi } from '../../dataProviders'
+import {
+  CriminalRecordApi,
+  NoDebtCertificateApi,
+  SyslumadurPaymentCatalogApi,
+} from '../../dataProviders'
 import { fakeDataSection } from './fakeDataSection'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
@@ -68,7 +71,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 subTitle: m.dataCollectionCriminalRecordSubtitle,
               }),
               buildDataProviderItem({
-                provider: PaymentCatalogApi,
+                provider: SyslumadurPaymentCatalogApi,
                 title: '',
               }),
             ],

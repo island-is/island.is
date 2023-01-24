@@ -27,5 +27,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
 }
