@@ -2,7 +2,6 @@ import {
   Gender,
   CaseState,
   CaseType,
-  UserRole,
   Case,
   CaseOrigin,
 } from '@island.is/judicial-system/types'
@@ -10,6 +9,7 @@ import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/
 import {
   InstitutionType,
   User,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const mockCourt = {
@@ -31,7 +31,7 @@ export const mockPrison = {
 }
 
 export const mockProsecutor = {
-  role: UserRole.PROSECUTOR,
+  role: UserRole.Prosecutor,
   name: 'Batman Robinson',
   title: 'saksóknari',
   institution: {
@@ -42,7 +42,7 @@ export const mockProsecutor = {
 
 export const mockJudge = {
   id: 'judge_1',
-  role: UserRole.JUDGE,
+  role: UserRole.Judge,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: mockCourt,
@@ -50,7 +50,7 @@ export const mockJudge = {
 
 export const mockHighCourtUser = {
   id: 'hc_1',
-  role: UserRole.JUDGE,
+  role: UserRole.Judge,
   name: 'Lalli Landsréttardómari',
   title: 'dómari',
   institution: mockHighCourt,
@@ -58,7 +58,7 @@ export const mockHighCourtUser = {
 
 export const mockPrisonUser = {
   id: 'hc_1',
-  role: UserRole.STAFF,
+  role: UserRole.Staff,
   name: 'Finnur fangavörður',
   title: 'fangavörður',
   institution: mockPrison,

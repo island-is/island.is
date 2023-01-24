@@ -11,7 +11,6 @@ import {
   CaseState,
   CaseType,
   Defendant,
-  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
@@ -35,6 +34,7 @@ import {
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
+import { isExtendedCourtRole } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   cases: CaseListEntry[]

@@ -9,11 +9,13 @@ import {
 import {
   CaseState,
   completedCaseStates,
-  isExtendedCourtRole,
-  isProsecutionRole,
   User,
 } from '@island.is/judicial-system/types'
 
+import {
+  isProsecutionRole,
+  isExtendedCourtRole,
+} from '../../../formatters/formatters'
 import { Case } from '../../case'
 
 @Injectable()

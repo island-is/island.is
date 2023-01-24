@@ -6,7 +6,7 @@ import { AlertBanner } from '@island.is/island-ui/core'
 import {
   isExtendedCourtRole,
   isProsecutionRole,
-} from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import { UserContext } from '../UserProvider/UserProvider'
 

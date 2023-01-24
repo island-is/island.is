@@ -6,9 +6,11 @@ import {
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
-  UserRole,
 } from '@island.is/judicial-system/types'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useFilter as m } from './useFilter.strings'
 
@@ -78,8 +80,8 @@ export function filterOptionsForUser(
 ) {
   return options.filter((option) => {
     if (
-      user?.role === UserRole.REGISTRAR ||
-      user?.role === UserRole.ASSISTANT
+      user?.role === UserRole.Registrar ||
+      user?.role === UserRole.Assistant
     ) {
       return option.value !== 'INVESTIGATION'
     }

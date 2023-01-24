@@ -10,15 +10,17 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  isCourtRole,
-  isExtendedCourtRole,
   isIndictmentCase,
-  isProsecutionRole,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
+import {
+  isProsecutionRole,
+  isExtendedCourtRole,
+  isCourtRole,
+} from '../../../formatters/formatters'
 import { Case } from '../models/case.model'
 
 const hideArchived = { isArchived: false }

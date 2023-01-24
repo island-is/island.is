@@ -8,6 +8,7 @@ import {
   CaseCustodyRestrictions,
   Gender,
 } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 /**
  * A value is considered dirty if it's a string, either an empty string or not.
@@ -87,4 +88,26 @@ export const createCaseResentExplanation = (
       ? `${workingCase.caseResentExplanation}<br/><br/>`
       : ''
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
+}
+
+const prosecutionRoles = [UserRole.Prosecutor, UserRole.Representative]
+
+export function isProsecutionRole(role: UserRole): boolean {
+  return prosecutionRoles.includes(role)
+}
+
+export const extendedCourtRoles = [
+  UserRole.Judge,
+  UserRole.Registrar,
+  UserRole.Assistant,
+]
+
+export function isExtendedCourtRole(role: UserRole): boolean {
+  return extendedCourtRoles.includes(role)
+}
+
+export const courtRoles = [UserRole.Judge, UserRole.Registrar]
+
+export function isCourtRole(role: UserRole): boolean {
+  return courtRoles.includes(role)
 }
