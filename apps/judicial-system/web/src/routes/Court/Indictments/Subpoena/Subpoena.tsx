@@ -1,6 +1,8 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import compareAsc from 'date-fns/compareAsc'
+import parseISO from 'date-fns/parseISO'
 
 import {
   CourtArrangements,
@@ -60,10 +62,16 @@ const Subpoena: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const hasSentNotification = workingCase.notifications?.find(
-        (notification) =>
-          notification.type === NotificationType.COURT_DATE &&
-          notification.recipients.every((recipient) => recipient.success),
+      const courtDateNotifications = workingCase.notifications?.filter(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+
+      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
+        compareAsc(parseISO(b.created), parseISO(a.created)),
+      )[0]
+
+      const hasSentNotification = latestCourtDateNotification?.recipients.some(
+        (recipient) => recipient.success,
       )
 
       await setAndSendCaseToServer(
