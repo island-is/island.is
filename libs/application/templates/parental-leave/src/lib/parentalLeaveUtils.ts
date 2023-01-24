@@ -471,8 +471,8 @@ export const getSelectedChild = (
     externalData,
     `children.data.children[${selectedChildIndex}]`,
     null,
-  ) as ChildInformation | null
-  
+  ) ?? getValueViaPath(externalData, 'noPrimaryChildren.data.children', null) as ChildInformation | null
+
   return selectedChild
 }
 
@@ -591,7 +591,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
 
-  const noPrimaryParentBirthDate = getValueViaPath(answers, 'noPrimaryParent.birthDate') as string
+  const noPrimaryParentBirthDate = getValueViaPath(
+    answers,
+    'noPrimaryParent.birthDate',
+  ) as string
 
   const hasMultipleBirths = getValueViaPath(
     answers,
@@ -867,21 +870,25 @@ export function getApplicationAnswers(answers: Application['answers']) {
 export const isParentWithoutBirthParent = (answers: Application['answers']) => {
   const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
   const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
-  const questionThree = getValueViaPath(answers, 'noPrimaryParent.questionThree')
-
-  console.log('ONE -- ', questionOne)
-  console.log('TWO -- ', questionTwo)
-  console.log('THREE -- ', questionThree)
+  const questionThree = getValueViaPath(
+    answers,
+    'noPrimaryParent.questionThree',
+  )
 
   return questionOne === YES && questionTwo === YES && questionThree === YES
 }
 
-export const isNotEligibleForParentWithoutBirthParent = (answers: Application['answers']) => {
+export const isNotEligibleForParentWithoutBirthParent = (
+  answers: Application['answers'],
+) => {
   const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
   const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
-  const questionThree = getValueViaPath(answers, 'noPrimaryParent.questionThree')
+  const questionThree = getValueViaPath(
+    answers,
+    'noPrimaryParent.questionThree',
+  )
 
-  return (questionOne === NO || questionTwo === NO || questionThree === NO)
+  return questionOne === NO || questionTwo === NO || questionThree === NO
 }
 
 export const requiresOtherParentApproval = (
@@ -960,9 +967,13 @@ export const allowOtherParent = (answers: Application['answers']) => {
 export const getOtherParentId = (
   application: Application,
 ): string | undefined => {
-  const { otherParent, otherParentId } = getApplicationAnswers(
+  const { otherParent, otherParentId, noPrimaryParentBirthDate } = getApplicationAnswers(
     application.answers,
   )
+
+  if(noPrimaryParentBirthDate) {
+    return ''
+  }
 
   if (otherParent === SPOUSE) {
     const spouse = getSpouse(application)

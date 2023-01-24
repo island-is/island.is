@@ -33,6 +33,9 @@ import {
   getAdditionalSingleParentRightsInDays,
   getApplicationExternalData,
   DAYS_IN_MONTH,
+  ParentalRelations,
+  ChildInformation,
+  isParentWithoutBirthParent,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -148,6 +151,30 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         genderCode: person.genderCode,
       }
     )
+  }
+
+  async setBirthDateForNoPrimaryParent({
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { noPrimaryParentBirthDate } = getApplicationAnswers(
+      application.answers,
+    )
+
+    if (noPrimaryParentBirthDate) {
+      const child: ChildInformation = {
+        hasRights: true,
+        remainingDays: 180,
+        expectedDateOfBirth: noPrimaryParentBirthDate,
+        parentalRelation: ParentalRelations.secondary,
+        primaryParentNationalRegistryId: '',
+      }
+      
+      const children: ChildInformation[] = [child]
+
+      return {
+        children: children[0],
+      }
+    }
   }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
@@ -428,6 +455,28 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           attachments.push({
             attachmentType: apiConstants.attachments.unEmploymentBenefits,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if(isParentWithoutBirthParent(application.answers)) {
+      const parentWithoutBirthParentPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.parentWithoutBirthParent',
+      )) as unknown[]
+
+      if (parentWithoutBirthParentPdfs?.length) {
+        for (let i = 0; i <= parentWithoutBirthParentPdfs.length - 1; i++) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.parentWithoutBirthParent',
+          )
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.parentWithoutBirthParent,
             attachmentBytes: pdf,
           })
         }
@@ -1225,6 +1274,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         attachments,
         true,
       )
+      console.log('PDTO -- ', parentalLeaveDTO)
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes

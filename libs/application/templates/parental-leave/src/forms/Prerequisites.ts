@@ -329,7 +329,7 @@ export const PrerequisitesForm: Form = buildForm({
           title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
           condition: (_, externalData) => {
             const { children } = getApplicationExternalData(externalData)
-            return children.length === 0 // laga þetta
+            return children.length === 0 // if no children found we want to ask these questions
           },
           children: [
             buildMultiField({

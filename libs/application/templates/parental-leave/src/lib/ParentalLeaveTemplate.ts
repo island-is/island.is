@@ -48,6 +48,7 @@ import {
   getOtherParentId,
   getSelectedChild,
   isParentalGrant,
+  isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import { ChildInformation } from '../types'
@@ -102,6 +103,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
+            externalDataId: 'noPrimaryChildren',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -127,7 +133,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['clearAssignees', 'setBirthDate'],
+        entry: 'clearAssignees',
         exit: [
           'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
@@ -347,7 +353,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: ['children', 'noPrimaryChildren', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
@@ -1066,28 +1072,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setBirthDate: assign((context) => {
-        const { application } = context
-        const answers = getApplicationAnswers(application.answers)
-        console.log('komst hingað')
-        console.log('ANS -- ', answers)
-
-        let childRes: ChildInformation[] = []
-        let child: ChildInformation = {
-          hasRights: true,
-          remainingDays: 180, 
-          expectedDateOfBirth: answers.noPrimaryParentBirthDate,
-          parentalRelation: ParentalRelations.primary, // á þetta að vera svona?????
-          // primaryParentNationalRegistryId: ''
-        }
-
-        childRes.push(child)
-        console.log('CHILD RES -- ', childRes)
-
-        set(application.externalData, 'children.data.children', childRes[0])
-        console.log('EXT DATA -- ', application.externalData)
-        return context
-      }),
       setPrivatePensionValuesIfUsePrivatePensionFundIsNO: assign((context) => {
         const { application } = context
 
@@ -1209,8 +1193,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers, externalData } = application
         const selectedChild = getSelectedChild(answers, externalData)
-
-        if (!selectedChild) {
+        
+        if (!selectedChild || isParentWithoutBirthParent(application.answers)) {
           return context
         }
 
