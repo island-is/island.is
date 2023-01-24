@@ -22,9 +22,9 @@ import {
   isInvestigationCase,
   isIndictmentCase,
   isExtendedCourtRole,
-  User,
   CaseListEntry,
 } from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'

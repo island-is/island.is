@@ -19,8 +19,11 @@ import {
   isProsecutionRole,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Institution, User } from '@island.is/judicial-system/types'
-import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Institution,
+  InstitutionType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { ReactSelectOption } from '../../../types'

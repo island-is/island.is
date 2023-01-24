@@ -10,10 +10,10 @@ import {
   CaseState,
   completedCaseStates,
   isCourtRole,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CaseFileList, InfoBox } from '../..'
 import { UploadStateMessage } from './UploadStateMessage'

@@ -3,8 +3,8 @@ import {
   Case,
   CaseType,
   isIndictmentCase,
-  User,
 } from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './stepHelper'
 

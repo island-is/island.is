@@ -1,13 +1,14 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { IntlShape, useIntl } from 'react-intl'
+
 import {
   CaseListEntry,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useFilter as m } from './useFilter.strings'
 
@@ -98,7 +99,7 @@ export type UserFilter = {
 export const useFilter = (
   allActiveCases: CaseListEntry[],
   allPastCases: CaseListEntry[],
-  user?: User | undefined,
+  user?: User,
 ): UserFilter => {
   const { formatMessage } = useIntl()
   const optionsMemo = useMemo(

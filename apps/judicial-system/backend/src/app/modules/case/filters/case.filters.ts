@@ -40,7 +40,7 @@ function getAllowedStates(
     ]
   }
 
-  if (institutionType === InstitutionType.Court) {
+  if (institutionType === InstitutionType.COURT) {
     if (role === UserRole.ASSISTANT || isIndictmentCase(caseType)) {
       return [
         CaseState.SUBMITTED,
@@ -61,7 +61,7 @@ function getAllowedStates(
     ]
   }
 
-  if (institutionType === InstitutionType.HighCourt) {
+  if (institutionType === InstitutionType.HIGH_COURT) {
     return [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED]
   }
 
@@ -121,7 +121,7 @@ function getAllowedTypes(
     return [...indictmentCases, ...investigationCases, ...restrictionCases]
   }
 
-  if (institutionType === InstitutionType.PrisonAdmin) {
+  if (institutionType === InstitutionType.PRISON_ADMIN) {
     return [
       CaseType.CUSTODY,
       CaseType.ADMISSION_TO_FACILITY,
@@ -146,7 +146,7 @@ function isDecisionHiddenFromInstitution(
   institutionType?: InstitutionType,
 ): boolean {
   return (
-    institutionType === InstitutionType.Prison &&
+    institutionType === InstitutionType.PRISON &&
     decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
   )
 }
@@ -179,7 +179,7 @@ function isCourtCaseHiddenFromUser(
     courtId !== user.institution?.id &&
     (forUpdate ||
       !hasCaseBeenAppealed ||
-      user.institution?.type !== InstitutionType.HighCourt)
+      user.institution?.type !== InstitutionType.HIGH_COURT)
   )
 }
 
@@ -290,7 +290,7 @@ export function isCaseBlockedFromUser(
 function getStaffCasesQueryFilter(
   institutionType?: InstitutionType,
 ): WhereOptions {
-  return institutionType === InstitutionType.PrisonAdmin
+  return institutionType === InstitutionType.PRISON_ADMIN
     ? {
         [Op.and]: [
           { isArchived: false },
@@ -336,7 +336,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
           { shared_with_prosecutors_office_id: user.institution?.id },
         ],
       }
-    : user.institution?.type === InstitutionType.HighCourt
+    : user.institution?.type === InstitutionType.HIGH_COURT
     ? {
         [Op.or]: [
           { accused_appeal_decision: CaseAppealDecision.APPEAL },

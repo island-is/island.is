@@ -7,8 +7,10 @@ import {
   CaseOrigin,
 } from '@island.is/judicial-system/types'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
-import type { User } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const mockCourt = {
   id: 'court_id',

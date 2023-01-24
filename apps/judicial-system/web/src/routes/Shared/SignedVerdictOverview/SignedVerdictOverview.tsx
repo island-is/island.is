@@ -20,7 +20,6 @@ import {
   CaseAppealDecision,
   isAcceptingCaseDecision,
   UpdateCase,
-  User,
   isCourtRole,
 } from '@island.is/judicial-system/types'
 import {

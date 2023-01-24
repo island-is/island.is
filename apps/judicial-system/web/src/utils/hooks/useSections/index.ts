@@ -7,13 +7,15 @@ import {
   Gender,
   isInvestigationCase,
   isRestrictionCase,
-  User,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
-import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  InstitutionType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
@@ -584,7 +586,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       children:
-        user?.institution?.type !== InstitutionType.Court
+        user?.institution?.type !== InstitutionType.HighCourt
           ? []
           : [
               {
