@@ -38,5 +38,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }

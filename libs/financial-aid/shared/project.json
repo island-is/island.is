@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/financial-aid/shared"]
     }
   },
-  "tags": []
+  "tags": ["lib:js", "scope:react", "TODO:splitUp"]
 }
