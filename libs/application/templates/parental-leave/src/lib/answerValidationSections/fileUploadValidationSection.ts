@@ -77,7 +77,10 @@ export const fileUploadValidationSection = (
     }
   }
 
-  if (isParentWithoutBirthParent(application.answers) && obj.parentWithoutBirthParent) {
+  if (
+    isParentWithoutBirthParent(application.answers) &&
+    obj.parentWithoutBirthParent
+  ) {
     if (
       isEmpty(
         (obj as { parentWithoutBirthParent: unknown[] })

@@ -1150,10 +1150,10 @@ describe('ParentWithOutBirthParent', () => {
     const application = buildApplication({
       answers: {
         noPrimaryParent: {
-          birthDate: "2023-02-03",
-          questionOne: "yes",
-          questionTwo: "yes",
-          questionThree: "yes"
+          birthDate: '2023-02-03',
+          questionOne: 'yes',
+          questionTwo: 'yes',
+          questionThree: 'yes',
         },
       },
     })
@@ -1164,13 +1164,15 @@ describe('ParentWithOutBirthParent', () => {
     const application = buildApplication({
       answers: {
         noPrimaryParent: {
-          questionOne: "no",
-          questionTwo: "yes",
-          questionThree: "yes"
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'yes',
         },
       },
     })
-    expect(isNotEligibleForParentWithoutBirthParent(application.answers)).toBe(true)
+    expect(isNotEligibleForParentWithoutBirthParent(application.answers)).toBe(
+      true,
+    )
   })
 })
 
@@ -1267,14 +1269,14 @@ describe('getOtherParentId', () => {
     const application = buildApplication({
       answers: {
         noPrimaryParent: {
-          birthDate: "2023-02-03",
-          questionOne: "no",
-          questionTwo: "yes",
-          questionThree: "yes"
+          birthDate: '2023-02-03',
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'yes',
         },
       },
     })
-    
+
     expect(getOtherParentId(application)).toBe(expectedId)
   })
 })

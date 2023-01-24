@@ -182,8 +182,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     noPrimaryParentQuestionTwo: {
       id: 'pl.applications:no.primary.parent.question.two',
-      defaultMessage: 'Er móðir búsett erlendis og/eða ekki með íslenska kennitölu?',
-      description: 'Is the mother living abroad and/or does she not have an Icelandic social security number?',
+      defaultMessage:
+        'Er móðir búsett erlendis og/eða ekki með íslenska kennitölu?',
+      description:
+        'Is the mother living abroad and/or does she not have an Icelandic social security number?',
     },
     noPrimaryParentQuestionThree: {
       id: 'pl.applications:no.primary.parent.question.three',
@@ -192,7 +194,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     noPrimaryParentDatePickerTitle: {
       id: 'pl.applications:no.primary.parent.date.picker.title',
-      defaultMessage: 'Settu inn áætlaðan/raunverulegan fæðingardagur barnsins/barnanna?',
+      defaultMessage:
+        'Settu inn áætlaðan/raunverulegan fæðingardagur barnsins/barnanna?',
       description: `Please enter the child's/children's expected/actual date of birth?`,
     },
     otherParentSubSection: {
@@ -1865,7 +1868,8 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'father withouy mother title',
     },
     parentWithoutBirthParentDescription: {
-      id: 'pl.application:attachmentscreen.parent.without.birth.parent.description',
+      id:
+        'pl.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
         'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afriit af staðfestingu þess lútandi með vottorði um áætlaðan. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',

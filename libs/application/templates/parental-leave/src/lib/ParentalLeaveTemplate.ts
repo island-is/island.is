@@ -51,7 +51,6 @@ import {
   isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
-import { ChildInformation } from '../types'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -353,7 +352,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'noPrimaryChildren', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -752,7 +756,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'noPrimaryChildren', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -1193,7 +1202,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers, externalData } = application
         const selectedChild = getSelectedChild(answers, externalData)
-        
+
         if (!selectedChild || isParentWithoutBirthParent(application.answers)) {
           return context
         }

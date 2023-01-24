@@ -467,11 +467,17 @@ export const getSelectedChild = (
   externalData: ExternalData,
 ): ChildInformation | null => {
   const { selectedChild: selectedChildIndex } = getApplicationAnswers(answers)
-  const selectedChild = getValueViaPath(
-    externalData,
-    `children.data.children[${selectedChildIndex}]`,
-    null,
-  ) ?? getValueViaPath(externalData, 'noPrimaryChildren.data.children', null) as ChildInformation | null
+  const selectedChild =
+    getValueViaPath(
+      externalData,
+      `children.data.children[${selectedChildIndex}]`,
+      null,
+    ) ??
+    (getValueViaPath(
+      externalData,
+      'noPrimaryChildren.data.children',
+      null,
+    ) as ChildInformation | null)
 
   return selectedChild
 }
@@ -967,11 +973,13 @@ export const allowOtherParent = (answers: Application['answers']) => {
 export const getOtherParentId = (
   application: Application,
 ): string | undefined => {
-  const { otherParent, otherParentId, noPrimaryParentBirthDate } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    otherParent,
+    otherParentId,
+    noPrimaryParentBirthDate,
+  } = getApplicationAnswers(application.answers)
 
-  if(noPrimaryParentBirthDate) {
+  if (noPrimaryParentBirthDate) {
     return ''
   }
 

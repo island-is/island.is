@@ -168,7 +168,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         parentalRelation: ParentalRelations.secondary,
         primaryParentNationalRegistryId: '',
       }
-      
+
       const children: ChildInformation[] = [child]
 
       return {
@@ -461,7 +461,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
     }
 
-    if(isParentWithoutBirthParent(application.answers)) {
+    if (isParentWithoutBirthParent(application.answers)) {
       const parentWithoutBirthParentPdfs = (await getValueViaPath(
         application.answers,
         'fileUpload.parentWithoutBirthParent',
