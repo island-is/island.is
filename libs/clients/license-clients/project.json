@@ -1,0 +1,23 @@
+{
+  "root": "libs/clients/license-clients",
+  "sourceRoot": "libs/clients/license-clients/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/license-clients/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/license-clients"],
+      "options": {
+        "jestConfig": "libs/clients/license-clients/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
