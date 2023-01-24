@@ -8,17 +8,16 @@ import {
 } from '@island.is/nest/config'
 import { DisabilityLicenseClientConfig } from './disabilityLicenseClient.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { DisabilityLicenseService } from './disabilityLicenseClient.service'
 
-export const DisabilityLicenseApiProvider: Provider<DisabilityLicenseService> = {
-  provide: DisabilityLicenseService,
+export const DisabilityLicenseApiProvider: Provider<DefaultApi> = {
+  provide: DefaultApi,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof DisabilityLicenseClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
-    const api = new DefaultApi(
+    return new DefaultApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           logErrorResponseBody: true,
@@ -42,7 +41,6 @@ export const DisabilityLicenseApiProvider: Provider<DisabilityLicenseService> = 
         },
       }),
     )
-    return new DisabilityLicenseService(api)
   },
   inject: [
     XRoadConfig.KEY,
