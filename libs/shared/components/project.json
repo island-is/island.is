@@ -25,5 +25,5 @@
       }
     }
   },
-  "tags": ["scope:react-spa", "lib:react-spa"]
+  "tags": ["scope:react-spa", "lib:react-spa", "TODO:splitUp"]
 }
