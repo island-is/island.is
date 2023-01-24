@@ -20,6 +20,7 @@
     "graphql",
     "pg",
     "firebase-admin",
+    "lodash.includes",
     "winston",
     "source-map-resolve",
     "atob",
