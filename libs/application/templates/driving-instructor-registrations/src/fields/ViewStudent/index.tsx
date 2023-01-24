@@ -233,6 +233,14 @@ const ViewStudent = ({
     }
   }
 
+  const allowPracticeDrivingVisable = (
+    student: DrivingLicenseBookStudentOverview,
+  ): boolean =>
+    !student.book.practiceDriving &&
+    !!student.book.drivingSchoolExams.find(
+      (school) => school.schoolTypeId === 1,
+    )
+
   return (
     <GridContainer>
       {!error &&
@@ -323,7 +331,7 @@ const ViewStudent = ({
             </GridColumn>
           </GridRow>
           {/* Practice driving button */}
-          {!student.book.practiceDriving &&
+          {allowPracticeDrivingVisable(student) &&
             student.book.totalLessonCount >= 10 && (
               <GridRow marginBottom={5}>
                 <GridColumn span={['12/12', '6/12']}>
