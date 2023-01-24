@@ -65,6 +65,7 @@ export const VehicleRadioField: FC<
     setColor(currentVehicle.color || undefined)
     setValue('vehicle.plate', currentVehicle.permno)
     setValue('vehicle.type', currentVehicle.make)
+    setValue('vehicle.date', new Date().toISOString().substring(0, 10))
   }
 
   const vehicleOptions = (

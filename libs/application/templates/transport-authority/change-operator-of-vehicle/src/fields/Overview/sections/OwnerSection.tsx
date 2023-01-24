@@ -6,6 +6,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { information } from '../../../lib/messages'
 import { ReviewGroup } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '../../../utils'
 
 export const OwnerSection: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -22,7 +23,11 @@ export const OwnerSection: FC<FieldBaseProps> = ({ application }) => {
             {getValueViaPath(answers, 'owner.nationalId', '') as string}
           </Text>
           <Text>{getValueViaPath(answers, 'owner.email', '') as string}</Text>
-          <Text>{getValueViaPath(answers, 'owner.phone', '') as string}</Text>
+          <Text>
+            {formatPhoneNumber(
+              getValueViaPath(answers, 'owner.phone', '') as string,
+            )}
+          </Text>
         </GridColumn>
       </GridRow>
     </ReviewGroup>
