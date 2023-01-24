@@ -1863,6 +1863,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
     },
+    additionalDocumentRequiredTag: {
+      id: 'pl.application:attachmentscreen.additionalDocumentRequiredTag',
+      defaultMessage:
+        'Vantar',
+      description:
+        'Missing',
+    },
     additionalDocumentsEditSubmit: {
       id: 'pl.application:attachmentscreen.additionalDocumentsEditSubmit',
       defaultMessage: 'Senda inn',

@@ -11,18 +11,26 @@ import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
-import { parentalLeaveFormMessages } from '../lib/messages'
-
-export const UploadAdditionalFiles: Form = buildForm({
-  id: 'ParentalLeaveUploadAdditionalFiles',
-  title: '',
+import {
+  inReviewFormMessages,
+  parentalLeaveFormMessages,
+} from '../lib/messages'
+export const InReviewAdditionalDocumentsRequired: Form = buildForm({
+  id: 'ParentalLeaveInReviewUpload',
+  title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
-      id: 'additionalDocuments',
-      title: parentalLeaveFormMessages.confirmation.title,
+      id: 'reviewupload',
+      title: parentalLeaveFormMessages.attachmentScreen.title,
+
       children: [
+        buildCustomField({
+          id: 'AdditionalDocumentsRequired',
+          title: parentalLeaveFormMessages.attachmentScreen.title,
+          component: 'AdditionalDocumentsRequired',
+        }),
         buildCustomField({
           id: 'uploadAdditionalFilesInfoScreen',
           title: parentalLeaveFormMessages.attachmentScreen.title,

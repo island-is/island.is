@@ -60,6 +60,8 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
+import { ReviewSectionState } from '../fields/InReviewSteps/ReviewSection'
+import { States as ApplicationStates } from '../constants'
 
 export function getExpectedDateOfBirth(
   application: Application,
