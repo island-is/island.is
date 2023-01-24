@@ -6,6 +6,5 @@ import { openApi } from './openApi'
 bootstrap({
   appModule: AppModule,
   name: 'license-api',
-  swaggerPath: 'api/swagger',
   openApi,
 })
