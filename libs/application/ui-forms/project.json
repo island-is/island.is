@@ -2,7 +2,6 @@
   "root": "libs/application/ui-forms",
   "sourceRoot": "libs/application/ui-forms/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -25,5 +24,6 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/ui-forms/src/**/*.{js,ts,tsx}'"
       }
     }
-  }
+  },
+  "tags": ["lib:application-system", "scope:application-system"]
 }

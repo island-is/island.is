@@ -6,6 +6,7 @@ import {
   Box,
   Breadcrumbs,
   GridContainer,
+  Inline,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -135,9 +136,19 @@ const OrganizationHomePage: Screen<HomeProps> = ({
                 />
               </Box>
               <Box marginBottom={5}>
-                <Text variant="h1" color="blueberry600">
-                  {organizationPage.title}
-                </Text>
+                <Inline space={1} alignY="center">
+                  {organization.logo?.url && (
+                    <img
+                      width={70}
+                      height={70}
+                      src={organization.logo.url}
+                      alt="organization-logo"
+                    />
+                  )}
+                  <Text variant="h1" color="blueberry600">
+                    {organization.title}
+                  </Text>
+                </Inline>
               </Box>
 
               <Box marginBottom={8}>

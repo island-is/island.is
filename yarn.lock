@@ -15337,7 +15337,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:4, chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.1, chalk@npm:^4.1.2":
+"chalk@npm:4, chalk@npm:4.1.2, chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.1, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -25395,6 +25395,7 @@ __metadata:
     bull: 3.18.0
     cache-manager: 3.3.0
     cache-manager-ioredis: 2.1.0
+    chalk: 4.1.2
     class-transformer: 0.5.1
     class-validator: 0.14.0
     classnames: 2.2.6
