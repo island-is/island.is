@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/auth-api-lib"]
     }
   },
-  "tags": []
+  "tags": ["lib:auth-api", "scope:auth-api"]
 }

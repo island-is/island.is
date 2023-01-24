@@ -148,6 +148,7 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
             fjoldiNeta: railNet,
             teinalengd: roeNet,
             skraarVidhengi: attachments,
+            fjarsyslaFaersluNumer: paymentStatus.paymentId,
           },
         })
       return { success: true }
