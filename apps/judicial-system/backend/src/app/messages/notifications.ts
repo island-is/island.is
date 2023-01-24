@@ -312,9 +312,9 @@ export const notifications = {
     },
     requestText: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.request_text',
+        'judicial.system.backend:notifications.prison_court_date_email.request_textv2',
       defaultMessage:
-        'Nafn sakbornings: {accusedName, select, NONE {Ekki skráð} other {{accusedName}}}.<br /><br />Kyn sakbornings: {gender, select, MALE {Karl} FEMALE {Kona} other {Kynsegin/Annað}}.<br /><br />Krafist er {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}} til {requestedValidToDateText}.',
+        'Kyn sakbornings: {gender, select, MALE {Karl} FEMALE {Kona} other {Kynsegin/Annað}}.<br /><br />Krafist er {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}} til {requestedValidToDateText}.',
       description:
         'Texti í pósti til fangeslis sem tilgreinir hver sakborningur er',
     },
