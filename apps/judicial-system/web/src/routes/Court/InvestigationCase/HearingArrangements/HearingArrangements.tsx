@@ -1,6 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import compareAsc from 'date-fns/compareAsc'
+import parseISO from 'date-fns/parseISO'
 
 import {
   BlueBox,
@@ -98,11 +100,19 @@ const HearingArrangements = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const hasSentNotification = workingCase?.notifications?.find(
+      const courtDateNotifications = workingCase.notifications?.filter(
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
 
-      setAndSendCaseToServer(
+      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
+        compareAsc(parseISO(b.created), parseISO(a.created)),
+      )[0]
+
+      const hasSentNotification = latestCourtDateNotification?.recipients.some(
+        (recipient) => recipient.success,
+      )
+
+      await setAndSendCaseToServer(
         [
           {
             courtDate: courtDate
