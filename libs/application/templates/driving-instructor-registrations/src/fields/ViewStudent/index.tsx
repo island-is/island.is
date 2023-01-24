@@ -74,7 +74,7 @@ const ViewStudent = ({
     EditDrivingLesson,
   )
 
-  const [allowPractiveDriving, { loading: loadingAllow }] = useMutation(
+  const [allowPracticeDriving, { loading: loadingAllow }] = useMutation(
     AllowPracticeDriving,
   )
 
@@ -113,10 +113,11 @@ const ViewStudent = ({
   }, [studentDataResponse])
 
   useEffect(() => {
+    // Returns most recently confirmed school types
     const schools = [
       ...new Map(
         student?.book?.drivingSchoolExams.map((item: any) => [
-          JSON.stringify(item),
+          item.schoolTypeName,
           item,
         ]),
       ).values(),
@@ -217,8 +218,8 @@ const ViewStudent = ({
     }
   }
 
-  const allowPracticeDriving = async (studentNationalId: string) => {
-    const res = await allowPractiveDriving({
+  const clickAllowPracticeDriving = async (studentNationalId: string) => {
+    const res = await allowPracticeDriving({
       variables: {
         input: {
           nationalId: studentNationalId,
@@ -240,6 +241,15 @@ const ViewStudent = ({
     !!student.book.drivingSchoolExams.find(
       (school) => school.schoolTypeId === 1,
     )
+
+  const getExamString = ({
+    name,
+    examDate,
+  }: {
+    name: string
+    examDate?: string
+  }) =>
+    `${name}${examDate ? `- ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''}`
 
   return (
     <GridContainer>
@@ -292,12 +302,13 @@ const ViewStudent = ({
               </Text>
               {completedSchools.length > 0 ? (
                 completedSchools?.map((school, key) => {
-                  const datePostfix = school.examDate
-                    ? `- ${format(new Date(school.examDate), 'dd.MM.yyyy')}`
-                    : ''
+                  const textStr = getExamString({
+                    name: school.schoolTypeName,
+                    examDate: school.examDate,
+                  })
                   return (
                     <Text key={key} variant="default">
-                      {`${school.schoolTypeName}${datePostfix}`}
+                      {textStr}
                     </Text>
                   )
                 })
@@ -314,12 +325,13 @@ const ViewStudent = ({
               </Text>
               {student.book?.testResults.length > 0 ? (
                 student.book?.testResults.map((test, key) => {
-                  const datePostfix = test.examDate
-                    ? `- ${format(new Date(test.examDate), 'dd.MM.yyyy')}`
-                    : ''
+                  const textStr = getExamString({
+                    name: test.testTypeName,
+                    examDate: test.examDate,
+                  })
                   return (
                     <Text key={key} variant="default">
-                      {`${test.testTypeName}${datePostfix}`}
+                      {textStr}
                     </Text>
                   )
                 })
@@ -338,7 +350,9 @@ const ViewStudent = ({
                   <Button
                     fluid
                     loading={loadingAllow}
-                    onClick={() => allowPracticeDriving(student.nationalId)}
+                    onClick={() =>
+                      clickAllowPracticeDriving(student.nationalId)
+                    }
                   >
                     {formatMessage(m.viewStudentPracticeDrivingButton)}
                   </Button>
