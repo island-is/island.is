@@ -22,7 +22,6 @@ import { DomainService } from './services/domain.service'
 import { MeDelegationsService } from './services/meDelegations.service'
 import { ApiScopeService } from './services/apiScope.service'
 
-
 @Module({
   providers: [
     DelegationResolver,

@@ -9,16 +9,12 @@ export type ClientDataLoader = DataLoader<string, Client>
 
 @Injectable()
 export class ClientLoader implements NestDataLoader<string, Client> {
-  async loadClients(
-    clientIds: readonly string[],
-  ): Promise<Array<Client>> {
-
+  async loadClients(clientIds: readonly string[]): Promise<Array<Client>> {
     // Todo: Add call to client endpoint in delegation api when ready.
 
     return clientIds.map((clientId) => ({
-        id: clientId,
-      })
-    )
+      id: clientId,
+    }))
   }
 
   generateDataLoader(): ClientDataLoader {

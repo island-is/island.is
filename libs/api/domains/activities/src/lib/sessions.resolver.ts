@@ -1,11 +1,11 @@
-import {UseGuards} from "@nestjs/common";
+import { UseGuards } from '@nestjs/common'
 import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { Client, ClientLoader } from '@island.is/api/domains/auth'
 import type { ClientDataLoader } from '@island.is/api/domains/auth'
 import { Identity, IdentityLoader } from '@island.is/api/domains/identity'
 import type { IdentityDataLoader } from '@island.is/api/domains/identity'
-import {CurrentUser, IdsUserGuard} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Loader } from '@island.is/nest/dataloader'
 

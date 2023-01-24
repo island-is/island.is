@@ -12,14 +12,11 @@ export type IdentityDataLoader = DataLoader<string, Identity>
 export class IdentityLoader implements NestDataLoader<string, Identity> {
   constructor(private readonly identityService: IdentityClientService) {}
 
-  loadIdentities(
-    nationalIds: readonly string[],
-  ): Promise<Array<Identity>> {
+  loadIdentities(nationalIds: readonly string[]): Promise<Array<Identity>> {
     return Promise.all(
       nationalIds.map(async (nationalId) => {
-          return this.identityService.getIdentityWithFallback(nationalId, {})
-        }
-      ),
+        return this.identityService.getIdentityWithFallback(nationalId, {})
+      }),
     )
   }
 
