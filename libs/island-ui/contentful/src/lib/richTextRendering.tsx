@@ -103,7 +103,7 @@ export type Slice =
         | 'TimelineSlice'
         | 'HeadingSlice'
         | 'LinkCardSlice'
-        | 'MailingListSignupSlice'
+        | 'EmailSignup'
         | 'StorySlice'
         | 'LatestNewsSlice'
         | 'LogoListSlice'

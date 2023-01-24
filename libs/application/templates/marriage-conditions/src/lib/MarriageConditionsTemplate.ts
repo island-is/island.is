@@ -23,7 +23,7 @@ import {
   getApplicationFeatureFlags,
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { MaritalStatusApi } from '../dataProviders'
+import { MaritalStatusApi, ReligionCodesApi } from '../dataProviders'
 
 const pruneAfter = (time: number) => {
   return {
@@ -84,6 +84,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
+                ReligionCodesApi,
               ],
               delete: true,
             },
@@ -169,6 +170,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
+                ReligionCodesApi,
               ],
             },
           ],

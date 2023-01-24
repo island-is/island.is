@@ -2235,6 +2235,7 @@ export interface IOrganizationPageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | ISliceConnectedComponent
         | IStorySection
         | ITabSection
         | ITimeline
@@ -2851,6 +2852,7 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/CatchQuotaCalculator'
     | 'Fiskistofa/StraddlingStockCalculator'
     | 'Fiskistofa/SelectedShip'
+    | 'Fiskistofa/ShipSearchBoxedInput'
     | undefined
 
   /** Localized JSON */

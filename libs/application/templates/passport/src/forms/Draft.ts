@@ -15,14 +15,15 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  MockProviderApi,
   NationalRegistryUserApi,
-  PaymentCatalogApi,
   UserProfileApi,
   DistrictsApi,
   YES,
 } from '@island.is/application/types'
-import { IdentityDocumentApi } from '../dataProviders'
+import {
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import {
   DistrictCommissionerAgencies,
   Passport,
@@ -68,7 +69,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
             buildDataProviderItem({
-              provider: PaymentCatalogApi,
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({
