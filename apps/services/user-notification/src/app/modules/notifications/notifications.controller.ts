@@ -24,6 +24,7 @@ import {
 } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
+// import { AppService } from './notifications.service'
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -59,6 +60,7 @@ export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService, //notifications
+    // private readonly appService: AppService,
   ) {}
 
 
@@ -66,6 +68,8 @@ export class NotificationsController {
   async test (
     @Req() req: Request,
   ): Promise<any> {
+    // return this.appService.getHello();
+    console.log(this.queue)
     return { id: "test", date: new Date().toISOString() }
   }
 

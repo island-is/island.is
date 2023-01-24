@@ -3,7 +3,7 @@ let env = process.env
 
 if (!env.NODE_ENV || env.NODE_ENV === 'development') {
   env = {
-    MAIN_QUEUE_NAME: 'notifications',
+    MAIN_QUEUE_NAME: 'user-notification-feature-deploy-queue', // 'notifications'
     DEAD_LETTER_QUEUE_NAME: 'notifications-failure',
     SQS_REGION: 'eu-west-1',
     SQS_ENDPOINT: 'http://localhost:4566',
