@@ -88,7 +88,7 @@ export type PresignedPost = {
 
 export type DraftSummary = Pick<
   RegulationDraft,
-  'id' | 'title' | 'idealPublishDate' | 'fastTrack' | 'authors'
+  'type' | 'id' | 'title' | 'idealPublishDate' | 'fastTrack' | 'authors'
 > & {
   draftingStatus: Extract<DraftingStatus, 'draft' | 'proposal'>
 }

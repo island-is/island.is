@@ -69,6 +69,7 @@ export const TaskList = () => {
               fastTrack,
               draftingStatus,
               authors,
+              type,
             } = item
             // const statusLabel = formatMessage(statusMsgs[draftingStatus])
 
@@ -92,7 +93,12 @@ export const TaskList = () => {
                   variant: 'text',
                   size: 'small',
                   onClick: () => {
-                    history.push(getEditUrl(id))
+                    history.push(
+                      getEditUrl(
+                        id,
+                        type === 'amending' ? 'impacts' : undefined,
+                      ),
+                    )
                   },
                 }}
               />
