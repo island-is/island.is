@@ -9,7 +9,11 @@ import {
   DefaultEvents,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  getValueViaPath,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { Features } from '@island.is/feature-flags'
@@ -73,7 +77,7 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: pruneAfterDays(1),
+          lifecycle: EphemeralStateLifeCycle,
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
           }),
@@ -179,7 +183,13 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: [],
+                answers: [
+                  'sellerCoOwner',
+                  'buyerCoOwnerAndOperator',
+                  'rejecter',
+                  'insurance',
+                  'buyer',
+                ],
               },
               read: 'all',
               delete: true,

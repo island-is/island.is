@@ -44,6 +44,17 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalIdNotFoundInNationalRegistryTitle,
+          summary:
+            coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        },
+        400,
+      )
+    }
+
     return result
   }
 
