@@ -25473,7 +25473,7 @@ __metadata:
     kennitala: 2.0.0-beta.2
     libphonenumber-js: 1.7.53
     license-checker: 25.0.1
-    lodash: 4.17.21
+    lodash: ^4.17.21
     lottie-web: 5.7.13
     mailparser: 3.5.0
     markdown-to-jsx: 7.1.7
