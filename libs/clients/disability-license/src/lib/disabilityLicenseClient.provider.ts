@@ -16,8 +16,8 @@ export const DisabilityLicenseApiProvider: Provider<DefaultApi> = {
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof DisabilityLicenseClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  ) => {
-    return new DefaultApi(
+  ) =>
+    new DefaultApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           logErrorResponseBody: true,
@@ -40,8 +40,7 @@ export const DisabilityLicenseApiProvider: Provider<DefaultApi> = {
           'Content-Type': 'application/json',
         },
       }),
-    )
-  },
+    ),
   inject: [
     XRoadConfig.KEY,
     DisabilityLicenseClientConfig.KEY,
