@@ -2,7 +2,6 @@
   "root": "libs/service-portal/transports",
   "sourceRoot": "libs/service-portal/transports/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -21,5 +20,6 @@
         "passWithNoTests": true
       }
     }
-  }
+  },
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
 }
