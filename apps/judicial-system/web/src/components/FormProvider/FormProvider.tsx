@@ -9,7 +9,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_ROUTE, USERS_ROUTE } from '@island.is/judicial-system/consts'
 
 import { CaseData, LimitedAccessCaseData } from '../../types'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
@@ -58,7 +58,17 @@ export const FormContext = createContext<FormProvider>({
   refreshCase: () => {},
 })
 
-export const FormProvider = ({ children }: Props) => {
+const MaybeFormProvider = ({ children }: Props) => {
+  const router = useRouter()
+  return router.pathname.includes(USERS_ROUTE) ? (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>{children}</>
+  ) : (
+    <FormProvider>{children}</FormProvider>
+  )
+}
+
+const FormProvider = ({ children }: Props) => {
   const router = useRouter()
   const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
   const id = router.query.id
@@ -157,3 +167,5 @@ export const FormProvider = ({ children }: Props) => {
     </FormContext.Provider>
   )
 }
+
+export { MaybeFormProvider as FormProvider }

@@ -36,7 +36,13 @@ export const error = defineMessages({
   },
   noShipsFoundError: {
     id: 'gfl.application:error.noShipsFoundError',
-    defaultMessage: 'Engin skip fundust, ekki er hægt að hefja umsókn',
+    defaultMessage:
+      'Engin skip fundust á þessari kennitölu, ekki er hægt að hefja umsókn',
     description: 'Error message when no ships are found',
+  },
+  noShipsFoundErrorTitle: {
+    id: 'gfl.application:error.noShipsFoundErrorTitle',
+    defaultMessage: 'Engin skip fundust',
+    description: 'Error title message when no ships are found',
   },
 })

@@ -189,9 +189,6 @@
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
       ],
-      "@island.is/application/data-providers": [
-        "libs/application/data-providers/src/index.ts"
-      ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
       ],
