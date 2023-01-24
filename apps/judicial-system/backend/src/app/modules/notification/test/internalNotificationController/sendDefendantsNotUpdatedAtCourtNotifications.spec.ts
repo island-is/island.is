@@ -4,7 +4,7 @@ import { EmailService } from '@island.is/email-service'
 import { NotificationType } from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
-import { SendNotificationDto } from '../../dto/sendNotification.dto'
+import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -17,11 +17,13 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notification: SendNotificationDto,
+  notification: SendInternalNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send defendants not updated at court notifications', () => {
-  const notification: SendNotificationDto = {
+  const userId = uuid()
+  const notification: SendInternalNotificationDto = {
+    userId,
     type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   }
   const caseId = uuid()
@@ -57,7 +59,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
     givenWhenThen = async (
       caseId: string,
       theCase: Case,
-      notification: SendNotificationDto,
+      notification: SendInternalNotificationDto,
     ) => {
       const then = {} as Then
 

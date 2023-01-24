@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/dokobit-signing"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }

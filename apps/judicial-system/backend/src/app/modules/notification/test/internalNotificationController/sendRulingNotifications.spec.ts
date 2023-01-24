@@ -16,7 +16,7 @@ import { createTestingNotificationModule } from '../createTestingNotificationMod
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
 import { DeliverResponse } from '../../models/deliver.response'
-import { SendNotificationDto } from '../../dto/sendNotification.dto'
+import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { notificationModuleConfig } from '../../notification.config'
 import { Notification } from '../../models/notification.model'
 
@@ -30,11 +30,15 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notification: SendNotificationDto,
+  notification: SendInternalNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send ruling notifications', () => {
-  const notification: SendNotificationDto = { type: NotificationType.RULING }
+  const userId = uuid()
+  const notification: SendInternalNotificationDto = {
+    userId,
+    type: NotificationType.RULING,
+  }
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>

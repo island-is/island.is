@@ -2,7 +2,7 @@
   "root": "libs/portals/admin/core",
   "sourceRoot": "libs/portals/admin/core/src",
   "projectType": "library",
-  "tags": ["lib:portals-admin"],
+  "tags": ["lib:portals-admin", "scope:portals-admin"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
