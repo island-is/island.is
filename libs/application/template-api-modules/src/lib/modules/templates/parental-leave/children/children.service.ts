@@ -150,6 +150,18 @@ export class ChildrenService {
     ) as YesOrNo
 
     if (useApplication === NO) {
+      const useNoPrimaryParent = getValueViaPath(
+        application.answers,
+        'mock.noPrimaryParent',
+        NO,
+      ) as YesOrNo
+      if (useNoPrimaryParent) {
+        return {
+          children: [],
+          existingApplications: [],
+        }
+      }
+
       const children = getChildrenFromMockData(application)
 
       if (!children.hasRights) {

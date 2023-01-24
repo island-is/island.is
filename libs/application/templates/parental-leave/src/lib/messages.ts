@@ -352,6 +352,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+    noPrimaryParentLabel: {
+      id: 'pl.application:no.primary.parent.label',
+      defaultMessage: 'Viltu sækja um Faðir án móður umsókn?',
+      description: 'Faðir without mother',
+    },
     rightsSection: {
       id: 'pl.application:rights.section',
       defaultMessage: 'Réttindi til fæðingarorlofs',

@@ -128,6 +128,42 @@ export const PrerequisitesForm: Form = buildForm({
                           },
                         ],
                       }),
+                      buildRadioField({
+                        id: 'mock.noPrimaryParent',
+                        title:
+                          parentalLeaveFormMessages.shared.noPrimaryParentLabel,
+                        width: 'half',
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+                          const useApplication =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedApplication',
+                            ) === NO
+                          const isSecondaryParent =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedParentalRelation',
+                            ) === ParentalRelations.secondary
+
+                          return (
+                            useMockData && useApplication && isSecondaryParent
+                          )
+                        },
+                        options: [
+                          {
+                            value: YES,
+                            label:
+                              parentalLeaveFormMessages.shared.yesOptionLabel,
+                          },
+                          {
+                            value: NO,
+                            label:
+                              parentalLeaveFormMessages.shared.noOptionLabel,
+                          },
+                        ],
+                      }),
                       buildTextField({
                         id: 'mock.useMockedApplicationId',
                         title:
@@ -166,6 +202,9 @@ export const PrerequisitesForm: Form = buildForm({
                               answers,
                               'mock.useMockedApplication',
                             ) === NO
+                          const useNoPrimaryParent =
+                            getValueViaPath(answers, 'mock.noPrimaryParent') ===
+                            NO
                           const isPrimaryParent =
                             getValueViaPath(
                               answers,
@@ -174,7 +213,9 @@ export const PrerequisitesForm: Form = buildForm({
 
                           return (
                             useMockData &&
-                            ((!isPrimaryParent && useApplication) ||
+                            ((!isPrimaryParent &&
+                              useApplication &&
+                              useNoPrimaryParent) ||
                               isPrimaryParent)
                           )
                         },
@@ -215,6 +256,9 @@ export const PrerequisitesForm: Form = buildForm({
                               answers,
                               'mock.useMockedApplication',
                             ) === NO
+                          const useNoPrimaryParent =
+                            getValueViaPath(answers, 'mock.noPrimaryParent') ===
+                            NO
                           const isSecondaryParent =
                             getValueViaPath(
                               answers,
@@ -222,7 +266,10 @@ export const PrerequisitesForm: Form = buildForm({
                             ) === ParentalRelations.secondary
 
                           return (
-                            useMockData && useApplication && isSecondaryParent
+                            useMockData &&
+                            useApplication &&
+                            useNoPrimaryParent &&
+                            isSecondaryParent
                           )
                         },
                       }),
@@ -241,6 +288,9 @@ export const PrerequisitesForm: Form = buildForm({
                               answers,
                               'mock.useMockedApplication',
                             ) === NO
+                          const useNoPrimaryParent =
+                            getValueViaPath(answers, 'mock.noPrimaryParent') ===
+                            NO
                           const isSecondaryParent =
                             getValueViaPath(
                               answers,
@@ -248,7 +298,10 @@ export const PrerequisitesForm: Form = buildForm({
                             ) === ParentalRelations.secondary
 
                           return (
-                            useMockData && useApplication && isSecondaryParent
+                            useMockData &&
+                            useApplication &&
+                            useNoPrimaryParent &&
+                            isSecondaryParent
                           )
                         },
                       }),
