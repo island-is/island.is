@@ -19,7 +19,7 @@
     "http-errors",
     "graphql",
     "pg",
-    "lodash",
+    "firebase-admin",
     "winston",
     "source-map-resolve",
     "atob",
