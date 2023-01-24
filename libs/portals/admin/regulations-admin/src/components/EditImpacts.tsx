@@ -1,25 +1,18 @@
 import * as s from './impacts/Impacts.css'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { useDraftingState } from '../state/useDraftingState'
 import { impactMsgs } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
-import {
-  nameToSlug,
-  prettyName,
-  RegName,
-  RegulationType,
-} from '@island.is/regulations'
+import { nameToSlug, RegName, RegulationType } from '@island.is/regulations'
 import {
   DraftImpactName,
   DraftRegulationCancelId,
   DraftRegulationChangeId,
 } from '@island.is/regulations/admin'
 
-import { useRegulationListQuery } from '../utils/dataHooks'
 import { ImpactList } from './impacts/ImpactList'
-import { RegDraftForm } from '../state/types'
 import {
   AlertMessage,
   Box,
@@ -28,7 +21,6 @@ import {
   Inline,
   Link,
   Option,
-  Select,
   Text,
 } from '@island.is/island-ui/core'
 import { EditCancellation } from './impacts/EditCancellation'
@@ -38,64 +30,13 @@ import {
 } from '../state/makeFields'
 import { EditChange } from './impacts/EditChange'
 import lastItem from 'lodash/last'
+import { ImpactBaseSelection } from './impacts/ImpactBaseSelection'
+import { ImpactAmendingSelection } from './impacts/ImpactAmendingSelection'
 
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
   type: RegulationType | ''
   migrated?: boolean
-}
-
-const useAffectedRegulations = (
-  selfType: RegulationType | '',
-  mentioned: RegDraftForm['mentioned'],
-  notFoundText: string,
-  selfAffectingText: string,
-  repealedText: string,
-) => {
-  const { data, loading /* , error */ } = useRegulationListQuery(mentioned)
-
-  const mentionedOptions = useMemo(() => {
-    if (!data) {
-      return []
-    }
-    const options = mentioned.map(
-      (name): SelRegOption => {
-        const reg = data.find((r) => r.name === name)
-        if (reg) {
-          return {
-            type: reg.type,
-            disabled: !!reg.repealed,
-            value: name,
-            label:
-              prettyName(name) +
-              ' – ' +
-              reg.title +
-              (reg.repealed ? ` (${repealedText})` : ''),
-            migrated: reg.migrated,
-          }
-        }
-        return {
-          type: '',
-          disabled: true,
-          value: '',
-          label: prettyName(name) + ' ' + notFoundText,
-        }
-      },
-    )
-
-    options.push({
-      type: selfType,
-      value: 'self',
-      label: selfAffectingText,
-    })
-
-    return options
-  }, [selfType, mentioned, data, notFoundText, selfAffectingText, repealedText])
-
-  return {
-    loading,
-    mentionedOptions,
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -105,14 +46,6 @@ export const EditImpacts = () => {
   const t = useLocale().formatMessage
 
   const { goToStep } = actions
-
-  const { mentionedOptions, loading } = useAffectedRegulations(
-    draft.type.value || '',
-    draft.mentioned,
-    t(impactMsgs.regSelect_mentionedNotFound),
-    t(impactMsgs.selfAffecting),
-    t(impactMsgs.regSelect_mentionedRepealed),
-  )
 
   const [selRegOption, setSelRegOption] = useState<SelRegOption | undefined>()
   const [chooseType, setChooseType] = useState<
@@ -145,9 +78,6 @@ export const EditImpacts = () => {
     }
   }, [escClick])
 
-  if (loading) {
-    return null
-  }
   return (
     <>
       <Box marginBottom={3} className={s.explainerText}>
@@ -170,16 +100,15 @@ export const EditImpacts = () => {
       </Box>
 
       <Box marginBottom={4}>
-        <Select
-          size="sm"
-          label={t(impactMsgs.regSelect)}
-          name="reg"
-          placeholder={t(impactMsgs.regSelect_placeholder)}
-          value={selRegOption}
-          options={mentionedOptions}
-          onChange={(option) => setSelRegOption(option as SelRegOption)}
-          backgroundColor="blue"
-        />
+        {draft.type.value === 'base' ? (
+          <ImpactBaseSelection
+            setImpactRegOption={(option) => setSelRegOption(option)}
+          />
+        ) : (
+          <ImpactAmendingSelection
+            setImpactRegOption={(option) => setSelRegOption(option)}
+          />
+        )}
       </Box>
 
       {selRegOption && (

@@ -96,6 +96,7 @@ export class DraftRegulationService {
         idealPublishDate: draft.ideal_publish_date,
         authors,
         fastTrack: draft.fast_track,
+        type: draft.type,
       })
     }
 

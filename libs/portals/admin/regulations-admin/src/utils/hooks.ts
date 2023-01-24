@@ -1,13 +1,15 @@
-import { Regulation, toISODate } from '@island.is/regulations'
+import { Regulation, RegulationType, toISODate } from '@island.is/regulations'
 import {
   DraftImpact,
   RegulationDraftId,
   RegulationHistoryItemAdmin,
 } from '@island.is/regulations/admin'
 import { useEffect, useMemo, useState } from 'react'
-import { DraftImpactForm } from '../state/types'
+import { DraftImpactForm, RegDraftForm } from '../state/types'
 import { Effects } from '../types'
 import sortBy from 'lodash/sortBy'
+import { useRegulationListQuery } from './dataHooks'
+import { formatSelRegOptions } from './formatSelRegOptions'
 
 export const useIsBrowserSide = () => {
   const [isBrowser, setIsBrowser] = useState<true | undefined>(undefined)
@@ -67,4 +69,39 @@ export const useGetRegulationHistory = (
   ).length
 
   return { allFutureEffects, hasImpactMismatch }
+}
+
+export const useAffectedRegulations = (
+  selfType: RegulationType | '',
+  mentioned: RegDraftForm['mentioned'],
+  notFoundText: string,
+  selfAffectingText: string,
+  repealedText: string,
+) => {
+  const { data, loading /* , error */ } = useRegulationListQuery(mentioned)
+
+  const mentionedOptions = useMemo(() => {
+    if (!data) {
+      return []
+    }
+    const options = formatSelRegOptions(
+      mentioned,
+      notFoundText,
+      repealedText,
+      data,
+    )
+
+    options.push({
+      type: selfType,
+      value: 'self',
+      label: selfAffectingText,
+    })
+
+    return options
+  }, [selfType, mentioned, data, notFoundText, selfAffectingText, repealedText])
+
+  return {
+    loading,
+    mentionedOptions,
+  }
 }

@@ -199,7 +199,8 @@ const updateImpacts = (
   // Title should only be considered for "breytingareglugerðir" (type: `amending`)
   // because we assume that Stofnreglugerð *title* will never mention another
   // regulation that its changing. Prove us wrong!
-  const checkedTitle = type.value === 'amending' ? title : ''
+  const isAmending = type.value === 'amending'
+  const checkedTitle = isAmending ? title : ''
   const newMentions = findAffectedRegulationsInText(checkedTitle, text)
 
   const mentionsChanged =
@@ -209,17 +210,19 @@ const updateImpacts = (
   if (mentionsChanged) {
     draft.mentioned = newMentions
 
-    Object.entries(impacts).forEach(([key, impactsList]) => {
-      impactsList.forEach((impact) => {
-        if (impact.name === 'self') return
+    if (!isAmending) {
+      Object.entries(impacts).forEach(([key, impactsList]) => {
+        impactsList.forEach((impact) => {
+          if (impact.name === 'self') return
 
-        if (newMentions.includes(impact.name)) {
-          delete impact.error
-        } else {
-          impact.error = errorMsgs.impactingUnMentioned
-        }
+          if (newMentions.includes(impact.name)) {
+            delete impact.error
+          } else {
+            impact.error = errorMsgs.impactingUnMentioned
+          }
+        })
       })
-    })
+    }
   }
 }
 

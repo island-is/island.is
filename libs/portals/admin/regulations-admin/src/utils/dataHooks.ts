@@ -460,7 +460,7 @@ export const useCreateRegulationDraft = () => {
 
 // ---------------------------------------------------------------------------
 
-const RegulationOptionListQuery = gql`
+export const RegulationOptionListQuery = gql`
   query RegulationOptionList($input: GetRegulationOptionListInput!) {
     getRegulationOptionList(input: $input)
   }
