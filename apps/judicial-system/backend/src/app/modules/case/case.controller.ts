@@ -229,10 +229,6 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
-    if (state === CaseState.DELETED) {
-      await this.caseService.addMessagesForDeletedCaseToQueue(theCase)
-    }
-
     // No need to wait
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,

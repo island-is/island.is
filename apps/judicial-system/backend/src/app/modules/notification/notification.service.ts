@@ -1442,11 +1442,15 @@ export class NotificationService {
   }
   private async addMessagesForRevokedNotificationToQueue(
     theCase: Case,
+    user: User,
   ): Promise<void> {
-    return this.messageService.sendMessageToQueue({
-      type: MessageType.SEND_REVOKED_NOTIFICATION,
-      caseId: theCase.id,
-    })
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_REVOKED_NOTIFICATION,
+        caseId: theCase.id,
+        userId: user.id,
+      },
+    ])
   }
 
   /* API */
@@ -1514,7 +1518,7 @@ export class NotificationService {
           )
           break
         case NotificationType.REVOKED:
-          await this.addMessagesForRevokedNotificationToQueue(theCase)
+          await this.addMessagesForRevokedNotificationToQueue(theCase, user)
           break
         default:
           throw new InternalServerErrorException(

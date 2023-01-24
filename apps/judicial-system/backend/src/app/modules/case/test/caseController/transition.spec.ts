@@ -181,6 +181,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
                   caseId,
                 },
                 {
@@ -225,6 +226,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
                   caseId,
                 },
               ],
