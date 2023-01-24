@@ -78,9 +78,9 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
-import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 
 @Controller('api')
 @ApiTags('cases')
@@ -228,24 +228,6 @@ export class CaseController {
       user,
       state !== CaseState.DELETED,
     )
-
-    if (isIndictmentCase(theCase.type)) {
-      if (state === CaseState.SUBMITTED) {
-        await this.caseService.addMessagesForSubmittedIndicitmentCaseToQueue(
-          theCase,
-        )
-      } else if (completedCaseStates.includes(state)) {
-        // Indictment cases are not signed
-        await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
-          theCase,
-        )
-      } else if (state === CaseState.DELETED) {
-        // Indictment cases need some case file cleanup
-        await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
-          theCase,
-        )
-      }
-    }
 
     // No need to wait
     this.eventService.postEvent(

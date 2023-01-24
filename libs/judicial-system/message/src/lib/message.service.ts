@@ -192,36 +192,6 @@ export class MessageService {
     })
   }
 
-  async sendMessageToQueue(
-    message: CaseMessage,
-    isRetry = false,
-  ): Promise<void> {
-    const queueUrl = await this.getQueueUrl()
-
-    return this.sqs
-      .send(
-        new SendMessageCommand({
-          QueueUrl: queueUrl,
-          MessageBody: JSON.stringify(message),
-        }),
-      )
-      .then((data) => {
-        if (!data.MessageId) {
-          this.logger.error('Failed to send message to queue', { data })
-        }
-      })
-      .catch((err) => {
-        this.connectToQueue()
-
-        if (isRetry) {
-          throw err
-        }
-
-        // Retry once
-        return this.sendMessageToQueue(message, true)
-      })
-  }
-
   async sendMessagesToQueue(
     messages: CaseMessage[],
     isRetry = false,

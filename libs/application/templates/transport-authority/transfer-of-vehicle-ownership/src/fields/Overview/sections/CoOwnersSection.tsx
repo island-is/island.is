@@ -7,6 +7,7 @@ import { overview } from '../../../lib/messages'
 import { ReviewScreenProps } from '../../../types'
 import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
+import { formatPhoneNumber } from '../../../utils'
 
 export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   coOwnersAndOperators = [],
@@ -32,7 +33,7 @@ export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                 <Text>{name}</Text>
                 <Text>{kennitala.format(nationalId, '-')}</Text>
                 <Text>{email}</Text>
-                <Text>{phone}</Text>
+                <Text>{formatPhoneNumber(phone)}</Text>
               </Box>
             </GridColumn>
           )
