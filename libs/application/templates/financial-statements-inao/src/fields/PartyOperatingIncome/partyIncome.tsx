@@ -30,24 +30,33 @@ export const PartyIncome = ({
   useEffect(() => {
     const values = getValues()
 
-    const contributionsFromTheTreasury = getValueViaPath(values, PARTYOPERATIONIDS.contributionsFromTheTreasury)
-    const parliamentaryPartySupport = getValueViaPath(values, PARTYOPERATIONIDS.parliamentaryPartySupport)
-    const municipalContributions = getValueViaPath(values, PARTYOPERATIONIDS.municipalContributions)
+    const contributionsFromTheTreasury = getValueViaPath(
+      values,
+      PARTYOPERATIONIDS.contributionsFromTheTreasury,
+    )
+    const parliamentaryPartySupport = getValueViaPath(
+      values,
+      PARTYOPERATIONIDS.parliamentaryPartySupport,
+    )
+    const municipalContributions = getValueViaPath(
+      values,
+      PARTYOPERATIONIDS.municipalContributions,
+    )
 
     if (data?.financialStatementsInaoTaxInfo) {
-      if(!contributionsFromTheTreasury) {
+      if (!contributionsFromTheTreasury) {
         setValue(
           PARTYOPERATIONIDS.contributionsFromTheTreasury,
           data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
         )
       }
-      if(!parliamentaryPartySupport) {
+      if (!parliamentaryPartySupport) {
         setValue(
           PARTYOPERATIONIDS.parliamentaryPartySupport,
           data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
         )
       }
-      if(!municipalContributions) {
+      if (!municipalContributions) {
         setValue(
           PARTYOPERATIONIDS.municipalContributions,
           data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',

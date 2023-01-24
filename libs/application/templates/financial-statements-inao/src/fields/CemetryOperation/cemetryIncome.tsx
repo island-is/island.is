@@ -32,23 +32,29 @@ export const CemetryIncome = ({
     const values = getValues()
 
     const careIncome = getValueViaPath(values, CEMETRYOPERATIONIDS.careIncome)
-    const burialRevenue = getValueViaPath(values, CEMETRYOPERATIONIDS.burialRevenue,)
-    const grantFromTheCemeteryFund = getValueViaPath(values, CEMETRYOPERATIONIDS.grantFromTheCemeteryFund)
+    const burialRevenue = getValueViaPath(
+      values,
+      CEMETRYOPERATIONIDS.burialRevenue,
+    )
+    const grantFromTheCemeteryFund = getValueViaPath(
+      values,
+      CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
+    )
 
     if (data?.financialStatementsInaoTaxInfo) {
-      if(!careIncome) {
+      if (!careIncome) {
         setValue(
           CEMETRYOPERATIONIDS.careIncome,
           data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
         )
       }
-      if(!burialRevenue) {
+      if (!burialRevenue) {
         setValue(
           CEMETRYOPERATIONIDS.burialRevenue,
           data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
         )
       }
-      if(!grantFromTheCemeteryFund) {
+      if (!grantFromTheCemeteryFund) {
         setValue(
           CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
           data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
