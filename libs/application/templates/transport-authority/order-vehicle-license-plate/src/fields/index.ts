@@ -1,1 +1,7 @@
-export { ConfirmationField } from './ConfirmationField'
+export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
+export { PaymentPending } from './Payment/PaymentPending'
+export { PaymentUrlNotFound } from './Payment/PaymentUrlNotFound'
+export { Confirmation } from './Confirmation'
+export { VehiclesField } from './VehiclesField'
+export { AlertWarningLostPlate } from './AlertWarningLostPlate'
+export { PickPlateSize } from './PickPlateSize'

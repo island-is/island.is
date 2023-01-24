@@ -34,7 +34,7 @@ export class TransportAuthorityApi {
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       user,
       {
-        permno: answers?.vehicle?.plate,
+        permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
           email: answers?.seller?.email,
