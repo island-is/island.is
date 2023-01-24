@@ -117,8 +117,14 @@ export const Applications: FC = () => {
     }
   }, [type, data, delegationsChecked])
 
-  if (loading || !template) {
+  if (loading) {
     return <ApplicationLoading />
+  }
+
+  if (!template) {
+    return (
+      <ErrorShell title={formatMessage(coreMessages.notFoundApplicationType)} />
+    )
   }
 
   if (!type || applicationsError) {
