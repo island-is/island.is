@@ -138,7 +138,6 @@
     "clients-health-insurance-v2": "libs/clients/health-insurance-v2",
     "clients-identity": "libs/clients/identity",
     "clients-islykill": "libs/clients/islykill",
-    "clients-license-clients": "libs/clients/license-clients",
     "clients-middlewares": "libs/clients/middlewares",
     "clients-mms": "libs/clients/mms",
     "clients-municipalities-financial-aid": "libs/clients/municipalities-financial-aid",
