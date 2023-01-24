@@ -1,7 +1,6 @@
 import React from 'react'
 import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
-import { Text, Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { EmptyImageSmall } from './EmptyImage'
 import { messages } from '../../utils/messages'
 

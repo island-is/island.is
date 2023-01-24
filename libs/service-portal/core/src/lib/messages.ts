@@ -662,6 +662,10 @@ export const m = defineMessages({
     id: 'service.portal:no-data-found',
     defaultMessage: 'Engin gögn fundust fyrir þig',
   },
+  noData: {
+    id: 'service.portal:no-data-found-simple',
+    defaultMessage: 'Engin gögn fundust',
+  },
   noDataFoundDetail: {
     id: 'service.portal:no-data-found-detail',
     defaultMessage:
@@ -901,5 +905,13 @@ export const m = defineMessages({
     id: 'service.portal:transports',
     defaultMessage: 'Samgöngur',
     description: 'Transports',
+  },
+  goBackToDashboard: {
+    id: 'service.portal:go-back-to-dashboard',
+    defaultMessage: 'Til baka í yfirlit',
+  },
+  download: {
+    id: 'service.portal:download',
+    defaultMessage: 'Niðurhala',
   },
 })

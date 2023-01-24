@@ -1,6 +1,13 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+export const active = style({
+  backgroundColor: theme.color.white,
+})
+
+export const unread = style({
+  backgroundColor: theme.color.blue100,
+})
 export const unopenedWrapper = style({
   backgroundColor: 'unset',
   ...themeUtils.responsiveStyle({
@@ -56,4 +63,16 @@ export const linkWrapper = style({
       backgroundColor: theme.color.blueberry100,
     },
   }),
+})
+
+export const badge = style({
+  position: 'absolute',
+  top: -12,
+  bottom: 0,
+  right: 'auto',
+  left: -107,
+  height: theme.spacing[1],
+  width: theme.spacing[1],
+  borderRadius: '50%',
+  backgroundColor: theme.color.red400,
 })

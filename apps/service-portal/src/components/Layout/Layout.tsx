@@ -56,7 +56,6 @@ const Layout: FC = ({ children }) => {
   useScrollTopOnUpdate([pathname])
 
   const isMobile = width < theme.breakpoints.sm
-  console.log(isMobile)
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
   const globalBanners = banners.filter((banner) =>
@@ -201,7 +200,7 @@ const Layout: FC = ({ children }) => {
 
         {(isDashboard || isMailbox) && (
           <Box as="main" component="main" style={{ marginTop: height }}>
-            <ContentBreadcrumbs />
+            {!isMailbox && <ContentBreadcrumbs />}
             {children}
           </Box>
         )}

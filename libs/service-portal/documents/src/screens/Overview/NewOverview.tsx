@@ -4,26 +4,26 @@ import {
   Box,
   Stack,
   LoadingDots,
-  Hidden,
   Pagination,
   Text,
   GridContainer,
   GridColumn,
   GridRow,
   PdfViewer,
+  Button,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
-  AccessDeniedLegal,
   ServicePortalModuleComponent,
-  IntroHeader,
-  EmptyState,
   ServicePortalPath,
   formatPlausiblePathToParams,
+  NoDataScreen,
+  m,
+  CardLoader,
 } from '@island.is/service-portal/core'
 import {
-  Document,
   DocumentCategory,
   DocumentDetails,
   DocumentSender,
@@ -32,10 +32,8 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
-import { messages } from '../../utils/messages'
-import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -46,11 +44,20 @@ import {
   FilterValuesType,
   SortType,
 } from '../../utils/types'
-import TableHeading from '../../components/TableHeading/TableHeading'
 import * as styles from './Overview.css'
 import { AuthDelegationType } from '@island.is/shared/types'
 import NewDocumentLine from '../../components/DocumentLine/NewDocumentLine'
 import NoPDF from '../../components/NoPDF/NoPDF'
+import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
+
+export type ActiveDocumentType = {
+  document: DocumentDetails
+  id: string
+  subject: string
+  date: string
+  sender: string
+  downloadUrl: string
+}
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -83,16 +90,18 @@ const pageSize = 10
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
-  client,
 }) => {
   useNamespaces('sp.documents')
 
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [isEmpty, setEmpty] = useState(false)
-  const [activeDocument, setActiveDocument] = useState<DocumentDetails | null>(
-    null,
-  )
+  const [scalePDF, setScalePDF] = useState(1.0)
+  const history = useHistory()
+  const [
+    activeDocument,
+    setActiveDocument,
+  ] = useState<ActiveDocumentType | null>(null)
 
   const isLegal = userInfo.profile.delegationType?.includes(
     AuthDelegationType.LegalGuardian,
@@ -279,24 +288,167 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
       debouncedResults.cancel()
     }
   })
+
   const debouncedResults = useMemo(() => {
     return debounce(handleSearchChange, 500)
   }, [])
 
+  const downloadFile = async () => {
+    let html: string | undefined = undefined
+    if (activeDocument?.document.html) {
+      html =
+        activeDocument?.document.html.length > 0
+          ? activeDocument?.document.html
+          : undefined
+    }
+    if (html) {
+      setTimeout(() => {
+        const win = window.open('', '_blank')
+        win && html && win.document.write(html)
+        win?.focus()
+      }, 250)
+    } else {
+      // Create form elements
+      const form = document.createElement('form')
+      const documentIdInput = document.createElement('input')
+      const tokenInput = document.createElement('input')
+
+      const token = userInfo?.access_token
+
+      if (!token) return
+
+      form.appendChild(documentIdInput)
+      form.appendChild(tokenInput)
+
+      // Form values
+      form.method = 'post'
+      // TODO: Use correct url
+      form.action = activeDocument?.downloadUrl ?? ''
+      form.target = '_blank'
+
+      // Document Id values
+      documentIdInput.type = 'hidden'
+      documentIdInput.name = 'documentId'
+      documentIdInput.value = activeDocument?.id ?? ''
+
+      // National Id values
+      tokenInput.type = 'hidden'
+      tokenInput.name = '__accessToken'
+      tokenInput.value = token
+
+      document.body.appendChild(form)
+      form.submit()
+      document.body.removeChild(form)
+    }
+  }
+
+  const goBack = () => {
+    return (
+      <Box printHidden marginY={3}>
+        <Button
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+          truncate
+          onClick={() => history.replace('/')}
+        >
+          {formatMessage(m.goBackToDashboard)}
+        </Button>
+      </Box>
+    )
+  }
+
+  if (loading && !error && filteredDocuments.length) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="full"
+        className={styles.loadingContainer}
+      >
+        <LoadingDots large />
+      </Box>
+    )
+  }
+
   if (isEmpty) {
     return (
-      <Box marginBottom={[4, 4, 6, 10]}>
-        <IntroHeader title={messages.title} intro={messages.intro} />
-        <EmptyState />
-      </Box>
+      <GridContainer>
+        <GridRow>
+          {goBack()}
+          <GridColumn span="12/12">
+            <Box marginBottom={[4, 4, 6, 10]}>
+              <NoDataScreen
+                tag={formatMessage(m.documents)}
+                title={formatMessage(m.noData)}
+                children={formatMessage(m.noDataFoundDetail)}
+                figure="./assets/images/empty.svg"
+              />
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     )
   }
 
   return (
     <GridContainer>
       <GridRow>
+        <GridColumn span="5/12">{goBack()}</GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span="5/12" paddingBottom={3}>
+          <DocumentsFilter
+            filterValue={filterValue}
+            categories={categoriesAvailable}
+            senders={sendersAvailable}
+            debounceChange={debouncedResults}
+            clearCategories={() =>
+              setFilterValue((oldFilter) => ({
+                ...oldFilter,
+                activeCategories: [],
+              }))
+            }
+            clearSenders={() =>
+              setFilterValue((oldFilter) => ({
+                ...oldFilter,
+                activeSenders: [],
+              }))
+            }
+            handleCategoriesChange={handleCategoriesChange}
+            handleSendersChange={handleSendersChange}
+            handleDateFromChange={handleDateFromInput}
+            handleDateToChange={handleDateToInput}
+            handleShowUnread={handleShowUnread}
+            handleClearFilters={handleClearFilters}
+            documentsLength={totalCount}
+          />
+        </GridColumn>
+        {activeDocument?.document && (
+          <GridColumn span="7/12">
+            <Box paddingLeft={8}>
+              <Text variant="h5" paddingBottom={1}>
+                {activeDocument.subject}
+              </Text>
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="spaceBetween"
+              >
+                <Text variant="medium">{activeDocument.sender}</Text>
+                <Text variant="medium">{activeDocument.date}</Text>
+              </Box>
+            </Box>
+          </GridColumn>
+        )}
+      </GridRow>
+      <GridRow>
         <GridColumn span="5/12">
           <Box marginTop={[2, 0]}>
+            {loading && <CardLoader />}
             <Stack space={2}>
               {filteredDocuments.map((doc, index) => (
                 <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
@@ -306,22 +458,85 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     documentCategories={categoriesAvailable}
                     userInfo={userInfo}
                     onClick={setActiveDocument}
+                    active={doc.id === activeDocument?.id}
                   />
                 </Box>
               ))}
             </Stack>
           </Box>
         </GridColumn>
-        <GridColumn span="7/12">
-          {activeDocument?.content ? (
-            <PdfViewer
-              file={`data:application/pdf;base64,${activeDocument?.content}`}
-              renderMode="svg"
-              showAllPages={true}
-            />
-          ) : (
-            <NoPDF />
-          )}
+        <GridColumn span="7/12" position="relative">
+          <Box
+            position="sticky"
+            style={{ top: SERVICE_PORTAL_HEADER_HEIGHT_LG }}
+            paddingLeft={8}
+          >
+            {activeDocument?.document.content ? (
+              <Box>
+                <Box display="flex" flexDirection="row" paddingBottom={2}>
+                  <Button
+                    circle
+                    icon="remove"
+                    variant="ghost"
+                    size="small"
+                    onClick={() => setScalePDF(scalePDF - 0.1)}
+                  />
+                  <Box paddingX={1}>
+                    <Text variant="small">
+                      {(scalePDF * 100).toFixed(0) + '%'}
+                    </Text>
+                  </Box>
+                  <Button
+                    circle
+                    icon="add"
+                    variant="ghost"
+                    size="small"
+                    onClick={() => setScalePDF(scalePDF + 0.1)}
+                  />
+                  <Box paddingLeft={2}>
+                    <Tooltip
+                      placement="top"
+                      as="span"
+                      text={formatMessage(m.download)}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="small"
+                        circle
+                        icon="download"
+                        onClick={() => downloadFile()}
+                      />
+                    </Tooltip>
+                  </Box>
+                  <Box paddingLeft={2}>
+                    <Tooltip
+                      placement="top"
+                      as="span"
+                      text={formatMessage(m.print)}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="small"
+                        circle
+                        icon="print"
+                        onClick={() => downloadFile()}
+                      />
+                    </Tooltip>
+                  </Box>
+                </Box>
+                <Box overflow="auto" boxShadow="subtle">
+                  <PdfViewer
+                    file={`data:application/pdf;base64,${activeDocument?.document.content}`}
+                    renderMode="canvas"
+                    showAllPages
+                    scale={scalePDF}
+                  />
+                </Box>
+              </Box>
+            ) : (
+              <NoPDF />
+            )}
+          </Box>
         </GridColumn>
       </GridRow>
       <GridRow>

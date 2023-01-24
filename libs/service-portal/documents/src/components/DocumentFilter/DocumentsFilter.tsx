@@ -93,7 +93,6 @@ const DocumentsFilter = ({
             placeholder={formatMessage(m.searchPlaceholder)}
             name="rafraen-skjol-input"
             size="xs"
-            label={formatMessage(m.searchLabel)}
             onChange={debounceChange}
           />
         }

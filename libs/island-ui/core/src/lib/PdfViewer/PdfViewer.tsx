@@ -6,11 +6,13 @@ import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
 import cn from 'classnames'
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 export interface PdfViewerProps {
   file: string
   renderMode?: 'svg' | 'canvas'
   showAllPages?: boolean
+  scale?: number
 }
 interface PdfProps {
   numPages: number
@@ -28,6 +30,7 @@ export const PdfViewer: FC<PdfViewerProps> = ({
   file,
   renderMode = 'svg',
   showAllPages = false,
+  scale = 1,
 }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
@@ -78,10 +81,16 @@ export const PdfViewer: FC<PdfViewerProps> = ({
         >
           {showAllPages ? (
             [...Array(numPages)].map((x, page) => (
-              <pdfLib.Page key={`page_${page + 1}`} pageNumber={page + 1} />
+              <pdfLib.Page
+                key={`page_${page + 1}`}
+                pageNumber={page + 1}
+                renderTextLayer={false}
+                renderAnnotationLayer={true}
+                scale={scale}
+              />
             ))
           ) : (
-            <pdfLib.Page pageNumber={pageNumber} />
+            <pdfLib.Page pageNumber={pageNumber} scale={scale} />
           )}
         </pdfLib.Document>
 
