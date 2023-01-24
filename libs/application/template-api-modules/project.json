@@ -21,5 +21,5 @@
       "outputs": ["coverage/libs/application/template-api-modules"]
     }
   },
-  "tags": []
+  "tags": ["lib:application-system-api", "scope:application-system-api"]
 }

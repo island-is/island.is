@@ -88,7 +88,7 @@ const ContentBreadcrumbs: FC = () => {
   if (items.length < 2) return null
 
   return (
-    <Box paddingTop={[0, 3]} paddingBottom={[2, 3]}>
+    <Box paddingTop={0} paddingBottom={[2, 3]}>
       <Breadcrumbs color="blue400" separatorColor="blue400">
         {items.map((item, index) =>
           isDefined(item.path) && !item.hidden ? (

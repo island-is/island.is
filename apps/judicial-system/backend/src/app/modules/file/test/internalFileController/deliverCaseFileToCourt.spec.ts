@@ -11,6 +11,7 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
+import { User } from '../../../user'
 import { Case } from '../../../case'
 import { CaseFile } from '../../models/file.model'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -28,6 +29,9 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalFileController - Deliver case file to court', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockAwsS3Service: AwsS3Service
   let mockCourtService: CourtService
   let mockFileModel: typeof CaseFile
@@ -54,7 +58,9 @@ describe('InternalFileController - Deliver case file to court', () => {
       const then = {} as Then
 
       await internalFileController
-        .deliverCaseFileToCourt(caseId, fileId, theCase, caseFile)
+        .deliverCaseFileToCourt(caseId, fileId, user, theCase, caseFile, {
+          userId,
+        })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -108,6 +114,7 @@ describe('InternalFileController - Deliver case file to court', () => {
 
     it('should upload the file to court', () => {
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+        user,
         caseId,
         courtId,
         courtCaseNumber,
@@ -116,7 +123,6 @@ describe('InternalFileController - Deliver case file to court', () => {
         fileName,
         fileType,
         content,
-        undefined,
       )
     })
 
@@ -178,6 +184,7 @@ describe('InternalFileController - Deliver case file to court', () => {
 
       it('should upload the file to court', () => {
         expect(mockCreateDocument).toHaveBeenCalledWith(
+          user,
           caseId,
           courtId,
           courtCaseNumber,
@@ -186,7 +193,6 @@ describe('InternalFileController - Deliver case file to court', () => {
           fileName,
           fileType,
           content,
-          undefined,
         )
       })
     },

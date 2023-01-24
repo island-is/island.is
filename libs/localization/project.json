@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/localization"]
     }
   },
-  "tags": ["lib:react"]
+  "tags": ["lib:react", "scope:react", "TODO:RemoveOverrides"]
 }

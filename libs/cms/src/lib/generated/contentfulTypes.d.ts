@@ -879,6 +879,8 @@ export interface IFormFieldFields {
     | 'acceptTerms'
     | 'email'
     | 'checkboxes'
+    | 'file'
+    | 'nationalId (kennitala)'
 
   /** Required */
   required?: boolean | undefined
@@ -1864,9 +1866,6 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
-  /** Tilkynning */
-  tilkynning?: string | undefined
-
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -1891,6 +1890,9 @@ export interface INewsFields {
   /** Featured image */
   image: Asset
 
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
+
   /** Content */
   content?: Document | undefined
 
@@ -1899,9 +1901,6 @@ export interface INewsFields {
 
   /** Generic tags */
   genericTags?: IGenericTag[] | undefined
-
-  /** Full Width Image In Content */
-  fullWidthImageInContent?: boolean | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2182,6 +2181,9 @@ export interface IOrganization extends Entry<IOrganizationFields> {
 }
 
 export interface IOrganizationPageFields {
+  /** Organization */
+  organization: IOrganization
+
   /** Title */
   title: string
 
@@ -2190,9 +2192,6 @@ export interface IOrganizationPageFields {
 
   /** Intro */
   intro?: string | undefined
-
-  /** Description */
-  description?: string | undefined
 
   /** Theme */
   theme:
@@ -2208,6 +2207,18 @@ export interface IOrganizationPageFields {
     | 'landskjorstjorn'
     | 'landing_page'
     | 'fjarsysla-rikisins'
+    | 'fjarsyslan'
+    | 'custom'
+    | 'hsu'
+
+  /** Description */
+  description?: string | undefined
+
+  /** Menu Links */
+  menuLinks?: ILinkGroup[] | undefined
+
+  /** Secondary Menu */
+  secondaryMenu?: ILinkGroup | undefined
 
   /** Slices */
   slices?:
@@ -2232,6 +2243,12 @@ export interface IOrganizationPageFields {
       )[]
     | undefined
 
+  /** Sidebar Cards */
+  sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined
+
+  /** Button Links */
+  externalLinks?: ILink[] | undefined
+
   /** Bottom slices */
   bottomSlices?:
     | (
@@ -2243,44 +2260,29 @@ export interface IOrganizationPageFields {
       )[]
     | undefined
 
-  /** News tag */
-  newsTag?: IGenericTag | undefined
-
-  /** Menu Links */
-  menuLinks?: ILinkGroup[] | undefined
-
-  /** Secondary Menu */
-  secondaryMenu?: ILinkGroup | undefined
-
   /** Menu Items */
   menuItems?: IMenuLinkWithChildren[] | undefined
 
   /** Secondary Menu Items */
   secondaryMenuItems?: IMenuLink[] | undefined
 
-  /** Organization */
-  organization: IOrganization
-
   /** Featured Image */
-  featuredImage?: Asset | undefined
-
-  /** Sidebar Cards */
-  sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined
-
-  /** Footer Items */
-  footerItems?: IFooterItem[] | undefined
+  featuredImage: Asset
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
 
-  /** External Links */
-  externalLinks?: ILink[] | undefined
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 
   /** Default Header Image */
   defaultHeaderImage?: Asset | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2301,6 +2303,9 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
 }
 
 export interface IOrganizationSubpageFields {
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
   /** Title */
   title: string
 
@@ -2310,11 +2315,8 @@ export interface IOrganizationSubpageFields {
   /** Intro */
   intro?: string | undefined
 
-  /** Description */
+  /** Content */
   description?: Document | undefined
-
-  /** Links */
-  links?: ILink[] | undefined
 
   /** Slices */
   slices?:
@@ -2340,20 +2342,17 @@ export interface IOrganizationSubpageFields {
       )[]
     | undefined
 
-  /** Show Table of Contents */
-  showTableOfContents?: boolean | undefined
-
   /** Slice Custom Renderer */
   sliceCustomRenderer?: 'SliceDropdown' | undefined
 
   /** Slice Extra Text */
   sliceExtraText?: string | undefined
 
-  /** Parent Subpage */
-  parentSubpage?: IOrganizationSubpage | undefined
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
-  /** Organization Page */
-  organizationPage: IOrganizationPage
+  /** Extra links */
+  links?: ILink[] | undefined
 
   /** Featured Image */
   featuredImage?: Asset | undefined
@@ -2517,11 +2516,11 @@ export interface IProcessEntryFields {
   /** Process asset */
   processAsset?: Asset | undefined
 
-  /** Open link in modal */
-  openLinkInModal?: boolean | undefined
-
   /** Button text */
   buttonText: string
+
+  /** Open link in modal */
+  openLinkInModal?: boolean | undefined
 }
 
 export interface IProcessEntry extends Entry<IProcessEntryFields> {
@@ -3105,23 +3104,23 @@ export interface IStorySection extends Entry<IStorySectionFields> {
 }
 
 export interface ISubArticleFields {
+  /** Parent */
+  parent: IArticle
+
   /** Title */
   title: string
+
+  /** url */
+  url: string
+
+  /** Slug(old) */
+  slug?: string | undefined
 
   /** Content */
   content: Document
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
-
-  /** url */
-  url: string
-
-  /** Parent */
-  parent: IArticle
-
-  /** Slug(old) */
-  slug?: string | undefined
 }
 
 /** A sub article that's a part of another main article */
