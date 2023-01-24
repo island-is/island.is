@@ -6,7 +6,6 @@ import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
 import cn from 'classnames'
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 export interface PdfViewerProps {
   file: string
@@ -85,7 +84,7 @@ export const PdfViewer: FC<PdfViewerProps> = ({
                 key={`page_${page + 1}`}
                 pageNumber={page + 1}
                 renderTextLayer={false}
-                renderAnnotationLayer={true}
+                renderAnnotationLayer={false}
                 scale={scale}
               />
             ))
