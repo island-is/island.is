@@ -16,7 +16,6 @@ import {
   CaseState,
   CaseTransition,
   InstitutionType,
-  NotificationType,
   isRestrictionCase,
   UserRole,
   Feature,
@@ -150,7 +149,6 @@ export const Cases: React.FC = () => {
   const {
     transitionCase,
     isTransitioningCase,
-    sendNotification,
     isSendingNotification,
   } = useCase()
 

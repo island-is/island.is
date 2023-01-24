@@ -510,7 +510,6 @@ export class CaseService {
     }
 
     if (stateUpdate === CaseState.DELETED) {
-      // Indictment cases need some case file cleanup
       await this.addMessagesForDeletedCaseToQueue(theCase, user)
     }
   }

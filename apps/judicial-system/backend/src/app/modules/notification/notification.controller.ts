@@ -42,7 +42,6 @@ import {
   judgeNotificationRule,
   prosecutorNotificationRule,
   registrarNotificationRule,
-  representativeNotificationRule,
   assistantNotificationRule,
 } from './guards/rolesRules'
 
@@ -58,7 +57,6 @@ export class NotificationController {
   @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorNotificationRule,
-    representativeNotificationRule,
     judgeNotificationRule,
     registrarNotificationRule,
     assistantNotificationRule,
@@ -83,7 +81,6 @@ export class NotificationController {
         NotificationType.HEADS_UP,
         NotificationType.READY_FOR_COURT,
         NotificationType.RECEIVED_BY_COURT,
-        NotificationType.REVOKED,
       ].includes(notification.type)
     ) {
       // Notifications put on queue will call the internal notification controller
