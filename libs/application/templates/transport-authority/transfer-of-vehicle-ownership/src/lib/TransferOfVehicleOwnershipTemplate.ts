@@ -183,7 +183,13 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: [],
+                answers: [
+                  'sellerCoOwner',
+                  'buyerCoOwnerAndOperator',
+                  'rejecter',
+                  'insurance',
+                  'buyer',
+                ],
               },
               read: 'all',
               delete: true,

@@ -159,6 +159,7 @@ export class CourtService {
   }
 
   async createDocument(
+    user: TUser | User,
     caseId: string,
     courtId = '',
     courtCaseNumber = '',
@@ -167,7 +168,6 @@ export class CourtService {
     fileName: string,
     fileType: string,
     content: Buffer,
-    user?: TUser,
   ): Promise<string> {
     return this.courtClientService
       .uploadStream(courtId, {
@@ -193,8 +193,8 @@ export class CourtService {
           'Failed to create a document at court',
           {
             caseId,
-            actor: user?.name ?? 'RVG',
-            institution: user?.institution?.name ?? 'RVG',
+            actor: user.name,
+            institution: user?.institution?.name,
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),
@@ -210,6 +210,7 @@ export class CourtService {
   }
 
   async createCourtRecord(
+    user: User,
     caseId: string,
     courtId = '',
     courtCaseNumber = '',
@@ -217,7 +218,6 @@ export class CourtService {
     fileName: string,
     fileType: string,
     content: Buffer,
-    user?: TUser,
   ): Promise<string> {
     return this.courtClientService
       .uploadStream(courtId, {
@@ -242,8 +242,8 @@ export class CourtService {
           'Failed to create a court record at court',
           {
             caseId,
-            actor: user?.name ?? 'RVG',
-            institution: user?.institution?.name ?? 'RVG',
+            actor: user?.name,
+            institution: user?.institution?.name,
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),

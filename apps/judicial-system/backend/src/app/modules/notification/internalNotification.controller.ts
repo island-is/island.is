@@ -13,8 +13,8 @@ import type { Logger } from '@island.is/logging'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
-import { SendNotificationDto } from './dto/sendNotification.dto'
-import { DeliverResponse } from '../defendant/models/deliver.response'
+import { SendInternalNotificationDto } from './dto/sendInternalNotification.dto'
+import { DeliverResponse } from './models/deliver.response'
 import { NotificationService } from './notification.service'
 
 @UseGuards(TokenGuard, CaseHasExistedGuard)
@@ -34,7 +34,7 @@ export class InternalNotificationController {
   async sendCaseNotification(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-    @Body() notification: SendNotificationDto,
+    @Body() notification: SendInternalNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${caseId}`,
