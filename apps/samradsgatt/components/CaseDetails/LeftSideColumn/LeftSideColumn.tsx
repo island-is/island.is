@@ -30,7 +30,7 @@ const LeftSideColumn = ({ caseNumber }: LeftSideColumnProps) => {
           />
         </Box>
         <Divider />
-        <CaseTimeline />
+        <CaseTimeline status="Niðurstöður í vinnslu" />
       </Box>
       <Box
         marginBottom={6}
