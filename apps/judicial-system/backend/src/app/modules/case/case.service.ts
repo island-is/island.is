@@ -506,10 +506,12 @@ export class CaseService {
       } else if (completedCaseStates.includes(stateUpdate)) {
         // Indictment cases are not signed
         await this.addMessagesForCompletedIndictmentCaseToQueue(theCase, user)
-      } else if (stateUpdate === CaseState.DELETED) {
-        // Indictment cases need some case file cleanup
-        await this.addMessagesForDeletedCaseToQueue(theCase, user)
       }
+    }
+
+    if (stateUpdate === CaseState.DELETED) {
+      // Indictment cases need some case file cleanup
+      await this.addMessagesForDeletedCaseToQueue(theCase, user)
     }
   }
 
@@ -660,17 +662,15 @@ export class CaseService {
         }
       })
       .then(async () => {
+        if ((update as { [key: string]: string }).state) {
+          await this.addMessagesForCaseTransitionToQueue(
+            theCase,
+            (update as { [key: string]: string }).state as CaseState,
+            user,
+          )
+        }
         if (returnUpdatedCase) {
           const updatedCase = await this.findById(theCase.id)
-
-          if ((update as { [key: string]: string }).state) {
-            await this.addMessagesForCaseTransitionToQueue(
-              theCase,
-              (update as { [key: string]: string }).state as CaseState,
-              user,
-            )
-          }
-
           // Update the court case if necessary
           await this.addMessagesForCourtCaseUpdateToQueue(
             theCase,
