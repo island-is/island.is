@@ -25,6 +25,8 @@ export class FormField {
     | 'acceptTerms'
     | 'email'
     | 'checkboxes'
+    | 'file'
+    | 'nationalId (kennitala)'
 
   @Field()
   required!: boolean
