@@ -75,9 +75,11 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const { applicantEmail, employers } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    applicantEmail,
+    employers,
+    employerNationalRegistryId,
+  } = getApplicationAnswers(application.answers)
 
   if (isSelfEmployed) {
     return [
@@ -90,7 +92,8 @@ export const getEmployer = (
 
   return employers.map((e) => ({
     email: e.email,
-    nationalRegistryId: e.companyNationalRegistryId ?? '',
+    nationalRegistryId:
+      e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
   }))
 }
 

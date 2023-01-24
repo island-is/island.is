@@ -718,6 +718,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const employers = getValueViaPath(answers, 'employers') as EmployerRow[]
 
+  const employerNationalRegistryId = getValueViaPath(
+    answers,
+    'employerNationalRegistryId',
+  ) as string
+
   const employerReviewerNationalRegistryId = getValueViaPath(
     answers,
     'employerReviewerNationalRegistryId',
@@ -828,6 +833,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employers,
+    employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
@@ -845,6 +851,21 @@ export function getApplicationAnswers(answers: Application['answers']) {
     isReceivingUnemploymentBenefits,
     unemploymentBenefits,
   }
+}
+
+export const getUnApprovedEmployers = (
+  answers: Application['answers'],
+): EmployerRow[] => {
+  const { employers } = getApplicationAnswers(answers)
+  const newEmployers: EmployerRow[] = []
+
+  employers?.forEach((e) => {
+    if (!e.isApproved) {
+      newEmployers.push(e)
+    }
+  })
+
+  return newEmployers
 }
 
 export const requiresOtherParentApproval = (

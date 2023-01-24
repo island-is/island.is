@@ -33,6 +33,7 @@ import {
   getAdditionalSingleParentRightsInDays,
   getApplicationExternalData,
   DAYS_IN_MONTH,
+  getUnApprovedEmployers,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -257,7 +258,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
-    const { employers } = getApplicationAnswers(application.answers)
+    const employers = getUnApprovedEmployers(application.answers)
 
     const token = await this.sharedTemplateAPIService.createAssignToken(
       application,
@@ -272,11 +273,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     // send confirmation sms to employer
     try {
-      if (
-        // TODO: fix for multiple employers
-        employers[0].phoneNumber &&
-        this.checkIfPhoneNumberIsGSM(employers[0].phoneNumber)
-      ) {
+      const phoneNumber = employers.length > 0 ? employers[0].phoneNumber : ''
+      if (phoneNumber && this.checkIfPhoneNumberIsGSM(phoneNumber)) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
           application,
@@ -1203,6 +1201,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
       applicationType,
+      employers,
     } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)

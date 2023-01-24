@@ -3,6 +3,7 @@ import get from 'lodash/get'
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { getUnApprovedEmployers } from '@island.is/application/templates/parental-leave'
 
 export let assignLinkEmployerSMS = ''
 
@@ -25,8 +26,9 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
 
   assignLinkEmployerSMS = assignLink
 
-  // TODO: fix for multiple employers
-  const employerEmail = get(application.answers, 'employers[0].email')
+  const employers = getUnApprovedEmployers(application.answers)
+
+  const employerEmail = employers.length > 0 ? employers[0].email : ''
   const applicantName = get(application.externalData, 'person.data.fullName')
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
 

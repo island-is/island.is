@@ -1,6 +1,7 @@
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getUnApprovedEmployers,
 } from '@island.is/application/templates/parental-leave'
 import { AssignmentSmsTemplateGenerator } from '../../../../types'
 
@@ -8,9 +9,9 @@ export const generateAssignEmployerApplicationSms: AssignmentSmsTemplateGenerato
   application,
   assignLink,
 ) => {
-  // TODO: fix for multiple employers
-  const { employers } = getApplicationAnswers(application.answers)
-  const phoneNumber = employers[0].phoneNumber ?? ''
+  const employers = getUnApprovedEmployers(application.answers)
+
+  const phoneNumber = employers.length > 0 ? employers[0].phoneNumber ?? '' : ''
   const { applicantName } = getApplicationExternalData(application.externalData)
   const applicantId = application.applicant
 

@@ -3,7 +3,10 @@ import format from 'date-fns/format'
 
 import { Message } from '@island.is/email-service'
 
-import type { Period } from '@island.is/application/templates/parental-leave'
+import {
+  getApplicationAnswers,
+  Period,
+} from '@island.is/application/templates/parental-leave'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 import { dateFormat } from '@island.is/shared/constants'
@@ -14,6 +17,11 @@ export type EmployerRejectedToEmployerEmail = (
   senderEmail?: string,
 ) => Message
 
+type EmailToType = {
+  name: string
+  address: string
+}
+
 // TODO handle translations
 export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejectedToEmployerEmail = (
   props,
@@ -23,7 +31,16 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
     options: { email },
   } = props
 
-  const employerEmail = get(application.answers, 'employer.email') as string
+  const { employers } = getApplicationAnswers(application.answers)
+  let employersArray: EmailToType[] = []
+
+  employers?.forEach((e) => {
+    employersArray.push({
+      name: '',
+      address: e.email,
+    })
+  })
+
   const periods = (get(application.answers, 'periods') as unknown) as Period[]
 
   const emailSubject = `Samþykkt umsókn um fæðingarorlof (kt. ${application.applicant}) - Vinsamlegast áframsendið til launadeildar`
@@ -34,12 +51,7 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
       name: email.sender,
       address: email.address,
     },
-    to: [
-      {
-        name: '',
-        address: employerEmail,
-      },
-    ],
+    to: employersArray,
     subject: emailSubject,
     template: {
       title: subject,

@@ -51,7 +51,6 @@ import {
   isParentalGrant,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
-import { State } from 'oidc-client-ts'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -131,7 +130,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: 'clearAssignees',
+        entry: ['clearAssignees', 'clearEmployers'],
         exit: [
           'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
@@ -327,7 +326,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVAL]: {
-        entry: 'removeNullPeriod',
+        entry: ['removeNullPeriod', 'setIsApprovedOnEmployer'],
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVAL,
@@ -637,6 +636,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'assignToVMST',
           'removeNullPeriod',
           'setNavId',
+          'clearEmployers',
         ],
         exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
@@ -730,8 +730,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: 'clearAssignees',
+        entry: ['assignToVMST', 'removeNullPeriod', 'setIsApprovedOnEmployer'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
@@ -970,6 +970,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      clearEmployers: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { employers } = getApplicationAnswers(answers)
+
+        employers?.forEach((val, i) => {
+          set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
+          set(answers, `employers[${i}].companyNationalRegistryId`, '')
+          set(answers, `employers[${i}].isApproved`, false)
+        })
+
+        return context
+      }),
       /**
        * The edits were approved. Clear out temp.
        */
@@ -1062,6 +1075,28 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(answers, 'periods')
           set(answers, 'periods', tempPeriods)
         }
+
+        return context
+      }),
+      setIsApprovedOnEmployer: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { employers, employerNationalRegistryId } = getApplicationAnswers(
+          answers,
+        )
+
+        let isAlreadyDone = false
+        employers.forEach((e, i) => {
+          if (!isAlreadyDone && !e.isApproved) {
+            set(answers, `employers[${i}].isApproved`, true)
+            set(
+              answers,
+              `employers[${i}].companyNationalRegistryId`,
+              employerNationalRegistryId,
+            )
+            isAlreadyDone = true
+          }
+        })
 
         return context
       }),
@@ -1186,12 +1221,24 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const { application } = context
         const { answers } = application
+        const { employers } = getApplicationAnswers(answers)
 
         set(
           answers,
           'employerReviewerNationalRegistryId',
           application.assignees[0],
         )
+        // Multiple employers and we mark first 'available' employer
+        for (let i in employers) {
+          if (!employers[i].isApproved) {
+            set(
+              answers,
+              `employers[${i}].reviewerNationalRegistryId`,
+              application.assignees[0],
+            )
+          }
+          break
+        }
 
         return context
       }),

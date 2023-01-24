@@ -90,10 +90,7 @@ export const dataSchema = z.object({
         const intValue = parseInt(value)
         return intValue >= 0 && intValue <= 100
       }),
-      isApproved: z
-        .boolean()
-        .refine((v) => v)
-        .optional(),
+      isApproved: z.boolean().optional(),
       reviewerNationalRegistryId: z
         .string()
         .optional()
