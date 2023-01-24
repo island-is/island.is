@@ -48,7 +48,12 @@ export const dataSchema = z.object({
     phoneNumber: z.string().refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        return phoneNumber && phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        return (
+          phoneNumber &&
+          phoneNumber.isValid() &&
+          phoneNumberStartStr.some((substr) => p.startsWith(substr))
+        )
       },
       { params: errorMessages.phoneNumber },
     ),
@@ -80,7 +85,12 @@ export const dataSchema = z.object({
     .refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        if (phoneNumber) return phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+          )
         else return true
       },
       { params: errorMessages.phoneNumber },
@@ -136,7 +146,12 @@ export const dataSchema = z.object({
     .refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        if (phoneNumber) return phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+          )
         else return true
       },
       { params: errorMessages.phoneNumber },
