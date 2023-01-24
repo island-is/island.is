@@ -4,3 +4,7 @@ export type VehiclesCurrentVehicle = {
   color?: string
   role?: string
 }
+
+export type OperatorField = {
+  nationalId: string
+}

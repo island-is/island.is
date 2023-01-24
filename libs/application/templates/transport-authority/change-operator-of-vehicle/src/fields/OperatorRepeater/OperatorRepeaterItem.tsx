@@ -9,11 +9,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { ArrayField } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import { OperatorInformation } from '../../shared'
+import { OperatorField } from '../../types'
 
 interface Props {
   id: string
@@ -21,6 +22,8 @@ interface Props {
   rowLocation: number
   repeaterField: Partial<ArrayField<OperatorInformation, 'id'>>
   handleRemove: (index: number) => void
+  setTempNewOperators?: (s: OperatorField[]) => void
+  tempNewOperators?: OperatorField[]
 }
 
 export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
@@ -29,13 +32,29 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   rowLocation,
   handleRemove,
   repeaterField,
+  setTempNewOperators,
+  tempNewOperators,
   ...props
 }) => {
+  const [nationalId, setNationalId] = useState<string>(
+    repeaterField.nationalId || '',
+  )
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
+
+  useEffect(() => {
+    if (setTempNewOperators && tempNewOperators && index > -1) {
+      const temp = [...tempNewOperators]
+      const itemValue = {
+        nationalId,
+      }
+      temp[index] = itemValue
+      setTempNewOperators(temp)
+    }
+  }, [nationalId])
 
   return (
     <Box position="relative" key={repeaterField.id} marginBottom={4}>
@@ -57,6 +76,7 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
         customNationalIdLabel={formatMessage(
           information.labels.operator.nationalId,
         )}
+        onNationalIdChange={setNationalId}
       />
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>

@@ -51,7 +51,8 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
     ? nationalIdDefaultValue?.length === 0
       ? errorMessage
       : undefined
-    : getErrorViaPath(errors, nationaIdField)
+    : getErrorViaPath(errors, `${nationaIdField}.message`) ??
+      getErrorViaPath(errors, nationaIdField)
 
   const defaultNationalId = nationalIdDefaultValue
     ? nationalIdDefaultValue

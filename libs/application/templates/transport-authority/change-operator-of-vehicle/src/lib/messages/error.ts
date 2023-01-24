@@ -12,4 +12,10 @@ export const error = defineMessages({
     description:
       'Error message if there was no name associated with given national id',
   },
+  duplicateNationalId: {
+    id: 'ta.cov.application:error.duplicateNationalId',
+    defaultMessage: 'Þessi kennitala hefur nú þegar verið valin',
+    description:
+      'Error message if we enter a national id that is already in the list',
+  },
 })

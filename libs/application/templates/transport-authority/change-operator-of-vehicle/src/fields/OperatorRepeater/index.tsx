@@ -1,20 +1,28 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { information } from '../../lib/messages'
+import { ChangeOperatorOfVehicle } from '../../lib/dataSchema'
+import { error, information } from '../../lib/messages'
 import { OperatorInformation } from '../../shared'
 import { OperatorRepeaterItem } from './OperatorRepeaterItem'
+import { OperatorField } from '../../types'
 
 export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
+  const { setValue, setError } = useFormContext()
   const { fields, append, remove } = useFieldArray<OperatorInformation>({
     name: 'operators',
   })
+  const { application } = props
+  const answers = application.answers as ChangeOperatorOfVehicle
 
-  const handleAdd = (operator?: OperatorInformation) =>
+  const [tempNewOperators, setTempNewOperators] = useState<OperatorField[]>(
+    answers.operators || [],
+  )
+
+  const handleAdd = (operator?: OperatorInformation) => {
     append({
       name: operator?.name || '',
       nationalId: operator?.nationalId || '',
@@ -22,8 +30,22 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
       phone: operator?.phone || '',
     })
 
+    setTempNewOperators([
+      ...tempNewOperators,
+      {
+        nationalId: '',
+      },
+    ])
+  }
+
   const handleRemove = (index: number) => {
     remove(index)
+
+    if (index > -1) {
+      const temp = [...tempNewOperators]
+      temp.splice(index, 1)
+      setTempNewOperators(temp)
+    }
   }
 
   useEffect(() => {
@@ -31,6 +53,42 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
       setValue('operators', [])
     }
   }, [fields, setValue])
+
+  //TODOx need to add similar validation in vehicleOwnerchange and changeCoOwner
+  const { setBeforeSubmitCallback } = props
+  useEffect(() => {
+    setBeforeSubmitCallback &&
+      setBeforeSubmitCallback(async () => {
+        let hasError = false
+        const selectedNationalIds = []
+
+        const oldOperators = answers.oldOperators.filter(
+          (x) => x.wasRemoved !== 'true',
+        )
+        for (let i = 0; i < oldOperators.length; i++) {
+          selectedNationalIds.push(oldOperators[i].nationalId)
+        }
+
+        const newOperators = tempNewOperators
+        for (let i = 0; i < newOperators.length; i++) {
+          if (selectedNationalIds.indexOf(newOperators[i].nationalId) !== -1) {
+            setError(`operators[${i}].nationalId`, {
+              type: 'custom',
+              message: formatMessage(error.duplicateNationalId),
+            })
+            hasError = true
+          } else {
+            selectedNationalIds.push(newOperators[i].nationalId)
+          }
+        }
+
+        if (hasError) {
+          return [false, formatMessage(error.duplicateNationalId)]
+        } else {
+          return [true, null]
+        }
+      })
+  }, [tempNewOperators, answers, answers.oldOperators])
 
   return (
     <Box>
@@ -44,6 +102,8 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
               rowLocation={index + 1}
               key={field.id}
               handleRemove={handleRemove}
+              setTempNewOperators={setTempNewOperators}
+              tempNewOperators={tempNewOperators}
               {...props}
             />
           )
