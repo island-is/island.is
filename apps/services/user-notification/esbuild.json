@@ -19,7 +19,7 @@
     "http-errors",
     "graphql",
     "pg",
-    "loadash",
+    "lodash",
     "winston",
     "source-map-resolve",
     "atob",
