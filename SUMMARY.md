@@ -184,6 +184,7 @@
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
   - [Identity](libs/clients/identity/README.md)
   - [Islykill](libs/clients/islykill/README.md)
+  - [License Clients](libs/clients/license-clients/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
   - [MMS](libs/clients/mms/README.md)
   - [Financial Aid](libs/clients/municipalities-financial-aid/README.md)
