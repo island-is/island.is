@@ -21,5 +21,5 @@
       "outputs": ["coverage/libs/api/domains/directorate-of-labour"]
     }
   },
-  "tags": []
+  "tags": ["lib:api", "scope:api"]
 }

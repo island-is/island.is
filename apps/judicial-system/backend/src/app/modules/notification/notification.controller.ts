@@ -34,16 +34,16 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import { SendNotificationDto } from './dto/sendNotification.dto'
-import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.response'
-import { NotificationService } from './notification.service'
 import {
   judgeNotificationRule,
   prosecutorNotificationRule,
   registrarNotificationRule,
   assistantNotificationRule,
 } from './guards/rolesRules'
+import { SendNotificationDto } from './dto/sendNotification.dto'
+import { Notification } from './models/notification.model'
+import { SendNotificationResponse } from './models/sendNotification.response'
+import { NotificationService } from './notification.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
 @Controller('api/case/:caseId')
@@ -81,6 +81,7 @@ export class NotificationController {
         NotificationType.HEADS_UP,
         NotificationType.READY_FOR_COURT,
         NotificationType.RECEIVED_BY_COURT,
+        NotificationType.COURT_DATE,
       ].includes(notification.type)
     ) {
       // Notifications put on queue will call the internal notification controller

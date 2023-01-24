@@ -9,6 +9,7 @@ import {
   CaseFileMessage,
   PoliceCaseMessage,
   DefendantMessage,
+  NotificationMessage,
 } from '@island.is/judicial-system/message'
 import type { CaseMessage } from '@island.is/judicial-system/message'
 import { NotificationType } from '@island.is/judicial-system/types'
@@ -107,46 +108,84 @@ export class MessageHandlerService implements OnModuleDestroy {
         )
         break
       }
-      case MessageType.SEND_HEADS_UP_NOTIFICATION:
+      case MessageType.SEND_HEADS_UP_NOTIFICATION: {
+        const notificationMessage = message as NotificationMessage
         handled = await this.internalDeliveryService.deliver(
           message.userId,
           message.caseId,
           'notification',
-          { type: NotificationType.HEADS_UP },
+          {
+            type: NotificationType.HEADS_UP,
+            eventOnly: notificationMessage.eventOnly,
+          },
         )
         break
-      case MessageType.SEND_READY_FOR_COURT_NOTIFICATION:
+      }
+      case MessageType.SEND_READY_FOR_COURT_NOTIFICATION: {
+        const notificationMessage = message as NotificationMessage
         handled = await this.internalDeliveryService.deliver(
           message.userId,
           message.caseId,
           'notification',
-          { type: NotificationType.READY_FOR_COURT },
+          {
+            type: NotificationType.READY_FOR_COURT,
+            eventOnly: notificationMessage.eventOnly,
+          },
         )
         break
-      case MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION:
+      }
+      case MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION: {
+        const notificationMessage = message as NotificationMessage
         handled = await this.internalDeliveryService.deliver(
           message.userId,
           message.caseId,
           'notification',
-          { type: NotificationType.RECEIVED_BY_COURT },
+          {
+            type: NotificationType.RECEIVED_BY_COURT,
+            eventOnly: notificationMessage.eventOnly,
+          },
         )
         break
-      case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
+      }
+      case MessageType.SEND_COURT_DATE_NOTIFICATION: {
+        const notificationMessage = message as NotificationMessage
         handled = await this.internalDeliveryService.deliver(
           message.userId,
           message.caseId,
           'notification',
-          { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+          {
+            type: NotificationType.COURT_DATE,
+            eventOnly: notificationMessage.eventOnly,
+          },
         )
         break
-      case MessageType.SEND_RULING_NOTIFICATION:
+      }
+      case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION: {
+        const notificationMessage = message as NotificationMessage
         handled = await this.internalDeliveryService.deliver(
           message.userId,
           message.caseId,
           'notification',
-          { type: NotificationType.RULING },
+          {
+            type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+            eventOnly: notificationMessage.eventOnly,
+          },
         )
         break
+      }
+      case MessageType.SEND_RULING_NOTIFICATION: {
+        const notificationMessage = message as NotificationMessage
+        handled = await this.internalDeliveryService.deliver(
+          message.userId,
+          message.caseId,
+          'notification',
+          {
+            type: NotificationType.RULING,
+            eventOnly: notificationMessage.eventOnly,
+          },
+        )
+        break
+      }
       case MessageType.SEND_REVOKED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.userId,
