@@ -1,7 +1,6 @@
-# api-domains-activities
+<!-- gitbook-ignore -->
 
-This library was generated with [Nx](https://nx.dev).
+# Activities
 
-## Running unit tests
+This library provides queries for user activities from the [activities service](../../../../apps/services/activities/README.md).
 
-Run `nx test api-domains-activities` to execute the unit tests via [Jest](https://jestjs.io).
