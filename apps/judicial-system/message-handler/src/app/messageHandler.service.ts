@@ -149,6 +149,7 @@ export class MessageHandlerService implements OnModuleDestroy {
         break
       case MessageType.SEND_REVOKED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
+          message.userId,
           message.caseId,
           'notification',
           { type: NotificationType.REVOKED },
