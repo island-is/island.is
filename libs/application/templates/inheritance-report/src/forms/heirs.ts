@@ -15,7 +15,7 @@ import { m } from '../lib/messages'
 
 export const heirs = buildSection({
   id: 'heirs',
-  title: m.propertyForExchange,
+  title: m.propertyForExchangeAndHeirs,
   children: [
     buildSubSection({
       id: 'spouse',
@@ -191,7 +191,6 @@ export const heirs = buildSection({
         buildMultiField({
           id: 'heirsOverview',
           title: m.overview,
-          description: m.heirsOverviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
