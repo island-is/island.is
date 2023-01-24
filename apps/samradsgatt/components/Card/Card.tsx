@@ -1,18 +1,15 @@
-import styled from 'styled-components'
-import { Tag, Box, Divider, Text, ArrowLink } from '@island.is/island-ui/core'
+import {
+  Tag,
+  Box,
+  Divider,
+  Text,
+  ArrowLink,
+  Inline,
+} from '@island.is/island-ui/core'
+import { CaseItemResponse } from '../../lib/samradsgattApi-generated'
 import getTagVariants from '../../utils/helpers/getTagVariants'
 
-type CardProps = {
-  caseNumber: string
-  status: string
-  name: string
-  adviceCount: number
-  shortDescription: string
-  id: number
-}
-import getTagVariants from '../../utils/helpers/getTagVariants'
-
-export const Card = (caseData: CardProps) => {
+export const Card = (caseData: CaseItemResponse) => {
   return (
     <Box
       style={{
@@ -22,7 +19,6 @@ export const Card = (caseData: CardProps) => {
         flexWrap: 'wrap',
       }}
       padding={3}
-      // margin={1}
       borderRadius="standard"
       borderWidth="standard"
       borderColor="purple300"
@@ -38,12 +34,12 @@ export const Card = (caseData: CardProps) => {
       >
         <Tag variant={getTagVariants(caseData.status)}>{caseData.status}</Tag>
         <Text as="p" variant="eyebrow" color="purple400">
-          {caseData.caseNumber}
+          NR.S-{caseData.caseNumber}
         </Text>
       </Box>
-      <Box display="flex" flexDirection="row" alignItems="center" paddingY={1}>
+      <Inline>
         <Text as="p" variant="eyebrow" color="blue600">
-          Stöðumat og valkostir
+          {caseData.type}
         </Text>
         <div
           style={{
@@ -53,7 +49,10 @@ export const Card = (caseData: CardProps) => {
             border: '1px solid #ccdfff',
           }}
         />
-      </Box>
+        <Text as="p" variant="eyebrow" color="blue600">
+          {caseData.institution}
+        </Text>
+      </Inline>
       <Box style={{ height: '90px', overflow: 'hidden' }} paddingBottom={2}>
         <Text as="h4" fontWeight="semiBold">
           {caseData.name}
