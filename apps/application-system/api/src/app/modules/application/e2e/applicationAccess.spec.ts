@@ -4,13 +4,13 @@ import { ApplicationService } from '@island.is/application/api/core'
 import {
   createApplicationTemplate,
   createApplication,
-  createCurrentUser,
-} from '@island.is/testing/fixtures'
+} from '@island.is/application/testing'
 import * as faker from 'faker'
 import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AllowedDelegation } from '@island.is/application/types'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 
 const testApplicationTemplate = createApplicationTemplate()
 

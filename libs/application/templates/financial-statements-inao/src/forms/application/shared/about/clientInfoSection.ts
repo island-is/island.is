@@ -5,12 +5,12 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../../../../types/schema'
 import { m } from '../../../../lib/messages'
 import { ABOUTIDS } from '../../../../lib/constants'
 import { getCurrentUserType } from '../../../../lib/utils/helpers'
 import { FSIUSERTYPE } from '../../../../types'
+import { Identity } from '@island.is/clients/identity'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -69,7 +69,7 @@ export const clientInfoSection = buildSection({
           readOnly: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.identity
-              .data as User
+              .data as Identity
             return nationalRegistry.name
           },
         }),
