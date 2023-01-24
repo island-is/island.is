@@ -17,6 +17,7 @@ import {
   EstateInfo,
   RealEstateAgent,
   Lawyer,
+  PropertyDetail,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -47,7 +48,6 @@ import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { PropertyDetail } from '@island.is/api/domains/assets'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 

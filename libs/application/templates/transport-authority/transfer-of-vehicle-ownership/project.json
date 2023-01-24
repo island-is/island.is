@@ -2,7 +2,7 @@
   "root": "libs/application/templates/transport-authority/transfer-of-vehicle-ownership",
   "sourceRoot": "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
