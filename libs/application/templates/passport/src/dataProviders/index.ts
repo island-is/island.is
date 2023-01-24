@@ -1,12 +1,22 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import {
+  defineTemplateApi,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
 export {
   NationalRegistryUserApi,
   UserProfileApi,
-  PaymentCatalogApi,
   MockProviderApi,
   DistrictsApi,
 } from '@island.is/application/types'
 
 export const IdentityDocumentApi = defineTemplateApi({
   action: 'identityDocument',
+})
+
+export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: SYSLUMADUR_NATIONAL_ID,
+  },
+  externalDataId: 'payment',
 })

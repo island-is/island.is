@@ -47,5 +47,5 @@
     },
     "docker-express": {}
   },
-  "tags": ["api-catalogue-services"]
+  "tags": ["scope:nest"]
 }

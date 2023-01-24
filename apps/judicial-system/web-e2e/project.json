@@ -33,6 +33,6 @@
       }
     }
   },
-  "tags": [],
+  "tags": ["scope:judicial-system"],
   "implicitDependencies": ["judicial-system-web"]
 }
