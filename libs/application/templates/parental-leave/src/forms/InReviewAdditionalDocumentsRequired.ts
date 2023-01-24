@@ -29,7 +29,7 @@ export const InReviewAdditionalDocumentsRequired: Form = buildForm({
         buildCustomField({
           id: 'AdditionalDocumentsRequired',
           title: parentalLeaveFormMessages.attachmentScreen.title,
-          component: 'AdditionalDocumentsRequired',
+          component: 'InReviewSteps',
         }),
         buildCustomField({
           id: 'uploadAdditionalFilesInfoScreen',

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, Fragment } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
@@ -6,6 +6,7 @@ import { Application } from '@island.is/application/types'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
+import { States } from '../../../constants'
 
 export enum ReviewSectionState {
   inProgress = 'In progress',
@@ -19,6 +20,7 @@ type ReviewSectionProps = {
   title: string
   description: string
   state?: ReviewSectionState
+  totalSteps?: number
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -27,6 +29,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   title,
   description,
   state,
+  totalSteps,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -65,8 +68,12 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         flexDirection={['columnReverse', 'row']}
         justifyContent="spaceBetween"
       >
-        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
-          <Text variant="h3">{title}</Text>
+        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]} width={'full'}>
+          <Box display="flex" justifyContent={'spaceBetween'}>
+            <Text variant="h3">{title}</Text>
+            {application.state === States.ADDITIONAL_DOCUMENT_REQUIRED &&
+              index === totalSteps && <Tag variant="red">Vantar</Tag>}
+          </Box>
           <Text marginTop={1} variant="default">
             {description}
           </Text>

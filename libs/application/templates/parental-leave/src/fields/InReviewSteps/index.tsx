@@ -165,7 +165,6 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
-
   return (
     <Box marginBottom={10}>
       <Box
@@ -254,6 +253,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               key={index}
               application={application}
               index={index + 1}
+              totalSteps={steps.length || 0}
               {...step}
             />
           ))}

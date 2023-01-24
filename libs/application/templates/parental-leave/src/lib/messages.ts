@@ -1865,10 +1865,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     additionalDocumentRequiredTag: {
       id: 'pl.application:attachmentscreen.additionalDocumentRequiredTag',
-      defaultMessage:
-        'Vantar',
-      description:
-        'Missing',
+      defaultMessage: 'Vantar',
+      description: 'Missing',
     },
     additionalDocumentsEditSubmit: {
       id: 'pl.application:attachmentscreen.additionalDocumentsEditSubmit',
