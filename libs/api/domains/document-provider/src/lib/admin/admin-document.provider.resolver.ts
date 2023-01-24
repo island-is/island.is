@@ -1,45 +1,31 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { AuditService } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
-
-import { Scopes, User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
 } from '@island.is/auth-nest-tools'
-import { logger } from '@island.is/logging'
-
-import { DocumentProviderService } from './document-provider.service'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Contact, Helpdesk, Organisation, ProviderStatistics } from '../models'
+import { AdminDocumentProviderService } from './admin-document-provider.service'
 import {
-  ClientCredentials,
-  AudienceAndScope,
-  TestResult,
-  Organisation,
-  Contact,
-  Helpdesk,
-  ProviderStatistics,
-} from './models'
-import {
-  RunEndpointTestsInput,
-  UpdateEndpointInput,
-  CreateProviderInput,
-  UpdateContactInput,
-  UpdateHelpdeskInput,
   CreateContactInput,
   CreateHelpdeskInput,
   StatisticsInput,
-} from './dto'
-import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
-import { AuditService } from '@island.is/nest/audit'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-
-const namespace = '@island.is/api/document-provider'
+  UpdateContactInput,
+  UpdateHelpdeskInput,
+  UpdateOrganisationInput,
+} from '../dto'
+import { logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
-export class DocumentProviderResolver {
+export class AdminDocumentProviderResolver {
   constructor(
-    private documentProviderService: DocumentProviderService,
+    private documentProviderService: AdminDocumentProviderService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -58,17 +44,6 @@ export class DocumentProviderResolver {
     @CurrentUser() user: User,
   ): Promise<Organisation> {
     return this.documentProviderService.getOrganisation(nationalId, user)
-  }
-
-  @Query(() => Boolean)
-  async organisationExists(
-    @Args('nationalId') nationalId: string,
-    @CurrentUser() user: User,
-  ): Promise<boolean> {
-    return await this.documentProviderService.organisationExists(
-      nationalId,
-      user,
-    )
   }
 
   @Scopes(AdminPortalScope.documentProvider)
@@ -190,134 +165,6 @@ export class DocumentProviderResolver {
       helpdeskId,
       helpdesk,
       user,
-    )
-  }
-
-  @Mutation(() => ClientCredentials)
-  async createTestProvider(
-    @Args('input') input: CreateProviderInput,
-    @CurrentUser() user: User,
-  ): Promise<ClientCredentials> {
-    logger.info(
-      `createTestProvider: user: ${user.nationalId}, organisation: ${input.nationalId}, clientName: ${input.clientName}`,
-    )
-
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'createTestProvider',
-        resources: input.nationalId,
-      },
-      this.documentProviderService.createProviderOnTest(
-        input.nationalId,
-        input.clientName,
-        user,
-      ),
-    )
-  }
-
-  @Mutation(() => AudienceAndScope)
-  async updateTestEndpoint(
-    @Args('input') input: UpdateEndpointInput,
-    @CurrentUser() user: User,
-  ): Promise<AudienceAndScope> {
-    logger.info(
-      `updateTestEndpoint: user: ${user.nationalId}, organisation: ${input.nationalId}, endpoint: ${input.endpoint}`,
-    )
-
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'updateTestEndpoint',
-        resources: input.nationalId,
-        meta: { fields: Object.keys(input) },
-      },
-      this.documentProviderService.updateEndpointOnTest(
-        input.nationalId,
-        input.endpoint,
-        input.providerId,
-        input.xroad || false,
-        user,
-      ),
-    )
-  }
-
-  @Mutation(() => [TestResult])
-  async runEndpointTests(
-    @Args('input') input: RunEndpointTestsInput,
-    @CurrentUser() user: User,
-  ): Promise<TestResult[]> {
-    logger.info(
-      `runEndpointTests: user: ${user.nationalId}, organisation: ${input.nationalId}, recipient: ${input.recipient}, documentId: ${input.recipient}, providerId: ${input.providerId}`,
-    )
-
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'runEndpointTests',
-        resources: input.nationalId,
-      },
-      this.documentProviderService.runEndpointTests(
-        input.nationalId,
-        input.recipient,
-        input.documentId,
-        input.providerId,
-        user,
-      ),
-    )
-  }
-
-  @Mutation(() => ClientCredentials)
-  async createProvider(
-    @Args('input') input: CreateProviderInput,
-    @CurrentUser() user: User,
-  ): Promise<ClientCredentials> {
-    logger.info(
-      `createTestProvider: user: ${user.nationalId}, organisation: ${input.nationalId}, clientName: ${input.clientName}`,
-    )
-
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'createProvider',
-        resources: input.nationalId,
-      },
-      this.documentProviderService.createProvider(
-        input.nationalId,
-        input.clientName,
-        user,
-      ),
-    )
-  }
-
-  @Mutation(() => AudienceAndScope)
-  async updateEndpoint(
-    @Args('input') input: UpdateEndpointInput,
-    @CurrentUser() user: User,
-  ): Promise<AudienceAndScope> {
-    logger.info(
-      `updateTestEndpoint: user: ${user.nationalId}, organisation: ${input.nationalId}, endpoint: ${input.endpoint}`,
-    )
-
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'updateEndpoint',
-        resources: input.nationalId,
-        meta: { fields: Object.keys(input) },
-      },
-      this.documentProviderService.updateEndpoint(
-        input.nationalId,
-        input.endpoint,
-        input.providerId,
-        input.xroad || false,
-        user,
-      ),
     )
   }
 

@@ -5,22 +5,13 @@ import { logger } from '@island.is/logging'
 import {
   AudienceAndScope,
   ClientCredentials,
-  Contact,
   TestResult,
   Organisation,
-  Helpdesk,
-  ProviderStatistics,
-} from './models'
-import { DocumentProviderClientTest } from './client/documentProviderClientTest'
-import { DocumentProviderClientProd } from './client/documentProviderClientProd'
-import {
-  UpdateOrganisationInput,
-  UpdateContactInput,
-  UpdateHelpdeskInput,
-  CreateContactInput,
-  CreateHelpdeskInput,
-} from './dto'
-import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
+} from '../models'
+import { DocumentProviderClientTest } from '../client/documentProviderClientTest'
+import { DocumentProviderClientProd } from '../client/documentProviderClientProd'
+
+import { OrganisationsApi, ProvidersApi } from '../../../gen/fetch'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 
@@ -65,130 +56,6 @@ export class DocumentProviderService {
   ): Promise<Organisation> {
     return await this.organisationsApiWithAuth(authorization)
       .organisationControllerFindByNationalId({ nationalId })
-      .catch(handleError)
-  }
-
-  async organisationExists(
-    nationalId: string,
-    authorization: Auth,
-  ): Promise<boolean> {
-    const organisation = await this.organisationsApiWithAuth(authorization)
-      .organisationControllerFindByNationalId({ nationalId })
-      .catch(() => {
-        //Find returns 404 error if organisation is not found. Do nothing.
-      })
-
-    return !organisation ? false : true
-  }
-
-  async updateOrganisation(
-    id: string,
-    organisation: UpdateOrganisationInput,
-    authorization: Auth,
-  ): Promise<Organisation> {
-    const dto = {
-      id,
-      updateOrganisationDto: { ...organisation },
-    }
-
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerUpdateOrganisation(dto)
-      .catch(handleError)
-  }
-
-  async createAdministrativeContact(
-    organisationId: string,
-    input: CreateContactInput,
-    authorization: Auth,
-  ): Promise<Contact> {
-    const dto = {
-      id: organisationId,
-      createContactDto: { ...input },
-    }
-
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerCreateAdministrativeContact(dto)
-      .catch(handleError)
-  }
-
-  async updateAdministrativeContact(
-    organisationId: string,
-    contactId: string,
-    contact: UpdateContactInput,
-    authorization: Auth,
-  ): Promise<Contact> {
-    const dto = {
-      id: organisationId,
-      administrativeContactId: contactId,
-      updateContactDto: { ...contact },
-    }
-
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerUpdateAdministrativeContact(dto)
-      .catch(handleError)
-  }
-
-  async createTechnicalContact(
-    organisationId: string,
-    input: CreateContactInput,
-    authorization: Auth,
-  ): Promise<Contact> {
-    const dto = {
-      id: organisationId,
-      createContactDto: { ...input },
-    }
-
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerCreateTechnicalContact(dto)
-      .catch(handleError)
-  }
-
-  async updateTechnicalContact(
-    organisationId: string,
-    contactId: string,
-    contact: UpdateContactInput,
-    authorization: Auth,
-  ): Promise<Contact> {
-    const dto = {
-      id: organisationId,
-      technicalContactId: contactId,
-      updateContactDto: { ...contact },
-    }
-
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerUpdateTechnicalContact(dto)
-      .catch(handleError)
-  }
-
-  async createHelpdesk(
-    organisationId: string,
-    input: CreateHelpdeskInput,
-    authorization: Auth,
-  ): Promise<Helpdesk> {
-    const dto = {
-      id: organisationId,
-      createHelpdeskDto: { ...input },
-    }
-
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerCreateHelpdesk(dto)
-      .catch(handleError)
-  }
-
-  async updateHelpdesk(
-    organisationId: string,
-    helpdeskId: string,
-    helpdesk: UpdateHelpdeskInput,
-    authorization: Auth,
-  ): Promise<Helpdesk> {
-    const dto = {
-      id: organisationId,
-      helpdeskId: helpdeskId,
-      updateHelpdeskDto: { ...helpdesk },
-    }
-
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerUpdateHelpdesk(dto)
       .catch(handleError)
   }
 
@@ -331,53 +198,6 @@ export class DocumentProviderService {
     }
 
     return audienceAndScope
-  }
-
-  //-------------------- STATISTICS --------------------------
-
-  async getStatisticsTotal(
-    authorization: Auth,
-    organisationId?: string,
-    fromDate?: string,
-    toDate?: string,
-  ): Promise<ProviderStatistics> {
-    let providers = undefined
-
-    // Get external provider ids if organisationId is included
-    if (organisationId) {
-      const orgProviders = await this.organisationsApiWithAuth(
-        authorization,
-      ).organisationControllerGetOrganisationsProviders({
-        id: organisationId,
-      })
-
-      // Filter out null values and only set providers if organisation has external providers
-      if (orgProviders) {
-        const externalProviders = orgProviders
-          .filter(
-            (item) =>
-              item.externalProviderId !== null &&
-              item.externalProviderId !== undefined,
-          )
-          .map((item) => {
-            return item.externalProviderId
-          })
-
-        if (externalProviders.length > 0) {
-          providers = externalProviders as string[]
-        }
-      }
-    }
-
-    const result = await this.documentProviderClientProd
-      .statisticsTotal(providers, fromDate, toDate)
-      .catch(handleError)
-
-    return new ProviderStatistics(
-      result.published,
-      result.notifications,
-      result.opened,
-    )
   }
 
   //-------------------- HELPER FUNCTIONS --------------------------
