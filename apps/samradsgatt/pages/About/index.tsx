@@ -33,7 +33,7 @@ const AboutPage: React.FC<AboutProps> = () => {
           <MainColumn />
         </GridColumn>
         <GridColumn span={'3/12'}>
-          <RightSideColmn></RightSideColmn>
+          <RightSideColmn aboutHeadings={null}></RightSideColmn>
         </GridColumn>
       </GridRow>
     </GridContainer>

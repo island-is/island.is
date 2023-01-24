@@ -28,7 +28,16 @@ const Mannaudstorg = dynamic(
   },
 )
 
-export const Background = ({ variation, small }: BackgroundProps) => {
+const Sjukratryggingar = dynamic(
+  () => import('./Variations/Sjukratryggingar/Sjukratryggingar'),
+  { ssr: false },
+)
+
+export const Background = ({
+  variation,
+  small,
+  namespace,
+}: BackgroundProps) => {
   const [component, setComponent] = useState<ReactNode | null>(null)
 
   useEffect(() => {
@@ -42,14 +51,18 @@ export const Background = ({ variation, small }: BackgroundProps) => {
         setComponent(<StafraentIsland small={small} />)
         break
       case 'mannaudstorg':
-        setComponent(<Mannaudstorg />)
+        setComponent(<Mannaudstorg namespace={namespace} />)
+        break
+      case 'sjukratryggingar':
+      case 'icelandic-health-insurance':
+        setComponent(<Sjukratryggingar namespace={namespace} />)
         break
       case 'default':
       default:
         setComponent(<Default />)
         break
     }
-  }, [small, variation])
+  }, [small, variation, namespace])
 
   return (
     <Hidden print={true}>

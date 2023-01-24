@@ -189,9 +189,6 @@
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
       ],
-      "@island.is/application/data-providers": [
-        "libs/application/data-providers/src/index.ts"
-      ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
       ],
@@ -464,6 +461,9 @@
       ],
       "@island.is/clients/transport-authority/vehicle-infolocks": [
         "libs/clients/transport-authority/vehicle-infolocks/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-operators": [
+        "libs/clients/transport-authority/vehicle-operators/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"

@@ -110,7 +110,7 @@ export const conclusion = {
     },
     operator: {
       id: 'ta.tvo.application:conclusion.rejected.operator',
-      defaultMessage: `umboðsmaður kaupanda`,
+      defaultMessage: `umráðamaður kaupanda`,
       description: 'Operator label',
     },
     startNewApplication: {
