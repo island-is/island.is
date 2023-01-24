@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
 import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
@@ -92,6 +93,8 @@ import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-s
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
+import {DataLoaderInterceptor} from "@island.is/nest/dataloader";
+import {ActivitiesModule} from "@island.is/api/domains/activities";
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -102,6 +105,12 @@ const autoSchemaFile = environment.production
 
 @Module({
   controllers: [HealthController],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataLoaderInterceptor,
+    },
+  ],
   imports: [
     GraphQLModule.forRoot({
       driver: ApolloDriver,
@@ -249,6 +258,7 @@ const autoSchemaFile = environment.production
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
+    ActivitiesModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

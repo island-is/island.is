@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/activities": [
+        "libs/api/domains/activities/src/index.ts"
+      ],
       "@island.is/api/domains/air-discount-scheme": [
         "libs/api/domains/air-discount-scheme/src/index.ts"
       ],
