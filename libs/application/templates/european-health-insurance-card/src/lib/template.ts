@@ -16,6 +16,7 @@ import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import { EhicCardResponseApi } from '../dataProviders'
+import { ApiActions } from '../dataProviders/actions.enum'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -92,6 +93,9 @@ const template: ApplicationTemplate<
           status: 'approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.applyForPhysicalCard,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -104,9 +108,6 @@ const template: ApplicationTemplate<
                 ),
             },
           ],
-          onEntry: defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication,
-          }),
         },
       },
     },

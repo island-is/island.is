@@ -1,5 +1,6 @@
 import {
   Comparators,
+  defineTemplateApi,
   Form,
   FormModes,
   NationalRegistryUserApi,
@@ -19,6 +20,7 @@ import {
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import styles from './european-health-insurance-card.module.scss'
 import { externalDataSection } from '../fields/externalDataSection'
+import { ApiActions } from '../dataProviders/actions.enum'
 
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
@@ -33,6 +35,7 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
     buildSection({
       id: 'intro',
       title: e.introScreen.sectionLabel,
+
       children: [
         buildCustomField(
           {
