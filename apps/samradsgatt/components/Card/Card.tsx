@@ -2,7 +2,17 @@ import styled from 'styled-components'
 import { Tag, Box, Divider, Text, ArrowLink } from '@island.is/island-ui/core'
 import getTagVariants from '../../utils/helpers/getTagVariants'
 
-export const Card = (caseData) => {
+type CardProps = {
+  caseNumber: string
+  status: string
+  name: string
+  adviceCount: number
+  shortDescription: string
+  id: number
+}
+import getTagVariants from '../../utils/helpers/getTagVariants'
+
+export const Card = (caseData: CardProps) => {
   return (
     <Box
       style={{
@@ -35,7 +45,14 @@ export const Card = (caseData) => {
         <Text as="p" variant="eyebrow" color="blue600">
           Stöðumat og valkostir
         </Text>
-        <TagDivider />
+        <div
+          style={{
+            marginLeft: 8,
+            marginRight: 8,
+            height: 16,
+            border: '1px solid #ccdfff',
+          }}
+        />
       </Box>
       <Box style={{ height: '90px', overflow: 'hidden' }} paddingBottom={2}>
         <Text as="h4" fontWeight="semiBold">
@@ -70,17 +87,9 @@ export const Card = (caseData) => {
         </Text>
       </Box>
 
-      <Box className="ArrowLinkContainer">
-        <ArrowLink href={`case/${caseData.id}`}>Skoða mál</ArrowLink>
-      </Box>
+      <ArrowLink href={`case/${caseData.id}`}>Skoða mál</ArrowLink>
     </Box>
   )
 }
 
 export default Card
-
-const TagDivider = styled.div`
-  border-left: 1px solid #ccdfff;
-  height: 16px;
-  margin: 0 8px 0 8px;
-`

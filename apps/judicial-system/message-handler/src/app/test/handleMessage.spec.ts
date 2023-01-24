@@ -10,7 +10,6 @@ import {
   MessageType,
   PoliceCaseMessage,
   DefendantMessage,
-  UserMessage,
 } from '@island.is/judicial-system/message'
 
 import { appModuleConfig } from '../app.config'
@@ -30,6 +29,7 @@ type GivenWhenThen = (message: CaseMessage) => Promise<Then>
 describe('MessageHandlerService - Handle message', () => {
   const config = appModuleConfig()
   const logger = ({ debug: jest.fn() } as unknown) as Logger
+  const userId = uuid()
   const caseId = uuid()
   let givenWhenThen: GivenWhenThen
 
@@ -44,6 +44,7 @@ describe('MessageHandlerService - Handle message', () => {
       const messageHandlerService = new MessageHandlerService(
         (undefined as unknown) as MessageService,
         new InternalDeliveryService(config, logger),
+        config,
         logger,
       )
       const then = {} as Then
@@ -59,15 +60,14 @@ describe('MessageHandlerService - Handle message', () => {
   })
 
   describe('deliver prosecutor to court', () => {
-    const userId = uuid()
     let then: Then
 
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
-        caseId,
         userId,
-      } as UserMessage)
+        caseId,
+      })
     })
 
     it('should deliver prosecutor to court', async () => {
@@ -88,15 +88,14 @@ describe('MessageHandlerService - Handle message', () => {
 
   describe('deliver defendant to court', () => {
     const defendantId = uuid()
-    const userId = uuid()
     let then: Then
 
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+        userId,
         caseId,
         defendantId,
-        userId,
       } as DefendantMessage)
     })
 
@@ -123,6 +122,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+        userId,
         caseId,
         caseFileId,
       } as CaseFileMessage)
@@ -137,6 +137,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -150,6 +151,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+        userId,
         caseId,
         policeCaseNumber,
       } as PoliceCaseMessage)
@@ -164,6 +166,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -176,6 +179,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.DELIVER_REQUEST_TO_COURT,
+        userId,
         caseId,
       })
     })
@@ -189,6 +193,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -201,6 +206,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+        userId,
         caseId,
       })
     })
@@ -214,6 +220,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -226,6 +233,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.DELIVER_SIGNED_RULING_TO_COURT,
+        userId,
         caseId,
       })
     })
@@ -239,6 +247,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -251,6 +260,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.DELIVER_CASE_TO_POLICE,
+        userId,
         caseId,
       })
     })
@@ -264,6 +274,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -277,6 +288,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.ARCHIVE_CASE_FILE,
+        userId,
         caseId,
         caseFileId,
       } as CaseFileMessage)
@@ -291,6 +303,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -303,6 +316,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+        userId,
         caseId,
       })
     })
@@ -316,7 +330,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
-          body: JSON.stringify({ type: NotificationType.HEADS_UP }),
+          body: JSON.stringify({ type: NotificationType.HEADS_UP, userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -329,6 +343,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+        userId,
         caseId,
       })
     })
@@ -342,7 +357,40 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
-          body: JSON.stringify({ type: NotificationType.READY_FOR_COURT }),
+          body: JSON.stringify({
+            type: NotificationType.READY_FOR_COURT,
+            userId,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send received by court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a received by court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.RECEIVED_BY_COURT,
+            userId,
+          }),
         },
       )
       expect(then.result).toBe(true)
@@ -355,6 +403,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+        userId,
         caseId,
       })
     })
@@ -370,6 +419,7 @@ describe('MessageHandlerService - Handle message', () => {
           },
           body: JSON.stringify({
             type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+            userId,
           }),
         },
       )
@@ -383,6 +433,7 @@ describe('MessageHandlerService - Handle message', () => {
     beforeEach(async () => {
       then = await givenWhenThen({
         type: MessageType.SEND_RULING_NOTIFICATION,
+        userId,
         caseId,
       })
     })
@@ -396,7 +447,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
-          body: JSON.stringify({ type: NotificationType.RULING }),
+          body: JSON.stringify({ type: NotificationType.RULING, userId }),
         },
       )
       expect(then.result).toBe(true)

@@ -3,8 +3,10 @@ import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import { TransportAuthorityApi } from '../transportAuthority.service'
 import { OwnerChangeAnswers, CheckTachoNetInput } from './dto'
@@ -15,6 +17,7 @@ import { OwnerChangeValidation, CheckTachoNetExists } from './models'
 export class MainResolver {
   constructor(private readonly transportAuthorityApi: TransportAuthorityApi) {}
 
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => OwnerChangeValidation, { nullable: true })
   vehicleOwnerChangeValidation(
     @CurrentUser() user: User,
@@ -26,6 +29,7 @@ export class MainResolver {
     )
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => CheckTachoNetExists)
   digitalTachographTachoNetExists(
     @CurrentUser() user: User,

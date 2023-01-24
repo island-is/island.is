@@ -28,7 +28,6 @@ export const judgeNotificationRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
-    NotificationType.RECEIVED_BY_COURT,
     NotificationType.COURT_DATE,
     NotificationType.MODIFIED,
     NotificationType.DEFENDER_ASSIGNED,
@@ -41,7 +40,6 @@ export const registrarNotificationRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
-    NotificationType.RECEIVED_BY_COURT,
     NotificationType.COURT_DATE,
     NotificationType.MODIFIED,
     NotificationType.DEFENDER_ASSIGNED,
@@ -54,7 +52,6 @@ export const assistantNotificationRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
-    NotificationType.RECEIVED_BY_COURT,
     NotificationType.COURT_DATE,
     NotificationType.DEFENDER_ASSIGNED,
   ],

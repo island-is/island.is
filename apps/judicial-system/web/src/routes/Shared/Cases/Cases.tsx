@@ -24,6 +24,7 @@ import {
   isIndictmentCase,
   isExtendedCourtRole,
   User,
+  CaseListEntry,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -91,6 +92,7 @@ const CreateCaseButton: React.FC<{
         '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
         '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
         'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
+        '53581d7b-0591-45e5-9cbe-c96b2f82da85', // Lögreglustjórinn á höfuðborgarsvæðinu
       ].includes(user.institution?.id ?? '')
     ) {
       return items
@@ -130,13 +132,12 @@ export const Cases: React.FC = () => {
     user?.institution?.type === InstitutionType.PRISON_ADMIN
   const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
-  const { data, error, loading, refetch } = useQuery<{ cases?: Case[] }>(
-    CasesQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { data, error, loading, refetch } = useQuery<{
+    cases?: CaseListEntry[]
+  }>(CasesQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
     fetchPolicy: 'no-cache',
@@ -166,16 +167,19 @@ export const Cases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [Case[], Case[]] = useMemo(() => {
+  const [allActiveCases, allPastCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(() => {
     if (!resCases) {
       return [[], []]
     }
 
-    const casesWithoutDeleted = resCases.filter((c: Case) => {
+    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
       return c.state !== CaseState.DELETED
     })
 
-    return partition(casesWithoutDeleted, (c: Case) => {
+    return partition(casesWithoutDeleted, (c) => {
       if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
         return false
       } else if (isPrisonAdminUser || isPrisonUser) {
@@ -194,7 +198,7 @@ export const Cases: React.FC = () => {
     pastCases,
   } = useFilter(allActiveCases, allPastCases, user)
 
-  const deleteCase = async (caseToDelete: Case) => {
+  const deleteCase = async (caseToDelete: CaseListEntry) => {
     if (
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT ||
@@ -202,7 +206,7 @@ export const Cases: React.FC = () => {
       caseToDelete.state === CaseState.RECEIVED
     ) {
       await sendNotification(caseToDelete.id, NotificationType.REVOKED)
-      await transitionCase(caseToDelete, CaseTransition.DELETE)
+      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
     }
   }

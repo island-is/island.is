@@ -60,7 +60,7 @@ export const LandlaeknirHeader: React.FC<HeaderProps> = ({
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" as="h1" color="blue600">
+              <Text variant="h1" as="h1" color="white">
                 {organizationPage.title}
               </Text>
             </Link>

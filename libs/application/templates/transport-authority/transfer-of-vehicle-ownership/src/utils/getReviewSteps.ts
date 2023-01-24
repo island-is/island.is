@@ -6,6 +6,7 @@ import {
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { review } from '../lib/messages'
+import { States } from '../lib/constants'
 
 export const getReviewSteps = (
   application: Application,
@@ -13,7 +14,7 @@ export const getReviewSteps = (
 ) => {
   const vehiclePlate = getValueViaPath(
     application.answers,
-    'vehicle.plate',
+    'pickVehicle.plate',
     '',
   ) as string
 
@@ -36,13 +37,17 @@ export const getReviewSteps = (
     (reviewer) => reviewer.type === 'operator',
   )
 
-  const sellerCoOwnerApproved = sellerCoOwner.find(
-    (coOwner) => coOwner.approved,
+  const sellerCoOwnerNotApproved = sellerCoOwner.find(
+    (coOwner) => !coOwner.approved,
   )
-  const buyerCoOwnerApproved = buyerCoOwner.find((coOwner) => coOwner.approved)
-  const buyerOperatorApproved = buyerOperator.find(
-    (operator) => operator.approved,
+  const buyerCoOwnerNotApproved = buyerCoOwner.find(
+    (coOwner) => !coOwner.approved,
   )
+  const buyerOperatorNotApproved = buyerOperator.find(
+    (operator) => !operator.approved,
+  )
+
+  const isComplete = application.state === States.COMPLETED
 
   const steps = [
     // Transfer of vehicle: Always approved
@@ -62,10 +67,11 @@ export const getReviewSteps = (
     },
     // Sellers coowner
     {
-      tagText: sellerCoOwnerApproved
-        ? review.step.tagText.received
-        : review.step.tagText.pendingApproval,
-      tagVariant: sellerCoOwnerApproved ? 'mint' : 'purple',
+      tagText:
+        !sellerCoOwnerNotApproved || isComplete
+          ? review.step.tagText.received
+          : review.step.tagText.pendingApproval,
+      tagVariant: !sellerCoOwnerNotApproved || isComplete ? 'mint' : 'purple',
       title: review.step.title.sellerCoOwner,
       description: review.step.description.sellerCoOwner,
       visible: sellerCoOwner.length > 0,
@@ -79,19 +85,21 @@ export const getReviewSteps = (
     },
     // Buyer
     {
-      tagText: buyerApproved
-        ? review.step.tagText.received
-        : review.step.tagText.pendingApproval,
-      tagVariant: buyerApproved ? 'mint' : 'purple',
+      tagText:
+        buyerApproved || isComplete
+          ? review.step.tagText.received
+          : review.step.tagText.pendingApproval,
+      tagVariant: buyerApproved || isComplete ? 'mint' : 'purple',
       title: review.step.title.buyer,
       description: review.step.description.buyer,
     },
     // Buyers coowner
     {
-      tagText: buyerCoOwnerApproved
-        ? review.step.tagText.received
-        : review.step.tagText.pendingApproval,
-      tagVariant: buyerCoOwnerApproved ? 'mint' : 'purple',
+      tagText:
+        !buyerCoOwnerNotApproved || isComplete
+          ? review.step.tagText.received
+          : review.step.tagText.pendingApproval,
+      tagVariant: !buyerCoOwnerNotApproved || isComplete ? 'mint' : 'purple',
       title: review.step.title.buyerCoOwner,
       description: review.step.description.buyerCoOwner,
       visible: buyerCoOwner.length > 0,
@@ -105,10 +113,11 @@ export const getReviewSteps = (
     },
     // Buyers operators
     {
-      tagText: buyerOperatorApproved
-        ? review.step.tagText.received
-        : review.step.tagText.pendingApproval,
-      tagVariant: buyerOperatorApproved ? 'mint' : 'purple',
+      tagText:
+        !buyerOperatorNotApproved || isComplete
+          ? review.step.tagText.received
+          : review.step.tagText.pendingApproval,
+      tagVariant: !buyerOperatorNotApproved || isComplete ? 'mint' : 'purple',
       title: review.step.title.buyerOperator,
       description: review.step.description.buyerOperator,
       visible: buyerOperator.length > 0,

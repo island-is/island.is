@@ -102,6 +102,23 @@ export const notifications = {
         'Notaður sem texti í sms-i til þess að tilgreina að mál sé komið í vinnslu',
     },
   }),
+  indictmentCourtReadyForCourt: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.indictment_court_ready_for_court.subject',
+      defaultMessage: 'Ákæra tilbúin til afgreiðslu',
+      description:
+        'Notaður sem titill í pósti til dómstóla þegar ný ákæra er tilbúin til afgreiðslu',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.indictment_court_ready_for_court.body',
+      defaultMessage:
+        '{prosecutorName} hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: {indictmentSubtypes}. Ákæran og öll skjöl málsins eru {linkStart}aðgengileg í Réttarvörslugátt.{linkEnd}',
+      description:
+        'Notaður sem texti í pósti til dómstóla þegar ný ákæra er tilbúin til afgreiðslu',
+    },
+  }),
   courtReadyForCourt: defineMessages({
     submittedCase: {
       id:
@@ -236,11 +253,11 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskurðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
     },
-    defenderBodyV2: {
+    defenderBodyV3: {
       id:
-        'judicial.system.backend:notifications.signed_ruling.defender_body_v2',
+        'judicial.system.backend:notifications.signed_ruling.defender_body_v3',
       defaultMessage:
-        'Dómari hefur {isModifyingRuling, select, true {leiðrétt} other {undirritað og staðfest}} úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {{signedVerdictAvailableInS3, select, false {Þú getur nálgast undirritaðan úrskurð hjá {courtName} ef upp koma vandamál við að sækja hann í {linkStart}Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}}}.',
+        'Dómari hefur {isModifyingRuling, select, true {leiðrétt} other {undirritað og staðfest}} úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}.',
       description:
         'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskurðar',
     },
@@ -295,9 +312,9 @@ export const notifications = {
     },
     requestText: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.request_text',
+        'judicial.system.backend:notifications.prison_court_date_email.request_textv2',
       defaultMessage:
-        'Nafn sakbornings: {accusedName, select, NONE {Ekki skráð} other {{accusedName}}}.<br /><br />Kyn sakbornings: {gender, select, MALE {Karl} FEMALE {Kona} other {Kynsegin/Annað}}.<br /><br />Krafist er {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}} til {requestedValidToDateText}.',
+        'Kyn sakbornings: {gender, select, MALE {Karl} FEMALE {Kona} other {Kynsegin/Annað}}.<br /><br />Krafist er {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}} til {requestedValidToDateText}.',
       description:
         'Texti í pósti til fangeslis sem tilgreinir hver sakborningur er',
     },
@@ -317,18 +334,18 @@ export const notifications = {
       description:
         'Texti í pósti til fangeslis sem tilgreinir hversu lengi gæsluvarðhandls er krafist',
     },
-    bodyV2: {
+    bodyV3: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.body_v2',
+        'judicial.system.backend:notifications.prison_court_date_email.body_v3',
       defaultMessage:
-        '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, true {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistunar á viðeignadi stofnun} other {gæsluvarðhald}} til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}.',
+        '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, true {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistunar á viðeignadi stofnun} other {gæsluvarðhald}} til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}.<br /><br />Málsnúmer héraðsdóms er {courtCaseNumber}.',
       description: 'Notaður sem beinagrind á í pósti til fangelsis',
     },
     subject: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.subject',
+        'judicial.system.backend:notifications.prison_court_date_email.subjectv2',
       defaultMessage:
-        'Krafa um {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhald}} í vinnslu',
+        '{courtCaseNumber} - Krafa um {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhald}} í vinnslu',
       description: 'Fyrirsögn í pósti til fangeslis þegar krafa fer í vinnslu',
     },
   }),
@@ -391,6 +408,20 @@ export const notifications = {
         'Verjandi sakbornings{defenderName, select, NONE { hefur ekki verið skráður} other {: {defenderName}}}.',
       description:
         'Texti í pósti til fangelsis sem tilgreinir hver verjandi sakbornings er',
+    },
+  }),
+  rejectedCustodyEmail: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.rejected_custody_email.subject',
+      defaultMessage: '{courtCaseNumber} - Kröfu um gæsluvarðhald hafnað',
+      description: 'Fyrirsögn í pósti til fangelsis þegar kröfu er hafnað',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.rejected_custody_email.body',
+      defaultMessage:
+        '{court} hefur hafnað gæsluvarðhaldskröfu með málsnúmerið {courtCaseNumber}.',
+      description: 'Texti í pósti til fangelsis þegar kröfu er hafnað',
     },
   }),
   defenderCourtDateEmail: defineMessages({
