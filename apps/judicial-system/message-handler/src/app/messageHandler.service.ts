@@ -187,12 +187,18 @@ export class MessageHandlerService implements OnModuleDestroy {
         break
       }
       case MessageType.SEND_REVOKED_NOTIFICATION:
-        handled = await this.internalDeliveryService.deliver(
-          message.userId,
-          message.caseId,
-          'notification',
-          { type: NotificationType.REVOKED },
-        )
+        {
+          const notificationMessage = message as NotificationMessage
+          handled = await this.internalDeliveryService.deliver(
+            message.userId,
+            message.caseId,
+            'notification',
+            {
+              type: NotificationType.REVOKED,
+              eventOnly: notificationMessage.eventOnly,
+            },
+          )
+        }
         break
       default:
         this.logger.error('Unknown message type', { msg: message })
