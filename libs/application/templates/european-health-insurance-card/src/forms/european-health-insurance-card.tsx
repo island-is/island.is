@@ -1,8 +1,12 @@
 import {
+  ChildrenCustodyInformationApi,
+  NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
+import {
   Comparators,
   Form,
   FormModes,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import {
   buildCompanySearchField,
@@ -16,34 +20,50 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 
+import { EhicCardResponseApi } from '../dataProviders'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
-import styles from './european-health-insurance-card.module.scss'
 import { externalDataSection } from '../fields/externalDataSection'
+import styles from './european-health-insurance-card.module.scss'
 
 /* eslint-disable-next-line */
-export interface EuropeanHealthInsuranceCardProps {}
+export interface EuropeanHealthInsuranceCardProps { }
 
 export const EuropeanHealthInsuranceCard: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
   mode: FormModes.DRAFT,
   children: [
-    externalDataSection,
-
     buildSection({
       id: 'intro',
       title: e.introScreen.sectionLabel,
       children: [
-        buildCustomField(
-          {
-            id: 'introScreen',
-            title: e.introScreen.sectionTitle,
-            component: 'IntroScreen',
-          },
-          {
-            subTitle: e.introScreen.sectionDescription,
-          },
-        ),
+        buildExternalDataProvider({
+          title: e.introScreen.sectionTitle,
+          id: 'introScreen',
+          description: e.introScreen.sectionDescription,
+          dataProviders: [
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: ChildrenCustodyInformationApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: EhicCardResponseApi,
+              title: '',
+              subTitle: '',
+            }),
+          ],
+        }),
       ],
     }),
 
