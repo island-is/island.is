@@ -492,6 +492,7 @@ export const slices = gql`
       type
       required
       options
+      informationText
     }
     successText
     aboutYouHeadingText
@@ -607,6 +608,7 @@ export const slices = gql`
       type
       required
       options
+      informationText
     }
     translations
   }

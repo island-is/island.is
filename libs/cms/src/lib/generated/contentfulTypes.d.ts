@@ -881,6 +881,7 @@ export interface IFormFieldFields {
     | 'checkboxes'
     | 'file'
     | 'nationalId (kennitala)'
+    | 'information'
 
   /** Required */
   required?: boolean | undefined
@@ -890,6 +891,9 @@ export interface IFormFieldFields {
 
   /** Email Config */
   emailConfig?: Record<string, any> | undefined
+
+  /** Information Text */
+  informationText?: string | undefined
 }
 
 export interface IFormField extends Entry<IFormFieldFields> {
