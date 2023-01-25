@@ -11,33 +11,40 @@ import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
-import { parentalLeaveFormMessages } from '../lib/messages'
-
-export const UploadAdditionalFiles: Form = buildForm({
-  id: 'ParentalLeaveUploadAdditionalFiles',
-  title: '',
+import {
+  inReviewFormMessages,
+  parentalLeaveFormMessages,
+} from '../lib/messages'
+export const InReviewAdditionalDocumentsRequired: Form = buildForm({
+  id: 'ParentalLeaveInReviewUpload',
+  title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
-      id: 'additionalDocuments',
-      title: parentalLeaveFormMessages.confirmation.title,
+      id: 'reviewUpload',
+      title: parentalLeaveFormMessages.attachmentScreen.title,
+
       children: [
         buildCustomField({
+          id: 'additionalDocumentsRequired',
+          title: parentalLeaveFormMessages.attachmentScreen.title,
+          component: 'InReviewSteps',
+        }),
+        buildCustomField({
           id: 'uploadAdditionalFilesInfoScreen',
-          title: parentalLeaveFormMessages.confirmation.title,
+          title: parentalLeaveFormMessages.attachmentScreen.title,
           component: 'UploadAdditionalFilesInfoScreen',
         }),
         buildMultiField({
           id: 'additionalDocumentsScreen',
-          title: parentalLeaveFormMessages.confirmation.title,
-          description: parentalLeaveFormMessages.confirmation.description,
+          title: parentalLeaveFormMessages.attachmentScreen.title,
           children: [
             buildFileUploadField({
               id: 'fileUpload.additionalDocuments',
-              title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+              title: parentalLeaveFormMessages.attachmentScreen.title,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.genericDescription,
+                parentalLeaveFormMessages.attachmentScreen.description,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
@@ -49,12 +56,16 @@ export const UploadAdditionalFiles: Form = buildForm({
             }),
             buildSubmitField({
               id: 'additionalDocumentsSubmit',
-              title: 'submit',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .additionalDocumentsEditSubmit,
               placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  name: 'Submit',
+                  name:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .additionalDocumentsEditSubmit,
                   type: 'primary',
                   event: 'APPROVE',
                 },

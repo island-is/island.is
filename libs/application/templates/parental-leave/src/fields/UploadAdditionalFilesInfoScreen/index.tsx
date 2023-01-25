@@ -10,10 +10,22 @@ import {
   getAvailableRightsInDays,
   synchronizeVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
-import { RepeaterProps } from '@island.is/application/types'
+import { FieldBaseProps, RepeaterProps } from '@island.is/application/types'
 import { States } from '../../constants'
+import PeriodsSectionImage from '../PeriodsSectionImage/PeriodsSectionImage'
+import WomanWithLaptopIllustration from '../PeriodsSectionImage/WomanWithLaptopIllustration'
 
-const UploadAdditionalFilesInfoScreen: FC<RepeaterProps> = ({
+type FieldProps = FieldBaseProps & {
+  field?: {
+    props?: {
+      showDescription: boolean
+    }
+  }
+}
+type ScreenProps = RepeaterProps & FieldProps
+
+const UploadAdditionalFilesInfoScreen: FC<ScreenProps> = ({
+  field,
   application,
   setRepeaterItems,
   setFieldLoadingState,
@@ -47,9 +59,16 @@ const UploadAdditionalFilesInfoScreen: FC<RepeaterProps> = ({
     <Box>
       <FieldDescription
         description={formatMessage(
-          parentalLeaveFormMessages.attachmentScreen.genericTitle,
+          parentalLeaveFormMessages.attachmentScreen.additionalDocumentRequired,
         )}
       />
+      <PeriodsSectionImage
+        field={field}
+        application={application}
+        alignItems={'center'}
+      >
+        <WomanWithLaptopIllustration />
+      </PeriodsSectionImage>
     </Box>
   )
 }

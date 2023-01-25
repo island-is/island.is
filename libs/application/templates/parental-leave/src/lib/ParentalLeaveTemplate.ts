@@ -521,8 +521,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/UploadAdditionalFiles').then((val) =>
-                  Promise.resolve(val.UploadAdditionalFiles),
+                import(
+                  '../forms/InReviewAdditionalDocumentsRequired'
+                ).then((val) =>
+                  Promise.resolve(val.InReviewAdditionalDocumentsRequired),
                 ),
               read: 'all',
               write: 'all',
