@@ -1,4 +1,3 @@
-import isString from 'lodash/isString'
 import { matchPath } from 'react-router-dom'
 import { ParamType } from '@island.is/plausible'
 
@@ -22,12 +21,9 @@ export const formatPlausiblePathToParams = ({
   basePath,
   fileName,
 }: FormatPlausiblePathToParams): ParamType => {
-  const currentPath = matchPath(path, {
-    path: routes,
-    exact: true,
-    strict: true,
-  })?.path
-
+  const currentPath = routes.find((route) =>
+    matchPath({ path: route, end: true }, path),
+  )
   const pageOrigin = window.location.origin
   const absoluteUrl = `${pageOrigin}${basePath}${currentPath ?? ''}`
 
