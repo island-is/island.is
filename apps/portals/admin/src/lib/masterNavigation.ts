@@ -1,4 +1,4 @@
-import { icelandicNamesRegistryNavigation } from '@island.is/portals-admin-icelandic-names-registry'
+import { icelandicNamesRegistryNavigation } from '@island.is/portals/admin/icelandic-names-registry'
 import { airDiscountSchemeNavigation } from '@island.is/portals/admin/air-discount-scheme'
 import {
   PortalNavigationItem,
