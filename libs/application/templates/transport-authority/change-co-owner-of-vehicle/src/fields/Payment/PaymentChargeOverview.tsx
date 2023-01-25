@@ -36,7 +36,12 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
           {formatMessage(payment.paymentChargeOverview.forPayment)}
         </Text>
         {items.map((item) => (
-          <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+          <Box
+            paddingTop={1}
+            display="flex"
+            key={item.chargeItemCode}
+            justifyContent="spaceBetween"
+          >
             <Text>{item?.chargeItemName}</Text>
             <Text>{formatIsk(item?.priceAmount || 0)}</Text>
           </Box>

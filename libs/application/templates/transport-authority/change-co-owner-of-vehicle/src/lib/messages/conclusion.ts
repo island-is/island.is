@@ -66,7 +66,7 @@ export const conclusion = {
   review: defineMessages({
     accordionText: {
       id: 'ta.ccov.application:conclusion.review.accordionText',
-      defaultMessage: `Skráning umráðamanns af/á ökutæki verður skráð þegar allir hafa samþykkt. Ef því verður ekki lokið innan 7 daga frá gerð umsóknar verður skráning umráðamanns af/á ökutæki hafnað og eigandi fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,
+      defaultMessage: `Skráning meðeiganda af/á ökutæki verður skráð þegar allir hafa samþykkt. Ef því verður ekki lokið innan 7 daga frá gerð umsóknar verður skráning umráðamanns af/á ökutæki hafnað og eigandi fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,
       description: 'Conclusion review accordion text',
     },
   }),

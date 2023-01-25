@@ -228,10 +228,18 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
-    const newCoOwners = answers?.coOwners.map((coOwner) => ({
+    const newCoOwners = answers?.coOwners?.map((coOwner) => ({
       ssn: coOwner.nationalId,
       email: coOwner.email,
     }))
+    const ownerCoOwners = answers?.ownerCoOwners?.filter(
+      (coOwner) => coOwner.wasRemoved !== 'true',
+    )
+    const oldCoOwners =
+      ownerCoOwners?.map((coOwner) => ({
+        ssn: coOwner.nationalId,
+        email: coOwner.email,
+      })) || []
 
     const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
       auth,
@@ -264,7 +272,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         email: '',
         isMainOperator: operator.isMainOperator || false,
       })),
-      coOwners: newCoOwners,
+      coOwners: [...newCoOwners, ...oldCoOwners],
     })
 
     // 3. Notify everyone in the process that the application has successfully been submitted

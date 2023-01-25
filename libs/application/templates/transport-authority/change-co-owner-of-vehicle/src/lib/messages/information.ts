@@ -28,7 +28,7 @@ export const information = {
       description: {
         id: 'ta.ccov.application:information.labels.pickVehicle.description',
         defaultMessage:
-          'Hér að neðan er listi yfir ökutæki í þinni eigu. Veldu það ökutæki sem þú ætlar að bæta við/fella niður umráðamann á',
+          'Hér að neðan er listi yfir ökutæki í þinni eigu. Veldu það ökutæki sem þú ætlar að bæta við/fella niður meðeiganda á.',
         description: 'Pick vehicle description',
       },
       vehicle: {
@@ -57,12 +57,12 @@ export const information = {
       sectionTitle: {
         id: 'ta.ccov.application:information.labels.owner.sectionTitle',
         defaultMessage: 'Eigandi',
-        description: 'Pick vehicle section title',
+        description: 'Owner section title',
       },
       title: {
         id: 'ta.ccov.application:information.labels.owner.title',
         defaultMessage: 'Eigandi',
-        description: 'Seller title',
+        description: 'Owner title',
       },
       subtitle: {
         id: 'ta.ccov.application:information.labels.owner.subtitle',
@@ -72,34 +72,44 @@ export const information = {
       description: {
         id: 'ta.ccov.application:information.labels.owner.description',
         defaultMessage: ' ',
-        description: 'Seller description',
+        description: 'Owner description',
       },
       nationalId: {
         id: 'ta.ccov.application:information.labels.owner.nationalId',
         defaultMessage: 'Kennitala eiganda',
-        description: 'Seller national ID label',
+        description: 'Owner national ID label',
       },
       name: {
         id: 'ta.ccov.application:information.labels.owner.name',
         defaultMessage: 'Nafn eiganda',
-        description: 'Seller name label',
+        description: 'Owner name label',
       },
       email: {
         id: 'ta.ccov.application:information.labels.owner.email',
         defaultMessage: 'Netfang',
-        description: 'Seller email label',
+        description: 'Owner email label',
       },
       phone: {
         id: 'ta.ccov.application:information.labels.owner.phone',
         defaultMessage: 'Gsm númer',
-        description: 'Seller phone number label',
+        description: 'Owner phone number label',
       },
     }),
     coOwner: defineMessages({
+      sectionTitle: {
+        id: 'ta.ccov.application:information.labels.coOwner.sectionTitle',
+        defaultMessage: 'Meðeigandi',
+        description: 'Co-owner section title',
+      },
       title: {
         id: 'ta.ccov.application:information.labels.coOwner.title',
         defaultMessage: 'Meðeigandi',
         description: 'Co-owner title',
+      },
+      description: {
+        id: 'ta.ccov.application:information.labels.coOwner.description',
+        defaultMessage: ' ',
+        description: 'coOwner description',
       },
       nationalId: {
         id: 'ta.ccov.application:information.labels.coOwner.nationalId',
@@ -120,6 +130,26 @@ export const information = {
         id: 'ta.ccov.application:information.labels.coOwner.phone',
         defaultMessage: 'Gsm númer',
         description: 'Co-owner phone number label',
+      },
+      error: {
+        id: 'ta.ccov.application:information.labels.coOwner.error',
+        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
+        description: 'Co-owner error message',
+      },
+      coOwnerTempTitle: {
+        id: 'ta.ccov.application:information.labels.operator.coOwnerTempTitle',
+        defaultMessage: 'Nýr meðeigandi',
+        description: 'Coowner temp title',
+      },
+      add: {
+        id: 'ta.ccov.application:information.labels.operator.add',
+        defaultMessage: 'Bæta við meðeiganda',
+        description: 'coOwner add label',
+      },
+      remove: {
+        id: 'ta.cov.application:information.labels.operator.remove',
+        defaultMessage: 'Fjarlægja umráðamann',
+        description: 'Operator remove label',
       },
     }),
   },
