@@ -50,7 +50,7 @@ export class Session extends Model<
     type: DataType.DATE,
     allowNull: false,
   })
-  timestamp!: string
+  timestamp!: Date
 
   @Column({
     type: DataType.STRING,
