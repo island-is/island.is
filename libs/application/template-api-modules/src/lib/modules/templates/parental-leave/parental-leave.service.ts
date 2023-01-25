@@ -991,13 +991,20 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           // 1. Period includes personal and transfer rights
           if (maximumMultipleBirthsDaysToSpend === 0) {
+            const fromDate =
+                isFirstPeriod && isActualDateOfBirth && useLength === YES
+                  ? apiConstants.actualDateOfBirthMonths
+                  : isFirstPeriod && isActualDateOfBirth
+                  ? apiConstants.actualDateOfBirth
+                  : period.startDate
+
             // Personal
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
             const personalPeriod = await this.getCalculatedPeriod(
               nationalRegistryId,
               startDate,
-              undefined,
+              fromDate,
               daysLeftOfPersonalRights,
               period,
               basicRightCodePeriod,
