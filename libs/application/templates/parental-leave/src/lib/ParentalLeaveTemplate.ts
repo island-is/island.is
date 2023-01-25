@@ -5,7 +5,6 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import {
   EphemeralStateLifeCycle,
-  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -31,8 +30,6 @@ import {
   SPOUSE,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
   TransferRightsOption,
   SINGLE,
 } from '../constants'
@@ -50,6 +47,7 @@ import {
   getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
+  isParentalGrant,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
@@ -71,16 +69,7 @@ enum Roles {
 }
 
 const determineNameFromApplicationAnswers = (application: Application) => {
-  const applicationType = getValueViaPath(
-    application.answers,
-    'applicationType.option',
-    undefined,
-  ) as string | undefined
-
-  if (
-    applicationType === PARENTAL_GRANT ||
-    applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.nameGrant
   }
 

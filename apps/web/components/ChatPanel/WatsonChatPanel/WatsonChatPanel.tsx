@@ -65,6 +65,9 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           },
         },
       },
+      serviceDesk: {
+        skipConnectAgentCard: true,
+      },
       ...props,
       onLoad: (instance) => {
         watsonInstance.current = instance

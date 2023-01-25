@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -15,14 +14,17 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
-  MockProviderApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
 import { m } from './messages'
 import { assign } from 'xstate'
 import { ApiActions } from '../shared'
-import { ReferenceDataApi, EphemiralApi } from '../dataProviders'
+import {
+  ReferenceDataApi,
+  EphemiralApi,
+  MyMockProvider,
+} from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
 
 const States = {
@@ -120,19 +122,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   },
                 }),
                 UserProfileApi,
-                MockProviderApi.configure({
-                  externalDataId: 'referenceMock',
-                  params: {
-                    mocked: true,
-                    mockObject: {
-                      mockString: 'This is a mocked string',
-                      mockArray: [
-                        'Need to mock providers?',
-                        'Use this handy templateApi',
-                      ],
-                    },
-                  },
-                }),
+                MyMockProvider,
                 EphemiralApi,
               ],
               delete: true,
@@ -182,9 +172,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.createApplication,
-          }),
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.createApplication,
+              order: 1,
+            }),
+            defineTemplateApi({
+              action: 'getAnotherReferenceData',
+              order: 2,
+            }),
+          ],
           status: 'inprogress',
           roles: [
             {
@@ -218,9 +215,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.completeApplication,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.completeApplication,
+            }),
+          ],
           roles: [
             {
               id: Roles.ASSIGNEE,
