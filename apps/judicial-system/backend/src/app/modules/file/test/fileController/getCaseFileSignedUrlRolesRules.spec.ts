@@ -1,5 +1,6 @@
 import {
   assistantRule,
+  defenderRule,
   judgeRule,
   prosecutorRule,
   registrarRule,
@@ -18,8 +19,8 @@ describe('FileController - Get case file signed url rules', () => {
     )
   })
 
-  it('should give permission to five roles', () => {
-    expect(rules).toHaveLength(5)
+  it('should give permission to six roles', () => {
+    expect(rules).toHaveLength(6)
   })
 
   it('should give permission to prosecutors, representatives, judges, registrars and assistants', () => {
@@ -28,5 +29,6 @@ describe('FileController - Get case file signed url rules', () => {
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)
+    expect(rules).toContain(defenderRule)
   })
 })
