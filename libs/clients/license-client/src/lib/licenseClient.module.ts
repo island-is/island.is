@@ -52,4 +52,4 @@ import { LicenseClientService } from './licenseClient.service'
   ],
   exports: [LicenseClientService],
 })
-export class LicenseServiceModule {}
+export class LicenseClientModule {}

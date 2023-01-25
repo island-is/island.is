@@ -1,4 +1,4 @@
-# Clients License Client
+# License Client
 
 This library was generated with [Nx](https://nx.dev).
 
