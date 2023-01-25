@@ -19,7 +19,7 @@ export class ActivitiesProcessor {
   ) {}
 
   @Process(sessionJobName)
-  async handleSessionActivity(job: Job<Session>): Promise<Session> {
-    return await this.sessionsService.create(job.data)
+  handleSessionActivity(job: Job<Session>): Promise<Session> {
+    return this.sessionsService.create(job.data)
   }
 }
