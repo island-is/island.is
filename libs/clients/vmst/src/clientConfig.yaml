@@ -566,7 +566,7 @@ components:
           nullable: true
         type:
           type: string
-          nullable:: true
+          nullable: true
     PaymentInfo:
       type: object
       additionalProperties: false
