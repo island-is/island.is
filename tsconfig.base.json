@@ -411,6 +411,9 @@
       "@island.is/clients/firearm-license": [
         "libs/clients/firearm-license/src/index.ts"
       ],
+      "@island.is/clients/license-client": [
+        "libs/clients/license-client/src/index.ts"
+      ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
       ],
