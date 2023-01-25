@@ -56,5 +56,5 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal')
+    .grantNamespaces('nginx-ingress-internal', 'identity-server')
 }
