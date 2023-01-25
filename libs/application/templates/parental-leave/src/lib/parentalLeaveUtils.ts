@@ -57,7 +57,7 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { isAfter } from 'date-fns'
+import { isAfter, isBefore } from 'date-fns'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -1283,22 +1283,31 @@ export const isParentalGrant = (application: Application) => {
 }
 
 const convertBirthDay = (birthDay: string) => {
+  // Regex check if only decimals are used in the string
   const reg = new RegExp(/^\d+$/)
   const convertedBirthDay = { year: 0, month: 0, date: 0 }
   if (birthDay.length !== 8) return convertedBirthDay
   if (!birthDay.match(reg)) return convertedBirthDay
+  // The string is expected to be yyyymmdd
   const year = Number(birthDay.slice(0, 4))
-  const month = Number(birthDay.slice(4, 6)) + 1
+  // Substract one month to take care of js zero index on dates
+  const month = Number(birthDay.slice(4, 6)) - 1
   const date = Number(birthDay.slice(6, 8))
   return { year, month, date }
 }
 export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
   const convertedBirthDay = convertBirthDay(childBirthDay)
+  // Guard that the method used above did not return 0 0 0
+  if ( convertedBirthDay.date === 0 && convertedBirthDay.month === 0 && convertedBirthDay.year === 0 ) return false
   const birthDay = new Date(
     convertedBirthDay?.year,
     convertedBirthDay.month,
     convertedBirthDay.date,
   )
   const dateToday = new Date()
-  return isAfter(birthDay, dateToday)
+  if (!isAfter(dateToday, birthDay)) return false
+  // Adds 6 months to the birthday
+  const fullPeriod = addMonths(birthDay, 6)
+  if (!isBefore(dateToday, fullPeriod)) return false
+    return true
 }
