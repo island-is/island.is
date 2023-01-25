@@ -1,8 +1,10 @@
-import { Process, Processor } from '@nestjs/bull'
-import { Job } from 'bull'
-import { activitiesQueueName, sessionJobName } from '../activities.config'
-import { SessionsService } from '../sessions/sessions.service'
-import { Session } from '../sessions/session.model'
+import { Job } from 'bull';
+
+import { Process, Processor } from '@nestjs/bull';
+
+import { activitiesQueueName, sessionJobName } from '../activities.config';
+import { Session } from '../sessions/session.model';
+import { SessionsService } from '../sessions/sessions.service';
 
 @Processor(activitiesQueueName)
 export class ActivitiesProcessor {

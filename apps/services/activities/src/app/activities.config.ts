@@ -1,5 +1,6 @@
-import { defineConfig } from '@island.is/nest/config'
-import { z } from 'zod'
+import { z } from 'zod';
+
+import { defineConfig } from '@island.is/nest/config';
 
 export const bullModuleName = 'activities_api_bull_module'
 export const activitiesQueueName = 'activities'

@@ -1,18 +1,12 @@
-import faker from 'faker'
-import request from 'supertest'
-import {
-  getRequestMethod,
-  TestApp,
-  TestEndpointOptions,
-} from '@island.is/testing/nest'
-import {
-  setupWithAuth,
-  setupWithoutAuth,
-  setupWithoutPermission,
-} from '../../../test/setup'
-import { ActivitiesScope } from '@island.is/auth/scopes'
-import { createRandomSession } from '../../../test/session.fixture'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+import faker from 'faker';
+import request from 'supertest';
+
+import { ActivitiesScope } from '@island.is/auth/scopes';
+import { createCurrentUser } from '@island.is/testing/fixtures';
+import { getRequestMethod, TestApp, TestEndpointOptions } from '@island.is/testing/nest';
+
+import { createRandomSession } from '../../../test/session.fixture';
+import { setupWithAuth, setupWithoutAuth, setupWithoutPermission } from '../../../test/setup';
 
 describe('ActivitiesController', () => {
   describe('withAuth', () => {

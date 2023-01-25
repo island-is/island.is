@@ -1,31 +1,19 @@
-import {
-  Body,
-  Controller,
-  ForbiddenException,
-  Get,
-  HttpCode,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
-import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-import { InjectQueue } from '@nestjs/bull'
-import { Queue } from 'bull'
+import { Queue } from 'bull';
 
+import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard, User } from '@island.is/auth-nest-tools';
+import { ActivitiesScope } from '@island.is/auth/scopes';
+import { Audit } from '@island.is/nest/audit';
+import { Documentation } from '@island.is/nest/swagger';
+import { InjectQueue } from '@nestjs/bull';
 import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-  User,
-} from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
-import { Documentation } from '@island.is/nest/swagger'
+    Body, Controller, ForbiddenException, Get, HttpCode, Post, UseGuards
+} from '@nestjs/common';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 
-import { Session } from './session.model'
-import { SessionsService } from './sessions.service'
-import { CreateSessionDto } from './create-session.dto'
-import { ActivitiesScope } from '@island.is/auth/scopes'
-import { activitiesQueueName, sessionJobName } from '../activities.config'
+import { activitiesQueueName, sessionJobName } from '../activities.config';
+import { CreateSessionDto } from './create-session.dto';
+import { Session } from './session.model';
+import { SessionsService } from './sessions.service';
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiSecurity('ias')

@@ -1,14 +1,14 @@
-import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
-import { ConfigModule } from '@nestjs/config'
+import { LoggingModule } from '@island.is/logging';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { SequelizeModule } from '@nestjs/sequelize';
 
-import { ActivitiesProcessor } from './activities.processor'
-import { SequelizeConfigService } from '../../sequelizeConfig.service'
-import { LoggingModule } from '@island.is/logging'
-import { Session } from '../sessions/session.model'
-import { ActivitiesConfig } from '../activities.config'
-import { SessionsService } from '../sessions/sessions.service'
-import { SessionsModule } from '../sessions/sessions.module'
+import { SequelizeConfigService } from '../../sequelizeConfig.service';
+import { ActivitiesConfig } from '../activities.config';
+import { Session } from '../sessions/session.model';
+import { SessionsModule } from '../sessions/sessions.module';
+import { SessionsService } from '../sessions/sessions.service';
+import { ActivitiesProcessor } from './activities.processor';
 
 @Module({
   imports: [

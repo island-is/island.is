@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { User } from '@island.is/auth-nest-tools';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 
-import { User } from '@island.is/auth-nest-tools'
-
-import { Session } from './session.model'
+import { Session } from './session.model';
 
 @Injectable()
 export class SessionsService {
