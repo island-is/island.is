@@ -21487,7 +21487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase-admin@npm:^11.5.0":
+"firebase-admin@npm:11.5.0":
   version: 11.5.0
   resolution: "firebase-admin@npm:11.5.0"
   dependencies:
@@ -25478,7 +25478,7 @@ __metadata:
     express-validator: 6.14.0
     faker: 5.5.3
     fetch-mock: 9.10.7
-    firebase-admin: ^11.5.0
+    firebase-admin: 11.5.0
     folder-hash: 4.0.0
     font-awesome: 4.7.0
     form-data: 3.0.0
