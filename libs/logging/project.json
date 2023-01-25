@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/logging"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "lib:node", "scope:nest", "TODO:splitUp"]
 }
