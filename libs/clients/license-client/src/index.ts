@@ -1,1 +1,1 @@
-export { LicenseClientModule } from './lib/licenseClient.module'
+export * from './lib/licenseClient.module'
