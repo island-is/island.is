@@ -11,7 +11,8 @@ import {
   ResponsiveSpace,
   Text,
 } from '@island.is/island-ui/core'
-import { FormField, FormFieldType } from '@island.is/web/components'
+import { FormField } from '@island.is/web/components'
+import { FormFieldType } from '../../../Form/Form'
 import {
   EmailSignup as EmailSignupSchema,
   EmailSignupInputField,

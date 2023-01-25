@@ -104,6 +104,28 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
   }
 }
 
+export interface IAppUriFields {
+  /** URI */
+  uri: string
+}
+
+export interface IAppUri extends Entry<IAppUriFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'appUri'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IArticleFields {
   /** Content status */
   contentStatus:
@@ -786,6 +808,35 @@ export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
   }
 }
 
+export interface IFeaturedSupportQnAsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** SupportQNAs */
+  supportQNAs?: ISupportQna[] | undefined
+}
+
+export interface IFeaturedSupportQnAs
+  extends Entry<IFeaturedSupportQnAsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredSupportQNAs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFooterItemFields {
   /** Title */
   title: string
@@ -1223,6 +1274,51 @@ export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
     contentType: {
       sys: {
         id: 'groupedMenu'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IHnippTemplateFields {
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** TemplateId */
+  templateId: string
+
+  /** Notification Title */
+  notificationTitle: string
+
+  /** Notification Body */
+  notificationBody: string
+
+  /** Notification Data Copy */
+  notificationDataCopy?: string | undefined
+
+  /** Click Action */
+  clickAction?: string | undefined
+
+  /** Category */
+  category?: 'NEW_DOCUMENT' | 'ISLANDIS_LINK' | undefined
+
+  /** Args */
+  args?: string[] | undefined
+}
+
+/** push notification templates for island.is */
+
+export interface IHnippTemplate extends Entry<IHnippTemplateFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'hnippTemplate'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3550,6 +3646,28 @@ export interface ITellUsAStory extends Entry<ITellUsAStoryFields> {
   }
 }
 
+export interface ITestHnippFieldFields {
+  /** Key */
+  key?: string | undefined
+}
+
+export interface ITestHnippField extends Entry<ITestHnippFieldFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'testHnippField'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -3919,6 +4037,7 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
+  | 'appUri'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -3937,6 +4056,7 @@ export type CONTENT_TYPE =
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
+  | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'
   | 'formField'
@@ -3948,6 +4068,7 @@ export type CONTENT_TYPE =
   | 'genericTagGroup'
   | 'graphCard'
   | 'groupedMenu'
+  | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
   | 'latestNewsSlice'
@@ -4005,6 +4126,7 @@ export type CONTENT_TYPE =
   | 'teamList'
   | 'teamMember'
   | 'tellUsAStory'
+  | 'testHnippField'
   | 'timeline'
   | 'timelineEvent'
   | 'twoColumnText'
