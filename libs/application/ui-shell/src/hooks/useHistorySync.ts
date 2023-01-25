@@ -19,7 +19,7 @@ export const useHistorySync = (
   const navigate = useNavigate()
   const navigationType = useNavigationType()
   const location = useLocation()
-  const urlRef = useRef()
+  const urlRef = useRef<string>()
   urlRef.current = `${location.pathname}${location.search}${location.hash}`
 
   // Set up history state.
@@ -46,7 +46,7 @@ export const useHistorySync = (
     const { historyReason } = lastHistoryState
 
     if (historyReason === 'navigate' || historyReason === 'initial') {
-      navigate(urlRef.current, {
+      navigate(urlRef.current as string, {
         state: lastHistoryState,
         replace: historyReason === 'initial',
       })

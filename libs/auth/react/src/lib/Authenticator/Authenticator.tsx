@@ -37,6 +37,13 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
 
+  if (
+    locationRef.current.pathname !== location.pathname ||
+    locationRef.current.search !== location.search
+  ) {
+    locationRef.current = location
+  }
+
   const signIn = useCallback(
     async function signIn() {
       dispatch({
