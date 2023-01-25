@@ -241,21 +241,23 @@ export interface Lawyer {
 export interface TempCase
   extends Omit<
     Case,
-    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments'
+    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments' | 'parentCase'
   > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
   courtDocuments?: CourtDocument[]
+  parentCase?: TempCase
 }
 
 export interface TempUpdateCase
   extends Omit<
     UpdateCase,
-    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments'
+    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments' | 'parentCase'
   > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
   courtDocuments?: CourtDocument[]
+  parentCase?: TempCase
 }
 
 export interface CourtDocument {
