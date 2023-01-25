@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import {
   render,
   screen,
@@ -59,9 +59,9 @@ const mocks = [
 const wrapper: FC = ({ children }) => (
   <MockedFeatureFlagProvider flags={[Features.delegationsEnabled]}>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <Router>
+      <BrowserRouter>
         <LocaleProvider skipPolyfills>{children}</LocaleProvider>
-      </Router>
+      </BrowserRouter>
     </MockedProvider>
   </MockedFeatureFlagProvider>
 )
