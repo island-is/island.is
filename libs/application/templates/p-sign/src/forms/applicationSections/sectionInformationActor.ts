@@ -4,8 +4,10 @@ import {
   buildTextField,
   buildDateField,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import type { User } from '@island.is/api/domains/national-registry'
+import {
+  Application,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
@@ -27,7 +29,7 @@ export const sectionInformationActor = buildSection({
           disabled: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
-              .data as User
+              .data as NationalRegistryIndividual
             return nationalRegistry.fullName
           },
         }),
@@ -48,8 +50,8 @@ export const sectionInformationActor = buildSection({
           disabled: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
-              .data as User
-            return nationalRegistry.address.streetAddress
+              .data as NationalRegistryIndividual
+            return nationalRegistry?.address?.streetAddress
           },
         }),
         buildTextField({
@@ -60,11 +62,11 @@ export const sectionInformationActor = buildSection({
           disabled: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
-              .data as User
+              .data as NationalRegistryIndividual
             return (
-              nationalRegistry.address.postalCode +
+              nationalRegistry?.address?.postalCode +
               ', ' +
-              nationalRegistry.address.city
+              nationalRegistry?.address?.locality
             )
           },
         }),

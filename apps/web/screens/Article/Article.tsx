@@ -32,6 +32,7 @@ import {
   footerEnabled,
   Stepper,
   stepperUtils,
+  Form,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -609,6 +610,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                         />
                       </Box>
                     ),
+                    Form: (form) => <Form form={form} namespace={namespace} />,
                   },
                 },
                 activeLocale,

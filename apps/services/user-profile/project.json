@@ -122,5 +122,5 @@
     "docker-express": {},
     "service-service-portal-api": {}
   },
-  "tags": []
+  "tags": ["scope:nest"]
 }

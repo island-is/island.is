@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/application/ui-fields"]
     }
   },
-  "tags": []
+  "tags": ["lib:application-system", "scope:application-system"]
 }

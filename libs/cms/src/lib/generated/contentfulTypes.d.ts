@@ -908,6 +908,8 @@ export interface IFormFieldFields {
     | 'acceptTerms'
     | 'email'
     | 'checkboxes'
+    | 'file'
+    | 'nationalId (kennitala)'
 
   /** Required */
   required?: boolean | undefined
@@ -2208,9 +2210,6 @@ export interface IOrganization extends Entry<IOrganizationFields> {
 }
 
 export interface IOrganizationPageFields {
-  /** Tilkynning */
-  tilkynning?: string | undefined
-
   /** Organization */
   organization: IOrganization
 
@@ -2333,9 +2332,6 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
 }
 
 export interface IOrganizationSubpageFields {
-  /** Tilkynning */
-  tilkynning?: string | undefined
-
   /** Organization Page */
   organizationPage: IOrganizationPage
 
@@ -3137,9 +3133,6 @@ export interface IStorySection extends Entry<IStorySectionFields> {
 }
 
 export interface ISubArticleFields {
-  /** Tilkynning */
-  tilkynning?: string | undefined
-
   /** Parent */
   parent: IArticle
 
