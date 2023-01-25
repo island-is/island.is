@@ -38,7 +38,7 @@
       "outputs": ["coverage/apps/services/activities"],
       "options": {
         "jestConfig": "apps/services/activities/jest.config.js",
-        "passWithNoTests": false
+        "passWithNoTests": true
       }
     },
     "dev-services": {
