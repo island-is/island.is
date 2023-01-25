@@ -6,7 +6,7 @@ const { exec } = require('./utils')
  * Because get-files-touched-by.sh cannot get files from nx cache
  * we skip the cache on PR and Push pipelines
  */
-const skipCache = true // process.argv && process.argv[2] === '--skip-cache'
+const skipCache = process.argv && process.argv[2] === '--skip-cache'
 
 /**
  * We need to create this file manually with a dummy content because

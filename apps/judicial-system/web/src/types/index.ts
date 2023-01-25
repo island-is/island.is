@@ -232,6 +232,12 @@ export interface Lawyer {
   nationalId: string
 }
 
+/**
+ * We are in the process of stopping using the Case type and
+ * using the generated Case type from /graphql/schema.tsx instead.
+ * We use this type so that we don't have to migrate all the code
+ * at once and this type will be removed when we are done.
+ */
 export interface TempCase
   extends Omit<
     Case,
