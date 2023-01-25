@@ -2,10 +2,10 @@ import {
   Gender,
   CaseState,
   CaseType,
-  Case,
   CaseOrigin,
 } from '@island.is/judicial-system/types'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   InstitutionType,
   User,

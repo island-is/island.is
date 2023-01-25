@@ -3,11 +3,11 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import {
-  Case,
   CaseFile,
   CaseFileCategory,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
