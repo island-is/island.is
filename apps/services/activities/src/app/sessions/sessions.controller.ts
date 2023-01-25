@@ -23,7 +23,7 @@ import { Documentation } from '@island.is/nest/swagger'
 
 import { Session } from './session.model'
 import { SessionsService } from './sessions.service'
-import { SessionDto } from './session.dto'
+import { CreateSessionDto } from './create-session.dto'
 import { ActivitiesScope } from '@island.is/auth/scopes'
 import { activitiesQueueName, sessionJobName } from '../activities.config'
 
@@ -61,7 +61,7 @@ export class SessionsController {
     response: { status: 202 },
   })
   @Scopes(ActivitiesScope.sessionsWrite)
-  create(@CurrentUser() user: User, @Body() session: SessionDto) {
+  create(@CurrentUser() user: User, @Body() session: CreateSessionDto) {
     const authenticatedUserNationalId =
       user.actor?.nationalId ?? user.nationalId
 
