@@ -388,7 +388,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   id: 'personalAllowance.usage',
                   title:
-                    parentalLeaveFormMessages.personalAllowance.zeroToHundred,
+                    parentalLeaveFormMessages.personalAllowance.oneToHundred,
                   description:
                     parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
@@ -404,7 +404,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                     return usingAsMuchAsPossible && usingPersonalAllowance
                   },
-                  placeholder: '0%',
+                  placeholder: '1%',
                   variant: 'number',
                   width: 'half',
                 }),
@@ -448,7 +448,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
                   title:
-                    parentalLeaveFormMessages.personalAllowance.zeroToHundred,
+                    parentalLeaveFormMessages.personalAllowance.oneToHundred,
                   description:
                     parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
@@ -470,7 +470,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                     return usingAsMuchAsPossible && usingPersonalAllowance
                   },
-                  placeholder: '0%',
+                  placeholder: '1%',
                   variant: 'number',
                   width: 'half',
                 }),
