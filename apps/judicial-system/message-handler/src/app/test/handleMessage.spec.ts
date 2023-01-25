@@ -484,7 +484,7 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
-  describe('send ruling notification', () => {
+  describe('send modified notification', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -495,7 +495,7 @@ describe('MessageHandlerService - Handle message', () => {
       })
     })
 
-    it('should send a ruling notification', async () => {
+    it('should send a modified notification', async () => {
       expect(fetch).toHaveBeenCalledWith(
         `${config.backendUrl}/api/internal/case/${caseId}/notification`,
         {
