@@ -22,12 +22,12 @@ export const InReviewAdditionalDocumentsRequired: Form = buildForm({
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
-      id: 'reviewupload',
+      id: 'reviewUpload',
       title: parentalLeaveFormMessages.attachmentScreen.title,
 
       children: [
         buildCustomField({
-          id: 'AdditionalDocumentsRequired',
+          id: 'additionalDocumentsRequired',
           title: parentalLeaveFormMessages.attachmentScreen.title,
           component: 'InReviewSteps',
         }),

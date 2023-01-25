@@ -49,6 +49,8 @@ const statesMap: StatesMap = {
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
+    [ApplicationStates.ADDITIONAL_DOCUMENT_REQUIRED]:
+      ReviewSectionState.complete,
   },
   employer: {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
@@ -62,8 +64,12 @@ const statesMap: StatesMap = {
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
+    [ApplicationStates.ADDITIONAL_DOCUMENT_REQUIRED]:
+      ReviewSectionState.complete,
   },
   vinnumalastofnun: {
+    [ApplicationStates.ADDITIONAL_DOCUMENT_REQUIRED]:
+      ReviewSectionState.requiresAction,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
       ReviewSectionState.inProgress,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
@@ -253,7 +259,6 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               key={index}
               application={application}
               index={index + 1}
-              totalSteps={steps.length || 0}
               {...step}
             />
           ))}
