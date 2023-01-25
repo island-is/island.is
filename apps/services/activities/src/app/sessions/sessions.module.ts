@@ -47,5 +47,6 @@ if (process.env.INIT_SCHEMA === 'true' || process.env.TESTS === 'true') {
   ],
   controllers: [SessionsController],
   providers: [SessionsService],
+  exports: [BullModule, SessionsService],
 })
 export class SessionsModule {}
