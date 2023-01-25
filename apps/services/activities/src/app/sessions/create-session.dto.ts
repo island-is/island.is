@@ -1,5 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsDate, IsString } from 'class-validator';
+import { IsDateString, IsString } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -16,8 +15,8 @@ export class CreateSessionDto {
   @ApiProperty()
   clientId!: string
 
-  @Type(() => Date)
-  @IsDate()
+  @IsDateString()
+  @ApiProperty()
   timestamp!: Date
 
   @IsString()
