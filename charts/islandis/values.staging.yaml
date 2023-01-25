@@ -1251,6 +1251,7 @@ license-api:
         - host: 'license-api-callback-xrd.staging01.devland.is'
           paths:
             - '/license-api'
+            - '/api/swagger'
   namespace: 'license-api'
   pvcs: []
   replicaCount:
