@@ -28,7 +28,6 @@ import { ActivitiesScope } from '@island.is/auth/scopes'
 import { activitiesQueueName, sessionJobName } from '../activities.config'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes()
 @ApiSecurity('ias')
 @ApiTags('sessions')
 @Controller({
@@ -47,6 +46,7 @@ export class SessionsController {
     description: 'Get all session activity for the authenticated user.',
     response: { status: 200, type: [Session] },
   })
+  @Scopes(ActivitiesScope.main)
   @Audit<Session[]>({
     resources: (sessions) => sessions.map((session) => session.id),
   })

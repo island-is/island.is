@@ -1,4 +1,4 @@
 export enum ActivitiesScope {
-  activitiesRead = '@island.is/activities:read',
+  main = '@island.is/activities',
   sessionsWrite = '@island.is/activities/sessions:write',
 }

@@ -21,7 +21,7 @@ export const openApi = new DocumentBuilder()
           tokenUrl: `${environment.auth.issuer}/connect/token`,
           scopes: {
             openid: 'Default openid scope',
-            [ActivitiesScope.activitiesRead]: 'Access to list all activities.',
+            [ActivitiesScope.main]: 'Access to list all activities.',
             [ActivitiesScope.sessionsWrite]:
               'Access to write sessions activities.',
           },
