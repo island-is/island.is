@@ -134,6 +134,26 @@ export const inheritanceReportSchema = z.object({
       .optional(),
     total: z.number().optional(),
   }),
+
+  /* heirs */
+  heirs: z.object({
+    data: z
+      .object({
+        nationalId: z.string(),
+        heirsName: z.string(),
+        email: z.string(),
+        phone: z.string(),
+        relation: z.string(),
+        heirsPercentage: z.string(),
+        taxFreeInheritance: z.number(),
+        inheritance: z.number(),
+        taxableInheritance: z.number(),
+        inheritanceTax: z.number(),
+      })
+      .array()
+      .optional(),
+    total: z.number().optional(),
+  }),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>
