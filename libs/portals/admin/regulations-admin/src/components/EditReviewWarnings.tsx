@@ -1,4 +1,3 @@
-import { FormatMessage } from '@island.is/cms-translations'
 import { Box, Text, Button, AlertMessage } from '@island.is/island-ui/core'
 import React, { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -8,6 +7,7 @@ import { isDraftErrorFree } from '../state/validations'
 import { Step } from '../types'
 import { useLocale } from '@island.is/localization'
 import { getEditUrl } from '../utils/routing'
+import { MessageDescriptor } from '@formatjs/intl'
 
 type ReviewMessage = {
   label: string
@@ -17,7 +17,10 @@ type ReviewMessage = {
 
 export const useCollectMessages = (
   state: DraftingState,
-  t: FormatMessage,
+  t: /* FormatMessage */ (
+    descriptor: MessageDescriptor | string,
+    values?: Record<string, any>,
+  ) => string,
 ): Array<ReviewMessage> | undefined =>
   useMemo(() => {
     if (isDraftErrorFree(state)) {
