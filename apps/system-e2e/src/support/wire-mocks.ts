@@ -119,7 +119,7 @@ export const addXroadMock = async <Conf>(
         apiPath: string
         prefixType: 'only-base-path'
         method?: HttpMethod
-    },
+      },
 ) => {
   const method = options.method === undefined ? HttpMethod.GET : options.method
   const { envs } = getEnvVariables(
@@ -153,13 +153,13 @@ export const addXroadMock = async <Conf>(
   await mb.createImposter(mockedServices.xroad.imposter)
 }
 
-export const mockNoApplications = ({ page: Page }) => {
+export const mockNoApplications = async (page: Page) => {
   await page.route('https://dog.ceo/api/breeds/list/all', async (route) => {
     const json = {
-      message: { 'test_breed': [] }
-    };
-    await route.fulfill({ json });
-  });
+      message: { test_breed: [] },
+    }
+    await route.fulfill({ json })
+  })
 
   return true
 }
