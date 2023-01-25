@@ -44,6 +44,8 @@ export enum Features {
   servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
+  servicePortalActivitiesModule = 'isServicePortalActivitiesModuleEnabled',
+
 
   // Application delegation flags
   applicationTemplatePublicDeptPaymentPlanAllowDelegation = 'applicationTemplatePublicDeptPaymentPlanAllowDelegation',

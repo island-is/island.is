@@ -1,0 +1,25 @@
+{
+  "root": "libs/service-portal/activities",
+  "sourceRoot": "libs/service-portal/activities/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/activities/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/service-portal/activities"],
+      "options": {
+        "jestConfig": "libs/service-portal/activities/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
