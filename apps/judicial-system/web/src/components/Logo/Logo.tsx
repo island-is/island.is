@@ -28,7 +28,6 @@ const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
   )
   const institutionType = user?.institution?.type
   const isPolice =
-    institutionType !== undefined &&
     institutionType === InstitutionType.ProsecutorsOffice &&
     institutionName !== 'Héraðssaksóknari' &&
     institutionName !== 'Ríkissaksóknari'
