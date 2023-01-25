@@ -27,6 +27,6 @@
       }
     }
   },
-  "tags": [],
+  "tags": ["lib:client", "scope:client"],
   "implicitDependencies": ["services-auth-public-api"]
 }

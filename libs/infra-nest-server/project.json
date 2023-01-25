@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/infra-nest-server"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }

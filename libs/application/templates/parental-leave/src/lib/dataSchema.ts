@@ -43,12 +43,23 @@ export const dataSchema = z.object({
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
+  noPrimaryParent: z.object({
+    questionOne: z.enum([YES, NO]),
+    questionTwo: z.enum([YES, NO]),
+    questionThree: z.enum([YES, NO]),
+    birthDate: z.string(),
+  }),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        return phoneNumber && phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        return (
+          phoneNumber &&
+          phoneNumber.isValid() &&
+          phoneNumberStartStr.some((substr) => p.startsWith(substr))
+        )
       },
       { params: errorMessages.phoneNumber },
     ),
@@ -80,7 +91,12 @@ export const dataSchema = z.object({
     .refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        if (phoneNumber) return phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+          )
         else return true
       },
       { params: errorMessages.phoneNumber },
@@ -136,7 +152,12 @@ export const dataSchema = z.object({
     .refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        if (phoneNumber) return phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+          )
         else return true
       },
       { params: errorMessages.phoneNumber },
