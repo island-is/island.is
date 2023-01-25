@@ -57,6 +57,7 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
+import { isAfter } from 'date-fns'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -1279,4 +1280,25 @@ export const isParentalGrant = (application: Application) => {
     applicationType === PARENTAL_GRANT ||
     applicationType === PARENTAL_GRANT_STUDENTS
   )
+}
+
+const convertBirthDay = (birthDay: string) => {
+  const reg = new RegExp(/^\d+$/)
+  const convertedBirthDay = { year: 0, month: 0, date: 0 }
+  if (birthDay.length !== 8) return convertedBirthDay
+  if (!birthDay.match(reg)) return convertedBirthDay
+  const year = Number(birthDay.slice(0, 4))
+  const month = Number(birthDay.slice(4, 6)) + 1
+  const date = Number(birthDay.slice(6, 8))
+  return { year, month, date }
+}
+export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
+  const convertedBirthDay = convertBirthDay(childBirthDay)
+  const birthDay = new Date(
+    convertedBirthDay?.year,
+    convertedBirthDay.month,
+    convertedBirthDay.date,
+  )
+  const dateToday = new Date()
+  return isAfter(birthDay, dateToday)
 }

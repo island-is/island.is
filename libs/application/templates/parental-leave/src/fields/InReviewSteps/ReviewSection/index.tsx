@@ -3,9 +3,10 @@ import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
+
 
 export enum ReviewSectionState {
   inProgress = 'In progress',
@@ -19,6 +20,7 @@ type ReviewSectionProps = {
   title: string
   description: string
   state?: ReviewSectionState
+  notifyParentComponent?: () => void
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -27,6 +29,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   title,
   description,
   state,
+  notifyParentComponent,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -70,6 +73,18 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Text marginTop={1} variant="default">
             {description}
           </Text>
+          
+          {notifyParentComponent &&
+            <Box>
+              <Button
+                variant="text"
+                icon="arrowForward"
+                onClick={() => notifyParentComponent()}
+                >
+                Open
+              </Button>
+            </Box>
+          }
         </Box>
 
         {state === ReviewSectionState.inProgress && (

@@ -60,6 +60,7 @@ type Events =
   | { type: DefaultEvents.EDIT }
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
   | { type: 'ADDITIONALDOCUMENTREQUIRED' } // Ex: VMST ask for more documents
+  | { type: 'RESIDENCEGRANTAPPLICATION' } // Ex: when the baby is born a parent can apply for resident grant
   | { type: 'CLOSED' } // Ex: Close application
 
 enum Roles {
@@ -510,8 +511,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DraftRequiresAction').then((val) =>
-                  Promise.resolve(val.DraftRequiresAction),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -527,7 +528,41 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.RESIDENCE_GRAND_APPLICATION },
+          ['RESIDENCEGRANTAPPLICATION']: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
+          },
+        },
+      },
+      [States.RESIDENCE_GRAND_APPLICATION]: {
+        entry: 'assignToVMST',
+        meta: {
+          status: 'inprogress',
+          name: States.RESIDENCE_GRAND_APPLICATION,
+          lifecycle: pruneAfterDays(970),
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/NewForm').then((val) =>
+                  Promise.resolve(val.NewForm),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          ['ADDITIONALDOCUMENTREQUIRED']: { target: States.ADDITIONAL_DOCUMENT_REQUIRED },
         },
       },
       // [States.RECEIVED]: {

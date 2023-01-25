@@ -18,6 +18,7 @@ import {
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
+  residentGrantIsOpenForApplication,
 } from '../../lib/parentalLeaveUtils'
 import {
   NO,
@@ -146,6 +147,14 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     })
   }
 
+  if (residentGrantIsOpenForApplication(`${application['answers']['child']}`)) {
+    steps.push({
+      state: ReviewSectionState.inProgress,
+      title: 'Open for application',
+      description: 'Now you can apply for residen grant',
+    })
+  }
+
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
 
@@ -166,6 +175,22 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
 
+  const onNotification = async () => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: 'RESIDENCEGRANTAPPLICATION',
+          answers: application.answers,
+
+        },
+      },
+    })
+    if (res?.data) {
+      // Takes them to the next state (which loads the relevant form)
+      refetch?.()
+    }
+  }
   return (
     <Box marginBottom={10}>
       <Box
@@ -210,6 +235,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
                 )}
             </Button>
           </Box>
+
           {canBeEdited && isUsedAllRights && (
             <Box display="inlineBlock">
               <Button
@@ -255,6 +281,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               application={application}
               index={index + 1}
               {...step}
+              notifyParentComponent={() => onNotification()}
             />
           ))}
         </Box>
