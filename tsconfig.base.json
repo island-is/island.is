@@ -189,9 +189,6 @@
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
       ],
-      "@island.is/application/data-providers": [
-        "libs/application/data-providers/src/index.ts"
-      ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
       ],
@@ -350,6 +347,9 @@
       ],
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
+      ],
+      "@island.is/application/testing": [
+        "libs/application/testing/src/index.ts"
       ],
       "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [

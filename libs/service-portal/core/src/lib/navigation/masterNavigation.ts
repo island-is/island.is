@@ -147,52 +147,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         description: m.educationDescription,
       },
-      {
-        name: m.documentProvider,
-        path: ServicePortalPath.DocumentProviderRoot,
-        icon: {
-          icon: 'receipt',
-        },
-        // The first release will only contain "Skjalaveitur" and only for the project owners.
-        // Therefore 'children' are temporarily disabled to enhance the UX of the owners.
-        // children: [
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-document-providers',
-        //       defaultMessage: 'Skjalaveitendur',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderDocumentProviders,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-my-categories',
-        //       defaultMessage: 'Mínar flokkar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderMyCategories,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-settings',
-        //       defaultMessage: 'Stillingar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderSettingsRoot,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-technical-info',
-        //       defaultMessage: 'Tæknilegar upplýsingar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderTechnicalInfo,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-statistics',
-        //       defaultMessage: 'Tölfræði',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderStatistics,
-        //   },
-        // ],
-      },
 
       // Fasteignir
       {

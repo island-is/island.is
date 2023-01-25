@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Box, Input, ActionCard, Pagination } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { OrganisationPreview } from './DocumentProviders'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
 
 interface Props {
   organisationsPreview: OrganisationPreview[]
@@ -69,7 +69,7 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
                     variant: 'text',
                     onClick: () => {
                       history.push({
-                        pathname: ServicePortalPath.DocumentProviderDocumentProvidersSingle.replace(
+                        pathname: AdminPortalCorePaths.DocumentProviderDocumentProvidersSingle.replace(
                           ':nationalId',
                           nationalId,
                         ),

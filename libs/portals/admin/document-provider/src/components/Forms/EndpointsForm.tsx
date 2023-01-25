@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Stack, Input, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
+import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
 
 export interface EndpointsFormData {
   endpoint: string
@@ -65,7 +65,7 @@ export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
         marginTop={4}
       >
         <Box marginTop={[1, 0]}>
-          <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
+          <Link to={AdminPortalCorePaths.DocumentProviderSettingsRoot}>
             <Button variant="ghost">
               {formatMessage(m.SettingsEditEndPointsBackButton)}
             </Button>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -17,10 +16,11 @@ import { DocumentProviderAdministrativeContactForm } from './DocumentProviderAdm
 import { DocumentProviderHelpDeskForm } from './DocumentProviderHelpDeskForm'
 import { DocumentProviderDashboard } from './DocumentProviderDashboard'
 import { useGetOrganisation } from '../../shared/useGetOrganisation'
+import { PortalModuleComponent } from '@island.is/portals/core'
 //TODO fix breadcrumbs so you can go back to DocmentProviders site
 export const IsFetchingProviderOrganisationContext = React.createContext(false)
 
-const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
+const SingleDocumentProvider: PortalModuleComponent = ({ userInfo }) => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const params = useParams<{ nationalId: string }>()

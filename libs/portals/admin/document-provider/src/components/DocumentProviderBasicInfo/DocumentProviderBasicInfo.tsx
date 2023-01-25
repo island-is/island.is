@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
@@ -11,6 +10,7 @@ import {
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
 
 //Interface will be deleted, when graphql is ready.
 interface Applicant {
@@ -623,7 +623,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
           marginTop={4}
         >
           <Box marginTop={[1, 0]}>
-            <Link to={ServicePortalPath.DocumentProviderDocumentProviders}>
+            <Link to={AdminPortalCorePaths.DocumentProviderRoot}>
               <Button variant="ghost">
                 {formatMessage(m.SingleProviderBackButton)}
               </Button>

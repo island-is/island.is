@@ -8,7 +8,6 @@ import { educationLicenseModule } from '@island.is/service-portal/education-lice
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
 import { financeModule } from '@island.is/service-portal/finance'
 import { petitionsModule } from '@island.is/service-portal/endorsements'
-import { icelandicNamesRegistryModule } from '@island.is/portals-admin-icelandic-names-registry'
 import { informationModule } from '@island.is/service-portal/information'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
@@ -31,7 +30,6 @@ export const modules: PortalModule[] = [
   educationStudentAssessmentModule,
   delegationsModule,
   financeModule,
-  icelandicNamesRegistryModule,
   informationModule,
   personalInformationModule,
   petitionsModule,

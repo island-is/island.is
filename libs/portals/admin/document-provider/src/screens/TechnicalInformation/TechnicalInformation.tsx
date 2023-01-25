@@ -1,10 +1,10 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
+import { PortalModuleComponent } from '@island.is/portals/core'
 
-const TechnicalInformation: ServicePortalModuleComponent = ({ userInfo }) => {
+const TechnicalInformation: PortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
 
   return (

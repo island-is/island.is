@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -13,6 +12,7 @@ import { gql, useQuery } from '@apollo/client'
 import { Organisation } from '@island.is/api/schema'
 import { DocumentProvidersSearch } from './DocumentProvidersSearch'
 import { DocumentProvidersDashboard } from './DocumentProvidersDashboard'
+import { PortalModuleComponent } from '@island.is/portals/core'
 
 export type OrganisationPreview = Pick<
   Organisation,
@@ -29,7 +29,7 @@ const getOrganisationsPreviewQuery = gql`
   }
 `
 
-const DocumentProviders: ServicePortalModuleComponent = () => {
+const DocumentProviders: PortalModuleComponent = () => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const { formatMessage } = useLocale()

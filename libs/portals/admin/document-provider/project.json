@@ -27,5 +27,5 @@
       }
     }
   },
-  "tags": ["lib:react-spa"]
+  "tags": ["scope:portals-admin", "lib:portals-admin"]
 }

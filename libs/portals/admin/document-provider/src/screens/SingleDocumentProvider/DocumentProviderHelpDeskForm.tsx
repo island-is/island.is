@@ -5,7 +5,6 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
 import { Helpdesk } from '@island.is/api/schema'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import {
   useUpdateHelpDesk,
@@ -15,6 +14,7 @@ import {
   useCreateHelpDesk,
   CreateHelpDeskInput,
 } from '../../shared/useCreateHelpDesk'
+import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
 
 interface Props {
   helpDesk?: Helpdesk | null
@@ -127,7 +127,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
           >
             <Box marginTop={[1, 0]}>
               {/* Breytt úr DocumentProviderDocumentProviders -> DocumentProviderRoot tímabundið*/}
-              <Link to={ServicePortalPath.DocumentProviderRoot}>
+              <Link to={AdminPortalCorePaths.DocumentProviderRoot}>
                 <Button variant="ghost">
                   {formatMessage(m.SingleProviderBackButton)}
                 </Button>

@@ -1,13 +1,13 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
 import { TechnicalContactForm } from '../../../components/Forms/TechnicalContactForm'
 import { useGetOrganisation } from '../../../shared/useGetOrganisation'
 import { SettingsFormsLoader } from '../../../components/SettingsFormsLoader'
+import { PortalModuleComponent } from '@island.is/portals/core'
 
-const EditTechnicalContact: ServicePortalModuleComponent = () => {
+const EditTechnicalContact: PortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { organisation } = useGetOrganisation('123456-0000')
 

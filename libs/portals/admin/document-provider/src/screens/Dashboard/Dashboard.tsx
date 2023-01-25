@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+
 import { useLocale } from '@island.is/localization'
 import {
   GridRow,
@@ -14,8 +14,9 @@ import {
   StatisticFormData,
 } from '../../components/Forms/StatisticForm'
 import { m } from '../../lib/messages'
+import { PortalModuleComponent } from '@island.is/portals/core'
 
-const Dashboard: ServicePortalModuleComponent = ({ userInfo }) => {
+const Dashboard: PortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
 
   interface Data {

@@ -4,7 +4,6 @@ import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
-  FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
 import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../../shared'
@@ -13,6 +12,7 @@ import ChildrenInfoMessage from '../ChildrenInfoMessage/ChildrenInfoMessage'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
 import { m } from '../../forms/messages'
+import { FileUploadController } from '@island.is/application/ui-components'
 
 const StatusAndChildren: FC<ReviewFieldProps> = ({
   application,

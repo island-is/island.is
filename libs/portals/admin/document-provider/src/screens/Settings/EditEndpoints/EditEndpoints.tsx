@@ -1,5 +1,4 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
@@ -7,8 +6,9 @@ import {
   EndpointsForm,
   EndpointsFormData,
 } from '../../../components/Forms/EndpointsForm'
+import { PortalModuleComponent } from '@island.is/portals/core'
 
-const EditEndpoints: ServicePortalModuleComponent = ({ userInfo }) => {
+const EditEndpoints: PortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
 
   const submitFormData = async (formData: EndpointsFormData) => {
