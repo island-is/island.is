@@ -24,8 +24,11 @@ import {
   VehiclesClientConfig,
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
-import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
-import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
+import { RegulationsService } from '@island.is/clients/regulations'
+import {
+  RegulationsAdminClientConfig,
+  RegulationsAdminClientService,
+} from '@island.is/clients/regulations-admin'
 
 @Module({
   controllers: [
@@ -46,13 +49,6 @@ import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-adm
     }),
     FinanceClientModule,
     VehiclesClientModule,
-    RegulationsAdminModule.register({
-      baseApiUrl: environment.regulationsAdmin.baseApiUrl,
-      regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
-      presignedKey: environment.regulationsAdmin.presignedKey,
-      publishKey: environment.regulationsAdmin.publishKey,
-      draftKey: environment.regulationsAdmin.draftKey,
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -65,6 +61,20 @@ import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-adm
       ],
     }),
   ],
-  providers: [],
+  providers: [
+    RegulationsAdminClientService,
+    {
+      provide: RegulationsService,
+      // See method doc for disable reason.
+      // eslint-disable-next-line local-rules/no-async-module-init
+      useFactory: async () =>
+        new RegulationsService({
+          url: environment.regulationsAdmin.regulationsApiUrl,
+          presignedKey: environment.regulationsAdmin.presignedKey,
+          publishKey: environment.regulationsAdmin.publishKey,
+          draftKey: environment.regulationsAdmin.draftKey,
+        }),
+    },
+  ],
 })
 export class AppModule {}
