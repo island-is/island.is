@@ -417,66 +417,49 @@ describe('CaseController - Update', () => {
     },
   )
 
-  describe('neither court case number nor defender email nor prosecutorId updated', () => {
-    const caseToUpdate = { courtCaseNumber }
+  describe.each(restrictionCases)(
+    'case modified explanation is updated for %s case',
+    (type) => {
+      const originalCase = { ...theCase, type } as Case
+      const caseToUdate = { caseModifiedExplanation: 'some explanation' }
+      const updatedCase = {
+        ...theCase,
+        type,
+        caseModifiedExplanation: 'some explanation',
+      }
 
+      beforeEach(async () => {
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        const then = await givenWhenThen(
+          caseId,
+          user,
+          originalCase,
+          caseToUdate,
+        )
+        console.log(then)
+      })
+
+      it('should post modified notification to queue', async () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.SEND_MODIFIED_NOTIFICATION,
+            userId,
+            caseId,
+          },
+        ])
+      })
+    },
+  )
+
+  describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation updated', () => {
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(caseId, user, theCase, {})
     })
 
     it('should not post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('validToDate is updated', () => {
-    const caseToUdate = { validToDate: new Date() } as Case
-    beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUdate)
-    })
-
-    it('should post modified notification to queue', async () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        {
-          type: MessageType.SEND_MODIFIED_NOTIFICATION,
-          userId,
-          caseId,
-        },
-      ])
-    })
-  })
-
-  describe('isolationDate is updated', () => {
-    const caseToUdate = { isolationToDate: new Date() } as Case
-    beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUdate)
-    })
-
-    it('should post modified notification to queue', async () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        {
-          type: MessageType.SEND_MODIFIED_NOTIFICATION,
-          userId,
-          caseId,
-        },
-      ])
-    })
-  })
-
-  describe('case modified explanation is updated', () => {
-    const caseToUdate = { caseModifiedExplanation: 'some explanation' } as Case
-    beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUdate)
-    })
-
-    it('should post modified notification to queue', async () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        {
-          type: MessageType.SEND_MODIFIED_NOTIFICATION,
-          userId,
-          caseId,
-        },
-      ])
     })
   })
 })

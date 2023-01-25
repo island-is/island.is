@@ -31,6 +31,7 @@ import {
   CaseTransition,
   completedCaseStates,
   isIndictmentCase,
+  isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -522,6 +523,7 @@ export class CaseService {
     }
 
     if (
+      isRestrictionCase(theCase.type) &&
       updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
     ) {
       // Case to dates modified
