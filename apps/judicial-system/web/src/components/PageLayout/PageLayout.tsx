@@ -14,11 +14,7 @@ import {
   Text,
   LinkV2,
 } from '@island.is/island-ui/core'
-import {
-  UserRole,
-  isIndictmentCase,
-  User,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   Sections,
   TempCase as Case,
@@ -27,6 +23,10 @@ import {
   sections as formStepperSections,
   pageLayout,
 } from '@island.is/judicial-system-web/messages'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -207,26 +207,26 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.ADMIN
+        user?.role === UserRole.Admin
           ? formatMessage(pageLayout.adminRole.alertTitle)
-          : user?.role === UserRole.DEFENDER
+          : user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.ADMIN
+        user?.role === UserRole.Admin
           ? formatMessage(pageLayout.adminRole.alertMessage)
-          : user?.role === UserRole.DEFENDER
+          : user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
       link={
-        user?.role === UserRole.DEFENDER
+        user?.role === UserRole.Defender
           ? undefined
           : {
               href:
-                user?.role === UserRole.ADMIN
+                user?.role === UserRole.Admin
                   ? constants.USERS_ROUTE
                   : constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',
