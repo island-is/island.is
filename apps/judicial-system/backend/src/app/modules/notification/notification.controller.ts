@@ -82,6 +82,7 @@ export class NotificationController {
       [
         NotificationType.HEADS_UP,
         NotificationType.READY_FOR_COURT,
+        NotificationType.RECEIVED_BY_COURT,
         NotificationType.COURT_DATE,
       ].includes(notification.type)
     ) {

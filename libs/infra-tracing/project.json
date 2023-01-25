@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/infra-tracing"]
     }
   },
-  "tags": []
+  "tags": ["scope:js", "lib:js"]
 }
