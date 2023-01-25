@@ -5,8 +5,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Contact, Helpdesk, Organisation, ProviderStatistics } from '../models'
