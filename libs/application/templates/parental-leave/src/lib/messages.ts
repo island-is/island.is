@@ -355,7 +355,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     noPrimaryParentLabel: {
       id: 'pl.application:no.primary.parent.label',
       defaultMessage: 'Viltu sækja um Faðir án móður umsókn?',
-      description: 'Faðir without mother',
+      description: 'Do you want to apply for Father without mother application?',
     },
     rightsSection: {
       id: 'pl.application:rights.section',
@@ -1870,7 +1870,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     parentWithoutBirthParentTitle: {
       id: 'pl.application:attachmentscreen.parent.without.birth.parent.title',
       defaultMessage: 'Staðfesting',
-      description: 'father withouy mother title',
+      description: 'Confirmation',
     },
     parentWithoutBirthParentDescription: {
       id:
