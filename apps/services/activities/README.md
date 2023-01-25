@@ -49,7 +49,6 @@ To make updates to the database you need to create a new migration file. To do t
 yarn nx run services-activities:migration-create -- --name <migration-name>
 ```
 
-
 ## Code owners and maintainers
 
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
