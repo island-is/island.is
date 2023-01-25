@@ -242,7 +242,11 @@ export interface TempCase
   courtDocuments?: CourtDocument[]
 }
 
-export interface TempUpdateCase extends Omit<UpdateCase, 'courtDocuments'> {
+export interface TempUpdateCase
+  extends Omit<
+    UpdateCase,
+    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments'
+  > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
   courtDocuments?: CourtDocument[]
