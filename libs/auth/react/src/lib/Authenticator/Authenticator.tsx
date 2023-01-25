@@ -30,19 +30,13 @@ const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
 }
 
 export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
-  const location = useLocation()
-  const locationRef = useRef(location)
   const reducerInstance = useReducer(reducer, initialState)
   const [state, dispatch] = reducerInstance
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
-
-  if (
-    locationRef.current.pathname !== location.pathname ||
-    locationRef.current.search !== location.search
-  ) {
-    locationRef.current = location
-  }
+  const location = useLocation()
+  const locationRef = useRef(location)
+  locationRef.current = location
 
   const signIn = useCallback(
     async function signIn() {
