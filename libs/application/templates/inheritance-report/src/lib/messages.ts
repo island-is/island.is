@@ -413,8 +413,8 @@ export const m = defineMessages({
     defaultMessage: 'Útgefandi og fjárhæð með vöxtum.',
     description: '',
   },
-  claimsPublisher: {
-    id: 'ir.application:claimsPublisher',
+  claimsIssuer: {
+    id: 'ir.application:claimsIssuer',
     defaultMessage: 'Útgefandi',
     description: '',
   },

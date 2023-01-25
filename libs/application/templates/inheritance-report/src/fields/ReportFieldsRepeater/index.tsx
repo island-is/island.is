@@ -138,7 +138,7 @@ export const ReportFieldsRepeater: FC<
     }
   }, [props, fields, append])
 
-  const calculateTotal = (input: any, index: any) => {
+  const calculateTotal = (input: any, index: number) => {
     const arr = valueArray
     if (input === '') {
       arr.splice(index, 1)
