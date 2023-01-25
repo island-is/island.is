@@ -144,4 +144,15 @@ export class DrivingLicenseBookService {
     this.logger.debug(`driving-license-book: Get types for driving schools`)
     return await this.drivingLicenseBookClientApiFactory.getSchoolTypes()
   }
+
+  async allowPracticeDriving(
+    user: User,
+    student: DrivingLicenseBookStudentInput,
+  ) {
+    this.logger.debug(`driving-license-book: Allow practice driving`)
+    return await this.drivingLicenseBookClientApiFactory.allowPracticeDriving({
+      teacherNationalId: user.nationalId,
+      studentNationalId: student.nationalId,
+    })
+  }
 }

@@ -334,7 +334,6 @@ export function formatPrisonCourtDateEmailNotification(
     notifications.prisonCourtDateEmail.requestText,
     {
       caseType: type,
-      accusedName: accusedName ?? 'NONE',
       gender: accusedGender,
       requestedValidToDateText,
     },

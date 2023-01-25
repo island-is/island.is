@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/api-catalogue/elastic"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }
