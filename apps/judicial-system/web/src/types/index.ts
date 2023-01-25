@@ -1,8 +1,9 @@
 import {
   Institution,
   User,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, UpdateCase } from '@island.is/judicial-system/types'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -232,7 +233,22 @@ export interface Lawyer {
 }
 
 export interface TempCase
-  extends Omit<Case, 'sharedWithProsecutorsOffice' | 'court'> {
+  extends Omit<
+    Case,
+    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments'
+  > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
+  courtDocuments?: CourtDocument[]
+}
+
+export interface TempUpdateCase extends Omit<UpdateCase, 'courtDocuments'> {
+  sharedWithProsecutorsOffice?: Institution
+  court?: Institution
+  courtDocuments?: CourtDocument[]
+}
+
+export interface CourtDocument {
+  name: string
+  submittedBy: UserRole
 }

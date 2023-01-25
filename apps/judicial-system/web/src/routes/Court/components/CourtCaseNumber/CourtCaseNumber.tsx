@@ -2,8 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { CaseState, isIndictmentCase } from '@island.is/judicial-system/types'
-import type { UpdateCase } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {

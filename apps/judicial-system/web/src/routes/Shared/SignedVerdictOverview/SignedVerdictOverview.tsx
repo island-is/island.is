@@ -17,7 +17,6 @@ import {
   SignatureConfirmationResponse,
   CaseAppealDecision,
   isAcceptingCaseDecision,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -49,6 +48,7 @@ import {
   ReactSelectOption,
   Sections,
   TempCase as Case,
+  TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 import {
   Box,

@@ -11,12 +11,12 @@ import type {
   CaseState,
   CaseType,
   SessionArrangements,
-  CourtDocument,
   CaseOrigin,
   SubpoenaType,
   IndictmentSubtypeMap,
   CrimeSceneMap,
 } from '@island.is/judicial-system/types'
+import { CourtDocument } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
 import { Institution } from '../../institution'

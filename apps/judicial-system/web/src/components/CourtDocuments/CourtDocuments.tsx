@@ -12,11 +12,11 @@ import Select, {
 } from 'react-select'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
 import {
   TempCase as Case,
   ReactSelectOption,
+  CourtDocument,
 } from '@island.is/judicial-system-web/src/types'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
