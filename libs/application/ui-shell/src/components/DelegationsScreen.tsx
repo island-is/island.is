@@ -20,7 +20,7 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 import { LoadingShell } from './LoadingShell'
 import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
@@ -42,7 +42,7 @@ export const DelegationsScreen = ({
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
   const { switchUser, userInfo: user } = useAuth()
-  const history = useHistory()
+  const navigate = useNavigate()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
   // Check for user delegations if application supports delegations
@@ -171,7 +171,7 @@ export const DelegationsScreen = ({
 
   const handleClick = (nationalId?: string) => {
     if (screenData.screenType !== ScreenType.ONGOING) {
-      history.push('?delegationChecked=true')
+      navigate('?delegationChecked=true')
     }
     if (nationalId) {
       switchUser(nationalId)
@@ -183,7 +183,8 @@ export const DelegationsScreen = ({
   const screenTexts = {
     title: formatMessage(
       screenData.screenType === ScreenType.ONGOING
-        ? coreDelegationsMessages.delegationScreenTitleForOngoingApplication
+        ? screenData.templateName ||
+            coreDelegationsMessages.delegationScreenTitleForOngoingApplication
         : screenData.screenType === ScreenType.NEW
         ? coreDelegationsMessages.delegationScreenTitle
         : coreDelegationsMessages.delegationScreenTitleApplicationNoDelegationSupport,

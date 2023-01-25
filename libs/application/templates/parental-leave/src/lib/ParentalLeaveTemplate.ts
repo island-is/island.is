@@ -5,7 +5,6 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import {
   EphemeralStateLifeCycle,
-  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -17,6 +16,8 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 
 import {
@@ -29,9 +30,8 @@ import {
   SPOUSE,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
   TransferRightsOption,
+  SINGLE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -47,7 +47,10 @@ import {
   getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
+  isParentalGrant,
+  isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -67,16 +70,7 @@ enum Roles {
 }
 
 const determineNameFromApplicationAnswers = (application: Application) => {
-  const applicationType = getValueViaPath(
-    application.answers,
-    'applicationType.option',
-    undefined,
-  ) as string | undefined
-
-  if (
-    applicationType === PARENTAL_GRANT ||
-    applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.nameGrant
   }
 
@@ -108,6 +102,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
+            externalDataId: 'noPrimaryChildren',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -124,6 +123,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [UserProfileApi, GetPersonInformation, ChildrenApi],
             },
           ],
         },
@@ -134,6 +134,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         entry: 'clearAssignees',
         exit: [
+          'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
           'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
           'setUnionValuesIfUseUnionIsNO',
@@ -153,10 +154,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.25,
-          onExit: {
-            apiModuleAction: ApiModuleActions.validateApplication,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -200,10 +201,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignOtherParent,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignOtherParent,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -272,11 +273,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -304,10 +304,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -352,7 +352,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -402,11 +407,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -435,11 +439,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.sendApplication,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -645,10 +649,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
-          onExit: {
-            apiModuleAction: ApiModuleActions.validateApplication,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -697,10 +701,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -752,7 +756,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -811,11 +820,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -854,11 +862,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.sendApplication,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -980,6 +988,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      clearOtherParentDataIfSelectedNo: assign((context) => {
+        const { application } = context
+        const { otherParent } = getApplicationAnswers(application.answers)
+        if (otherParent === NO || otherParent === SINGLE) {
+          unset(application.answers, 'otherParentEmail')
+          unset(application.answers, 'otherParentPhoneNumber')
+          unset(application.answers, 'requestRights')
+          unset(application.answers, 'giveRights')
+          unset(application.answers, 'transferRights')
+          unset(application.answers, 'personalAllowanceFromSpouse')
+          unset(application.answers, 'otherParentRightOfAccess')
+        }
+        return context
+      }),
       setOtherParentIdIfSelectedSpouse: assign((context) => {
         const { application } = context
 
@@ -1001,12 +1023,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
         const { application } = context
+        const { usePersonalAllowance } = getApplicationAnswers(
+          application.answers,
+        )
 
-        const answers = getApplicationAnswers(application.answers)
-
-        if (answers.usePersonalAllowance === NO) {
+        if (usePersonalAllowance === NO) {
           if (application.answers.personalAllowance) {
-            unset(application.answers, 'personalAllowance')
+            unset(application.answers, 'personalAllowance.useAsMuchAsPossible')
+            unset(application.answers, 'personalAllowance.usage')
           }
         }
 
@@ -1014,12 +1038,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
         const { application } = context
+        const { usePersonalAllowanceFromSpouse } = getApplicationAnswers(
+          application.answers,
+        )
 
-        const answers = getApplicationAnswers(application.answers)
-
-        if (answers.usePersonalAllowanceFromSpouse === NO) {
+        if (usePersonalAllowanceFromSpouse === NO) {
           if (application.answers.personalAllowanceFromSpouse) {
-            unset(application.answers, 'personalAllowanceFromSpouse')
+            unset(
+              application.answers,
+              'personalAllowanceFromSpouse.useAsMuchAsPossible',
+            )
+            unset(application.answers, 'personalAllowanceFromSpouse.usage')
           }
         }
 
@@ -1174,7 +1203,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers, externalData } = application
         const selectedChild = getSelectedChild(answers, externalData)
 
-        if (!selectedChild) {
+        if (!selectedChild || isParentWithoutBirthParent(application.answers)) {
           return context
         }
 

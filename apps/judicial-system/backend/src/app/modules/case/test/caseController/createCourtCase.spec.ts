@@ -3,10 +3,14 @@ import { Op, Transaction } from 'sequelize'
 
 import {
   CaseFileCategory,
+  CaseFileState,
   CaseState,
   CaseType,
+  indictmentCases,
   IndictmentSubtype,
+  investigationCases,
   isIndictmentCase,
+  restrictionCases,
   User as TUser,
 } from '@island.is/judicial-system/types'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
@@ -15,7 +19,7 @@ import { randomEnum } from '../../../../test'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { CourtService } from '../../../court'
 import { Case } from '../../models/case.model'
-import { defendantsOrder, includes } from '../../case.service'
+import { order, include } from '../../case.service'
 
 interface Then {
   result: Case
@@ -29,6 +33,10 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Create court case', () => {
+  const userId = uuid()
+  const user = { id: userId } as TUser
+  const courtCaseNumber = uuid()
+
   let mockMessageService: MessageService
   let mockCourtService: CourtService
   let transaction: Transaction
@@ -54,6 +62,11 @@ describe('CaseController - Create court case', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
+    const mockCreateCourtCase = mockCourtService.createCourtCase as jest.Mock
+    mockCreateCourtCase.mockResolvedValue(courtCaseNumber)
+    const mockUpdate = mockCaseModel.update as jest.Mock
+    mockUpdate.mockResolvedValue([1])
+
     givenWhenThen = async (caseId: string, user: TUser, theCase: Case) => {
       const then = {} as Then
 
@@ -72,7 +85,6 @@ describe('CaseController - Create court case', () => {
   })
 
   describe('court case created', () => {
-    const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
     const policeCaseNumber = uuid()
@@ -91,9 +103,20 @@ describe('CaseController - Create court case', () => {
       indictmentSubtypes,
       courtId,
     } as Case
+    const returnedCase = {
+      id: caseId,
+      policeCaseNumbers,
+      indictmentSubtypes,
+      courtId,
+      courtCaseNumber,
+    } as Case
+    let then: Then
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase)
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      then = await givenWhenThen(caseId, user, theCase)
     })
 
     it('should create a court case', () => {
@@ -107,20 +130,6 @@ describe('CaseController - Create court case', () => {
         indictmentSubtypes,
       )
     })
-  })
-
-  describe('court case number updated', () => {
-    const user = {} as TUser
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
-    const courtCaseNumber = uuid()
-
-    beforeEach(async () => {
-      const mockCreateCourtCase = mockCourtService.createCourtCase as jest.Mock
-      mockCreateCourtCase.mockResolvedValueOnce(courtCaseNumber)
-
-      await givenWhenThen(caseId, user, theCase)
-    })
 
     it('should update the court case number', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
@@ -128,24 +137,11 @@ describe('CaseController - Create court case', () => {
         { where: { id: caseId }, transaction },
       )
     })
-  })
-
-  describe('case lookup', () => {
-    const user = {} as TUser
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
-
-    beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
-
-      await givenWhenThen(caseId, user, theCase)
-    })
 
     it('should lookup the updated case', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        include: includes,
-        order: [defendantsOrder],
+        include,
+        order,
         where: {
           id: caseId,
           isArchived: false,
@@ -153,38 +149,96 @@ describe('CaseController - Create court case', () => {
         },
       })
     })
-  })
-
-  describe('case returned', () => {
-    const user = {} as TUser
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
-    const returnedCase = { id: caseId } as Case
-    let then: Then
-
-    beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(returnedCase)
-
-      then = await givenWhenThen(caseId, user, theCase)
-    })
 
     it('should return the case', () => {
       expect(then.result).toBe(returnedCase)
     })
+  })
 
-    it('should post to queue', () => {
-      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.DELIVER_REQUEST_TO_COURT,
-        caseId,
-      })
+  describe('court case received', () => {
+    const caseId = uuid()
+    const type = randomEnum(CaseType)
+    const courtId = uuid()
+    const theCase = {
+      id: caseId,
+      type,
+      state: CaseState.SUBMITTED,
+      courtId,
+    } as Case
+    const returnedCase = {
+      id: caseId,
+      courtId,
+      courtCaseNumber,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should update the court case number', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        { state: CaseState.RECEIVED, courtCaseNumber },
+        { where: { id: caseId }, transaction },
+      )
     })
   })
 
-  describe('indictment case queued', () => {
-    const user = {} as TUser
+  describe.each([...restrictionCases, ...investigationCases])(
+    '%s case queued',
+    (type) => {
+      const defendantId1 = uuid()
+      const defendantId2 = uuid()
+      const caseId = uuid()
+      const theCase = {
+        id: caseId,
+      } as Case
+      const returnedCase = {
+        id: caseId,
+        type,
+        defendants: [{ id: defendantId1 }, { id: defendantId2 }],
+        courtCaseNumber,
+      } as Case
+
+      beforeEach(async () => {
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(returnedCase)
+
+        await givenWhenThen(caseId, user, theCase)
+      })
+
+      it('should post to queue', () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.DELIVER_REQUEST_TO_COURT,
+            userId,
+            caseId,
+          },
+          {
+            type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            userId,
+            caseId,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
+            caseId,
+            defendantId: defendantId1,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
+            caseId,
+            defendantId: defendantId2,
+          },
+        ])
+      })
+    },
+  )
+
+  describe.each(indictmentCases)('%s case queued', (type) => {
     const caseId = uuid()
     const policeCaseNumber1 = uuid()
     const policeCaseNumber2 = uuid()
@@ -192,24 +246,56 @@ describe('CaseController - Create court case', () => {
     const indictmentId = uuid()
     const criminalRecordId = uuid()
     const costBreakdownId = uuid()
+    const uncategorisedId = uuid()
     const theCase = {
       id: caseId,
     } as Case
     const returnedCase = {
       id: caseId,
-      type: CaseType.INDICTMENT,
+      type,
       policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
       caseFiles: [
-        { id: coverLetterId, category: CaseFileCategory.COVER_LETTER },
-        { id: indictmentId, category: CaseFileCategory.INDICTMENT },
-        { id: criminalRecordId, category: CaseFileCategory.CRIMINAL_RECORD },
-        { id: costBreakdownId, category: CaseFileCategory.COST_BREAKDOWN },
+        {
+          id: coverLetterId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.COVER_LETTER,
+        },
+        {
+          id: indictmentId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.INDICTMENT,
+        },
+        {
+          id: criminalRecordId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.CRIMINAL_RECORD,
+        },
+        {
+          id: costBreakdownId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.COST_BREAKDOWN,
+        },
+        {
+          id: uncategorisedId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.CASE_FILE,
+        },
+        {
+          id: uuid(),
+          key: uuid(),
+          state: CaseFileState.STORED_IN_COURT,
+          category: CaseFileCategory.CASE_FILE,
+        },
       ],
+      courtCaseNumber,
     } as Case
 
     beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
@@ -219,41 +305,57 @@ describe('CaseController - Create court case', () => {
     it('should post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
+          type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+          userId,
+          caseId: theCase.id,
+        },
+        {
           type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          userId,
           caseId,
           policeCaseNumber: policeCaseNumber1,
         },
         {
           type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          userId,
           caseId,
           policeCaseNumber: policeCaseNumber2,
         },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
           caseId,
           caseFileId: coverLetterId,
         },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
           caseId,
           caseFileId: indictmentId,
         },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
           caseId,
           caseFileId: criminalRecordId,
         },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
           caseId,
           caseFileId: costBreakdownId,
+        },
+        {
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
+          caseId,
+          caseFileId: uncategorisedId,
         },
       ])
     })
   })
 
   describe('court case number update fails', () => {
-    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     let then: Then
@@ -272,14 +374,11 @@ describe('CaseController - Create court case', () => {
   })
 
   describe('case lookup fails', () => {
-    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockRejectedValueOnce(new Error('Some error'))
 

@@ -20,8 +20,10 @@ import {
   Vehicles,
   AdrAndMachine,
   Firearm,
+  DisabilityLicense,
   VehicleServiceFjsV1,
   TransportAuthority,
+  ChargeFjsV2,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -158,10 +160,16 @@ export const serviceSetup = (services: {
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
       NO_UPDATE_NOTIFIER: 'true',
+      FISKISTOFA_ZENTER_CLIENT_ID: '1114',
+      SOFFIA_SOAP_URL: {
+        dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
+        staging: ref((h) => h.svc('https://soffiaprufa.skra.is')),
+        prod: ref((h) => h.svc('https://soffia2.skra.is')),
+        local: ref((h) => h.svc('https://localhost:8443')),
+      },
     })
 
     .secrets({
-      SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
       DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL',
       DOCUMENT_PROVIDER_BASE_PATH_TEST:
@@ -201,9 +209,12 @@ export const serviceSetup = (services: {
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
+      TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID',
+      DISABILITY_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID',
       MACHINE_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
@@ -216,6 +227,8 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
       FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL',
       FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD',
+      FISKISTOFA_ZENTER_CLIENT_PASSWORD:
+        '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD',
       FISKISTOFA_API_URL: '/k8s/api/FISKISTOFA_API_URL',
       FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET',
@@ -233,6 +246,7 @@ export const serviceSetup = (services: {
     .xroad(
       AdrAndMachine,
       Firearm,
+      DisabilityLicense,
       Base,
       Client,
       HealthInsurance,
@@ -253,6 +267,7 @@ export const serviceSetup = (services: {
       Passports,
       VehicleServiceFjsV1,
       TransportAuthority,
+      ChargeFjsV2,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

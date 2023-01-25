@@ -10,11 +10,11 @@ import {
 import {
   expectMatchingDelegations,
   findExpectedDelegationModels,
+  FixtureFactory,
 } from '@island.is/services/auth/testing'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
-import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { setupWithAuth } from '../../../../test/setup'
 import {
   testCompanyActorNationalId,
@@ -411,8 +411,8 @@ describe('MeDelegationController company filters', () => {
     server = request(app.getHttpServer())
     factory = new FixtureFactory(app)
 
-    await Object.values(testDomains).map((domain) =>
-      factory.createDomain(domain),
+    await Promise.all(
+      Object.values(testDomains).map((domain) => factory.createDomain(domain)),
     )
 
     delegations = Object.fromEntries(
@@ -468,6 +468,26 @@ describe('MeDelegationController company filters', () => {
     // Assert
     expect(res.status).toEqual(200)
     expect(res.body).toEqual([])
+  })
+
+  it('GET /v1/me/delegations?domain=domainName with X-Query-OtherUser should return 400 when actor searches for self', async () => {
+    // Act
+    const res = await server
+      .get(
+        `/v1/me/delegations?domain=${delegations.actorDelegation.domainName}`,
+      )
+      .set('X-Query-OtherUser', delegations.actorDelegation.toNationalId)
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "Cannot fetch delegations for yourself as actor.",
+        "status": 400,
+        "title": "Bad Request",
+        "type": "https://httpstatuses.org/400",
+      }
+    `)
   })
 
   it('POST /v1/me/delegations should return 400 when creating delegation to actor', async () => {

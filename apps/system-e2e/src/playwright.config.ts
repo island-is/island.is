@@ -1,6 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
-import { devices } from '@playwright/test'
 import './addons'
+import { urls } from './support/urls'
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -35,7 +36,10 @@ const config: PlaywrightTestConfig = {
         ['line'],
         [
           'playwright-tesults-reporter',
-          { 'tesults-target': process.env.TESULTS_TOKEN },
+          {
+            'tesults-target': process.env.TESULTS_TOKEN,
+            'tesults-build-name': process.env.COMMIT_INFO ?? 'unknown',
+          },
         ],
         ['html', { open: 'never' }],
       ]
@@ -46,7 +50,7 @@ const config: PlaywrightTestConfig = {
     actionTimeout: 15 * 1000,
     navigationTimeout: 30 * 1000,
     /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL: urls.islandisBaseUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
@@ -105,7 +109,7 @@ const config: PlaywrightTestConfig = {
   // ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  outputDir: 'test-results/',
+  outputDir: 'dist/test-results/',
 
   /* Run your local dev server before starting the tests */
   // webServer: {

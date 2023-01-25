@@ -1,5 +1,22 @@
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { DistrictsProvider } from './DistrictsProvider'
-export { FeeInfoProvider } from './FeeInfoProvider'
-export { IdentityDocumentProvider } from './IdentityDocumentProvider'
+import {
+  defineTemplateApi,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
+export {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  MockProviderApi,
+  DistrictsApi,
+} from '@island.is/application/types'
+
+export const IdentityDocumentApi = defineTemplateApi({
+  action: 'identityDocument',
+})
+
+export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: SYSLUMADUR_NATIONAL_ID,
+  },
+  externalDataId: 'payment',
+})

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
@@ -20,12 +20,9 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   Case,
-  CaseState,
-  CaseTransition,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -61,9 +58,6 @@ const ReceptionAndAssignment = () => {
   const {
     createCourtCase,
     isCreatingCourtCase,
-    transitionCase,
-    isTransitioningCase,
-    sendNotification,
     setAndSendCaseToServer,
   } = useCase()
 
@@ -75,21 +69,6 @@ const ReceptionAndAssignment = () => {
     },
   )
 
-  const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
-    if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
-      // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-      const received = await transitionCase(
-        { ...workingCase, courtCaseNumber },
-        CaseTransition.RECEIVE,
-        setWorkingCase,
-      )
-
-      if (received) {
-        sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
-      }
-    }
-  }
-
   const handleCreateCourtCase = async (workingCase: Case) => {
     const courtCaseNumber = await createCourtCase(
       workingCase,
@@ -99,7 +78,6 @@ const ReceptionAndAssignment = () => {
 
     if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
-      receiveCase(workingCase, courtCaseNumber)
     }
   }
 
@@ -125,10 +103,10 @@ const ReceptionAndAssignment = () => {
 
   const getNextRoute = () => {
     return isRestrictionCase(workingCase.type)
-      ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
+      ? constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE
       : isInvestigationCase(workingCase.type)
-      ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
-      : `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`
+      ? constants.INVESTIGATION_CASE_OVERVIEW_ROUTE
+      : constants.INDICTMENTS_SUBPOENA_ROUTE
   }
 
   const getActiveSubSection = () => {
@@ -138,6 +116,12 @@ const ReceptionAndAssignment = () => {
         RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
   }
 
+  const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -145,6 +129,8 @@ const ReceptionAndAssignment = () => {
       activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.shared.receptionAndAssignment)}
@@ -170,7 +156,6 @@ const ReceptionAndAssignment = () => {
             setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
             handleCreateCourtCase={handleCreateCourtCase}
             isCreatingCourtCase={isCreatingCourtCase}
-            receiveCase={receiveCase}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -191,8 +176,8 @@ const ReceptionAndAssignment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
-          nextUrl={getNextRoute()}
-          nextIsDisabled={!isReceptionAndAssignmentStepValid(workingCase)}
+          onNextButtonClick={() => handleNavigationTo(getNextRoute())}
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
     </PageLayout>

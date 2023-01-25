@@ -24,7 +24,7 @@ export const propertiesFields = [
       cards: ({ externalData }: Application) =>
         (
           (externalData.syslumennOnEntry.data as { estate: EstateRegistrant })
-            ?.estate.assets ?? []
+            ?.estate?.assets ?? []
         ).map((asset: EstateAsset) => ({
           title: asset.description,
           description: [asset.assetNumber],
@@ -48,7 +48,7 @@ export const propertiesFields = [
       cards: ({ externalData }: Application) =>
         (
           (externalData.syslumennOnEntry.data as { estate: EstateRegistrant })
-            ?.estate.vehicles ?? []
+            ?.estate?.vehicles ?? []
         ).map((vehicle: EstateAsset) => ({
           title: vehicle.description,
           description: [vehicle.assetNumber],

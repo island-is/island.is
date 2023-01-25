@@ -17,16 +17,16 @@ import {
   FormModes,
   DefaultEvents,
   Application,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
-import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
-import { dataCollection } from './sharedSections/dataCollection'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import { dataCollection } from './sharedSections/dataCollection'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -122,7 +122,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
+                        .nationalRegistry.data as NationalRegistryIndividual
                       return nationalRegistry.fullName ?? ''
                     },
                   }),
@@ -205,8 +205,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.address.streetAddress
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry?.address?.streetAddress
                     },
                   }),
                   buildTextField({
@@ -217,8 +217,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.citizenship.code
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry?.citizenship?.code
                     },
                   }),
                   buildTextField({

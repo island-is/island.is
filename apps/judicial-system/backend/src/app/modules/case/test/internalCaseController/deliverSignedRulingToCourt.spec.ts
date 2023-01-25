@@ -3,8 +3,9 @@ import { uuid } from 'uuidv4'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
+import { User } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
+import { Case } from '../../models/case.model'
 
 interface Then {
   result: DeliverResponse
@@ -14,6 +15,9 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver signed ruling to court', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockCourtService: CourtService
   let mockAwsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
@@ -37,7 +41,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverSignedRulingToCourt(caseId, theCase)
+        .deliverSignedRulingToCourt(caseId, user, theCase, { userId })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -45,7 +49,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     }
   })
 
-  describe('deliver signed ruling to court', () => {
+  describe('signed ruling delivered', () => {
     const caseId = uuid()
     const courtId = uuid()
     const courtCaseNumber = uuid()
@@ -70,6 +74,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
 
     it('should create a ruling at court', async () => {
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+        user,
         caseId,
         courtId,
         courtCaseNumber,
@@ -78,7 +83,6 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
         `Úrskurður ${courtCaseNumber}.pdf`,
         'application/pdf',
         pdf,
-        undefined,
       )
     })
 

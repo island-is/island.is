@@ -11,10 +11,10 @@ import {
   Text,
   Button,
   AlertBanner,
-  Link,
   AlertMessage,
 } from '@island.is/island-ui/core'
 import {
+  LinkResolver,
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
@@ -29,6 +29,7 @@ import {
 import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
 import { applyPassport, lostPassport } from '../../lib/constants'
+import { capitalizeEveryWord } from '../../utils/capitalize'
 
 const getCurrentPassport = (
   id: string | undefined,
@@ -47,17 +48,28 @@ const getCurrentPassport = (
 }
 
 const NotifyLostLink = (text: string) => (
-  <Link href={lostPassport}>
-    <Button variant="utility" size="small" icon="open" iconType="outline">
+  <LinkResolver href={lostPassport}>
+    <Button
+      as="span"
+      variant="utility"
+      size="small"
+      icon="open"
+      iconType="outline"
+    >
       {text}
     </Button>
-  </Link>
+  </LinkResolver>
 )
+
+type UseParams = {
+  id: string
+}
 
 const PassportDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
+
   const { data: passportData, loading, error } = usePassport()
   const { data: childPassportData } = useChildrenPassport()
 
@@ -123,16 +135,19 @@ const PassportDetail: ServicePortalModuleComponent = () => {
                 </Box>
 
                 <Box display="flex" flexDirection="row" alignItems="center">
-                  <Link className={styles.renew} href={applyPassport}>
-                    <Button
-                      variant="utility"
-                      size="small"
-                      icon="open"
-                      iconType="outline"
-                    >
-                      {formatMessage(m.passportRenew)}
-                    </Button>
-                  </Link>
+                  <Box className={styles.renew}>
+                    <LinkResolver href={applyPassport}>
+                      <Button
+                        variant="utility"
+                        size="small"
+                        icon="open"
+                        iconType="outline"
+                        as="span"
+                      >
+                        {formatMessage(m.passportRenew)}
+                      </Button>
+                    </LinkResolver>
+                  </Box>
                   {NotifyLostLink(formatMessage(m.passportNotifyLost))}
                 </Box>
               </GridColumn>
@@ -148,7 +163,9 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           )}
           <UserInfoLine
             label={defineMessage(m.passportName)}
-            content={data?.displayFirstName + ' ' + data?.displayLastName}
+            content={capitalizeEveryWord(
+              data?.displayFirstName + ' ' + data?.displayLastName,
+            )}
             loading={loading}
             titlePadding={3}
             paddingBottom={1}
@@ -199,7 +216,13 @@ const PassportDetail: ServicePortalModuleComponent = () => {
                   >
                     <Icon
                       icon={isInvalid ? 'closeCircle' : 'checkmarkCircle'}
-                      color={isInvalid ? 'red600' : 'mint600'}
+                      color={
+                        isInvalid
+                          ? 'red600'
+                          : expireWarning
+                          ? 'yellow600'
+                          : 'mint600'
+                      }
                       type="filled"
                     />
                   </Box>

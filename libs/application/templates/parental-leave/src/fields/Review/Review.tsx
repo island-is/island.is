@@ -326,87 +326,91 @@ export const Review: FC<ReviewScreenProps> = ({
         </GridRow>
       </ReviewGroup>
 
-      <ReviewGroup
-        isEditable={editable && isPrimaryParent}
-        editAction={() => goToScreen?.('otherParentObj')}
-      >
-        {(otherParent === NO || otherParent === SINGLE) && (
-          <RadioValue
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.otherParentTitle,
-            )}
-            value={NO}
-          />
-        )}
+      {otherParent && (
+        <ReviewGroup
+          isEditable={editable && isPrimaryParent}
+          editAction={() => goToScreen?.('otherParentObj')}
+        >
+          {(otherParent === NO || otherParent === SINGLE) && (
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.otherParentTitle,
+              )}
+              value={NO}
+            />
+          )}
 
-        {otherParent === SPOUSE && (
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentName,
-                )}
-                value={otherParentName}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentID,
-                )}
-                value={formatKennitala(otherParentId!)}
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-
-        {otherParent === MANUAL && (
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentName,
-                )}
-                value={otherParentName}
-              />
-            </GridColumn>
-
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentID,
-                )}
-                value={
-                  otherParentId ? formatKennitala(otherParentId) : otherParentId
-                }
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-        {otherParentWillApprove && (
-          <GridRow marginTop={3}>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-                )}
-                value={otherParentEmail}
-              />
-            </GridColumn>
-            {otherParentPhoneNumber && (
+          {otherParent === SPOUSE && (
+            <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    parentalLeaveFormMessages.shared
-                      .otherParentPhoneNumberSubSection,
+                    parentalLeaveFormMessages.shared.otherParentName,
                   )}
-                  value={formatPhoneNumber(otherParentPhoneNumber)}
+                  value={otherParentName}
                 />
               </GridColumn>
-            )}
-          </GridRow>
-        )}
-      </ReviewGroup>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentID,
+                  )}
+                  value={formatKennitala(otherParentId!)}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
+
+          {otherParent === MANUAL && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentName,
+                  )}
+                  value={otherParentName}
+                />
+              </GridColumn>
+
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentID,
+                  )}
+                  value={
+                    otherParentId
+                      ? formatKennitala(otherParentId)
+                      : otherParentId
+                  }
+                />
+              </GridColumn>
+            </GridRow>
+          )}
+          {otherParentWillApprove && (
+            <GridRow marginTop={3}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentEmailSubSection,
+                  )}
+                  value={otherParentEmail}
+                />
+              </GridColumn>
+              {otherParentPhoneNumber && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared
+                        .otherParentPhoneNumberSubSection,
+                    )}
+                    value={formatPhoneNumber(otherParentPhoneNumber)}
+                  />
+                </GridColumn>
+              )}
+            </GridRow>
+          )}
+        </ReviewGroup>
+      )}
 
       <ReviewGroup
         saveAction={saveApplication}
@@ -714,115 +718,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
       <ReviewGroup
         isEditable={editable}
-        canCloseEdit={groupHasNoErrors([
-          'personalAllowance.usePersonalAllowance',
-          'personalAllowance.useAsMuchAsPossible',
-          'personalAllowance.usage',
-        ])}
-        editChildren={
-          <>
-            <Label marginBottom={4}>
-              {formatMessage(parentalLeaveFormMessages.personalAllowance.title)}
-            </Label>
-
-            <RadioController
-              id="personalAllowance.usePersonalAllowance"
-              name="personalAllowance.usePersonalAllowance"
-              defaultValue={usePersonalAllowance}
-              split="1/2"
-              options={[
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.yesOptionLabel,
-                  ),
-                  value: YES,
-                },
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.noOptionLabel,
-                  ),
-                  value: NO,
-                },
-              ]}
-              onSelect={(s: string) => {
-                setStateful((prev) => ({
-                  ...prev,
-                  usePersonalAllowance: s as YesOrNo,
-                }))
-              }}
-              error={hasError('personalAllowance.usePersonalAllowance')}
-            />
-
-            {usePersonalAllowance === YES && (
-              <>
-                <Label marginTop={2} marginBottom={2}>
-                  {formatMessage(
-                    parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossible,
-                  )}
-                </Label>
-
-                <RadioController
-                  id="personalAllowance.useAsMuchAsPossible"
-                  name="personalAllowance.useAsMuchAsPossible"
-                  defaultValue={personalUseAsMuchAsPossible}
-                  split="1/2"
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                  onSelect={(s: string) => {
-                    setStateful((prev) => ({
-                      ...prev,
-                      personalUseAsMuchAsPossible: s as YesOrNo,
-                    }))
-                    if (s === YES) setValue('personalAllowance.usage', '100')
-                    if (s === NO) setValue('personalAllowance.usage', '')
-                  }}
-                  error={hasError('personalAllowance.useAsMuchAsPossible')}
-                />
-              </>
-            )}
-
-            {personalUseAsMuchAsPossible === NO &&
-              usePersonalAllowance === YES && (
-                <>
-                  <Label marginTop={2} marginBottom={2}>
-                    {formatMessage(
-                      parentalLeaveFormMessages.personalAllowance.manual,
-                    )}
-                  </Label>
-
-                  <InputController
-                    id="personalAllowance.usage"
-                    name="personalAllowance.usage"
-                    suffix="%"
-                    placeholder="0%"
-                    type="number"
-                    defaultValue={personalUsage}
-                    onChange={(e) =>
-                      setStateful((prev) => ({
-                        ...prev,
-                        personalUsage: e.target.value?.replace('%', ''),
-                      }))
-                    }
-                    error={hasError('personalAllowance.usage')}
-                  />
-                </>
-              )}
-          </>
-        }
-        triggerValidation
+        editAction={() => goToScreen?.('personalAllowance')}
       >
         <GridRow marginBottom={2}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

@@ -35,3 +35,14 @@ export const loadingWrapper = style({
 export const link = style({
   textDecoration: 'underline',
 })
+
+export const name = style({
+  whiteSpace: 'nowrap',
+  textAlign: 'left',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      whiteSpace: 'inherit',
+    },
+  },
+})

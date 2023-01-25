@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
@@ -82,9 +82,12 @@ export const RadioFormField: FC<Props> = ({
               ? ''
               : undefined
           }
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
+            subLabel:
+              subLabel &&
+              HtmlParser(formatText(subLabel, application, formatMessage)),
             ...(tooltip && {
               tooltip: HtmlParser(
                 formatText(tooltip, application, formatMessage),

@@ -1,11 +1,12 @@
 import { Browser, BrowserContext, expect, Page } from '@playwright/test'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
-import { cognitoLogin, getCognitoCredentials, idsLogin, urls } from './utils'
+import { cognitoLogin, idsLogin } from './login'
+import { urls } from './urls'
 
 export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
-  mkdirSync(sessionsPath)
+  mkdirSync(sessionsPath, { recursive: true })
 }
 
 /**
@@ -16,8 +17,8 @@ if (!existsSync(sessionsPath)) {
  */
 async function ensureCognitoSessionIfNeeded(
   page: Page,
-  homeUrl: string,
-  authUrlPrefix: string,
+  homeUrl = '/',
+  authUrlPrefix = '',
 ) {
   const cognitoSessionValidation = await page.request.get(homeUrl)
   if (
@@ -26,7 +27,7 @@ async function ensureCognitoSessionIfNeeded(
       .startsWith('https://cognito.shared.devland.is/')
   ) {
     await page.goto(homeUrl)
-    await cognitoLogin(page, getCognitoCredentials(), homeUrl, authUrlPrefix)
+    await cognitoLogin(page, homeUrl, authUrlPrefix)
   } else {
     console.log(`Cognito session exists`)
   }
@@ -40,6 +41,7 @@ async function ensureCognitoSessionIfNeeded(
  * @param homeUrl
  * @param phoneNumber
  * @param authUrlPrefix
+ * @param delegation - National ID of delegation to choose, if any
  */
 async function ensureIDSsession(
   idsLoginOn: { nextAuth?: { nextAuthRoot: string } } | boolean,
@@ -48,6 +50,7 @@ async function ensureIDSsession(
   homeUrl: string,
   phoneNumber: string,
   authUrlPrefix: string,
+  delegation?: string,
 ) {
   if (typeof idsLoginOn === 'object' && idsLoginOn.nextAuth) {
     const idsSessionValidation = await page.request.get(
@@ -57,7 +60,7 @@ async function ensureIDSsession(
     if (!sessionObject.expires) {
       const idsPage = await context.newPage()
       await idsPage.goto(homeUrl)
-      await idsLogin(idsPage, phoneNumber, homeUrl)
+      await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
       await idsPage.close()
     } else {
       console.log(`IDS(next-auth) session exists`)
@@ -80,7 +83,7 @@ async function ensureIDSsession(
     ) {
       const idsPage = await context.newPage()
       await idsPage.goto(homeUrl)
-      await idsLogin(idsPage, phoneNumber, homeUrl)
+      await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
       await idsPage.close()
     } else {
       console.log(`IDS session exists`)
@@ -90,16 +93,17 @@ async function ensureIDSsession(
 
 export async function session({
   browser,
-  storageState,
   homeUrl,
   phoneNumber,
   authUrl,
   idsLoginOn,
+  delegation,
+  storageState = `${homeUrl}-${phoneNumber}`,
 }: {
   browser: Browser
-  storageState: string
   homeUrl: string
   phoneNumber: string
+  authUrl?: string
   idsLoginOn:
     | boolean
     | {
@@ -107,9 +111,16 @@ export async function session({
           nextAuthRoot: string
         }
       }
-  authUrl?: string
+  delegation?: string
+  storageState?: string
 }) {
-  const storageStatePath = join(sessionsPath, storageState)
+  // Browser context storage
+  // default: sessions/phone x delegation/url
+  const storageStatePath = join(
+    sessionsPath,
+    storageState ??
+      `sessions/${phoneNumber}x${delegation ?? phoneNumber}/${homeUrl}`,
+  )
   const context = existsSync(storageStatePath)
     ? await browser.newContext({ storageState: storageStatePath })
     : await browser.newContext()
@@ -131,7 +142,7 @@ export async function session({
   const sessionValidation = await sessionValidationPage.goto(homeUrl, {
     waitUntil: 'networkidle',
   })
-  await expect(sessionValidation!.url()).toMatch(homeUrl)
+  await expect(sessionValidation?.url()).toMatch(homeUrl)
   await sessionValidationPage.context().storageState({ path: storageStatePath })
   await sessionValidationPage.close()
   return context

@@ -6,14 +6,20 @@ import {
   Attachment,
   PersonType,
   DataUploadResponse,
+  CertificateInfoResponse,
 } from '@island.is/clients/syslumenn'
-import { NationalRegistry } from './types'
-import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
@@ -50,16 +56,38 @@ type Delivery = {
 
 const YES = 'yes'
 @Injectable()
-export class PSignSubmissionService {
+export class PSignSubmissionService extends BaseTemplateApiService {
   s3: S3
   constructor(
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
+    super(ApplicationTypes.P_SIGN)
     this.s3 = new S3()
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async doctorsNote({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CertificateInfoResponse> {
+    const note = await this.syslumennService.getCertificateInfo(auth.nationalId)
+    if (!note) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    } else {
+      return note
+    }
+  }
+
+  async submitApplication({
+    application,
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
     const content: string =
       (application.answers.photo as Photo)?.qualityPhoto === YES &&
       (application.externalData.qualityPhoto as HasQualityPhotoData)?.data
@@ -77,6 +105,7 @@ export class PSignSubmissionService {
         : await this.getAttachments({
             application,
             auth,
+            currentUserLocale,
           })
     const name = this.getName(application)
     const attachments: Attachment[] = [
@@ -86,16 +115,16 @@ export class PSignSubmissionService {
       },
     ]
     const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+      ?.data as NationalRegistryIndividual
 
     const person: Person = {
       name: nationalRegistryData?.fullName,
       ssn: nationalRegistryData?.nationalId,
       phoneNumber: application.answers.phone as string,
       email: application.answers.email as string,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: nationalRegistryData?.address?.streetAddress || '',
+      postalCode: nationalRegistryData?.address?.postalCode || '',
+      city: nationalRegistryData?.address?.locality || '',
       signed: true,
       type: PersonType.Plaintiff,
     }
@@ -143,7 +172,7 @@ export class PSignSubmissionService {
 
   private getName(application: Application): string {
     const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+      ?.data as NationalRegistryIndividual
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
 
     return `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.jpeg`

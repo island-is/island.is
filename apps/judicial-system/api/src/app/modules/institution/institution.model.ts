@@ -30,4 +30,7 @@ export class Institution implements TInstitution {
 
   @Field({ nullable: true })
   readonly policeCaseNumberPrefix?: string
+
+  @Field({ nullable: true })
+  readonly nationalId?: string
 }

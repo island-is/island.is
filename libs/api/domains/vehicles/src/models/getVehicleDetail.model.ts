@@ -139,6 +139,12 @@ export class VehiclesRegistrationInfo {
 
   @Field(() => Number, { nullable: true })
   standingPassengers?: number | null
+
+  @Field(() => String, { nullable: true })
+  plateTypeFront?: string | null
+
+  @Field(() => String, { nullable: true })
+  plateTypeRear?: string | null
 }
 
 @ObjectType()
@@ -306,9 +312,6 @@ export class VehiclesDetail {
 
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isStolen?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean

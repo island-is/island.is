@@ -94,13 +94,16 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
     GenericLicenseType.DriversLicense,
+    GenericLicenseType.AdrLicense,
+    GenericLicenseType.MachineLicense,
+    GenericLicenseType.FirearmLicense,
   ])
-  const [passportEnabled, setPassportEnabled] = useState(false)
 
+  /* Flag to hide disability license */
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
-        `servicePortalFetchAllLicenses`,
+        `isServicePortalDisabilityLicenseEnabled`,
         false,
       )
       if (ffEnabled) {
@@ -109,22 +112,11 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           GenericLicenseType.AdrLicense,
           GenericLicenseType.MachineLicense,
           GenericLicenseType.FirearmLicense,
+          GenericLicenseType.DisabilityLicense,
         ])
       }
     }
     isFlagEnabled()
-
-    const isPassportFlagEnabled = async () => {
-      const isPassEnabled = Boolean(
-        await featureFlagClient.getValue(
-          `isServicePortalPassportPageEnabled`,
-          false,
-        ),
-      )
-
-      setPassportEnabled(isPassEnabled)
-    }
-    isPassportFlagEnabled()
   }, [])
 
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
@@ -170,6 +162,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       />
     )
   }
+
   return (
     <>
       <IntroHeader
@@ -177,10 +170,10 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         intro={defineMessage(m.intro)}
         marginBottom={1}
       />
-      {hasChildren && passportEnabled ? (
+      {hasChildren ? (
         <Box>
           <Tabs
-            label="License tabs"
+            label={formatMessage(m.seeLicenses)}
             contentBackground="white"
             tabs={[
               {
@@ -214,7 +207,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           hasData={hasData}
           hasError={hasError}
           isGenericLicenseEmpty={isGenericLicenseEmpty}
-          passportData={passportEnabled ? passportData : null}
+          passportData={passportData}
           genericLicenses={genericLicenses}
         />
       )}

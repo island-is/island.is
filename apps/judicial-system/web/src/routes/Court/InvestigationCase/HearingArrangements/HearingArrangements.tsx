@@ -1,6 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import compareAsc from 'date-fns/compareAsc'
+import parseISO from 'date-fns/parseISO'
 
 import {
   BlueBox,
@@ -25,10 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  titles,
-  icHearingArrangements as m,
-} from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlertMessage,
   RadioButton,
@@ -38,7 +37,10 @@ import {
 } from '@island.is/island-ui/core'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { icHearingArrangements as m } from './HearingArrangements.strings'
 
 const HearingArrangements = () => {
   const {
@@ -63,7 +65,7 @@ const HearingArrangements = () => {
   } = useCourtArrangements(workingCase)
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const [modalVisible, setModalVisible] = useState(false)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -96,38 +98,52 @@ const HearingArrangements = () => {
     workingCase,
   ])
 
-  const handleNextButtonClick = useCallback(() => {
-    const hasSentNotification = workingCase?.notifications?.find(
-      (notification) => notification.type === NotificationType.COURT_DATE,
-    )
-
-    setAndSendCaseToServer(
-      [
-        {
-          courtDate: courtDate
-            ? formatDateForServer(new Date(courtDate))
-            : undefined,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-
-    if (hasSentNotification && !courtDateHasChanged) {
-      router.push(
-        `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      const courtDateNotifications = workingCase.notifications?.filter(
+        (notification) => notification.type === NotificationType.COURT_DATE,
       )
-    } else {
-      setModalVisible(true)
-    }
-  }, [
+
+      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
+        compareAsc(parseISO(b.created), parseISO(a.created)),
+      )[0]
+
+      const hasSentNotification = latestCourtDateNotification?.recipients.some(
+        (recipient) => recipient.success,
+      )
+
+      await setAndSendCaseToServer(
+        [
+          {
+            courtDate: courtDate
+              ? formatDateForServer(new Date(courtDate))
+              : undefined,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (hasSentNotification && !courtDateHasChanged) {
+        router.push(`${destination}/${workingCase.id}`)
+      } else {
+        setNavigateTo(destination)
+      }
+    },
+    [
+      workingCase,
+      setAndSendCaseToServer,
+      courtDate,
+      setWorkingCase,
+      courtDateHasChanged,
+    ],
+  )
+
+  const stepIsValid = isCourtHearingArrangementsStepValidIC(
     workingCase,
-    setAndSendCaseToServer,
     courtDate,
-    setWorkingCase,
-    courtDateHasChanged,
-  ])
+  )
 
   return (
     <PageLayout
@@ -138,6 +154,8 @@ const HearingArrangements = () => {
       activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      onNavigationTo={handleNavigationTo}
+      isValid={stepIsValid}
     >
       <PageHeader
         title={formatMessage(
@@ -300,14 +318,14 @@ const HearingArrangements = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={handleNextButtonClick}
-              nextIsDisabled={
-                !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
+              onNextButtonClick={() =>
+                handleNavigationTo(constants.INVESTIGATION_CASE_RULING_ROUTE)
               }
+              nextIsDisabled={!stepIsValid}
               nextButtonText={formatMessage(m.continueButton.label)}
             />
           </FormContentContainer>
-          {modalVisible && (
+          {navigateTo !== undefined && (
             <Modal
               title={formatMessage(m.modal.heading)}
               text={formatMessage(
@@ -327,26 +345,16 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(
-                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
-                  )
+                  router.push(`${navigateTo}/${workingCase.id}`)
                 }
               }}
-              onSecondaryButtonClick={async () => {
-                const notificationSent = await sendNotification(
-                  workingCase.id,
-                  NotificationType.COURT_DATE,
-                  true,
-                )
-
-                if (notificationSent) {
-                  router.push(
-                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
-                  )
-                }
+              onSecondaryButtonClick={() => {
+                router.push(`${navigateTo}/${workingCase.id}`)
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
-              secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
+              secondaryButtonText={formatMessage(m.modal.secondaryButtonText, {
+                courtDateHasChanged,
+              })}
               isPrimaryButtonLoading={isSendingNotification}
             />
           )}

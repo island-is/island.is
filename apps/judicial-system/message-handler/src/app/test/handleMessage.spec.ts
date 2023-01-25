@@ -4,18 +4,17 @@ import fetch from 'node-fetch'
 import type { Logger } from '@island.is/logging'
 import { NotificationType } from '@island.is/judicial-system/types'
 import {
-  Message,
+  CaseMessage,
   CaseFileMessage,
   MessageService,
   MessageType,
   PoliceCaseMessage,
+  DefendantMessage,
 } from '@island.is/judicial-system/message'
 
 import { appModuleConfig } from '../app.config'
 import { MessageHandlerService } from '../messageHandler.service'
-import { RulingNotificationService } from '../rulingNotification.service'
 import { InternalDeliveryService } from '../internalDelivery.service'
-import { CaseDeliveryService } from '../caseDelivery.service'
 
 jest.mock('@island.is/logging')
 jest.mock('node-fetch')
@@ -25,21 +24,27 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (message: Message) => Promise<Then>
+type GivenWhenThen = (message: CaseMessage) => Promise<Then>
 
 describe('MessageHandlerService - Handle message', () => {
   const config = appModuleConfig()
   const logger = ({ debug: jest.fn() } as unknown) as Logger
+  const userId = uuid()
   const caseId = uuid()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    givenWhenThen = async (message: Message) => {
+    const mockFetch = (fetch as unknown) as jest.Mock
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({ delivered: true }),
+    })
+
+    givenWhenThen = async (message: CaseMessage) => {
       const messageHandlerService = new MessageHandlerService(
         (undefined as unknown) as MessageService,
-        (undefined as unknown) as CaseDeliveryService,
         new InternalDeliveryService(config, logger),
-        new RulingNotificationService(config, logger),
+        config,
         logger,
       )
       const then = {} as Then
@@ -54,21 +59,70 @@ describe('MessageHandlerService - Handle message', () => {
     }
   })
 
+  describe('deliver prosecutor to court', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should deliver prosecutor to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverProsecutorToCourt`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('deliver defendant to court', () => {
+    const defendantId = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+        userId,
+        caseId,
+        defendantId,
+      } as DefendantMessage)
+    })
+
+    it('should deliver defendant to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/defendant/${defendantId}/deliverToCourt`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('deliver case file to court', () => {
     const caseFileId = uuid()
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+        userId,
         caseId,
         caseFileId,
       } as CaseFileMessage)
@@ -83,6 +137,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -94,16 +149,9 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+        userId,
         caseId,
         policeCaseNumber,
       } as PoliceCaseMessage)
@@ -118,6 +166,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -128,16 +177,9 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_REQUEST_TO_COURT,
+        userId,
         caseId,
       })
     })
@@ -151,6 +193,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -161,16 +204,9 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+        userId,
         caseId,
       })
     })
@@ -184,6 +220,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
         },
       )
       expect(then.result).toBe(true)
@@ -194,16 +231,9 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ delivered: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.DELIVER_SIGNED_RULING_TO_COURT,
+        userId,
         caseId,
       })
     })
@@ -217,6 +247,210 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
+          body: JSON.stringify({ userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('deliver case to police', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_CASE_TO_POLICE,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should deliver case to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverCaseToPolice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('archive case file', () => {
+    const caseFileId = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.ARCHIVE_CASE_FILE,
+        userId,
+        caseId,
+        caseFileId,
+      } as CaseFileMessage)
+    })
+
+    it('should archive case file', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/file/${caseFileId}/archive`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send heads up notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a heads up notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: NotificationType.HEADS_UP, userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send ready for court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a ready for court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.READY_FOR_COURT,
+            userId,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send received by court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a received by court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.RECEIVED_BY_COURT,
+            userId,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send received by court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_COURT_DATE_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a received by court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.COURT_DATE,
+            userId,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send defendants not updated at court notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a defendants not updated at court notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+            userId,
+          }),
         },
       )
       expect(then.result).toBe(true)
@@ -227,16 +461,9 @@ describe('MessageHandlerService - Handle message', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = (fetch as unknown) as jest.Mock
-      mockFetch.mockResolvedValueOnce(
-        Promise.resolve({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce({ notificationSent: true }),
-        }),
-      )
-
       then = await givenWhenThen({
         type: MessageType.SEND_RULING_NOTIFICATION,
+        userId,
         caseId,
       })
     })
@@ -250,7 +477,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
-          body: JSON.stringify({ type: NotificationType.RULING }),
+          body: JSON.stringify({ type: NotificationType.RULING, userId }),
         },
       )
       expect(then.result).toBe(true)

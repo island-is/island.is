@@ -1,11 +1,13 @@
 import { useParams } from 'react-router-dom'
-import { AuthCustomDelegation } from '@island.is/api/schema'
+import { AuthDomainDirection } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import {
-  AuthDomainDirection,
-  useAuthDelegationQuery,
-  useAuthScopeTreeLazyQuery,
-} from '@island.is/service-portal/graphql'
+import { useAuthScopeTreeLazyQuery } from '../components/access/AccessList/AccessListContainer/AccessListContainer.generated'
+import { useAuthDelegationQuery } from '../screens/AccessOutgoing/AccessOutgoing.generated'
+import { AuthCustomDelegationOutgoing } from '../types/customDelegation'
+
+type UseParams = {
+  delegationId: string
+}
 
 /**
  * Wrapper hook for fetching delegation by id from url param
@@ -13,9 +15,7 @@ import {
  */
 export const useDelegation = (direction?: AuthDomainDirection) => {
   const { lang } = useLocale()
-  const { delegationId } = useParams<{
-    delegationId: string
-  }>()
+  const { delegationId } = useParams() as UseParams
 
   const [
     getAuthScopeTreeQuery,
@@ -26,13 +26,13 @@ export const useDelegation = (direction?: AuthDomainDirection) => {
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        delegationId,
+        delegationId: delegationId as string,
       },
       lang,
     },
     onCompleted(data) {
       const delegation = data?.authDelegation
-        ? (data.authDelegation as AuthCustomDelegation)
+        ? (data.authDelegation as AuthCustomDelegationOutgoing)
         : undefined
 
       if (delegation) {
@@ -54,7 +54,7 @@ export const useDelegation = (direction?: AuthDomainDirection) => {
   return {
     scopeTree: authScopeTree,
     delegation: data?.authDelegation
-      ? (data.authDelegation as AuthCustomDelegation)
+      ? (data.authDelegation as AuthCustomDelegationOutgoing)
       : undefined,
     delegationLoading,
     scopeTreeLoading,

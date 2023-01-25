@@ -57,6 +57,17 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const windowObject: any = window
     windowObject.watsonAssistantChatOptions = {
+      showCloseAndRestartButton: true,
+      pageLinkConfig: {
+        linkIDs: {
+          t10: {
+            text: n('t10', 'Tala við manneskju'),
+          },
+        },
+      },
+      serviceDesk: {
+        skipConnectAgentCard: true,
+      },
       ...props,
       onLoad: (instance) => {
         watsonInstance.current = instance

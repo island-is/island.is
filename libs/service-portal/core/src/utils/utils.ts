@@ -1,3 +1,5 @@
+export { formatNationalId } from '@island.is/portals/core'
+
 export const getNameAbbreviation = (name: string) => {
   const names = name.split(' ')
   let initials = names[0].substring(0, 1).toUpperCase()
@@ -6,14 +8,6 @@ export const getNameAbbreviation = (name: string) => {
     initials += names[names.length - 1].substring(0, 1).toUpperCase()
 
   return initials
-}
-
-export const formatNationalId = (nationalId: string): string => {
-  if (nationalId?.length === 10) {
-    return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
-  } else {
-    return nationalId
-  }
 }
 
 export const tableStyles = {
@@ -55,4 +49,6 @@ export type DrivingLicenseType = {
   svipting: Array<DrivingLicenseSuspended>
 }
 
-export type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+export type ExcludesFalse = <T>(
+  x: T | null | undefined | false | '' | 0,
+) => x is T

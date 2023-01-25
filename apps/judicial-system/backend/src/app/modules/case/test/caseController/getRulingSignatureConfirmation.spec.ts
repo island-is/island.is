@@ -3,7 +3,12 @@ import { Transaction } from 'sequelize/types'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseFileState,
+  CaseOrigin,
+  User,
+} from '@island.is/judicial-system/types'
 import { MessageType, MessageService } from '@island.is/judicial-system/message'
 
 import { randomDate } from '../../../../test'
@@ -25,6 +30,9 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get ruling signature confirmation', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockMessageService: MessageService
   let mockAwsS3Service: AwsS3Service
   let transaction: Transaction
@@ -50,10 +58,12 @@ describe('CaseController - Get ruling signature confirmation', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    const mockPostMessageToQueue = mockMessageService.sendMessagesToQueue as jest.Mock
-    mockPostMessageToQueue.mockResolvedValue(undefined)
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockResolvedValue(uuid())
+    const mockUpdate = mockCaseModel.update as jest.Mock
+    mockUpdate.mockResolvedValue([1])
+    const mockPostMessageToQueue = mockMessageService.sendMessagesToQueue as jest.Mock
+    mockPostMessageToQueue.mockResolvedValue(undefined)
 
     givenWhenThen = async (
       caseId: string,
@@ -78,15 +88,35 @@ describe('CaseController - Get ruling signature confirmation', () => {
     }
   })
 
-  describe('database update', () => {
-    const userId = uuid()
-    const user = { id: userId } as User
+  describe('successful completion', () => {
+    const caseFileId = uuid()
     const caseId = uuid()
-    const theCase = { id: caseId, judgeId: userId } as Case
+    const theCase = {
+      id: caseId,
+      caseFiles: [
+        {
+          id: caseFileId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.CASE_FILE,
+        },
+        {
+          id: uuid(),
+          key: uuid(),
+          state: CaseFileState.STORED_IN_COURT,
+          category: CaseFileCategory.CASE_FILE,
+        },
+      ],
+      judgeId: userId,
+    } as Case
     const documentToken = uuid()
+    let then: Then
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, documentToken)
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(theCase)
+
+      then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
     it('should set the ruling date', () => {
@@ -95,37 +125,61 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { where: { id: caseId }, transaction },
       )
     })
+
+    it('should return success', () => {
+      expect(mockAwsS3Service.putObject).toHaveBeenCalled()
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, userId, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
+        {
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
+          caseId,
+          caseFileId,
+        },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, userId, caseId },
+      ])
+      expect(then.result).toEqual({ documentSigned: true })
+    })
   })
 
-  describe('successful completion', () => {
-    const userId = uuid()
-    const user = { id: userId } as User
+  describe('successful completion of LÖKE case', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, judgeId: userId } as Case
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      judgeId: userId,
+    } as Case
     const documentToken = uuid()
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [theCase]])
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
+    it('should set the ruling date', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        { rulingDate: expect.any(Date) },
+        { where: { id: caseId }, transaction },
+      )
+    })
+
     it('should return success', () => {
-      expect(then.result).toEqual({ documentSigned: true })
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.CASE_COMPLETED, caseId },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, userId, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, userId, caseId },
+        { type: MessageType.DELIVER_CASE_TO_POLICE, userId, caseId },
       ])
+      expect(then.result).toEqual({ documentSigned: true })
     })
   })
 
   describe('user is not the assigned judge', () => {
-    const user = { id: uuid() } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid() } as Case
     const documentToken = uuid()
@@ -144,8 +198,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
   })
 
   describe('database update fails', () => {
-    const userId = uuid()
-    const user = { id: userId } as User
     const caseId = uuid()
     const theCase = {
       id: caseId,
@@ -199,8 +251,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
   })
 
   describe('AWS S3 upload failed', () => {
-    const userId = uuid()
-    const user = { id: userId } as User
     const caseId = uuid()
     const theCase = {
       id: caseId,

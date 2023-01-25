@@ -12,10 +12,17 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsOverview } from './overviewSection/childsOverview'
+import {
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 
 export const ParentB: Form = buildForm({
   id: 'PassportApplicationParentB',
@@ -59,31 +66,26 @@ export const ParentB: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              id: 'identityDocument',
-              type: 'IdentityDocumentProvider',
+              provider: IdentityDocumentApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'FeeInfoProvider',
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({
-              id: 'districtCommissioners',
-              type: 'DistrictsProvider',
+              provider: DistrictsApi,
               title: '',
             }),
           ],

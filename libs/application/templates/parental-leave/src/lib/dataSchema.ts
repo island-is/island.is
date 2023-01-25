@@ -43,12 +43,25 @@ export const dataSchema = z.object({
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
+  noPrimaryParent: z.object({
+    questionOne: z.enum([YES, NO]),
+    questionTwo: z.enum([YES, NO]),
+    questionThree: z.enum([YES, NO]),
+    birthDate: z.string(),
+  }),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        return phoneNumber && phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        return (
+          phoneNumber &&
+          phoneNumber.isValid() &&
+          phoneNumberStartStr.some((substr) =>
+            phoneNumber.nationalNumber.startsWith(substr),
+          )
+        )
       },
       { params: errorMessages.phoneNumber },
     ),
@@ -72,17 +85,22 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  employerNationalRegistryId: z
-    .string()
-    .refine((n) => n && kennitala.isValid(n), {
-      params: errorMessages.employerNationalRegistryId,
-    }),
+  employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
+    params: errorMessages.employerNationalRegistryId,
+  }),
   employerPhoneNumber: z
     .string()
     .refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        if (phoneNumber) return phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
+          )
         else return true
       },
       { params: errorMessages.phoneNumber },
@@ -132,13 +150,20 @@ export const dataSchema = z.object({
       params: errorMessages.otherParentId,
     }),
   otherParentRightOfAccess: z.enum([YES, NO]),
-  otherParentEmail: z.string().email(),
+  otherParentEmail: z.string().email().optional(),
   otherParentPhoneNumber: z
     .string()
     .refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        if (phoneNumber) return phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
+          )
         else return true
       },
       { params: errorMessages.phoneNumber },

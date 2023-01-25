@@ -6,6 +6,7 @@ import {
   formatNationalId,
   getSupportedCaseCustodyRestrictions,
   laws,
+  readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
 import type { FormatMessage } from '@island.is/cms-translations'
@@ -20,7 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
 
-import { notifications, custodyNotice, courtUpload } from '../messages'
+import { core, notifications, custodyNotice, courtUpload } from '../messages'
 import { Case } from '../modules/case'
 
 type SubjectAndBody = {
@@ -300,6 +301,7 @@ export function formatPrisonCourtDateEmailNotification(
   defenderName?: string,
   isExtension?: boolean,
   sessionArrangements?: SessionArrangements,
+  courtCaseNumber?: string,
 ): string {
   const courtText = formatMessage(
     notifications.prisonCourtDateEmail.courtText,
@@ -332,7 +334,6 @@ export function formatPrisonCourtDateEmailNotification(
     notifications.prisonCourtDateEmail.requestText,
     {
       caseType: type,
-      accusedName: accusedName ?? 'NONE',
       gender: accusedGender,
       requestedValidToDateText,
     },
@@ -347,7 +348,7 @@ export function formatPrisonCourtDateEmailNotification(
     sessionArrangements,
   })
 
-  return formatMessage(notifications.prisonCourtDateEmail.bodyV2, {
+  return formatMessage(notifications.prisonCourtDateEmail.bodyV3, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
@@ -357,6 +358,7 @@ export function formatPrisonCourtDateEmailNotification(
     isolationText,
     defenderText,
     sessionArrangements,
+    courtCaseNumber,
   })
 }
 
@@ -668,6 +670,31 @@ export function formatDefenderAssignedEmailNotification(
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     court: theCase.court?.name ?? '',
     courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { body, subject }
+}
+
+export function formatCourtIndictmentReadyForCourtEmailNotification(
+  formatMessage: FormatMessage,
+  theCase: Case,
+  overviewUrl?: string,
+) {
+  const subject = formatMessage(
+    notifications.indictmentCourtReadyForCourt.subject,
+  )
+
+  const body = formatMessage(notifications.indictmentCourtReadyForCourt.body, {
+    indictmentSubtypes: enumerate(
+      readableIndictmentSubtypes(
+        theCase.policeCaseNumbers,
+        theCase.indictmentSubtypes,
+      ),
+      formatMessage(core.and),
+    ),
+    prosecutorName: theCase.prosecutor?.institution?.name,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

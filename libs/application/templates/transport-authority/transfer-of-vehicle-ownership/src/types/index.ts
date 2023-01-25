@@ -51,4 +51,17 @@ export interface ReviewSectionProps {
   tagVariant: TagVariant
   reviewer?: ReviewerProps[]
   messageValue?: string
+  isComplete?: boolean
+}
+
+export type InsuranceCompany = {
+  code?: string | null
+  name?: string | null
+}
+
+export type VehiclesCurrentVehicle = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
 }

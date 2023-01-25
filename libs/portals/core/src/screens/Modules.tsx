@@ -1,17 +1,20 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { Suspense, useEffect } from 'react'
-import { Route, Switch, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 
 import { Box } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
-import { useModules } from '../components/ModulesProvider'
 import { useModuleProps } from '../hooks/useModuleProps'
 import { ModuleErrorScreen, ModuleErrorBoundary } from './ModuleErrorScreen'
 import { AccessDenied } from './AccessDenied'
 import { NotFound } from './NotFound'
 import { PortalRoute } from '../types/portalCore'
-import { usePortalMeta } from '../components/PortalMetaProvider'
-import { plausiblePageviewDetail } from '../lib/plausiblePageviewDetail'
+import {
+  useModules,
+  usePortalMeta,
+  useRoutes,
+} from '../components/PortalProvider'
+import { plausiblePageviewDetail } from '../utils/plausible'
 
 type RouteComponentProps = {
   route: PortalRoute
@@ -30,7 +33,7 @@ const RouteComponent = React.memo(
           path: route.path,
         })
       }
-    }, [location])
+    }, [basePath, location, route.path, route.render])
 
     if (route.render === undefined) {
       return null
@@ -62,43 +65,46 @@ type RouteLoaderProps = {
 
 const RouteLoader = React.memo(
   ({ routes, userInfo, client }: RouteLoaderProps) => (
-    <Switch>
+    <Routes>
       {routes.map((route) =>
         route.enabled === false ? (
           <Route
             path={route.path}
-            exact
-            key={Array.isArray(route.path) ? route.path[0] : route.path}
-            component={AccessDenied}
+            key={route.path}
+            element={<AccessDenied />}
           />
         ) : (
           <Route
             path={route.path}
-            exact
-            key={Array.isArray(route.path) ? route.path[0] : route.path}
-            render={() => (
+            key={route.path}
+            element={
               <RouteComponent
                 route={route}
                 userInfo={userInfo}
                 client={client}
               />
-            )}
+            }
           />
         ),
       )}
-      {routes.length > 0 && <Route component={NotFound} />}
-    </Switch>
+      {routes.length > 0 && <Route path="*" element={<NotFound />} />}
+    </Routes>
   ),
 )
 
 export const Modules = () => {
-  const { routes } = useModules()
+  const routes = useRoutes()
   const { userInfo, client } = useModuleProps()
+  const modules = useModules()
+
+  if (!userInfo) return null
 
   return (
     <Box paddingY={1}>
-      {userInfo && (
+      {modules.length > 0 ? (
         <RouteLoader routes={routes} userInfo={userInfo} client={client} />
+      ) : (
+        <AccessDenied />
       )}
     </Box>
   )

@@ -11,6 +11,7 @@ import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { TemplateApi } from './template-api/TemplateApi'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -30,8 +31,10 @@ export type ReadWriteValues =
       answers?: string[]
       externalData?: string[]
     }
-
-export interface RoleInState<T extends EventObject = AnyEventObject> {
+export interface RoleInState<
+  T extends EventObject = AnyEventObject,
+  R = unknown
+> {
   id: ApplicationRole
   read?: ReadWriteValues
   write?: ReadWriteValues
@@ -39,6 +42,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
   shouldBeListedForRole?: boolean
+  api?: TemplateApi<R>[]
 }
 
 export interface ApplicationContext {
@@ -51,20 +55,6 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   type: 'primary' | 'subtle' | 'reject' | 'sign'
   condition?: Condition
 } & TestSupport
-
-export interface ApplicationTemplateAPIAction {
-  // Name of the action that will be run on the API
-  // these actions are exported are found in:
-  // /libs/application/template-api-modules
-  apiModuleAction: string
-  // If response/error should be written to application.externalData, defaults to true
-  shouldPersistToExternalData?: boolean
-  // Id inside application.externalData, value of apiModuleAction is used by default
-  externalDataId?: string
-  // Should the state transition be blocked if this action errors out
-  // defaults to true
-  throwOnError?: boolean
-}
 
 export type StateLifeCycle =
   | {
@@ -81,7 +71,10 @@ export type StateLifeCycle =
       shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 
-export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
+export interface ApplicationStateMeta<
+  T extends EventObject = AnyEventObject,
+  R = unknown
+> {
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
@@ -95,8 +88,8 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
    */
   status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
   roles?: RoleInState<T>[]
-  onExit?: ApplicationTemplateAPIAction
-  onEntry?: ApplicationTemplateAPIAction
+  onExit?: TemplateApi<R>[] | TemplateApi<R>
+  onEntry?: TemplateApi<R>[] | TemplateApi<R>
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

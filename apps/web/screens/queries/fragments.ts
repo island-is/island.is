@@ -40,28 +40,6 @@ export const slices = gql`
     hasBorderAbove
   }
 
-  fragment MailingListSignupFields on MailingListSignupSlice {
-    __typename
-    id
-    title
-    variant
-    description
-    inputLabel
-    fullNameLabel
-    questionLabel
-    yesLabel
-    noLabel
-    disclaimerLabel
-    categoryLabel
-    categories
-    inputs
-    buttonText
-    signupUrl
-    image {
-      ...ImageFields
-    }
-  }
-
   fragment StoryFields on StorySlice {
     __typename
     id
@@ -635,7 +613,6 @@ export const slices = gql`
 
   fragment BaseSlices on Slice {
     ...TimelineFields
-    ...MailingListSignupFields
     ...StoryFields
     ...LatestNewsFields
     ...LinkCardFields
@@ -687,7 +664,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-export const nestedFields = `
+const nestedContainerFields = `
   ... on AccordionSlice {
     ...AccordionSliceFields
     accordionItems {
@@ -723,4 +700,15 @@ export const nestedFields = `
       }
     }
   }
+`
+
+export const nestedFields = `
+  ... on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+      ${nestedContainerFields}
+    }
+  }
+  ${nestedContainerFields}
 `

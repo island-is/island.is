@@ -1,6 +1,12 @@
+import {
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 import { uuid } from 'uuidv4'
 
 import { AwsS3Service } from '../../../aws-s3'
+import { Case } from '../../../case'
 import { CreatePresignedPostDto } from '../../dto/createPresignedPost.dto'
 import { PresignedPost } from '../../models/presignedPost.model'
 import { createTestingFileModule } from '../createTestingFileModule'
@@ -13,6 +19,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   createPresignedPost: CreatePresignedPostDto,
+  theCase: Case,
 ) => Promise<Then>
 
 describe('FileController - Create presigned post', () => {
@@ -27,11 +34,12 @@ describe('FileController - Create presigned post', () => {
     givenWhenThen = async (
       caseId: string,
       createPresignedPost: CreatePresignedPostDto,
+      theCase: Case,
     ): Promise<Then> => {
       const then = {} as Then
 
       await fileController
-        .createPresignedPost(caseId, createPresignedPost)
+        .createPresignedPost(caseId, theCase, createPresignedPost)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -39,45 +47,54 @@ describe('FileController - Create presigned post', () => {
     }
   })
 
-  describe('remote call', () => {
-    const caseId = uuid()
-    const createPresignedPost: CreatePresignedPostDto = {
-      fileName: 'test.txt',
-      type: 'text/plain',
-    }
-    let mockCreatePresignedPost: jest.Mock
+  describe.each([...restrictionCases, ...investigationCases])(
+    'presigned post created for %s case',
+    (type) => {
+      const caseId = uuid()
+      const theCase = { id: caseId, type } as Case
+      const createPresignedPost: CreatePresignedPostDto = {
+        fileName: 'test.txt',
+        type: 'text/plain',
+      }
+      let then: Then
 
-    beforeEach(async () => {
-      mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
-      mockCreatePresignedPost.mockResolvedValueOnce({})
+      beforeEach(async () => {
+        const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
+        mockCreatePresignedPost.mockImplementationOnce((key: string) =>
+          Promise.resolve({
+            url:
+              'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+            fields: {
+              key,
+              bucket: 'island-is-dev-upload-judicial-system',
+              'X-Amz-Algorithm': 'Some Algorithm',
+              'X-Amz-Credential': 'Some Credentials',
+              'X-Amz-Date': 'Some Date',
+              'X-Amz-Security-Token': 'Some Token',
+              Policy: 'Some Policy',
+              'X-Amz-Signature': 'Some Signature',
+            },
+          }),
+        )
 
-      await givenWhenThen(caseId, createPresignedPost)
-    })
+        then = await givenWhenThen(caseId, createPresignedPost, theCase)
+      })
 
-    it('should request a presigned post from AWS S3', () => {
-      expect(mockCreatePresignedPost).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp(`^uploads/${caseId}/.{36}/test.txt$`)),
-        'text/plain',
-      )
-    })
-  })
+      it('should request a presigned post from AWS S3', () => {
+        expect(mockAwsS3Service.createPresignedPost).toHaveBeenCalledWith(
+          expect.stringMatching(
+            new RegExp(`^uploads/${caseId}/.{36}/test.txt$`),
+          ),
+          'text/plain',
+        )
+      })
 
-  describe('presigned post created', () => {
-    const caseId = uuid()
-    const createPresignedPost: CreatePresignedPostDto = {
-      fileName: 'test.txt',
-      type: 'text/plain',
-    }
-    let then: Then
-
-    beforeEach(async () => {
-      const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
-      mockCreatePresignedPost.mockImplementationOnce((key: string) =>
-        Promise.resolve({
+      it('should return a presigned post', () => {
+        expect(then.result).toEqual({
           url:
             'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
           fields: {
-            key,
+            key: then.result.fields.key,
             bucket: 'island-is-dev-upload-judicial-system',
             'X-Amz-Algorithm': 'Some Algorithm',
             'X-Amz-Credential': 'Some Credentials',
@@ -86,35 +103,83 @@ describe('FileController - Create presigned post', () => {
             Policy: 'Some Policy',
             'X-Amz-Signature': 'Some Signature',
           },
-        }),
-      ),
-        (then = await givenWhenThen(caseId, createPresignedPost))
-    })
+        })
 
-    it('should return a presigned post', () => {
-      expect(then.result).toEqual({
-        url:
-          'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
-        fields: {
-          key: then.result.fields.key,
-          bucket: 'island-is-dev-upload-judicial-system',
-          'X-Amz-Algorithm': 'Some Algorithm',
-          'X-Amz-Credential': 'Some Credentials',
-          'X-Amz-Date': 'Some Date',
-          'X-Amz-Security-Token': 'Some Token',
-          Policy: 'Some Policy',
-          'X-Amz-Signature': 'Some Signature',
-        },
+        expect(then.result.fields.key).toMatch(
+          new RegExp(`^uploads/${caseId}/.{36}/test.txt$`),
+        )
+      })
+    },
+  )
+
+  describe.each(indictmentCases)(
+    'presigned post created for %s case',
+    (type) => {
+      const caseId = uuid()
+      const theCase = { id: caseId, type } as Case
+      const createPresignedPost: CreatePresignedPostDto = {
+        fileName: 'test.txt',
+        type: 'text/plain',
+      }
+      let then: Then
+
+      beforeEach(async () => {
+        const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
+        mockCreatePresignedPost.mockImplementationOnce((key: string) =>
+          Promise.resolve({
+            url:
+              'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+            fields: {
+              key,
+              bucket: 'island-is-dev-upload-judicial-system',
+              'X-Amz-Algorithm': 'Some Algorithm',
+              'X-Amz-Credential': 'Some Credentials',
+              'X-Amz-Date': 'Some Date',
+              'X-Amz-Security-Token': 'Some Token',
+              Policy: 'Some Policy',
+              'X-Amz-Signature': 'Some Signature',
+            },
+          }),
+        )
+
+        then = await givenWhenThen(caseId, createPresignedPost, theCase)
       })
 
-      expect(then.result.fields.key).toMatch(
-        new RegExp(`^uploads/${caseId}/.{36}/test.txt$`),
-      )
-    })
-  })
+      it('should request a presigned post from AWS S3', () => {
+        expect(mockAwsS3Service.createPresignedPost).toHaveBeenCalledWith(
+          expect.stringMatching(
+            new RegExp(`^indictments/${caseId}/.{36}/test.txt$`),
+          ),
+          'text/plain',
+        )
+      })
+
+      it('should return a presigned post', () => {
+        expect(then.result).toEqual({
+          url:
+            'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+          fields: {
+            key: then.result.fields.key,
+            bucket: 'island-is-dev-upload-judicial-system',
+            'X-Amz-Algorithm': 'Some Algorithm',
+            'X-Amz-Credential': 'Some Credentials',
+            'X-Amz-Date': 'Some Date',
+            'X-Amz-Security-Token': 'Some Token',
+            Policy: 'Some Policy',
+            'X-Amz-Signature': 'Some Signature',
+          },
+        })
+
+        expect(then.result.fields.key).toMatch(
+          new RegExp(`^indictments/${caseId}/.{36}/test.txt$`),
+        )
+      })
+    },
+  )
 
   describe('remote call fails', () => {
     const caseId = uuid()
+    const theCase = { id: caseId } as Case
     const createPresignedPost: CreatePresignedPostDto = {
       fileName: 'test.txt',
       type: 'text/plain',
@@ -125,7 +190,7 @@ describe('FileController - Create presigned post', () => {
       const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
       mockCreatePresignedPost.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, createPresignedPost)
+      then = await givenWhenThen(caseId, createPresignedPost, theCase)
     })
 
     it('should throw error', () => {
