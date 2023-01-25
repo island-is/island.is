@@ -239,7 +239,9 @@ export const InputController = forwardRef(
         control={control}
         rules={rules}
         {...(defaultValue !== undefined && { defaultValue })}
-        render={renderChildInput as any}
+        render={({ field: { onChange, onBlur, value, name } }) =>
+          renderChildInput({ value, onBlur, onChange, name })
+        }
       />
     )
   },

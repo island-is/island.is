@@ -491,9 +491,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         className="client__input"
                         placeholder={localization.fields['baseUrl'].placeholder}
                         title={localization.fields['baseUrl'].helpText}
-                        onChange={(e) => setCallbackUri(e.target.value)}
                         onFocus={() => setShowBaseUrlInfo(true)}
-                        onBlur={() => setShowBaseUrlInfo(false)}
                       />
                       <HelpBox
                         helpText={localization.fields['baseUrl'].helpText}
