@@ -464,8 +464,10 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.realEstateEstimation,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.realEstate as any)?.total)),
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'realEstate.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({
