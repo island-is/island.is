@@ -5,25 +5,23 @@ import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { Features } from '@island.is/react/feature-flags'
 
 import { m } from './lib/messages'
-import { ActivitiesPaths } from './lib/paths'
+import { SessionsPaths } from './lib/paths'
 
 const allowedScopes: string[] = [ApiScope.internal, ApiScope.internalProcuring]
 
-export const activitiesModule: PortalModule = {
-  name: m.activities,
-  featureFlag: Features.servicePortalActivitiesModule,
+export const sessionsModule: PortalModule = {
+  name: m.sessions,
+  featureFlag: Features.sessionHistory,
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
   routes() {
-    const routes: PortalRoute[] = [
+    return [
       {
         name: m.sessions,
-        path: ActivitiesPaths.Sessions,
+        path: SessionsPaths.Sessions,
         render: () => lazy(() => import('./screens/Sessions/Sessions')),
       },
     ]
-
-    return routes
   },
 }

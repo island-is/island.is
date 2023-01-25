@@ -1,3 +1,3 @@
-export enum ActivitiesPaths {
+export enum SessionsPaths {
   Sessions = '/adgangsstyring/innskraningar',
 }

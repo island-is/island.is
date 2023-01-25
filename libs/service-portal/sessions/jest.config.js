@@ -1,9 +1,9 @@
 module.exports = {
-  displayName: 'service-portal-activities',
+  displayName: 'service-portal-sessions',
   preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/service-portal/activities',
+  coverageDirectory: '../../../coverage/libs/service-portal/sessions',
 }

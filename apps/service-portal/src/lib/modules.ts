@@ -1,5 +1,5 @@
 import { PortalModule } from '@island.is/portals/core'
-import { activitiesModule } from '@island.is/service-portal/activities'
+import { sessionsModule } from '@island.is/service-portal/sessions'
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { assetsModule } from '@island.is/service-portal/assets'
 import { documentProviderModule } from '@island.is/service-portal/document-provider'
@@ -24,7 +24,6 @@ import { delegationsModule } from '@island.is/portals/shared-modules/delegations
  * for beta testing should be feature flagged.
  */
 export const modules: PortalModule[] = [
-  activitiesModule,
   applicationsModule,
   assetsModule,
   documentProviderModule,
@@ -41,4 +40,5 @@ export const modules: PortalModule[] = [
   petitionsModule,
   vehiclesModule,
   licensesModule,
+  sessionsModule,
 ]
