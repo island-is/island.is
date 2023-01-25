@@ -326,8 +326,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVAL]: {
-        entry: ['removeNullPeriod', 'setIsApprovedOnEmployer'],
-        exit: 'clearAssignees',
+        entry: ['removeNullPeriod'],
+        exit: ['clearAssignees', 'setIsApprovedOnEmployer'],
         meta: {
           name: States.EMPLOYER_APPROVAL,
           status: 'inprogress',
@@ -730,8 +730,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod', 'setIsApprovedOnEmployer'],
-        exit: ['clearAssignees'],
+        entry: ['assignToVMST', 'removeNullPeriod'],
+        exit: ['clearAssignees', 'setIsApprovedOnEmployer'],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
@@ -1088,7 +1088,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         let isAlreadyDone = false
         employers.forEach((e, i) => {
           if (!isAlreadyDone && !e.isApproved) {
-            set(answers, `employers[${i}].isApproved`, true)
             set(
               answers,
               `employers[${i}].companyNationalRegistryId`,
@@ -1228,17 +1227,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'employerReviewerNationalRegistryId',
           application.assignees[0],
         )
+
         // Multiple employers and we mark first 'available' employer
-        for (let i in employers) {
-          if (!employers[i].isApproved) {
+        let isAlreadyDone = false
+        employers.forEach((e, i) => {
+          if (!isAlreadyDone && !e.isApproved) {
+            set(answers, `employers[${i}].isApproved`, true)
             set(
               answers,
               `employers[${i}].reviewerNationalRegistryId`,
               application.assignees[0],
             )
+            isAlreadyDone = true
           }
-          break
-        }
+        })
 
         return context
       }),
