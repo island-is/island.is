@@ -432,13 +432,7 @@ describe('CaseController - Update', () => {
         const mockFindOne = mockCaseModel.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
-        const then = await givenWhenThen(
-          caseId,
-          user,
-          originalCase,
-          caseToUdate,
-        )
-        console.log(then)
+        await givenWhenThen(caseId, user, originalCase, caseToUdate)
       })
 
       it('should post modified notification to queue', async () => {
