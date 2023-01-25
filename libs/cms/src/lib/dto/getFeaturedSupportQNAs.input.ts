@@ -18,4 +18,14 @@ export class GetFeaturedSupportQNAsInput {
   @Max(20)
   @IsOptional()
   size?: number = 10
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  category?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  subCategory?: string
 }

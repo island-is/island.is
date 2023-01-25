@@ -815,6 +815,21 @@ export interface IFeaturedSupportQnAsFields {
   /** Link */
   link?: ILink | undefined
 
+  /** Automatically Fetch SupportQNAs */
+  automaticallyFetchSupportQNAs?: boolean | undefined
+
+  /** SupportQNA count */
+  supportQnaCount?: number | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** Support Category */
+  supportCategory?: ISupportCategory | undefined
+
+  /** Support Subcategory */
+  supportSubcategory?: ISupportSubCategory | undefined
+
   /** SupportQNAs */
   supportQNAs?: ISupportQna[] | undefined
 }

@@ -38,7 +38,11 @@ const FeaturedSupportQNAs = ({ slice }: FeaturedSupportQNAsProps) => {
       </Inline>
       <Box marginTop={3}>
         <Stack space="p2">
-          {(slice?.supportQNAs ?? [])
+          {(
+            (slice?.resolvedSupportQNAs?.length
+              ? slice?.resolvedSupportQNAs
+              : slice?.supportQNAs) ?? []
+          )
             .filter(
               (qna) =>
                 qna?.title &&

@@ -339,11 +339,19 @@ export class CmsElasticsearchService {
       size: input.size,
     }
 
-    const articlesResponse = await this.elasticService.getDocumentsByMetaData(
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+
+    if (input.subCategory) {
+      query.tags.push({ type: 'subcategory', key: input.subCategory })
+    }
+
+    const supportqnasResponse = await this.elasticService.getDocumentsByMetaData(
       index,
       query,
     )
-    return articlesResponse.hits.hits.map<SupportQNA>((response) =>
+    return supportqnasResponse.hits.hits.map((response) =>
       JSON.parse(response._source.response ?? '[]'),
     )
   }
