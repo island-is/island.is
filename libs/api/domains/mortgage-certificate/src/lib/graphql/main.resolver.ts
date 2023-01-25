@@ -7,7 +7,7 @@ import { MortgageCertificateValidationModel } from './models'
 import { ValidateMortgageCertificateInput } from './dto/validateMortgageCertificate.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.internalProcuring)
 @Resolver()
 export class MainResolver {
   constructor(
