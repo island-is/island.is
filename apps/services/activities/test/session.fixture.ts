@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { CreateSessionDto } from '../app/sessions/create-session.dto'
+import { CreateSessionDto } from '../src/app/sessions/create-session.dto'
 
 export const createRandomSession = (
   actorNationalId: string,

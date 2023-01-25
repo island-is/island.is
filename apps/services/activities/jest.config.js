@@ -12,5 +12,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../coverage/apps/services/activities',
-  setupFiles: ['./src/test/set-env-vars.ts'],
+  setupFiles: ['./test/set-env-vars.ts'],
 }

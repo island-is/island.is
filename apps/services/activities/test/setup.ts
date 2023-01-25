@@ -5,8 +5,8 @@ import {
   useAuth,
   TestApp,
 } from '@island.is/testing/nest'
-import { AppModule } from '../app/app.module'
-import { SequelizeConfigService } from '../sequelizeConfig.service'
+import { AppModule } from '../src/app/app.module'
+import { SequelizeConfigService } from '../src/sequelizeConfig.service'
 import { User } from '@island.is/auth-nest-tools'
 
 interface SetupOptions {

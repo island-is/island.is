@@ -9,9 +9,9 @@ import {
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
-} from '../../test/setup'
+} from '../../../test/setup'
 import { ActivitiesScope } from '@island.is/auth/scopes'
-import { createRandomSession } from '../../test/session.fixture'
+import { createRandomSession } from '../../../test/session.fixture'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 describe('ActivitiesController', () => {
