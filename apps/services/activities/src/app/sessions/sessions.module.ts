@@ -14,8 +14,11 @@ import {
 } from '../activities.config'
 let BullModule: DynamicModule
 
-if (process.env.INIT_SCHEMA === 'true') {
-  BullModule = NestBullModule.registerQueueAsync()
+if (process.env.INIT_SCHEMA === 'true' || process.env.TESTS === 'true') {
+  BullModule = NestBullModule.registerQueueAsync({
+    name: activitiesQueueName,
+    useFactory: () => ({}),
+  })
 } else {
   BullModule = NestBullModule.registerQueueAsync({
     name: activitiesQueueName,

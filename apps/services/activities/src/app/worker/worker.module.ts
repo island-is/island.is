@@ -15,26 +15,20 @@ import {
 } from '../activities.config'
 import { SessionsService } from '../sessions/sessions.service'
 
-let BullModule: DynamicModule
-
-if (process.env.INIT_SCHEMA === 'true') {
-  BullModule = NestBullModule.registerQueueAsync()
-} else {
-  BullModule = NestBullModule.registerQueueAsync({
-    name: activitiesQueueName,
-    useFactory: (config: ConfigType<typeof ActivitiesConfig>) => ({
-      prefix: `{${bullModuleName}}`,
-      createClient: () =>
-        createRedisCluster({
-          name: bullModuleName,
-          nodes: config.redis.nodes,
-          ssl: config.redis.ssl,
-          noPrefix: true,
-        }),
-    }),
-    inject: [ActivitiesConfig.KEY],
-  })
-}
+const BullModule = NestBullModule.registerQueueAsync({
+  name: activitiesQueueName,
+  useFactory: (config: ConfigType<typeof ActivitiesConfig>) => ({
+    prefix: `{${bullModuleName}}`,
+    createClient: () =>
+      createRedisCluster({
+        name: bullModuleName,
+        nodes: config.redis.nodes,
+        ssl: config.redis.ssl,
+        noPrefix: true,
+      }),
+  }),
+  inject: [ActivitiesConfig.KEY],
+})
 
 @Module({
   imports: [
