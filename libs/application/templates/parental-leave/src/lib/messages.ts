@@ -355,7 +355,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     noPrimaryParentLabel: {
       id: 'pl.application:no.primary.parent.label',
       defaultMessage: 'Viltu sækja um Faðir án móður umsókn?',
-      description: 'Do you want to apply for Father without mother application?',
+      description:
+        'Do you want to apply for Father without mother application?',
     },
     rightsSection: {
       id: 'pl.application:rights.section',
