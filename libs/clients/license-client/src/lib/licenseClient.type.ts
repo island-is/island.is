@@ -249,6 +249,6 @@ export interface LicenseClient<LicenseType> {
   ) => Promise<PkPassVerification | null>
 }
 
-export const LICENSE_FACTORY = 'license_factory'
+export const LICENSE_CLIENT_FACTORY = 'license_client_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'

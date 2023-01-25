@@ -1,18 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   CONFIG_PROVIDER,
-  LICENSE_FACTORY,
+  LICENSE_CLIENT_FACTORY,
+  LicenseClient,
   LicenseType,
   PassTemplateIds,
 } from './licenseClient.type'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { createClient } from '@island.is/feature-flags'
 
 @Injectable()
 export class LicenseClientService {
   constructor(
-    @Inject(LICENSE_FACTORY)
+    @Inject(LICENSE_CLIENT_FACTORY)
     private licenseFactory: (
       type: LicenseType,
     ) => Promise<LicenseClient<unknown> | null>,

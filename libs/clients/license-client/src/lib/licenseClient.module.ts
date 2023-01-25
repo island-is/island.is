@@ -6,14 +6,15 @@ import { ConfigType } from '@nestjs/config'
 import {
   CONFIG_PROVIDER,
   PassTemplateIds,
-  GENERIC_LICENSE_FACTORY,
-  GenericLicenseType,
-  GenericLicenseClient,
+  LICENSE_CLIENT_FACTORY,
+  LicenseType,
+  LicenseClient,
 } from './licenseClient.type'
 import {
   FirearmLicenseClient,
   FirearmLicenseClientApiConfig,
 } from './firearm-license-client'
+import { LicenseClientService } from './licenseClient.service'
 
 @Module({
   imports: [FirearmLicenseClientModule],
@@ -35,12 +36,12 @@ import {
       inject: [FirearmLicenseClientApiConfig.KEY],
     },
     {
-      provide: LICENSE_FACTORY,
+      provide: LICENSE_CLIENT_FACTORY,
       useFactory: (firearmClient: FirearmLicenseClient) => async (
-        type: GenericLicenseType,
-      ): Promise<GenericLicenseClient<unknown> | null> => {
+        type: LicenseType,
+      ): Promise<LicenseClient<unknown> | null> => {
         switch (type) {
-          case GenericLicenseType.FirearmLicense:
+          case LicenseType.FirearmLicense:
             return firearmClient
           default:
             return null
@@ -49,6 +50,6 @@ import {
       inject: [FirearmLicenseClient, XRoadConfig.KEY],
     },
   ],
-  exports: [GEEN],
+  exports: [LicenseClientService],
 })
 export class LicenseServiceModule {}
