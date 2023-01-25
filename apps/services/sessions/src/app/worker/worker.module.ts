@@ -6,9 +6,7 @@ import { LoggingModule } from '@island.is/logging'
 
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { SessionsConfig } from '../sessions.config'
-import { Session } from '../sessions/session.model'
 import { SessionsModule } from '../sessions/sessions.module'
-import { SessionsService } from '../sessions/sessions.service'
 import { SessionsProcessor } from './sessions-processor'
 
 @Module({
