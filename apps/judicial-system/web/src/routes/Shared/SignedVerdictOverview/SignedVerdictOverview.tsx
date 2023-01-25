@@ -7,7 +7,6 @@ import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseType,
@@ -49,6 +48,7 @@ import {
 import {
   ReactSelectOption,
   Sections,
+  TempCase as Case,
 } from '@island.is/judicial-system-web/src/types'
 import {
   Box,

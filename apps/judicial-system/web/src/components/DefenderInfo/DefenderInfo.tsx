@@ -3,11 +3,11 @@ import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
 import {
-  Case,
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isCourtRole } from '@island.is/judicial-system-web/src/utils/stepHelper'
 

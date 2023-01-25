@@ -2,7 +2,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  Case,
   CaseType,
   Gender,
   isInvestigationCase,
@@ -16,6 +15,7 @@ import {
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'

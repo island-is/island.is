@@ -1,4 +1,5 @@
 import type { Case, User } from '@island.is/judicial-system/types'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -69,7 +70,7 @@ export interface SortConfig {
 }
 
 export interface CaseData {
-  case?: Case
+  case?: TempCase
 }
 
 export interface LimitedAccessCaseData {
@@ -225,4 +226,8 @@ export interface Lawyer {
   email: string
   phoneNr: string
   nationalId: string
+}
+
+export interface TempCase extends Omit<Case, 'sharedWithProsecutorsOffice'> {
+  sharedWithProsecutorsOffice?: Institution
 }

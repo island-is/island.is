@@ -16,11 +16,13 @@ import {
 } from '@island.is/island-ui/core'
 import {
   UserRole,
-  Case,
   isIndictmentCase,
   User,
 } from '@island.is/judicial-system/types'
-import { Sections } from '@island.is/judicial-system-web/src/types'
+import {
+  Sections,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
 import {
   sections as formStepperSections,
   pageLayout,

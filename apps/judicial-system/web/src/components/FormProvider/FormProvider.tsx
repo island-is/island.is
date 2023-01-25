@@ -3,7 +3,6 @@ import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import {
-  Case,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -11,7 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { DEFENDER_ROUTE, USERS_ROUTE } from '@island.is/judicial-system/consts'
 
-import { CaseData, LimitedAccessCaseData } from '../../types'
+import { CaseData, LimitedAccessCaseData, TempCase } from '../../types'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
 import CaseQuery from './caseGql'
 
@@ -24,8 +23,8 @@ type ProviderState =
   | undefined
 
 interface FormProvider {
-  workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  workingCase: TempCase
+  setWorkingCase: React.Dispatch<React.SetStateAction<TempCase>>
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
   isCaseUpToDate: boolean
@@ -36,7 +35,7 @@ interface Props {
   children: ReactNode
 }
 
-const initialState: Case = {
+const initialState: TempCase = {
   id: '',
   created: '',
   modified: '',
@@ -86,7 +85,7 @@ const FormProvider = ({ children }: Props) => {
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
   const [path, setPath] = useState<string>()
-  const [workingCase, setWorkingCase] = useState<Case>({
+  const [workingCase, setWorkingCase] = useState<TempCase>({
     ...initialState,
     type: caseType,
     policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
@@ -120,7 +119,7 @@ const FormProvider = ({ children }: Props) => {
     fetchPolicy: 'no-cache',
     onCompleted: (caseData) => {
       if (caseData && caseData[resultProperty]) {
-        setWorkingCase(caseData[resultProperty] as Case)
+        setWorkingCase(caseData[resultProperty] as TempCase)
 
         // The case has been loaded from the server
         setState('up-to-date')

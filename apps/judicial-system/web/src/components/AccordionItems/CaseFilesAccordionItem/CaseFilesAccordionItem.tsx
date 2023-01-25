@@ -6,10 +6,10 @@ import { Box, AccordionItem, Button, Text } from '@island.is/island-ui/core'
 import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import {
-  Case,
   CaseState,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
 import {
   User,
