@@ -37,7 +37,8 @@ export const ReportFieldsRepeater: FC<
   const { answers, externalData } = application
   const { id, props } = field
   const error = errors
-    ? (errors[id.replace('.data', '')] as any)?.data
+    ? (errors[id.replace('.data', '')] as any)?.data ||
+      (errors[id.replace('.data', '')] as any)?.total
     : undefined
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
@@ -287,6 +288,13 @@ export const ReportFieldsRepeater: FC<
                 }
                 backgroundColor={'white'}
                 readOnly={true}
+                hasError={
+                  (props.sumField === 'heirsPercentage' &&
+                    error &&
+                    total !== 100) ??
+                  false
+                }
+                errorMessage={formatMessage(m.totalPercentageError)}
               />
             </GridColumn>
           </GridRow>

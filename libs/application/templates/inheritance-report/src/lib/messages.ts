@@ -383,7 +383,7 @@ export const m = defineMessages({
   },
   bankAccount: {
     id: 'ir.application:bankAccount',
-    defaultMessage: 'Innstæða',
+    defaultMessage: 'Bankareikningur',
     description: '',
   },
   bankAccountBalance: {
@@ -905,6 +905,11 @@ export const m = defineMessages({
   totalPercentage: {
     id: 'ir.application:totalPercentage',
     defaultMessage: 'Samtals arfshlutfall',
+    description: '',
+  },
+  totalPercentageError: {
+    id: 'ir.application:totalPercentageError',
+    defaultMessage: 'Samtals arfshlutfall þarf að vera 100%',
     description: '',
   },
   overviewTotal: {

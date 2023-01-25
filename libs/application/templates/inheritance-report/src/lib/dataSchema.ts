@@ -152,7 +152,10 @@ export const inheritanceReportSchema = z.object({
       })
       .array()
       .optional(),
-    total: z.number().optional(),
+    total: z
+      .number()
+      .refine((v) => v === 100)
+      .optional(),
   }),
 })
 
