@@ -23,11 +23,10 @@ expect.extend({
       pass: true,
     }
   },
-  async toBeApplication(received: string | Page, ofType = '\\w+') {
+  async toBeApplication(received: string | Page, applicationType = '\\w+') {
     const url: string = typeof received == 'string' ? received : received.url()
     const protocol = 'https?://'
     const host = '[^/]+'
-    const applicationType = ofType // e.g. p-merki, okuskoli
     const applicationId = '(/(\\w|-)*)?'
     const applicationRegExp = new RegExp(
       `^${protocol}${host}/umsoknir/${applicationType}${applicationId}$`,

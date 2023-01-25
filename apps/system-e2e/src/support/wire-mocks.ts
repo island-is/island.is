@@ -21,6 +21,7 @@ import {
 } from '../../../../infra/src/dsl/types/input-types'
 import { Envs } from '../../../../infra/src/environments'
 import { env, TestEnvironment } from './urls'
+import { Page } from '@playwright/test'
 
 const getServiceMock = (envVariableRef: ValueSource) => {
   const resolver = new Localhost()
@@ -118,7 +119,7 @@ export const addXroadMock = async <Conf>(
         apiPath: string
         prefixType: 'only-base-path'
         method?: HttpMethod
-      },
+    },
 ) => {
   const method = options.method === undefined ? HttpMethod.GET : options.method
   const { envs } = getEnvVariables(
@@ -150,4 +151,15 @@ export const addXroadMock = async <Conf>(
   }
   mockedServices.xroad.imposter.withStub(stub)
   await mb.createImposter(mockedServices.xroad.imposter)
+}
+
+export const mockNoApplications = ({ page: Page }) => {
+  await page.route('https://dog.ceo/api/breeds/list/all', async (route) => {
+    const json = {
+      message: { 'test_breed': [] }
+    };
+    await route.fulfill({ json });
+  });
+
+  return true
 }

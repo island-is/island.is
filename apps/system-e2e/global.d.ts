@@ -4,8 +4,8 @@ export {}
 declare global {
   namespace PlaywrightTest {
     interface Matchers<R> {
-      toHaveCountGreaterThan(a: number): R
-      toBeApplication(ofType?: string): R
+      async toHaveCountGreaterThan(a: number): Promise<R>
+      async toBeApplication(applicationType?: string): Promise<R>
     }
   }
 }
