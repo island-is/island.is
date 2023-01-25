@@ -58,7 +58,7 @@ export const dataSchema = z.object({
         return (
           phoneNumber &&
           phoneNumber.isValid() &&
-          phoneNumberStartStr.some((substr) => p.startsWith(substr))
+          phoneNumberStartStr.some((substr) => phoneNumber.nationalNumber.startsWith(substr))
         )
       },
       { params: errorMessages.phoneNumber },
@@ -95,7 +95,7 @@ export const dataSchema = z.object({
         if (phoneNumber)
           return (
             phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+            phoneNumberStartStr.some((substr) => phoneNumber.nationalNumber.startsWith(substr))
           )
         else return true
       },
@@ -156,7 +156,7 @@ export const dataSchema = z.object({
         if (phoneNumber)
           return (
             phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+            phoneNumberStartStr.some((substr) => phoneNumber.nationalNumber.startsWith(substr))
           )
         else return true
       },
