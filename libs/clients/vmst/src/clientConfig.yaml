@@ -343,6 +343,7 @@ components:
         - applicationRights
         - employers
         - testData
+        - type
       properties:
         result:
           type: string
@@ -565,6 +566,7 @@ components:
           nullable: true
         type:
           type: string
+          nullable:: true
     PaymentInfo:
       type: object
       additionalProperties: false

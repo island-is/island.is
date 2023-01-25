@@ -66,7 +66,6 @@ import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { type } from 'os'
 
 interface VMSTError {
   type: string
