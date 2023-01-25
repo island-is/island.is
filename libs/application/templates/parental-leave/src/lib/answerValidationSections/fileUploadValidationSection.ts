@@ -6,7 +6,10 @@ import {
   UnEmployedBenefitTypes,
   YES,
 } from '../../constants'
-import { getApplicationAnswers } from '../parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  isParentWithoutBirthParent,
+} from '../parentalLeaveUtils'
 import isEmpty from 'lodash/isEmpty'
 import { buildError } from './utils'
 import { errorMessages } from '../messages'
@@ -72,6 +75,25 @@ export const fileUploadValidationSection = (
 
       return undefined
     }
+  }
+
+  if (
+    isParentWithoutBirthParent(application.answers) &&
+    obj.parentWithoutBirthParent
+  ) {
+    if (
+      isEmpty(
+        (obj as { parentWithoutBirthParent: unknown[] })
+          .parentWithoutBirthParent,
+      )
+    )
+      return buildError(
+        errorMessages.requiredAttachment,
+        'parentWithoutBirthParent',
+        FILEUPLOAD,
+      )
+
+    return undefined
   }
 
   return undefined

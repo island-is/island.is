@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/shared/connected"]
     }
   },
-  "tags": []
+  "tags": ["lib:react", "scope:react"]
 }

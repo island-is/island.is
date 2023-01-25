@@ -105,6 +105,7 @@
     "application-templates-transport-authority-order-vehicle-license-plate": "libs/application/templates/transport-authority/order-vehicle-license-plate",
     "application-templates-transport-authority-order-vehicle-registration-certificate": "libs/application/templates/transport-authority/order-vehicle-registration-certificate",
     "application-templates-transport-authority-transfer-of-vehicle-ownership": "libs/application/templates/transport-authority/transfer-of-vehicle-ownership",
+    "application-testing": "libs/application/testing",
     "application-types": "libs/application/types",
     "application-ui-components": "libs/application/ui-components",
     "application-ui-fields": "libs/application/ui-fields",

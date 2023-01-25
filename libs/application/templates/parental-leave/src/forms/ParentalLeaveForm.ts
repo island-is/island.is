@@ -23,6 +23,7 @@ import {
   getAllPeriodDates,
   getSelectedChild,
   requiresOtherParentApproval,
+  isParentWithoutBirthParent,
   getApplicationAnswers,
   allowOtherParent,
   removeCountryCode,
@@ -720,6 +721,24 @@ export const ParentalLeaveForm: Form = buildForm({
                     chooseOtherParent: string
                   }
                 })?.otherParentObj?.chooseOtherParent === SINGLE,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.parentWithoutBirthParent',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .parentWithoutBirthParentTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .parentWithoutBirthParentDescription,
+              condition: (answers) => isParentWithoutBirthParent(answers),
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,

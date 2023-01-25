@@ -8,11 +8,11 @@ import {
   DataUploadResponse,
   CertificateInfoResponse,
 } from '@island.is/clients/syslumenn'
-import { NationalRegistry } from './types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 
 import AmazonS3URI from 'amazon-s3-uri'
@@ -115,16 +115,16 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       },
     ]
     const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+      ?.data as NationalRegistryIndividual
 
     const person: Person = {
       name: nationalRegistryData?.fullName,
       ssn: nationalRegistryData?.nationalId,
       phoneNumber: application.answers.phone as string,
       email: application.answers.email as string,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: nationalRegistryData?.address?.streetAddress || '',
+      postalCode: nationalRegistryData?.address?.postalCode || '',
+      city: nationalRegistryData?.address?.locality || '',
       signed: true,
       type: PersonType.Plaintiff,
     }
@@ -172,7 +172,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
 
   private getName(application: Application): string {
     const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+      ?.data as NationalRegistryIndividual
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
 
     return `p_kort_mynd_${nationalRegistryData?.nationalId}_${dateStr}.jpeg`
