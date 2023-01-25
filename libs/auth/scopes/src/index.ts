@@ -1,5 +1,5 @@
 export * from './lib/admin-portal.scope'
-export * from './lib/activities.scope'
+export * from './lib/sessions-scope'
 export * from './lib/air-discount-scheme.scope'
 export * from './lib/application.scope'
 export * from './lib/api.scope'
