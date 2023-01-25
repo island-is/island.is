@@ -55,7 +55,6 @@ export class SessionsController {
   }
 
   @Post()
-  @HttpCode(202)
   @Documentation({
     description: 'Register a session activity.',
     response: { status: 202 },
