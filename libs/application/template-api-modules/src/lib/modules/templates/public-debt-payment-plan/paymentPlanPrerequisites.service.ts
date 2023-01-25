@@ -307,8 +307,8 @@ export class PrerequisitesService {
     }
 
     return {
-      title: errorModal.other.title,
-      summary: errorModal.other.summary,
+      title: errorModal.noDebts.title,
+      summary: errorModal.noDebts.summary,
     }
   }
 
@@ -350,8 +350,8 @@ export class PrerequisitesService {
     }
 
     return {
-      title: errorModal.other.title,
-      summary: errorModal.other.summary,
+      title: errorModal.noDebts.title,
+      summary: errorModal.noDebts.summary,
     }
   }
 

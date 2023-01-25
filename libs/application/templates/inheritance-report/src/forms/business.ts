@@ -126,7 +126,6 @@ export const business = buildSection({
         buildMultiField({
           id: 'businessOverview',
           title: m.businessOverview,
-          description: m.businessOverviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({

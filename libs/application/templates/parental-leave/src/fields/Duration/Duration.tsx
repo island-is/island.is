@@ -17,15 +17,11 @@ import {
   getApplicationAnswers,
   calculateEndDateForPeriodWithStartAndLength,
   calculatePeriodLengthInMonths,
+  isParentalGrant,
 } from '../../lib/parentalLeaveUtils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
-import {
-  StartDateOptions,
-  DATE_FORMAT,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-} from '../../constants'
+import { StartDateOptions, DATE_FORMAT } from '../../constants'
 import * as styles from './Duration.css'
 
 const DEFAULT_PERIOD_LENGTH = usageMinMonths
@@ -43,7 +39,6 @@ export const Duration: FC<FieldBaseProps> = ({
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const currentStartDateAnswer = currentPeriod.startDate
-  const appAnswers = getApplicationAnswers(application.answers)
 
   const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
     currentPeriod.endDate ?? NO_ANSWER,
@@ -107,9 +102,7 @@ export const Duration: FC<FieldBaseProps> = ({
     init()
   }, [])
 
-  const isGrant =
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  const isGrant = isParentalGrant(application)
 
   const rangeDates =
     currentPeriod.firstPeriodStart !== StartDateOptions.ACTUAL_DATE_OF_BIRTH

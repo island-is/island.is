@@ -12,7 +12,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
-  FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
@@ -26,6 +25,7 @@ import {
   requireConfirmationOfResidency,
   extractKeyFromStringObject,
 } from '../../healthInsuranceUtils'
+import { FileUploadController } from '@island.is/application/ui-components'
 
 const FormerInsurance: FC<ReviewFieldProps> = ({
   application,

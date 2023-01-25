@@ -59,6 +59,7 @@ export interface ReviewSectionProps {
   tagVariant: TagVariant
   reviewer?: ReviewerProps[]
   messageValue?: string
+  isComplete?: boolean
 }
 
 export type InsuranceCompany = {

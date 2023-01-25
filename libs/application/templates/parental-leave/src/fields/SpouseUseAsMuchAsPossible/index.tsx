@@ -56,7 +56,7 @@ export const SpouseUseAsMuchAsPossible: FC<FieldBaseProps> = ({
               setValue('personalAllowanceFromSpouse.usage', '100')
             }
             if (s === NO) {
-              setValue('personalAllowanceFromSpouse.usage', '0')
+              setValue('personalAllowanceFromSpouse.usage', '1')
             }
           },
         }}

@@ -14,13 +14,10 @@ import {
   getExpectedDateOfBirth,
   getApplicationAnswers,
   getBeginningOfThisMonth,
+  isParentalGrant,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import {
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  StartDateOptions,
-} from '../../constants'
+import { StartDateOptions } from '../../constants'
 
 type ValidAnswers = StartDateOptions | undefined
 
@@ -32,9 +29,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const { rawPeriods, applicationType } = getApplicationAnswers(
-    application.answers,
-  )
+  const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
 
@@ -60,9 +55,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
     setStatefulAnswer(answer as ValidAnswers)
   }
 
-  const isGrant =
-    applicationType === PARENTAL_GRANT ||
-    applicationType === PARENTAL_GRANT_STUDENTS
+  const isGrant = isParentalGrant(application)
 
   const renderHiddenStartDateInput =
     statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
