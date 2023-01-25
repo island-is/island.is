@@ -66,6 +66,7 @@ import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { type } from 'os'
 
 interface VMSTError {
   type: string
@@ -1181,6 +1182,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
+        undefined,
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -1246,6 +1248,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
+        undefined,
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request

@@ -563,6 +563,8 @@ components:
         noOfChildren:
           type: string
           nullable: true
+        type:
+          type: string
     PaymentInfo:
       type: object
       additionalProperties: false
