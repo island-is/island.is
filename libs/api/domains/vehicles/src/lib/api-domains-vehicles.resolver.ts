@@ -96,7 +96,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => [VehiclesCurrentVehicleWithOwnerchangeChecks], {
     name: 'currentVehiclesWithOwnerchangeChecks',
     nullable: true,
@@ -114,7 +114,7 @@ export class VehiclesResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehicleOwnerchangeChecksByPermno, {
     name: 'vehicleOwnerchangeChecksByPermno',
     nullable: true,

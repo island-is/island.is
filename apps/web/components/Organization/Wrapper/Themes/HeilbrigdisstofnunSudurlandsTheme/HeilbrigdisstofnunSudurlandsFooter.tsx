@@ -84,7 +84,10 @@ const convertFooterItemsToFooterColumns = (footerItems: FooterItem[]) => {
   let currentColumnIndex = 1
   for (const footerItem of footerItems.slice(1)) {
     if (columns.length <= currentColumnIndex) {
-      columns[currentColumnIndex] = { rows: [] }
+      columns[currentColumnIndex] = {
+        rows: [],
+        span: ['8/8', '4/8', '2/8', '2/12'],
+      }
     }
 
     columns[currentColumnIndex].rows.push(footerItem)

@@ -170,6 +170,34 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
     },
+    noPrimaryParentTitle: {
+      id: 'pl.applications:no.primary.parent.title',
+      defaultMessage: 'Staðfesting á faðerni barns',
+      description: 'Confirmation of paternity',
+    },
+    noPrimaryParentQuestionOne: {
+      id: 'pl.applications:no.primary.parent.question.one',
+      defaultMessage: 'Er barn að fæðast erlendis?',
+      description: 'Is the child being born abroad?',
+    },
+    noPrimaryParentQuestionTwo: {
+      id: 'pl.applications:no.primary.parent.question.two',
+      defaultMessage:
+        'Er móðir búsett erlendis og/eða ekki með íslenska kennitölu?',
+      description:
+        'Is the mother living abroad and/or does she not have an Icelandic social security number?',
+    },
+    noPrimaryParentQuestionThree: {
+      id: 'pl.applications:no.primary.parent.question.three',
+      defaultMessage: 'Á móðir ekki rétt á fæðingarorlofi á Íslandi?',
+      description: 'Is the mother not entitled to parental leave in Iceland?',
+    },
+    noPrimaryParentDatePickerTitle: {
+      id: 'pl.applications:no.primary.parent.date.picker.title',
+      defaultMessage:
+        'Settu inn áætlaðan/raunverulegan fæðingardagur barnsins/barnanna?',
+      description: `Please enter the child's/children's expected/actual date of birth?`,
+    },
     otherParentSubSection: {
       id: 'pl.application:otherParent.subSection',
       defaultMessage: 'Hitt foreldrið',
@@ -323,6 +351,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:no.option.label',
       defaultMessage: 'Nei',
       description: 'No',
+    },
+    noPrimaryParentLabel: {
+      id: 'pl.application:no.primary.parent.label',
+      defaultMessage: 'Viltu sækja um Faðir án móður umsókn?',
+      description:
+        'Do you want to apply for Father without mother application?',
     },
     rightsSection: {
       id: 'pl.application:rights.section',
@@ -1834,15 +1868,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
     },
-    fatherWithoutMotherTitle: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
-      defaultMessage: 'Vottorð frá heilsugæslu',
-      description: 'father withouy mother title',
+    parentWithoutBirthParentTitle: {
+      id: 'pl.application:attachmentscreen.parent.without.birth.parent.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation',
     },
-    fatherWithoutMotherDescription: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherDescription',
+    parentWithoutBirthParentDescription: {
+      id:
+        'pl.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
-        'Faðir þarf að skila inn fæðingarvottorði frá heilsugæslu sem staðfestir faðerni barns. Athugaðu að skjalið þarf að vera á .pdf formi',
+        'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afriit af staðfestingu þess lútandi með vottorði um áætlaðan. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',
     },
     permanentFostercareTitle: {

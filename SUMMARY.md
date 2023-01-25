@@ -153,6 +153,7 @@
     - [Application Templates General Fishing License](libs/application/templates/general-fishing-license/README.md)
     - [Inheritance Report](libs/application/templates/inheritance-report/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
+  - [Application Testing](libs/application/testing/README.md)
   - [Types](libs/application/types/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Forms](libs/application/ui-forms/README.md)
