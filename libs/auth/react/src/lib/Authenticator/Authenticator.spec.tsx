@@ -1,6 +1,6 @@
+import { FC } from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { UserManagerEvents } from 'oidc-client-ts'
-import React, { FC } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
 import { getAuthSettings, getUserManager } from '../userManager'
