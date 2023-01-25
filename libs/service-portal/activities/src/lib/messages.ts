@@ -15,6 +15,7 @@ export const m = defineMessages({
   },
   sessionsHeaderIntro: {
     id: 'portals-my-pages.activities:sessions-header-intro',
-    defaultMessage: 'Hér er yfirlit yfir innskráningar þínar á Ísland.is, sem þú sjálfur, aðrir hafa gert í þínu umboði eða sem þú hefur gert í umboði fyrir aðra.',
-  }
+    defaultMessage:
+      'Hér er yfirlit yfir innskráningar þínar á Ísland.is, sem þú sjálfur, aðrir hafa gert í þínu umboði eða sem þú hefur gert í umboði fyrir aðra.',
+  },
 })

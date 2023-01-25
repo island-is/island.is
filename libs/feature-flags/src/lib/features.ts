@@ -46,7 +46,6 @@ export enum Features {
   servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
   servicePortalActivitiesModule = 'isServicePortalActivitiesModuleEnabled',
 
-
   // Application delegation flags
   applicationTemplatePublicDeptPaymentPlanAllowDelegation = 'applicationTemplatePublicDeptPaymentPlanAllowDelegation',
   transportAuthorityTransferOfVehicleOwnershipDelegations = 'applicationTransportAuthorityTransferOfVehicleOwnershipDelegations',

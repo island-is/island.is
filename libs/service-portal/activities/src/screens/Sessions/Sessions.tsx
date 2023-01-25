@@ -16,7 +16,7 @@ const Sessions = () => {
         intro={formatMessage(m.sessionsHeaderIntro)}
       />
       <Box>
-        <Text>{ userInfo?.profile?.actor?.name ?? userInfo?.profile?.name}</Text>
+        <Text>{userInfo?.profile?.actor?.name ?? userInfo?.profile?.name}</Text>
       </Box>
     </>
   )
