@@ -586,7 +586,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       children:
-        user?.institution?.type !== InstitutionType.HighCourt
+        user?.institution?.type !== InstitutionType.Court
           ? []
           : [
               {
