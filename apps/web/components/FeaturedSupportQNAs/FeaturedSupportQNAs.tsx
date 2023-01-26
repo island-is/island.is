@@ -26,7 +26,7 @@ const FeaturedSupportQNAs = ({ slice }: FeaturedSupportQNAsProps) => {
     <Box background="blueberry100" borderRadius="large" padding={4}>
       <Inline flexWrap="nowrap" alignY="center" justifyContent="spaceBetween">
         <Text variant="eyebrow" fontWeight="semiBold" color="blueberry600">
-          {slice.renderedTitle || defaultRenderedTitle[activeLocale]}
+          {slice?.renderedTitle || defaultRenderedTitle[activeLocale]}
         </Text>
         {slice?.link?.url && slice?.link?.text && (
           <LinkV2 href={slice.link.url}>
