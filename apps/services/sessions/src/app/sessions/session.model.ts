@@ -1,16 +1,5 @@
-import {
-  CreationOptional,
-  InferAttributes,
-  InferCreationAttributes,
-} from 'sequelize'
-import {
-  Column,
-  CreatedAt,
-  DataType,
-  Model,
-  PrimaryKey,
-  Table,
-} from 'sequelize-typescript'
+import { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
+import { Column, CreatedAt, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 @Table({
   tableName: 'session',
@@ -22,11 +11,10 @@ export class Session extends Model<
 > {
   @PrimaryKey
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: false,
-    defaultValue: DataType.UUIDV4,
   })
-  id!: CreationOptional<string>
+  id!: string
 
   @Column({
     type: DataType.STRING,
@@ -51,12 +39,6 @@ export class Session extends Model<
     allowNull: false,
   })
   timestamp!: Date
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  sessionId!: string
 
   @Column({
     type: DataType.STRING,

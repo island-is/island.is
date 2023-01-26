@@ -4,10 +4,9 @@ module.exports = {
   up(queryInterface, Sequelize) {
     return queryInterface.createTable('session', {
       id: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING,
         primaryKey: true,
         allowNull: false,
-        defaultValue: Sequelize.UUIDV4,
       },
       actor_national_id: {
         type: Sequelize.STRING,
@@ -23,10 +22,6 @@ module.exports = {
       },
       timestamp: {
         type: 'TIMESTAMP WITH TIME ZONE',
-        allowNull: false,
-      },
-      session_id: {
-        type: Sequelize.STRING,
         allowNull: false,
       },
       user_agent: {

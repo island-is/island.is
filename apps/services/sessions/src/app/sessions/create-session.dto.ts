@@ -1,8 +1,12 @@
-import { IsDateString, IsString } from 'class-validator'
+import { IsDateString, IsString } from 'class-validator';
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSessionDto {
+  @IsString()
+  @ApiProperty()
+  id!: string
+
   @IsString()
   @ApiProperty()
   actorNationalId!: string
@@ -18,10 +22,6 @@ export class CreateSessionDto {
   @IsDateString()
   @ApiProperty()
   timestamp!: Date
-
-  @IsString()
-  @ApiProperty()
-  sessionId!: string
 
   @IsString()
   @ApiProperty()
