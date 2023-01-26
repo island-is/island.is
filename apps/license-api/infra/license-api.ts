@@ -42,7 +42,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
           staging: 'license-api-callback-xrd',
           prod: 'license-api-callback-xrd',
         },
-        paths: ['/license-api', '/api/swagger'],
+        paths: ['/api/swagger'],
         extraAnnotations: {
           dev: {},
           staging: {
