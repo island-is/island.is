@@ -39,10 +39,7 @@ if (process.env.INIT_SCHEMA === 'true' || process.env.TESTS === 'true') {
 }
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([Session]),
-    BullModule,
-  ],
+  imports: [SequelizeModule.forFeature([Session]), BullModule],
   controllers: [SessionsController],
   providers: [SessionsService],
   exports: [BullModule, SessionsService],

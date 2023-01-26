@@ -1,3 +1,4 @@
+import { getQueueToken } from '@nestjs/bull'
 import faker from 'faker'
 import request from 'supertest'
 
@@ -15,17 +16,29 @@ import {
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../test/setup'
+import { sessionsQueueName } from '../sessions.config'
 
 describe('SessionsController', () => {
   describe('withAuth', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
+    let sessionsQueueAddSpy: jest.SpyInstance
     const user = createCurrentUser({ scope: [SessionsScope.sessionsWrite] })
 
     beforeAll(async () => {
       // Arrange
       app = await setupWithAuth({ user })
+
+      const sessionsQueue = app.get(getQueueToken(sessionsQueueName))
+      sessionsQueueAddSpy = jest
+        .spyOn(sessionsQueue, 'add')
+        .mockImplementation(() => Promise.resolve())
+
       server = request(app.getHttpServer())
+    })
+
+    beforeEach(() => {
+      sessionsQueueAddSpy.mockClear()
     })
 
     afterAll(() => {
@@ -41,6 +54,7 @@ describe('SessionsController', () => {
       // Assert
       expect(res.status).toEqual(202)
       expect(res.body.data).toBeUndefined()
+      expect(sessionsQueueAddSpy).toHaveBeenCalledTimes(1)
     })
 
     it('POST /v1/me/sessions should return forbidden when not actor', async () => {

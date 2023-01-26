@@ -30,9 +30,7 @@
       "executor": "@nrwl/node:node",
       "options": {
         "buildTarget": "services-sessions:build",
-        "args": [
-          "--job", "worker"
-        ]
+        "args": ["--job", "worker"]
       }
     },
     "lint": {

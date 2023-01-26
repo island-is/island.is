@@ -59,7 +59,10 @@ export class SessionsController {
     response: { status: 202 },
   })
   @Scopes(SessionsScope.sessionsWrite)
-  create(@CurrentUser() user: User, @Body() session: CreateSessionDto) {
+  async create(
+    @CurrentUser() user: User,
+    @Body() session: CreateSessionDto,
+  ): Promise<void> {
     const authenticatedUserNationalId =
       user.actor?.nationalId ?? user.nationalId
 
@@ -68,6 +71,6 @@ export class SessionsController {
         'Sessions can only be registered for the authenticated user.',
       )
 
-    this.sessionsQueue.add(sessionJobName, session)
+    await this.sessionsQueue.add(sessionJobName, session)
   }
 }
