@@ -130,15 +130,12 @@ const Overview: ServicePortalModuleComponent = () => {
   }
 
   const noApplications =
-    applications.length === 0 ||
+    (applications.length === 0 && !focusedApplication) ||
     (statusToShow === ApplicationOverViewStatus.incomplete &&
-      !focusedApplication &&
       applicationsSortedByStatus.incomplete.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.inProgress &&
-      !focusedApplication &&
       applicationsSortedByStatus.inProgress.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.completed &&
-      !focusedApplication &&
       applicationsSortedByStatus.finished.length === 0)
 
   return (
