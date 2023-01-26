@@ -96,7 +96,8 @@ export const m = defineMessages({
   },
   noIncompleteApplicationsAvailable: {
     id: 'sp.applications:no-incomplete-applications-available',
-    defaultMessage: 'Engar ókláraðar fundust hjá Ísland.is á þessari kennitölu',
+    defaultMessage:
+      'Engar ókláraðar umsóknir fundust hjá Ísland.is á þessari kennitölu',
     description:
       'Error message when no incomplete applications are found in the overview for national id',
   },
