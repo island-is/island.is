@@ -2,7 +2,7 @@
   "root": "libs/application/templates/transport-authority/digital-tachograph-workshop-card",
   "sourceRoot": "libs/application/templates/transport-authority/digital-tachograph-workshop-card/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",

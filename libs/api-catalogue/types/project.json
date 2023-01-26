@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/api-catalogue/types"]
     }
   },
-  "tags": []
+  "tags": ["scope:js", "lib:js"]
 }

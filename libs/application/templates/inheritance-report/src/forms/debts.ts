@@ -7,6 +7,7 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
@@ -130,9 +131,12 @@ export const debts = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String((answers.domesticAndForeignDebts as any)?.total),
+                  String(
+                    getValueViaPath(answers, 'domesticAndForeignDebts.total'),
+                  ),
                 ),
             }),
             buildDividerField({}),
@@ -145,16 +149,17 @@ export const debts = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
-                formatCurrency(String((answers.publicCharges as any)?.total)),
+                formatCurrency(
+                  String(getValueViaPath(answers, 'publicCharges.total')),
+                ),
             }),
             buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewAllDebtsWorth',
-              title: m.totalValueOfDebts,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
+            buildKeyValueField({
+              label: '',
+              colSpan: '6/12',
+              value: '',
             }),
             buildTextField({
               id: 'debtsTotal',
@@ -164,14 +169,12 @@ export const debts = buildSection({
               variant: 'currency',
               rightAlign: true,
               backgroundColor: 'white',
-              defaultValue: ({ answers }: Application) => {
-                const total =
-                  Number(answers.funeralCostAmount) +
-                  (answers.domesticAndForeignDebts as any)?.total +
-                  (answers.publicCharges as any)?.total
-
-                return total
-              },
+              defaultValue: ({ answers }: Application) =>
+                (getValueViaPath(
+                  answers,
+                  'domesticAndForeignDebts.total',
+                ) as number) +
+                (getValueViaPath(answers, 'publicCharges.total') as number),
             }),
           ],
         }),

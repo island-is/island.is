@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/nova-sms"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }
