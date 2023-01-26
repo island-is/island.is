@@ -44,6 +44,7 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getApprovedEmployers,
   getMaxMultipleBirthsDays,
   getMultipleBirthRequestDays,
   getOtherParentId,
@@ -1081,21 +1082,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setIsApprovedOnEmployer: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { employers, employerNationalRegistryId } = getApplicationAnswers(
-          answers,
-        )
-
-        let isAlreadyDone = false
-        employers.forEach((e, i) => {
-          if (!isAlreadyDone && !e.isApproved) {
-            set(
-              answers,
-              `employers[${i}].companyNationalRegistryId`,
-              employerNationalRegistryId,
-            )
-            isAlreadyDone = true
-          }
-        })
+        const { employerNationalRegistryId } = getApplicationAnswers(answers)
+        const employers = getApprovedEmployers(answers)
+        if (employers?.length > 0) {
+          set(
+            answers,
+            `employers[${employers.length - 1}].companyNationalRegistryId`,
+            employerNationalRegistryId,
+          )
+        }
 
         return context
       }),

@@ -868,6 +868,21 @@ export const getUnApprovedEmployers = (
   return newEmployers
 }
 
+export const getApprovedEmployers = (
+  answers: Application['answers'],
+): EmployerRow[] => {
+  const { employers } = getApplicationAnswers(answers)
+  const newEmployers: EmployerRow[] = []
+
+  employers?.forEach((e) => {
+    if (e.isApproved) {
+      newEmployers.push(e)
+    }
+  })
+
+  return newEmployers
+}
+
 export const requiresOtherParentApproval = (
   answers: Application['answers'],
   externalData: Application['externalData'],
