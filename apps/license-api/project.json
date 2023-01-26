@@ -14,8 +14,8 @@
         "assets": [
           {
             "glob": "*",
-            "input": "apps/license-api/migrations",
-            "output": "./migrations"
+            "input": "apps/license-api",
+            "output": "./"
           },
           {
             "glob": ".sequelizerc",
