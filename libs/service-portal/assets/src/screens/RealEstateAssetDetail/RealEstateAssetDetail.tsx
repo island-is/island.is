@@ -85,10 +85,14 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
   ${addressFragment}
 `
 
+type UseParams = {
+  id: string
+}
+
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { loading, error, data } = useQuery<Query>(GET_SINGLE_PROPERTY_QUERY, {
     variables: {

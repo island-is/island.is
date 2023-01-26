@@ -33,9 +33,13 @@ type RepeaterProps = {
 
 export const ReportFieldsRepeater: FC<
   FieldBaseProps<Answers> & RepeaterProps
-> = ({ application, field }) => {
+> = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
+  const error = errors
+    ? (errors[id.replace('.data', '')] as any)?.data ||
+      (errors[id.replace('.data', '')] as any)?.total
+    : undefined
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
@@ -135,7 +139,7 @@ export const ReportFieldsRepeater: FC<
     }
   }, [props, fields, append])
 
-  const calculateTotal = (input: any, index: any) => {
+  const calculateTotal = (input: any, index: number) => {
     const arr = valueArray
     if (input === '') {
       arr.splice(index, 1)
@@ -218,6 +222,12 @@ export const ReportFieldsRepeater: FC<
                       type={field.type}
                       textarea={field.variant}
                       rows={field.rows}
+                      required={field.required}
+                      error={
+                        error && error[index]
+                          ? error[index][field.id]
+                          : undefined
+                      }
                       onChange={(elem) => {
                         // heirs
                         if (field.id === 'heirsPercentage') {
@@ -278,6 +288,13 @@ export const ReportFieldsRepeater: FC<
                 }
                 backgroundColor={'white'}
                 readOnly={true}
+                hasError={
+                  (props.sumField === 'heirsPercentage' &&
+                    error &&
+                    total !== 100) ??
+                  false
+                }
+                errorMessage={formatMessage(m.totalPercentageError)}
               />
             </GridColumn>
           </GridRow>
