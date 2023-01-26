@@ -1,5 +1,4 @@
 import { ApplicationContext } from '@island.is/application/types'
-import { State } from 'xstate'
 
 import {
   YES,
