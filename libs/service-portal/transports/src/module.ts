@@ -9,7 +9,7 @@ export const transportsModule: PortalModule = {
   routes: ({ userInfo }) => [
     {
       name: m.yourVehicles,
-      path: TransportPaths.AssetsMyVehicles,
+      path: TransportPaths.AssetsVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },

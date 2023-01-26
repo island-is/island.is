@@ -3,7 +3,7 @@ import { m } from '@island.is/service-portal/core'
 import { TransportPaths } from './paths'
 
 export const transportsNavigation: PortalNavigationItem = {
-  name: m.vehicles,
+  name: m.transports,
   path: TransportPaths.AssetsVehicles,
   icon: {
     icon: 'car',

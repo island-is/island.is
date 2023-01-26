@@ -6,7 +6,7 @@ export const delegationsNavigation: PortalNavigationItem = {
   name: m.accessControl,
   path: DelegationPaths.Delegations,
   icon: {
-    icon: 'people',
+    icon: 'lockClosed',
   },
   description: m.accessControlDescription,
   children: [
