@@ -59,4 +59,4 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .grantNamespaces('nginx-ingress-external')
+    .grantNamespaces('nginx-ingress-external', 'islandis')
