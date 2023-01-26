@@ -1510,6 +1510,16 @@ export class NotificationService {
             ),
           ]
           break
+        case NotificationType.REVOKED:
+          messages = [
+            this.getNotificationMessage(
+              MessageType.SEND_REVOKED_NOTIFICATION,
+              user,
+              theCase,
+              notification.eventOnly,
+            ),
+          ]
+          break
         default:
           throw new InternalServerErrorException(
             `Invalid notification type ${notification.type}`,
