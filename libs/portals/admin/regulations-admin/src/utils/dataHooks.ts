@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
 import {
@@ -416,7 +416,7 @@ export const useCreateRegulationDraft = () => {
 
   const [status, setStatus] = useState<CreateStatus>({ creating: false })
   const [createDraftRegulation] = useMutation(CREATE_DRAFT_REGULATION_MUTATION)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return {
     ...status,
@@ -443,12 +443,12 @@ export const useCreateRegulationDraft = () => {
 
           setStatus({ creating: false })
 
-          history.push({
-            pathname: getEditUrl(
+          navigate(
+            getEditUrl(
               newDraft.id,
               regulationType === 'amending' ? 'impacts' : undefined,
             ),
-          })
+          )
         })
         .catch((e) => {
           const error = e instanceof Error ? e : new Error(String(e))

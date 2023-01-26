@@ -9,7 +9,7 @@ import {
 import { homeMessages as msg, statusMsgs } from '../lib/messages'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { workingDaysUntil } from '../utils'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { getEditUrl } from '../utils/routing'
 import { useRegulationTaskListQuery } from '../utils/dataHooks'
 import { useLocale } from '@island.is/localization'
@@ -18,7 +18,7 @@ export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
   const [page, setPage] = useState(1)
-  const history = useHistory()
+  const navigate = useNavigate()
   const handlePageChange = useCallback((page: number) => setPage(page), [])
   const { loading, data, error } = useRegulationTaskListQuery(page)
 
@@ -93,7 +93,7 @@ export const TaskList = () => {
                   variant: 'text',
                   size: 'small',
                   onClick: () => {
-                    history.push(
+                    navigate(
                       getEditUrl(
                         id,
                         type === 'amending' ? 'impacts' : undefined,

@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import { useMutation, gql } from '@apollo/client'
 import { LawChapterSlug, toISODate } from '@island.is/regulations'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Step } from '../types'
 import { useLocale } from '@island.is/localization'
 import { DraftingStatus } from '@island.is/regulations/admin'
@@ -68,7 +68,7 @@ const DELETE_DRAFT_REGULATION_MUTATION = gql`
 // ---------------------------------------------------------------------------
 
 const useMakeDraftingState = (inputs: StateInputs) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const t = useLocale().formatMessage
 
   const [state, dispatch] = useEditDraftReducer(inputs)
@@ -84,14 +84,16 @@ const useMakeDraftingState = (inputs: StateInputs) => {
       inputs.stepName !== 'review' &&
       inputs.stepName !== 'publish'
     ) {
-      history.replace(getEditUrl('review'))
+      navigate(getEditUrl('review'), {
+        replace: true,
+      })
     } else {
       dispatch({ type: 'CHANGE_STEP', stepName: inputs.stepName })
     }
   }, [
     inputs.stepName,
     draftIsLocked,
-    history, // NOTE: Should be immutable
+    navigate, // NOTE: Should be immutable
     dispatch, // NOTE: Should be immutable
   ])
 
@@ -182,7 +184,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         if (!isDraftEmpty(draft)) {
           await actions.saveStatus(true)
         }
-        history.push(getEditUrl(draft.id, stepName))
+        navigate(getEditUrl(draft.id, stepName))
       },
 
       // FIXME: rename to updateProp??
@@ -247,7 +249,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             },
           }).then(() => {
             // TODO: Láta notanda vita að færslu hefur verið eytt út?
-            history.push(getHomeUrl())
+            navigate(getHomeUrl())
           })
         } catch (e) {
           console.error('Failed to delete regulation draft: ', e)
@@ -269,7 +271,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             error: error && { message: buttonsMsgs.saveFailure, error },
           })
 
-          history.push(getHomeUrl())
+          navigate(getHomeUrl())
         })
       },
 
@@ -286,7 +288,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                   error: { message: buttonsMsgs.saveFailure, error },
                 })
               } else {
-                history.push(getHomeUrl())
+                navigate(getHomeUrl())
               }
             })
           }
@@ -308,7 +310,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                     error: { message: buttonsMsgs.saveFailure, error },
                   })
                 } else {
-                  history.push(getHomeUrl())
+                  navigate(getHomeUrl())
                 }
               })
             }
@@ -330,7 +332,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                     error: { message: buttonsMsgs.saveFailure, error },
                   })
                 } else {
-                  history.push(getHomeUrl())
+                  navigate(getHomeUrl())
                 }
               })
             }
@@ -341,7 +343,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
     state,
 
     dispatch, // NOTE Should be immutable
-    history, // NOTE: Should be immutable
+    navigate, // NOTE: Should be immutable
     updateDraftRegulationById, // NOTE: Should be immutable
     deleteDraftRegulationMutation, // NOTE: Should be immutable
     t, // NOTE: Should be immutable,
