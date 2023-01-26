@@ -1,5 +1,5 @@
 import { Locale } from 'locale'
-import { LicenseLabelsObject } from '../licenceService.type'
+import { LicenseLabelsObject } from '../licenseClient.type'
 
 export const getLabel = (
   labelKey: string,

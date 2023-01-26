@@ -4,6 +4,7 @@ import {
   LICENSE_CLIENT_FACTORY,
   LicenseClient,
   LicenseType,
+  LicenseTypeType,
   PassTemplateIds,
 } from './licenseClient.type'
 import type { Logger } from '@island.is/logging'
@@ -20,8 +21,42 @@ export class LicenseClientService {
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
   ) {}
 
-  async createClient(type: LicenseType) {
+  private async createClient(type: LicenseType) {
     const client = await this.licenseFactory(type)
     return client
+  }
+
+  private getTypeByPassTemplateId(id: string) {
+    for (const [key, value] of Object.entries(this.config)) {
+      // some license Config id === barcode id
+      if (value === id) {
+        // firearmLicense => FirearmLicense
+        const keyAsEnumKey = key.slice(0, 1).toUpperCase() + key.slice(1)
+
+        const valueFromEnum: LicenseType | undefined =
+          LicenseType[keyAsEnumKey as LicenseTypeType]
+
+        if (!valueFromEnum) {
+          throw new Error(`Invalid license type: ${key}`)
+        }
+        return valueFromEnum
+      }
+    }
+    return null
+  }
+
+  async createClientByLicenseType(type: LicenseType) {
+    const client = await this.createClient(type)
+    return client
+  }
+
+  async createClientByPassTemplateId(passTemplateId: string) {
+    const type = this.getTypeByPassTemplateId(passTemplateId)
+    if (type) {
+      const client = await this.createClient(type)
+      return client
+    }
+
+    return null
   }
 }

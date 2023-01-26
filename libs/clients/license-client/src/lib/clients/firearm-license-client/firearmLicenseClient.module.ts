@@ -31,4 +31,4 @@ import { FirearmLicenseClientApiConfig } from './firearmLicenseClient.config'
   providers: [FirearmLicenseClient, FirearmLicenseApiProvider],
   exports: [FirearmLicenseClient],
 })
-export class GenericFirearmLicenseModule {}
+export class FirearmClientModule {}

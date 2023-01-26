@@ -16,19 +16,19 @@ import { Locale } from '@island.is/shared/types'
 import compareAsc from 'date-fns/compareAsc'
 import { LicenseData } from './firearmLicenseClient.type'
 import {
-  GenericLicenseClient,
+  LicenseClient,
   GenericLicenseLabels,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
   PkPassVerificationInputData,
-} from '../licenseClient.type'
+} from '../../licenseClient.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
 @Injectable()
-export class FirearmLicenseClient implements GenericLicenseClient<LicenseInfo> {
+export class FirearmLicenseClient implements LicenseClient<LicenseInfo> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,
@@ -68,7 +68,7 @@ export class FirearmLicenseClient implements GenericLicenseClient<LicenseInfo> {
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
 
     if (payload) {
-      pkpassStatus = GenericFirearmLicenseService.licenseIsValidForPkpass(
+      pkpassStatus = FirearmLicenseClient.licenseIsValidForPkpass(
         licenseData.licenseInfo,
       )
     }

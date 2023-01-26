@@ -13,8 +13,8 @@ import {
   GenericUserLicensePayload,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
-} from '../licenseClient.type'
-import { getLabel } from '../utils/translations'
+} from '../../licenseClient.type'
+import { getLabel } from '../../utils/translations'
 
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''

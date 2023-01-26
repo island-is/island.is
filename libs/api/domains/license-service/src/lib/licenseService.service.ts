@@ -9,7 +9,6 @@ import { CmsContentfulService } from '@island.is/cms'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
-  GENERIC_LICENSE_FACTORY,
   GenericLicenseType,
   GenericLicenseClient,
   GenericLicenseMetadata,
@@ -21,12 +20,15 @@ import {
   GenericUserLicensePkPassStatus,
   GenericLicenseOrganizationSlug,
   GenericLicenseLabels,
-  CONFIG_PROVIDER,
+  DRIVING_LICENSE_FACTORY,
 } from './licenceService.type'
-import type { PassTemplateIds } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import { AVAILABLE_LICENSES } from './licenseService.module'
 import { FetchError } from '@island.is/clients/middlewares'
+import {
+  LicenseClientService,
+  LicenseType,
+} from '@island.is/clients/license-client'
 
 const CACHE_KEY = 'licenseService'
 const LOG_CATEGORY = 'license-service'
@@ -40,14 +42,14 @@ export type GetGenericLicenseOptions = {
 @Injectable()
 export class LicenseServiceService {
   constructor(
-    @Inject(GENERIC_LICENSE_FACTORY)
+    @Inject(DRIVING_LICENSE_FACTORY)
     private genericLicenseFactory: (
       type: GenericLicenseType,
       cacheManager: CacheManager,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
+    private readonly licenseClient: LicenseClientService,
     private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
@@ -199,10 +201,12 @@ export class LicenseServiceService {
       )
 
       if (!onlyList) {
-        const licenseService = await this.genericLicenseFactory(
-          license.type,
-          this.cacheManager,
-        )
+        const licenseService =
+          license.type === GenericLicenseType.DriversLicense
+            ? await this.genericLicenseFactory(license.type, this.cacheManager)
+            : await this.licenseClient.createClientByLicenseType(
+                (license.type as unknown) as LicenseType,
+              )
 
         if (!licenseService) {
           this.logger.warn('No license service from generic license factory', {
@@ -391,50 +395,36 @@ export class LicenseServiceService {
      * id is missing, then it's a drivers license.
      * Otherwise, map the id to its corresponding license type
      */
+    let licenseService
 
-    const licenseType = passTemplateId
-      ? this.getTypeFromPassTemplateId(passTemplateId)
-      : GenericLicenseType.DriversLicense
-
-    if (!licenseType) {
-      throw new Error(`Invalid pass template id: ${passTemplateId}`)
+    if (passTemplateId) {
+      licenseService = await this.licenseClient.createClientByPassTemplateId(
+        passTemplateId,
+      )
+      if (!licenseService) {
+        throw new Error(`Invalid pass template id: ${passTemplateId}`)
+      }
+    } else {
+      licenseService = await this.genericLicenseFactory(
+        GenericLicenseType.DriversLicense,
+        this.cacheManager,
+      )
     }
 
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    if (!licenseService) {
+      throw new Error(`Invalid pass template id: ${passTemplateId}`)
+    }
 
     if (licenseService) {
       verification = await licenseService.verifyPkPass(data, passTemplateId)
     } else {
-      throw new Error(`${licenseType} not supported`)
+      throw new Error('License type not supported')
     }
 
+    // TODO BETTER ERROR HANDLING
     if (!verification) {
-      throw new Error(`Unable to verify pkpass for ${licenseType} for user`)
+      throw new Error(`Unable to verify pkpass for user`)
     }
     return verification
-  }
-
-  private getTypeFromPassTemplateId(
-    passTemplateId: string,
-  ): GenericLicenseType | null {
-    for (const [key, value] of Object.entries(this.config)) {
-      // some license Config id === barcode id
-      if (value === passTemplateId) {
-        // firearmLicense => FirearmLicense
-        const keyAsEnumKey = key.slice(0, 1).toUpperCase() + key.slice(1)
-
-        const valueFromEnum: GenericLicenseType | undefined =
-          GenericLicenseType[keyAsEnumKey as GenericLicenseTypeType]
-
-        if (!valueFromEnum) {
-          throw new Error(`Invalid license type: ${key}`)
-        }
-        return valueFromEnum
-      }
-    }
-    return null
   }
 }

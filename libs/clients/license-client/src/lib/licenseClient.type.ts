@@ -3,7 +3,12 @@ import { Locale } from '@island.is/shared/types'
 
 export enum LicenseType {
   FirearmLicense = 'FirearmLicense',
+  AdrLicense = 'AdrLicense',
+  MachineLicense = 'MachineLicense',
+  DisabilityLicense = 'DisabilityLicense',
 }
+
+export type LicenseTypeType = keyof typeof LicenseType
 
 /**
  * Get organization slug from the CMS.
@@ -17,7 +22,6 @@ export enum GenericLicenseOrganizationSlug {
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
 }
-export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
 export enum GenericLicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
@@ -63,25 +67,6 @@ export type GenericLicenseProvider = {
   /*
   name: string
   logo?: string
-  */
-}
-
-export type GenericLicenseMetadata = {
-  type: GenericLicenseType
-  provider: GenericLicenseProvider
-  pkpass: boolean
-  pkpassVerify: boolean
-  timeout: number
-  orgSlug?: GenericLicenseOrganizationSlug
-
-  // TODO(osk) should these be here? or be resolved by client via contentful?
-  // Commented out until talked about, to limit scope of v1
-  /*
-  title: string
-  ordering: number
-  backgroundImage?: string
-  applicationUrl?: string
-  detailUrl?: string
   */
 }
 
@@ -149,16 +134,6 @@ export type GenericLicenseLabels = {
   labels?: LicenseLabelsObject
 }
 
-export type GenericUserLicense = {
-  nationalId: string
-  license: GenericLicenseMetadata &
-    GenericLicenseUserdata &
-    GenericLicenseOrgdata &
-    GenericLicenseLabels
-  fetch: GenericLicenseFetch
-  payload?: GenericUserLicensePayload
-}
-
 export type GenericLicensePkPassResult = {
   valid?: boolean
   url?: string
@@ -185,9 +160,9 @@ export type PkPassVerificationError = {
 
 export type PassTemplateIds = {
   firearmLicense: string
-  //adrLicense: string
-  //machineLicense: string
-  //disabilityLicense: string
+  adrLicense: string
+  machineLicense: string
+  disabilityLicense: string
 }
 
 export type PkPassVerificationData = {

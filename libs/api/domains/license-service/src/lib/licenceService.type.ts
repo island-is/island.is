@@ -254,6 +254,6 @@ export interface GenericLicenseClient<LicenseType> {
   ) => Promise<PkPassVerification | null>
 }
 
-export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
+export const DRIVING_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
