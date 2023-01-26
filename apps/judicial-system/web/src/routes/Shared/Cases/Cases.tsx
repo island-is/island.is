@@ -15,7 +15,6 @@ import {
 import {
   CaseState,
   CaseTransition,
-  NotificationType,
   isRestrictionCase,
   Feature,
   isInvestigationCase,
