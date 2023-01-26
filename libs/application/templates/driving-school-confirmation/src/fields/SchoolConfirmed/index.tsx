@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
@@ -14,13 +15,12 @@ import { m } from '../../lib/messages'
 import Jobs from '../../assets/Jobs'
 import kennitala from 'kennitala'
 import { Student } from '../../types'
-import { useHistory } from 'react-router-dom'
 
 const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const nationalId = kennitala.format((answers.student as Student).nationalId)
   const { formatMessage } = useLocale()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return (
     <GridContainer>
@@ -57,7 +57,7 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
       </Box>
       <Box marginBottom={10} display="flex" justifyContent="flexEnd">
         <Button
-          onClick={() => history.push('/okuskoli')}
+          onClick={() => navigate('/okuskoli')}
           icon="arrowForward"
           type="button"
         >

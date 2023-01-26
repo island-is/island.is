@@ -73,8 +73,12 @@ type DataField = Pick<
   'variant' | 'color' | 'truncate' | 'fontWeight' | 'lineHeight'
 >
 
+type UseParams = {
+  familyIndex: string
+}
+
 const StudentAssessmentTable = () => {
-  const { familyIndex } = useParams<{ familyIndex: string }>()
+  const { familyIndex } = useParams() as UseParams
   const { data, loading: queryLoading } = useQuery<Query>(
     EducationExamResultQuery,
     {

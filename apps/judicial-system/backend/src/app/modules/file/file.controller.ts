@@ -32,6 +32,7 @@ import {
   registrarRule,
   representativeRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import {
   Case,
@@ -143,6 +144,7 @@ export class FileController {
     judgeRule,
     registrarRule,
     assistantRule,
+    defenderRule,
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({

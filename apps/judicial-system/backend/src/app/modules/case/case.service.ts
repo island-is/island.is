@@ -486,13 +486,24 @@ export class CaseService {
     ])
   }
 
-  private addMessagesForDeletedIndictmentCaseToQueue(
+  private addMessagesForDeletedCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getArchiveCaseFileMessages(theCase, user),
-    )
+    const messages: CaseMessage[] = [
+      {
+        type: MessageType.SEND_REVOKED_NOTIFICATION,
+        caseId: theCase.id,
+        userId: user.id,
+      },
+    ]
+
+    // Indictment cases need some case file cleanup
+    if (isIndictmentCase(theCase.type)) {
+      messages.push(...this.getArchiveCaseFileMessages(theCase, user))
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -504,9 +515,9 @@ export class CaseService {
       // New case state
       if (updatedCase.state === CaseState.RECEIVED) {
         await this.addMessagesForReceivedCaseToQueue(theCase, user)
-      }
-
-      if (isIndictmentCase(theCase.type)) {
+      } else if (updatedCase.state === CaseState.DELETED) {
+        await this.addMessagesForDeletedCaseToQueue(theCase, user)
+      } else if (isIndictmentCase(theCase.type)) {
         if (updatedCase.state === CaseState.SUBMITTED) {
           await this.addMessagesForSubmittedIndicitmentCaseToQueue(
             theCase,
@@ -515,9 +526,6 @@ export class CaseService {
         } else if (completedCaseStates.includes(updatedCase.state)) {
           // Indictment cases are not signed
           await this.addMessagesForCompletedIndictmentCaseToQueue(theCase, user)
-        } else if (updatedCase.state === CaseState.DELETED) {
-          // Indictment cases need some case file cleanup
-          await this.addMessagesForDeletedIndictmentCaseToQueue(theCase, user)
         }
       }
     }
@@ -675,7 +683,7 @@ export class CaseService {
         }
       })
       .then(async () => {
-        const updatedCase = await this.findById(theCase.id)
+        const updatedCase = await this.findById(theCase.id, true)
 
         await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
