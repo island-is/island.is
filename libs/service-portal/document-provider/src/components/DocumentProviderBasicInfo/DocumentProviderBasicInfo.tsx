@@ -99,8 +99,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                     placeholder={formatMessage(
                       m.SingleProviderInstitutionNamePlaceholder,
                     )}
-                    hasError={errors.applicant?.name}
-                    errorMessage={errors.applicant?.name?.message}
+                    hasError={errors?.applicant?.name !== undefined}
+                    errorMessage={errors?.applicant?.name?.message}
                   />
                 )}
               />
@@ -137,7 +137,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionNationalIdPlaceholder,
                   )}
-                  hasError={errors.applicant?.nationalId}
+                  hasError={errors.applicant?.nationalId !== undefined}
                   errorMessage={errors.applicant?.nationalId?.message}
                 />
               )}
@@ -170,7 +170,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionEmailPlaceholder,
                   )}
-                  hasError={errors.applicant?.email}
+                  hasError={errors.applicant?.email !== undefined}
                   errorMessage={errors.applicant?.email?.message}
                 />
               )}
@@ -219,7 +219,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionPhonenumberPlaceholder,
                   )}
-                  hasError={errors.applicant?.phoneNumber}
+                  hasError={errors.applicant?.phoneNumber !== undefined}
                   errorMessage={errors.applicant?.phoneNumber?.message}
                 />
               )}
@@ -248,7 +248,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionAddressPlaceholder,
                   )}
-                  hasError={errors.applicant?.address}
+                  hasError={errors.applicant?.address !== undefined}
                   errorMessage={errors.applicant?.address?.message}
                 />
               )}
@@ -273,7 +273,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   onChange={onChange}
                   label={formatMessage(m.DashBoardDescription)}
                   placeholder={formatMessage(m.DashBoardDescription)}
-                  hasError={errors.applicant?.zipCode}
+                  hasError={errors.applicant?.zipCode !== undefined}
                   errorMessage={errors.applicant?.zipCode?.message}
                 />
               )}
@@ -311,7 +311,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderResponsibleContactNamePlaceholder,
                   )}
-                  hasError={errors.administrativeContact?.name}
+                  hasError={errors.administrativeContact?.name !== undefined}
                   errorMessage={errors.administrativeContact?.name?.message}
                 />
               )}
@@ -346,7 +346,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderResponsibleContactEmailPlaceholder,
                   )}
-                  hasError={errors.administrativeContact?.email}
+                  hasError={errors.administrativeContact?.email !== undefined}
                   errorMessage={errors.administrativeContact?.email?.message}
                 />
               )}
@@ -395,7 +395,9 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderResponsibleContactPhoneNumberPlaceholder,
                   )}
-                  hasError={errors.administrativeContact?.phoneNumber}
+                  hasError={
+                    errors.administrativeContact?.phoneNumber !== undefined
+                  }
                   errorMessage={
                     errors.administrativeContact?.phoneNumber?.message
                   }
@@ -472,7 +474,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderTechnicalContactEmailPlaceholder,
                   )}
-                  hasError={errors.technicalContact?.email}
+                  hasError={errors.technicalContact?.email !== undefined}
                   errorMessage={errors.technicalContact?.email?.message}
                 />
               )}
@@ -521,7 +523,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderTechnicalContactPhoneNumberPlaceholder,
                   )}
-                  hasError={errors.technicalContact?.phoneNumber}
+                  hasError={errors.technicalContact?.phoneNumber !== undefined}
                   errorMessage={errors.technicalContact?.phoneNumber?.message}
                 />
               )}
@@ -563,7 +565,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderUserHelpContactEmailPlaceholder,
                   )}
-                  hasError={errors.helpDeskContact?.email}
+                  hasError={errors.helpDeskContact?.email !== undefined}
                   errorMessage={errors.helpDeskContact?.email?.message}
                 />
               )}
@@ -612,7 +614,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderUserHelpContactPhoneNumberPlaceholder,
                   )}
-                  hasError={errors.helpDeskContact?.phoneNumber}
+                  hasError={errors.helpDeskContact?.phoneNumber !== undefined}
                   errorMessage={errors.helpDeskContact?.phoneNumber?.message}
                 />
               )}

@@ -54,7 +54,7 @@ export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
               label={formatMessage(m.SettingsEditEndPointsUrl)}
               placeholder={formatMessage(m.SettingsEditEndPointsUrl)}
               value={value}
-              hasError={errors.endpoint}
+              hasError={errors.endpoint !== undefined}
               errorMessage={errors.endpoint?.message}
               onChange={onChange}
             />

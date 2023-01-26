@@ -176,7 +176,7 @@ const BasicInput = ({
       id={name}
       name={name}
       label={label}
-      error={errors?.[name]?.message}
+      error={errors?.[name]?.message as string}
       required={!!requiredMessage}
       format={format}
       rules={{
@@ -205,7 +205,7 @@ export const StandardForm = ({
   formNamespace,
 }: StandardFormProps) => {
   const { activeLocale } = useI18n()
-  const useFormMethods = useForm({})
+  const useFormMethods = useForm()
   const n = useNamespace(namespace)
   const fn = useFormNamespace(formNamespace)
   const {
@@ -688,8 +688,8 @@ export const StandardForm = ({
                           onChange={({ label }: Option) => {
                             onChange(label)
                           }}
-                          hasError={errors.rikisadili}
-                          errorMessage={errors.rikisadili?.message}
+                          hasError={errors?.rikisadili !== undefined}
+                          errorMessage={errors?.rikisadili?.message}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -713,14 +713,12 @@ export const StandardForm = ({
                     control={control}
                     name="nafn"
                     defaultValue=""
-                    rules={
-                      {
-                        required: {
-                          value: true,
-                          message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
-                        },
-                      } as ValidationRule
-                    }
+                    rules={{
+                      required: {
+                        value: true,
+                        message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
+                      },
+                    }}
                     render={({ field: { onChange, onBlur, value, name } }) => (
                       <Input
                         backgroundColor="blue"
@@ -728,8 +726,8 @@ export const StandardForm = ({
                         onBlur={onBlur}
                         label={fn('nafn', 'label', 'Nafn')}
                         value={value}
-                        hasError={errors.nafn}
-                        errorMessage={errors.nafn?.message}
+                        hasError={errors?.nafn !== undefined}
+                        errorMessage={errors?.nafn?.message}
                         onChange={onChange}
                         required
                       />
@@ -770,8 +768,8 @@ export const StandardForm = ({
                             onBlur={onBlur}
                             label={fn('email', 'label', 'Tölvupóstfang')}
                             value={value}
-                            hasError={errors.email}
-                            errorMessage={errors.email?.message}
+                            hasError={errors?.email !== undefined}
+                            errorMessage={errors?.email?.message}
                             onChange={onChange}
                             required
                           />
@@ -805,8 +803,8 @@ export const StandardForm = ({
                             onBlur={onBlur}
                             label={fn('erindi', 'label', 'Erindi')}
                             value={value}
-                            hasError={errors.erindi}
-                            errorMessage={errors.erindi?.message}
+                            hasError={errors?.erindi !== undefined}
+                            errorMessage={errors?.erindi?.message}
                             onChange={onChange}
                             rows={10}
                             textarea
@@ -831,7 +829,7 @@ export const StandardForm = ({
                             )}
                             checked={value}
                             onChange={(e) => onChange(e.target.checked)}
-                            hasError={errors.storageAllowed}
+                            hasError={errors?.storageAllowed !== undefined}
                           />
                         )}
                       />
@@ -872,8 +870,8 @@ export const StandardForm = ({
                                 onChange(label)
                                 setSyslumadurId(value as string)
                               }}
-                              hasError={errors.syslumadur}
-                              errorMessage={errors.syslumadur?.message}
+                              hasError={errors?.syslumadur !== undefined}
+                              errorMessage={errors?.syslumadur?.message}
                               options={syslumenn.map((x) => ({
                                 label: x.title,
                                 value: x.id,
