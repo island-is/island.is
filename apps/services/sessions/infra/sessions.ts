@@ -1,11 +1,15 @@
 import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
+const namespace = 'sessions'
 const serviceName = 'services-sessions'
+const workerName = 'services-sessions-worker'
+const imageName = 'services-sessions'
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
   return service(serviceName)
-    .namespace('sessions')
-    .image(serviceName)
+    .namespace(namespace)
+    .image(imageName)
+    .serviceAccount('sessions')
     .postgres({
       passwordSecret: '/k8s/services/sessions/DB_PASSWORD',
     })
@@ -58,3 +62,35 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     })
     .grantNamespaces('nginx-ingress-internal', 'identity-server')
 }
+
+export const workerSetup = (): ServiceBuilder<typeof workerName> =>
+  service(workerName)
+    .image(imageName)
+    .namespace(namespace)
+    .serviceAccount('sessions-worker')
+    .command('node')
+    .args('main.js', '--job=worker')
+    .postgres({
+      passwordSecret: '/k8s/services/sessions/DB_PASSWORD',
+    })
+    .env({
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+      REDIS_URL_NODE_01: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      REDIS_USE_SSL: 'true',
+    })
+    .liveness('/liveness')
+    .readiness('/liveness')
