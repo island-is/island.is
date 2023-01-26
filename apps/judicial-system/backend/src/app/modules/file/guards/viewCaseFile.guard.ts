@@ -10,6 +10,7 @@ import {
   CaseState,
   completedCaseStates,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -40,10 +41,10 @@ export class ViewCaseFileGuard implements CanActivate {
       return true
     }
 
-    // Judges, registrars and assistants have permission to view files of
+    // Judges, registrars, assistants and defenders have permission to view files of
     // submitted, received and completed cases
     if (
-      isExtendedCourtRole(user.role) &&
+      (isExtendedCourtRole(user.role) || user.role === UserRole.DEFENDER) &&
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
