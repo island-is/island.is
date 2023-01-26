@@ -38,7 +38,6 @@ import {
   judgeNotificationRule,
   prosecutorNotificationRule,
   registrarNotificationRule,
-  representativeNotificationRule,
   assistantNotificationRule,
 } from './guards/rolesRules'
 import { SendNotificationDto } from './dto/sendNotification.dto'
@@ -58,7 +57,6 @@ export class NotificationController {
   @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorNotificationRule,
-    representativeNotificationRule,
     judgeNotificationRule,
     registrarNotificationRule,
     assistantNotificationRule,

@@ -155,7 +155,8 @@ export class ChildrenService {
         'mock.noPrimaryParent',
         NO,
       ) as YesOrNo
-      if (useNoPrimaryParent) {
+
+      if (useNoPrimaryParent === YES) {
         return {
           children: [],
           existingApplications: [],
