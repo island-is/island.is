@@ -4,9 +4,10 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 
 @InputType()
 export class GetFeaturedSupportQNAsInput {
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  organization!: string
+  @IsOptional()
+  organization?: string
 
   @Field(() => String)
   @IsString()

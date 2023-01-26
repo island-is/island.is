@@ -600,7 +600,7 @@ export class FeaturedSupportQNAsResolver {
   async resolvedSupportQNAs(
     @Parent() { resolvedSupportQNAs: input }: FeaturedSupportQNAs,
   ): Promise<SupportQNA[]> {
-    if (!input || input.size === 0) {
+    if (input.size === 0) {
       return []
     }
     return this.cmsElasticsearchService.getFeaturedSupportQNAs(

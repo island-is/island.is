@@ -9,6 +9,12 @@ import {
 import { FeaturedSupportQnAs as FeaturedSupportQNAsSchema } from '@island.is/web/graphql/schema'
 import { linkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { Locale } from 'locale'
+
+const defaultRenderedTitle: Record<Locale, string> = {
+  is: 'Spurningar og svör',
+  en: 'Questions and answers',
+}
 
 interface FeaturedSupportQNAsProps {
   slice: FeaturedSupportQNAsSchema
@@ -20,7 +26,7 @@ const FeaturedSupportQNAs = ({ slice }: FeaturedSupportQNAsProps) => {
     <Box background="blueberry100" borderRadius="large" padding={4}>
       <Inline flexWrap="nowrap" alignY="center" justifyContent="spaceBetween">
         <Text variant="eyebrow" fontWeight="semiBold" color="blueberry600">
-          {activeLocale === 'is' ? 'Spurt og svarað' : 'Questions and answers'}
+          {slice.renderedTitle || defaultRenderedTitle[activeLocale]}
         </Text>
         {slice?.link?.url && slice?.link?.text && (
           <LinkV2 href={slice.link.url}>

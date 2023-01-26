@@ -10,6 +10,9 @@ export class FeaturedSupportQNAs {
   @Field(() => ID)
   id!: string
 
+  @Field(() => String, { nullable: true })
+  renderedTitle?: string
+
   @Field(() => Link, { nullable: true })
   link?: Link | null
 
@@ -29,6 +32,7 @@ export const mapFeaturedSupportQNAs = ({
 }: IFeaturedSupportQnAs) => ({
   typename: 'FeaturedSupportQNAs',
   id: sys.id,
+  renderedTitle: fields.renderedTitle ?? '',
   link: fields.link ? mapLink(fields.link) : null,
   supportQNAs: (fields.supportQNAs ?? []).map(mapSupportQNA),
   automaticallyFetchSupportQNAs: fields.automaticallyFetchSupportQNAs ?? false,

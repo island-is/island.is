@@ -332,11 +332,13 @@ export class CmsElasticsearchService {
   ): Promise<SupportQNA[]> {
     const query = {
       types: ['webQNA'],
-      tags: [
-        { type: 'organization', key: input.organization },
-      ] as elasticTagField[],
+      tags: [] as elasticTagField[],
       sort: [{ popularityScore: { order: SortDirection.DESC } }] as sortRule[],
       size: input.size,
+    }
+
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
     }
 
     if (input.category) {

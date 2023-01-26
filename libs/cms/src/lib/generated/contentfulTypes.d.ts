@@ -812,6 +812,9 @@ export interface IFeaturedSupportQnAsFields {
   /** Title */
   title?: string | undefined
 
+  /** Rendered Title */
+  renderedTitle?: string | undefined
+
   /** Link */
   link?: ILink | undefined
 
