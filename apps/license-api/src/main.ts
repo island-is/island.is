@@ -7,4 +7,6 @@ bootstrap({
   appModule: AppModule,
   name: 'license-api',
   openApi,
+  port: 4248,
+  swaggerPath: 'api/swagger',
 })
