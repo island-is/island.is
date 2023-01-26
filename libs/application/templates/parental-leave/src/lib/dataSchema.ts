@@ -43,6 +43,12 @@ export const dataSchema = z.object({
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
+  noPrimaryParent: z.object({
+    questionOne: z.enum([YES, NO]),
+    questionTwo: z.enum([YES, NO]),
+    questionThree: z.enum([YES, NO]),
+    birthDate: z.string(),
+  }),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(
@@ -52,7 +58,9 @@ export const dataSchema = z.object({
         return (
           phoneNumber &&
           phoneNumber.isValid() &&
-          phoneNumberStartStr.some((substr) => p.startsWith(substr))
+          phoneNumberStartStr.some((substr) =>
+            phoneNumber.nationalNumber.startsWith(substr),
+          )
         )
       },
       { params: errorMessages.phoneNumber },
@@ -89,7 +97,9 @@ export const dataSchema = z.object({
         if (phoneNumber)
           return (
             phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
           )
         else return true
       },
@@ -150,7 +160,9 @@ export const dataSchema = z.object({
         if (phoneNumber)
           return (
             phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
           )
         else return true
       },

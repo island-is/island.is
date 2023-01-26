@@ -48,6 +48,8 @@ import {
   getAdditionalSingleParentRightsInDays,
   allowOtherParentToUsePersonalAllowance,
   getAvailablePersonalRightsSingleParentInMonths,
+  isParentWithoutBirthParent,
+  isNotEligibleForParentWithoutBirthParent,
   residentGrantIsOpenForApplication,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
@@ -111,6 +113,41 @@ describe('getExpectedDateOfBirth', () => {
               },
             ],
             existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirth(application)
+
+    expect(res).toEqual('2021-05-17')
+  })
+
+  it('should return the selected child expected DOB when the child is as noPrimaryChildren', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        noPrimaryChildren: {
+          data: {
+            children: {
+              hasRights: true,
+              remainingDays: 180,
+              parentalRelation: ParentalRelations.secondary,
+              expectedDateOfBirth: '2021-05-17',
+              primaryParentNationalRegistryId: '',
+            },
           },
           date: new Date(),
           status: 'success',
@@ -1109,6 +1146,37 @@ describe('getApplicationExternalData', () => {
   })
 })
 
+describe('ParentWithOutBirthParent', () => {
+  it('should return true if all questions answeres YES', () => {
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          birthDate: '2023-02-03',
+          questionOne: 'yes',
+          questionTwo: 'yes',
+          questionThree: 'yes',
+        },
+      },
+    })
+    expect(isParentWithoutBirthParent(application.answers)).toBe(true)
+  })
+
+  it('should return true if some question has been answeres NO', () => {
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'yes',
+        },
+      },
+    })
+    expect(isNotEligibleForParentWithoutBirthParent(application.answers)).toBe(
+      true,
+    )
+  })
+})
+
 describe('requiresOtherParentApproval', () => {
   it('should return false when conditions not met', () => {
     const application = buildApplication()
@@ -1194,6 +1262,23 @@ describe('getOtherParentId', () => {
     }
 
     expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
+  })
+
+  it('should not return other parent id if where is no primary parent birth date', () => {
+    const expectedId = ''
+
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          birthDate: '2023-02-03',
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'yes',
+        },
+      },
+    })
+
+    expect(getOtherParentId(application)).toBe(expectedId)
   })
 })
 

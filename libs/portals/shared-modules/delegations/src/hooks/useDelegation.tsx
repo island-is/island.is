@@ -5,15 +5,17 @@ import { useAuthScopeTreeLazyQuery } from '../components/access/AccessList/Acces
 import { useAuthDelegationQuery } from '../screens/AccessOutgoing/AccessOutgoing.generated'
 import { AuthCustomDelegationOutgoing } from '../types/customDelegation'
 
+type UseParams = {
+  delegationId: string
+}
+
 /**
  * Wrapper hook for fetching delegation by id from url param
  * and fetching delegation scope tree once delegation by id resolves.
  */
 export const useDelegation = (direction?: AuthDomainDirection) => {
   const { lang } = useLocale()
-  const { delegationId } = useParams<{
-    delegationId: string
-  }>()
+  const { delegationId } = useParams() as UseParams
 
   const [
     getAuthScopeTreeQuery,
@@ -24,7 +26,7 @@ export const useDelegation = (direction?: AuthDomainDirection) => {
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        delegationId,
+        delegationId: delegationId as string,
       },
       lang,
     },

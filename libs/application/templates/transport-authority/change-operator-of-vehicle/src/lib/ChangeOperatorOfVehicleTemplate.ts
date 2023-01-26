@@ -28,6 +28,7 @@ import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { isRemovingOperatorOnly } from '../utils'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -61,6 +62,13 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.ChangeOperatorOfVehicle.translation,
   ],
   dataSchema: ChangeOperatorOfVehicleSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.transportAuthorityChangeOperatorOfVehicleDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityChangeOperatorOfVehicle,
   stateMachineConfig: {
     initial: States.DRAFT,

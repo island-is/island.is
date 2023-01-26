@@ -11,13 +11,13 @@ import {
   PkPassVerificationError,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import {
   createPkPassDataInput,
   parseDisabilityLicensePayload,
 } from './disabilityLicenseMapper'
 import {
-  DefaultApi,
+  DisabilityLicenseService,
   OrorkuSkirteini,
 } from '@island.is/clients/disability-license'
 import {
@@ -25,7 +25,6 @@ import {
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
-import { handle404 } from '@island.is/clients/middlewares'
 import { Locale } from '@island.is/shared/types'
 import compareAsc from 'date-fns/compareAsc'
 
@@ -37,15 +36,12 @@ export class GenericDisabilityLicenseService
   implements GenericLicenseClient<OrorkuSkirteini> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private disabilityLicenseApi: DefaultApi,
+    private disabilityLicenseApi: DisabilityLicenseService,
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private withAuth = (user: User) =>
-    this.disabilityLicenseApi.withMiddleware(new AuthMiddleware(user as Auth))
-
   async fetchLicense(user: User) {
-    const license = await this.withAuth(user).faskirteiniGet().catch(handle404)
+    const license = await this.disabilityLicenseApi.getDisabilityLicense(user)
     return license
   }
 

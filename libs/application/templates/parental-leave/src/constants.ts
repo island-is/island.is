@@ -33,6 +33,7 @@ export enum ApiModuleActions {
   notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
   validateApplication = 'validateApplication',
   notifyApplicantOfRejectionFromEmployer = 'notifyApplicantOfRejectionFromEmployer',
+  setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
 }
 
 export enum StartDateOptions {
