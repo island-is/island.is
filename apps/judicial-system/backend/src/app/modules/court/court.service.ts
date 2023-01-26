@@ -310,7 +310,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: TUser,
+    user: TUser | User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,

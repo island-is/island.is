@@ -20,11 +20,16 @@ import { useGetOrganisation } from '../../shared/useGetOrganisation'
 //TODO fix breadcrumbs so you can go back to DocmentProviders site
 export const IsFetchingProviderOrganisationContext = React.createContext(false)
 
+type UseParams = {
+  nationalId: string
+}
+
 const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
-  const params = useParams<{ nationalId: string }>()
-  const { state: organisationPreview } = useLocation<OrganisationPreview>()
+  const { nationalId } = useParams() as UseParams
+  const location = useLocation()
+  const organisationPreview = location.state as OrganisationPreview
   const { formatMessage } = useLocale()
 
   const [organisationName, setOrganisationName] = useState(
@@ -32,7 +37,7 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
       formatMessage(m.SingleProviderOrganisationNameNotFoundMessage),
   )
 
-  const { organisation, loading } = useGetOrganisation(params.nationalId)
+  const { organisation, loading } = useGetOrganisation(nationalId)
   useEffect(() => {
     const name = organisation?.name
     if (name) setOrganisationName(name)
