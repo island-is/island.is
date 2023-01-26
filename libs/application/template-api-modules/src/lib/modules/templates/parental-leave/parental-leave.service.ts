@@ -1295,17 +1295,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         true,
       )
 
-      console.log('PDTO -- ', parentalLeaveDTO)
-
-      throw Error('hehe')
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes
-      // await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
-      //   nationalRegistryId,
-      //   parentalLeave: parentalLeaveDTO,
-      // })
+      await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+        nationalRegistryId,
+        parentalLeave: parentalLeaveDTO,
+      })
 
-      // return
+      return
     } catch (e) {
       this.logger.error('Failed to validate the parental leave application', e)
       throw this.parseErrors(e as VMSTError)
