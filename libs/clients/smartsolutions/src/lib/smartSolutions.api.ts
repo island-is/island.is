@@ -59,9 +59,6 @@ export class SmartSolutionsApi {
 
   private async fetch(query: string): Promise<FetchResponse> {
     let res: Response | null = null
-    this.logger.info(`apiUrl: ${this.config.apiUrl}`, {
-      category: LOG_CATEGORY,
-    })
     try {
       res = await fetch(this.config.apiUrl, {
         method: 'POST',
