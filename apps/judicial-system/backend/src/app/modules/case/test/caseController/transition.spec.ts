@@ -245,7 +245,6 @@ describe('CaseController - Transition', () => {
               order,
               where: {
                 id: caseId,
-                state: { [Op.not]: CaseState.DELETED },
                 isArchived: false,
               },
             })
