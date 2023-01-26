@@ -510,4 +510,31 @@ describe('MessageHandlerService - Handle message', () => {
       expect(then.result).toBe(true)
     })
   })
+
+  describe('send revoked notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_REVOKED_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a revoked notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: NotificationType.REVOKED, userId }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
 })
