@@ -560,11 +560,9 @@ export function getApplicationExternalData(
     'person.data.genderCode',
   )
 
-  const applicantName = getValueViaPath(
-    externalData,
-    'person.data.fullName',
-    '',
-  ) as string
+  const applicantName =
+    getValueViaPath(externalData, 'person.data.fullname') ??
+    (getValueViaPath(externalData, 'person.data.fullName', '') as string)
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
