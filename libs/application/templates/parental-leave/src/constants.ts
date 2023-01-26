@@ -63,8 +63,7 @@ export enum States {
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
-  ADDITIONAL_DOCUMENT_REQUIRED = 'additionalDocumentRequired',
-  ADDITIONAL_DOCUMENT_EDITS = 'additionalDocumentEdits',
+  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
 
   APPROVED = 'approved',
   CLOSED = 'closed',

@@ -1,4 +1,5 @@
 import { ApplicationContext } from '@island.is/application/types'
+import { State } from 'xstate'
 
 import {
   YES,
@@ -6,6 +7,7 @@ import {
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  States,
 } from '../constants'
 import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
 
@@ -50,4 +52,11 @@ export function needsOtherParentApproval(context: ApplicationContext) {
 export function currentDateStartTime() {
   const date = new Date().toDateString()
   return new Date(date).getTime()
+}
+
+export function findActionName(context: ApplicationContext) {
+  const state = context?.application?.state
+  if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
+  if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
+  return undefined
 }

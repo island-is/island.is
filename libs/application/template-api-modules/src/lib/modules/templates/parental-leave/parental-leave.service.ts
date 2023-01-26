@@ -17,6 +17,7 @@ import {
   ApplicationConfigurations,
   Application,
   ApplicationTypes,
+  ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
   getApplicationAnswers,
@@ -66,6 +67,7 @@ import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { State } from 'xstate'
 
 interface VMSTError {
   type: string
@@ -1160,6 +1162,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
+  checkActionName = (application: ApplicationWithAttachments) => {
+    const actionName = application.answers['actionName']
+    if (actionName === 'document' || actionName === 'documentPeriod' || actionName === 'period') {
+      return actionName
+    }
+    return undefined
+  }
+
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
@@ -1181,7 +1191,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
-        undefined,
+        this.checkActionName(application)
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -1234,7 +1244,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async validateApplication({ application }: TemplateApiModuleActionProps) {
-    const nationalRegistryId = application.applicant
+    const nationalRegistryId = application .applicant
     const attachments = await this.getAttachments(application)
     try {
       const periods = await this.createPeriodsDTO(
@@ -1247,7 +1257,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
-        undefined,
+        this.checkActionName(application)
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request

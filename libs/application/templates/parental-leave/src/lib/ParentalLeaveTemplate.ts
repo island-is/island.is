@@ -40,6 +40,7 @@ import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
+  findActionName,
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
@@ -61,7 +62,7 @@ type Events =
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
-  | { type: 'ADDITIONALDOCUMENTREQUIRED' } // Ex: VMST ask for more documents
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
   | { type: 'CLOSED' } // Ex: Close application
 
 enum Roles {
@@ -466,8 +467,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
-          ADDITIONALDOCUMENTREQUIRED: {
-            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
@@ -507,11 +508,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      [States.ADDITIONAL_DOCUMENT_REQUIRED]: {
-        entry: 'assignToVMST',
+      [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        entry: ['assignToVMST', 'setActionName'],
         meta: {
           status: 'inprogress',
-          name: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           actionCard: {
             description: statesMessages.additionalDocumentRequiredDescription,
           },
@@ -573,7 +574,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //     ],
       //   },
       //   on: {
-      //     ADDITIONALDOCUMENTREQUIRED: { target: States.ADDITIONAL_DOCUMENT_REQUIRED },
+      //     ADDITIONALDOCUMENTSREQUIRED: { target: States.ADDITIONAL_DOCUMENTS_REQUIRED },
       //     [DefaultEvents.APPROVE]: { target: States.APPROVED },
       //     [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
       //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
@@ -643,6 +644,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'assignToVMST',
           'removeNullPeriod',
           'setNavId',
+          'setActionName'
         ],
         exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
@@ -888,8 +890,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
-          ADDITIONALDOCUMENTREQUIRED: {
-            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           [DefaultEvents.REJECT]: {
@@ -1321,6 +1323,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         }))
         set(answers, 'fileUpload.additionalDocuments', newAddDocs)
 
+        return context
+      }),
+      setActionName: assign((context) => {
+        const answers = context.application.answers
+        const actionName = findActionName(context)
+        set(answers, 'actionName',  actionName)
         return context
       }),
     },
