@@ -40,7 +40,6 @@ const defaultFilterValues: FilterValues = {
 const Overview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
-
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
   const location = useLocation()
@@ -106,7 +105,7 @@ const Overview: ServicePortalModuleComponent = () => {
     heading = false,
   ) => {
     switch (status) {
-      case ApplicationOverViewStatus.finished:
+      case ApplicationOverViewStatus.completed:
         return heading ? m.headingFinished : m.introCopyFinished
       case ApplicationOverViewStatus.inProgress:
         return heading ? m.headingInProgress : m.introCopyInProgress
@@ -117,6 +116,31 @@ const Overview: ServicePortalModuleComponent = () => {
     }
   }
 
+  const getNoApplicationsError = (status: ApplicationOverViewStatus) => {
+    switch (status) {
+      case ApplicationOverViewStatus.completed:
+        return m.noCompletedApplicationsAvailable
+      case ApplicationOverViewStatus.inProgress:
+        return m.noInProgressApplicationsAvailable
+      case ApplicationOverViewStatus.incomplete:
+        return m.noIncompleteApplicationsAvailable
+      default:
+        return m.noApplicationsAvailable
+    }
+  }
+
+  const noApplications =
+    applications.length === 0 ||
+    (statusToShow === ApplicationOverViewStatus.incomplete &&
+      !focusedApplication &&
+      applicationsSortedByStatus.incomplete.length === 0) ||
+    (statusToShow === ApplicationOverViewStatus.inProgress &&
+      !focusedApplication &&
+      applicationsSortedByStatus.inProgress.length === 0) ||
+    (statusToShow === ApplicationOverViewStatus.completed &&
+      !focusedApplication &&
+      applicationsSortedByStatus.finished.length === 0)
+
   return (
     <>
       <IntroHeader
@@ -126,8 +150,8 @@ const Overview: ServicePortalModuleComponent = () => {
 
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
 
-      {!error && !loading && applications.length === 0 && (
-        <EmptyState description={m.noApplicationsAvailable} />
+      {!error && !loading && noApplications && (
+        <EmptyState description={getNoApplicationsError(statusToShow)} />
       )}
 
       {applications &&
@@ -135,7 +159,8 @@ const Overview: ServicePortalModuleComponent = () => {
         orgData &&
         !loading &&
         !loadingOrg &&
-        !error && (
+        !error &&
+        !noApplications && (
           <>
             <Box paddingBottom={[3, 5]}>
               <GridRow alignItems="flexEnd">
@@ -202,7 +227,7 @@ const Overview: ServicePortalModuleComponent = () => {
               )}
             {applicationsSortedByStatus.finished?.length > 0 &&
               (statusToShow === ApplicationOverViewStatus.all ||
-                statusToShow === ApplicationOverViewStatus.finished) && (
+                statusToShow === ApplicationOverViewStatus.completed) && (
                 <ApplicationGroup
                   applications={applicationsSortedByStatus.finished}
                   label={formatMessage(m.finishedApplications)}
