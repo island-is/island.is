@@ -6,12 +6,14 @@ import { Application } from '@island.is/application/types'
 import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 
 
 export enum ReviewSectionState {
   inProgress = 'In progress',
   requiresAction = 'Requires action',
   complete = 'Complete',
+  optionalAction = 'Optional action'
 }
 
 type ReviewSectionProps = {
@@ -54,6 +56,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           [styles.sectionNumberRequiresAction]:
             state === ReviewSectionState.requiresAction,
           [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
+          [styles.sectionNumberOptionalAction]: state === ReviewSectionState.optionalAction,
         })}
       >
         {(state === ReviewSectionState.complete && (
@@ -68,21 +71,27 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         flexDirection={['columnReverse', 'row']}
         justifyContent="spaceBetween"
       >
-        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
+        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]} width='full'>
           <Text variant="h3">{title}</Text>
           <Text marginTop={1} variant="default">
             {description}
           </Text>
-          
-          {notifyParentComponent &&
-            <Box>
-              <Button
-                variant="text"
-                icon="arrowForward"
-                onClick={() => notifyParentComponent()}
-                >
-                Open
-              </Button>
+          {notifyParentComponent && state === ReviewSectionState.optionalAction  &&
+            <Box display={'flex'} justifyContent={'flexEnd'}>
+              <Box>
+                <Button
+                  variant="text"
+                  icon="arrowForward"
+                  onClick={() => notifyParentComponent()}
+                  >
+                    {formatText(
+                coreMessages.tagsInProgress,
+                application,
+                formatMessage,
+              )}
+                  Sækja um dvalarstyrk
+                </Button>
+              </Box>
             </Box>
           }
         </Box>

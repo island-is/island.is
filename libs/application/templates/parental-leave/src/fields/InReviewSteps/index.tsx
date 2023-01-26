@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { MessageDescriptor } from '@formatjs/intl'
@@ -147,9 +147,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     })
   }
 
-  if (residentGrantIsOpenForApplication(`${application['answers']['child']}`)) {
+  if (residentGrantIsOpenForApplication(`${application['answers']['dateOfBirth']}`)) {
     steps.push({
-      state: ReviewSectionState.inProgress,
+      state: ReviewSectionState.optionalAction,
       title: 'Open for application',
       description: 'Now you can apply for residen grant',
     })
@@ -175,14 +175,13 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
 
-  const onNotification = async () => {
+  const handleSubmit = useCallback(async (event: string) => {
     const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
-          event: 'RESIDENCEGRANTAPPLICATION',
+          event,
           answers: application.answers,
-
         },
       },
     })
@@ -190,7 +189,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
       // Takes them to the next state (which loads the relevant form)
       refetch?.()
     }
-  }
+  }, [])
   return (
     <Box marginBottom={10}>
       <Box
@@ -247,22 +246,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
                 icon="pencil"
                 loading={loadingSubmit}
                 disabled={loadingSubmit}
-                onClick={async () => {
-                  const res = await submitApplication({
-                    variables: {
-                      input: {
-                        id: application.id,
-                        event: 'EDIT',
-                        answers: application.answers,
-                      },
-                    },
-                  })
-
-                  if (res?.data) {
-                    // Takes them to the next state (which loads the relevant form)
-                    refetch?.()
-                  }
-                }}
+                onClick={() => handleSubmit('EDIT',)}
               >
                 {formatMessage(
                   parentalLeaveFormMessages.reviewScreen.buttonsEdit,
@@ -281,7 +265,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               application={application}
               index={index + 1}
               {...step}
-              notifyParentComponent={() => onNotification()}
+              notifyParentComponent={() => handleSubmit('RESIDENCEGRANTAPPLICATION',)}
             />
           ))}
         </Box>

@@ -2,14 +2,12 @@ import React, { FC, useCallback } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useMutation } from '@apollo/client'
-import { formatMessage } from '@formatjs/intl'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { handleServerError } from '@island.is/application/ui-components'
-import { States } from '../../constants'
 
 const ResidentGrantApplication: FC<FieldBaseProps> = ({
   application,
-  refetch
+  refetch,
+  field,
 }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
@@ -17,7 +15,7 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
       onError: (e) => e,
     },
   )
-  const submitApplicationOnClick = async () => {
+  const handleSubmitApplication = useCallback(async () => {
       const res = await submitApplication({
         variables: {
           input: {
@@ -31,12 +29,12 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
         // Takes them to the next state (which loads the relevant form)
         refetch?.()
       }
-    }
+    }, [])
   
   return (
     <Box>
-      <Text>ResidentGrantApplication</Text>
-      <Button onClick={() => submitApplicationOnClick()}>
+      <Text variant='h4'>{field.description}</Text>
+      <Button onClick={handleSubmitApplication} >
         Go back
       </Button>
     </Box>

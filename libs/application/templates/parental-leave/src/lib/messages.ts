@@ -2470,3 +2470,12 @@ export const statesMessages = defineMessages({
     description: 'Description of the state - vinnumalastofnunEditsAction',
   },
 })
+
+export const residentGrantMessage = defineMessages({
+  residentGrant: {
+    id: 'pl.application:resident.grant',
+    defaultMessage:
+      'Sækja um dvalarstyrk',
+    description: 'Apply for Residen Grant!',
+  },
+})
