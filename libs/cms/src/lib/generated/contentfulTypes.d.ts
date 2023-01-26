@@ -1745,70 +1745,6 @@ export interface ILogoListSlice extends Entry<ILogoListSliceFields> {
   }
 }
 
-export interface IMailingListSignupFields {
-  /** Title */
-  title: string
-
-  /** Variant */
-  variant: 'default' | 'conference' | 'categories'
-
-  /** Description */
-  description?: string | undefined
-
-  /** Email label */
-  inputLabel: string
-
-  /** Name label */
-  fullNameLabel: string
-
-  /** QuestionLabel */
-  questionLabel?: string | undefined
-
-  /** Yes Label */
-  yesLabel?: string | undefined
-
-  /** No Label */
-  noLabel?: string | undefined
-
-  /** Disclaimer Label */
-  disclaimerLabel?: string | undefined
-
-  /** Category Label */
-  categoryLabel?: string | undefined
-
-  /** Inputs */
-  inputs?: Record<string, any> | undefined
-
-  /** Categories */
-  categories?: Record<string, any> | undefined
-
-  /** Submit button text */
-  buttonText: string
-
-  /** Signup URL */
-  signupUrl: string
-
-  /** Image */
-  image?: Asset | undefined
-}
-
-export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'mailingListSignup'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IMenuFields {
   /** Title */
   title?: string | undefined
@@ -4099,7 +4035,6 @@ export type CONTENT_TYPE =
   | 'linkUrl'
   | 'location'
   | 'logoListSlice'
-  | 'mailingListSignup'
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'
