@@ -1242,7 +1242,8 @@ license-api:
         kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
         - host: 'license-api-callback-xrd.island.is'
-          paths: []
+          paths:
+            - '/'
   namespace: 'license-api'
   pvcs: []
   replicaCount:

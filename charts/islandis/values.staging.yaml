@@ -1250,7 +1250,8 @@ license-api:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
       hosts:
         - host: 'license-api-callback-xrd.staging01.devland.is'
-          paths: []
+          paths:
+            - '/'
   namespace: 'license-api'
   pvcs: []
   replicaCount:
