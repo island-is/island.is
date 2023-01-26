@@ -11,6 +11,7 @@ import Person from '../../components/AnimatedIcon/Person'
 import Business from '../../components/AnimatedIcon/Business'
 import LogOut from '../../components/AnimatedIcon/LogOut'
 import People from '../../components/AnimatedIcon/People'
+import { Icon } from '@island.is/island-ui/core'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -89,6 +90,10 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     // Pósthólf
     case 'reader':
       return <Reader />
+      break
+    // Nýtt pósthólf
+    case 'mail':
+      return <Icon type="outline" icon="mail" color="blue400" />
       break
     // Fjármál
     case 'cellular':

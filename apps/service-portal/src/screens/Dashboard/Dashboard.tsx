@@ -21,9 +21,13 @@ import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import { useListDocuments } from '@island.is/service-portal/graphql'
+import * as styles from './Dashboard.css'
+import cn from 'classnames'
 
 export const Dashboard: FC<{}> = () => {
   const location = useLocation()
+  const { unreadCounter } = useListDocuments()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -31,6 +35,9 @@ export const Dashboard: FC<{}> = () => {
   useEffect(() => {
     PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
   }, [location])
+
+  const badgeActive: keyof typeof styles.badge =
+    unreadCounter > 0 ? 'active' : 'inactive'
 
   const onHover = (id: string) => {
     const a: HTMLElement | null | '' =
@@ -58,30 +65,38 @@ export const Dashboard: FC<{}> = () => {
                   flexGrow={1}
                 >
                   {navRoot.path && (
-                    <CategoryCard
-                      autoStack
-                      hyphenate
-                      truncateHeading
-                      component={Link}
-                      to={navRoot.path}
-                      icon={
-                        isMobile && navRoot.icon ? (
-                          <Icon
-                            icon={navRoot.icon.icon}
-                            type="outline"
-                            color="blue400"
-                          />
-                        ) : (
-                          iconTypeToSVG(navRoot.icon?.icon ?? '', '')
-                        )
-                      }
-                      heading={formatMessage(navRoot.name)}
-                      text={
-                        navRoot.description
-                          ? formatMessage(navRoot.description)
-                          : formatMessage(navRoot.name)
-                      }
-                    />
+                    <>
+                      <CategoryCard
+                        autoStack
+                        hyphenate
+                        truncateHeading
+                        component={Link}
+                        to={navRoot.path}
+                        icon={
+                          isMobile && navRoot.icon ? (
+                            <Icon
+                              icon={navRoot.icon.icon}
+                              type="outline"
+                              color="blue400"
+                            />
+                          ) : (
+                            iconTypeToSVG(navRoot.icon?.icon ?? '', '')
+                          )
+                        }
+                        heading={formatMessage(navRoot.name)}
+                        text={
+                          navRoot.description
+                            ? formatMessage(navRoot.description)
+                            : formatMessage(navRoot.name)
+                        }
+                      />
+                      {navRoot.subscribesTo === 'documents' && (
+                        <Box
+                          borderRadius="circle"
+                          className={cn(styles.badge[badgeActive])}
+                        ></Box>
+                      )}
+                    </>
                   )}
                 </Box>
               </GridColumn>

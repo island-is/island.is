@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, styleVariants } from '@vanilla-extract/css'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
@@ -37,5 +37,20 @@ export const placeholder = style({
 export const closeButton = style({
   ':hover': {
     backgroundColor: theme.color.blue200,
+  },
+})
+
+export const badge = styleVariants({
+  active: {
+    position: 'absolute',
+    top: 14,
+    left: 88,
+    height: theme.spacing[1],
+    width: theme.spacing[1],
+    borderRadius: '50%',
+    backgroundColor: theme.color.red400,
+  },
+  inactive: {
+    display: 'none',
   },
 })

@@ -6,8 +6,6 @@ import {
   Logo,
   FocusableBox,
   Icon,
-  GridContainer,
-  GridColumn,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.css'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -16,6 +14,8 @@ import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
+import { useListDocuments } from '@island.is/service-portal/graphql'
+import cn from 'classnames'
 
 interface Props {
   position: number
@@ -26,6 +26,10 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const { formatMessage } = useLocale()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { userInfo: user } = useAuth()
+  const { unreadCounter } = useListDocuments()
+
+  const badgeActive: keyof typeof styles.badge =
+    unreadCounter > 0 ? 'active' : 'inactive'
 
   const closeButton = () => {
     return (
@@ -49,8 +53,6 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header className={styles.header} style={{ top: position }}>
         <Box width="full" paddingX={6}>
-          {/* <GridContainer>
-            <GridColumn span="12/12"> */}
           <Box
             display="flex"
             justifyContent="spaceBetween"
@@ -74,7 +76,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                 flexWrap="nowrap"
                 marginLeft={[1, 1, 2]}
               >
-                <Box marginRight={[1, 1, 2]}>
+                <Box marginRight={[1, 1, 2]} position="relative">
                   <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
                     <Button
                       variant="utility"
@@ -86,6 +88,10 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                       {formatMessage(m.documents)}
                     </Button>
                   </Link>
+                  <Box
+                    borderRadius="circle"
+                    className={cn(styles.badge[badgeActive])}
+                  ></Box>
                 </Box>
                 <UserMenu
                   fullscreen
@@ -120,8 +126,6 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
               </Box>
             </Hidden>
           </Box>
-          {/* </GridColumn>
-          </GridContainer> */}
         </Box>
       </header>
     </div>

@@ -6,7 +6,7 @@ export const documentsNavigation: PortalNavigationItem = {
   name: m.documents,
   path: DocumentsPaths.ElectronicDocumentsRoot,
   icon: {
-    icon: 'reader',
+    icon: 'mail',
   },
   subscribesTo: 'documents',
   description: m.documentsDescription,
