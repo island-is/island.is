@@ -131,6 +131,7 @@ export const is = {
   // home
   'home.screenTitle': 'Yfirlit',
   'home.applicationsStatus': 'Staða umsókna',
+  'home.allApplications': 'Allar stafrænar umsóknir',
   'home.notifications': 'Tilkynningar',
   'home.welcomeText': 'Hæ',
   'home.onboardingModule.card1':

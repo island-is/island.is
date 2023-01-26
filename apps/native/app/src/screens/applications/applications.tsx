@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client'
 import {
   EmptyList,
+  Heading,
   ListButton, TopLine
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -17,12 +18,14 @@ import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import { IArticleSearchResults } from '../../graphql/fragments/search.fragment'
+import { ListApplicationsResponse, LIST_APPLICATIONS_QUERY } from '../../graphql/queries/list-applications.query'
 import { LIST_SEARCH_QUERY } from '../../graphql/queries/list-search.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { openBrowser } from '../../lib/rn-island'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import { ApplicationsModule } from '../home/applications-module'
 
 const {
   useNavigationOptions,
@@ -96,6 +99,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     },
   })
 
+  const applicationsRes = useQuery<ListApplicationsResponse>(
+    LIST_APPLICATIONS_QUERY,
+    { client },
+  )
+
   useEffect(() => {
     if (!res.loading && res.data) {
       setItems([...res?.data?.searchResults?.items || []].sort((a: IArticleSearchResults, b: IArticleSearchResults) => a.title.localeCompare(b.title)) as any);
@@ -158,6 +166,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   return (
     <>
+
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_APPLICATIONS}
@@ -173,6 +182,21 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         keyboardDismissMode="on-drag"
         data={isSkeltonView ? skeletonItems : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
+        ListHeaderComponent={
+          <>
+          <ApplicationsModule
+            applications={applicationsRes.data?.applicationApplications ?? []}
+            loading={applicationsRes.loading}
+            componentId={componentId}
+            hideAction={true}
+          />
+          <View style={{ paddingHorizontal: 16 }}>
+            <Heading>
+              {intl.formatMessage({ id: 'home.allApplications' })}
+            </Heading>
+          </View>
+          </>
+        }
         refreshControl={
           <RefreshControl
             refreshing={loading}

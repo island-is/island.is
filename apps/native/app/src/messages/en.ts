@@ -133,6 +133,7 @@ export const en: TranslatedMessages = {
   // Home
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
+  'home.allApplications': 'All digital applications',
   'home.notifications': 'Notifications',
   'home.welcomeText': 'Hi',
   'home.onboardingModule.card1':

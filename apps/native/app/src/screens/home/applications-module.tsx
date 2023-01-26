@@ -10,7 +10,6 @@ import {
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
-import { useTheme } from 'styled-components/native'
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
 import { IApplication } from '../../graphql/fragments/application.fragment'
 import { navigateTo } from '../../lib/deep-linking'
@@ -21,12 +20,12 @@ interface ApplicationsModuleProps {
   applications: IApplication[]
   loading: boolean
   componentId: string
+  hideAction?: boolean
 }
 
 export const ApplicationsModule = React.memo(
-  ({ applications, loading, componentId }: ApplicationsModuleProps) => {
+  ({ applications, loading, componentId, hideAction }: ApplicationsModuleProps) => {
     const intl = useIntl()
-    const theme = useTheme()
     const count = applications.length
 
     const children = applications.slice(0, 5).map((application) => (
@@ -95,6 +94,7 @@ export const ApplicationsModule = React.memo(
                   />
                 }
                 link={
+                  hideAction ? null :
                   <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
                     <LinkText>
                       {intl.formatMessage({

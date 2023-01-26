@@ -170,6 +170,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const theme = useTheme()
   const { dismiss, dismissed } = usePreferencesStore()
+  const showPassport = useFeatureFlag('isPassportEnabled', false);
+  const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false);
 
   const res = useQuery<ListGenericLicensesResponse>(
     LIST_GENERIC_LICENSES_QUERY,
@@ -183,8 +185,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             GenericLicenseType.AdrLicense,
             GenericLicenseType.MachineLicense,
             GenericLicenseType.FirearmLicense,
-            GenericLicenseType.DisabilityLicense
-          ]
+            showDisability ? GenericLicenseType.DisabilityLicense : null,
+          ].filter(Boolean)
         }
       }
     },
@@ -198,9 +200,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const loadingTimeout = useRef<number>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
-
-  const showPassport = useFeatureFlag('isPassportEnabled', false);
-  const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false);
 
   const passportData = showPassport ? identityDocumentData?.getIdentityDocument ?? [] : [];
 
