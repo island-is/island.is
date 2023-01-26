@@ -1031,10 +1031,10 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hvað viltu nota hátt hlutfall af persónuafslættinum?',
       description: 'What percentage do you want to use?',
     },
-    zeroToHundred: {
-      id: 'pl.application:personal.allowance.zeroToHundred',
-      defaultMessage: 'Stimplaðu inn tölu á bilinu 0-100',
-      description: 'Type a number from 0 to 100',
+    oneToHundred: {
+      id: 'pl.application:personal.allowance.oneToHundred',
+      defaultMessage: 'Skráðu tölu á bilinu 1-100',
+      description: 'Type a number between 1 and 100',
     },
     allowanceUsage: {
       id: 'pl.application:allowance.allowance.usage',
