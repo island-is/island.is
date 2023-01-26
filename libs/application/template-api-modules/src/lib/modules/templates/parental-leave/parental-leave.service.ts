@@ -127,6 +127,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
   }
 
+  getFromDate(
+    isFirstPeriod: boolean,
+    isActualDateOfBirth: boolean,
+    useLength: string,
+    period: AnswerPeriod,
+  ) {
+    return isFirstPeriod && isActualDateOfBirth && useLength === YES
+      ? apiConstants.actualDateOfBirthMonths
+      : isFirstPeriod && isActualDateOfBirth
+      ? apiConstants.actualDateOfBirth
+      : period.startDate
+  }
+
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
     return this.childrenService.provideChildren(application, auth.nationalId)
   }
@@ -648,7 +661,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
-      const useLength = period.useLength
+      const useLength = period.useLength || ''
 
       let periodLength = 0
 
@@ -719,12 +732,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       ) {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
-          from:
-            isFirstPeriod && isActualDateOfBirth && useLength === YES
-              ? apiConstants.actualDateOfBirthMonths
-              : isFirstPeriod && isActualDateOfBirth
-              ? apiConstants.actualDateOfBirth
-              : period.startDate,
+          from: this.getFromDate(
+            isFirstPeriod,
+            isActualDateOfBirth,
+            useLength,
+            period,
+          ),
           to: period.endDate,
           ratio: getRatio(
             period.ratio,
@@ -765,12 +778,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               // Personal rights
               const daysLeftOfPersonalRights =
                 maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-              const fromDate =
-                isFirstPeriod && isActualDateOfBirth && useLength === YES
-                  ? apiConstants.actualDateOfBirthMonths
-                  : isFirstPeriod && isActualDateOfBirth
-                  ? apiConstants.actualDateOfBirth
-                  : period.startDate
+              const fromDate = this.getFromDate(
+                isFirstPeriod,
+                isActualDateOfBirth,
+                useLength,
+                period,
+              )
 
               const personalPeriod = await this.getCalculatedPeriod(
                 nationalRegistryId,
@@ -826,12 +839,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               // Personal rights
               const daysLeftOfPersonalRights =
                 maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-              const fromDate =
-                isFirstPeriod && isActualDateOfBirth && useLength === YES
-                  ? apiConstants.actualDateOfBirthMonths
-                  : isFirstPeriod && isActualDateOfBirth
-                  ? apiConstants.actualDateOfBirth
-                  : period.startDate
+              const fromDate = this.getFromDate(
+                isFirstPeriod,
+                isActualDateOfBirth,
+                useLength,
+                period,
+              )
 
               const personalPeriod = await this.getCalculatedPeriod(
                 nationalRegistryId,
@@ -991,12 +1004,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           // 1. Period includes personal and transfer rights
           if (maximumMultipleBirthsDaysToSpend === 0) {
-            const fromDate =
-              isFirstPeriod && isActualDateOfBirth && useLength === YES
-                ? apiConstants.actualDateOfBirthMonths
-                : isFirstPeriod && isActualDateOfBirth
-                ? apiConstants.actualDateOfBirth
-                : period.startDate
+            const fromDate = this.getFromDate(
+              isFirstPeriod,
+              isActualDateOfBirth,
+              useLength,
+              period,
+            )
 
             // Personal
             const daysLeftOfPersonalRights =
@@ -1075,12 +1088,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             // Personal
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-            const fromDate =
-              isFirstPeriod && isActualDateOfBirth && useLength === YES
-                ? apiConstants.actualDateOfBirthMonths
-                : isFirstPeriod && isActualDateOfBirth
-                ? apiConstants.actualDateOfBirth
-                : period.startDate
+            const fromDate = this.getFromDate(
+              isFirstPeriod,
+              isActualDateOfBirth,
+              useLength,
+              period,
+            )
             const personalPeriod = await this.getCalculatedPeriod(
               nationalRegistryId,
               startDate,
@@ -1151,12 +1164,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           // Personal
           const daysLeftOfPersonalRights =
             maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-          const fromDate =
-            isFirstPeriod && isActualDateOfBirth && useLength === YES
-              ? apiConstants.actualDateOfBirthMonths
-              : isFirstPeriod && isActualDateOfBirth
-              ? apiConstants.actualDateOfBirth
-              : period.startDate
+          const fromDate = this.getFromDate(
+            isFirstPeriod,
+            isActualDateOfBirth,
+            useLength,
+            period,
+          )
           const personalPeriod = await this.getCalculatedPeriod(
             nationalRegistryId,
             startDate,
@@ -1282,14 +1295,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         true,
       )
 
+      console.log('PDTO -- ', parentalLeaveDTO)
+
+      throw Error('hehe')
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes
-      await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
-        nationalRegistryId,
-        parentalLeave: parentalLeaveDTO,
-      })
+      // await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+      //   nationalRegistryId,
+      //   parentalLeave: parentalLeaveDTO,
+      // })
 
-      return
+      // return
     } catch (e) {
       this.logger.error('Failed to validate the parental leave application', e)
       throw this.parseErrors(e as VMSTError)
