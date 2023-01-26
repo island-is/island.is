@@ -1163,7 +1163,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   checkActionName = (application: ApplicationWithAttachments) => {
-    const actionName = application.answers['actionName']
+   const answer = application.answers
+   const { actionName } = answer
     if (actionName === 'document' || actionName === 'documentPeriod' || actionName === 'period') {
       return actionName
     }

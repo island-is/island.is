@@ -645,9 +645,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'assignToVMST',
           'removeNullPeriod',
           'setNavId',
-          'setActionName'
         ],
-        exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
+        exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId', 'setActionName'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           status: 'inprogress',
@@ -681,7 +680,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: [
+          [DefaultEvents.EDIT]: [
             {
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
               cond: hasEmployer,
@@ -1329,7 +1328,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setActionName: assign((context) => {
         const { application } = context
         const { answers } = application
-        set(answers, 'actionName',  'document')
+        const actionName = findActionName(context)
+        set(answers, 'actionName',  actionName)
         return context
       }),
     },
