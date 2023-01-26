@@ -15,6 +15,7 @@ import { Events, States, Roles } from './constants'
 import { z } from 'zod'
 import { m } from './messages'
 import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const ChangeCoOwnerOfVehicleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -32,6 +33,12 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.ChangeCoOwnerOfVehicle.translation,
   ],
   dataSchema: ChangeCoOwnerOfVehicleSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag: Features.transportAuthorityChangeCoOwnerOfVehicleDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityChangeCoOwnerOfVehicle,
   stateMachineConfig: {
     initial: States.DRAFT,
