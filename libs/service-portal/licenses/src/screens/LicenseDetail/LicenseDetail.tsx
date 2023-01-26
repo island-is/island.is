@@ -313,15 +313,19 @@ const DataFields = ({
   )
 }
 
+type UseParams = {
+  type: string | undefined
+  provider: string
+}
+
 const LicenseDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = userProfile?.locale ?? 'is'
-  const {
-    type,
-  }: { type: string | undefined; provider: string | undefined } = useParams()
+  const { type } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined
+
   const { data, loading: queryLoading, error } = useQuery<Query>(
     GenericLicenseQuery,
     {
