@@ -24,6 +24,7 @@ import {
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -49,6 +50,13 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.OrderVehicleRegistrationCertificate.translation,
   ],
   dataSchema: OrderVehicleRegistrationCertificateSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.transportAuthorityOrderVehicleRegistrationCertificateDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityOrderVehicleRegistrationCertificate,
   stateMachineConfig: {
     initial: States.DRAFT,
