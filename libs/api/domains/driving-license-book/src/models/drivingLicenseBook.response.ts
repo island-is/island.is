@@ -49,4 +49,7 @@ export class DrivingLicenseBook {
 
   @Field(() => [DrivingLicenceTestResult])
   testResults!: DrivingLicenceTestResult[]
+
+  @Field()
+  practiceDriving?: boolean
 }
