@@ -5,13 +5,13 @@ import { session } from '../../../../support/session'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('First test', () => {
+test.describe('Restriction case', () => {
   let context: BrowserContext
 
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser,
-      homeUrl: 'http://localhost:4200/krofur',
+      homeUrl: '/krofur',
       phoneNumber: '0103019',
       idsLoginOn: false,
     })
@@ -19,7 +19,7 @@ test.describe('First test', () => {
 
   test.afterAll(async () => await context.close())
 
-  test('should work', async () => {
+  test('should have a table visible on the screen', async () => {
     const page = await context.newPage()
     await page.goto('/api/auth/login?nationalId=0000000009')
     await expect(page.locator('role=table')).toBeVisible()
