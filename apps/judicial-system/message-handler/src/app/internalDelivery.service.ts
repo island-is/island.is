@@ -17,9 +17,10 @@ export class InternalDeliveryService {
   ) {}
 
   async deliver(
+    userId: string,
     caseId: string,
     what: string,
-    body?: unknown,
+    body: { [key: string]: unknown } = {},
   ): Promise<boolean> {
     this.logger.debug(`Posting ${what} for case ${caseId}`)
 
@@ -31,7 +32,7 @@ export class InternalDeliveryService {
           'Content-Type': 'application/json',
           authorization: `Bearer ${this.config.backendAccessToken}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ ...body, userId }),
       },
     )
       .then(async (res) => {

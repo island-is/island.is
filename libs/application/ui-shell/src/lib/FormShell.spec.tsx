@@ -1,4 +1,3 @@
-import React from 'react'
 import { act, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { z } from 'zod'
@@ -14,6 +13,7 @@ import {
 import { initializeClient } from '@island.is/application/graphql'
 import { ApolloProvider } from '@apollo/client'
 import { LocaleProvider } from '@island.is/localization'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 
 describe(' FormShell', () => {
   const applicant = '1111112219'
@@ -42,23 +42,39 @@ describe(' FormShell', () => {
     ],
   })
 
+  const routes = [
+    {
+      path: '/',
+      element: (
+        <FormShell
+          application={application}
+          dataSchema={z.object({})}
+          form={form}
+          nationalRegistryId={applicant}
+        />
+      ),
+    },
+  ]
+
+  const router = createMemoryRouter(routes, {
+    initialEntries: ['/'],
+  })
+
   it('should render successfully', async () => {
     let baseElement
+
+    const wrapper = await render(
+      <ApolloProvider client={initializeClient('')}>
+        <LocaleProvider locale="is" messages={{}}>
+          <RouterProvider router={router} />
+        </LocaleProvider>
+      </ApolloProvider>,
+    )
+
     await act(async () => {
-      const wrapper = await render(
-        <ApolloProvider client={initializeClient('')}>
-          <LocaleProvider locale="is" messages={{}}>
-            <FormShell
-              application={application}
-              dataSchema={z.object({})}
-              form={form}
-              nationalRegistryId={applicant}
-            />
-          </LocaleProvider>
-        </ApolloProvider>,
-      )
       baseElement = wrapper.baseElement
     })
+
     expect(baseElement).toBeTruthy()
   })
 
@@ -67,12 +83,7 @@ describe(' FormShell', () => {
       render(
         <ApolloProvider client={initializeClient('')}>
           <LocaleProvider locale="is" messages={{}}>
-            <FormShell
-              application={application}
-              dataSchema={z.object({})}
-              form={form}
-              nationalRegistryId={applicant}
-            />
+            <RouterProvider router={router} />
           </LocaleProvider>
         </ApolloProvider>,
       )
