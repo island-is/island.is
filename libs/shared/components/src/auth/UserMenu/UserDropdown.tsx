@@ -9,7 +9,7 @@ import {
   Divider,
   Hidden,
 } from '@island.is/island-ui/core'
-import { AuthDelegationType, User } from '@island.is/shared/types'
+import { AuthDelegationType, User, Locale } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import * as styles from './UserMenu.css'
@@ -21,6 +21,7 @@ import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { checkDelegation } from '@island.is/shared/utils'
+import { useUpdateUserProfileMutation } from '../../../gen/graphql'
 
 interface UserDropdownProps {
   user: User
@@ -31,6 +32,7 @@ interface UserDropdownProps {
   fullscreen: boolean
   showActorButton: boolean
   showDropdownLanguage: boolean
+  showLanguageButton: boolean
 }
 
 export const UserDropdown = ({
@@ -42,8 +44,10 @@ export const UserDropdown = ({
   fullscreen,
   showActorButton,
   showDropdownLanguage,
+  showLanguageButton,
 }: UserDropdownProps) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, changeLanguage, lang } = useLocale()
+  const [updateUserProfileMutation] = useUpdateUserProfileMutation()
   const isVisible = dropdownState === 'open'
   const onClose = () => {
     setDropdownState('closed')
@@ -78,6 +82,26 @@ export const UserDropdown = ({
     </button>
   )
 
+  const handleLanguageChange = async () => {
+    const locale = lang === 'en' ? 'is' : 'en'
+    const isDelegation = checkDelegation(user)
+
+    changeLanguage(locale as Locale)
+
+    if (user && !isDelegation) {
+      try {
+        await updateUserProfileMutation({
+          variables: {
+            input: {
+              locale: locale,
+            },
+          },
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
   const content = (
     <Box display="flex" justifyContent="flexEnd">
       <Box
@@ -137,6 +161,16 @@ export const UserDropdown = ({
               showActorButton={showActorButton}
             />
           </Box>
+
+          {showLanguageButton && (
+            <Box paddingTop={1}>
+              <UserDropdownItem
+                onClick={() => handleLanguageChange()}
+                text={formatMessage(sharedMessages.switchToEnglish)}
+                icon={{ icon: 'en' }}
+              />
+            </Box>
+          )}
 
           {(!isDelegation || isProcurationHolder) && (
             <Box paddingTop={1}>

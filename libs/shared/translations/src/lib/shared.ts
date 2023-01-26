@@ -48,4 +48,9 @@ export const sharedMessages = defineMessages({
     description: 'My categories for dashboard and sidemenu.',
     defaultMessage: 'Mínir flokkar',
   },
+  switchToEnglish: {
+    id: 'global:switch-to-english',
+    description: 'Button under usermenu to switch language to english',
+    defaultMessage: 'Skipta á ensku',
+  },
 })

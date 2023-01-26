@@ -30,6 +30,7 @@ export type Icon =
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
+  | 'en'
   | 'eye'
   | 'eyeOff'
   | 'fileTrayFull'
@@ -96,6 +97,7 @@ export default {
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
+    en: 'EN',
     eye: 'Eye',
     eyeOff: 'EyeOff',
     fileTrayFull: 'FileTrayFull',
@@ -161,6 +163,7 @@ export default {
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
+    en: 'EN',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
     fileTrayFull: 'FileTrayFullOutline',
