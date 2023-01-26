@@ -16,7 +16,6 @@ export const regulationAdminModule: PortalModule = {
     const mayManage = userInfo.scopes.includes(
       AdminPortalScope.regulationAdminManage,
     )
-
     return [
       {
         name: 'Reglugerðir — vinnslusvæði',
@@ -26,7 +25,7 @@ export const regulationAdminModule: PortalModule = {
       },
       {
         name: 'Skrá nýja reglugerð',
-        path: RegulationsAdminPaths.RegulationsAdminEdit,
+        path: RegulationsAdminPaths.RegulationsAdminEditPath,
         enabled: mayCreate,
         render: () => lazy(() => import('./screens/Edit')),
       },

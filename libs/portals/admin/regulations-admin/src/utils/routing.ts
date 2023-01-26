@@ -20,7 +20,7 @@ export const getEditUrl: GetEditUrlFn = (
   if (isUuid(draftIdOrStepName)) {
     return generatePath(RegulationsAdminEdit, {
       draftId: draftIdOrStepName,
-      stepName,
+      stepName: stepName ?? null,
     })
   }
   return draftIdOrStepName || '.'
