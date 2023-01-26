@@ -9,8 +9,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
   return service(serviceName)
     .namespace(namespace)
     .image(imageName)
-    .serviceAccount('sessions')
     .postgres({
+      username: serviceName,
+      name: serviceName,
       passwordSecret: '/k8s/services/sessions/DB_PASSWORD',
     })
     .env({
