@@ -99,6 +99,7 @@ export enum FieldTypes {
   PAYMENT_PENDING = 'PAYMENT_PENDING',
   COMPANY_SEARCH = 'COMPANY_SEARCH',
   REDIRECT_TO_SERVICE_PORTAL = 'REDIRECT_TO_SERVICE_PORTAL',
+  PHONE = 'PHONE',
 }
 
 export enum FieldComponents {
@@ -116,6 +117,7 @@ export enum FieldComponents {
   PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
+  PHONE = 'PhoneFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -212,6 +214,21 @@ export interface TextField extends BaseField {
   onChange?: (...event: any[]) => void
 }
 
+export interface PhoneField extends BaseField {
+  readonly type: FieldTypes.PHONE
+  component: FieldComponents.PHONE
+  disabled?: boolean
+  readOnly?: boolean
+  rightAlign?: boolean
+  placeholder?: FormText
+  backgroundColor?: InputBackgroundColor
+  format?: string | FormatInputValueFunction
+  suffix?: string
+  rows?: number
+  required?: boolean
+  onChange?: (...event: any[]) => void
+}
+
 export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
@@ -281,3 +298,4 @@ export type Field =
   | AsyncSelectField
   | CompanySearchField
   | RedirectToServicePortalField
+  | PhoneField

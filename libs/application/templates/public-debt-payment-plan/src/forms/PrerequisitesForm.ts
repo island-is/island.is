@@ -9,6 +9,7 @@ import {
   buildDescriptionField,
   buildSubSection,
   buildRadioField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -197,13 +198,30 @@ export const PrerequisitesForm: Form = buildForm({
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.email,
             }),
-            buildTextField({
+            /* buildTextField({
               id: 'applicant.phoneNumber',
               title: info.labels.tel,
               format: '###-####',
               width: 'half',
               variant: 'tel',
               backgroundColor: 'blue',
+              defaultValue: (application: Application) => {
+                const number = removeCountryCode(
+                  application.externalData?.userProfile?.data
+                    ?.mobilePhoneNumber ?? '',
+                )
+                return number
+              },
+            }), */
+            buildPhoneField({
+              id: 'applicant.phoneNumber',
+              title: info.labels.tel,
+              width: 'half',
+              backgroundColor: 'blue',
+              condition: (answ) => {
+                console.log(answ)
+                return true
+              },
               defaultValue: (application: Application) => {
                 const number = removeCountryCode(
                   application.externalData?.userProfile?.data

@@ -28,6 +28,7 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
+  PhoneField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
 
@@ -256,6 +257,35 @@ export function buildTextField(
     rightAlign,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
+  }
+}
+
+export function buildPhoneField(
+  data: Omit<PhoneField, 'type' | 'component' | 'children'>,
+): PhoneField {
+  const {
+    backgroundColor = 'blue',
+    placeholder,
+    format,
+    suffix,
+    rows,
+    required,
+    readOnly,
+    rightAlign,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    placeholder,
+    backgroundColor,
+    format,
+    suffix,
+    rows,
+    required,
+    readOnly,
+    rightAlign,
+    type: FieldTypes.PHONE,
+    component: FieldComponents.PHONE,
   }
 }
 

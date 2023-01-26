@@ -1,4 +1,8 @@
-import { buildMultiField, buildTextField } from '@island.is/application/core'
+import {
+  buildMultiField,
+  buildPhoneField,
+  buildTextField,
+} from '@island.is/application/core'
 
 import { applicantInformation } from './messages'
 import { ApplicantInformationInterface } from './types'
@@ -79,13 +83,23 @@ export const applicantInformationMultiField = buildMultiField({
       defaultValue: '',
       maxLength: 100,
     }),
-    buildTextField({
+    /* buildTextField({
       id: 'applicant.phoneNumber',
       title: applicantInformation.labels.tel,
       format: '###-####',
       width: 'half',
       variant: 'tel',
       defaultValue: '',
+    }), */
+    buildPhoneField({
+      id: 'applicant.phoneNumber',
+      title: applicantInformation.labels.tel,
+      width: 'half',
+      backgroundColor: 'blue',
+      condition: (answ) => {
+        console.log(answ)
+        return true
+      },
     }),
   ],
 })
