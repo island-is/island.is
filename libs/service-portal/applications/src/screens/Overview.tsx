@@ -150,17 +150,12 @@ const Overview: ServicePortalModuleComponent = () => {
 
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
 
-      {!error && !loading && noApplications && (
-        <EmptyState description={getNoApplicationsError(statusToShow)} />
-      )}
-
       {applications &&
         applications.length > 0 &&
         orgData &&
         !loading &&
         !loadingOrg &&
-        !error &&
-        !noApplications && (
+        !error && (
           <>
             <Box paddingBottom={[3, 5]}>
               <GridRow alignItems="flexEnd">
@@ -237,6 +232,9 @@ const Overview: ServicePortalModuleComponent = () => {
               )}
           </>
         )}
+      {!error && !loading && noApplications && (
+        <EmptyState description={getNoApplicationsError(statusToShow)} />
+      )}
     </>
   )
 }
