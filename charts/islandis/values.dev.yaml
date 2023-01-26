@@ -1401,8 +1401,7 @@ license-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'islandis'
+    - 'nginx-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1426,9 +1425,9 @@ license-api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
-        - host: 'license-api-callback-xrd.dev01.devland.is'
+        - host: 'license-api-xrd.internal.dev01.devland.is'
           paths:
             - '/'
   namespace: 'license-api'

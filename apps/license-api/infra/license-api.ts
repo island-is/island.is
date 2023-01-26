@@ -38,11 +38,12 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     .ingress({
       primary: {
         host: {
-          dev: 'license-api-callback-xrd',
-          staging: 'license-api-callback-xrd',
-          prod: 'license-api-callback-xrd',
+          dev: 'license-api-xrd',
+          staging: 'license-api-xrd',
+          prod: 'license-api-xrd',
         },
         paths: ['/'],
+        public: false,
         extraAnnotations: {
           dev: {},
           staging: {
@@ -59,4 +60,4 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .grantNamespaces('nginx-internal')
