@@ -32,10 +32,10 @@ describe('SessionsController', () => {
       app.cleanUp()
     })
 
-    it('POST /v1/sessions should return success', async () => {
+    it('POST /v1/me/sessions should return success', async () => {
       // Act
       const res = await server
-        .post(`/v1/sessions`)
+        .post(`/v1/me/sessions`)
         .send(createRandomSession(user.nationalId))
 
       // Assert
@@ -43,10 +43,10 @@ describe('SessionsController', () => {
       expect(res.body.data).toBeUndefined()
     })
 
-    it('POST /v1/sessions should return forbidden when not actor', async () => {
+    it('POST /v1/me/sessions should return forbidden when not actor', async () => {
       // Act
       const res = await server
-        .post(`/v1/sessions`)
+        .post(`/v1/me/sessions`)
         .send(createRandomSession(faker.datatype.string(10)))
 
       // Assert
@@ -57,7 +57,7 @@ describe('SessionsController', () => {
   describe('withoutAuth and permission', () => {
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v1/sessions'}
+      ${'POST'} | ${'/v1/me/sessions'}
     `(
       '$method $endpoint should return 401 when user is not authenticated',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -84,7 +84,7 @@ describe('SessionsController', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v1/sessions'}
+      ${'POST'} | ${'/v1/me/sessions'}
     `(
       '$method $endpoint should return 403 Forbidden when user does not have the correct scope',
       async ({ method, endpoint }: TestEndpointOptions) => {
