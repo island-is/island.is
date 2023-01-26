@@ -3,7 +3,6 @@ import { useLazyQuery } from '@apollo/client'
 import {
   useForm,
   Controller,
-  ValidationRule,
   useFormContext,
   FormProvider,
 } from 'react-hook-form'
@@ -212,8 +211,7 @@ export const StandardForm = ({
     handleSubmit,
     getValues,
     control,
-    errors,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useFormMethods
   const { linkResolver } = useLinkResolver()
   const [syslumadurId, setSyslumadurId] = useState<string>('')
@@ -229,6 +227,7 @@ export const StandardForm = ({
     () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
+  console.log(errors)
 
   const stateEntityOptions = useMemo(() => {
     const options = [...stateEntities]
@@ -555,7 +554,7 @@ export const StandardForm = ({
                 id="vidfangsefni"
                 name="vidfangsefni"
                 label={fn('vidfangsefni', 'label', 'Viðfangsefni')}
-                error={errors?.vidfangsefni?.message}
+                error={errors?.vidfangsefni?.message as string}
                 onChange={(e) => {
                   if (e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH) {
                     setIsChangingSubject(true)
@@ -689,7 +688,7 @@ export const StandardForm = ({
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
-                          errorMessage={errors?.rikisadili?.message}
+                          errorMessage={errors?.rikisadili?.message.toString()}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -727,7 +726,7 @@ export const StandardForm = ({
                         label={fn('nafn', 'label', 'Nafn')}
                         value={value}
                         hasError={errors?.nafn !== undefined}
-                        errorMessage={errors?.nafn?.message}
+                        errorMessage={errors?.nafn?.message as string}
                         onChange={onChange}
                         required
                       />
@@ -769,7 +768,7 @@ export const StandardForm = ({
                             label={fn('email', 'label', 'Tölvupóstfang')}
                             value={value}
                             hasError={errors?.email !== undefined}
-                            errorMessage={errors?.email?.message}
+                            errorMessage={errors?.email?.message as string}
                             onChange={onChange}
                             required
                           />
@@ -804,7 +803,7 @@ export const StandardForm = ({
                             label={fn('erindi', 'label', 'Erindi')}
                             value={value}
                             hasError={errors?.erindi !== undefined}
-                            errorMessage={errors?.erindi?.message}
+                            errorMessage={errors?.erindi?.message as string}
                             onChange={onChange}
                             rows={10}
                             textarea
@@ -871,7 +870,9 @@ export const StandardForm = ({
                                 setSyslumadurId(value as string)
                               }}
                               hasError={errors?.syslumadur !== undefined}
-                              errorMessage={errors?.syslumadur?.message}
+                              errorMessage={
+                                errors?.syslumadur?.message as string
+                              }
                               options={syslumenn.map((x) => ({
                                 label: x.title,
                                 value: x.id,

@@ -13,7 +13,7 @@ import {
   useCreateTechnicalContact,
   CreateContactInput,
 } from '../../shared/useCreateTechnicalContact'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath } from '@island.is/service-portal/core'
 
 interface Props {
   technicalContact?: Contact | null

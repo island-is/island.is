@@ -1,6 +1,9 @@
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import {
+  getErrorViaPath,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import {
   Box,
   Text,
@@ -8,7 +11,7 @@ import {
   Button,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
@@ -49,7 +52,7 @@ export interface FormData {
 
 interface Props {
   data: FormData
-  onSubmit: (data: FormData) => void
+  onSubmit: SubmitHandler<any>
   isFetching: boolean
 }
 
@@ -99,8 +102,13 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                     placeholder={formatMessage(
                       m.SingleProviderInstitutionNamePlaceholder,
                     )}
-                    hasError={errors?.applicant?.name !== undefined}
-                    errorMessage={errors?.applicant?.name?.message}
+                    hasError={
+                      getErrorViaPath(errors, 'applicant.name') !== undefined
+                    }
+                    errorMessage={getErrorViaPath(
+                      errors,
+                      'applicant.name.message',
+                    )}
                   />
                 )}
               />
@@ -137,8 +145,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionNationalIdPlaceholder,
                   )}
-                  hasError={errors.applicant?.nationalId !== undefined}
-                  errorMessage={errors.applicant?.nationalId?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'applicant.nationalId') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'applicant.nationalId.message',
+                  )}
                 />
               )}
             />
@@ -170,8 +184,13 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionEmailPlaceholder,
                   )}
-                  hasError={errors.applicant?.email !== undefined}
-                  errorMessage={errors.applicant?.email?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'applicant.email') !== undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'applicant.email.message',
+                  )}
                 />
               )}
             />
@@ -219,8 +238,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionPhonenumberPlaceholder,
                   )}
-                  hasError={errors.applicant?.phoneNumber !== undefined}
-                  errorMessage={errors.applicant?.phoneNumber?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'applicant.phoneNumber') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'applicant.phoneNumber.message',
+                  )}
                 />
               )}
             />
@@ -248,8 +273,13 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionAddressPlaceholder,
                   )}
-                  hasError={errors.applicant?.address !== undefined}
-                  errorMessage={errors.applicant?.address?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'applicant.address') !== undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'applicant.address.message',
+                  )}
                 />
               )}
             />
@@ -273,8 +303,13 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   onChange={onChange}
                   label={formatMessage(m.DashBoardDescription)}
                   placeholder={formatMessage(m.DashBoardDescription)}
-                  hasError={errors.applicant?.zipCode !== undefined}
-                  errorMessage={errors.applicant?.zipCode?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'applicant.zipCode') !== undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'applicant.zipCode.message',
+                  )}
                 />
               )}
             />
@@ -311,8 +346,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderResponsibleContactNamePlaceholder,
                   )}
-                  hasError={errors.administrativeContact?.name !== undefined}
-                  errorMessage={errors.administrativeContact?.name?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'administrativeContact.name') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'administrativeContact.name.message',
+                  )}
                 />
               )}
             />
@@ -346,8 +387,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderResponsibleContactEmailPlaceholder,
                   )}
-                  hasError={errors.administrativeContact?.email !== undefined}
-                  errorMessage={errors.administrativeContact?.email?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'administrativeContact.email') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'administrativeContact.email.message',
+                  )}
                 />
               )}
             />
@@ -396,11 +443,15 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                     m.SingleProviderResponsibleContactPhoneNumberPlaceholder,
                   )}
                   hasError={
-                    errors.administrativeContact?.phoneNumber !== undefined
+                    getErrorViaPath(
+                      errors,
+                      'administrativeContact.phoneNumber',
+                    ) !== undefined
                   }
-                  errorMessage={
-                    errors.administrativeContact?.phoneNumber?.message
-                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'administrativeContact.phoneNumber.message',
+                  )}
                 />
               )}
             />
@@ -437,8 +488,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderTechnicalContactNamePlaceholder,
                   )}
-                  hasError={errors.technicalContact?.name}
-                  errorMessage={errors.technicalContact?.name?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'technicalContact.name') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'technicalContact.name.message',
+                  )}
                 />
               )}
             />
@@ -474,8 +531,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderTechnicalContactEmailPlaceholder,
                   )}
-                  hasError={errors.technicalContact?.email !== undefined}
-                  errorMessage={errors.technicalContact?.email?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'technicalContact.email') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'technicalContact.email.message',
+                  )}
                 />
               )}
             />
@@ -523,8 +586,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderTechnicalContactPhoneNumberPlaceholder,
                   )}
-                  hasError={errors.technicalContact?.phoneNumber !== undefined}
-                  errorMessage={errors.technicalContact?.phoneNumber?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'technicalContact.phoneNumber') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'technicalContact.phoneNumber.message',
+                  )}
                 />
               )}
             />
@@ -565,8 +634,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderUserHelpContactEmailPlaceholder,
                   )}
-                  hasError={errors.helpDeskContact?.email !== undefined}
-                  errorMessage={errors.helpDeskContact?.email?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'helpDeskContact.email') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'helpDeskContact.email.message',
+                  )}
                 />
               )}
             />
@@ -614,8 +689,14 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderUserHelpContactPhoneNumberPlaceholder,
                   )}
-                  hasError={errors.helpDeskContact?.phoneNumber !== undefined}
-                  errorMessage={errors.helpDeskContact?.phoneNumber?.message}
+                  hasError={
+                    getErrorViaPath(errors, 'helpDeskContact.phoneNumber') !==
+                    undefined
+                  }
+                  errorMessage={getErrorViaPath(
+                    errors,
+                    'helpDeskContact.phoneNumber.message',
+                  )}
                 />
               )}
             />

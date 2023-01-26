@@ -9,7 +9,7 @@ import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministra
 import { useCreateAdministrativeContact } from '../../shared/useCreateAdministrativeContact'
 import { ContactInput } from '../../shared/useUpdateTechnicalContact'
 import { CreateContactInput } from '../../shared/useCreateTechnicalContact'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath } from '@island.is/service-portal/core'
 
 interface Props {
   administrativeContact?: Contact | null

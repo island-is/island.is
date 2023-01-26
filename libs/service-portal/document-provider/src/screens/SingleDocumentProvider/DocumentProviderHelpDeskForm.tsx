@@ -15,7 +15,7 @@ import {
   useCreateHelpDesk,
   CreateHelpDeskInput,
 } from '../../shared/useCreateHelpDesk'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath } from '@island.is/service-portal/core'
 
 interface Props {
   helpDesk?: Helpdesk | null

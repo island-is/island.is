@@ -10,7 +10,7 @@ import {
   useUpdateOrganisation,
   OnCompletedArgumentsType,
 } from '../../shared/useUpdateOrganisation'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath } from '@island.is/service-portal/core'
 
 interface Props {
   organisation: Organisation
