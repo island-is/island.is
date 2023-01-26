@@ -33,10 +33,12 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
   
   return (
     <Box>
-      <Text variant='h4'>{field.description}</Text>
-      <Button onClick={handleSubmitApplication} >
-        Go back
-      </Button>
+      <Text >{field.description}</Text>
+      {false &&
+        <Button onClick={handleSubmitApplication} >
+          Go back
+        </Button>
+      }
     </Box>
   )
 }
