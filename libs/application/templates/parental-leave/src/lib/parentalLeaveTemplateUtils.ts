@@ -55,7 +55,8 @@ export function currentDateStartTime() {
 }
 
 export function findActionName(context: ApplicationContext) {
-  const state = context?.application?.state
+  const { application } = context
+  const { state } = application
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
   if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
   return undefined

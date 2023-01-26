@@ -509,7 +509,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
-        entry: ['assignToVMST', 'setActionName'],
+        entry: 'assignToVMST',
+        exit: 'setActionName',
         meta: {
           status: 'inprogress',
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
@@ -1326,9 +1327,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         return context
       }),
       setActionName: assign((context) => {
-        const answers = context.application.answers
-        const actionName = findActionName(context)
-        set(answers, 'actionName',  actionName)
+        const { application } = context
+        const { answers } = application
+        set(answers, 'actionName',  'document')
         return context
       }),
     },
