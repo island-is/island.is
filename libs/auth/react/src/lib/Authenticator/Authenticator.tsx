@@ -1,6 +1,5 @@
-import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
-import { Route, Switch, useHistory } from 'react-router-dom'
-import type { History } from 'history'
+import { FC, useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
+import { Location, Routes, useLocation, Route } from 'react-router-dom'
 import type { User } from 'oidc-client-ts'
 
 import OidcSignIn from './OidcSignIn'
@@ -20,20 +19,24 @@ interface Props {
   autoLogin?: boolean
 }
 
-const getReturnUrl = (history: History, { redirectPath }: AuthSettings) => {
-  const returnUrl = history.location.pathname + history.location.search
+const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
+  const returnUrl = location.pathname + location.search
+
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
     return '/'
   }
+
   return returnUrl
 }
 
 export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
-  const history = useHistory()
   const reducerInstance = useReducer(reducer, initialState)
   const [state, dispatch] = reducerInstance
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
+  const location = useLocation()
+  const locationRef = useRef(location)
+  locationRef.current = location
 
   const signIn = useCallback(
     async function signIn() {
@@ -41,11 +44,11 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.SIGNIN_START,
       })
       return userManager.signinRedirect({
-        state: getReturnUrl(history, authSettings),
+        state: getReturnUrl(locationRef.current, authSettings),
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, authSettings, history],
+    [dispatch, userManager, authSettings, locationRef],
   )
 
   const signInSilent = useCallback(
@@ -91,12 +94,12 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       return userManager.signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
-          getReturnUrl(history, authSettings),
+          getReturnUrl(locationRef.current, authSettings),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch, history, authSettings],
+    [userManager, dispatch, authSettings, locationRef],
   )
 
   const signOut = useCallback(
@@ -187,25 +190,24 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
 
   return (
     <AuthContext.Provider value={context}>
-      <Switch>
+      <Routes>
         <Route
-          exact
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          path={authSettings.redirectPath!}
-          render={() => <OidcSignIn authDispatch={dispatch} />}
+          path={authSettings.redirectPath as string}
+          element={<OidcSignIn authDispatch={dispatch} />}
         />
         <Route
-          exact
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          path={authSettings.redirectPathSilent!}
-          component={OidcSilentSignIn}
+          path={authSettings.redirectPathSilent as string}
+          element={<OidcSilentSignIn />}
         />
-        <Route>
-          <CheckAuth checkLogin={checkLogin} autoLogin={autoLogin}>
-            {children}
-          </CheckAuth>
-        </Route>
-      </Switch>
+        <Route
+          path="*"
+          element={
+            <CheckAuth checkLogin={checkLogin} autoLogin={autoLogin}>
+              {children}
+            </CheckAuth>
+          }
+        />
+      </Routes>
     </AuthContext.Provider>
   )
 }

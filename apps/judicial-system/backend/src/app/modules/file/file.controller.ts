@@ -32,6 +32,7 @@ import {
   registrarRule,
   representativeRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import {
   Case,
@@ -48,13 +49,13 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
+import { UpdateFilesDto } from './dto/updateFile.dto'
 import { PresignedPost } from './models/presignedPost.model'
 import { CaseFile } from './models/file.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
-import { UpdateFilesDto } from './dto/updateFile.dto'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
@@ -80,8 +81,8 @@ export class FileController {
   })
   createPresignedPost(
     @Param('caseId') caseId: string,
-    @Body() createPresignedPost: CreatePresignedPostDto,
     @CurrentCase() theCase: Case,
+    @Body() createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
     this.logger.debug(`Creating a presigned post for case ${caseId}`)
 
@@ -103,8 +104,8 @@ export class FileController {
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
-    @Body() createFile: CreateFileDto,
     @CurrentCase() theCase: Case,
+    @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
@@ -143,6 +144,7 @@ export class FileController {
     judgeRule,
     registrarRule,
     assistantRule,
+    defenderRule,
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({
