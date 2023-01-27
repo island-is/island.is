@@ -40,6 +40,7 @@ export enum ApplicationTypes {
   ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
+  DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
 }
 
 export const ApplicationConfigurations = {
@@ -206,5 +207,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: {
     slug: 'eigendaskipti-okutaekis',
     translation: 'ta.tvo.application',
+  },
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: {
+    slug: 'okunam-okukennari',
+    translation: 'dlui.application',
   },
 }
