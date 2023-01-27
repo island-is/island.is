@@ -1209,7 +1209,6 @@ license-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-internal'
-    - 'nginx-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1233,9 +1232,9 @@ license-api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
-        - host: 'license-api-xrd.island.is'
+        - host: 'license-api-xrd.internal.island.is'
           paths:
             - '/'
   namespace: 'license-api'
