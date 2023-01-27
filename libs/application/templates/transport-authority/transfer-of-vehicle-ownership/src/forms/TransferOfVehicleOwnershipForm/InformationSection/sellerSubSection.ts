@@ -6,7 +6,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { Application } from '../../../types/schema'
+import { Application } from '@island.is/api/schema'
 
 export const sellerSubSection = buildSubSection({
   id: 'seller',
