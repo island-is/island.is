@@ -1,6 +1,7 @@
 import { GridColumn, GridRow, Tiles } from '@island.is/island-ui/core'
 import React from 'react'
 import Card from '../components/Card/Card'
+import Layout from '../components/Layout/Layout'
 type arrayDummy = Array<info>
 type info = {
   caseNumber: string
@@ -104,18 +105,20 @@ export const Index = () => {
     },
   ]
   return (
-    <GridRow>
-      <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn>
-      <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
-        {dummycontent && (
-          <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-            {dummycontent.map((item, index) => {
-              return <Card key={index} {...item} />
-            })}
-          </Tiles>
-        )}
-      </GridColumn>
-    </GridRow>
+    <Layout showIcon={false}>
+      <GridRow>
+        <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn>
+        <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
+          {dummycontent && (
+            <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
+              {dummycontent.map((item, index) => {
+                return <Card key={index} {...item} />
+              })}
+            </Tiles>
+          )}
+        </GridColumn>
+      </GridRow>
+    </Layout>
   )
 }
 
