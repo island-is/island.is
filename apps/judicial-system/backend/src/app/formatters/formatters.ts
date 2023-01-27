@@ -18,7 +18,6 @@ import {
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
 
