@@ -1,4 +1,4 @@
-import { filterDoc } from './index'
+import { filterDoc, getValidBulkRequestChunk } from './index'
 
 describe('filterDoc', () => {
   it('should not recurse infinitely if the node is circular', () => {
@@ -22,5 +22,57 @@ describe('filterDoc', () => {
     const result = filterDoc(test, new Set(), 20)
     expect(result).toBe(true)
     expect(test.b).toStrictEqual({})
+  })
+})
+
+describe('getValidBulkRequestChunk', () => {
+  it('should return a request chunk of the correct size', () => {
+    const test = [
+      {
+        update: { _id: 'some-id', _index: 'some-index' },
+      },
+      {
+        doc: {
+          dateCreated: '2022-06-23T12:57:22.850Z',
+          dateUpdated: '1674817889815',
+          tags: [],
+          title: 'some-title',
+          type: 'some-type',
+        },
+        doc_as_upsert: true,
+      },
+      { delete: { _id: 'some-other-id', _index: 'some-index' } },
+    ]
+
+    const result = getValidBulkRequestChunk(test, 3)
+
+    expect(result.length).toBe(3)
+    expect(test.length).toBe(0)
+  })
+  it('should not exceed the given max size', () => {
+    const test = [
+      {
+        update: { _id: 'some-id', _index: 'some-index' },
+      },
+      {
+        doc: {
+          dateCreated: '2022-06-23T12:57:22.850Z',
+          dateUpdated: '1674817889815',
+          tags: [],
+          title: 'some-title',
+          type: 'some-type',
+        },
+        doc_as_upsert: true,
+      },
+      { delete: { _id: 'some-other-id', _index: 'some-index' } },
+    ]
+
+    const startingLength = test.length
+    const maxSize = 2
+
+    const result = getValidBulkRequestChunk(test, maxSize)
+
+    expect(result.length).toBeLessThanOrEqual(maxSize)
+    expect(test.length).toBe(startingLength - result.length)
   })
 })
