@@ -13,14 +13,14 @@ import {
   CaseType,
   CaseState,
   Recipient,
-  User,
   IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
-import { Case } from '../../../case/models/case.model'
+import { User } from '../../../user'
+import { Case } from '../../../case'
 import { Institution } from '../../../institution/institution.model'
-import { SendNotificationDto } from '../../dto/sendNotification.dto'
+import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
@@ -34,10 +34,11 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notification: SendNotificationDto,
+  notification: SendInternalNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send ready for court notifications for restriction and investigation cases', () => {
+  const userId = uuid()
   const caseId = uuid()
   const policeCaseNumber = uuid()
   const courtId = uuid()
@@ -61,8 +62,9 @@ describe('InternalNotificationController - Send ready for court notifications fo
     defenderEmail: 'saul@dummy.is',
     sendRequestToDefender: true,
   } as Case
-  const notification = { type: NotificationType.READY_FOR_COURT }
+  const notification = { userId, type: NotificationType.READY_FOR_COURT }
   const courtMobileNumber = uuid()
+
   let mockEmailService: EmailService
   let mockSmsService: SmsService
   let mockNotificationConfig: ConfigType<typeof notificationModuleConfig>
@@ -89,7 +91,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -227,7 +234,9 @@ describe('InternalNotificationController - Send ready for court notifications fo
 })
 
 describe('InternalNotificationController - Send ready for court notifications for restriction and investigation cases', () => {
-  const notification = { type: NotificationType.READY_FOR_COURT }
+  const userId = uuid()
+  const notification = { userId, type: NotificationType.READY_FOR_COURT }
+
   let mockEmailService: EmailService
   let mockNotificationConfig: ConfigType<typeof notificationModuleConfig>
   let mockNotificationModel: typeof Notification
@@ -249,7 +258,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

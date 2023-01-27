@@ -20,5 +20,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["lib:react", "scope:react"]
 }

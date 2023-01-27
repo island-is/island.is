@@ -1,7 +1,7 @@
 import * as faker from 'faker'
-import { DefaultStateLifeCycle, buildForm } from '@island.is/application/core'
 import { EventObject } from 'xstate'
 import { z } from 'zod'
+import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationWithAttachments,
   ApplicationTypes,

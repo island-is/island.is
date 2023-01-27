@@ -86,6 +86,11 @@ export const information = {
         defaultMessage: 'Stærð {name} ({height}x{width}cm)',
         description: 'Plate size plate size option title',
       },
+      error: {
+        id: 'ta.ovlp.application:information.labels.plateSize.error',
+        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
+        description: 'Plate size error message',
+      },
     }),
     plateDelivery: defineMessages({
       sectionTitle: {
