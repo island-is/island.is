@@ -1,5 +1,5 @@
+import { FC } from 'react'
 import { render, screen } from '@testing-library/react'
-import React, { FC } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
 import { configureMock } from '../userManager'

@@ -180,6 +180,11 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
+                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+                {
                   type: MessageType.ARCHIVE_CASE_FILE,
                   userId,
                   caseId,
@@ -211,6 +216,16 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ],
+            )
+          } else if (newState === CaseState.DELETED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_REVOKED_NOTIFICATION,
                   userId,
                   caseId,
                 },

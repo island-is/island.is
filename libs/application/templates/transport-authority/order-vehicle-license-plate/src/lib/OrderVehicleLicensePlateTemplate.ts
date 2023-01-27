@@ -26,6 +26,7 @@ import {
   DeliveryStationsApi,
   PlateTypesApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -51,6 +52,13 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.OrderVehicleLicensePlate.translation,
   ],
   dataSchema: OrderVehicleLicensePlateSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.transportAuthorityOrderVehicleLicensePlateDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityOrderVehicleLicensePlate,
   stateMachineConfig: {
     initial: States.DRAFT,

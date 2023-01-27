@@ -445,7 +445,7 @@ export class CaseService {
       })
 
       // Case created from LOKE
-      if (theCase.origin === CaseOrigin.LOKE) {
+      if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
         messages.push({
           type: MessageType.DELIVER_CASE_TO_POLICE,
           userId: user.id,
@@ -472,13 +472,23 @@ export class CaseService {
     )
   }
 
-  private addMessagesForDeletedIndictmentCaseToQueue(
+  private addMessagesForDeletedCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getArchiveCaseFileMessages(theCase, user),
-    )
+    const messages: CaseMessage[] = [
+      {
+        type: MessageType.SEND_REVOKED_NOTIFICATION,
+        caseId: theCase.id,
+        userId: user.id,
+      },
+    ]
+    // Indictment cases need some case file cleanup
+    if (isIndictmentCase(theCase.type)) {
+      messages.push(...this.getArchiveCaseFileMessages(theCase, user))
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForCaseTransitionToQueue(
@@ -496,10 +506,11 @@ export class CaseService {
       } else if (completedCaseStates.includes(stateUpdate)) {
         // Indictment cases are not signed
         await this.addMessagesForCompletedIndictmentCaseToQueue(theCase, user)
-      } else if (stateUpdate === CaseState.DELETED) {
-        // Indictment cases need some case file cleanup
-        await this.addMessagesForDeletedIndictmentCaseToQueue(theCase, user)
       }
+    }
+
+    if (stateUpdate === CaseState.DELETED) {
+      await this.addMessagesForDeletedCaseToQueue(theCase, user)
     }
   }
 
@@ -650,8 +661,6 @@ export class CaseService {
         }
       })
       .then(async () => {
-        const updatedCase = await this.findById(theCase.id)
-
         if ((update as { [key: string]: string }).state) {
           await this.addMessagesForCaseTransitionToQueue(
             theCase,
@@ -659,15 +668,15 @@ export class CaseService {
             user,
           )
         }
-
-        // Update the court case if necessary
-        await this.addMessagesForCourtCaseUpdateToQueue(
-          theCase,
-          updatedCase,
-          user,
-        )
-
         if (returnUpdatedCase) {
+          const updatedCase = await this.findById(theCase.id)
+          // Update the court case if necessary
+          await this.addMessagesForCourtCaseUpdateToQueue(
+            theCase,
+            updatedCase,
+            user,
+          )
+
           return updatedCase
         }
       })
