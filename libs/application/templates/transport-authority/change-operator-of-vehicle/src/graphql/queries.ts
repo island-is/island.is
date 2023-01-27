@@ -57,3 +57,15 @@ export const GET_VEHICLE_OPERATOR_CHANGE_CHECKS_BY_PERMNO = `
     }
   } 
 `
+
+export const VALIDATE_VEHICLE_OPERATOR_CHANGE = `
+  query GetVehicleOperatorChangeValidation($answers: OperatorChangeAnswers!) {
+    vehicleOperatorChangeValidation(answers: $answers) {
+      hasError
+      errorMessages {
+        errorNo
+        defaultMessage
+      }
+    }
+  } 
+`

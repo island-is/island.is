@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/shared/babel"]
     }
   },
-  "tags": []
+  "tags": ["lib:react", "scope:react"]
 }

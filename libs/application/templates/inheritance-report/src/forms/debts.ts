@@ -7,6 +7,7 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
@@ -17,37 +18,13 @@ export const debts = buildSection({
   title: m.debtsTitle,
   children: [
     buildSubSection({
-      id: 'funeralCost',
-      title: m.funeralCostTitle,
-      children: [
-        buildMultiField({
-          id: 'funeralCost',
-          title: m.debtsTitle,
-          description: '',
-          children: [
-            buildDescriptionField({
-              id: 'funeralCostHeader',
-              title: m.funeralCostTitle,
-              titleVariant: 'h3',
-            }),
-            buildTextField({
-              id: 'funeralCostAmount',
-              title: m.amount,
-              width: 'half',
-              variant: 'currency',
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSubSection({
       id: 'domesticAndForeignDebts',
       title: m.debtsTitle,
       children: [
         buildMultiField({
           id: 'domesticAndForeignDebts',
           title: m.debtsAndFuneralCost,
-          description: '',
+          description: m.debtsAndFuneralCostDescription,
           children: [
             buildDescriptionField({
               id: 'domesticAndForeignDebtsHeader',
@@ -97,8 +74,8 @@ export const debts = buildSection({
       children: [
         buildMultiField({
           id: 'publicCharges',
-          title: m.publicChargesTitle,
-          description: '',
+          title: m.debtsAndFuneralCost,
+          description: m.debtsAndFuneralCostDescription,
           children: [
             buildDescriptionField({
               id: 'publicChargesHeader',
@@ -142,21 +119,8 @@ export const debts = buildSection({
         buildMultiField({
           id: 'debtsOverview',
           title: m.overview,
-          description: '',
+          description: m.overviewDescription,
           children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewFuneralCost',
-              title: m.funeralCostTitle,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.totalAmount,
-              value: ({ answers }) =>
-                formatCurrency(String(answers.funeralCostAmount)),
-            }),
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewDomesticAndForeignDebts',
@@ -167,9 +131,12 @@ export const debts = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String((answers.domesticAndForeignDebts as any)?.total),
+                  String(
+                    getValueViaPath(answers, 'domesticAndForeignDebts.total'),
+                  ),
                 ),
             }),
             buildDividerField({}),
@@ -182,33 +149,32 @@ export const debts = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
-                formatCurrency(String((answers.publicCharges as any)?.total)),
+                formatCurrency(
+                  String(getValueViaPath(answers, 'publicCharges.total')),
+                ),
             }),
             buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewAllDebtsWorth',
-              title: m.totalValueOfDebts,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
+            buildKeyValueField({
+              label: '',
+              colSpan: '6/12',
+              value: '',
             }),
             buildTextField({
               id: 'debtsTotal',
-              title: 'Samtals alls',
+              title: m.overviewTotal,
               readOnly: true,
               width: 'half',
               variant: 'currency',
               rightAlign: true,
               backgroundColor: 'white',
-              defaultValue: ({ answers }: Application) => {
-                const total =
-                  Number(answers.funeralCostAmount) +
-                  (answers.domesticAndForeignDebts as any)?.total +
-                  (answers.publicCharges as any)?.total
-
-                return total
-              },
+              defaultValue: ({ answers }: Application) =>
+                (getValueViaPath(
+                  answers,
+                  'domesticAndForeignDebts.total',
+                ) as number) +
+                (getValueViaPath(answers, 'publicCharges.total') as number),
             }),
           ],
         }),

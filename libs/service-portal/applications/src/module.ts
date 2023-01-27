@@ -5,6 +5,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { ApplicationsPaths } from './lib/paths'
 
 const OverviewScreen = lazy(() => import('./screens/Overview'))
+
 export const applicationsModule: PortalModule = {
   name: m.applications,
   routes: ({ userInfo }) => [
@@ -14,24 +15,23 @@ export const applicationsModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApplicationScope.read),
       render: () => OverviewScreen,
     },
-    // Will be added later when we have standardised the states of applications.
-    // {
-    //   name: m.inProgressApplications,
-    //   path: ServicePortalPath.ApplicationInProgressApplications,
-    //   enabled: userInfo.scopes.includes(ApplicationScope.read),
-    //   render: () => OverviewScreen,
-    // },
-    // {
-    //   name: m.unfinishedApplications,
-    //   path: ServicePortalPath.ApplicationIncompleteApplications,
-    //   enabled: userInfo.scopes.includes(ApplicationScope.read),
-    //   render: () => OverviewScreen,
-    // },
-    // {
-    //   name: m.finishedApplications,
-    //   path: ServicePortalPath.ApplicationCompleteApplications,
-    //   enabled: userInfo.scopes.includes(ApplicationScope.read),
-    //   render: () => OverviewScreen,
-    // },
+    {
+      name: m.inProgressApplications,
+      path: ApplicationsPaths.ApplicationInProgressApplications,
+      enabled: userInfo.scopes.includes(ApplicationScope.read),
+      render: () => OverviewScreen,
+    },
+    {
+      name: m.unfinishedApplications,
+      path: ApplicationsPaths.ApplicationIncompleteApplications,
+      enabled: userInfo.scopes.includes(ApplicationScope.read),
+      render: () => OverviewScreen,
+    },
+    {
+      name: m.finishedApplications,
+      path: ApplicationsPaths.ApplicationCompleteApplications,
+      enabled: userInfo.scopes.includes(ApplicationScope.read),
+      render: () => OverviewScreen,
+    },
   ],
 }

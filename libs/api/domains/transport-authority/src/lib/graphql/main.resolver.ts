@@ -4,8 +4,8 @@ import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
   IdsUserGuard,
-  ScopesGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { TransportAuthorityApi } from '../transportAuthority.service'
@@ -13,34 +13,24 @@ import {
   OwnerChangeAnswers,
   CheckTachoNetInput,
   GetCurrentVehiclesInput,
+  OperatorChangeAnswers,
 } from './dto'
 import {
-  OwnerChangeValidation,
   CheckTachoNetExists,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-  VehicleOwnerchangeChecksByPermno,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
+  OperatorChangeValidation,
+  OwnerChangeValidation,
   VehicleOperatorChangeChecksByPermno,
-  VehiclesCurrentVehicleWithPlateOrderChecks,
+  VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
+  VehiclesCurrentVehicleWithPlateOrderChecks,
+  VehiclesCurrentVehicleWithOperatorChangeChecks,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
   constructor(private readonly transportAuthorityApi: TransportAuthorityApi) {}
-
-  @Scopes(ApiScope.internal)
-  @Query(() => OwnerChangeValidation, { nullable: true })
-  vehicleOwnerChangeValidation(
-    @CurrentUser() user: User,
-    @Args('answers') answers: OwnerChangeAnswers,
-  ) {
-    return this.transportAuthorityApi.validateApplicationForOwnerChange(
-      user,
-      answers,
-    )
-  }
 
   @Scopes(ApiScope.internal)
   @Query(() => CheckTachoNetExists)
@@ -51,7 +41,7 @@ export class MainResolver {
     return this.transportAuthorityApi.checkTachoNet(user, input)
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => [VehiclesCurrentVehicleWithOwnerchangeChecks], {
     name: 'currentVehiclesWithOwnerchangeChecks',
     nullable: true,
@@ -68,7 +58,7 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehicleOwnerchangeChecksByPermno, {
     name: 'vehicleOwnerchangeChecksByPermno',
     nullable: true,
@@ -83,7 +73,19 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Query(() => OwnerChangeValidation, { nullable: true })
+  vehicleOwnerChangeValidation(
+    @CurrentUser() user: User,
+    @Args('answers') answers: OwnerChangeAnswers,
+  ) {
+    return this.transportAuthorityApi.validateApplicationForOwnerChange(
+      user,
+      answers,
+    )
+  }
+
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => [VehiclesCurrentVehicleWithOperatorChangeChecks], {
     name: 'currentVehiclesWithOperatorChangeChecks',
     nullable: true,
@@ -100,7 +102,7 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehicleOperatorChangeChecksByPermno, {
     name: 'vehicleOperatorChangeChecksByPermno',
     nullable: true,
@@ -115,7 +117,19 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Query(() => OperatorChangeValidation, { nullable: true })
+  vehicleOperatorChangeValidation(
+    @CurrentUser() user: User,
+    @Args('answers') answers: OperatorChangeAnswers,
+  ) {
+    return this.transportAuthorityApi.validateApplicationForOperatorChange(
+      user,
+      answers,
+    )
+  }
+
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => [VehiclesCurrentVehicleWithPlateOrderChecks], {
     name: 'currentVehiclesWithPlateOrderChecks',
     nullable: true,
@@ -132,7 +146,7 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehiclePlateOrderChecksByPermno, {
     name: 'vehiclePlateOrderChecksByPermno',
     nullable: true,
