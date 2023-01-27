@@ -881,6 +881,11 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
+  heirs: {
+    id: 'ir.application:heirs',
+    defaultMessage: 'Erfingjar',
+    description: '',
+  },
   heirAdditionalInfo: {
     id: 'ir.application:heirAdditionalInfo',
     defaultMessage: 'Athugasemdir erfingja',
@@ -915,6 +920,16 @@ export const m = defineMessages({
   overviewTotal: {
     id: 'ir.application:overviewTotal',
     defaultMessage: 'Samtals alls',
+    description: '',
+  },
+  overviewTotalInheritance: {
+    id: 'ir.application:overviewTotalInheritance',
+    defaultMessage: 'Samtals erfðafjárskattur',
+    description: '',
+  },
+  overviewPrint: {
+    id: 'ir.application:overviewPrint',
+    defaultMessage: 'Prenta yfirlit',
     description: '',
   },
 
