@@ -38,8 +38,20 @@ export function getValidBulkRequestChunk(
 ) {
   let count = 0
   for (let i = requests.length - 1; i >= 0; i -= 1) {
-    const increment = 'delete' in requests[i] ? 1 : 2
-    if (count + increment > maxSize) break
+    let increment = 0
+
+    const requestTakesUpASingleLine = 'delete' in requests[i]
+
+    if (requestTakesUpASingleLine) {
+      increment = 1
+    } else {
+      increment = 2
+      i -= 1 // Skip the next request since that's the operation for this request
+    }
+
+    const wouldGoOverMaxSize = count + increment > maxSize
+    if (wouldGoOverMaxSize) break
+
     count += increment
   }
   return requests.splice(-count, count)
