@@ -8,7 +8,6 @@ import {
   Gender,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 /**
  * A value is considered dirty if it's a string, either an empty string or not.
