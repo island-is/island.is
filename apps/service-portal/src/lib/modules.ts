@@ -1,4 +1,5 @@
 import { PortalModule } from '@island.is/portals/core'
+import { sessionsModule } from '@island.is/service-portal/sessions'
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { assetsModule } from '@island.is/service-portal/assets'
 import { documentProviderModule } from '@island.is/service-portal/document-provider'
@@ -39,4 +40,5 @@ export const modules: PortalModule[] = [
   petitionsModule,
   transportsModule,
   licensesModule,
+  sessionsModule,
 ]

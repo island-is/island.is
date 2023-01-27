@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import { Link, match, matchPath, useLocation } from 'react-router-dom'
+import { Link, useLocation, PathMatch, matchPath } from 'react-router-dom'
 
 import {
   Box,
@@ -31,7 +31,7 @@ interface ContentBreadcrumb {
  */
 const parseNavItemName = (
   navItem: ServicePortalNavigationItem,
-  activePath: match<Record<string, string>> | null,
+  activePath: PathMatch<string> | null,
 ) => {
   if (activePath && activePath.params && typeof navItem.name === 'string') {
     return activePath.params[navItem.name] || navItem.name
@@ -59,10 +59,15 @@ const ContentBreadcrumbs: FC<{
   ) => {
     if (navItem) {
       // Check if the current navItem is the active browser path
-      const activePath = matchPath(location.pathname, {
-        path: navItem.path,
-        exact: true,
-      })
+      const activePath = navItem.path
+        ? matchPath(
+            {
+              path: navItem.path,
+              end: true,
+            },
+            location.pathname,
+          )
+        : null
 
       // Push the nav item to the current array as we are currently located here in our search
       currentBreadcrumbs.push({
@@ -76,7 +81,7 @@ const ContentBreadcrumbs: FC<{
         items = [...currentBreadcrumbs]
       }
 
-      // Explore all of the childrens
+      // Explore all of the children
       if (navItem.children && navItem.children.length) {
         for (const children of navItem.children) {
           findBreadcrumbsPath(children, currentBreadcrumbs)

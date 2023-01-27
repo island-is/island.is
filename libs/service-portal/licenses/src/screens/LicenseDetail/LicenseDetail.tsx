@@ -313,6 +313,11 @@ const DataFields = ({
   )
 }
 
+type UseParams = {
+  type: string | undefined
+  provider: string
+}
+
 const LicenseDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
