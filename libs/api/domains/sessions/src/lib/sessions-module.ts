@@ -11,4 +11,4 @@ import { SessionsService } from './services/sessions.service'
   providers: [SessionsResolver, SessionsService],
   exports: [],
 })
-export class ActivitiesModule {}
+export class SessionsModule {}

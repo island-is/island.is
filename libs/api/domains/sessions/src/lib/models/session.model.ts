@@ -3,7 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Client } from '@island.is/api/domains/auth'
 import { Identity } from '@island.is/api/domains/identity'
 
-@ObjectType('ActivitiesSession')
+@ObjectType('SessionsSession')
 export class Session {
   @Field(() => ID)
   id!: string

@@ -94,7 +94,7 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
-import { ActivitiesModule } from '@island.is/api/domains/activities'
+import { SessionsModule } from '@island.is/api-domains-sessions'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -258,7 +258,7 @@ const autoSchemaFile = environment.production
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
-    ActivitiesModule,
+    SessionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
