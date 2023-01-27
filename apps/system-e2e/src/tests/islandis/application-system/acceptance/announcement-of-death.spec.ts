@@ -21,17 +21,12 @@ test.describe('Announcement of Death', () => {
   test('test', async () => {
     const page = await context.newPage()
     await page.goto(home)
-    await page.locator('[data-testid="create-new-application"]').click()
 
+    await page.locator('[data-testid="create-new-application"]').click()
     await page.locator('[data-testid="create-new-application"]').click()
     await expect(page).toBeApplication()
 
-    await page
-      .locator(
-        'span:has-text("Ég skil að ofangreindra upplýsinga verður aflað við úrvinnslu umsóknarinnar.")',
-      )
-      .nth(1)
-      .click()
+    await page.locator('span:has-text("Ég skil að ofangreindra upplýsinga verður aflað við úrvinnslu umsóknarinnar.")').nth(1).click()
 
     await page.locator('[data-testid="proceed"]').click()
     await expect(page).toBeApplication()
@@ -41,7 +36,7 @@ test.describe('Announcement of Death', () => {
 
     await page.locator('text=Samþykki að halda áfram með tilkynningu').click()
 
-    await page.locator('button:has-text("Halda áfram")').click()
+    await page.locator('[data-testid="proceed"]').click()
     await expect(page).toBeApplication()
 
     await page.locator('text=Veldu tengsl').click()
@@ -57,42 +52,18 @@ test.describe('Announcement of Death', () => {
 
     await page.locator('text=Bæta við erfingja').click()
 
-    await page
-      .locator(
-        'div:nth-child(5) > div > div:nth-child(2) > div > div > div > .reset_base__1r86fzb0',
-      )
-      .first()
-      .click()
+    await page.locator('div:nth-child(5) > div > div:nth-child(2) > div > div > div > .reset_base__1r86fzb0').first().click()
 
     // Fill input[name="estateMembers\.members\[3\]\.nationalId"]
-    await page
-      .locator('input[name="estateMembers\\.members\\[3\\]\\.nationalId"]')
-      .fill('010130-5069 ')
+    await page.locator('input[name="estateMembers\\.members\\[3\\]\\.nationalId"]').fill('010130-5069 ')
 
-    await page
-      .locator(
-        '[id="estateMembers\\.members\\[3\\]\\.relation"] div:has-text("Tengsl")',
-      )
-      .click()
+    await page.locator('[id="estateMembers\\.members\\[3\\]\\.relation"] div:has-text("Tengsl")').click()
 
-    await page
-      .locator(
-        '[id="react-select-estateMembers\\.members\\[3\\]\\.relation-option-0"]',
-      )
-      .click()
+    await page.locator('[id="react-select-estateMembers\\.members\\[3\\]\\.relation-option-0"]').click()
 
-    await page
-      .locator(
-        'div:nth-child(5) > div > div:nth-child(2) > div:nth-child(4) > div > div > div > .Checkbox_label__jho66t4 > .Checkbox_labelText__jho66t5 > span',
-      )
-      .click()
+    await page.locator('div:nth-child(5) > div > div:nth-child(2) > div:nth-child(4) > div > div > div > .Checkbox_label__jho66t4 > .Checkbox_labelText__jho66t5 > span').click()
 
-    await page
-      .locator(
-        'text=ErfingjarErfðaréttur byggist á skyldleika, ættleiðingu, hjúskap og erfðaskrá ein >> button',
-      )
-      .nth(3)
-      .click()
+    await page.locator('text=ErfingjarErfðaréttur byggist á skyldleika, ættleiðingu, hjúskap og erfðaskrá ein >> button').nth(3).click()
 
     await page.locator('[data-testid="proceed"]').click()
     await expect(page).toBeApplication()
@@ -103,55 +74,28 @@ test.describe('Announcement of Death', () => {
     // Uncheck input[name="otherProperties\[0\]"]
     await page.locator('input[name="otherProperties\\[0\\]"]').uncheck()
 
-    await page
-      .locator('text=Nissan Terrano IIEyða >> span[role="button"]')
-      .click()
+    await page.locator('text=Nissan Terrano IIEyða >> span[role="button"]').click()
 
-    await page.locator('text=Halda áframTil baka >> div').first().click()
+    await page.locator('#react-select-financesDataCollectionPermission-option-0').first().click()
     await expect(page).toBeApplication()
 
-    await page
-      .locator(
-        'text=Vottorð um tilkynningu andlátsHeimilar að útför hins látna megi fara fram. Prest',
-      )
-      .click()
+    await page.locator('text=Vottorð um tilkynningu andlátsHeimilar að útför hins látna megi fara fram. Prest').click()
 
-    await page
-      .locator(
-        '[data-testid="select-certificateOfDeathAnnouncement"] >> text=Enginn viðtakandi valinn',
-      )
-      .click()
+    await page.locator('[data-testid="select-certificateOfDeathAnnouncement"] >> text=Enginn viðtakandi valinn').click()
 
-    await page
-      .locator('#react-select-certificateOfDeathAnnouncement-option-0')
-      .click()
+    await page.locator('#react-select-certificateOfDeathAnnouncement-option-0').click()
 
-    await page
-      .locator(
-        '[data-testid="select-authorizationForFuneralExpenses"] >> text=Enginn viðtakandi valinn',
-      )
-      .click()
+    await page.locator('[data-testid="select-authorizationForFuneralExpenses"] >> text=Enginn viðtakandi valinn').click()
 
-    await page
-      .locator('#react-select-authorizationForFuneralExpenses-option-0')
-      .click()
+    await page.locator('#react-select-authorizationForFuneralExpenses-option-0').click()
 
-    await page
-      .locator(
-        '[data-testid="select-financesDataCollectionPermission"] label:has-text("Viðtakandi")',
-      )
-      .click()
+    await page.locator('[data-testid="select-financesDataCollectionPermission"] label:has-text("Viðtakandi")').click()
 
-    await page
-      .locator('#react-select-financesDataCollectionPermission-option-0')
-      .click()
 
     await page.locator('[data-testid="proceed"]').click()
     await expect(page).toBeApplication()
 
-    await page
-      .locator('div:nth-child(41) > div > div > div > div > div')
-      .click()
+    await page.locator('div:nth-child(41) > div > div > div > div > div').click()
 
     await page.locator('textarea[name="additionalInfo"]').fill('test test þæö')
 
