@@ -4,7 +4,6 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import {
   information,
   externalData,
@@ -15,7 +14,6 @@ import {
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
   title: '',
-  logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
