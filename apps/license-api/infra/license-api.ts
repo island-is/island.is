@@ -43,7 +43,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
           prod: 'license-api-xrd',
         },
         paths: ['/'],
-        public: false,
+        public: true,
         extraAnnotations: {
           dev: {},
           staging: {
@@ -60,4 +60,4 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .grantNamespaces('nginx-internal')
+    .grantNamespaces('nginx-internal', 'nginx-external')
