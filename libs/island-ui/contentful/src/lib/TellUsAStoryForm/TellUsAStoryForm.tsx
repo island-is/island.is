@@ -25,7 +25,6 @@ import { Locale } from '@island.is/shared/types'
 import BackgroundImage from '../BackgroundImage/BackgroundImage'
 import { Slice as SliceType, richText } from '../..'
 import * as styles from './TellUsAStoryFrom.css'
-import { getErrorViaPath } from '@island.is/application/core'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -170,6 +169,8 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
         }))
       : []
 
+  console.log(errors)
+
   return (
     <>
       {!!showIntro && (
@@ -236,14 +237,12 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                         placeholder={organizationPlaceholder}
                         options={options}
                         errorMessage={
-                          errors.organization
+                          errors?.organization
                             ? organizationInputErrorMessage
                             : null
                         }
                         required
-                        hasError={
-                          getErrorViaPath(errors, 'organization') !== undefined
-                        }
+                        hasError={errors?.organization !== undefined}
                         disabled={
                           Boolean(error || loading) || state === 'submitting'
                         }
@@ -272,9 +271,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                             ? dateOfStoryInputErrorMessage
                             : null
                         }
-                        hasError={
-                          getErrorViaPath(errors, 'dateOfStory') !== undefined
-                        }
+                        hasError={errors?.dateOfStory !== undefined}
                         disabled={state === 'submitting'}
                         handleChange={onChange}
                       />
@@ -345,7 +342,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                       textarea
                       rows={isTablet ? 8 : showIntro ? 14 : 18}
                       required
-                      errorMessage={getErrorViaPath(errors, 'message.message')}
+                      errorMessage={errors?.message?.message as string}
                       disabled={state === 'submitting'}
                       {...register('message', {
                         required: messageInputErrorMessage,
@@ -367,10 +364,10 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     placeholder={namePlaceholder}
                     defaultValue=""
                     required
-                    errorMessage={getErrorViaPath(errors, 'name.message')}
+                    errorMessage={errors?.name?.message as string}
                     disabled={state === 'submitting'}
                     {...register('name', {
-                      required: true,
+                      required: nameInputErrorMessage,
                     })}
                   />
                 </GridColumn>
@@ -382,7 +379,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     placeholder={emailPlaceholder}
                     defaultValue=""
                     required
-                    errorMessage={getErrorViaPath(errors, 'email.message')}
+                    errorMessage={errors?.email?.message as string}
                     disabled={state === 'submitting'}
                     {...register('email', {
                       required: emailInputErrorMessage,
