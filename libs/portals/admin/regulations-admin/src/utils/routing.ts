@@ -4,7 +4,7 @@ import { isUuid } from 'uuidv4'
 import { RegulationsAdminPaths } from '../lib/paths'
 import { Step } from '../types'
 
-const { RegulationsAdminEdit } = RegulationsAdminPaths
+const { RegulationsAdminEditStep, RegulationsAdminEdit } = RegulationsAdminPaths
 
 // ---------------------------------------------------------------------------
 
@@ -18,7 +18,8 @@ export const getEditUrl: GetEditUrlFn = (
   stepName?: Step,
 ) => {
   if (isUuid(draftIdOrStepName)) {
-    return generatePath(RegulationsAdminEdit, {
+    const path = stepName ? RegulationsAdminEditStep : RegulationsAdminEdit
+    return generatePath(path, {
       draftId: draftIdOrStepName,
       stepName: stepName ?? null,
     })

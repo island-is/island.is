@@ -25,7 +25,13 @@ export const regulationAdminModule: PortalModule = {
       },
       {
         name: 'Skrá nýja reglugerð',
-        path: RegulationsAdminPaths.RegulationsAdminEditPath,
+        path: RegulationsAdminPaths.RegulationsAdminEdit,
+        enabled: mayCreate,
+        render: () => lazy(() => import('./screens/Edit')),
+      },
+      {
+        name: 'Skrá nýja reglugerð',
+        path: RegulationsAdminPaths.RegulationsAdminEditStep,
         enabled: mayCreate,
         render: () => lazy(() => import('./screens/Edit')),
       },
