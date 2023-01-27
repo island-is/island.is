@@ -39,5 +39,5 @@
     },
     "docker-jest": {}
   },
-  "tags": []
+  "tags": ["scope:e2e"]
 }

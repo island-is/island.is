@@ -35,88 +35,6 @@ export class TransportAuthorityApi {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async validateApplicationForOwnerChange(
-    user: User,
-    answers: OwnerChangeAnswers,
-  ): Promise<OwnerChangeValidation | null> {
-    // No need to continue with this validation in user is neither seller nor buyer
-    // (only time application data changes is on state change from these roles)
-    const sellerSsn = answers?.seller?.nationalId
-    const buyerSsn = answers?.buyer?.nationalId
-    if (user.nationalId !== sellerSsn && user.nationalId !== buyerSsn) {
-      return null
-    }
-
-    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'coOwner',
-    )
-    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'operator',
-    )
-
-    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
-      user,
-      {
-        permno: answers?.pickVehicle?.plate,
-        seller: {
-          ssn: sellerSsn,
-          email: answers?.seller?.email,
-        },
-        buyer: {
-          ssn: buyerSsn,
-          email: answers?.buyer?.email,
-        },
-        dateOfPurchase: new Date(answers?.vehicle?.date),
-        saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
-        insuranceCompanyCode: answers?.insurance?.value || '',
-        coOwners: buyerCoOwners?.map((coOwner) => ({
-          ssn: coOwner.nationalId,
-          email: coOwner.email,
-        })),
-        operators: buyerOperators?.map((operator) => ({
-          ssn: operator.nationalId,
-          email: operator.email,
-          isMainOperator:
-            buyerOperators.length > 1
-              ? operator.nationalId === answers?.buyerMainOperator?.nationalId
-              : true,
-        })),
-      },
-    )
-
-    return result
-  }
-
-  async validateApplicationForOperatorChange(
-    user: User,
-    answers: OperatorChangeAnswers,
-  ): Promise<OperatorChangeValidation | null> {
-    // No need to continue with this validation in user is not owner
-    // (only time application data changes is on state change from that role)
-    const ownerSsn = answers?.owner?.nationalId
-    if (user.nationalId !== ownerSsn) {
-      return null
-    }
-
-    const permno = answers?.pickVehicle?.plate
-
-    const operators = (answers?.operators || []).map((operator) => ({
-      ssn: operator.nationalId,
-      isMainOperator:
-        answers.operators && answers.operators?.length > 1
-          ? operator.nationalId === answers?.mainOperator?.nationalId
-          : true,
-    }))
-
-    const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
-      user,
-      permno,
-      operators,
-    )
-
-    return result
-  }
-
   async checkTachoNet(
     user: User,
     input: CheckTachoNetInput,
@@ -219,6 +137,58 @@ export class TransportAuthorityApi {
     }
   }
 
+  async validateApplicationForOwnerChange(
+    user: User,
+    answers: OwnerChangeAnswers,
+  ): Promise<OwnerChangeValidation | null> {
+    // No need to continue with this validation in user is neither seller nor buyer
+    // (only time application data changes is on state change from these roles)
+    const sellerSsn = answers?.seller?.nationalId
+    const buyerSsn = answers?.buyer?.nationalId
+    if (user.nationalId !== sellerSsn && user.nationalId !== buyerSsn) {
+      return null
+    }
+
+    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'operator',
+    )
+
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      user,
+      {
+        permno: answers?.pickVehicle?.plate,
+        seller: {
+          ssn: sellerSsn,
+          email: answers?.seller?.email,
+        },
+        buyer: {
+          ssn: buyerSsn,
+          email: answers?.buyer?.email,
+        },
+        dateOfPurchase: new Date(answers?.vehicle?.date),
+        saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        insuranceCompanyCode: answers?.insurance?.value || '',
+        coOwners: buyerCoOwners?.map((coOwner) => ({
+          ssn: coOwner.nationalId,
+          email: coOwner.email,
+        })),
+        operators: buyerOperators?.map((operator) => ({
+          ssn: operator.nationalId,
+          email: operator.email,
+          isMainOperator:
+            buyerOperators.length > 1
+              ? operator.nationalId === answers?.buyerMainOperator?.nationalId
+              : true,
+        })),
+      },
+    )
+
+    return result
+  }
+
   async getCurrentVehiclesWithOperatorChangeChecks(
     auth: User,
     showOwned: boolean,
@@ -307,5 +277,35 @@ export class TransportAuthorityApi {
         ? operatorChangeValidation.errorMessages
         : null,
     }
+  }
+
+  async validateApplicationForOperatorChange(
+    user: User,
+    answers: OperatorChangeAnswers,
+  ): Promise<OperatorChangeValidation | null> {
+    // No need to continue with this validation in user is not owner
+    // (only time application data changes is on state change from that role)
+    const ownerSsn = answers?.owner?.nationalId
+    if (user.nationalId !== ownerSsn) {
+      return null
+    }
+
+    const permno = answers?.pickVehicle?.plate
+
+    const operators = (answers?.operators || []).map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        answers.operators && answers.operators?.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
+
+    const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
+      user,
+      permno,
+      operators,
+    )
+
+    return result
   }
 }

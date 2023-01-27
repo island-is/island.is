@@ -16,7 +16,6 @@ import {
   CaseState,
   CaseTransition,
   InstitutionType,
-  NotificationType,
   isRestrictionCase,
   UserRole,
   Feature,
@@ -92,6 +91,7 @@ const CreateCaseButton: React.FC<{
         '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
         '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
         'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
+        '53581d7b-0591-45e5-9cbe-c96b2f82da85', // Lögreglustjórinn á höfuðborgarsvæðinu
       ].includes(user.institution?.id ?? '')
     ) {
       return items
@@ -150,7 +150,6 @@ export const Cases: React.FC = () => {
   const {
     transitionCase,
     isTransitioningCase,
-    sendNotification,
     isSendingNotification,
   } = useCase()
 
@@ -204,7 +203,6 @@ export const Cases: React.FC = () => {
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED
     ) {
-      await sendNotification(caseToDelete.id, NotificationType.REVOKED)
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
     }

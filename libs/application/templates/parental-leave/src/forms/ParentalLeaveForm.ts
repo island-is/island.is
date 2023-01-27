@@ -23,6 +23,7 @@ import {
   getAllPeriodDates,
   getSelectedChild,
   requiresOtherParentApproval,
+  isParentWithoutBirthParent,
   getApplicationAnswers,
   allowOtherParent,
   removeCountryCode,
@@ -388,7 +389,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   id: 'personalAllowance.usage',
                   title:
-                    parentalLeaveFormMessages.personalAllowance.zeroToHundred,
+                    parentalLeaveFormMessages.personalAllowance.oneToHundred,
                   description:
                     parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
@@ -404,7 +405,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                     return usingAsMuchAsPossible && usingPersonalAllowance
                   },
-                  placeholder: '0%',
+                  placeholder: '1%',
                   variant: 'number',
                   width: 'half',
                 }),
@@ -448,7 +449,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
                   title:
-                    parentalLeaveFormMessages.personalAllowance.zeroToHundred,
+                    parentalLeaveFormMessages.personalAllowance.oneToHundred,
                   description:
                     parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
@@ -470,7 +471,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                     return usingAsMuchAsPossible && usingPersonalAllowance
                   },
-                  placeholder: '0%',
+                  placeholder: '1%',
                   variant: 'number',
                   width: 'half',
                 }),
@@ -720,6 +721,24 @@ export const ParentalLeaveForm: Form = buildForm({
                     chooseOtherParent: string
                   }
                 })?.otherParentObj?.chooseOtherParent === SINGLE,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.parentWithoutBirthParent',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .parentWithoutBirthParentTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .parentWithoutBirthParentDescription,
+              condition: (answers) => isParentWithoutBirthParent(answers),
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
