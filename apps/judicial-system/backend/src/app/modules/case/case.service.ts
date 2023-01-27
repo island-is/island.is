@@ -445,7 +445,7 @@ export class CaseService {
       })
 
       // Case created from LOKE
-      if (theCase.origin === CaseOrigin.LOKE) {
+      if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
         messages.push({
           type: MessageType.DELIVER_CASE_TO_POLICE,
           userId: user.id,
