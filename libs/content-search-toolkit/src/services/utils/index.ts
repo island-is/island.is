@@ -31,3 +31,16 @@ export function filterDoc<T>(
   }
   return deleted
 }
+
+export function getValidBulkRequestChunk(
+  requests: Record<string, unknown>[],
+  maxSize = 20,
+) {
+  let count = 0
+  for (let i = requests.length - 1; i >= 0; i -= 1) {
+    const increment = 'delete' in requests[i] ? 1 : 2
+    if (count + increment > maxSize) break
+    count += increment
+  }
+  return requests.splice(-count, count)
+}
