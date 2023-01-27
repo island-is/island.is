@@ -1,6 +1,6 @@
 import { gql, useLazyQuery } from '@apollo/client'
 import { VehiclesCurrentOwnerInfo } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'

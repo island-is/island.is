@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { VehiclesCurrentVehicle } from '../types'
+import { VehiclesCurrentVehicle } from '../shared'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
