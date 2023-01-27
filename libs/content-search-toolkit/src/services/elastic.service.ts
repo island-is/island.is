@@ -35,7 +35,7 @@ import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
-import { filterDoc } from './utils'
+import { filterDoc, getValidBulkRequestChunk } from './utils'
 
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
@@ -108,9 +108,10 @@ export class ElasticService {
   async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
-      const chunkSize = 20 // this has to be an even number
       const client = await this.getClient()
-      let requestChunk = requests.splice(-chunkSize, chunkSize)
+
+      let requestChunk = getValidBulkRequestChunk(requests)
+
       while (requestChunk.length) {
         // wait for request b4 continuing
         const response = await client.bulk({
@@ -126,7 +127,7 @@ export class ElasticService {
             response,
           })
         }
-        requestChunk = requests.splice(-chunkSize, chunkSize)
+        requestChunk = getValidBulkRequestChunk(requests)
       }
 
       return true
