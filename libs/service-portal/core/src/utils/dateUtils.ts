@@ -20,7 +20,7 @@ export const formatDate = (date: string) => {
 // Takes in date string
 export const formatDateWithTime = (date: string) => {
   try {
-    return format(new Date(date), 'dd.MM.yyyy - hh:mm')
+    return format(new Date(date), 'dd.MM.yyyy - HH:mm')
   } catch {
     return date
   }

@@ -106,12 +106,23 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
     )
   }
 
+  const noRights =
+    airDiscounts?.filter(
+      (item) => item.user.fund?.credit === 0 && item.user.fund.used === 0,
+    ).length === airDiscounts?.length
+
   const copy = (code?: string | null) => {
     if (code) {
       copyToClipboard(code)
       const newCode: CopiedCode = { code: code, copied: true }
       setCopiedCodes([...copiedCodes, newCode])
       toast.success(formatMessage(m.codeCopiedSuccess))
+      setTimeout(() => {
+        const codes = copiedCodes
+        const currentCodeIndex = codes.findIndex((item) => item.code === code)
+        copiedCodes.slice(currentCodeIndex, 0)
+        setCopiedCodes(copiedCodes)
+      }, 5000)
     }
   }
 
@@ -149,55 +160,67 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
 
-        <AlertMessage
-          type="warning"
-          title={formatMessage(m.attention)}
-          message={formatMessage(m.codeRenewalText)}
-        />
+        {loading && <CardLoader />}
+        {!loading ? (
+          noRights ? (
+            <AlertMessage
+              type="error"
+              title={formatMessage(m.noRights)}
+              message={formatMessage(m.noRightsText)}
+            />
+          ) : (
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.attention)}
+              message={formatMessage(m.codeRenewalText)}
+            />
+          )
+        ) : undefined}
       </Box>
-      {loading && <CardLoader />}
-      {data && (
+      {data && !noRights && (
         <Box marginBottom={5}>
           <Text paddingBottom={3} fontWeight="medium">
             {formatMessage(m.myRights)}
           </Text>
           <Stack space={2}>
-            {airDiscounts?.map((item, index) => {
-              const message = [
-                formatMessage(m.remainingAirfares),
-                item.user.fund?.credit,
-                formatMessage(m.of),
-                item.user.fund?.total,
-              ]
-                .filter((x) => x !== null)
-                .join(' ')
-              const isCopied = copiedCodes.find(
-                (x) => x.code === item.discountCode,
-              )?.copied
-              return (
-                <ActionCard
-                  key={`loftbru-item-${index}`}
-                  heading={item.user.name}
-                  text={message}
-                  secondaryText={
-                    item.user.fund?.credit === 0
-                      ? undefined
-                      : item.discountCode
-                      ? item.discountCode
-                      : '0'
-                  }
-                  cta={{
-                    label: isCopied
-                      ? formatMessage(m.copied)
-                      : formatMessage(m.copyCode),
-                    onClick: () => copy(item.discountCode),
-                    centered: true,
-                    icon: isCopied ? 'checkmark' : 'copy',
-                    hide: item.user.fund?.credit === 0,
-                  }}
-                />
+            {airDiscounts
+              ?.filter(
+                (x) => !(x.user.fund?.used === 0 && x.user.fund.credit === 0),
               )
-            })}
+              .map((item, index) => {
+                const message = [
+                  formatMessage(m.remainingAirfares),
+                  item.user.fund?.credit,
+                  formatMessage(m.of),
+                  item.user.fund?.total,
+                ]
+                  .filter((x) => x !== null)
+                  .join(' ')
+                const isCopied = copiedCodes.find(
+                  (x) => x.code === item.discountCode,
+                )?.copied
+                return (
+                  <ActionCard
+                    key={`loftbru-item-${index}`}
+                    heading={item.user.name}
+                    text={message}
+                    secondaryText={
+                      item.user.fund?.credit === 0
+                        ? undefined
+                        : item.discountCode
+                        ? item.discountCode
+                        : '0'
+                    }
+                    cta={{
+                      label: formatMessage(m.copyCode),
+                      onClick: () => copy(item.discountCode),
+                      centered: true,
+                      icon: isCopied ? 'checkmark' : 'copy',
+                      hide: item.user.fund?.credit === 0,
+                    }}
+                  />
+                )
+              })}
           </Stack>
         </Box>
       )}
@@ -224,10 +247,8 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
                         formatDateWithTime(code.validUntil),
                     }}
                     cta={{
-                      label: isCopied
-                        ? formatMessage(m.copied)
-                        : formatMessage(m.copyCode),
-                      onClick: () => copy(item.discountCode),
+                      label: formatMessage(m.copyCode),
+                      onClick: () => copy(code.code),
                       centered: true,
                       icon: isCopied ? 'checkmark' : 'copy',
                     }}

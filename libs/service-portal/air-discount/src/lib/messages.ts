@@ -87,4 +87,13 @@ export const messages = defineMessages({
     id: 'sp.air-discount:valid-to',
     defaultMessage: 'Gildir til',
   },
+  noRights: {
+    id: 'sp.air-discount:no-rights',
+    defaultMessage: 'Enginn réttur',
+  },
+  noRightsText: {
+    id: 'sp.air-discount:no-rights-text',
+    defaultMessage:
+      'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og á eyjum eiga rétt á Loftbrú (sjá kort á loftbru.is).',
+  },
 })
