@@ -1,5 +1,5 @@
 import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
-import { generatePath } from 'react-router'
+import { generatePath } from 'react-router-dom'
 import { isUuid } from 'uuidv4'
 import { RegulationsAdminPaths } from '../lib/paths'
 import { Step } from '../types'
