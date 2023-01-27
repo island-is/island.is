@@ -3,12 +3,12 @@ import { defineMessages } from 'react-intl'
 export const information = {
   general: defineMessages({
     sectionTitle: {
-      id: 'dlui.application:information.general.sectionTitle',
+      id: 'dlbui.application:information.general.sectionTitle',
       defaultMessage: 'Upplýsingar',
       description: 'Title of information section',
     },
     pageTitle: {
-      id: 'dlui.application:information.general.pageTitle',
+      id: 'dlbui.application:information.general.pageTitle',
       defaultMessage: 'Upplýsingar',
       description: 'Title of information page',
     },
@@ -16,36 +16,36 @@ export const information = {
   labels: {
     instructor: defineMessages({
       title: {
-        id: 'dlui.application:information.labels.instructor.title',
+        id: 'dlbui.application:information.labels.instructor.title',
         defaultMessage: 'Ökukennari',
         description: 'Instructor title',
       },
     }),
     oldInstructor: defineMessages({
       subtitle: {
-        id: 'dlui.application:information.labels.oldInstructor.subtitle',
+        id: 'dlbui.application:information.labels.oldInstructor.subtitle',
         defaultMessage: 'Núverandi ökukennari',
         description: 'Old instructor sub title',
       },
       nationalId: {
-        id: 'dlui.application:information.labels.oldInstructor.nationalId',
+        id: 'dlbui.application:information.labels.oldInstructor.nationalId',
         defaultMessage: 'Kennitala',
         description: 'Old instructor national ID label',
       },
       name: {
-        id: 'dlui.application:information.labels.oldInstructor.name',
+        id: 'dlbui.application:information.labels.oldInstructor.name',
         defaultMessage: 'Nafn',
         description: 'Old instructor name label',
       },
     }),
     newInstructor: defineMessages({
       subtitle: {
-        id: 'dlui.application:information.labels.newInstructor.subtitle',
+        id: 'dlbui.application:information.labels.newInstructor.subtitle',
         defaultMessage: 'Veldu nýjan ökukennara',
         description: 'Select new instructor sub title',
       },
       selectSubLabel: {
-        id: 'dlui.application:information.labels.newInstructor.selectSubLabel',
+        id: 'dlbui.application:information.labels.newInstructor.selectSubLabel',
         defaultMessage: 'Nýr ökukennari',
         description: 'Select new instructor select sub label',
       },
@@ -53,7 +53,7 @@ export const information = {
   },
   confirmation: defineMessages({
     confirm: {
-      id: 'dlui.application:information.confirmation.confirm',
+      id: 'dlbui.application:information.confirmation.confirm',
       defaultMessage: 'Áfram',
       description: 'Continue',
     },

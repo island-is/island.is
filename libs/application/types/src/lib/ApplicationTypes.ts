@@ -210,6 +210,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: {
     slug: 'okunam-okukennari',
-    translation: 'dlui.application',
+    translation: 'dlbui.application',
   },
 }
