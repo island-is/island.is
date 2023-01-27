@@ -665,6 +665,9 @@
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
       ],
+      "@island.is/service-portal/sessions": [
+        "libs/service-portal/sessions/src/index.ts"
+      ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
       ],

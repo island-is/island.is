@@ -1,6 +1,6 @@
 import { Box, Text, Button, AlertMessage } from '@island.is/island-ui/core'
 import React, { useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { editorMsgs, reviewMessages } from '../lib/messages'
 import { DraftingState } from '../state/types'
 import { isDraftErrorFree } from '../state/validations'
@@ -165,14 +165,14 @@ export const useCollectMessages = (
 
 export const JumpToStep = (props: { step: Step; label: string }) => {
   const t = useLocale().formatMessage
-  const history = useHistory()
+  const navigate = useNavigate()
   const jumpLabel = t(reviewMessages.jumpToStepButton)
 
   return (
     <Button
       variant="text"
       size="small"
-      onClick={() => history.push(getEditUrl(props.step))}
+      onClick={() => navigate(getEditUrl(props.step))}
       aria-label={jumpLabel + ': ' + props.label}
     >
       {jumpLabel}

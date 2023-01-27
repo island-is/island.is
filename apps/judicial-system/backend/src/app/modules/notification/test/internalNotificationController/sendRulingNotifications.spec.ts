@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import { User } from '../../../user'
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -70,6 +71,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       try {
         then.result = await internalNotificationController.sendCaseNotification(
           caseId,
+          { id: userId } as User,
           theCase,
           notification,
         )

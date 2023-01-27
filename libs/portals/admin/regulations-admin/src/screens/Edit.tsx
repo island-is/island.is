@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'

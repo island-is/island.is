@@ -5,7 +5,7 @@ import { homeMessages, statusMsgs } from '../lib/messages'
 import { prettyName } from '@island.is/regulations'
 import { useLocale } from '@island.is/localization'
 import { getEditUrl } from '../utils/routing'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ShippedSummary } from '@island.is/regulations/admin'
 
 export type ShippedRegulationsProps = {
@@ -16,7 +16,7 @@ export const ShippedRegulations = (props: ShippedRegulationsProps) => {
   const { shippedRegs } = props
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
-  const history = useHistory()
+  const navigate = useNavigate()
 
   // DECIDE:
   // We are currently loading both shipped (i.e. locked) drafts
@@ -63,7 +63,7 @@ export const ShippedRegulations = (props: ShippedRegulationsProps) => {
                       variant: 'text',
                       size: 'small',
                       onClick: () => {
-                        history.push(getEditUrl(shipped.id, 'publish'))
+                        navigate(getEditUrl(shipped.id, 'publish'))
                       },
                     }
                   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
