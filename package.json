@@ -373,8 +373,6 @@
     "@types/react-datepicker": "3.1.1",
     "@types/react-dom": "17.0.3",
     "@types/react-html-parser": "2.0.1",
-    "@types/react-router": "^5.1.20",
-    "@types/react-router-dom": "5.3.3",
     "@types/react-select": "3.0.19",
     "@types/request": "2.48.5",
     "@types/smoothscroll-polyfill": "0.3.1",

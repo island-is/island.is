@@ -80,24 +80,26 @@ export const EditImpacts = () => {
 
   return (
     <>
-      <Box marginBottom={3} className={s.explainerText}>
-        <AlertMessage
-          type="info"
-          message={
-            <div>
-              {t(impactMsgs.regExplainer)}
-              {'    '}
-              <Button
-                onClick={() => goToStep('basics')}
-                variant="text"
-                size="small"
-              >
-                {t(impactMsgs.regExplainer_editLink)}
-              </Button>
-            </div>
-          }
-        />
-      </Box>
+      {draft.type.value === 'base' && (
+        <Box marginBottom={3} className={s.explainerText}>
+          <AlertMessage
+            type="info"
+            message={
+              <div>
+                {t(impactMsgs.regExplainer)}
+                {'    '}
+                <Button
+                  onClick={() => goToStep('basics')}
+                  variant="text"
+                  size="small"
+                >
+                  {t(impactMsgs.regExplainer_editLink)}
+                </Button>
+              </div>
+            }
+          />
+        </Box>
+      )}
 
       <Box marginBottom={4}>
         {draft.type.value === 'base' ? (

@@ -9,7 +9,7 @@ const creationScopes = {
 }
 
 export const regulationAdminModule: PortalModule = {
-  name: 'Reglugerðir — vinnslusvæði',
+  name: 'Reglugerðir',
   layout: 'full',
   routes: ({ userInfo }) => {
     const mayCreate = !!userInfo.scopes.find((scope) => scope in creationScopes)

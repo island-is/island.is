@@ -14,6 +14,10 @@ export const m = defineMessages({
     id: 'admin-portal.regulations-admin:regulations-ministries',
     defaultMessage: 'Ráðuneyti',
   },
+  regulationAdminDescription: {
+    id: 'admin-portal.regulations-admin:regulation-admin-description',
+    defaultMessage: 'Vinnslusvæði reglugerða',
+  },
 })
 
 export const editorMsgs = defineMessages({
@@ -409,6 +413,10 @@ export const impactMsgs = defineMessages({
   regSelect_placeholder: {
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
+  },
+  regSelectAmmending_placeholder: {
+    id: 'ap.regulations-admin:draft-opts-impactedreg_ammending_placeholder',
+    defaultMessage: 'Sláðu inn númer stofnreglugerðar (Dæmi: 0438/2022)',
   },
   effectiveDate: {
     id: 'ap.regulations-admin:draft-labels-impacteffectivedate',

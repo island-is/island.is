@@ -19,6 +19,7 @@ export const useCollectMessages = (
   state: DraftingState,
   t: /* FormatMessage */ (
     descriptor: MessageDescriptor | string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values?: Record<string, any>,
   ) => string,
 ): Array<ReviewMessage> | undefined =>
