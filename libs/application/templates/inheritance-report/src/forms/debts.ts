@@ -56,6 +56,7 @@ export const debts = buildSection({
                   {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
+                    required: true,
                     currency: true,
                   },
                 ],
@@ -99,6 +100,7 @@ export const debts = buildSection({
                     title: m.amount.defaultMessage,
                     id: 'publicChargesAmount',
                     width: 'full',
+                    required: true,
                     currency: true,
                   },
                 ],

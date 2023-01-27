@@ -60,6 +60,7 @@ export const assets = buildSection({
                     title: m.propertyValuation.defaultMessage,
                     id: 'propertyValuation',
                     required: true,
+                    currency: true,
                   },
                 ],
                 repeaterButtonText: m.addRealEstate.defaultMessage,
@@ -115,6 +116,7 @@ export const assets = buildSection({
                     title: m.vehicleValuation.defaultMessage,
                     id: 'propertyValuation',
                     required: true,
+                    currency: true,
                   },
                 ],
                 repeaterButtonText: m.addVehicle.defaultMessage,
@@ -222,6 +224,7 @@ export const assets = buildSection({
                   {
                     title: m.bankAccountBalance.defaultMessage,
                     id: 'balance',
+                    required: true,
                     currency: true,
                   },
                 ],
@@ -272,6 +275,7 @@ export const assets = buildSection({
                   {
                     title: m.claimsAmount.defaultMessage,
                     id: 'value',
+                    required: true,
                     currency: true,
                   },
                 ],
@@ -381,6 +385,7 @@ export const assets = buildSection({
                   {
                     title: m.moneyTitle.defaultMessage,
                     id: 'moneyValue',
+                    required: true,
                     currency: true,
                     width: 'full',
                   },
@@ -433,6 +438,7 @@ export const assets = buildSection({
                   {
                     title: m.otherAssetsValue.defaultMessage,
                     id: 'otherAssetsValue',
+                    required: true,
                     currency: true,
                   },
                 ],

@@ -143,21 +143,25 @@ export const heirs = buildSection({
                     title: m.taxFreeInheritance.defaultMessage,
                     id: 'taxFreeInheritance',
                     readOnly: true,
+                    currency: true,
                   },
                   {
                     title: m.inheritanceAmount.defaultMessage,
                     id: 'inheritance',
                     readOnly: true,
+                    currency: true,
                   },
                   {
                     title: m.taxableInheritance.defaultMessage,
                     id: 'taxableInheritance',
                     readOnly: true,
+                    currency: true,
                   },
                   {
                     title: m.inheritanceTax.defaultMessage,
                     id: 'inheritanceTax',
                     readOnly: true,
+                    currency: true,
                   },
                 ],
                 repeaterButtonText: m.addHeir.defaultMessage,
@@ -283,10 +287,13 @@ export const heirs = buildSection({
               label: m.inheritanceAmount,
               display: 'flex',
               value: ({ answers }) => {
-                let total = 0
-                total += ((answers as InheritanceReport)?.heirs?.data?.map(
-                  (heir: any) => heir.inheritance,
-                ) as unknown) as number
+                const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+                  (sum, heir) => {
+                    return sum + heir.inheritance
+                  },
+                  0,
+                ) as number
+
                 return formatCurrency(String(total))
               },
             }),
@@ -299,10 +306,13 @@ export const heirs = buildSection({
               label: m.taxFreeInheritance,
               display: 'flex',
               value: ({ answers }) => {
-                let total = 0
-                total += ((answers as InheritanceReport)?.heirs?.data?.map(
-                  (heir: any) => heir.taxFreeInheritance,
-                ) as unknown) as number
+                const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+                  (sum, heir) => {
+                    return sum + heir.taxFreeInheritance
+                  },
+                  0,
+                ) as number
+
                 return formatCurrency(String(total))
               },
             }),
@@ -315,10 +325,14 @@ export const heirs = buildSection({
               label: m.taxableInheritance,
               display: 'flex',
               value: ({ answers }) => {
-                let total = 0
-                total += ((answers as InheritanceReport)?.heirs?.data?.map(
-                  (heir: any) => heir.taxableInheritance,
-                ) as unknown) as number
+                const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+                  (sum, heir) => {
+                    console.log(heir)
+                    return sum + heir.taxableInheritance
+                  },
+                  0,
+                ) as number
+
                 return formatCurrency(String(total))
               },
             }),
@@ -328,13 +342,16 @@ export const heirs = buildSection({
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: m.inheritanceAmount,
+              label: m.inheritanceTax,
               display: 'flex',
               value: ({ answers }) => {
-                let total = 0
-                total += ((answers as InheritanceReport)?.heirs?.data?.map(
-                  (heir: any) => heir.inheritanceTax,
-                ) as unknown) as number
+                const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+                  (sum, heir) => {
+                    return sum + heir.inheritanceTax
+                  },
+                  0,
+                ) as number
+
                 return formatCurrency(String(total))
               },
             }),

@@ -147,8 +147,8 @@ export const inheritanceReportSchema = z.object({
         heirsPercentage: z.string(),
         taxFreeInheritance: z.number(),
         inheritance: z.number(),
-        taxableInheritance: z.number(),
-        inheritanceTax: z.number(),
+        taxableInheritance: z.any(),
+        inheritanceTax: z.any(),
       })
       .array()
       .optional(),

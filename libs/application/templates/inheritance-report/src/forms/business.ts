@@ -52,6 +52,7 @@ export const business = buildSection({
                   {
                     title: m.businessAssetAmount.defaultMessage,
                     id: 'businessAssetValue',
+                    required: true,
                     currency: true,
                     width: 'half',
                   },
@@ -107,6 +108,7 @@ export const business = buildSection({
                   {
                     title: m.debtsBalance.defaultMessage,
                     id: 'debtValue',
+                    required: true,
                     currency: true,
                     width: 'half',
                   },

@@ -204,13 +204,13 @@ export const ReportFieldsRepeater: FC<
                         repeaterField[field.id]
                           ? repeaterField[field.id]
                           : field.id === 'taxFreeInheritance'
-                          ? formatCurrency(String(taxFreeInheritance))
+                          ? taxFreeInheritance
                           : field.id === 'inheritance'
-                          ? formatCurrency(String(inheritance))
+                          ? inheritance
                           : field.id === 'taxableInheritance'
-                          ? formatCurrency(String(taxableInheritance))
+                          ? taxableInheritance
                           : field.id === 'inheritanceTax'
-                          ? formatCurrency(String(inheritanceTax))
+                          ? inheritanceTax
                           : ''
                       }
                       format={field.format}
