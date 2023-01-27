@@ -14,6 +14,10 @@ export const m = defineMessages({
     id: 'admin-portal.regulations-admin:regulations-ministries',
     defaultMessage: 'Ráðuneyti',
   },
+  regulationAdminDescription: {
+    id: 'admin-portal.regulations-admin:regulation-admin-description',
+    defaultMessage: 'Vinnslusvæði reglugerða',
+  },
 })
 
 export const editorMsgs = defineMessages({
