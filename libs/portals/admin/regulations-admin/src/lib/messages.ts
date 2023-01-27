@@ -410,6 +410,10 @@ export const impactMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
   },
+  regSelectAmmending_placeholder: {
+    id: 'ap.regulations-admin:draft-opts-impactedreg_ammending_placeholder',
+    defaultMessage: 'Sláðu inn númer stofnreglugerðar (Dæmi: 0438/2022)',
+  },
   effectiveDate: {
     id: 'ap.regulations-admin:draft-labels-impacteffectivedate',
     defaultMessage: 'Gildistaka breytinga',

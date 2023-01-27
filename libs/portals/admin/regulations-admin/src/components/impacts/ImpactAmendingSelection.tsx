@@ -92,7 +92,7 @@ export const ImpactAmendingSelection = ({
 
   return (
     <AsyncSearch
-      placeholder={t(impactMsgs.regSelect_placeholder)}
+      placeholder={t(impactMsgs.regSelectAmmending_placeholder)}
       onInputValueChange={(newValue) => {
         setIsLoading(newValue !== value)
         setValue(newValue ?? '')
