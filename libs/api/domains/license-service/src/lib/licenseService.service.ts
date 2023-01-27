@@ -43,8 +43,7 @@ export type GetGenericLicenseOptions = {
 export class LicenseServiceService {
   constructor(
     @Inject(DRIVING_LICENSE_FACTORY)
-    private genericLicenseFactory: (
-      type: GenericLicenseType,
+    private drivingLicenseFactory: (
       cacheManager: CacheManager,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
@@ -203,7 +202,7 @@ export class LicenseServiceService {
       if (!onlyList) {
         const licenseService =
           license.type === GenericLicenseType.DriversLicense
-            ? await this.genericLicenseFactory(license.type, this.cacheManager)
+            ? await this.drivingLicenseFactory(this.cacheManager)
             : await this.licenseClient.createClientByLicenseType(
                 (license.type as unknown) as LicenseType,
               )
@@ -279,10 +278,12 @@ export class LicenseServiceService {
     let licenseUserdata: GenericLicenseUserdataExternal | null = null
 
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService =
+      licenseType === GenericLicenseType.DriversLicense
+        ? await this.drivingLicenseFactory(this.cacheManager)
+        : await this.licenseClient.createClientByLicenseType(
+            (licenseType as unknown) as LicenseType,
+          )
 
     const licenseLabels = await this.getLicenseLabels(locale)
 
@@ -328,10 +329,12 @@ export class LicenseServiceService {
   ) {
     let pkpassUrl: string | null = null
 
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService =
+      licenseType === GenericLicenseType.DriversLicense
+        ? await this.drivingLicenseFactory(this.cacheManager)
+        : await this.licenseClient.createClientByLicenseType(
+            (licenseType as unknown) as LicenseType,
+          )
 
     if (licenseService) {
       pkpassUrl = await licenseService.getPkPassUrl(user, licenseType, locale)
@@ -352,10 +355,12 @@ export class LicenseServiceService {
   ) {
     let pkpassQRCode: string | null = null
 
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService =
+      licenseType === GenericLicenseType.DriversLicense
+        ? await this.drivingLicenseFactory(this.cacheManager)
+        : await this.licenseClient.createClientByLicenseType(
+            (licenseType as unknown) as LicenseType,
+          )
 
     if (licenseService) {
       pkpassQRCode = await licenseService.getPkPassQRCode(
@@ -405,10 +410,7 @@ export class LicenseServiceService {
         throw new Error(`Invalid pass template id: ${passTemplateId}`)
       }
     } else {
-      licenseService = await this.genericLicenseFactory(
-        GenericLicenseType.DriversLicense,
-        this.cacheManager,
-      )
+      licenseService = await this.drivingLicenseFactory(this.cacheManager)
     }
 
     if (!licenseService) {

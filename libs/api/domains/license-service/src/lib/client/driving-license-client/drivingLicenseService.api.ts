@@ -56,8 +56,7 @@ export class GenericDrivingLicenseApi
   private pkpassClient: PkPassClient
 
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(XRoadConfig.KEY)
+    private logger: Logger,
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private config: ConfigType<typeof GenericDrivingLicenseConfig>,
     private cacheManager?: CacheManager | null,

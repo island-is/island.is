@@ -180,8 +180,6 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
       return null
     }
 
-    let error: PkPassVerificationError | undefined
-
     if (!result.ok) {
       return {
         valid: false,

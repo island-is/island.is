@@ -46,11 +46,7 @@ import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-syst
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import {
-  GenericAdrLicenseConfig,
   GenericDrivingLicenseConfig,
-  GenericFirearmLicenseConfig,
-  GenericMachineLicenseConfig,
-  GenericDisabilityLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
@@ -267,11 +263,7 @@ const autoSchemaFile = environment.production
         AdrLicenseClientApiConfig,
         MachineLicenseClientApiConfig,
         DisabilityLicenseClientConfig,
-        GenericFirearmLicenseConfig,
-        GenericMachineLicenseConfig,
-        GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
-        GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
