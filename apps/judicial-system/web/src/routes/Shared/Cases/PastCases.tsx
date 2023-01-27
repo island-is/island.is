@@ -11,6 +11,7 @@ import {
   CaseState,
   CaseType,
   Defendant,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
@@ -18,7 +19,6 @@ import {
   displayFirstPlusRemaining,
   formatDate,
   formatDOB,
-  isExtendedCourtRole,
 } from '@island.is/judicial-system/formatters'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import {

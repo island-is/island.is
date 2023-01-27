@@ -13,13 +13,11 @@ import {
   isIndictmentCase,
   restrictionCases,
   UserRole,
-} from '@island.is/judicial-system/types'
-import type { User, Case as TCase } from '@island.is/judicial-system/types'
-import {
   isExtendedCourtRole,
   isProsecutionRole,
   isCourtRole,
 } from '@island.is/judicial-system/types'
+import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 

@@ -11,8 +11,6 @@ import {
   completedCaseStates,
   User,
   UserRole,
-} from '@island.is/judicial-system/types'
-import {
   isProsecutionRole,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
