@@ -60,8 +60,6 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { ReviewSectionState } from '../fields/InReviewSteps/ReviewSection'
-import { States as ApplicationStates } from '../constants'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -846,6 +844,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
 
+  const actionName = getValueViaPath(answers, 'actionName') as
+    | 'period'
+    | 'document'
+    | 'documentPeriod'
+    | undefined
+
   return {
     applicationType,
     hasMultipleBirths,
@@ -896,6 +900,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     singleParentFiles,
     benefitsFiles,
     commonFiles,
+    actionName,
   }
 }
 

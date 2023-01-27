@@ -17,6 +17,7 @@ import {
   ApplicationConfigurations,
   Application,
   ApplicationTypes,
+  ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
   getApplicationAnswers,
@@ -1160,6 +1161,18 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
+  checkActionName = (application: ApplicationWithAttachments) => {
+    const { actionName } = getApplicationAnswers(application.answers)
+    if (
+      actionName === 'document' ||
+      actionName === 'documentPeriod' ||
+      actionName === 'period'
+    ) {
+      return actionName
+    }
+    return undefined
+  }
+
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
@@ -1181,6 +1194,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
+        this.checkActionName(application),
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -1246,6 +1260,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
+        this.checkActionName(application),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request

@@ -49,7 +49,7 @@ const statesMap: StatesMap = {
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
-    [ApplicationStates.ADDITIONAL_DOCUMENT_REQUIRED]:
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.complete,
   },
   employer: {
@@ -64,11 +64,11 @@ const statesMap: StatesMap = {
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
-    [ApplicationStates.ADDITIONAL_DOCUMENT_REQUIRED]:
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.complete,
   },
   vinnumalastofnun: {
-    [ApplicationStates.ADDITIONAL_DOCUMENT_REQUIRED]:
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.requiresAction,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
       ReviewSectionState.inProgress,

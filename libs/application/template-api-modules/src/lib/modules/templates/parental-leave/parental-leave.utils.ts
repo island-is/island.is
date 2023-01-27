@@ -260,6 +260,7 @@ export const transformApplicationToParentalLeaveDTO = (
   periods: Period[],
   attachments?: Attachment[],
   onlyValidate?: boolean,
+  type?: 'period' | 'documentPeriod' | 'document' | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -329,6 +330,7 @@ export const transformApplicationToParentalLeaveDTO = (
       multipleBirths && multipleBirths > 1
         ? multipleBirths.toString()
         : undefined,
+    type,
   }
 }
 
