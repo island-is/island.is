@@ -26,7 +26,7 @@ test.describe('Announcement of Death', () => {
     await page.locator('[data-testid="create-new-application"]').click()
     await expect(page).toBeApplication()
 
-    await page.locator('span:has-text("Ég skil að ofangreindra upplýsinga verður aflað við úrvinnslu umsóknarinnar.")').nth(1).click()
+    await page.locator('data-testid=agree-to-data-providers').click()
 
     await page.locator('[data-testid="proceed"]').click()
     await expect(page).toBeApplication()
@@ -34,7 +34,7 @@ test.describe('Announcement of Death', () => {
     await page.locator('text=Hefja umsókn').click()
     await expect(page).toBeApplication()
 
-    await page.locator('text=Samþykki að halda áfram með tilkynningu').click()
+    await page.locator('input[value=continue]').click()
 
     await page.locator('[data-testid="proceed"]').click()
     await expect(page).toBeApplication()
