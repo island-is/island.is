@@ -34,7 +34,12 @@ export type {
   CreateFile,
 } from './lib/file'
 
-export { UserRole } from './lib/user'
+export {
+  UserRole,
+  isExtendedCourtRole,
+  isCourtRole,
+  isProsecutionRole,
+} from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {

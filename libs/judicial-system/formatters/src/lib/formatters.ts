@@ -12,7 +12,6 @@ import {
   isIndictmentCase,
   IndictmentSubtype,
   IndictmentSubtypeMap,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
@@ -346,29 +345,4 @@ export const readableIndictmentSubtypes = (
   }
 
   return _uniq(returnValue)
-}
-
-const extendedCourtRoles: string[] = [
-  UserRole.JUDGE,
-  UserRole.REGISTRAR,
-  UserRole.ASSISTANT,
-]
-
-export function isExtendedCourtRole(role: string): boolean {
-  return Object.values(extendedCourtRoles).includes(role)
-}
-
-const prosecutionRoles: string[] = [
-  UserRole.PROSECUTOR,
-  UserRole.REPRESENTATIVE,
-]
-
-export function isProsecutionRole(role: string): boolean {
-  return prosecutionRoles.includes(role)
-}
-
-const courtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
-
-export function isCourtRole(role: string): boolean {
-  return courtRoles.includes(role)
 }

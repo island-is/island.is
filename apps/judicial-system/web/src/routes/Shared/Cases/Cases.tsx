@@ -20,6 +20,7 @@ import {
   isInvestigationCase,
   isIndictmentCase,
   CaseListEntry,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -29,10 +30,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  capitalize,
-  isExtendedCourtRole,
-} from '@island.is/judicial-system/formatters'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {

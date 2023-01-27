@@ -13,7 +13,12 @@ import {
 
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
-import { CaseListEntry, CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseListEntry,
+  CaseState,
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   directionType,
@@ -24,8 +29,6 @@ import {
   capitalize,
   displayFirstPlusRemaining,
   formatDOB,
-  isExtendedCourtRole,
-  isProsecutionRole,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'

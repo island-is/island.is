@@ -15,7 +15,7 @@ import {
 import {
   isProsecutionRole,
   isExtendedCourtRole,
-} from '@island.is/judicial-system/formatters'
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
 
