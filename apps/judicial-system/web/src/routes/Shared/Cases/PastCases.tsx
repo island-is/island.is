@@ -18,6 +18,7 @@ import {
   displayFirstPlusRemaining,
   formatDate,
   formatDOB,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/formatters'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -34,7 +35,6 @@ import {
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
-import { isExtendedCourtRole } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   cases: CaseListEntry[]

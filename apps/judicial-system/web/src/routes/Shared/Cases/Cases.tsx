@@ -29,7 +29,10 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  isExtendedCourtRole,
+} from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -45,7 +48,6 @@ import TableSkeleton from './TableSkeleton'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 import { FilterOption, useFilter } from './useFilter'
-import { isExtendedCourtRole } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 const CreateCaseButton: React.FC<{
   features: Feature[]

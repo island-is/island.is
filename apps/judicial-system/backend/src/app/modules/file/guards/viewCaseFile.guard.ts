@@ -12,11 +12,11 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-
 import {
   isProsecutionRole,
   isExtendedCourtRole,
-} from '../../../formatters/formatters'
+} from '@island.is/judicial-system/formatters'
+
 import { Case } from '../../case'
 
 @Injectable()

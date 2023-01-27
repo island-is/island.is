@@ -4,9 +4,9 @@ import { useIntl } from 'react-intl'
 import { core } from '@island.is/judicial-system-web/messages'
 import { AlertBanner } from '@island.is/island-ui/core'
 import {
-  isExtendedCourtRole,
   isProsecutionRole,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+  isExtendedCourtRole,
+} from '@island.is/judicial-system/formatters'
 
 import { UserContext } from '../UserProvider/UserProvider'
 

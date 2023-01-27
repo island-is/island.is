@@ -89,25 +89,3 @@ export const createCaseResentExplanation = (
       : ''
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
 }
-
-const prosecutionRoles = [UserRole.Prosecutor, UserRole.Representative]
-
-export function isProsecutionRole(role: UserRole): boolean {
-  return prosecutionRoles.includes(role)
-}
-
-export const extendedCourtRoles = [
-  UserRole.Judge,
-  UserRole.Registrar,
-  UserRole.Assistant,
-]
-
-export function isExtendedCourtRole(role: UserRole): boolean {
-  return extendedCourtRoles.includes(role)
-}
-
-export const courtRoles = [UserRole.Judge, UserRole.Registrar]
-
-export function isCourtRole(role: UserRole): boolean {
-  return courtRoles.includes(role)
-}

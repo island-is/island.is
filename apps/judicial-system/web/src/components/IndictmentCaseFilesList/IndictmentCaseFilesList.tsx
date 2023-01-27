@@ -11,7 +11,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isExtendedCourtRole } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isExtendedCourtRole } from '@island.is/judicial-system/formatters'
 
 import PdfButton from '../PdfButton/PdfButton'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'

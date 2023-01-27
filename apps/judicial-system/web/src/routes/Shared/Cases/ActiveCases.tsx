@@ -24,13 +24,11 @@ import {
   capitalize,
   displayFirstPlusRemaining,
   formatDOB,
+  isExtendedCourtRole,
+  isProsecutionRole,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  isExtendedCourtRole,
-  isProsecutionRole,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'

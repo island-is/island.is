@@ -702,25 +702,3 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
 
   return { body, subject }
 }
-
-const prosecutionRoles = [UserRole.PROSECUTOR, UserRole.REPRESENTATIVE]
-
-export function isProsecutionRole(role: UserRole): boolean {
-  return prosecutionRoles.includes(role)
-}
-
-const extendedCourtRoles = [
-  UserRole.JUDGE,
-  UserRole.REGISTRAR,
-  UserRole.ASSISTANT,
-]
-
-export function isExtendedCourtRole(role: UserRole): boolean {
-  return extendedCourtRoles.includes(role)
-}
-
-export const courtRoles = [UserRole.JUDGE, UserRole.REGISTRAR]
-
-export function isCourtRole(role: UserRole): boolean {
-  return courtRoles.includes(role)
-}
