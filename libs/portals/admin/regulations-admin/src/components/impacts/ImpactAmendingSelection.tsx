@@ -4,6 +4,7 @@ import { useDraftingState } from '../../state/useDraftingState'
 import { impactMsgs } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
+  ensureRegName,
   RegName,
   RegulationOptionList,
   RegulationType,
@@ -47,7 +48,7 @@ export const ImpactAmendingSelection = ({
     SelRegOption[] | undefined
   >()
   const [isLoading, setIsLoading] = useState(false)
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState<RegName | undefined>(undefined)
   const t = useLocale().formatMessage
 
   const [getRegulationList, { data, loading, error }] = useLazyQuery<Query>(
@@ -65,7 +66,7 @@ export const ImpactAmendingSelection = ({
     () => {
       if (value) {
         getRegulationList({
-          variables: { input: { names: [value as RegName] } },
+          variables: { input: { names: [value] } },
         })
       }
       setIsLoading(false)
@@ -78,10 +79,12 @@ export const ImpactAmendingSelection = ({
     const dataRes =
       (data?.getRegulationOptionList as RegulationOptionList) || []
 
-    const optionNames = dataRes.map((reg) => reg.name)
+    const optionNames = dataRes
+      .filter((reg) => reg.type === 'base')
+      .map((reg) => reg.name)
 
     const relRegOptionsArray = formatSelRegOptions(
-      optionNames as RegName[],
+      optionNames,
       t(impactMsgs.regSelect_mentionedNotFound),
       t(impactMsgs.regSelect_mentionedRepealed),
       dataRes,
@@ -94,17 +97,19 @@ export const ImpactAmendingSelection = ({
     <AsyncSearch
       placeholder={t(impactMsgs.regSelectAmmending_placeholder)}
       onInputValueChange={(newValue) => {
-        setIsLoading(newValue !== value)
-        setValue(newValue ?? '')
+        const regName = ensureRegName(newValue)
+        setIsLoading(regName !== value)
+        setValue(regName)
       }}
       loading={loading || isLoading}
       onSubmit={(newValue) => {
-        setIsLoading(newValue !== value)
-        setValue(newValue ?? '')
+        const regName = ensureRegName(newValue)
+        setIsLoading(regName !== value)
+        setValue(regName)
       }}
       options={selRegOptions || []}
       inputValue={value}
-      initialInputValue={''}
+      initialInputValue={undefined}
       label={t(impactMsgs.regSelect)}
       onChange={(i, option) => {
         handleOptionSelect(option.selectedItem as SelRegOption)
