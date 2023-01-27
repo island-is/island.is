@@ -1,11 +1,11 @@
 import { Box, HyphenProps, Button } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 // Á þetta að fara bara tilbaka eða alltaf á dashboard skjá
 export const GoBack = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return (
     <Box display={['none', 'none', 'block']} printHidden marginBottom={3}>
@@ -16,7 +16,7 @@ export const GoBack = () => {
         type="button"
         variant="text"
         truncate
-        onClick={() => history.replace('/')}
+        onClick={() => navigate('/')}
       >
         Til baka í yfirlit
       </Button>

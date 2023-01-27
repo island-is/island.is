@@ -32,7 +32,7 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
@@ -97,7 +97,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [page, setPage] = useState(1)
   const [isEmpty, setEmpty] = useState(false)
   const [scalePDF, setScalePDF] = useState(1.0)
-  const history = useHistory()
+  const navigate = useNavigate()
   const [
     activeDocument,
     setActiveDocument,
@@ -352,7 +352,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           type="button"
           variant="text"
           truncate
-          onClick={() => history.replace('/')}
+          onClick={() => navigate('/')}
         >
           {formatMessage(m.goBackToDashboard)}
         </Button>
