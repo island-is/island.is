@@ -8,5 +8,5 @@ bootstrap({
   name: 'license-api',
   openApi,
   port: 4248,
-  swaggerPath: 'api/swagger',
+  swaggerPath: '/swagger',
 })
