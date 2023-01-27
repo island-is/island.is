@@ -10,7 +10,6 @@ import {
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import { Queue } from 'bull'
 
-import { Audit } from '@island.is/nest/audit'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -18,10 +17,11 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { SessionsScope } from '@island.is/auth/scopes'
+import { ApiScope, SessionsScope } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
-import { sessionsQueueName, sessionJobName } from '../sessions.config'
+import { sessionJobName, sessionsQueueName } from '../sessions.config'
 import { CreateSessionDto } from './create-session.dto'
 import { Session } from './session.model'
 import { SessionsService } from './sessions.service'
@@ -45,7 +45,7 @@ export class SessionsController {
     description: 'Get all sessions for the authenticated user.',
     response: { status: 200, type: [Session] },
   })
-  @Scopes(SessionsScope.main)
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Audit<Session[]>({
     resources: (sessions) => sessions.map((session) => session.id),
   })
