@@ -1,6 +1,6 @@
 import each from 'jest-each'
 import { uuid } from 'uuidv4'
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   CaseFileState,

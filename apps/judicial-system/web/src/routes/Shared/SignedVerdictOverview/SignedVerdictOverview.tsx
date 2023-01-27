@@ -14,7 +14,6 @@ import {
   InstitutionType,
   isInvestigationCase,
   isRestrictionCase,
-  NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   UserRole,
@@ -248,7 +247,6 @@ export const SignedVerdictOverview: React.FC = () => {
     isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
-    sendNotification,
     isSendingNotification,
   } = useCase()
 
