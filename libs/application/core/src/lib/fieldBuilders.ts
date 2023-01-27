@@ -28,8 +28,12 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
+  GoToServicePortalField,
+  BulletPointField,
+  AlertMessageField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { StaticText } from 'static-text'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -401,5 +405,55 @@ export function buildRedirectToServicePortalField(data: {
     title,
     type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL,
     component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL,
+  }
+}
+
+export function buildGoToServicePortalField(data: {
+  id: string
+  title: FormText
+}): GoToServicePortalField {
+  const { id, title } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    type: FieldTypes.GO_TO_SERVICE_PORTAL,
+    component: FieldComponents.GO_TO_SERVICE_PORTAL,
+  }
+}
+
+export function buildBulletPointField(data: {
+  id: string
+  title: FormText
+  bulletPoints: StaticText
+  introText: FormText
+}): BulletPointField {
+  const { id, title, bulletPoints, introText } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    bulletPoints,
+    introText,
+    type: FieldTypes.BULLET_POINT,
+    component: FieldComponents.BULLET_POINT,
+  }
+}
+
+export function buildAlertMessageField(data: {
+  id: string
+  title: FormText
+  message?: FormText
+  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
+}): AlertMessageField {
+  const { id, title, message, alertType } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    message,
+    alertType,
+    type: FieldTypes.ALERT_MESSAGE,
+    component: FieldComponents.ALERT_MESSAGE,
   }
 }
