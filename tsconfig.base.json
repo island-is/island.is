@@ -361,9 +361,6 @@
       "@island.is/application/ui-forms": [
         "libs/application/ui-forms/src/index.ts"
       ],
-      "@island.is/application/ui-forms-fields": [
-        "libs/application/ui-forms/src/sharedFields.ts"
-      ],
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],
