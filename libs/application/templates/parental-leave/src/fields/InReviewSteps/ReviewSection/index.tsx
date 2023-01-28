@@ -6,10 +6,9 @@ import { Application } from '@island.is/application/types'
 import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
-import { parentalLeaveFormMessages } from '../../../lib/messages'
-
 
 export enum ReviewSectionState {
+  prerequisites = 'Prerequisites',
   inProgress = 'In progress',
   requiresAction = 'Requires action',
   complete = 'Complete',
@@ -22,7 +21,7 @@ type ReviewSectionProps = {
   title: string
   description: string
   state?: ReviewSectionState
-  notifyParentComponent?: () => void
+  notifyParentOnClickEvent?: (event: 'RESIDENCEGRANTAPPLICATION') => void
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -31,7 +30,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   title,
   description,
   state,
-  notifyParentComponent,
+  notifyParentOnClickEvent,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -57,6 +56,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
             state === ReviewSectionState.requiresAction,
           [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
           [styles.sectionNumberOptionalAction]: state === ReviewSectionState.optionalAction,
+          [styles.sectionNumberPrerequisites]: state === ReviewSectionState.prerequisites,
         })}
       >
         {(state === ReviewSectionState.complete && (
@@ -75,21 +75,19 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Text variant="h3">{title}</Text>
           <Text marginTop={1} variant="default">
             {description}
-          </Text>
-          {notifyParentComponent && state === ReviewSectionState.optionalAction  &&
-            <Box display={'flex'} justifyContent={'flexEnd'}>
+          </Text> 
+          {notifyParentOnClickEvent && (state === ReviewSectionState.optionalAction || state === ReviewSectionState.prerequisites)  &&
+            <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
               <Box>
                 <Button
                   variant="text"
                   icon="arrowForward"
-                  onClick={() => notifyParentComponent()}
-                  >
-                    {formatText(
-                coreMessages.tagsInProgress,
-                application,
-                formatMessage,
-              )}
-                  Sækja um dvalarstyrk
+                  onClick={() => notifyParentOnClickEvent('RESIDENCEGRANTAPPLICATION')}
+                >
+                  {state === ReviewSectionState.optionalAction
+                    ? 'Sækja um dvalarstyrk'
+                    : 'Upplýsingar um þetta forrit'
+                  }
                 </Button>
               </Box>
             </Box>

@@ -6,7 +6,7 @@ import { MessageDescriptor } from '@formatjs/intl'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text  } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
 
@@ -147,11 +147,18 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     })
   }
 
-  if (residentGrantIsOpenForApplication(`${application['answers']['dateOfBirth']}`)) {
+  if (residentGrantIsOpenForApplication(`${application.answers['dateOfBirth']}`)) {
     steps.push({
       state: ReviewSectionState.optionalAction,
-      title: 'Open for application',
-      description: 'Now you can apply for residen grant',
+      title: 'Opið er fyrir umsókn',
+      description: 'Nú er hægt að sækja um dvalarstyrkur',
+    })
+  }
+  else {
+    steps.push({
+      state: ReviewSectionState.prerequisites,
+      title: 'Umsóknin er ekki opin ennþá',
+      description: 'Þetta forrit opnast eftir að barnið fæðist. Smelltu til að fá frekari upplýsingar.',
     })
   }
 
@@ -190,6 +197,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
       refetch?.()
     }
   }, [])
+  console.log(application)
   return (
     <Box marginBottom={10}>
       <Box
@@ -246,7 +254,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
                 icon="pencil"
                 loading={loadingSubmit}
                 disabled={loadingSubmit}
-                onClick={() => handleSubmit('EDIT',)}
+                onClick={() => handleSubmit('EDIT')}
               >
                 {formatMessage(
                   parentalLeaveFormMessages.reviewScreen.buttonsEdit,
@@ -265,7 +273,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               application={application}
               index={index + 1}
               {...step}
-              notifyParentComponent={() => handleSubmit('RESIDENCEGRANTAPPLICATION',)}
+              notifyParentOnClickEvent={() => handleSubmit('RESIDENCEGRANTAPPLICATION')}
             />
           ))}
         </Box>

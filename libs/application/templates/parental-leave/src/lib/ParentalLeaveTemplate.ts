@@ -62,6 +62,10 @@ type Events =
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
   | { type: 'ADDITIONALDOCUMENTREQUIRED' } // Ex: VMST ask for more documents
   | { type: 'RESIDENCEGRANTAPPLICATION' } // Ex: when the baby is born a parent can apply for resident grant
+  | { type: 'EMPLOYERWAITINGTOASSIGN' }
+  | { type: 'VINNUMALASTOFNUNAPPROVAL' }
+  | { type: 'EMPLOYERAPPROVAL' }
+  | { type: 'APPROVED' }
   | { type: 'CLOSED' } // Ex: Close application
 
 enum Roles {
@@ -69,7 +73,6 @@ enum Roles {
   ASSIGNEE = 'assignee',
   ORGINISATION_REVIEWER = 'vmst',
 }
-
 const determineNameFromApplicationAnswers = (application: Application) => {
   if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.nameGrant
@@ -326,6 +329,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          ['RESIDENCEGRANTAPPLICATION']: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
+          },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -397,6 +403,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          ['RESIDENCEGRANTAPPLICATION']: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
+          },
         },
       },
       [States.EMPLOYER_ACTION]: {
@@ -472,6 +481,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          ['RESIDENCEGRANTAPPLICATION']: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
+          },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -539,16 +551,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.RESIDENCE_GRAND_APPLICATION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
           ['RESIDENCEGRANTAPPLICATION']: {
             target: States.RESIDENCE_GRAND_APPLICATION,
           },
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST', 'setPreviousState'],
+        exit: 'removePreviousState',
         meta: {
-          status: 'inprogress',
+          status: 'inprogress',       
           name: States.RESIDENCE_GRAND_APPLICATION,
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -556,8 +569,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/NewForm').then((val) =>
-                  Promise.resolve(val.NewForm),
+                import('../forms/ResidenceGrantOpen').then((val) =>
+                  Promise.resolve(val.ResidenceGrantOpen),
                 ),
               read: 'all',
               write: 'all',
@@ -573,7 +586,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
+          ['APPROVED']: { target: States.APPROVED },
           ['ADDITIONALDOCUMENTREQUIRED']: { target: States.ADDITIONAL_DOCUMENT_REQUIRED },
+          ['EMPLOYERWAITINGTOASSIGN']: { target: States.EMPLOYER_WAITING_TO_ASSIGN },
+          ['CLOSED']: { target: States.CLOSED },
+          ['VINNUMALASTOFNUNAPPROVAL']: { target: States.VINNUMALASTOFNUN_APPROVAL },
+          ['EMPLOYERAPPROVAL']: { target: States.EMPLOYER_APPROVAL },
         },
       },
       // [States.RECEIVED]: {
@@ -612,6 +630,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       // },
       [States.APPROVED]: {
         entry: 'assignToVMST',
+        exit: 'setBirthDate',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -643,6 +662,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           CLOSED: { target: States.CLOSED },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          ['RESIDENCEGRANTAPPLICATION']: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
+          },
         },
       },
       [States.CLOSED]: {
@@ -666,6 +688,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
         },
+        on: {
+          ['RESIDENCEGRANTAPPLICATION']: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
+          },
+        }
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
@@ -1346,6 +1373,27 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      setBirthDate: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        set(answers, 'dateOfBirth', '20230101')
+        return context
+      }),
+      setPreviousState: assign((context) => {
+        const { application } = context
+        const { state } = application
+        const { answers } = application
+        const { dateOfBirth } = answers
+        set(answers, 'previousState', state)
+        return context
+      }),
+      removePreviousState: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'previousState')
+        return context
+      }),
     },
   },
   mapUserToRole(

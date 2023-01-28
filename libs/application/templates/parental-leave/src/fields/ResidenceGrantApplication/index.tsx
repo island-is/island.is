@@ -15,13 +15,29 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
       onError: (e) => e,
     },
   )
+
+  type EventType = {
+    [key: string]: any
+  }
+
+  const eventsMap: EventType = {
+    "closed": "CLOSED",
+    "approved": "APPROVED",
+    "employerApproval": "EMPLOYERAPPROVAL",
+    "employerWaitingToAssign": "EMPLOYERWAITINGTOASSIGN",
+    "vinnumalastofnunApproval": "VINNUMALASTOFNUNAPPROVAL",
+    "additionalDocumentRequired": "ADDITIONALDOCUMENTREQUIRED",
+  }
+
+  const { previousState, ...rest } = application.answers
+  console.log(previousState)
   const handleSubmitApplication = useCallback(async () => {
       const res = await submitApplication({
         variables: {
           input: {
             id: application.id,
-            event: 'ADDITIONALDOCUMENTREQUIRED',
-            answers: application.answers,
+            event: eventsMap[`${previousState}`],
+            answers: rest,
           },
         },
       })
@@ -34,10 +50,15 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
   return (
     <Box>
       <Text >{field.description}</Text>
-      {false &&
-        <Button onClick={handleSubmitApplication} >
-          Go back
-        </Button>
+      {field.defaultValue === 'visible' &&
+        <Box marginTop={5}>
+          <Button 
+            variant="ghost"
+            onClick={handleSubmitApplication}
+          >
+            Farðu í umsókn.
+          </Button>
+        </Box>
       }
     </Box>
   )

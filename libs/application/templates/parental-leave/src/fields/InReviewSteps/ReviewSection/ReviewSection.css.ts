@@ -38,3 +38,9 @@ export const sectionNumberComplete = style({
 export const sectionNumberOptionalAction = style({
   background: theme.color.mint400,
 })
+
+export const sectionNumberPrerequisites = style({
+  background: theme.color.white,
+  border: `1px solid ${theme.color.blue200}`,
+  color: theme.color.blue200,
+})
