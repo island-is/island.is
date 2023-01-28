@@ -1,6 +1,6 @@
 import { DocumentBuilder } from '@nestjs/swagger'
 
-import { SessionsScope } from '@island.is/auth/scopes'
+import { ApiScope, SessionsScope } from '@island.is/auth/scopes'
 
 import { environment } from './environments'
 
@@ -21,8 +21,10 @@ export const openApi = new DocumentBuilder()
           tokenUrl: `${environment.auth.issuer}/connect/token`,
           scopes: {
             openid: 'Default openid scope',
-            [SessionsScope.main]:
+            [ApiScope.internal]:
               'Access to list all sessions of the authenticated user.',
+            [ApiScope.internalProcuring]:
+              'Access to list all sessions of the organisation.',
             [SessionsScope.sessionsWrite]: 'Access to log sessions.',
           },
         },
