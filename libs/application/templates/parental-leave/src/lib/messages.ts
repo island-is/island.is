@@ -189,8 +189,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     noPrimaryParentQuestionThree: {
       id: 'pl.applications:no.primary.parent.question.three',
-      defaultMessage: 'Á barnshafandi foreldri rétt á fæðingarorlofi á Íslandi?',
-      description: 'Is the pregnant parent entitled to parental leave in Iceland?',
+      defaultMessage:
+        'Á barnshafandi foreldri rétt á fæðingarorlofi á Íslandi?',
+      description:
+        'Is the pregnant parent entitled to parental leave in Iceland?',
     },
     noPrimaryParentDatePickerTitle: {
       id: 'pl.applications:no.primary.parent.date.picker.title',
