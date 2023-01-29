@@ -880,7 +880,7 @@ export const isParentWithoutBirthParent = (answers: Application['answers']) => {
     'noPrimaryParent.questionThree',
   )
 
-  return questionOne === YES && questionTwo === YES && questionThree === YES
+  return questionOne === YES && questionTwo === YES && questionThree === NO
 }
 
 export const isNotEligibleForParentWithoutBirthParent = (
@@ -893,7 +893,7 @@ export const isNotEligibleForParentWithoutBirthParent = (
     'noPrimaryParent.questionThree',
   )
 
-  return questionOne === NO || questionTwo === NO || questionThree === NO
+  return questionOne === NO || questionTwo === NO || questionThree === YES
 }
 
 export const requiresOtherParentApproval = (
