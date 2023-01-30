@@ -7,5 +7,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/portals/shared-modules/delegations',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/portals/shared-modules/delegations',
 }

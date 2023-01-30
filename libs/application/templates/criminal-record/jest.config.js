@@ -10,5 +10,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/criminal-record',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/criminal-record',
 }

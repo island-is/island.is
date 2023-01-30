@@ -13,5 +13,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/api/domains/financial-statements-inao',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/api/domains/financial-statements-inao',
 }

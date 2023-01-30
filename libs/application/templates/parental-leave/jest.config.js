@@ -9,6 +9,7 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/parental-leave',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/parental-leave',
   displayName: 'application-templates-parental-leave',
 }

@@ -8,5 +8,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/transport-authority/transfer-of-vehicle-ownership',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/transport-authority/transfer-of-vehicle-ownership',
 }

@@ -10,6 +10,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/api/domains/directorate-of-labour',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/api/domains/directorate-of-labour',
   displayName: 'api-domains-directorate-of-labour',
 }

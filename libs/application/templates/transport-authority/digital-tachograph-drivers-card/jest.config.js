@@ -8,5 +8,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/transport-authority/digital-tachograph-drivers-card',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/transport-authority/digital-tachograph-drivers-card',
 }

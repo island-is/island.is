@@ -9,6 +9,7 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/reference-template',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/reference-template',
   displayName: 'application-templates-reference-template',
 }

@@ -9,6 +9,7 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/general-petition',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/general-petition',
   displayName: 'application-templates-general-petition',
 }
