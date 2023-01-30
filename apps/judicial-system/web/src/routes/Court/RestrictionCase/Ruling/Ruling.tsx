@@ -687,7 +687,7 @@ export const Ruling: React.FC = () => {
                   <Checkbox
                     name="isCustodyIsolation"
                     label={formatMessage(
-                      m.sections.custodyRestrictions.isolationV1,
+                      m.sections.custodyRestrictions.isolation,
                     )}
                     checked={workingCase.isCustodyIsolation}
                     disabled={isModifyingRuling}
