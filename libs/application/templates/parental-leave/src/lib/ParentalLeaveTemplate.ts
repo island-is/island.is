@@ -474,7 +474,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
-        entry: 'assignToVMST',
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
           status: 'inprogress',
@@ -508,7 +507,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENT_REQUIRED]: {
-        entry: 'assignToVMST',
         meta: {
           status: 'inprogress',
           name: States.ADDITIONAL_DOCUMENT_REQUIRED,
@@ -634,12 +632,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: [
-          'createTempPeriods',
-          'assignToVMST',
-          'removeNullPeriod',
-          'setNavId',
-        ],
+        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
         exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
@@ -732,7 +725,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: 'removeNullPeriod',
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -810,7 +803,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
-        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
@@ -853,7 +845,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: 'clearTemp',
+        exit: ['clearTemp', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -899,7 +891,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
-        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,

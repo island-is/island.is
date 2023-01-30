@@ -14,11 +14,8 @@ import {
   CourtDocuments,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  CaseType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   RestrictionCaseCourtSubsections,
   Sections,

@@ -1,11 +1,12 @@
+import { useCallback, useEffect, useState } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
+
 import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
 import {
-  Case,
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { useCallback, useEffect, useState } from 'react'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
