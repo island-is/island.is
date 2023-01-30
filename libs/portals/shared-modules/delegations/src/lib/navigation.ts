@@ -9,6 +9,8 @@ export const delegationsNavigation: PortalNavigationItem = {
     icon: 'lockClosed',
   },
   description: m.accessControlDescription,
+  serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
+
   children: [
     {
       name: m.accessControlDelegationsOutgoingLong,
@@ -20,16 +22,19 @@ export const delegationsNavigation: PortalNavigationItem = {
           navHide: true,
         },
       ],
+      serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
     },
     {
       name: m.accessControlDelegationsIncomingLong,
       path: DelegationPaths.DelegationsIncoming,
       breadcrumbHide: true,
+      serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
     },
     {
       name: m.accessControlAccess,
       path: DelegationPaths.DelegationAccess,
       navHide: true,
+      serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
     },
   ],
   isKeyitem: true,

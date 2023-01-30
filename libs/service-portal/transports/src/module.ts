@@ -14,8 +14,8 @@ export const transportsModule: PortalModule = {
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
     {
-      name: m.yourVehicles,
-      path: TransportPaths.AssetsMyVehicles,
+      name: m.myVehicles,
+      path: TransportPaths.AssetsVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },

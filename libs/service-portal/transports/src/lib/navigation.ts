@@ -12,7 +12,7 @@ export const transportsNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.myVehicles,
-      path: TransportPaths.AssetsMyVehicles,
+      path: TransportPaths.AssetsVehicles,
       serviceProvider: '6IZT17s7stKJAmtPutjpD7',
       children: [
         {
