@@ -31,6 +31,9 @@ export class Form {
 
   @Field(() => FormField, { nullable: true })
   recipientFormFieldDecider?: FormField
+
+  @Field(() => [String], { nullable: true })
+  recipientList?: string[]
 }
 
 export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
@@ -46,4 +49,5 @@ export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
   recipientFormFieldDecider: fields.recipientFormFieldDecider
     ? mapFormField(fields.recipientFormFieldDecider)
     : undefined,
+  recipientList: fields.recipientList ?? [],
 })

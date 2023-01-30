@@ -140,7 +140,8 @@ export class CommunicationsService {
       return false
     }
 
-    let recipient = form.recipient
+    let recipient: string | string[] =
+      form.recipient || (form.recipientList ?? [])
 
     const emailConfig = form.recipientFormFieldDecider?.emailConfig
     const key: string | undefined = input.recipientFormFieldDeciderValue
