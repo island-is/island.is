@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Bullet, BulletList, Button } from '@island.is/island-ui/core'
@@ -22,7 +22,7 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
     applicationType,
     isRecivingUnemploymentBenefits,
   } = useApplicationAnswers(application)
-  const history = useHistory()
+  const navigate = useNavigate()
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
 
   // Added this check for applications that is in the db already
@@ -48,7 +48,7 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   }
 
   const handleRefresh = () => {
-    history.go(0)
+    navigate(0)
   }
 
   return (

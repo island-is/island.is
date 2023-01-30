@@ -7,7 +7,7 @@ import {
   Breadcrumbs,
 } from '@island.is/island-ui/core'
 import CaseTimeline from './CaseTimeline'
-import SubscriptionBox from './SubscriptionBox'
+import SubscriptionBox from '../../SubscriptionBox'
 import { useLocation } from 'react-use'
 
 interface LeftSideColumnProps {
@@ -30,7 +30,7 @@ const LeftSideColumn = ({ caseNumber }: LeftSideColumnProps) => {
           />
         </Box>
         <Divider />
-        <CaseTimeline />
+        <CaseTimeline status="Niðurstöður í vinnslu" />
       </Box>
       <Box
         marginBottom={6}

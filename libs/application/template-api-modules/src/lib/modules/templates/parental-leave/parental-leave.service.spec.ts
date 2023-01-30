@@ -324,7 +324,7 @@ describe('ParentalLeaveService', () => {
 
       expect(res).toEqual([
         {
-          from: '2021-05-17',
+          from: 'date_of_birth',
           to: '2021-11-16',
           ratio: '100',
           approved: false,
