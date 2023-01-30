@@ -2,18 +2,16 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
-
 import {
-  Case,
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
-  UserRole,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { defenderInfo } from './DefenderInfo.strings'
-
 import { BlueBox, SectionHeading } from '..'
 import { useCase } from '../../utils/hooks'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -35,13 +33,13 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
   const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
-      if (user?.role === UserRole.PROSECUTOR) {
+      if (user?.role === UserRole.Prosecutor) {
         return defenderInfo.restrictionCases.sections.defender.heading
       } else {
         return defenderInfo.restrictionCases.sections.defender.title
       }
     } else {
-      if (user?.role === UserRole.PROSECUTOR) {
+      if (user?.role === UserRole.Prosecutor) {
         return defenderInfo.investigationCases.sections.defender.heading
       } else {
         return defenderInfo.investigationCases.sections.defender.title
@@ -99,7 +97,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
-        {user?.role === UserRole.PROSECUTOR && (
+        {user?.role === UserRole.Prosecutor && (
           <Box marginTop={2}>
             <Checkbox
               name="sendRequestToDefender"
