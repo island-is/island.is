@@ -2,21 +2,23 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  Case,
   CaseType,
   Gender,
-  InstitutionType,
   isInvestigationCase,
   isRestrictionCase,
-  User,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import {
+  InstitutionType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -56,7 +58,7 @@ const useSections = (
         caseType: type,
       }),
       children:
-        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+        user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
           : [
               {
@@ -187,7 +189,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
       children:
-        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+        user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
           : [
               {
@@ -454,7 +456,7 @@ const useSections = (
     return {
       name: formatMessage(sections.courtSection.title),
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.Court
           ? []
           : [
               {
@@ -584,7 +586,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.Court
           ? []
           : [
               {
@@ -805,7 +807,7 @@ const useSections = (
     return {
       name: formatMessage(sections.extensionSection.title),
       children:
-        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+        user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
           : [
               {
@@ -881,7 +883,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
       children:
-        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+        user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
           : [
               {

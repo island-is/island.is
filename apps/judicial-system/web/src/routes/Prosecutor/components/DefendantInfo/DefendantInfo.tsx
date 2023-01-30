@@ -4,12 +4,12 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
 import {
-  Case,
   Defendant,
   Gender,
   isIndictmentCase,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,

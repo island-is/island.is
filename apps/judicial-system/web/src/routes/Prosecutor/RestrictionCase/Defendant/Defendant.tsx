@@ -29,11 +29,8 @@ import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  Case,
-  CaseType,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
+import { CaseType, UpdateDefendant } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
