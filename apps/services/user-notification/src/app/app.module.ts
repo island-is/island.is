@@ -7,19 +7,10 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     //   ttl: 5, // seconds
     //   max: 1000, // maximum number of items in cache
     // }),
-    NotificationsModule
+    NotificationsModule,
   ],
- 
 })
 export class AppModule {}
-
-
-
-
-
-
-
-
 
 /// WRONG PLACE ?'???????????????????????????'
 

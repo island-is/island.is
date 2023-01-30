@@ -1,20 +1,25 @@
-// import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { createHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 
 @Injectable()
 export class NotificationsService {
-  // firebase: any
   constructor(
-    // @Inject(LOGGER_PROVIDER)
-    // private logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
-  // MOVE QUERY TO THE SOMETHING SOEMTHIGN
+  // MOVE QUERY TO THE SOMETHING SOEMTHIGN ..................................................................
   async getTemplates(locale: string = 'is-IS'): Promise<any> {
+    if (locale == 'is') {
+      locale = 'is-IS'
+    }
+    this.logger.info(
+      'Fetcing templates from Contentful GQL for locale: ' + locale,
+    )
     try {
-      // this.logger.info('Fetching Templates from Contentful GQL')
       let results = await fetch(
         'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
         {
@@ -56,7 +61,7 @@ export class NotificationsService {
 
       return templates.data.hnippTemplateCollection.items
     } catch {
-      throw new BadRequestException('Error fetching templates')
+      throw new BadRequestException('Error fetching templates from Contentful')
     }
   }
 
@@ -64,6 +69,9 @@ export class NotificationsService {
     templateId: string,
     locale: string = 'is-IS',
   ): Promise<HnippTemplate> {
+    if (locale == 'is') {
+      locale = 'is-IS'
+    }
     const templates = await this.getTemplates(locale)
     try {
       for (const template of templates) {
@@ -71,9 +79,13 @@ export class NotificationsService {
           return template
         }
       }
-      throw new BadRequestException('Requested template  not found')
+      throw new BadRequestException(
+        `Requested template ${templateId} not found`,
+      )
     } catch {
-      throw new BadRequestException('Requested template not found') /// ?
+      throw new BadRequestException(
+        `Requested template ${templateId} not found`,
+      ) // ??
     }
   }
 
@@ -133,76 +145,5 @@ export class NotificationsService {
       }
     }
     return template
-  }
-
-  // async sendFCM() {
-  //   const notification = {
-  //     title: 'title',
-  //     body: 'body',
-  //     category: 'category',
-  //     appURI: 'appURI',
-  //   }
-  //   const tokens = ['remove me'] // "remove me"
-  //   const {
-  //     responses,
-  //     successCount,
-  //   } = await this.firebase.messaging().sendMulticast({
-  //     tokens,
-  //     notification: {
-  //       title: notification.title,
-  //       body: notification.body,
-  //     },
-  //     apns: {
-  //       payload: {
-  //         aps: {
-  //           category: notification.category,
-  //         },
-  //       },
-  //     },
-  //     data: {
-  //       ...(notification.appURI && { url: notification.appURI }),
-  //     },
-  //   })
-  //   return { responses, successCount }
-  // }
-
-  async convertToNotification(
-    message: createHnippNotificationDto,
-  ): Promise<any> {
-    //Notification
-
-    // get template on selected language - map user profile locale to other
-    const locale = 'en' //'is-IS' // enum en
-    // formatArgs
-    const template = await this.getTemplate(message.templateId, locale)
-
-    // formatObject  FUNCTION
-    const notification = {
-      messageType: 'bogus', ///  phase me out .................
-      title: template.notificationTitle,
-      body: template.notificationBody,
-      dataCopy: template.notificationDataCopy,
-      category: template.category,
-      appURI: template.clickAction, //`${this.appProtocol}://inbox/${message.documentId}`,
-    }
-
-    // FCM format
-    return {
-      notification: {
-        title: notification.title,
-        body: notification.body,
-      },
-      apns: {
-        payload: {
-          aps: {
-            category: notification.category,
-          },
-        },
-      },
-      data: {
-        ...(notification.appURI && { url: notification.appURI }),
-      },
-    }
-    // also test FCM objects
   }
 }

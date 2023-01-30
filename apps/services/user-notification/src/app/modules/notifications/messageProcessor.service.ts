@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { IntlService } from '@island.is/cms-translations'
-import { CreateNotificationDto } from './dto/createNotification.dto'
-import { Notification, MessageTypes } from './types'
-import messages from '../../../messages'
+import { Notification } from './types'
 import { UserProfile } from '@island.is/clients/user-profile'
+import { NotificationsService } from './notifications.service'
+import { createHnippNotificationDto } from './dto/createHnippNotification.dto'
 
 export const APP_PROTOCOL = Symbol('APP_PROTOCOL')
 export interface MessageProcessorServiceConfig {
@@ -16,57 +16,28 @@ export class MessageProcessorService {
     private intlService: IntlService,
     @Inject(APP_PROTOCOL)
     private readonly appProtocol: string,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
-  shouldSendNotification(type: MessageTypes, profile: UserProfile): boolean {
-    // documentNotifications is now the global switch for all notifications
-    return profile.documentNotifications
-  }
-
-  
   async convertToNotification(
-    message: CreateNotificationDto,
+    message: createHnippNotificationDto,
     profile: UserProfile,
   ): Promise<Notification> {
-
-    // get template on selected language - map user profile locale to other
-    // formatArsg
-    // formatObject
-    // return object
-
-
-
-    const t = await this.intlService.useIntl(
-      ['user-notification.messages'],
-      profile.locale ?? 'is',
+    const template = await this.notificationsService.getTemplate(
+      message.templateId,
+      profile.locale ?? 'is-IS', // defaults or error to fix userprofile serivcd ?????
     )
 
-    const { title, body } = messages.notifications[message.type]
+    const notification = await this.notificationsService.formatArguments(
+      message,
+      template,
+    )
 
-    switch (message.type) {
-      case MessageTypes.NewDocumentMessage: {
-        const formatArgs = {
-          organization: message.organization,
-        }
-        return {
-          messageType: message.type,
-          title: t.formatMessage(title, formatArgs),
-          body: t.formatMessage(body, formatArgs),
-          category: 'NEW_DOCUMENT',
-          appURI: `${this.appProtocol}://inbox/${message.documentId}`,
-        }
-      }
-      case MessageTypes.TestMessage: {
-        return {
-          messageType: message.type,
-          title: 'fixed test title', // t.formatMessage(title),
-          body: 'fixed test body', //t.formatMessage(body),
-          // category: 'NEW_DOCUMENT',
-          // appURI: `${this.appProtocol}://inbox/${message.documentId}`,
-        }
-      }
+    return {
+      title: notification.notificationTitle,
+      body: notification.notificationBody,
+      category: notification.category,
+      appURI: notification.clickAction,
     }
   }
-
-  
 }

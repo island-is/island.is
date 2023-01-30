@@ -12,22 +12,27 @@ import { getSdk } from '../../contentful/client'
 @Module({
   controllers: [],
   imports: [CmsModule],
-  providers: [CmsTranslationsResolver, CmsTranslationsService, IntlService, {
-    provide: 'GRAPHQL_CLIENT',
-    useFactory: async () => {
-      const client = new GraphQLClient(
-        'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.CONTENTFUL_DELIVERY_KEY}`
+  providers: [
+    CmsTranslationsResolver,
+    CmsTranslationsService,
+    IntlService,
+    {
+      provide: 'GRAPHQL_CLIENT',
+      useFactory: async () => {
+        const client = new GraphQLClient(
+          'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${process.env.CONTENTFUL_DELIVERY_KEY}`,
+            },
           },
-        },
-      )
+        )
 
-      return getSdk(client)
+        return getSdk(client)
+      },
     },
-  },],
+  ],
   exports: [CmsTranslationsService, IntlService],
 })
 export class CmsTranslationsModule {}

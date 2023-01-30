@@ -85,7 +85,7 @@ export class NotificationDispatchService {
         },
       },
       data: {
-        ...(notification.appURI && { url: notification.appURI }), // what is this doing ? tha () && part ?
+        ...(notification.appURI && { url: notification.appURI }),
       },
     })
 

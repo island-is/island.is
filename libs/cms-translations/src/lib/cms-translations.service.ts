@@ -43,8 +43,8 @@ const errorHandler = (name: string) => {
 export class CmsTranslationsService {
   constructor(
     private contentfulRepository: ContentfulRepository,
-    @Inject('GRAPHQL_CLIENT') private readonly graphQLClient: Sdk
-    ) {}
+    @Inject('GRAPHQL_CLIENT') private readonly graphQLClient: Sdk,
+  ) {}
 
   getNamespaceMessages = memoize(
     async (namespace: string) => {

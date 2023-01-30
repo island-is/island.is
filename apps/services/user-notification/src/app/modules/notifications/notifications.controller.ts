@@ -2,12 +2,10 @@ import {
   Inject,
   Body,
   Get,
-
   Param,
   Query,
   CacheInterceptor,
   UseInterceptors,
-
 } from '@nestjs/common'
 import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
@@ -26,31 +24,19 @@ import { createHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 
-import { Cache } from 'cache-manager'
 import { NotificationsService } from './notifications.service'
-
-import * as firebaseAdmin from 'firebase-admin'
-export const FIREBASE_PROVIDER = 'FIREBASE_PROVIDER'
-
-const CACHE_TTL = 60 // 1 minute
-// REMOVE HNIPP FROM NAMES ... GO FOR NOTIFICATIONS INSTEAD ... PUSH NOTIFICATIONS
-// LOCALE MAPPINGS
-import { Locale } from '@island.is/shared/types'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-// @UseInterceptors(CacheInterceptor) // To enable auto-caching responses, just tie the CacheInterceptor where you want to cache data.
+@UseInterceptors(CacheInterceptor) // auto-caching GET responses
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService,
-    // @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly notificationsService: NotificationsService,
-    @Inject(FIREBASE_PROVIDER) private firebase: firebaseAdmin.app.App,
-    // @Inject(forwardRef(() => CACHE_MANAGER)) private readonly cacheManager: Cache
   ) {}
 
-  // legacy hnipp to new hnipp setup redirect for backwards compatibility
+  // redirecting legacy endpoint to new one with fixed values
   @ApiBody({
     schema: {
       type: 'object',
@@ -85,8 +71,6 @@ export class NotificationsController {
       },
     },
   })
-  // @CacheTTL(CACHE_TTL)
-  // @UseInterceptors(CacheInterceptor)
   @Get('/templates')
   async getNotificationTemplates(
     @Query('locale') locale: string = 'is-IS',
@@ -116,8 +100,6 @@ export class NotificationsController {
       },
     },
   })
-  // @CacheTTL(CACHE_TTL)
-  // @UseInterceptors(CacheInterceptor)
   @Get('/template/:templateId')
   async getNotificationTemplate(
     @Param('templateId')
@@ -127,25 +109,15 @@ export class NotificationsController {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
 
-  
-  
-
   @Post('/create-notification')
   async createHnippNotification(
     @Body() body: createHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
-    // test stuff
-    // if (true) {
-    //   const template = await this.notificationsService.getTemplate(body.templateId)
-    //   return this.notificationsService.formatArguments(body, template)
-    //   // translate select language
-    //   return this.notificationsService.convertToNotification(body)
-    // }
     // validate
     this.notificationsService.validateArgs(body)
     // add to queue
     const id = await this.queue.add(body)
-    this.logger.info('Message queued ...', { messageId: id, ...body })
+    this.logger.info('Message queued ... ...', { messageId: id, ...body })
     return { id }
   }
 }

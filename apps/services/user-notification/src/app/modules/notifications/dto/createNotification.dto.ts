@@ -1,20 +1,19 @@
-import { IsEnum,  IsString } from 'class-validator'
+import { IsEnum, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNationalId } from '@island.is/nest/validators'
 import { MessageTypes } from '../types'
 
 export class CreateNotificationDto {
   @IsEnum(MessageTypes)
-  @ApiProperty({ 
+  @ApiProperty({
     enum: MessageTypes,
-    example: MessageTypes.NewDocumentMessage
+    example: 'newDocumentMessage',
   })
   type!: MessageTypes
 
   @IsNationalId()
-  @ApiProperty()
+  @ApiProperty({ example: '1234567890' })
   recipient!: string
-
 
   @IsString()
   @ApiProperty()
@@ -23,7 +22,4 @@ export class CreateNotificationDto {
   @IsString()
   @ApiProperty()
   documentId!: string
-
-
-
 }
