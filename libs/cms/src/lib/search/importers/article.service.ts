@@ -199,6 +199,16 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 value: x.title,
                 type: 'category',
               })),
+              ...(mapped.otherGroups ?? []).map((x) => ({
+                key: x.slug,
+                value: x.title,
+                type: 'group',
+              })),
+              ...(mapped.otherSubgroups ?? []).map((x) => ({
+                key: x.slug,
+                value: x.title,
+                type: 'subgroup',
+              })),
               ...(entry.fields?.organization ?? []).map((x) => ({
                 key: x.fields?.slug ?? '',
                 value: x.fields?.title,

@@ -178,19 +178,21 @@ export const parentalLeaveFormMessages: MessageDir = {
     noPrimaryParentQuestionOne: {
       id: 'pl.applications:no.primary.parent.question.one',
       defaultMessage: 'Er barn að fæðast erlendis?',
-      description: 'Is the child being born abroad?',
+      description: 'Is child being born abroad?',
     },
     noPrimaryParentQuestionTwo: {
       id: 'pl.applications:no.primary.parent.question.two',
       defaultMessage:
-        'Er móðir búsett erlendis og/eða ekki með íslenska kennitölu?',
+        'Er barnshafandi foreldri búsett erlendis og/eða ekki með íslenska kennitölu?',
       description:
-        'Is the mother living abroad and/or does she not have an Icelandic social security number?',
+        'Is the pregnant parent living abroad and/or does not have an Icelandic social security number?',
     },
     noPrimaryParentQuestionThree: {
       id: 'pl.applications:no.primary.parent.question.three',
-      defaultMessage: 'Á móðir ekki rétt á fæðingarorlofi á Íslandi?',
-      description: 'Is the mother not entitled to parental leave in Iceland?',
+      defaultMessage:
+        'Á barnshafandi foreldri rétt á fæðingarorlofi á Íslandi?',
+      description:
+        'Is the pregnant parent entitled to parental leave in Iceland?',
     },
     noPrimaryParentDatePickerTitle: {
       id: 'pl.applications:no.primary.parent.date.picker.title',
@@ -1877,7 +1879,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       id:
         'pl.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
-        'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afriit af staðfestingu þess lútandi með vottorði um áætlaðan. Athugaðu að skjalið þarf að vera á .pdf formi',
+        'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afrit af staðfestingu þess lútandi með vottorði um áætlaðan fæðingardag. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',
     },
     permanentFostercareTitle: {
