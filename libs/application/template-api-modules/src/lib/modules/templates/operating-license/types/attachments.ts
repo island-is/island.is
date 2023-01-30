@@ -30,3 +30,7 @@ export type File = {
   key: string
   name: string
 }
+
+export interface CriminalRecord {
+  contentBase64: string
+}

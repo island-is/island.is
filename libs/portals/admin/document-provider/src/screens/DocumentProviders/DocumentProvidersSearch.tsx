@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Box, Input, ActionCard, Pagination } from '@island.is/island-ui/core'
 import { OrganisationPreview } from './DocumentProviders'
 import { m } from '../../lib/messages'
@@ -14,7 +14,7 @@ const PAGE_SIZE = 10
 
 export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
   const [searchTerm, setSearchTerm] = useState('')
-  const history = useHistory()
+  const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const [searchResults, setSearchResults] = useState(organisationsPreview)
   const [page, setPage] = useState(1)
@@ -68,16 +68,18 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
                     ),
                     variant: 'text',
                     onClick: () => {
-                      history.push({
-                        pathname: AdminPortalCorePaths.DocumentProviderDocumentProvidersSingle.replace(
+                      navigate(
+                        AdminPortalCorePaths.DocumentProviderDocumentProvidersSingle.replace(
                           ':nationalId',
                           nationalId,
                         ),
-                        state: {
-                          id,
-                          name,
+                        {
+                          state: {
+                            id,
+                            name,
+                          },
                         },
-                      })
+                      )
                     },
                   }}
                 />

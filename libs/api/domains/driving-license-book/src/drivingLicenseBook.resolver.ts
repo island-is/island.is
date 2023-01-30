@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { NotFoundException, UseGuards, UseInterceptors } from '@nestjs/common'
+import { UseGuards, UseInterceptors } from '@nestjs/common'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -133,6 +133,7 @@ export class DrivingLicenseBookResolver {
       user,
     )
   }
+
   @UseGuards(DrivingSchoolEmployeeGuard)
   @Query(() => DrivingLicenseBookSchool)
   drivingLicenseBookSchoolForEmployee(@CurrentUser() user: User) {
@@ -150,5 +151,14 @@ export class DrivingLicenseBookResolver {
     @Args('input') input: CreateDrivingSchoolTestResultInput,
   ) {
     return this.drivingLicenseBookService.createDrivingSchoolTestResult(input)
+  }
+
+  @UseGuards(DrivingInstructorGuard)
+  @Mutation(() => DrivingLicenseBookSuccess)
+  drivingLicenseBookAllowPracticeDriving(
+    @Args('input') input: DrivingLicenseBookStudentInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.drivingLicenseBookService.allowPracticeDriving(user, input)
   }
 }

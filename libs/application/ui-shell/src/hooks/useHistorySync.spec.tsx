@@ -1,5 +1,4 @@
-import React, { FC } from 'react'
-import { ApplicationUIState } from '../reducer/ReducerTypes'
+import { ActionTypes, ApplicationUIState } from '../reducer/ReducerTypes'
 import { buildForm, buildTextField } from '@island.is/application/core'
 import {
   ApplicationStatus,
@@ -58,49 +57,74 @@ describe('useHistorySync', () => {
   it('pushes transitions to history and supports history navigation', () => {
     // Arrange
     const history = createMemoryHistory()
-    const wrapper: FC = ({ children }) => (
-      <Router history={history}>{children}</Router>
-    )
 
     // Act render application
-    const result = renderHook(
+    const { rerender } = renderHook(
       () => useHistorySync(applicationState, dispatch),
-      { wrapper },
+      {
+        wrapper: ({ children }) => (
+          <Router navigator={history} location={history.location}>
+            {children}
+          </Router>
+        ),
+      },
     )
 
-    // Assert history sync
-    expect(history.entries).toHaveLength(1)
-    expect(history.entries[0].state).toMatchObject({ screen: 0 })
+    expect(history.location.state).toStrictEqual({
+      state: 'draft',
+      screen: 0,
+      historyReason: 'initial',
+    })
+
+    rerender()
+
+    // Assert dispatch.
+    expect(dispatch).toHaveBeenCalledTimes(1)
+    expect(dispatch).toHaveBeenLastCalledWith({
+      type: ActionTypes.HISTORY_POP,
+      payload: {
+        state: 'draft',
+        screen: 0,
+        historyReason: 'initial',
+      },
+    })
 
     // Act render next step
     applicationState.activeScreen = 1
     applicationState.historyReason = 'navigate'
-    result.rerender()
+    rerender()
 
-    // Assert history push
-    expect(history.entries).toHaveLength(2)
-    expect(history.entries[1].state).toMatchObject({ screen: 1 })
-
-    // Act "click back"
+    //Act "click back"
     act(() => {
-      history.goBack()
+      history.back()
     })
+
+    rerender()
+
+    expect(dispatch).toHaveBeenLastCalledWith({
+      type: ActionTypes.HISTORY_POP,
+      payload: {
+        state: 'draft',
+        screen: 0,
+        historyReason: 'initial',
+      },
+    })
+
+    //Act "click back"
+    act(() => {
+      history.forward()
+    })
+
+    rerender()
 
     // Assert dispatch.
     expect(dispatch).toHaveBeenLastCalledWith({
-      type: 'HISTORY_POP',
-      payload: { state: 'draft', screen: 0, historyReason: 'initial' },
-    })
-
-    // Act "click forward"
-    act(() => {
-      history.goForward()
-    })
-
-    // Assert dispatch.
-    expect(dispatch).toHaveBeenLastCalledWith({
-      type: 'HISTORY_POP',
-      payload: { state: 'draft', screen: 1, historyReason: 'navigate' },
+      type: ActionTypes.HISTORY_POP,
+      payload: {
+        state: 'draft',
+        screen: 1,
+        historyReason: 'navigate',
+      },
     })
   })
 })
