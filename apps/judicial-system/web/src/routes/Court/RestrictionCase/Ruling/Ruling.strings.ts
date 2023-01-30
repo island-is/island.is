@@ -12,7 +12,7 @@ export const rcRuling = {
       title: {
         id:
           'judicial.system.core:restriction_cases.ruling.sections.alert_message.title',
-        defaultMessage: 'Athugið',
+        defaultMessage: 'Leiðrétting úrskurðar',
         description:
           'Notaður sem titill í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
       },
@@ -20,7 +20,7 @@ export const rcRuling = {
         id:
           'judicial.system.core:restriction_cases.ruling.sections.alert_message.message',
         defaultMessage:
-          'Allar breytingar á textum verða sýnilegar í yfirliti málsins, hvort sem nýr úrskurður er undirritaður eða ekki.',
+          'Hægt er að leiðrétta textann í úrskurðarskjalinu og undirrita það aftur, og vistast þá ný útgáfa í málaskrá dómsins auk þess sem málflytjendur fá tilkynningu um nýtt skjal. Athugið að allar breytingar á textum verða sýnilegar í yfirliti málsins, hvort sem nýr úrskurður er undirritaður eða ekki.',
         description:
           'Notaður sem texti í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
       },
@@ -65,7 +65,8 @@ export const rcRuling = {
       placeholder: {
         id:
           'judicial.system.core:restriction_cases.ruling.conclusion.placeholder',
-        defaultMessage: 'Hver eru úrskurðarorðin',
+        defaultMessage:
+          'Tillaga að úrskurðarorðum forbókast hér þegar lyktir máls eru valdar',
         description:
           'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
@@ -74,7 +75,7 @@ export const rcRuling = {
       title: {
         id:
           'judicial.system.core:restriction_cases.ruling.court_case_facts.title',
-        defaultMessage: 'Greinargerð um málsatvik',
+        defaultMessage: 'Málsatvik',
         description:
           'Notaður sem titill fyrir "greinargerð um málsatvik" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
@@ -106,7 +107,7 @@ export const rcRuling = {
       title: {
         id:
           'judicial.system.core:restriction_cases.ruling.court_legal_arguments.title',
-        defaultMessage: 'Greinargerð um lagarök',
+        defaultMessage: 'Lagarök',
         description:
           'Notaður sem titill fyrir "Greinargerð um lagarök" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
@@ -138,7 +139,7 @@ export const rcRuling = {
       title: {
         id:
           'judicial.system.core:restriction_cases.ruling.custody_restrictions.title',
-        defaultMessage: 'Takmarkanir á gæslu',
+        defaultMessage: 'Einangrun',
         description:
           'Notaður sem titill fyrir "Takmarkanir á gæslu" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
@@ -153,7 +154,7 @@ export const rcRuling = {
     decision: defineMessages({
       title: {
         id: 'judicial.system.core:restriction_cases.ruling.decision.title',
-        defaultMessage: 'Úrskurður',
+        defaultMessage: 'Lyktir máls',
         description:
           'Notaður sem titill fyrir "Úrskurður" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
@@ -178,7 +179,7 @@ export const rcRuling = {
       autofill: {
         id:
           'judicial.system.core:restriction_cases.ruling.introduction.autofill',
-        defaultMessage: 'Mál þetta var tekið til úrskurðar {date}.',
+        defaultMessage: 'Mál þetta var þingfest og tekið til úrskurðar {date}.',
         description:
           'Notaður sem sjálfgefinn texti í "Aðfararorð" textabox á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
@@ -215,7 +216,7 @@ export const rcRuling = {
       label: {
         id:
           'judicial.system.core:restriction_cases.ruling.prosecutor_demands.label',
-        defaultMessage: 'Krafa lögreglu',
+        defaultMessage: 'Dómkröfur',
         description:
           'Notaður sem titill fyrir í "Krafa lögreglu" textaboxi á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
