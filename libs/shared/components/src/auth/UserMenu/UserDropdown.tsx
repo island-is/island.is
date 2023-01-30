@@ -87,6 +87,7 @@ export const UserDropdown = ({
     const isDelegation = checkDelegation(user)
 
     changeLanguage(locale as Locale)
+    onClose()
 
     if (user && !isDelegation) {
       try {
