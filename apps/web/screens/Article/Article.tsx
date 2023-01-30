@@ -527,35 +527,37 @@ const ArticleScreen: Screen<ArticleProps> = ({
             />
           )}
           {!inStepperView && <Webreader readId={null} readClass="rs_read" />}
-          <Box marginTop={3}>
-            <TableOfContents
-              headings={[
-                {
-                  headingId: article.slug,
-                  headingTitle: article.shortTitle || article.title,
-                },
-              ].concat(
-                article.subArticles.map((s) => ({
-                  headingId: s.slug,
-                  headingTitle: s.title,
-                })),
-              )}
-              selectedHeadingId={subArticle?.slug || article.slug}
-              tableOfContentsTitle={n('tableOfContentsTitle', 'Efnisyfirlit')}
-              onClick={(selectedSlug) => {
-                if (selectedSlug === article.slug) {
-                  push(linkResolver('article', [article.slug]).href)
-                  return
-                }
-                const selectedSubArticle = article.subArticles.find(
-                  (s) => s.slug === selectedSlug,
-                )
-                if (!selectedSubArticle) return
-                const variables = selectedSubArticle.slug.split('/')
-                push(linkResolver('subarticle', variables).href)
-              }}
-            />
-          </Box>
+          {article.subArticles.length > 0 && (
+            <Box marginTop={3}>
+              <TableOfContents
+                headings={[
+                  {
+                    headingId: article.slug,
+                    headingTitle: article.shortTitle || article.title,
+                  },
+                ].concat(
+                  article.subArticles.map((s) => ({
+                    headingId: s.slug,
+                    headingTitle: s.title,
+                  })),
+                )}
+                selectedHeadingId={subArticle?.slug || article.slug}
+                tableOfContentsTitle={n('tableOfContentsTitle', 'Efnisyfirlit')}
+                onClick={(selectedSlug) => {
+                  if (selectedSlug === article.slug) {
+                    push(linkResolver('article', [article.slug]).href)
+                    return
+                  }
+                  const selectedSubArticle = article.subArticles.find(
+                    (s) => s.slug === selectedSlug,
+                  )
+                  if (!selectedSubArticle) return
+                  const variables = selectedSubArticle.slug.split('/')
+                  push(linkResolver('subarticle', variables).href)
+                }}
+              />
+            </Box>
+          )}
 
           {processEntry?.processLink && (
             <Box

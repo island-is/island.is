@@ -6,7 +6,7 @@ import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 import * as styles from './Link.css'
 
-export type LinkColor = 'white' | 'blue400' | 'blue600' | 'blueberry600'
+export type LinkColor = 'white' | 'blue400' | 'blue600'
 export type UnderlineVisibility = 'always' | 'hover'
 export type UnderlineVariants = 'normal' | 'small'
 

@@ -64,12 +64,6 @@ export const colors = styleVariants({
       color: theme.color.blueberry600,
     },
   },
-  blueberry600: {
-    color: theme.color.blueberry600,
-    ':hover': {
-      color: theme.color.blueberry600,
-    },
-  },
   white: {
     color: theme.color.white,
     ':hover': {
