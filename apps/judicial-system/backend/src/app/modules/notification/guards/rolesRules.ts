@@ -6,11 +6,7 @@ export const prosecutorNotificationRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [
-    NotificationType.HEADS_UP,
-    NotificationType.READY_FOR_COURT,
-    NotificationType.MODIFIED,
-  ],
+  dtoFieldValues: [NotificationType.HEADS_UP, NotificationType.READY_FOR_COURT],
 } as RolesRule
 
 // Allows judges to send notifiications
@@ -20,7 +16,6 @@ export const judgeNotificationRule = {
   dtoField: 'type',
   dtoFieldValues: [
     NotificationType.COURT_DATE,
-    NotificationType.MODIFIED,
     NotificationType.DEFENDER_ASSIGNED,
   ],
 } as RolesRule
@@ -32,7 +27,6 @@ export const registrarNotificationRule = {
   dtoField: 'type',
   dtoFieldValues: [
     NotificationType.COURT_DATE,
-    NotificationType.MODIFIED,
     NotificationType.DEFENDER_ASSIGNED,
   ],
 } as RolesRule
