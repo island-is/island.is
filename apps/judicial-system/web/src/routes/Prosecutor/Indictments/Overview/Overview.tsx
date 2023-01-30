@@ -20,8 +20,13 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  IndictmentSubtype,
+} from '@island.is/judicial-system/types'
 import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import { hasIndictmentSubtype } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
@@ -66,7 +71,14 @@ const Overview: React.FC = () => {
       activeSubSection={
         caseHasBeenReceivedByCourt
           ? undefined
-          : IndictmentsProsecutorSubsections.OVERVIEW
+          : IndictmentsProsecutorSubsections.OVERVIEW +
+            (workingCase.indictmentSubtypes &&
+            hasIndictmentSubtype(
+              workingCase.indictmentSubtypes,
+              IndictmentSubtype.TRAFFIC_VIOLATION,
+            )
+              ? 1
+              : 0)
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

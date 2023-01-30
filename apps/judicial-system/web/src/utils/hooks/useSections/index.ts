@@ -1,8 +1,11 @@
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import concat from 'lodash/concat'
+import flatten from 'lodash/flatten'
 
 import {
   Gender,
+  IndictmentSubtype,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -19,6 +22,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
+import { hasIndictmentSubtype } from '../../stepHelper'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -314,6 +318,7 @@ const useSections = (
     const caseHasBeenReceivedByCourt =
       workingCase.courtCaseNumber !== undefined &&
       workingCase.courtCaseNumber !== null
+
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       // Prosecutor can only view the overview when case has been submitted to court
@@ -392,6 +397,37 @@ const useSections = (
                       )
                   : undefined,
             },
+            ...(workingCase.type === CaseType.Indictment &&
+            workingCase.indictmentSubtypes &&
+            hasIndictmentSubtype(
+              workingCase.indictmentSubtypes,
+              IndictmentSubtype.TRAFFIC_VIOLATION,
+            )
+              ? [
+                  {
+                    name: formatMessage(
+                      sections.indictmentCaseProsecutorSection.indictment,
+                    ),
+                    href: `${constants.INDICTMENT_TRAFFIC_VIOLATION_ROUTE}/${id}`,
+                    onClick:
+                      validateFormStepper(
+                        isValid,
+                        [
+                          constants.INDICTMENTS_DEFENDANT_ROUTE,
+                          constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                          constants.INDICTMENTS_CASE_FILE_ROUTE,
+                          constants.INDICTMENTS_PROCESSING_ROUTE,
+                        ],
+                        workingCase,
+                      ) && onNavigationTo
+                        ? async () =>
+                            await onNavigationTo(
+                              constants.INDICTMENT_TRAFFIC_VIOLATION_ROUTE,
+                            )
+                        : undefined,
+                  },
+                ]
+              : []),
             {
               name: capitalize(
                 formatMessage(
@@ -399,7 +435,6 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
-
               onClick:
                 validateFormStepper(
                   isValid,

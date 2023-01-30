@@ -34,12 +34,16 @@ import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  IndictmentSubtype,
+} from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
+import { hasIndictmentSubtype } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 const CaseFiles: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -48,6 +52,10 @@ const CaseFiles: React.FC = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
   const { upload, remove } = useS3Upload(workingCase.id)
+  const isTrafficViolationCase = hasIndictmentSubtype(
+    workingCase.indictmentSubtypes,
+    IndictmentSubtype.TRAFFIC_VIOLATION,
+  )
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -153,7 +161,10 @@ const CaseFiles: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={Sections.PROSECUTOR}
-      activeSubSection={IndictmentsProsecutorSubsections.CASE_FILES}
+      activeSubSection={
+        IndictmentsProsecutorSubsections.CASE_FILES +
+        (isTrafficViolationCase ? 1 : 0)
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -266,7 +277,11 @@ const CaseFiles: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${
+            isTrafficViolationCase
+              ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
+              : constants.INDICTMENTS_PROCESSING_ROUTE
+          }/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }
