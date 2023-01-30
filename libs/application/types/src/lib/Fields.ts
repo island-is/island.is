@@ -101,7 +101,7 @@ export enum FieldTypes {
   PAYMENT_PENDING = 'PAYMENT_PENDING',
   COMPANY_SEARCH = 'COMPANY_SEARCH',
   REDIRECT_TO_SERVICE_PORTAL = 'REDIRECT_TO_SERVICE_PORTAL',
-  GO_TO_SERVICE_PORTAL = 'GO_TO_SERVICE_PORTAL',
+  MESSAGE_WITH_LINK_BUTTON_FIELD = 'MESSAGE_WITH_LINK_BUTTON_FIELD',
   BULLET_POINT = 'BULLET_POINT',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
 }
@@ -121,7 +121,7 @@ export enum FieldComponents {
   PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
-  GO_TO_SERVICE_PORTAL = 'GoToServicePortalFormField',
+  MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
   BULLET_POINT = 'BulletPointFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
 }
@@ -274,9 +274,12 @@ export interface RedirectToServicePortalField extends BaseField {
   component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL
 }
 
-export interface GoToServicePortalField extends BaseField {
-  readonly type: FieldTypes.GO_TO_SERVICE_PORTAL
-  component: FieldComponents.GO_TO_SERVICE_PORTAL
+export interface MessageWithLinkButtonField extends BaseField {
+  readonly type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD
+  component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD
+  url: string
+  buttonTitle: FormText
+  message: FormText
 }
 
 export interface BulletPointField extends BaseField {
@@ -308,6 +311,6 @@ export type Field =
   | AsyncSelectField
   | CompanySearchField
   | RedirectToServicePortalField
-  | GoToServicePortalField
+  | MessageWithLinkButtonField
   | BulletPointField
   | AlertMessageField

@@ -2,7 +2,7 @@ import {
   buildAlertMessageField,
   buildBulletPointField,
   buildForm,
-  buildGoToServicePortalField,
+  buildMessageWithLinkButtonField,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'

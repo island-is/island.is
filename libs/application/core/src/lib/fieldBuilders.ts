@@ -28,7 +28,7 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
-  GoToServicePortalField,
+  MessageWithLinkButtonField,
   BulletPointField,
   AlertMessageField,
 } from '@island.is/application/types'
@@ -417,17 +417,23 @@ export function buildRedirectToServicePortalField(data: {
   }
 }
 
-export function buildGoToServicePortalField(data: {
+export function buildMessageWithLinkButtonField(data: {
   id: string
   title: FormText
-}): GoToServicePortalField {
-  const { id, title } = data
+  url: string
+  buttonTitle: FormText
+  message: FormText
+}): MessageWithLinkButtonField {
+  const { id, title, url, message, buttonTitle } = data
   return {
     children: undefined,
     id,
     title,
-    type: FieldTypes.GO_TO_SERVICE_PORTAL,
-    component: FieldComponents.GO_TO_SERVICE_PORTAL,
+    url,
+    message,
+    buttonTitle,
+    type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+    component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
   }
 }
 

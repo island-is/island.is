@@ -7,7 +7,7 @@ import {
   buildRadioField,
   buildSection,
   buildSubmitField,
-  buildGoToServicePortalField,
+  buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
 import {
   CustomField,

@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildAlertMessageField,
   buildBulletPointField,
-  buildGoToServicePortalField,
+  buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
 import { MessageDescriptor } from 'react-intl'
 import { StaticText } from 'static-text'
@@ -38,9 +38,12 @@ export const formConclusionSection = (type: props) =>
             introText: type.bulletIntro,
             bulletPoints: type.bulletPoints,
           }),
-          buildGoToServicePortalField({
+          buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionGoToServicePortal',
             title: '',
+            url: '/minarsidur',
+            buttonTitle: conclusion.information.buttonTitle,
+            message: conclusion.information.messageText,
           }),
         ],
       }),
