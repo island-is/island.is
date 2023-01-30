@@ -6,7 +6,6 @@ import { applicationsNavigation } from '@island.is/service-portal/applications'
 import { assetsNavigation } from '@island.is/service-portal/assets'
 import { documentProviderNavigation } from '@island.is/service-portal/document-provider'
 import { educationNavigation } from '@island.is/service-portal/education'
-import { icelandicNamesRegistryNavigation } from '@island.is/service-portal/icelandic-names-registry'
 import {
   companyNavigation,
   informationNavigation,
@@ -41,7 +40,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     educationNavigation,
     licenseNavigation,
     educationLicenseNavigation,
-    icelandicNamesRegistryNavigation,
     delegationsNavigation,
   ],
 }

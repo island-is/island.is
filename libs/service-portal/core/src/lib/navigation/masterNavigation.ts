@@ -185,15 +185,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
       },
 
-      // Mannanafnaskrá
-      {
-        name: m.icelandicNamesRegistry,
-        path: ServicePortalPath.IcelandicNamesRegistryRoot,
-        icon: {
-          icon: 'fileTrayFull',
-        },
-      },
-
       // Fasteignir
       {
         name: m.realEstate,
