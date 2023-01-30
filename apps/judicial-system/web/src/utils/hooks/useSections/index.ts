@@ -2,7 +2,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  CaseType,
   Gender,
   isInvestigationCase,
   isRestrictionCase,
@@ -12,6 +11,7 @@ import { caseResult } from '@island.is/judicial-system-web/src/components/PageLa
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import {
+  CaseType,
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -78,7 +78,7 @@ const useSections = (
                   validateFormStepper(
                     isValid,
                     [
-                      workingCase.type === CaseType.CUSTODY
+                      workingCase.type === CaseType.Custody
                         ? constants.RESTRICTION_CASE_DEFENDANT_ROUTE
                         : constants.CREATE_TRAVEL_BAN_ROUTE,
                     ],

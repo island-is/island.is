@@ -402,16 +402,19 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
-export function isIndictmentCase(type?: CaseType): boolean {
-  return Boolean(type && indictmentCases.includes(type))
+export function isIndictmentCase(type: unknown): boolean {
+  const caseType = type as CaseType
+  return indictmentCases.includes(caseType)
 }
 
-export function isRestrictionCase(type?: CaseType): boolean {
-  return Boolean(type && restrictionCases.includes(type))
+export function isRestrictionCase(type: unknown): boolean {
+  const caseType = type as CaseType
+  return restrictionCases.includes(caseType)
 }
 
-export function isInvestigationCase(type?: CaseType): boolean {
-  return Boolean(type && investigationCases.includes(type))
+export function isInvestigationCase(type: unknown): boolean {
+  const caseType = type as CaseType
+  return investigationCases.includes(caseType)
 }
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {

@@ -17,12 +17,9 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import { indictment } from './Indictment.strings'
 
 const Indictment: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
   const { formatMessage } = useIntl()
 
   return (

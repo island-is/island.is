@@ -1,8 +1,8 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
-import type {
+import {
   Case as TCase,
   CaseAppealDecision,
   CaseLegalProvisions,
@@ -24,6 +24,8 @@ import { User } from '../../user'
 import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
 
+registerEnumType(CaseType, { name: 'CaseType' })
+
 @ObjectType()
 export class Case implements TCase {
   @Field(() => ID)
@@ -38,7 +40,7 @@ export class Case implements TCase {
   @Field(() => String)
   readonly origin!: CaseOrigin
 
-  @Field(() => String)
+  @Field(() => CaseType)
   readonly type!: CaseType
 
   @Field(() => GraphQLJSONObject, { nullable: true })
