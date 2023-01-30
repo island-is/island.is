@@ -7,6 +7,7 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
@@ -137,8 +138,11 @@ export const business = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
-                formatCurrency(String((answers.businessAssets as any).total)),
+                formatCurrency(
+                  String(getValueViaPath(answers, 'businessAssets.total')),
+                ),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -150,20 +154,21 @@ export const business = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
-                formatCurrency(String((answers.businessDebts as any).total)),
+                formatCurrency(
+                  String(getValueViaPath(answers, 'businessDebts.total')),
+                ),
             }),
             buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewBusinessOwnedMoney',
-              title: m.businessEquity,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
+            buildKeyValueField({
+              label: '',
+              colSpan: '6/12',
+              value: '',
             }),
             buildTextField({
               id: 'businessTotal',
-              title: m.total,
+              title: m.overviewTotal,
               readOnly: true,
               width: 'half',
               variant: 'currency',
@@ -171,8 +176,8 @@ export const business = buildSection({
               backgroundColor: 'white',
               defaultValue: ({ answers }: Application) => {
                 const total =
-                  (answers.businessAssets as any).total -
-                  (answers.businessDebts as any).total
+                  (getValueViaPath(answers, 'businessAssets.total') as number) -
+                  (getValueViaPath(answers, 'businessDebts.total') as number)
 
                 return total
               },

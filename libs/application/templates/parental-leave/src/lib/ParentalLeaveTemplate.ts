@@ -48,6 +48,7 @@ import {
   getOtherParentId,
   getSelectedChild,
   isParentalGrant,
+  isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
@@ -101,6 +102,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
+            externalDataId: 'noPrimaryChildren',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -346,7 +352,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -463,7 +474,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
-        entry: 'assignToVMST',
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
           status: 'inprogress',
@@ -497,7 +507,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENT_REQUIRED]: {
-        entry: 'assignToVMST',
         meta: {
           status: 'inprogress',
           name: States.ADDITIONAL_DOCUMENT_REQUIRED,
@@ -623,12 +632,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: [
-          'createTempPeriods',
-          'assignToVMST',
-          'removeNullPeriod',
-          'setNavId',
-        ],
+        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
         exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
@@ -721,7 +725,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: 'removeNullPeriod',
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -745,7 +749,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -794,7 +803,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
-        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
@@ -837,7 +845,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: 'clearTemp',
+        exit: ['clearTemp', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -883,7 +891,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
-        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
@@ -1187,7 +1194,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers, externalData } = application
         const selectedChild = getSelectedChild(answers, externalData)
 
-        if (!selectedChild) {
+        if (!selectedChild || isParentWithoutBirthParent(application.answers)) {
           return context
         }
 

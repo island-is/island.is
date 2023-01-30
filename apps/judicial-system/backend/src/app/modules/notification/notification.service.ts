@@ -656,7 +656,11 @@ export class NotificationService {
     user: TUser | User,
     eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
-    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
+    this.eventService.postEvent(
+      CaseEvent.SCHEDULE_COURT_DATE,
+      theCase,
+      eventOnly,
+    )
 
     if (eventOnly) {
       return { notificationSent: false }
@@ -1504,6 +1508,16 @@ export class NotificationService {
           messages = [
             this.getNotificationMessage(
               MessageType.SEND_COURT_DATE_NOTIFICATION,
+              user,
+              theCase,
+              notification.eventOnly,
+            ),
+          ]
+          break
+        case NotificationType.REVOKED:
+          messages = [
+            this.getNotificationMessage(
+              MessageType.SEND_REVOKED_NOTIFICATION,
               user,
               theCase,
               notification.eventOnly,
