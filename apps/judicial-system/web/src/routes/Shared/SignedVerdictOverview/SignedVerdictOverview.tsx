@@ -16,6 +16,7 @@ import {
   SignatureConfirmationResponse,
   CaseAppealDecision,
   isAcceptingCaseDecision,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -76,7 +77,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isCourtRole } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
