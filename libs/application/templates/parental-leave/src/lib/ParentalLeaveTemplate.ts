@@ -561,7 +561,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: ['assignToVMST', 'setPreviousState'],
         exit: 'removePreviousState',
         meta: {
-          status: 'inprogress',       
+          status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -586,11 +586,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
+          [DefaultEvents.REJECT]: { target: States.APPROVED },
+          [DefaultEvents.SUBMIT]: { target: States.APPROVED },
           ['APPROVED']: { target: States.APPROVED },
-          ['ADDITIONALDOCUMENTREQUIRED']: { target: States.ADDITIONAL_DOCUMENT_REQUIRED },
-          ['EMPLOYERWAITINGTOASSIGN']: { target: States.EMPLOYER_WAITING_TO_ASSIGN },
+          ['ADDITIONALDOCUMENTREQUIRED']: {
+            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          },
+          ['EMPLOYERWAITINGTOASSIGN']: {
+            target: States.EMPLOYER_WAITING_TO_ASSIGN,
+          },
           ['CLOSED']: { target: States.CLOSED },
-          ['VINNUMALASTOFNUNAPPROVAL']: { target: States.VINNUMALASTOFNUN_APPROVAL },
+          ['VINNUMALASTOFNUNAPPROVAL']: {
+            target: States.VINNUMALASTOFNUN_APPROVAL,
+          },
           ['EMPLOYERAPPROVAL']: { target: States.EMPLOYER_APPROVAL },
         },
       },
@@ -692,7 +700,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ['RESIDENCEGRANTAPPLICATION']: {
             target: States.RESIDENCE_GRAND_APPLICATION,
           },
-        }
+        },
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
@@ -1383,7 +1391,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { state } = application
         const { answers } = application
-        const { dateOfBirth } = answers
         set(answers, 'previousState', state)
         return context
       }),

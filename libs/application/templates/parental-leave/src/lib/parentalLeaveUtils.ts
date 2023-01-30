@@ -1340,7 +1340,12 @@ const convertBirthDay = (birthDay: string) => {
 export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
   const convertedBirthDay = convertBirthDay(childBirthDay)
   // Guard that the method used above did not return 0 0 0
-  if ( convertedBirthDay.date === 0 && convertedBirthDay.month === 0 && convertedBirthDay.year === 0 ) return false
+  if (
+    convertedBirthDay.date === 0 &&
+    convertedBirthDay.month === 0 &&
+    convertedBirthDay.year === 0
+  )
+    return false
   const birthDay = new Date(
     convertedBirthDay?.year,
     convertedBirthDay.month,
@@ -1351,5 +1356,5 @@ export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
   // Adds 6 months to the birthday
   const fullPeriod = addMonths(birthDay, 6)
   if (!isBefore(dateToday, fullPeriod)) return false
-    return true
+  return true
 }

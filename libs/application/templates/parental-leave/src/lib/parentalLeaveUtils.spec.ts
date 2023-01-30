@@ -1527,13 +1527,11 @@ test.each([
 )
 
 test.each([
-  { date: '20230102', expected: true},
-  { date: '19800102', expected: false},
+  { date: '20230102', expected: true },
+  { date: '19800102', expected: false },
 ])(
   'should return true if today is after the date and within 6 months of the date',
   ({ date, expected }) => {
-    expect(residentGrantIsOpenForApplication(date)).toBe(
-      expected,
-    )
+    expect(residentGrantIsOpenForApplication(date)).toBe(expected)
   },
 )

@@ -12,7 +12,7 @@ export enum ReviewSectionState {
   inProgress = 'In progress',
   requiresAction = 'Requires action',
   complete = 'Complete',
-  optionalAction = 'Optional action'
+  optionalAction = 'Optional action',
 }
 
 type ReviewSectionProps = {
@@ -55,8 +55,10 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           [styles.sectionNumberRequiresAction]:
             state === ReviewSectionState.requiresAction,
           [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
-          [styles.sectionNumberOptionalAction]: state === ReviewSectionState.optionalAction,
-          [styles.sectionNumberPrerequisites]: state === ReviewSectionState.prerequisites,
+          [styles.sectionNumberOptionalAction]:
+            state === ReviewSectionState.optionalAction,
+          [styles.sectionNumberPrerequisites]:
+            state === ReviewSectionState.prerequisites,
         })}
       >
         {(state === ReviewSectionState.complete && (
@@ -71,27 +73,30 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         flexDirection={['columnReverse', 'row']}
         justifyContent="spaceBetween"
       >
-        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]} width='full'>
+        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]} width="full">
           <Text variant="h3">{title}</Text>
           <Text marginTop={1} variant="default">
             {description}
-          </Text> 
-          {notifyParentOnClickEvent && (state === ReviewSectionState.optionalAction || state === ReviewSectionState.prerequisites)  &&
-            <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
-              <Box>
-                <Button
-                  variant="text"
-                  icon="arrowForward"
-                  onClick={() => notifyParentOnClickEvent('RESIDENCEGRANTAPPLICATION')}
-                >
-                  {state === ReviewSectionState.optionalAction
-                    ? 'Sækja um dvalarstyrk'
-                    : 'Upplýsingar um þetta forrit'
-                  }
-                </Button>
+          </Text>
+          {notifyParentOnClickEvent &&
+            (state === ReviewSectionState.optionalAction ||
+              state === ReviewSectionState.prerequisites) && (
+              <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
+                <Box>
+                  <Button
+                    variant="text"
+                    icon="arrowForward"
+                    onClick={() =>
+                      notifyParentOnClickEvent('RESIDENCEGRANTAPPLICATION')
+                    }
+                  >
+                    {state === ReviewSectionState.optionalAction
+                      ? 'Sækja um dvalarstyrk'
+                      : 'Upplýsingar um þetta forrit'}
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          }
+            )}
         </Box>
 
         {state === ReviewSectionState.inProgress && (
