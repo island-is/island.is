@@ -7,6 +7,7 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { ConfigModule } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
+import { PaymentModule } from '@island.is/application/api/payment'
 
 export class PaymentCatalogModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -14,6 +15,7 @@ export class PaymentCatalogModule {
       module: PaymentCatalogModule,
       imports: [
         ChargeFjsV2ClientModule,
+        PaymentModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [XRoadConfig, ChargeFjsV2ClientConfig],
