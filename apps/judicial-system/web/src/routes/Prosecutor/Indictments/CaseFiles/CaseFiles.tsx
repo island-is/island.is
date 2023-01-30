@@ -36,14 +36,16 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseFileCategory,
+  Feature,
   IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import { hasIndictmentSubtype } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
-import { hasIndictmentSubtype } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 const CaseFiles: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -52,10 +54,13 @@ const CaseFiles: React.FC = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
   const { upload, remove } = useS3Upload(workingCase.id)
-  const isTrafficViolationCase = hasIndictmentSubtype(
-    workingCase.indictmentSubtypes,
-    IndictmentSubtype.TRAFFIC_VIOLATION,
-  )
+  const { features } = useContext(FeatureContext)
+  const isTrafficViolationCase =
+    features.includes(Feature.INDICTMENT_ROUTE) &&
+    hasIndictmentSubtype(
+      workingCase.indictmentSubtypes,
+      IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
 
   useEffect(() => {
     if (workingCase.caseFiles) {

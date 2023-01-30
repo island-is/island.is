@@ -23,10 +23,12 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseState,
   CaseTransition,
+  Feature,
   IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import { hasIndictmentSubtype } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
@@ -42,8 +44,15 @@ const Overview: React.FC = () => {
     'noModal',
   )
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
   const { transitionCase } = useCase()
+  const isTrafficViolationCase =
+    features.includes(Feature.INDICTMENT_ROUTE) &&
+    hasIndictmentSubtype(
+      workingCase.indictmentSubtypes,
+      IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
 
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
@@ -72,13 +81,7 @@ const Overview: React.FC = () => {
         caseHasBeenReceivedByCourt
           ? undefined
           : IndictmentsProsecutorSubsections.OVERVIEW +
-            (workingCase.indictmentSubtypes &&
-            hasIndictmentSubtype(
-              workingCase.indictmentSubtypes,
-              IndictmentSubtype.TRAFFIC_VIOLATION,
-            )
-              ? 1
-              : 0)
+            (isTrafficViolationCase ? 1 : 0)
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

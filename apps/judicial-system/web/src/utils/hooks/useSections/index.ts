@@ -1,9 +1,8 @@
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import concat from 'lodash/concat'
-import flatten from 'lodash/flatten'
 
 import {
+  Feature,
   Gender,
   IndictmentSubtype,
   isInvestigationCase,
@@ -23,6 +22,8 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { hasIndictmentSubtype } from '../../stepHelper'
+import { useContext } from 'react'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -49,6 +50,7 @@ const useSections = (
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
 
   const getRestrictionCaseProsecutorSection = (
@@ -397,7 +399,8 @@ const useSections = (
                       )
                   : undefined,
             },
-            ...(workingCase.type === CaseType.Indictment &&
+            ...(features.includes(Feature.INDICTMENT_ROUTE) &&
+            workingCase.type === CaseType.Indictment &&
             workingCase.indictmentSubtypes &&
             hasIndictmentSubtype(
               workingCase.indictmentSubtypes,
