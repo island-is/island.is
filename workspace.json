@@ -265,6 +265,7 @@
     "service-portal-icelandic-names-registry": "libs/service-portal/icelandic-names-registry",
     "service-portal-information": "libs/service-portal/information",
     "service-portal-licenses": "libs/service-portal/licenses",
+    "service-portal-sessions": "libs/service-portal/sessions",
     "service-portal-settings-personal-information": "libs/service-portal/settings/personal-information",
     "service-portal-vehicles": "libs/service-portal/vehicles",
     "services-auth-admin-api": "apps/services/auth/admin-api",

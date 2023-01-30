@@ -179,6 +179,32 @@ describe('CaseController - Get ruling signature confirmation', () => {
     })
   })
 
+  describe('successful completion of extended LÖKE case', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      judgeId: userId,
+      parentCaseId: uuid(),
+    } as Case
+    const documentToken = uuid()
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(theCase)
+
+      await givenWhenThen(caseId, user, theCase, documentToken)
+    })
+
+    it('should return success', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, userId, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, userId, caseId },
+      ])
+    })
+  })
+
   describe('user is not the assigned judge', () => {
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid() } as Case
