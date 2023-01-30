@@ -13,6 +13,7 @@ import {
   ApiBody,
   ApiExtraModels,
   getSchemaPath,
+  ApiOperation,
 } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -44,6 +45,7 @@ export class NotificationsController {
     },
   })
   @ApiOkResponse({ type: CreateNotificationResponse })
+  @ApiOperation({deprecated: true})
   @HttpCode(201)
   @Post()
   async createNotification(

@@ -1592,7 +1592,6 @@ export type AssetLinkingCollections = {
   introLinkImageCollection?: Maybe<IntroLinkImageCollection>
   lifeEventPageCollection?: Maybe<LifeEventPageCollection>
   logoListSliceCollection?: Maybe<LogoListSliceCollection>
-  mailingListSignupCollection?: Maybe<MailingListSignupCollection>
   newsCollection?: Maybe<NewsCollection>
   openDataPageCollection?: Maybe<OpenDataPageCollection>
   openDataSubpageCollection?: Maybe<OpenDataSubpageCollection>
@@ -1705,13 +1704,6 @@ export type AssetLinkingCollectionsLifeEventPageCollectionArgs = {
 }
 
 export type AssetLinkingCollectionsLogoListSliceCollectionArgs = {
-  limit?: InputMaybe<Scalars['Int']>
-  locale?: InputMaybe<Scalars['String']>
-  preview?: InputMaybe<Scalars['Boolean']>
-  skip?: InputMaybe<Scalars['Int']>
-}
-
-export type AssetLinkingCollectionsMailingListSignupCollectionArgs = {
   limit?: InputMaybe<Scalars['Int']>
   locale?: InputMaybe<Scalars['String']>
   preview?: InputMaybe<Scalars['Boolean']>
@@ -2877,6 +2869,7 @@ export type EmailSignup = Entry & {
   linkedFrom?: Maybe<EmailSignupLinkingCollections>
   signupType?: Maybe<Scalars['String']>
   sys: Sys
+  tilkynning?: Maybe<Scalars['String']>
   title?: Maybe<Scalars['String']>
   translations?: Maybe<Scalars['JSON']>
 }
@@ -2906,6 +2899,11 @@ export type EmailSignupLinkedFromArgs = {
 
 /** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/emailSignup) */
 export type EmailSignupSignupTypeArgs = {
+  locale?: InputMaybe<Scalars['String']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/emailSignup) */
+export type EmailSignupTilkynningArgs = {
   locale?: InputMaybe<Scalars['String']>
 }
 
@@ -2948,6 +2946,13 @@ export type EmailSignupFilter = {
   signupType_not_contains?: InputMaybe<Scalars['String']>
   signupType_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   sys?: InputMaybe<SysFilter>
+  tilkynning?: InputMaybe<Scalars['String']>
+  tilkynning_contains?: InputMaybe<Scalars['String']>
+  tilkynning_exists?: InputMaybe<Scalars['Boolean']>
+  tilkynning_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
+  tilkynning_not?: InputMaybe<Scalars['String']>
+  tilkynning_not_contains?: InputMaybe<Scalars['String']>
+  tilkynning_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   title?: InputMaybe<Scalars['String']>
   title_contains?: InputMaybe<Scalars['String']>
   title_exists?: InputMaybe<Scalars['Boolean']>
@@ -3959,6 +3964,169 @@ export enum FeaturedOrder {
   TitleDesc = 'title_DESC',
 }
 
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAs = Entry & {
+  __typename?: 'FeaturedSupportQnAs'
+  automaticallyFetchSupportQnAs?: Maybe<Scalars['Boolean']>
+  contentfulMetadata: ContentfulMetadata
+  link?: Maybe<Link>
+  linkedFrom?: Maybe<FeaturedSupportQnAsLinkingCollections>
+  organization?: Maybe<Organization>
+  renderedTitle?: Maybe<Scalars['String']>
+  supportCategory?: Maybe<SupportCategory>
+  supportQnAsCollection?: Maybe<FeaturedSupportQnAsSupportQnAsCollection>
+  supportQnaCount?: Maybe<Scalars['Int']>
+  supportSubcategory?: Maybe<SupportSubCategory>
+  sys: Sys
+  title?: Maybe<Scalars['String']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsAutomaticallyFetchSupportQnAsArgs = {
+  locale?: InputMaybe<Scalars['String']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsLinkArgs = {
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsLinkedFromArgs = {
+  allowedLocales?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsOrganizationArgs = {
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsRenderedTitleArgs = {
+  locale?: InputMaybe<Scalars['String']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsSupportCategoryArgs = {
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsSupportQnAsCollectionArgs = {
+  limit?: InputMaybe<Scalars['Int']>
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+  skip?: InputMaybe<Scalars['Int']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsSupportQnaCountArgs = {
+  locale?: InputMaybe<Scalars['String']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsSupportSubcategoryArgs = {
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs) */
+export type FeaturedSupportQnAsTitleArgs = {
+  locale?: InputMaybe<Scalars['String']>
+}
+
+export type FeaturedSupportQnAsCollection = {
+  __typename?: 'FeaturedSupportQnAsCollection'
+  items: Array<Maybe<FeaturedSupportQnAs>>
+  limit: Scalars['Int']
+  skip: Scalars['Int']
+  total: Scalars['Int']
+}
+
+export type FeaturedSupportQnAsFilter = {
+  AND?: InputMaybe<Array<InputMaybe<FeaturedSupportQnAsFilter>>>
+  OR?: InputMaybe<Array<InputMaybe<FeaturedSupportQnAsFilter>>>
+  automaticallyFetchSupportQNAs?: InputMaybe<Scalars['Boolean']>
+  automaticallyFetchSupportQNAs_exists?: InputMaybe<Scalars['Boolean']>
+  automaticallyFetchSupportQNAs_not?: InputMaybe<Scalars['Boolean']>
+  contentfulMetadata?: InputMaybe<ContentfulMetadataFilter>
+  link?: InputMaybe<CfLinkNestedFilter>
+  link_exists?: InputMaybe<Scalars['Boolean']>
+  organization?: InputMaybe<CfOrganizationNestedFilter>
+  organization_exists?: InputMaybe<Scalars['Boolean']>
+  renderedTitle?: InputMaybe<Scalars['String']>
+  renderedTitle_contains?: InputMaybe<Scalars['String']>
+  renderedTitle_exists?: InputMaybe<Scalars['Boolean']>
+  renderedTitle_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
+  renderedTitle_not?: InputMaybe<Scalars['String']>
+  renderedTitle_not_contains?: InputMaybe<Scalars['String']>
+  renderedTitle_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
+  supportCategory?: InputMaybe<CfSupportCategoryNestedFilter>
+  supportCategory_exists?: InputMaybe<Scalars['Boolean']>
+  supportQNAsCollection_exists?: InputMaybe<Scalars['Boolean']>
+  supportQnaCount?: InputMaybe<Scalars['Int']>
+  supportQnaCount_exists?: InputMaybe<Scalars['Boolean']>
+  supportQnaCount_gt?: InputMaybe<Scalars['Int']>
+  supportQnaCount_gte?: InputMaybe<Scalars['Int']>
+  supportQnaCount_in?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>
+  supportQnaCount_lt?: InputMaybe<Scalars['Int']>
+  supportQnaCount_lte?: InputMaybe<Scalars['Int']>
+  supportQnaCount_not?: InputMaybe<Scalars['Int']>
+  supportQnaCount_not_in?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>
+  supportSubcategory?: InputMaybe<CfSupportSubCategoryNestedFilter>
+  supportSubcategory_exists?: InputMaybe<Scalars['Boolean']>
+  sys?: InputMaybe<SysFilter>
+  title?: InputMaybe<Scalars['String']>
+  title_contains?: InputMaybe<Scalars['String']>
+  title_exists?: InputMaybe<Scalars['Boolean']>
+  title_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
+  title_not?: InputMaybe<Scalars['String']>
+  title_not_contains?: InputMaybe<Scalars['String']>
+  title_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
+}
+
+export type FeaturedSupportQnAsLinkingCollections = {
+  __typename?: 'FeaturedSupportQnAsLinkingCollections'
+  entryCollection?: Maybe<EntryCollection>
+}
+
+export type FeaturedSupportQnAsLinkingCollectionsEntryCollectionArgs = {
+  limit?: InputMaybe<Scalars['Int']>
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+  skip?: InputMaybe<Scalars['Int']>
+}
+
+export enum FeaturedSupportQnAsOrder {
+  AutomaticallyFetchSupportQnAsAsc = 'automaticallyFetchSupportQNAs_ASC',
+  AutomaticallyFetchSupportQnAsDesc = 'automaticallyFetchSupportQNAs_DESC',
+  RenderedTitleAsc = 'renderedTitle_ASC',
+  RenderedTitleDesc = 'renderedTitle_DESC',
+  SupportQnaCountAsc = 'supportQnaCount_ASC',
+  SupportQnaCountDesc = 'supportQnaCount_DESC',
+  SysFirstPublishedAtAsc = 'sys_firstPublishedAt_ASC',
+  SysFirstPublishedAtDesc = 'sys_firstPublishedAt_DESC',
+  SysIdAsc = 'sys_id_ASC',
+  SysIdDesc = 'sys_id_DESC',
+  SysPublishedAtAsc = 'sys_publishedAt_ASC',
+  SysPublishedAtDesc = 'sys_publishedAt_DESC',
+  SysPublishedVersionAsc = 'sys_publishedVersion_ASC',
+  SysPublishedVersionDesc = 'sys_publishedVersion_DESC',
+  TitleAsc = 'title_ASC',
+  TitleDesc = 'title_DESC',
+}
+
+export type FeaturedSupportQnAsSupportQnAsCollection = {
+  __typename?: 'FeaturedSupportQnAsSupportQNAsCollection'
+  items: Array<Maybe<SupportQna>>
+  limit: Scalars['Int']
+  skip: Scalars['Int']
+  total: Scalars['Int']
+}
+
 export type FeaturedThing =
   | Article
   | LinkUrl
@@ -4210,6 +4378,7 @@ export type FormField = Entry & {
   __typename?: 'FormField'
   contentfulMetadata: ContentfulMetadata
   emailConfig?: Maybe<Scalars['JSON']>
+  informationText?: Maybe<Scalars['String']>
   linkedFrom?: Maybe<FormFieldLinkingCollections>
   name?: Maybe<Scalars['String']>
   options?: Maybe<Array<Maybe<Scalars['String']>>>
@@ -4222,6 +4391,11 @@ export type FormField = Entry & {
 
 /** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/formField) */
 export type FormFieldEmailConfigArgs = {
+  locale?: InputMaybe<Scalars['String']>
+}
+
+/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/formField) */
+export type FormFieldInformationTextArgs = {
   locale?: InputMaybe<Scalars['String']>
 }
 
@@ -4273,6 +4447,13 @@ export type FormFieldFilter = {
   OR?: InputMaybe<Array<InputMaybe<FormFieldFilter>>>
   contentfulMetadata?: InputMaybe<ContentfulMetadataFilter>
   emailConfig_exists?: InputMaybe<Scalars['Boolean']>
+  informationText?: InputMaybe<Scalars['String']>
+  informationText_contains?: InputMaybe<Scalars['String']>
+  informationText_exists?: InputMaybe<Scalars['Boolean']>
+  informationText_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
+  informationText_not?: InputMaybe<Scalars['String']>
+  informationText_not_contains?: InputMaybe<Scalars['String']>
+  informationText_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   name?: InputMaybe<Scalars['String']>
   name_contains?: InputMaybe<Scalars['String']>
   name_exists?: InputMaybe<Scalars['Boolean']>
@@ -6991,6 +7172,7 @@ export type LinkLinkingCollections = {
   entryCollection?: Maybe<EntryCollection>
   eventSliceCollection?: Maybe<EventSliceCollection>
   featuredArticlesCollection?: Maybe<FeaturedArticlesCollection>
+  featuredSupportQnAsCollection?: Maybe<FeaturedSupportQnAsCollection>
   footerItemCollection?: Maybe<FooterItemCollection>
   frontpageSliderCollection?: Maybe<FrontpageSliderCollection>
   latestNewsSliceCollection?: Maybe<LatestNewsSliceCollection>
@@ -7046,6 +7228,13 @@ export type LinkLinkingCollectionsEventSliceCollectionArgs = {
 }
 
 export type LinkLinkingCollectionsFeaturedArticlesCollectionArgs = {
+  limit?: InputMaybe<Scalars['Int']>
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+  skip?: InputMaybe<Scalars['Int']>
+}
+
+export type LinkLinkingCollectionsFeaturedSupportQnAsCollectionArgs = {
   limit?: InputMaybe<Scalars['Int']>
   locale?: InputMaybe<Scalars['String']>
   preview?: InputMaybe<Scalars['Boolean']>
@@ -7583,257 +7772,6 @@ export enum LogoListSliceOrder {
   SysPublishedVersionDesc = 'sys_publishedVersion_DESC',
   TitleAsc = 'title_ASC',
   TitleDesc = 'title_DESC',
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignup = Entry & {
-  __typename?: 'MailingListSignup'
-  buttonText?: Maybe<Scalars['String']>
-  categories?: Maybe<Scalars['JSON']>
-  categoryLabel?: Maybe<Scalars['String']>
-  contentfulMetadata: ContentfulMetadata
-  description?: Maybe<Scalars['String']>
-  disclaimerLabel?: Maybe<Scalars['String']>
-  fullNameLabel?: Maybe<Scalars['String']>
-  image?: Maybe<Asset>
-  inputLabel?: Maybe<Scalars['String']>
-  inputs?: Maybe<Scalars['JSON']>
-  linkedFrom?: Maybe<MailingListSignupLinkingCollections>
-  noLabel?: Maybe<Scalars['String']>
-  questionLabel?: Maybe<Scalars['String']>
-  signupUrl?: Maybe<Scalars['String']>
-  sys: Sys
-  title?: Maybe<Scalars['String']>
-  variant?: Maybe<Scalars['String']>
-  yesLabel?: Maybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupButtonTextArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupCategoriesArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupCategoryLabelArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupDescriptionArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupDisclaimerLabelArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupFullNameLabelArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupImageArgs = {
-  locale?: InputMaybe<Scalars['String']>
-  preview?: InputMaybe<Scalars['Boolean']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupInputLabelArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupInputsArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupLinkedFromArgs = {
-  allowedLocales?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupNoLabelArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupQuestionLabelArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupSignupUrlArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupTitleArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupVariantArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/mailingListSignup) */
-export type MailingListSignupYesLabelArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-export type MailingListSignupCollection = {
-  __typename?: 'MailingListSignupCollection'
-  items: Array<Maybe<MailingListSignup>>
-  limit: Scalars['Int']
-  skip: Scalars['Int']
-  total: Scalars['Int']
-}
-
-export type MailingListSignupFilter = {
-  AND?: InputMaybe<Array<InputMaybe<MailingListSignupFilter>>>
-  OR?: InputMaybe<Array<InputMaybe<MailingListSignupFilter>>>
-  buttonText?: InputMaybe<Scalars['String']>
-  buttonText_contains?: InputMaybe<Scalars['String']>
-  buttonText_exists?: InputMaybe<Scalars['Boolean']>
-  buttonText_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  buttonText_not?: InputMaybe<Scalars['String']>
-  buttonText_not_contains?: InputMaybe<Scalars['String']>
-  buttonText_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  categories_exists?: InputMaybe<Scalars['Boolean']>
-  categoryLabel?: InputMaybe<Scalars['String']>
-  categoryLabel_contains?: InputMaybe<Scalars['String']>
-  categoryLabel_exists?: InputMaybe<Scalars['Boolean']>
-  categoryLabel_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  categoryLabel_not?: InputMaybe<Scalars['String']>
-  categoryLabel_not_contains?: InputMaybe<Scalars['String']>
-  categoryLabel_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  contentfulMetadata?: InputMaybe<ContentfulMetadataFilter>
-  description?: InputMaybe<Scalars['String']>
-  description_contains?: InputMaybe<Scalars['String']>
-  description_exists?: InputMaybe<Scalars['Boolean']>
-  description_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  description_not?: InputMaybe<Scalars['String']>
-  description_not_contains?: InputMaybe<Scalars['String']>
-  description_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  disclaimerLabel?: InputMaybe<Scalars['String']>
-  disclaimerLabel_contains?: InputMaybe<Scalars['String']>
-  disclaimerLabel_exists?: InputMaybe<Scalars['Boolean']>
-  disclaimerLabel_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  disclaimerLabel_not?: InputMaybe<Scalars['String']>
-  disclaimerLabel_not_contains?: InputMaybe<Scalars['String']>
-  disclaimerLabel_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  fullNameLabel?: InputMaybe<Scalars['String']>
-  fullNameLabel_contains?: InputMaybe<Scalars['String']>
-  fullNameLabel_exists?: InputMaybe<Scalars['Boolean']>
-  fullNameLabel_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  fullNameLabel_not?: InputMaybe<Scalars['String']>
-  fullNameLabel_not_contains?: InputMaybe<Scalars['String']>
-  fullNameLabel_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  image_exists?: InputMaybe<Scalars['Boolean']>
-  inputLabel?: InputMaybe<Scalars['String']>
-  inputLabel_contains?: InputMaybe<Scalars['String']>
-  inputLabel_exists?: InputMaybe<Scalars['Boolean']>
-  inputLabel_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  inputLabel_not?: InputMaybe<Scalars['String']>
-  inputLabel_not_contains?: InputMaybe<Scalars['String']>
-  inputLabel_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  inputs_exists?: InputMaybe<Scalars['Boolean']>
-  noLabel?: InputMaybe<Scalars['String']>
-  noLabel_contains?: InputMaybe<Scalars['String']>
-  noLabel_exists?: InputMaybe<Scalars['Boolean']>
-  noLabel_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  noLabel_not?: InputMaybe<Scalars['String']>
-  noLabel_not_contains?: InputMaybe<Scalars['String']>
-  noLabel_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  questionLabel?: InputMaybe<Scalars['String']>
-  questionLabel_contains?: InputMaybe<Scalars['String']>
-  questionLabel_exists?: InputMaybe<Scalars['Boolean']>
-  questionLabel_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  questionLabel_not?: InputMaybe<Scalars['String']>
-  questionLabel_not_contains?: InputMaybe<Scalars['String']>
-  questionLabel_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  signupUrl?: InputMaybe<Scalars['String']>
-  signupUrl_contains?: InputMaybe<Scalars['String']>
-  signupUrl_exists?: InputMaybe<Scalars['Boolean']>
-  signupUrl_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  signupUrl_not?: InputMaybe<Scalars['String']>
-  signupUrl_not_contains?: InputMaybe<Scalars['String']>
-  signupUrl_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  sys?: InputMaybe<SysFilter>
-  title?: InputMaybe<Scalars['String']>
-  title_contains?: InputMaybe<Scalars['String']>
-  title_exists?: InputMaybe<Scalars['Boolean']>
-  title_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  title_not?: InputMaybe<Scalars['String']>
-  title_not_contains?: InputMaybe<Scalars['String']>
-  title_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  variant?: InputMaybe<Scalars['String']>
-  variant_contains?: InputMaybe<Scalars['String']>
-  variant_exists?: InputMaybe<Scalars['Boolean']>
-  variant_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  variant_not?: InputMaybe<Scalars['String']>
-  variant_not_contains?: InputMaybe<Scalars['String']>
-  variant_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  yesLabel?: InputMaybe<Scalars['String']>
-  yesLabel_contains?: InputMaybe<Scalars['String']>
-  yesLabel_exists?: InputMaybe<Scalars['Boolean']>
-  yesLabel_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  yesLabel_not?: InputMaybe<Scalars['String']>
-  yesLabel_not_contains?: InputMaybe<Scalars['String']>
-  yesLabel_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-}
-
-export type MailingListSignupLinkingCollections = {
-  __typename?: 'MailingListSignupLinkingCollections'
-  entryCollection?: Maybe<EntryCollection>
-}
-
-export type MailingListSignupLinkingCollectionsEntryCollectionArgs = {
-  limit?: InputMaybe<Scalars['Int']>
-  locale?: InputMaybe<Scalars['String']>
-  preview?: InputMaybe<Scalars['Boolean']>
-  skip?: InputMaybe<Scalars['Int']>
-}
-
-export enum MailingListSignupOrder {
-  ButtonTextAsc = 'buttonText_ASC',
-  ButtonTextDesc = 'buttonText_DESC',
-  CategoryLabelAsc = 'categoryLabel_ASC',
-  CategoryLabelDesc = 'categoryLabel_DESC',
-  DisclaimerLabelAsc = 'disclaimerLabel_ASC',
-  DisclaimerLabelDesc = 'disclaimerLabel_DESC',
-  FullNameLabelAsc = 'fullNameLabel_ASC',
-  FullNameLabelDesc = 'fullNameLabel_DESC',
-  InputLabelAsc = 'inputLabel_ASC',
-  InputLabelDesc = 'inputLabel_DESC',
-  NoLabelAsc = 'noLabel_ASC',
-  NoLabelDesc = 'noLabel_DESC',
-  QuestionLabelAsc = 'questionLabel_ASC',
-  QuestionLabelDesc = 'questionLabel_DESC',
-  SignupUrlAsc = 'signupUrl_ASC',
-  SignupUrlDesc = 'signupUrl_DESC',
-  SysFirstPublishedAtAsc = 'sys_firstPublishedAt_ASC',
-  SysFirstPublishedAtDesc = 'sys_firstPublishedAt_DESC',
-  SysIdAsc = 'sys_id_ASC',
-  SysIdDesc = 'sys_id_DESC',
-  SysPublishedAtAsc = 'sys_publishedAt_ASC',
-  SysPublishedAtDesc = 'sys_publishedAt_DESC',
-  SysPublishedVersionAsc = 'sys_publishedVersion_ASC',
-  SysPublishedVersionDesc = 'sys_publishedVersion_DESC',
-  TitleAsc = 'title_ASC',
-  TitleDesc = 'title_DESC',
-  VariantAsc = 'variant_ASC',
-  VariantDesc = 'variant_DESC',
-  YesLabelAsc = 'yesLabel_ASC',
-  YesLabelDesc = 'yesLabel_DESC',
 }
 
 /** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/menu) */
@@ -9698,6 +9636,7 @@ export type OrganizationLinkingCollections = {
   enhancedAssetCollection?: Maybe<EnhancedAssetCollection>
   entryCollection?: Maybe<EntryCollection>
   featuredArticlesCollection?: Maybe<FeaturedArticlesCollection>
+  featuredSupportQnAsCollection?: Maybe<FeaturedSupportQnAsCollection>
   frontpageSliderCollection?: Maybe<FrontpageSliderCollection>
   hnippTemplateCollection?: Maybe<HnippTemplateCollection>
   organizationPageCollection?: Maybe<OrganizationPageCollection>
@@ -9735,6 +9674,13 @@ export type OrganizationLinkingCollectionsEntryCollectionArgs = {
 }
 
 export type OrganizationLinkingCollectionsFeaturedArticlesCollectionArgs = {
+  limit?: InputMaybe<Scalars['Int']>
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+  skip?: InputMaybe<Scalars['Int']>
+}
+
+export type OrganizationLinkingCollectionsFeaturedSupportQnAsCollectionArgs = {
   limit?: InputMaybe<Scalars['Int']>
   locale?: InputMaybe<Scalars['String']>
   preview?: InputMaybe<Scalars['Boolean']>
@@ -9841,7 +9787,6 @@ export type OrganizationPage = Entry & {
   sys: Sys
   theme?: Maybe<Scalars['String']>
   themeProperties?: Maybe<Scalars['JSON']>
-  tilkynning?: Maybe<Scalars['String']>
   title?: Maybe<Scalars['String']>
 }
 
@@ -9976,11 +9921,6 @@ export type OrganizationPageThemePropertiesArgs = {
 }
 
 /** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/organizationPage) */
-export type OrganizationPageTilkynningArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/organizationPage) */
 export type OrganizationPageTitleArgs = {
   locale?: InputMaybe<Scalars['String']>
 }
@@ -10068,13 +10008,6 @@ export type OrganizationPageFilter = {
   theme_not?: InputMaybe<Scalars['String']>
   theme_not_contains?: InputMaybe<Scalars['String']>
   theme_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  tilkynning?: InputMaybe<Scalars['String']>
-  tilkynning_contains?: InputMaybe<Scalars['String']>
-  tilkynning_exists?: InputMaybe<Scalars['Boolean']>
-  tilkynning_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  tilkynning_not?: InputMaybe<Scalars['String']>
-  tilkynning_not_contains?: InputMaybe<Scalars['String']>
-  tilkynning_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   title?: InputMaybe<Scalars['String']>
   title_contains?: InputMaybe<Scalars['String']>
   title_exists?: InputMaybe<Scalars['Boolean']>
@@ -10210,6 +10143,7 @@ export type OrganizationPageSlicesItem =
   | OneColumnText
   | OverviewLinks
   | SectionHeading
+  | SliceConnectedComponent
   | StorySection
   | TabSection
   | Timeline
@@ -10239,7 +10173,6 @@ export type OrganizationSubpage = Entry & {
   slicesCollection?: Maybe<OrganizationSubpageSlicesCollection>
   slug?: Maybe<Scalars['String']>
   sys: Sys
-  tilkynning?: Maybe<Scalars['String']>
   title?: Maybe<Scalars['String']>
 }
 
@@ -10303,11 +10236,6 @@ export type OrganizationSubpageSlicesCollectionArgs = {
 
 /** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/organizationSubpage) */
 export type OrganizationSubpageSlugArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/organizationSubpage) */
-export type OrganizationSubpageTilkynningArgs = {
   locale?: InputMaybe<Scalars['String']>
 }
 
@@ -10393,13 +10321,6 @@ export type OrganizationSubpageFilter = {
   slug_not_contains?: InputMaybe<Scalars['String']>
   slug_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   sys?: InputMaybe<SysFilter>
-  tilkynning?: InputMaybe<Scalars['String']>
-  tilkynning_contains?: InputMaybe<Scalars['String']>
-  tilkynning_exists?: InputMaybe<Scalars['Boolean']>
-  tilkynning_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  tilkynning_not?: InputMaybe<Scalars['String']>
-  tilkynning_not_contains?: InputMaybe<Scalars['String']>
-  tilkynning_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   title?: InputMaybe<Scalars['String']>
   title_contains?: InputMaybe<Scalars['String']>
   title_exists?: InputMaybe<Scalars['Boolean']>
@@ -11700,6 +11621,8 @@ export type Query = {
   featuredArticles?: Maybe<FeaturedArticles>
   featuredArticlesCollection?: Maybe<FeaturedArticlesCollection>
   featuredCollection?: Maybe<FeaturedCollection>
+  featuredSupportQnAs?: Maybe<FeaturedSupportQnAs>
+  featuredSupportQnAsCollection?: Maybe<FeaturedSupportQnAsCollection>
   footerItem?: Maybe<FooterItem>
   footerItemCollection?: Maybe<FooterItemCollection>
   form?: Maybe<Form>
@@ -11746,8 +11669,6 @@ export type Query = {
   linkedPageCollection?: Maybe<LinkedPageCollection>
   logoListSlice?: Maybe<LogoListSlice>
   logoListSliceCollection?: Maybe<LogoListSliceCollection>
-  mailingListSignup?: Maybe<MailingListSignup>
-  mailingListSignupCollection?: Maybe<MailingListSignupCollection>
   menu?: Maybe<Menu>
   menuCollection?: Maybe<MenuCollection>
   menuLink?: Maybe<MenuLink>
@@ -12214,6 +12135,21 @@ export type QueryFeaturedCollectionArgs = {
   where?: InputMaybe<FeaturedFilter>
 }
 
+export type QueryFeaturedSupportQnAsArgs = {
+  id: Scalars['String']
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+}
+
+export type QueryFeaturedSupportQnAsCollectionArgs = {
+  limit?: InputMaybe<Scalars['Int']>
+  locale?: InputMaybe<Scalars['String']>
+  order?: InputMaybe<Array<InputMaybe<FeaturedSupportQnAsOrder>>>
+  preview?: InputMaybe<Scalars['Boolean']>
+  skip?: InputMaybe<Scalars['Int']>
+  where?: InputMaybe<FeaturedSupportQnAsFilter>
+}
+
 export type QueryFooterItemArgs = {
   id: Scalars['String']
   locale?: InputMaybe<Scalars['String']>
@@ -12557,21 +12493,6 @@ export type QueryLogoListSliceCollectionArgs = {
   preview?: InputMaybe<Scalars['Boolean']>
   skip?: InputMaybe<Scalars['Int']>
   where?: InputMaybe<LogoListSliceFilter>
-}
-
-export type QueryMailingListSignupArgs = {
-  id: Scalars['String']
-  locale?: InputMaybe<Scalars['String']>
-  preview?: InputMaybe<Scalars['Boolean']>
-}
-
-export type QueryMailingListSignupCollectionArgs = {
-  limit?: InputMaybe<Scalars['Int']>
-  locale?: InputMaybe<Scalars['String']>
-  order?: InputMaybe<Array<InputMaybe<MailingListSignupOrder>>>
-  preview?: InputMaybe<Scalars['Boolean']>
-  skip?: InputMaybe<Scalars['Int']>
-  where?: InputMaybe<MailingListSignupFilter>
 }
 
 export type QueryMenuArgs = {
@@ -14820,7 +14741,6 @@ export type SubArticle = Entry & {
   showTableOfContents?: Maybe<Scalars['Boolean']>
   slug?: Maybe<Scalars['String']>
   sys: Sys
-  tilkynning?: Maybe<Scalars['String']>
   title?: Maybe<Scalars['String']>
   url?: Maybe<Scalars['String']>
 }
@@ -14848,11 +14768,6 @@ export type SubArticleShowTableOfContentsArgs = {
 
 /** A sub article that's a part of another main article [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/subArticle) */
 export type SubArticleSlugArgs = {
-  locale?: InputMaybe<Scalars['String']>
-}
-
-/** A sub article that's a part of another main article [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/subArticle) */
-export type SubArticleTilkynningArgs = {
   locale?: InputMaybe<Scalars['String']>
 }
 
@@ -14919,13 +14834,6 @@ export type SubArticleFilter = {
   slug_not_contains?: InputMaybe<Scalars['String']>
   slug_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   sys?: InputMaybe<SysFilter>
-  tilkynning?: InputMaybe<Scalars['String']>
-  tilkynning_contains?: InputMaybe<Scalars['String']>
-  tilkynning_exists?: InputMaybe<Scalars['Boolean']>
-  tilkynning_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  tilkynning_not?: InputMaybe<Scalars['String']>
-  tilkynning_not_contains?: InputMaybe<Scalars['String']>
-  tilkynning_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   title?: InputMaybe<Scalars['String']>
   title_contains?: InputMaybe<Scalars['String']>
   title_exists?: InputMaybe<Scalars['Boolean']>
@@ -15235,10 +15143,18 @@ export type SupportCategoryFilter = {
 export type SupportCategoryLinkingCollections = {
   __typename?: 'SupportCategoryLinkingCollections'
   entryCollection?: Maybe<EntryCollection>
+  featuredSupportQnAsCollection?: Maybe<FeaturedSupportQnAsCollection>
   supportQnaCollection?: Maybe<SupportQnaCollection>
 }
 
 export type SupportCategoryLinkingCollectionsEntryCollectionArgs = {
+  limit?: InputMaybe<Scalars['Int']>
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+  skip?: InputMaybe<Scalars['Int']>
+}
+
+export type SupportCategoryLinkingCollectionsFeaturedSupportQnAsCollectionArgs = {
   limit?: InputMaybe<Scalars['Int']>
   locale?: InputMaybe<Scalars['String']>
   preview?: InputMaybe<Scalars['Boolean']>
@@ -15427,10 +15343,18 @@ export type SupportQnaFilter = {
 export type SupportQnaLinkingCollections = {
   __typename?: 'SupportQnaLinkingCollections'
   entryCollection?: Maybe<EntryCollection>
+  featuredSupportQnAsCollection?: Maybe<FeaturedSupportQnAsCollection>
   supportQnaCollection?: Maybe<SupportQnaCollection>
 }
 
 export type SupportQnaLinkingCollectionsEntryCollectionArgs = {
+  limit?: InputMaybe<Scalars['Int']>
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+  skip?: InputMaybe<Scalars['Int']>
+}
+
+export type SupportQnaLinkingCollectionsFeaturedSupportQnAsCollectionArgs = {
   limit?: InputMaybe<Scalars['Int']>
   locale?: InputMaybe<Scalars['String']>
   preview?: InputMaybe<Scalars['Boolean']>
@@ -15558,10 +15482,18 @@ export type SupportSubCategoryFilter = {
 export type SupportSubCategoryLinkingCollections = {
   __typename?: 'SupportSubCategoryLinkingCollections'
   entryCollection?: Maybe<EntryCollection>
+  featuredSupportQnAsCollection?: Maybe<FeaturedSupportQnAsCollection>
   supportQnaCollection?: Maybe<SupportQnaCollection>
 }
 
 export type SupportSubCategoryLinkingCollectionsEntryCollectionArgs = {
+  limit?: InputMaybe<Scalars['Int']>
+  locale?: InputMaybe<Scalars['String']>
+  preview?: InputMaybe<Scalars['Boolean']>
+  skip?: InputMaybe<Scalars['Int']>
+}
+
+export type SupportSubCategoryLinkingCollectionsFeaturedSupportQnAsCollectionArgs = {
   limit?: InputMaybe<Scalars['Int']>
   locale?: InputMaybe<Scalars['String']>
   preview?: InputMaybe<Scalars['Boolean']>
@@ -18673,6 +18605,13 @@ export type CfFormFieldNestedFilter = {
   OR?: InputMaybe<Array<InputMaybe<CfFormFieldNestedFilter>>>
   contentfulMetadata?: InputMaybe<ContentfulMetadataFilter>
   emailConfig_exists?: InputMaybe<Scalars['Boolean']>
+  informationText?: InputMaybe<Scalars['String']>
+  informationText_contains?: InputMaybe<Scalars['String']>
+  informationText_exists?: InputMaybe<Scalars['Boolean']>
+  informationText_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
+  informationText_not?: InputMaybe<Scalars['String']>
+  informationText_not_contains?: InputMaybe<Scalars['String']>
+  informationText_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   name?: InputMaybe<Scalars['String']>
   name_contains?: InputMaybe<Scalars['String']>
   name_exists?: InputMaybe<Scalars['Boolean']>
@@ -19057,13 +18996,6 @@ export type CfOrganizationPageNestedFilter = {
   theme_not?: InputMaybe<Scalars['String']>
   theme_not_contains?: InputMaybe<Scalars['String']>
   theme_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  tilkynning?: InputMaybe<Scalars['String']>
-  tilkynning_contains?: InputMaybe<Scalars['String']>
-  tilkynning_exists?: InputMaybe<Scalars['Boolean']>
-  tilkynning_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
-  tilkynning_not?: InputMaybe<Scalars['String']>
-  tilkynning_not_contains?: InputMaybe<Scalars['String']>
-  tilkynning_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>
   title?: InputMaybe<Scalars['String']>
   title_contains?: InputMaybe<Scalars['String']>
   title_exists?: InputMaybe<Scalars['Boolean']>

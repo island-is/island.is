@@ -21,6 +21,6 @@ class BuildModule {}
 
 buildOpenApi({
   path: 'apps/services/user-notification/src/openapi.yaml',
-  appModule: AppModule, // why was it a BuildModule before?
+  appModule: BuildModule, // why was it a BuildModule before? is this a race condition fix ... ?
   openApi,
 })
