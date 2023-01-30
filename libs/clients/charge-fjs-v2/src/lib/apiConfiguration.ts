@@ -18,6 +18,7 @@ export const ApiConfiguration = {
       fetchApi: createEnhancedFetch({
         name: 'clients-charge-fjs-v2',
         timeout: config.fetchTimeout,
+        treat400ResponsesAsErrors: false,
         autoAuth: idsClientConfig.isConfigured
           ? {
               mode: 'auto',

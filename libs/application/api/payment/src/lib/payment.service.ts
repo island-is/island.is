@@ -162,58 +162,64 @@ export class PaymentService {
     applicationId: string,
     extraData: ExtraData[] | undefined,
   ): Promise<CreateChargeResult> {
-    try {
-      //.1 Get charge items from FJS
-      const chargeItems = await this.findChargeItems(
-        performingOrganizationID,
-        chargeItemCodes,
-      )
+    //.1 Get charge items from FJS
+    const chargeItems = await this.findChargeItems(
+      performingOrganizationID,
+      chargeItemCodes,
+    )
 
-      //2. Create and insert payment db entry
-      const paymentModel = await this.createPaymentModel(
-        chargeItems,
-        applicationId,
-        performingOrganizationID,
-      )
+    //1.5 Check if payment already exists
+    const existingPayment = await this.findPaymentByApplicationId(applicationId)
 
-      //3. Send charge to FJS
-      const chargeResult = await this.chargeFjsV2ClientService.createCharge(
-        formatCharge(
-          paymentModel,
-          this.config.callbackBaseUrl,
-          this.config.callbackAdditionUrl,
-          extraData,
-          user,
-        ),
+    if (existingPayment) {
+      console.log('payment already exists', existingPayment)
+      const status = await this.chargeFjsV2ClientService.getChargeStatus(
+        existingPayment.id,
       )
+      console.log('payment status status', status)
+    }
 
-      //4. update payment with user4 from charge result
-      await this.paymentModel.update(
-        {
-          user4: chargeResult.user4,
+    //2. Create and insert payment db entry
+    const paymentModel = await this.createPaymentModel(
+      chargeItems,
+      applicationId,
+      performingOrganizationID,
+    )
+
+    //3. Send charge to FJS
+    const chargeResult = await this.chargeFjsV2ClientService.createCharge(
+      formatCharge(
+        paymentModel,
+        this.config.callbackBaseUrl,
+        this.config.callbackAdditionUrl,
+        extraData,
+        user,
+      ),
+    )
+
+    //4. update payment with user4 from charge result
+    await this.paymentModel.update(
+      {
+        user4: chargeResult.user4,
+      },
+      {
+        where: {
+          id: paymentModel.id,
+          application_id: applicationId,
         },
-        {
-          where: {
-            id: paymentModel.id,
-            application_id: applicationId,
-          },
-        },
-      )
+      },
+    )
 
-      this.auditService.audit({
-        auth: user,
-        action: 'createCharge',
-        resources: applicationId as string,
-        meta: { applicationId, id: paymentModel.id },
-      })
+    this.auditService.audit({
+      auth: user,
+      action: 'createCharge',
+      resources: applicationId as string,
+      meta: { applicationId, id: paymentModel.id },
+    })
 
-      return {
-        id: paymentModel.id,
-        paymentUrl: this.makePaymentUrl(chargeResult.user4),
-      }
-    } catch (e) {
-      this.logger.error('Error creating charge', e)
-      throw new InternalServerErrorException('Error creating charge')
+    return {
+      id: paymentModel.id,
+      paymentUrl: this.makePaymentUrl(chargeResult.user4),
     }
   }
 

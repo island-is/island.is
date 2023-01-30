@@ -8,9 +8,9 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { ExamplePaymentCatalogApi } from '../dataProviders'
 import * as m from '../lib/messages'
 import { chargeItemCodeRadioOptions } from '../lib/utils/chargeItemCodeRadioOptions'
-import { PaymentCatalogApi } from '@island.is/application/types'
 
 export const draft: Form = buildForm({
   id: 'ExamplePaymentDraftForm',
@@ -30,7 +30,7 @@ export const draft: Form = buildForm({
           checkboxLabel: m.draft.externalDataTitle,
           dataProviders: [
             buildDataProviderItem({
-              provider: PaymentCatalogApi,
+              provider: ExamplePaymentCatalogApi,
               title: m.draft.feeInfo,
             }),
           ],

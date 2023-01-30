@@ -6,12 +6,18 @@ import { Catalog, Charge, ChargeResponse } from './chargeFjsV2Client.types'
 export class ChargeFjsV2ClientService {
   constructor(private api: DefaultApi) {}
 
-  async getChargeStatus(chargeId: string): Promise<string> {
-    const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
-      requestID: chargeId,
-    })
-
-    return response.statusResult?.status
+  async getChargeStatus(chargeId: string): Promise<string | null> {
+    try {
+      const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
+        requestID: chargeId,
+      })
+      return response.statusResult?.status
+    } catch (e) {
+      if (e.status === 404) {
+        return null
+      }
+      throw e
+    }
   }
 
   async deleteCharge(chargeId: string): Promise<string> {
