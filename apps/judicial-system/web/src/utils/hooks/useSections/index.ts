@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 
 import {
   Case,
-  CaseState,
   CaseType,
   Gender,
   InstitutionType,

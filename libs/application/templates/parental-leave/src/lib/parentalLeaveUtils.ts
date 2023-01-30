@@ -467,11 +467,17 @@ export const getSelectedChild = (
   externalData: ExternalData,
 ): ChildInformation | null => {
   const { selectedChild: selectedChildIndex } = getApplicationAnswers(answers)
-  const selectedChild = getValueViaPath(
-    externalData,
-    `children.data.children[${selectedChildIndex}]`,
-    null,
-  ) as ChildInformation | null
+  const selectedChild =
+    getValueViaPath(
+      externalData,
+      `children.data.children[${selectedChildIndex}]`,
+      null,
+    ) ??
+    (getValueViaPath(
+      externalData,
+      'noPrimaryChildren.data.children',
+      null,
+    ) as ChildInformation | null)
 
   return selectedChild
 }
@@ -554,11 +560,10 @@ export function getApplicationExternalData(
     'person.data.genderCode',
   )
 
-  const applicantName = getValueViaPath(
+  const applicantName = (getValueViaPath(
     externalData,
-    'person.data.fullName',
-    '',
-  ) as string
+    'person.data.fullname',
+  ) ?? getValueViaPath(externalData, 'person.data.fullName', '')) as string
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
@@ -590,6 +595,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
+
+  const noPrimaryParentBirthDate = getValueViaPath(
+    answers,
+    'noPrimaryParent.birthDate',
+  ) as string
 
   const hasMultipleBirths = getValueViaPath(
     answers,
@@ -816,6 +826,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
+    noPrimaryParentBirthDate,
     hasMultipleBirths,
     multipleBirths,
     multipleBirthsRequestDays: Number(multipleBirthsRequestDays),
@@ -859,6 +870,30 @@ export function getApplicationAnswers(answers: Application['answers']) {
     isRecivingUnemploymentBenefits,
     unemploymentBenefits,
   }
+}
+
+export const isParentWithoutBirthParent = (answers: Application['answers']) => {
+  const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
+  const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
+  const questionThree = getValueViaPath(
+    answers,
+    'noPrimaryParent.questionThree',
+  )
+
+  return questionOne === YES && questionTwo === YES && questionThree === NO
+}
+
+export const isNotEligibleForParentWithoutBirthParent = (
+  answers: Application['answers'],
+) => {
+  const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
+  const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
+  const questionThree = getValueViaPath(
+    answers,
+    'noPrimaryParent.questionThree',
+  )
+
+  return questionOne === NO || questionTwo === NO || questionThree === YES
 }
 
 export const requiresOtherParentApproval = (
@@ -937,9 +972,15 @@ export const allowOtherParent = (answers: Application['answers']) => {
 export const getOtherParentId = (
   application: Application,
 ): string | undefined => {
-  const { otherParent, otherParentId } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    otherParent,
+    otherParentId,
+    noPrimaryParentBirthDate,
+  } = getApplicationAnswers(application.answers)
+
+  if (noPrimaryParentBirthDate) {
+    return ''
+  }
 
   if (otherParent === SPOUSE) {
     const spouse = getSpouse(application)

@@ -334,8 +334,16 @@ export function buildKeyValueField(data: {
   width?: FieldWidth
   colSpan?: SpanType
   condition?: Condition
+  display?: 'block' | 'flex'
 }): KeyValueField {
-  const { label, value, condition, width = 'full', colSpan } = data
+  const {
+    label,
+    value,
+    condition,
+    width = 'full',
+    colSpan,
+    display = 'block',
+  } = data
 
   return {
     id: '',
@@ -349,6 +357,7 @@ export function buildKeyValueField(data: {
     value,
     type: FieldTypes.KEY_VALUE,
     component: FieldComponents.KEY_VALUE,
+    display,
   }
 }
 
