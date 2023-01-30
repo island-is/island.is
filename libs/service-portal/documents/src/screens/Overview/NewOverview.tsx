@@ -474,25 +474,37 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {activeDocument?.document.content ? (
               <Box>
                 <Box display="flex" flexDirection="row" paddingBottom={2}>
-                  <Button
-                    circle
-                    icon="remove"
-                    variant="ghost"
-                    size="small"
-                    onClick={() => setScalePDF(scalePDF - 0.1)}
-                  />
+                  <Tooltip
+                    placement="top"
+                    as="span"
+                    text={formatMessage(m.zoomOut)}
+                  >
+                    <Button
+                      circle
+                      icon="remove"
+                      variant="ghost"
+                      size="small"
+                      onClick={() => setScalePDF(scalePDF - 0.1)}
+                    />
+                  </Tooltip>
                   <Box paddingX={1}>
                     <Text variant="small">
                       {(scalePDF * 100).toFixed(0) + '%'}
                     </Text>
                   </Box>
-                  <Button
-                    circle
-                    icon="add"
-                    variant="ghost"
-                    size="small"
-                    onClick={() => setScalePDF(scalePDF + 0.1)}
-                  />
+                  <Tooltip
+                    placement="top"
+                    as="span"
+                    text={formatMessage(m.zoomIn)}
+                  >
+                    <Button
+                      circle
+                      icon="add"
+                      variant="ghost"
+                      size="small"
+                      onClick={() => setScalePDF(scalePDF + 0.1)}
+                    />
+                  </Tooltip>
                   <Box paddingLeft={2}>
                     <Tooltip
                       placement="top"
