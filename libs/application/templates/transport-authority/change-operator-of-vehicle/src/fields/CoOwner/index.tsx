@@ -1,6 +1,5 @@
 import { gql, useLazyQuery } from '@apollo/client'
 import { VehiclesCurrentOwnerInfo } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../types'
 import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -15,7 +14,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { UserInformation } from '../../shared'
+import { UserInformation, VehiclesCurrentVehicle } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 
 export const CoOwner: FC<FieldBaseProps> = ({
