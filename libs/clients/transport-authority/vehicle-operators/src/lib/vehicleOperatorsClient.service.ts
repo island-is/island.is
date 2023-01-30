@@ -36,16 +36,23 @@ export class VehicleOperatorsClient {
     auth: User,
     permno: string,
   ): Promise<OperatorChangeValidation> {
-    // Since we don't have operators selected yet, we will send in empty array
-    return await this.validateAllForOperatorChange(auth, permno, [])
+    return await this.validateAllForOperatorChange(auth, permno, null)
   }
 
   public async validateAllForOperatorChange(
     auth: User,
     permno: string,
-    operators: Operator[],
+    operators: Operator[] | null,
   ): Promise<OperatorChangeValidation> {
     let errorList: ReturnTypeMessage[] = []
+
+    // In case we dont have the operators selected yet,
+    // then we will send in the owner as operator
+    // Note: it is not possible to validate application if operators array is empty
+    // (even though that is what we might want to do)
+    if (!operators || operators.length === 0) {
+      operators = [{ ssn: auth.nationalId, isMainOperator: true }]
+    }
 
     try {
       await this.operatorsApiWithAuth(auth).withoutcontractPost({
@@ -59,12 +66,10 @@ export class VehicleOperatorsClient {
             personIdNumber: operator.ssn || '',
             mainOperator: operator.isMainOperator ? 1 : 0,
           })),
-          onlyRunFlexibleWarning: true,
+          onlyRunFlexibleWarning: true, // to make sure we are only validating
         },
       })
     } catch (e) {
-      // TODOx this will probably throw an error if operators is empty, maybe catch that?
-
       // Note: We need to wrap in try-catch to get the error messages, because if this action results in error,
       // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
       // that is of the same class as 200 result schema
