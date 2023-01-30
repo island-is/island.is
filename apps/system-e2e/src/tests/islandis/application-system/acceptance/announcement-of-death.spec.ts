@@ -1,107 +1,93 @@
-import { BrowserContext, expect, test } from '@playwright/test'
+import { expect, test as base, Page } from '@playwright/test'
+import { disableI18n, disablePreviousApplications } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 
-test.describe('Announcement of Death', () => {
-  const home = '/umsoknir/andlatstilkynningar'
-  let context: BrowserContext
+const homeUrl = '/umsoknir/andlatstilkynningar'
 
-  test.beforeEach(async ({ browser }) => {
-    context = await session({
-      browser: browser,
-      homeUrl: home,
+const applicationTest = base.extend<{applicationPage: Page}>({
+  applicationPage: async ({ browser }, use) => {
+    const applicationContext = await session({
+      browser,
+      homeUrl,
       phoneNumber: '0102399',
       idsLoginOn: true,
     })
-    // TODO: add mocking for listing applications, to prevent previous applications from being seen
-  })
-  test.afterAll(async () => {
-    await context.close()
-  })
 
-  test('test', async () => {
-    const page = await context.newPage()
-    await page.goto(home)
+    const applicationPage = await applicationContext.newPage()
+    await disablePreviousApplications(applicationPage)
+    await disableI18n(applicationPage)
+    await applicationPage.goto(homeUrl)
+    await expect(applicationPage).toBeApplication()
+    await use(applicationPage)
 
+    await applicationPage.close()
+    await applicationContext.close()
+
+  }
+})
+
+applicationTest.describe('Announcement of Death', () => {
+  // Custom continue button
+  const submitButton = 'button[type=submit]'
+  const nextButton = 'button[data-testid=proceed]'
+
+  applicationTest('test', async ({ applicationPage }) => {
+    const page = applicationPage
+    await expect(applicationPage).toBeApplication()
+
+    // Should be gone with applicationPage
     await page.locator('[data-testid="create-new-application"]').click()
     await page.locator('[data-testid="create-new-application"]').click()
-    await expect(page).toBeApplication()
 
     await page.locator('data-testid=agree-to-data-providers').click()
+    await page.locator(submitButton).click()
 
-    await page.locator('[data-testid="proceed"]').click()
-    await expect(page).toBeApplication()
-
+    // Multiple announcements screen
     await page.locator('text=Hefja umsókn').click()
-    await expect(page).toBeApplication()
 
+    // Accept handling the announcement
     await page.locator('input[value=continue]').click()
+    await page.locator(submitButton).click()
 
-    await page.locator('[data-testid="proceed"]').click()
-    await expect(page).toBeApplication()
-
-    await page.locator('text=Veldu tengsl').click()
-
+    // Relations screen
     // TODO improve selectability in this screen
+    await page.locator('text=Veldu tengsl').click()
     await page.locator('div:text("Systir")').click()
+    await page.locator(nextButton).click()
 
-    await page.locator('[data-testid="proceed"]').click()
-    await expect(page).toBeApplication()
+    // Other wills and prenup screen
+    await page.locator('input[name=knowledgeOfOtherWills][value=no]').click()
+    await page.locator(nextButton).click()
 
-    await page.locator('[data-testid="proceed"]').click()
-    await expect(page).toBeApplication()
-
+    // Heirs -> add a new heir
     await page.locator('text=Bæta við erfingja').click()
+    await page.locator('input[name=nationalId]').fill('010130-5069')
+    await page.locator('input[name=relation"]').click()
+    await page.locator('div:text("Systir")').click()
+    await page.locator(nextButton).click()
 
-    await page.locator('div:nth-child(5) > div > div:nth-child(2) > div > div > div > .reset_base__1r86fzb0').first().click()
+    // Assets
+    await page.locator('input[name=otherProperties]').first().check()
+    await page.locator('input[name=otherProperties]').first().uncheck()
+    await page.locator('p + div > [role=button]').click()
+    await page.locator(nextButton).click()
 
-    // Fill input[name="estateMembers\.members\[3\]\.nationalId"]
-    await page.locator('input[name="estateMembers\\.members\\[3\\]\\.nationalId"]').fill('010130-5069 ')
-
-    await page.locator('[id="estateMembers\\.members\\[3\\]\\.relation"] div:has-text("Tengsl")').click()
-
-    await page.locator('[id="react-select-estateMembers\\.members\\[3\\]\\.relation-option-0"]').click()
-
-    await page.locator('div:nth-child(5) > div > div:nth-child(2) > div:nth-child(4) > div > div > div > .Checkbox_label__jho66t4 > .Checkbox_labelText__jho66t5 > span').click()
-
-    await page.locator('text=ErfingjarErfðaréttur byggist á skyldleika, ættleiðingu, hjúskap og erfðaskrá ein >> button').nth(3).click()
-
-    await page.locator('[data-testid="proceed"]').click()
-    await expect(page).toBeApplication()
-
-    // Check input[name="otherProperties\[0\]"]
-    await page.locator('input[name="otherProperties\\[0\\]"]').check()
-
-    // Uncheck input[name="otherProperties\[0\]"]
-    await page.locator('input[name="otherProperties\\[0\\]"]').uncheck()
-
-    await page.locator('text=Nissan Terrano IIEyða >> span[role="button"]').click()
-
-    await page.locator('#react-select-financesDataCollectionPermission-option-0').first().click()
-    await expect(page).toBeApplication()
-
-    await page.locator('text=Vottorð um tilkynningu andlátsHeimilar að útför hins látna megi fara fram. Prest').click()
-
-    await page.locator('[data-testid="select-certificateOfDeathAnnouncement"] >> text=Enginn viðtakandi valinn').click()
-
-    await page.locator('#react-select-certificateOfDeathAnnouncement-option-0').click()
-
-    await page.locator('[data-testid="select-authorizationForFuneralExpenses"] >> text=Enginn viðtakandi valinn').click()
-
-    await page.locator('#react-select-authorizationForFuneralExpenses-option-0').click()
-
-    await page.locator('[data-testid="select-financesDataCollectionPermission"] label:has-text("Viðtakandi")').click()
+    // Recipients of documents
+    await page.locator('label[for=certificateOfDeathAnnouncement]').click()
+    await page.locator('#react-select').first().click()
+    await page.locator('label[for=authorizationForFuneralExpenses]').click()
+    await page.locator('#react-select').first().click()
+    await page.locator('[data-testid=select-financesDataCollectionPermission]').click()
+    await page.locator('#react-select').first().click()
+    await page.locator(nextButton).click()
 
 
-    await page.locator('[data-testid="proceed"]').click()
-    await expect(page).toBeApplication()
-
-    await page.locator('div:nth-child(41) > div > div > div > div > div').click()
-
-    await page.locator('textarea[name="additionalInfo"]').fill('test test þæö')
-
+    // Overview screen
+    await page.locator('textarea[name=additionalInfo]').fill('test test þæö')
     await page.locator('text=Staðfesta andlátstilkynningu').click()
-    await expect(page).toBeApplication()
+    await page.locator(submitButton).fill('test test þæö')
 
+    // Confirmation screen
     await page.locator('h2:has-text("Tilkynning móttekin")').dblclick()
   })
 })
