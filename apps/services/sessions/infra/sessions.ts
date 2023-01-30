@@ -72,6 +72,9 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     .command('node')
     .args('main.js', '--job=worker')
     .postgres({
+      // Using the same credentials as the service
+      username: serviceName,
+      name: serviceName,
       passwordSecret: '/k8s/services/sessions/DB_PASSWORD',
     })
     .env({
