@@ -135,12 +135,12 @@ export const m = defineMessages({
     description: 'Some description',
   },
   operationCategoryHotelTitle: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Title',
+    id: 'ol.application:applicationInfo.operationCategoryHotel.Title',
     defaultMessage: 'Vinsamlegast hakaðu við þá þjónustu sem er í boði',
     description: 'Some description',
   },
   operationCategoryResturantTitle: {
-    id: 'ol.application:applicationInfo.operationCategoryResturant:Title',
+    id: 'ol.application:applicationInfo.operationCategoryResturant.Title',
     defaultMessage: 'Veldu flokk veitingastaðar',
     description: 'Some description',
   },
@@ -151,65 +151,65 @@ export const m = defineMessages({
     description: 'Some description',
   },
   operationCategoryTwo: {
-    id: 'ol.application:applicationInfo.operationCategory:two',
+    id: 'ol.application:applicationInfo.operationCategory.two',
     defaultMessage: 'Flokkur II',
     description: 'Some description',
   },
   operationCategoryThree: {
-    id: 'ol.application:applicationInfo.operationCategory:three',
+    id: 'ol.application:applicationInfo.operationCategory.three',
     defaultMessage: 'Flokkur III',
     description: 'Some description',
   },
   operationCategoryFour: {
-    id: 'ol.application:applicationInfo.operationCategory:four',
+    id: 'ol.application:applicationInfo.operationCategory.four',
     defaultMessage: 'Flokkur IV',
     description: 'Some description',
   },
   operationCategoryResturantTwo: {
-    id: 'ol.application:applicationInfo.operationCategoryResturant:Two',
+    id: 'ol.application:applicationInfo.operationCategoryResturant.Two',
     defaultMessage:
       'Umfangslitlir áfengisveitingastaðir þar sem starfsemin er ekki til þess fallin að valda ónæði í nágrenninu , svo sem með háværri tónlist, og staðir sem kalla ekki á mikið eftirlit og/eða löggæslu.',
     description: 'Some description',
   },
   operationCategoryResturantThree: {
-    id: 'ol.application:applicationInfo.operationCategoryResturant:Three',
+    id: 'ol.application:applicationInfo.operationCategoryResturant.Three',
     defaultMessage:
       'Umfangsmiklir áfengisveitingastaðir, svo sem þar sem leikin er hávær tónlist, og staðir sem kalla á meira eftirlit og/eða löggæslu.',
     description: 'Some description',
   },
   operationCategoryHotelTwo: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Two',
+    id: 'ol.application:applicationInfo.operationCategoryHotel.Two',
     defaultMessage: 'Gististaður án veitinga',
     description: 'Some description',
   },
   operationCategoryHotelThree: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Three',
+    id: 'ol.application:applicationInfo.operationCategoryHotel.Three',
     defaultMessage: 'Gististaður með veitingum en þó ekki áfengisveitingum',
     description: 'Some description',
   },
   operationCategoryHotelFour: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Four',
+    id: 'ol.application:applicationInfo.operationCategoryHotel.Four',
     defaultMessage: 'Gististaðir með áfengisveitingum',
     description: 'Some description',
   },
 
   operationTypeHotelTitle: {
-    id: 'ol.application:applicationInfo.operationTypeHotel:Title',
+    id: 'ol.application:applicationInfo.operationTypeHotel.Title',
     defaultMessage: 'Veldu tegund gististaðar',
     description: 'Some description',
   },
   operationTypeResturantTitle: {
-    id: 'ol.application:applicationInfo.operationTypeResturant:Title',
+    id: 'ol.application:applicationInfo.operationTypeResturant.Title',
     defaultMessage: 'Tegund veitingastaðar',
     description: 'Some description',
   },
   operationTypeHotelDescription: {
-    id: 'ol.application:applicationInfo.operationTypeHotel:Description',
+    id: 'ol.application:applicationInfo.operationTypeHotel.Description',
     defaultMessage: 'Veldu tegund gististaðar',
     description: 'Some description',
   },
   operationTypeResturantDescription: {
-    id: 'ol.application:applicationInfo.operationTypeResturant:Description',
+    id: 'ol.application:applicationInfo.operationTypeResturant.Description',
     defaultMessage: 'Veldu tegund veitingastaðar',
     description: 'Some description',
   },
