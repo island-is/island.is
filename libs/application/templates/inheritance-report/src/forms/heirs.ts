@@ -15,7 +15,7 @@ import { m } from '../lib/messages'
 
 export const heirs = buildSection({
   id: 'heirs',
-  title: m.propertyForExchange,
+  title: m.propertyForExchangeAndHeirs,
   children: [
     buildSubSection({
       id: 'spouse',
@@ -47,6 +47,7 @@ export const heirs = buildSection({
           children: [
             buildKeyValueField({
               label: m.netProperty,
+              display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
                   String(
@@ -63,6 +64,7 @@ export const heirs = buildSection({
             }),
             buildKeyValueField({
               label: m.totalDeduction,
+              display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(String(Number(answers.totalDeduction ?? '0'))),
             }),
@@ -71,8 +73,10 @@ export const heirs = buildSection({
               title: '',
               space: 'gutter',
             }),
+            buildDividerField({}),
             buildKeyValueField({
               label: m.netPropertyForExchange,
+              display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
                   String(
@@ -191,7 +195,6 @@ export const heirs = buildSection({
         buildMultiField({
           id: 'heirsOverview',
           title: m.overview,
-          description: m.heirsOverviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({

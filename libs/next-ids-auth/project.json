@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/next-ids-auth"]
     }
   },
-  "tags": []
+  "tags": ["lib:react-next", "scope:react-next"]
 }

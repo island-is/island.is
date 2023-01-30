@@ -7,6 +7,7 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
@@ -14,7 +15,7 @@ import { Application } from '@island.is/api/schema'
 
 export const assets = buildSection({
   id: 'estateProperties',
-  title: m.propertiesTitle,
+  title: m.properties,
   children: [
     buildSubSection({
       id: 'realEstate',
@@ -23,7 +24,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutAssests.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
@@ -45,20 +49,21 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: 'Fastanúmer',
+                    title: m.assetNumber.defaultMessage,
                     id: 'assetNumber',
                   },
                   {
-                    title: 'Lögheimili',
+                    title: m.assetAddress.defaultMessage,
                     id: 'description',
                   },
                   {
-                    title: 'Fasteignamat á dánardegi',
+                    title: m.propertyValuation.defaultMessage,
                     id: 'propertyValuation',
+                    required: true,
                   },
                 ],
-                repeaterButtonText: m.addInventory.defaultMessage,
-                repeaterHeaderText: m.inventoryTitle.defaultMessage,
+                repeaterButtonText: m.addRealEstate.defaultMessage,
+                repeaterHeaderText: m.realEstateRepeaterHeader.defaultMessage,
                 fromExternalData: 'assets',
                 sumField: 'propertyValuation',
               },
@@ -74,7 +79,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'vehicles',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutVehicles.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'vehiclesTitle',
@@ -96,20 +104,21 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: 'Fastanúmer',
+                    title: m.assetNumber.defaultMessage,
                     id: 'assetNumber',
                   },
                   {
-                    title: 'Tegund',
+                    title: m.vehicleType.defaultMessage,
                     id: 'description',
                   },
                   {
-                    title: 'Markaðsverð á dánardegi',
+                    title: m.vehicleValuation.defaultMessage,
                     id: 'propertyValuation',
+                    required: true,
                   },
                 ],
-                repeaterButtonText: m.addInventory.defaultMessage,
-                repeaterHeaderText: m.inventoryTitle.defaultMessage,
+                repeaterButtonText: m.addVehicle.defaultMessage,
+                repeaterHeaderText: m.vehicles.defaultMessage,
                 fromExternalData: 'vehicles',
                 sumField: 'propertyValuation',
               },
@@ -125,7 +134,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'inventory',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutInnventory.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'inventoryTitle',
@@ -159,6 +171,7 @@ export const assets = buildSection({
                     id: 'inventoryValue',
                     currency: true,
                     width: 'half',
+                    required: true,
                   },
                 ],
                 repeaterButtonText: m.addInventory.defaultMessage,
@@ -177,7 +190,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'estateBankInfo',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutBankAccounts.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'estateBankInfoTitle',
@@ -225,7 +241,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'claims',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutClaims.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'claimsTitle',
@@ -247,8 +266,8 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: m.claimsPublisher.defaultMessage,
-                    id: 'publisher',
+                    title: m.claimsIssuer.defaultMessage,
+                    id: 'issuer',
                   },
                   {
                     title: m.claimsAmount.defaultMessage,
@@ -272,7 +291,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'stocks',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutStocks.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'stocksTitle',
@@ -442,8 +464,11 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.realEstateEstimation,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.realEstate as any)?.total)),
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'realEstate.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -455,8 +480,11 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.marketValue,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.vehicles as any)?.total)),
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'vehicles.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -468,8 +496,11 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.marketValue,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.inventory as any)?.total)),
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'inventory.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -481,8 +512,11 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.banksBalance,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.bankAccounts as any)?.total)),
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'bankAccounts.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -494,8 +528,11 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.totalValue,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.claims as any)?.total)),
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'claims.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -507,8 +544,11 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.totalValue,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.stocks as any)?.total)),
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'stocks.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -520,8 +560,11 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.totalValue,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.money as any)?.total)),
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'money.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -533,20 +576,21 @@ export const assets = buildSection({
             }),
             buildKeyValueField({
               label: m.otherAssetsTotal,
-              value: ({ answers }) =>
-                formatCurrency(String((answers.otherAssets as any)?.total)),
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'otherAssets.total')
+                return formatCurrency(String(total))
+              },
             }),
             buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewAllAssetsWorth',
-              title: m.totalValueOfAssets,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
+            buildKeyValueField({
+              label: '',
+              value: '',
+              colSpan: '6/12',
             }),
             buildTextField({
               id: 'assetsTotal',
-              title: m.total,
+              title: m.overviewTotal,
               readOnly: true,
               width: 'half',
               variant: 'currency',
@@ -554,15 +598,14 @@ export const assets = buildSection({
               backgroundColor: 'white',
               defaultValue: ({ answers }: Application) => {
                 const total =
-                  (answers.otherAssets as any)?.total +
-                  (answers.money as any)?.total +
-                  (answers.stocks as any)?.total +
-                  (answers.claims as any)?.total +
-                  (answers.bankAccounts as any)?.total +
-                  (answers.inventory as any)?.total +
-                  (answers.realEstate as any)?.total +
-                  (answers.vehicles as any)?.total
-
+                  (getValueViaPath(answers, 'otherAssets.total') as number) +
+                  (getValueViaPath(answers, 'money.total') as number) +
+                  (getValueViaPath(answers, 'stocks.total') as number) +
+                  (getValueViaPath(answers, 'claims.total') as number) +
+                  (getValueViaPath(answers, 'bankAccounts.total') as number) +
+                  (getValueViaPath(answers, 'inventory.total') as number) +
+                  (getValueViaPath(answers, 'vehicles.total') as number) +
+                  (getValueViaPath(answers, 'realEstate.total') as number)
                 return total
               },
             }),

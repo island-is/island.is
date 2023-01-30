@@ -73,8 +73,7 @@ let admin: CUser
 let adminAuthCookie: string
 
 beforeAll(async () => {
-  // Need to use sequelize-cli becuase sequelize.sync does not keep track of completed migrations
-  // await sequelize.sync()
+  // Migrate the database
   execSync('yarn nx run judicial-system-backend:migrate')
 
   // Seed the database
