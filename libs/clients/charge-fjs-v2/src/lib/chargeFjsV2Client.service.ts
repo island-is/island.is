@@ -14,6 +14,7 @@ export class ChargeFjsV2ClientService {
       return response.statusResult?.status
     } catch (e) {
       if (e.status === 404) {
+        //  currently no 404 is returned if not found
         return null
       }
       throw e
