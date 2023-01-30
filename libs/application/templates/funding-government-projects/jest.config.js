@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'application-templates-funding-government-projects',
-  preset: `${__dirname}/jest.preset.js`,
+  preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {

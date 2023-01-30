@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'island-ui-vanilla-extract-utils',
-  preset: `${__dirname}/jest.preset.js`,
+  preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   globals: {

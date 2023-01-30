@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'contentful-role-permissions',
-  preset: `${__dirname}/jest.preset.js`,
+  preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   transform: {

@@ -1,5 +1,5 @@
 module.exports = {
-  preset: `${__dirname}/jest.preset.js`,
+  preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   coverageDirectory: '<rootDir>/coverage/apps/financial-aid/backend',

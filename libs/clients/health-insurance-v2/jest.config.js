@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'clients-health-insurance-v2',
-  preset: `${__dirname}/jest.preset.js`,
+  preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   globals: {

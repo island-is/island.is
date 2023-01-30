@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'portals-admin-air-discount-scheme',
-  preset: `${__dirname}/jest.preset.js`,
+  preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {

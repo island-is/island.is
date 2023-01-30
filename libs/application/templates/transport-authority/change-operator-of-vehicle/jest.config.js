@@ -1,7 +1,7 @@
 module.exports = {
   displayName:
     'application-templates-transport-authority-change-operator-of-vehicle',
-  preset: `${__dirname}/jest.preset.js`,
+  preset: './jest.preset.js',
   rootDir: '../../../../..',
   roots: [__dirname],
   transform: {

@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'application-templates-public-debt-payment-plan',
-  preset: `${__dirname}/jest.preset.js`,
+  preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
