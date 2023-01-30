@@ -7,17 +7,17 @@ export const attachmentNames = defineMessages({
     description: 'Some description',
   },
   two: {
-    id: 'ol.application:attachemnt.one',
+    id: 'ol.application:attachemnt.two',
     defaultMessage: 'Staðsetning fyrri leyfishafa (valkvætt)',
     description: 'Some description',
   },
   three: {
-    id: 'ol.application:attachemnt.one',
+    id: 'ol.application:attachemnt.three',
     defaultMessage: 'Nákvæm teikning af húsnæði (Staðfest)',
     description: 'Some description',
   },
   four: {
-    id: 'ol.application:attachemnt.one',
+    id: 'ol.application:attachemnt.four',
     defaultMessage: 'Teikning af útisvæði (valkvætt)',
     description: 'Some description',
   },
@@ -50,7 +50,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollection.userProfileTitle',
+    id: 'ol.application:dataCollection.userProfileTitle',
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Some description',
   },
@@ -61,7 +61,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionDebtStatusTitle: {
-    id: 'cr.application:dataCollection.debtStatusTitle',
+    id: 'ol.application:dataCollection.debtStatusTitle',
     defaultMessage: 'Skuldastaða hjá ríkissjóði',
     description: 'Some description',
   },
@@ -83,7 +83,7 @@ export const m = defineMessages({
     description: '',
   },
   dataCollectionNonBankruptcyDisclosureTitle: {
-    id: 'cr.application:dataCollection.nonBankruptcyDisclosureTitle',
+    id: 'ol.application:dataCollection.nonBankruptcyDisclosureTitle',
     defaultMessage: 'Búsforræðisvottorð',
     description: 'Some description',
   },
@@ -188,7 +188,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   operationCategoryHotelFour: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Three',
+    id: 'ol.application:applicationInfo.operationCategoryHotel:Four',
     defaultMessage: 'Gististaðir með áfengisveitingum',
     description: 'Some description',
   },
@@ -531,7 +531,7 @@ export const m = defineMessages({
     description: 'Oops! Something went wrong when fetching your data',
   },
   applicationPaymentTitle: {
-    id: 'ol.application:complete.title',
+    id: 'ol.application:complete.PaymentTitle',
     defaultMessage: 'Til greiðslu',
     description: 'Some description',
   },
@@ -566,7 +566,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   no: {
-    id: 'ol.application:yes',
+    id: 'ol.application:no',
     defaultMessage: 'Nei',
     description: 'Some description',
   },
