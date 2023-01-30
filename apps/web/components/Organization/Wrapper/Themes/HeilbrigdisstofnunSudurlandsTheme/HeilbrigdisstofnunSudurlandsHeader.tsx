@@ -16,7 +16,7 @@ export const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
 
   return (
     <Box className={styles.headerBg}>
-      <Hidden below="sm">
+      <Hidden below="md">
         <Box className={styles.headerImage} />
       </Hidden>
       <Box className={styles.headerWrapper}>
