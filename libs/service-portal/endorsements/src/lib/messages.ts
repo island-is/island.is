@@ -6,7 +6,7 @@ export const m: MessageDir = {
   endorsement: defineMessages({
     introTitle: {
       id: 'sp.endorsements:title',
-      defaultMessage: 'Meðmælendalistar',
+      defaultMessage: 'Undirskriftalistar',
       description: 'Endorsement page title',
     },
     intro: {
@@ -45,34 +45,34 @@ export const m: MessageDir = {
     bullet1: {
       id: 'sp.petitions:intro-bullet1',
       defaultMessage:
-        'Lista sem þú ert ábyrgðamaður á, hægt er að sjá yfirlit yfir meðmæli, breyta lokadagsetningu, og loka/opna lista.',
+        'Lista sem þú ert ábyrgðamaður á, hægt er að sjá yfirlit yfir undirskriftir, breyta lokadagsetningu, og loka/opna lista.',
       description: 'Petitions intro text bullet',
     },
     bullet2: {
       id: 'sp.petitions:intro-bullet2',
       defaultMessage:
-        'Opna meðmælendalista sem þú hefur mælt með, hægt er að afskrá meðmæli.',
+        'Opna undirskriftalista sem þú hefur skráð þig á, hægt er að draga skráningu tilbaka.',
       description: 'Petitions intro text bullet',
     },
     bullet3: {
       id: 'sp.petitions:intro-bullet3',
       defaultMessage:
-        'Lokaða meðmælendalista sem þú hefur mælt með, ekki er hægt að afskrá sig af lokuðum lista.',
+        'Ekki hægt að draga skráningu tilbaka að gildistíma loknum eða listum sem hefur verið lokað.',
       description: 'Petitions intro text bullet',
     },
     bullet1Admin: {
       id: 'sp.petitions:intro-bullet1-admin',
-      defaultMessage: 'Opna meðmælendalista',
+      defaultMessage: 'Virka undirskriftalista',
       description: 'Petitions intro text bullet',
     },
     bullet2Admin: {
       id: 'sp.petitions:intro-bullet2-admin',
-      defaultMessage: 'Lokaða meðmælendalista',
+      defaultMessage: 'Liðna undirskriftalista',
       description: 'Petitions intro text bullet',
     },
     bullet3Admin: {
       id: 'sp.petitions:intro-bullet2-admin',
-      defaultMessage: 'Læsta meðmælendalista',
+      defaultMessage: 'Lokaða undirskriftalista',
       description: 'Petitions intro text bullet',
     },
     petitionListsIown: {
@@ -87,12 +87,12 @@ export const m: MessageDir = {
     },
     petitionListsClosed: {
       id: 'sp.petitions:petition-lists-closed',
-      defaultMessage: 'Lokaðir listar',
+      defaultMessage: 'Liðnir listar',
       description: 'Section title for closed petition lists',
     },
     petitionListsLocked: {
       id: 'sp.petitions:petition-lists-locked',
-      defaultMessage: 'Læstir listar',
+      defaultMessage: 'Lokaðir listar',
       description: 'Section title for locked petition lists',
     },
     petitionListsSignedByMe: {
@@ -102,7 +102,7 @@ export const m: MessageDir = {
     },
     closedListsSignedByMe: {
       id: 'sp.petitions:closed-lists-signed-by-me',
-      defaultMessage: 'Lokaðir listar sem ég hef mælt með',
+      defaultMessage: 'Liðnir listar sem ég hef skráð mig á ',
       description: 'Section title for petitions you signed that are now closed',
     },
     listPeriod: {
@@ -112,7 +112,7 @@ export const m: MessageDir = {
     },
     editList: {
       id: 'sp.petitions:edit-list',
-      defaultMessage: 'Sýsla með lista',
+      defaultMessage: 'Skoða lista',
       description: 'Edit list button label',
     },
     viewList: {
@@ -124,12 +124,12 @@ export const m: MessageDir = {
   viewPetition: defineMessages({
     numberSigned: {
       id: 'sp.petitions:number-signed',
-      defaultMessage: 'Fjöldi skráðir:',
+      defaultMessage: 'Fjöldi skráðra:',
       description: 'Number of petitions signed',
     },
     openTil: {
       id: 'sp.petitions:open-til',
-      defaultMessage: 'Meðmælendalistinn er opinn til:',
+      defaultMessage: 'Undirskriftalistinn er opinn til:',
       description: 'List is open til',
     },
     listOwner: {
@@ -184,7 +184,7 @@ export const m: MessageDir = {
     },
     updateListButton: {
       id: 'sp.petitions:update-list',
-      defaultMessage: 'Uppfæra lista',
+      defaultMessage: 'Uppfæra gildistíma',
       description: 'Button label',
     },
     dialogPromptConfirm: {
@@ -266,7 +266,7 @@ export const m: MessageDir = {
     updateListDescription: {
       id: 'sp.petitions:update-list-description',
       defaultMessage:
-        'Hér geturðu breytt lokadagsetningu lista og þannig lengt/stytt líftíma hans.',
+        'Hér geturðu breytt lokadagsetningu lista og þannig lengt/stytt gildistíma hans.',
       description: 'Update list description text',
     },
     openListTitle: {
@@ -282,7 +282,7 @@ export const m: MessageDir = {
     },
     enorsementsTableTitle: {
       id: 'sp.petitions:endorsements-table-title',
-      defaultMessage: 'Yfirlit meðmæla',
+      defaultMessage: 'Yfirlit skráninga á lista',
       description: 'Endorsements table title',
     },
     alertForSelectingDate: {
@@ -298,12 +298,12 @@ export const m: MessageDir = {
     },
     listTitleHeader: {
       id: 'sp.petitions:list-title',
-      defaultMessage: 'Heiti meðmælendalista',
+      defaultMessage: 'Heiti undirskriftalista',
       description: 'List title header',
     },
     aboutListHeader: {
       id: 'sp.petitions:about-list',
-      defaultMessage: 'Um meðmælendalista',
+      defaultMessage: 'Um undirskriftalista',
       description: 'About list header',
     },
     adminLockedList: {
@@ -328,7 +328,7 @@ export const m: MessageDir = {
     },
     noPetitionsText: {
       id: 'sp.petitions:no-petitions',
-      defaultMessage: 'Engin meðmæli komin enn',
+      defaultMessage: 'Engar skráningar komnar á lista',
       description: 'No petitions text',
     },
   }),

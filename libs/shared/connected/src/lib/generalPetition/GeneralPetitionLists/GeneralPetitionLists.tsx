@@ -19,7 +19,7 @@ export const GeneralPetitionLists = () => {
   return (
     <>
       <Box marginBottom={3}>
-        <Text variant="h4">{'Virkir meðmælendalistar'}</Text>
+        <Text variant="h4">{'Virkir undirskriftalistar'}</Text>
       </Box>
       <Stack space={4}>
         {petitionLists?.data?.map((petition: any) => {
@@ -29,7 +29,7 @@ export const GeneralPetitionLists = () => {
               key={petition.id}
               onClick={() =>
                 router
-                  .push('/medmaelendalistar/' + petition.id)
+                  .push('/undirskriftalistar/' + petition.id)
                   .then(() => window.scrollTo(0, 0))
               }
             >

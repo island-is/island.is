@@ -108,7 +108,7 @@ export const ApplicationConfigurations = {
     translation: 'an.application',
   },
   [ApplicationTypes.GENERAL_PETITION]: {
-    slug: 'medmaelendalisti',
+    slug: 'undirskriftalisti',
     translation: 'gpt.application',
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {

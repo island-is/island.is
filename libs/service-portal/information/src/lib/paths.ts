@@ -4,6 +4,6 @@ export enum InformationPaths {
   Spouse = '/min-gogn/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
-  Endorsements = '/min-gogn/medmaeli',
+  Endorsements = '/min-gogn/undirskrifalisti',
   Company = '/fyrirtaeki',
 }

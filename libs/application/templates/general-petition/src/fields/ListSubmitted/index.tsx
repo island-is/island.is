@@ -14,7 +14,7 @@ const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
     document.location.origin === 'http://localhost:4242'
       ? 'http://localhost:4200'
       : document.location.origin
-  const baseUrlForm = `${baseUrl}/medmaelendalistar/`
+  const baseUrlForm = `${baseUrl}/undirskriftalistar/`
 
   return (
     <>

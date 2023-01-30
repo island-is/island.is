@@ -12,13 +12,13 @@ export const m: MessageDir = {
     },
     subtitle: {
       id: 'gpt.application:terms.subtitle',
-      defaultMessage: 'Eftirfarandi gildir um söfnun meðmæla',
+      defaultMessage: 'Eftirfarandi gildir um söfnun undirskrifta',
       description: 'External data subtitle',
     },
     termsAndConditions: {
       id: 'gpt.application:dmr.subtitle',
       defaultMessage:
-        'Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018. Ábyrgðaraðili staðfestir hér með að listinn sé í samræmi við lög og reglur landsins og stjórnarskrá Íslands. Vinnsluaðila er heimilt að loka lista niður fari hann gegn ofangreindu.',
+        'Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018. Ábyrgðaraðili staðfestir hér með að listinn sé í samræmi við lög og reglur landsins og stjórnarskrá Íslands. Vinnsluaðila er heimilt að loka lista fari hann gegn ofangreindu. Eftir að listi er stofnaður er ekki hægt að breyta efni listans.',
       description: 'External data DRM subtitle',
     },
     agree: {
@@ -30,14 +30,14 @@ export const m: MessageDir = {
   collectEndorsements: defineMessages({
     title: {
       id: 'gpt.application:collect.endorsements.title',
-      defaultMessage: 'Safna meðmælum',
+      defaultMessage: 'Safna undirskriftum',
       description: 'Collect endorsements title',
     },
   }),
   endorsementList: defineMessages({
     linkDescription: {
       id: 'gpt.application:endorsement.list.link.description',
-      defaultMessage: 'Hér er hlekkur til að senda út á meðmælendur',
+      defaultMessage: 'Hér er hlekkur til að senda út',
       description: 'Link description',
     },
     copyLinkButton: {
@@ -47,12 +47,12 @@ export const m: MessageDir = {
     },
     namesCount: {
       id: 'gpt.application:endorsement.list.names.count',
-      defaultMessage: 'meðmæli á lista',
+      defaultMessage: 'undirskriftir á lista',
       description: 'X names on list',
     },
     invalidEndorsements: {
       id: 'gpt.application:endorsement.list.invalid.endorsements',
-      defaultMessage: 'Sjá einungis meðmæli í vafa',
+      defaultMessage: 'Sjá einungis undirskriftir í vafa',
       description: 'Only show invalid endorsements',
     },
     searchbar: {
@@ -81,7 +81,7 @@ export const m: MessageDir = {
   information: defineMessages({
     title: {
       id: 'gpt.application:information.title',
-      defaultMessage: 'Upplýsingar um lista',
+      defaultMessage: 'Upplýsingar um undirskriftalista',
       description: 'Information about the list',
     },
     titleSidebar: {
@@ -91,18 +91,18 @@ export const m: MessageDir = {
     },
     listName: {
       id: 'gpt.application:information.listName',
-      defaultMessage: 'Heiti meðmælendalista',
+      defaultMessage: 'Heiti undirskriftalista',
       description: 'List name',
     },
     aboutList: {
       id: 'gpt.application:information.aboutList',
-      defaultMessage: 'Um meðmælendalista',
+      defaultMessage: 'Um undirskriftalista',
       description: 'About list',
     },
     aboutListPlaceholder: {
       id: 'gpt.application:information.aboutListPlaceholder',
       defaultMessage:
-        'Texti sem birtist með meðmælendalista. Ekki er hægt að breyta texta eftir að meðmælendalisti hefur verið birtur',
+        'Texti sem birtist með undirskriftalista. Ekki er hægt að breyta texta eftir að undirskriftalisti hefur verið birtur',
       description: 'About list placeholder',
     },
     dateTitle: {
@@ -147,7 +147,7 @@ export const m: MessageDir = {
     },
     overviewTitle: {
       id: 'gpt.application:overview.overviewTitle',
-      defaultMessage: 'Upplýsingar um meðmælendalista',
+      defaultMessage: 'Upplýsingar um undirskriftalista',
       description: 'Overview review title',
     },
     applicant: {
@@ -157,12 +157,12 @@ export const m: MessageDir = {
     },
     listName: {
       id: 'gpt.application:overview.listName',
-      defaultMessage: 'Heiti meðmælendalista',
+      defaultMessage: 'Heiti undirskriftalista',
       description: 'List name',
     },
     aboutList: {
       id: 'gpt.application:overview.aboutList',
-      defaultMessage: 'Um meðmælendalista',
+      defaultMessage: 'Um undirskriftalista',
       description: 'About list',
     },
     listPeriod: {
@@ -200,18 +200,18 @@ export const m: MessageDir = {
   listSubmitted: defineMessages({
     title: {
       id: 'gpt.application.list.submitted.title',
-      defaultMessage: 'Meðmælendalista hefur verið skilað',
+      defaultMessage: 'Undirskriftalista hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'gpt.application.list.submitted.title',
-      defaultMessage: 'Meðmælendalista hefur verið skilað til Ísland.is',
+      defaultMessage: 'Undirskriftalista hefur verið skilað til Ísland.is',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
       id: 'gpt.application.list.submitted.subtitle',
       defaultMessage:
-        'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum. Hægt er að sýsla með lista þar.',
+        'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum. Hægt er að sjá stöðu lista, undirskriftir og einnig er hægt að breyta gildisdagsetningu lista.',
       description: 'Subtitle for approved card',
     },
     bulletListTitle: {
@@ -282,7 +282,7 @@ export const m: MessageDir = {
     },
     sectionTitle: {
       id: 'gpt.application:endorsement.form.secitontitle',
-      defaultMessage: 'Listabókstafs meðmælendalisti',
+      defaultMessage: 'Listabókstafs undirskriftalisti',
       description:
         'Partial title for section, party letter will be added programmatically',
     },
@@ -294,13 +294,13 @@ export const m: MessageDir = {
     descriptionPt1: {
       id: 'gpt.application:endorsement.form.descripton.pt.one',
       defaultMessage:
-        'Með því veiti ég viðkomandi stjórnmálasamtökum, dómsmálaráðuneytinu og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á meðmælendalistan, þ.e. nafn, kt og heimilsfang. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
+        'Með því veiti ég viðkomandi stjórnmálasamtökum, dómsmálaráðuneytinu og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á undirskriftalistan, þ.e. nafn, kt og heimilsfang. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Disclaimer description, first paragraph',
     },
     descriptionPt2: {
       id: 'gpt.application:endorsement.form.descripton.pt.two',
       defaultMessage:
-        'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra meðmælendalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
+        'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra undirskriftalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
 
       description: 'Disclaimer description, second paragraph',
     },
@@ -318,7 +318,7 @@ export const m: MessageDir = {
     },
     isClosedMessage: {
       id: 'gpt.application:endorsement.form.isClosed.message',
-      defaultMessage: 'Meðmælendalista hefur verið lokað',
+      defaultMessage: 'Undirskriftalista hefur verið lokað',
       description: 'Error message if endorsement list has been closed',
     },
     submitButton: {
@@ -334,7 +334,7 @@ export const m: MessageDir = {
     },
     openTil: {
       id: 'sp.petitions:open-til',
-      defaultMessage: 'Meðmælendalistinn er opinn til:',
+      defaultMessage: 'Undirskriftalistinn er opinn til:',
       description: 'List is open til',
     },
     listOwner: {
@@ -385,7 +385,8 @@ export const m: MessageDir = {
     },
     cardSubtitle: {
       id: 'gpt.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum.',
+      defaultMessage:
+        'Yfirlit yfir þá lista sem þú ert skráður á má finna á Mínum Síðum.',
       description: 'Approved card subtitle',
     },
     myPagesButton: {
