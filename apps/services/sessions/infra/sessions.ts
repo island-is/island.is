@@ -4,14 +4,16 @@ const namespace = 'sessions'
 const serviceName = 'services-sessions'
 const workerName = 'services-sessions-worker'
 const imageName = 'services-sessions'
+const dbName = 'sessions'
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
   return service(serviceName)
     .namespace(namespace)
     .image(imageName)
     .postgres({
+      // The service has only read permissions
       username: serviceName,
-      name: serviceName,
+      name: dbName,
       passwordSecret: '/k8s/services/sessions/DB_PASSWORD',
     })
     .env({
@@ -72,10 +74,10 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     .command('node')
     .args('main.js', '--job=worker')
     .postgres({
-      // Using the same credentials as the service
-      username: serviceName,
-      name: serviceName,
-      passwordSecret: '/k8s/services/sessions/DB_PASSWORD',
+      // Worker has write permissions
+      username: workerName,
+      name: dbName,
+      passwordSecret: '/k8s/services/sessions/worker/DB_PASSWORD',
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
