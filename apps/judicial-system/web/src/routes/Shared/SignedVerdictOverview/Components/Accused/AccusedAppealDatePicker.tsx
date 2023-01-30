@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { Box, Button } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import * as styles from '../AppealSection/AppealSection.css'
 import { core } from '@island.is/judicial-system-web/messages'
