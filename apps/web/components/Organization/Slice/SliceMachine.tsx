@@ -10,6 +10,7 @@ import {
 import { RichText, EmailSignup } from '@island.is/web/components'
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
+import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -133,6 +134,8 @@ const renderSlice = (slice, namespace, slug, params) => {
       return <FeaturedSupportQNAs slice={slice} />
     case 'ConnectedComponent':
       return webRenderConnectedComponent(slice)
+    case 'FeaturedSupportQNAs':
+      return <FeaturedSupportQNAs slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

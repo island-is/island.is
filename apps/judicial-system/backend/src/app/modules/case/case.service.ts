@@ -31,6 +31,7 @@ import {
   CaseTransition,
   completedCaseStates,
   isIndictmentCase,
+  isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -445,7 +446,7 @@ export class CaseService {
       })
 
       // Case created from LOKE
-      if (theCase.origin === CaseOrigin.LOKE) {
+      if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
         messages.push({
           type: MessageType.DELIVER_CASE_TO_POLICE,
           userId: user.id,
@@ -472,46 +473,76 @@ export class CaseService {
     )
   }
 
-  private addMessagesForDeletedIndictmentCaseToQueue(
+  private addMessagesForModifiedCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getArchiveCaseFileMessages(theCase, user),
-    )
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_MODIFIED_NOTIFICATION,
+        userId: user.id,
+        caseId: theCase.id,
+      },
+    ])
   }
 
-  private async addMessagesForCaseTransitionToQueue(
+  private addMessagesForDeletedCaseToQueue(
     theCase: Case,
-    stateUpdate: CaseState,
     user: TUser,
-  ) {
-    if (stateUpdate === CaseState.RECEIVED) {
-      await this.addMessagesForReceivedCaseToQueue(theCase, user)
+  ): Promise<void> {
+    const messages: CaseMessage[] = [
+      {
+        type: MessageType.SEND_REVOKED_NOTIFICATION,
+        caseId: theCase.id,
+        userId: user.id,
+      },
+    ]
+
+    // Indictment cases need some case file cleanup
+    if (isIndictmentCase(theCase.type)) {
+      messages.push(...this.getArchiveCaseFileMessages(theCase, user))
     }
 
-    if (isIndictmentCase(theCase.type)) {
-      if (stateUpdate === CaseState.SUBMITTED) {
-        await this.addMessagesForSubmittedIndicitmentCaseToQueue(theCase, user)
-      } else if (completedCaseStates.includes(stateUpdate)) {
-        // Indictment cases are not signed
-        await this.addMessagesForCompletedIndictmentCaseToQueue(theCase, user)
-      } else if (stateUpdate === CaseState.DELETED) {
-        // Indictment cases need some case file cleanup
-        await this.addMessagesForDeletedIndictmentCaseToQueue(theCase, user)
-      }
-    }
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private async addMessagesForCourtCaseUpdateToQueue(
+  private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
   ): Promise<void> {
+    if (updatedCase.state !== theCase.state) {
+      // New case state
+      if (updatedCase.state === CaseState.RECEIVED) {
+        await this.addMessagesForReceivedCaseToQueue(theCase, user)
+      } else if (updatedCase.state === CaseState.DELETED) {
+        await this.addMessagesForDeletedCaseToQueue(theCase, user)
+      } else if (isIndictmentCase(theCase.type)) {
+        if (updatedCase.state === CaseState.SUBMITTED) {
+          await this.addMessagesForSubmittedIndicitmentCaseToQueue(
+            theCase,
+            user,
+          )
+        } else if (completedCaseStates.includes(updatedCase.state)) {
+          // Indictment cases are not signed
+          await this.addMessagesForCompletedIndictmentCaseToQueue(theCase, user)
+        }
+      }
+    }
+
+    if (
+      isRestrictionCase(theCase.type) &&
+      updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
+    ) {
+      // Case to dates modified
+      this.addMessagesForModifiedCaseToQueue(theCase, user)
+    }
+
     if (
       updatedCase.courtCaseNumber &&
       updatedCase.courtCaseNumber !== theCase.courtCaseNumber
     ) {
+      // New court case number
       isIndictmentCase(updatedCase.type)
         ? await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
             updatedCase,
@@ -520,6 +551,7 @@ export class CaseService {
         : await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
     } else if (theCase.courtCaseNumber) {
       if (updatedCase.prosecutorId !== theCase.prosecutorId) {
+        // New prosecutor
         await this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
       }
 
@@ -529,6 +561,7 @@ export class CaseService {
         theCase.defendants.length > 0 &&
         updatedCase.defenderEmail !== theCase.defenderEmail
       ) {
+        // New defender email
         await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
       }
     }
@@ -650,22 +683,9 @@ export class CaseService {
         }
       })
       .then(async () => {
-        const updatedCase = await this.findById(theCase.id)
+        const updatedCase = await this.findById(theCase.id, true)
 
-        if ((update as { [key: string]: string }).state) {
-          await this.addMessagesForCaseTransitionToQueue(
-            theCase,
-            (update as { [key: string]: string }).state as CaseState,
-            user,
-          )
-        }
-
-        // Update the court case if necessary
-        await this.addMessagesForCourtCaseUpdateToQueue(
-          theCase,
-          updatedCase,
-          user,
-        )
+        await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
         if (returnUpdatedCase) {
           return updatedCase

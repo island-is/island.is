@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
 
 import { client } from '../graphql'
@@ -19,7 +19,7 @@ export const App = () => {
     <ApolloProvider client={client}>
       <LocaleProvider locale={defaultLanguage} messages={{}}>
         <ApplicationErrorBoundary>
-          <Router basename={AdminPortalPaths.Base}>
+          <BrowserRouter basename={AdminPortalPaths.Base}>
             <Authenticator>
               <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
                 <PortalProvider
@@ -30,19 +30,18 @@ export const App = () => {
                   }}
                 >
                   <Layout>
-                    <Switch>
-                      <Route exact path={AdminPortalPaths.Root}>
-                        <Dashboard />
-                      </Route>
-                      <Route>
-                        <Modules />
-                      </Route>
-                    </Switch>
+                    <Routes>
+                      <Route
+                        path={AdminPortalPaths.Root}
+                        element={<Dashboard />}
+                      />
+                      <Route path="*" element={<Modules />} />
+                    </Routes>
                   </Layout>
                 </PortalProvider>
               </FeatureFlagProvider>
             </Authenticator>
-          </Router>
+          </BrowserRouter>
         </ApplicationErrorBoundary>
       </LocaleProvider>
     </ApolloProvider>

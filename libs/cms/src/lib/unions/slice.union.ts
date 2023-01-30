@@ -101,7 +101,7 @@ import { EmailSignup, mapEmailSignup } from '../models/emailSignup.model'
 import {
   FeaturedSupportQNAs,
   mapFeaturedSupportQNAs,
-} from '../models/featureSupportQNAs.model'
+} from '../models/featuredSupportQNAs.model'
 
 type SliceTypes =
   | ITimeline

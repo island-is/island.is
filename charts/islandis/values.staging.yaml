@@ -1138,7 +1138,6 @@ icelandic-names-registry-backend:
       cpu: '100m'
       memory: '128Mi'
   secrets:
-    ALLOWED_NATIONAL_IDS: '/k8s/icelandic-names-registry-backend/ALLOWED_NATIONAL_IDS'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   securityContext:

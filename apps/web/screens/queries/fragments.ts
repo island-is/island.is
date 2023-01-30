@@ -492,6 +492,7 @@ export const slices = gql`
       type
       required
       options
+      informationText
     }
     successText
     aboutYouHeadingText
@@ -607,6 +608,7 @@ export const slices = gql`
       type
       required
       options
+      informationText
     }
     translations
   }
@@ -614,6 +616,29 @@ export const slices = gql`
   fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
     __typename
     id
+    resolvedSupportQNAs {
+      id
+      title
+      slug
+      answer {
+        ...BaseSlices
+      }
+      organization {
+        id
+        title
+        slug
+      }
+      category {
+        title
+        description
+        slug
+      }
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
     link {
       text
       url
