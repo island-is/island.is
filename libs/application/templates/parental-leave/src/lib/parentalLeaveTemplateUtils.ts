@@ -58,5 +58,6 @@ export function findActionName(context: ApplicationContext) {
   const { state } = application
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
   if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
-  return undefined
+
+  return 'period' // Have default on period so we always reset actionName
 }

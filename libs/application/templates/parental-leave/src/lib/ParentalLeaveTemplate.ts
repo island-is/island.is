@@ -859,7 +859,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: ['clearTemp', 'setAdditionalFileSentVariable'],
+        exit: ['clearTemp', 'resetAdditionalDocumentsArray'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -1071,6 +1071,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(answers, 'periods')
           set(answers, 'periods', tempPeriods)
         }
+
+        return context
+      }),
+      resetAdditionalDocumentsArray: assign((context) => {
+        const { application } = context
+        unset(application.answers, 'fileUpload.additionalDocuments')
 
         return context
       }),
@@ -1317,19 +1323,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
-      setAdditionalFileSentVariable: assign((context) => {
-        const { application } = context
-        const answers = application.answers
-        const { additionalDocuments } = getApplicationAnswers(answers)
-
-        const newAddDocs = additionalDocuments.map((v) => ({
-          ...v,
-          isSend: true,
-        }))
-        set(answers, 'fileUpload.additionalDocuments', newAddDocs)
-
-        return context
-      }),
       setActionName: assign((context) => {
         const { application } = context
         const { answers } = application
