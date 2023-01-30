@@ -265,6 +265,7 @@ api:
   env:
     AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
+    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.staging01.devland.is'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
@@ -1279,6 +1280,7 @@ portals-admin:
 search-indexer-service:
   enabled: true
   env:
+    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.staging01.devland.is'
     APPLICATION_URL: 'http://search-indexer-service'
     CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
     CONTENTFUL_ENVIRONMENT: 'master'
@@ -1357,6 +1359,7 @@ search-indexer-service:
             cpu: '100m'
             memory: '512Mi'
     env:
+      AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.staging01.devland.is'
       APPLICATION_URL: 'http://search-indexer-service'
       CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
       CONTENTFUL_ENVIRONMENT: 'master'
