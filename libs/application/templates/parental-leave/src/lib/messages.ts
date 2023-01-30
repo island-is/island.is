@@ -2312,6 +2312,13 @@ export const errorMessages = defineMessages({
       'Ekki er hægt að óska eftir dögum ef ekki er nýttur allur sameiginlegur réttur vegna fjölbura. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to request days!',
   },
+  notAllowedToGiveRightsOtherParentNotAllowed: {
+    id:
+      'pl.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
+    defaultMessage:
+      'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
+    description: 'Unable to transfer days!',
+  },
 })
 
 export const statesMessages = defineMessages({
