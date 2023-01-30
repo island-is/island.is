@@ -3,7 +3,6 @@ import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import {
-  Case,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -11,7 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { DEFENDER_ROUTE, USERS_ROUTE } from '@island.is/judicial-system/consts'
 
-import { CaseData, LimitedAccessCaseData } from '../../types'
+import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
 import CaseQuery from './caseGql'
 

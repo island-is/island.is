@@ -30,13 +30,13 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseDecision,
   CaseType,
   completedCaseStates,
   Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   RestrictionCaseCourtSubsections,
