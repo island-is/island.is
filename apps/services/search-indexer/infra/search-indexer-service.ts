@@ -24,14 +24,9 @@ const envs = {
     prod: '40',
   },
   AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
-    dev: ref(
-      (ctx) =>
-        `${
-          ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-        }loftbru.dev01.devland.is`,
-    ),
-    staging: 'loftbru.staging01.devland.is',
-    prod: 'loftbru.island.is',
+    dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
+    staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
+    prod: ref((h) => h.svc('loftbru.island.is')),
   },
 }
 export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
