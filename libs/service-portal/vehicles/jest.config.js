@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'service-portal-vehicles',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../..',
   roots: [__dirname],
   transform: {

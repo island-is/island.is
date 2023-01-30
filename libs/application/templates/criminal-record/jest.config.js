@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'application-templates-criminal-record',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
@@ -10,6 +10,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/application/templates/criminal-record',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/criminal-record',
 }

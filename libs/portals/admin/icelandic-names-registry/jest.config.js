@@ -1,5 +1,5 @@
 module.exports = {
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
@@ -9,7 +9,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/portals/admin/icelandic-names-registry',
+  coverageDirectory: '<rootDir>/coverage/libs/portals/admin/icelandic-names-registry',
   displayName: 'portals-admin-icelandic-names-registry',
 }

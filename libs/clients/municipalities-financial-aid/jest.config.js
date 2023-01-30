@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'clients-municipality-financial-aid',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../..',
   roots: [__dirname],
   globals: {
@@ -12,6 +12,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../coverage/libs/clients/municipality-financial-aid',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/municipalities-financial-aid',
 }

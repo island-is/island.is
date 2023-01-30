@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'clients-transport-authority-vehicle-codetables',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {
@@ -13,6 +13,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/clients/transport-authority/vehicle-codetables',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/transport-authority/vehicle-codetables',
 }

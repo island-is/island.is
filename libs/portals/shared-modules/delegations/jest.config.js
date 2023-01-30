@@ -1,12 +1,11 @@
 module.exports = {
   displayName: 'portals-shared-modules-delegations',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/portals/shared-modules/delegations',
+  coverageDirectory: '<rootDir>/coverage/libs/portals/shared-modules/delegations',
 }

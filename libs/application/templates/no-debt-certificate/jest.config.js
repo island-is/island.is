@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'application-templates-no-debt-certificate',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {
@@ -10,6 +10,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'js'],
   testEnvironment: 'node',
-  coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/no-debt-certificate',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/no-debt-certificate',
 }

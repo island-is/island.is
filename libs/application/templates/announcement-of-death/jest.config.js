@@ -1,5 +1,5 @@
 module.exports = {
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
@@ -9,7 +9,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/application/templates/announcement-of-death',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/announcement-of-death',
   displayName: 'application-templates-announcement-of-death',
 }

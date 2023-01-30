@@ -1,5 +1,5 @@
 module.exports = {
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
@@ -9,7 +9,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/application/templates/driving-assessment-approval',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/driving-assessment-approval',
   displayName: 'application-templates-driving-assessment-approval',
 }

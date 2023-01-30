@@ -1,13 +1,12 @@
 module.exports = {
   displayName:
     'application-templates-transport-authority-order-vehicle-registration-certificate',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../../..',
   roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../../coverage/libs/application/templates/transport-authority/order-vehicle-registration-certificate',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/transport-authority/order-vehicle-registration-certificate',
 }

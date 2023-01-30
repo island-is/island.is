@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'services-auth-personal-representative-public',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {
@@ -13,8 +13,7 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
-  coverageDirectory:
-    '../../../../coverage/apps/services/auth/personal-representative-public',
+  coverageDirectory: '<rootDir>/coverage/apps/services/auth/personal-representative-public',
   setupFiles: [`${__dirname}/test/environment.jest.ts`],
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',

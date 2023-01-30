@@ -1,5 +1,5 @@
 module.exports = {
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {
@@ -14,7 +14,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/application/templates/health-insurance',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/health-insurance',
   displayName: 'application-templates-health-insurance',
 }

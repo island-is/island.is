@@ -1,5 +1,5 @@
 module.exports = {
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../..',
   roots: [__dirname],
   globalSetup: `${__dirname}/test/globalSetup.ts`,

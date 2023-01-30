@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'application-api-payment',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {

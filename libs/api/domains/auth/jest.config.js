@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'api-domains-auth',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {

@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'clients-rsk-personal-tax-return',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   testEnvironment: 'node',
@@ -11,6 +11,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/clients/rsk/personal-tax-return',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/rsk/personal-tax-return',
 }

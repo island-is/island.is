@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'services-contentful-entry-tagger',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../..',
   roots: [__dirname],
   globals: {

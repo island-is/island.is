@@ -1,7 +1,7 @@
 module.exports = {
   displayName: 'portals-core',
   testEnvironment: 'jsdom',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../..',
   roots: [__dirname],
   transform: {

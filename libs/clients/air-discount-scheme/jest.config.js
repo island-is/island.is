@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'clients-air-discount-scheme',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../..',
   roots: [__dirname],
   globals: {

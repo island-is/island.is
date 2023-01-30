@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'application-templates-financial-aid',
-  preset: './jest.preset.js',
+  preset: `${__dirname}/jest.preset.js`,
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
@@ -10,6 +10,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/application/templates/financial-aid',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/financial-aid',
 }
