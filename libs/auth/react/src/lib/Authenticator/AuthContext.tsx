@@ -1,11 +1,11 @@
 import { createContext, useContext } from 'react'
-
+import { Location } from 'react-router-dom'
 import { AuthReducerState, initialState } from './Authenticator.state'
 
 export interface AuthContextType extends AuthReducerState {
   signIn: () => void
   signInSilent: () => void
-  switchUser: (nationalId?: string) => void
+  switchUser: (nationalId?: string, location?: Location) => void
   signOut: () => void
 }
 
@@ -17,7 +17,7 @@ export const defaultAuthContext = {
   signInSilent() {
     // Intentionally empty
   },
-  switchUser(nationalId?: string) {
+  switchUser(nationalId?: string, location?: Location) {
     // Intentionally empty
   },
   signOut() {

@@ -71,7 +71,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   )
 
   const switchUser = useCallback(
-    async function switchUser(nationalId?: string) {
+    async function switchUser(nationalId?: string, location?: Location) {
       const args =
         nationalId !== undefined
           ? {
@@ -94,7 +94,10 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       return userManager.signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
-          getReturnUrl(locationRef.current, authSettings),
+          getReturnUrl(
+            location != null ? location : locationRef.current,
+            authSettings,
+          ),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
