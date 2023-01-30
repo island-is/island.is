@@ -11,7 +11,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
 import { GET_VEHICLE_INFORMATION } from '../graphql/queries'
 import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
-import { PlateType, VehiclesCurrentVehicle } from '../types'
+import { PlateType, VehiclesCurrentVehicle } from '../shared'
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
 

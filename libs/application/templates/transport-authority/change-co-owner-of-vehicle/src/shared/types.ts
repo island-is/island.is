@@ -7,6 +7,13 @@ import {
 import { MessageDescriptor } from '@formatjs/intl'
 import { TagVariant } from '@island.is/island-ui/core'
 
+export type VehiclesCurrentVehicle = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+}
+
 interface ReviewerProps {
   nationalId: string
   name: string

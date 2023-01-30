@@ -5,7 +5,6 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import {
   information,
   externalData,
@@ -17,7 +16,6 @@ import {
 export const Rejected: Form = buildForm({
   id: 'RejectedApplicationForm',
   title: '',
-  logo: Logo,
   mode: FormModes.REJECTED,
   children: [
     buildSection({

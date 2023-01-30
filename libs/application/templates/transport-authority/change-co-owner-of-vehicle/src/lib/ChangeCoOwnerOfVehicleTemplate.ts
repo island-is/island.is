@@ -32,6 +32,7 @@ import {
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -65,6 +66,12 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.ChangeCoOwnerOfVehicle.translation,
   ],
   dataSchema: ChangeCoOwnerOfVehicleSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag: Features.transportAuthorityChangeCoOwnerOfVehicleDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityChangeCoOwnerOfVehicle,
   stateMachineConfig: {
     initial: States.DRAFT,

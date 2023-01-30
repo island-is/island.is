@@ -2,7 +2,7 @@ import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { PropertyDetail } from '../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {

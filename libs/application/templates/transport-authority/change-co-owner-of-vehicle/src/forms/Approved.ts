@@ -5,13 +5,11 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messagesx'
-import Logo from '../assets/Logo'
 import { payment } from '../lib/messages'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: '',
-  logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

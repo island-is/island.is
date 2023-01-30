@@ -5,7 +5,6 @@ import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '../../lib/messagesx'
-import { Bus } from '../../assets/Bus'
 
 export const ConfirmationField: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -51,15 +50,6 @@ export const ConfirmationField: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           }
         />
-      </Box>
-
-      <Box
-        display="flex"
-        justifyContent="center"
-        marginTop={2}
-        marginBottom={4}
-      >
-        <Bus />
       </Box>
 
       {renderFooter()}

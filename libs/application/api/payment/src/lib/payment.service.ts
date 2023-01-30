@@ -81,6 +81,7 @@ export class PaymentService {
     return {
       fulfilled: true,
       paymentUrl: '',
+      paymentId: '',
     }
 
     /*
@@ -118,6 +119,7 @@ export class PaymentService {
         user.sub ?? user.nationalId,
         callbackUrl,
       ),
+      paymentId: foundPayment.id,
     }
     */
   }

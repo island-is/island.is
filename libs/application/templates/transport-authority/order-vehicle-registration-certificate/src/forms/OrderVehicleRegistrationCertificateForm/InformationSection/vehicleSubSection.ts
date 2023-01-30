@@ -6,7 +6,7 @@ import {
   buildDescriptionField,
   buildCustomField,
 } from '@island.is/application/core'
-import { VehiclesCurrentVehicle } from '../../../types'
+import { VehiclesCurrentVehicle } from '../../../shared'
 import { information } from '../../../lib/messages'
 import { getSelectedVehicle } from '../../../utils'
 

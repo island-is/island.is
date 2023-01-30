@@ -4,13 +4,11 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { information, externalData, payment, review } from '../lib/messages'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: '',
-  logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

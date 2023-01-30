@@ -1,5 +1,5 @@
 import { Application } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../../types'
+import { VehiclesCurrentVehicle } from '../../../shared'
 import {
   buildMultiField,
   buildTextField,
