@@ -284,8 +284,8 @@ export class PoliceService {
           'Failed to update police case',
           {
             caseId,
-            actor: user?.name,
-            institution: user?.institution?.name,
+            actor: user.name,
+            institution: user.institution?.name,
             caseType,
             caseState,
             policeCaseNumber,
