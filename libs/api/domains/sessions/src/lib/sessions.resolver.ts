@@ -11,22 +11,23 @@ import { Loader } from '@island.is/nest/dataloader'
 
 import { Session } from './models/session.model'
 import { SessionsService } from './services/sessions.service'
-import { SessionDTO } from './services/types'
+import { PaginatedSessionDto, SessionDto } from './services/types'
+import { PaginatedSessionResponse } from './dto/paginated-session.response'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Session)
 export class SessionsResolver {
   constructor(private readonly sessionsService: SessionsService) {}
 
-  @Query(() => [Session], { name: 'activitiesSessions' })
-  getSessions(@CurrentUser() user: User): Promise<SessionDTO[]> {
+  @Query(() => PaginatedSessionResponse, { name: 'sessionsList' })
+  getSessions(@CurrentUser() user: User): Promise<PaginatedSessionDto> {
     return this.sessionsService.getSessions(user)
   }
 
   @ResolveField('actor', () => Identity)
   resolveActor(
     @Loader(IdentityLoader) identityLoader: IdentityDataLoader,
-    @Parent() session: SessionDTO,
+    @Parent() session: SessionDto,
   ) {
     return identityLoader.load(session.actorNationalId)
   }
@@ -34,7 +35,7 @@ export class SessionsResolver {
   @ResolveField('subject', () => Identity)
   resolveSubject(
     @Loader(IdentityLoader) identityLoader: IdentityDataLoader,
-    @Parent() session: SessionDTO,
+    @Parent() session: SessionDto,
   ) {
     return identityLoader.load(session.subjectNationalId)
   }
@@ -42,7 +43,7 @@ export class SessionsResolver {
   @ResolveField('client', () => Client)
   resolveClient(
     @Loader(ClientLoader) clientLoader: ClientDataLoader,
-    @Parent() session: SessionDTO,
+    @Parent() session: SessionDto,
   ) {
     return clientLoader.load(session.clientId)
   }

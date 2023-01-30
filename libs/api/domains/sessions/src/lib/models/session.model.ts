@@ -21,9 +21,6 @@ export class Session {
   timestamp!: string
 
   @Field(() => String)
-  sessionId!: string
-
-  @Field(() => String)
   userAgent!: string
 
   @Field(() => String)

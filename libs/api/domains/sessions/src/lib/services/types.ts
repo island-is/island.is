@@ -1,4 +1,6 @@
-export class SessionDTO {
+import { PageInfoDto } from '@island.is/nest/pagination'
+
+export class SessionDto {
   id!: string
 
   actorNationalId!: string
@@ -9,11 +11,17 @@ export class SessionDTO {
 
   timestamp!: string
 
-  sessionId!: string
-
   userAgent!: string
 
   ip!: string
 
   ipLocation!: string
+}
+
+export class PaginatedSessionDto {
+  totalCount!: number
+
+  pageInfo!: PageInfoDto
+
+  data!: SessionDto[]
 }
