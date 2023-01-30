@@ -1,5 +1,16 @@
-import { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
-import { Column, CreatedAt, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  Model,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript'
 
 @Table({
   tableName: 'session',

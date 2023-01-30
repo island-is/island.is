@@ -1,6 +1,6 @@
-import { IsDateString, IsString } from 'class-validator';
+import { IsDateString, IsString } from 'class-validator'
 
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateSessionDto {
   @IsString()
