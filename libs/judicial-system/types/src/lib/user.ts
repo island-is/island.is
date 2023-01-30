@@ -55,7 +55,7 @@ export function isExtendedCourtRole(role: string): boolean {
   return Object.values(extendedCourtRoles).includes(role)
 }
 
-const prosecutionRoles: string[] = [
+export const prosecutionRoles: string[] = [
   UserRole.PROSECUTOR,
   UserRole.REPRESENTATIVE,
 ]
@@ -64,7 +64,7 @@ export function isProsecutionRole(role: string): boolean {
   return prosecutionRoles.includes(role)
 }
 
-const courtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
+export const courtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
 
 export function isCourtRole(role: string): boolean {
   return courtRoles.includes(role)
