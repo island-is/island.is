@@ -11,6 +11,7 @@ import { payment } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Company } from '../../assets/Company'
+import { Conclusion } from '../Conclusion'
 
 const QUERY = gql`
   query status($applicationId: String!) {
@@ -28,11 +29,13 @@ interface PaymentStatus {
   fulfilled: boolean
 }
 
-export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
+export const PaymentPending: FC<Props> = (props) => {
+  const { error, application, refetch } = props
   const applicationId = application.id
   const { formatMessage } = useLocale()
   const [continuePolling, setContinuePolling] = useState(true)
   const [submitError, setSubmitError] = useState(false)
+  const [conlusionScreen, setConclusionScreen] = useState(false)
 
   const { data, error: queryError } = useQuery(QUERY, {
     variables: {
@@ -71,7 +74,7 @@ export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
         if (data && !errors?.length) {
           // Takes them to the next state (which loads the relevant form)
 
-          refetch?.()
+          setConclusionScreen(true)
         } else {
           return Promise.reject()
         }
@@ -86,6 +89,10 @@ export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
     refetch,
     submitApplication,
   ])
+
+  if (conlusionScreen) {
+    return <Conclusion {...props} />
+  }
 
   if (queryError) {
     return (

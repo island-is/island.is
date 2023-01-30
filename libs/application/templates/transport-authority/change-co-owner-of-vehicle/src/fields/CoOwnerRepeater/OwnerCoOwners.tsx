@@ -10,25 +10,20 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
-import { ArrayField } from 'react-hook-form'
-import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { UserInformation } from '../../shared'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<UserInformation, 'id'>>
   handleRemove: (index: number) => void
 }
 
-export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
+export const OwnerCoOwners: FC<Props & FieldBaseProps> = ({
   id,
   index,
   rowLocation,
   handleRemove,
-  repeaterField,
   ...props
 }) => {
   const { formatMessage } = useLocale()
@@ -36,13 +31,14 @@ export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
   const fieldIndex = `${id}[${index}]`
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
+  const nameField = `${fieldIndex}.name`
+  const nationaIdField = `${fieldIndex}.nationalId`
 
   return (
-    <Box position="relative" key={repeaterField.id} marginBottom={4}>
+    <Box position="relative" marginBottom={4}>
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
-          {formatMessage(information.labels.coOwner.coOwnerTempTitle)}{' '}
-          {rowLocation}
+          {formatMessage(information.labels.coOwner.title)} {rowLocation}
         </Text>
         <Box>
           <Button variant="text" onClick={handleRemove.bind(null, index)}>
@@ -50,15 +46,35 @@ export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
           </Button>
         </Box>
       </Box>
-      <NationalIdWithName
-        {...props}
-        customId={fieldIndex}
-        customNameLabel={formatMessage(information.labels.coOwner.name)}
-        customNationalIdLabel={formatMessage(
-          information.labels.coOwner.nationalId,
-        )}
-      />
       <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={nationaIdField}
+            name={nationaIdField}
+            format="######-####"
+            label={formatMessage(information.labels.coOwner.nationalId)}
+            error={errors && getErrorViaPath(errors, nationaIdField)}
+            backgroundColor="white"
+            readOnly
+            defaultValue={
+              getValueViaPath(application.answers, nationaIdField, '') as string
+            }
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={nameField}
+            name={nameField}
+            type="email"
+            label={formatMessage(information.labels.coOwner.name)}
+            error={errors && getErrorViaPath(errors, nameField)}
+            backgroundColor="white"
+            readOnly
+            defaultValue={
+              getValueViaPath(application.answers, nameField, '') as string
+            }
+          />
+        </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={emailField}
@@ -66,8 +82,8 @@ export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
             type="email"
             label={formatMessage(information.labels.coOwner.email)}
             error={errors && getErrorViaPath(errors, emailField)}
-            backgroundColor="blue"
-            required
+            backgroundColor="white"
+            readOnly
             defaultValue={
               getValueViaPath(application.answers, emailField, '') as string
             }
@@ -81,8 +97,8 @@ export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
             format="###-####"
             label={formatMessage(information.labels.coOwner.phone)}
             error={errors && getErrorViaPath(errors, phoneField)}
-            backgroundColor="blue"
-            required
+            backgroundColor="white"
+            readOnly
             defaultValue={
               getValueViaPath(application.answers, phoneField, '') as string
             }

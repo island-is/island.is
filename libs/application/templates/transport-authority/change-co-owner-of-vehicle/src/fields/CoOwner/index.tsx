@@ -1,76 +1,111 @@
-import { gql, useQuery } from '@apollo/client'
+import { gql, useLazyQuery } from '@apollo/client'
 import { VehiclesCurrentOwnerInfo } from '@island.is/api/schema'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Text,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { VehiclesCurrentVehicle } from '../../types'
-import { getSelectedVehicle } from '../../utils'
+import { OwnerCoOwnersInformation } from '../../shared'
+import { useFormContext } from 'react-hook-form'
 
 export const CoOwner: FC<FieldBaseProps> = (props) => {
-  const { application, field, setFieldLoadingState } = props
+  const { application, field, setFieldLoadingState, errors } = props
 
   const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
   const { id } = field
+  const [coOwners, setCoOwners] = useState<OwnerCoOwnersInformation[]>(
+    getValueViaPath(
+      application.answers,
+      'ownerCoOwners',
+      [],
+    ) as OwnerCoOwnersInformation[],
+  )
 
-  const vehicle = getSelectedVehicle(
-    application.externalData,
-    application.answers,
-  ) as VehiclesCurrentVehicle
-
-  const { data, loading, error } = useQuery(
+  const [getCoOwnerInfo, { loading, error }] = useLazyQuery(
     gql`
       ${GET_VEHICLE_INFORMATION}
     `,
     {
-      variables: {
-        input: {
-          permno: vehicle.permno,
-          regno: '',
-          vin: '',
-        },
+      onCompleted: (result) => {
+        const data = result.vehiclesDetail
+        if (data?.coOwners !== coOwners) {
+          setCoOwners(data?.coOwners || [])
+        }
+        if (data?.coOwners?.length === 0) {
+          setValue('ownerCoOwners', [])
+        }
       },
     },
   )
 
   useEffect(() => {
-    setFieldLoadingState?.(loading || !!error)
+    if (coOwners.length === 0) {
+      setFieldLoadingState?.(loading || !!error)
+    }
   }, [loading, error])
 
-  return !loading && !error ? (
-    data?.vehiclesDetail?.coOwners &&
-    data.vehiclesDetail.coOwners.length > 0 ? (
+  useEffect(() => {
+    getCoOwnerInfo({
+      variables: {
+        input: {
+          permno: getValueViaPath(
+            application.answers,
+            'pickVehicle.plate',
+            undefined,
+          ),
+          regno: '',
+          vin: '',
+        },
+      },
+    })
+  }, [coOwners])
+
+  return !error ? (
+    coOwners.length > 0 ? (
       <Box>
-        {data.vehiclesDetail.coOwners.map(
-          (coOwner: VehiclesCurrentOwnerInfo, index: number) => (
-            <Box marginTop={3}>
-              <Text variant="h5">
-                {formatMessage(information.labels.coOwner.title)}
-                {data.vehiclesDetail.coOwners.length > 1 ? ` ${index + 1}` : ''}
-              </Text>
-              <Box marginTop={2}>
+        {coOwners.map((coOwner: VehiclesCurrentOwnerInfo, index: number) => (
+          <Box marginTop={3} key={`co-owner-${index}`}>
+            <Text variant="h5">
+              {formatMessage(information.labels.coOwner.title)}
+              {coOwners.length > 1 ? ` ${index + 1}` : ''}
+            </Text>
+            <GridRow>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
                 <InputController
                   id={`${id}[${index}].name`}
                   name={`${id}[${index}].name`}
                   defaultValue={coOwner.owner || ''}
                   label={formatMessage(information.labels.coOwner.name)}
+                  error={
+                    errors && getErrorViaPath(errors, `${id}[${index}].name`)
+                  }
                   readOnly
                 />
-              </Box>
-              <Box marginTop={2}>
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
                 <InputController
                   id={`${id}[${index}].nationalId`}
                   name={`${id}[${index}].nationalId`}
                   defaultValue={coOwner.nationalId || ''}
                   label={formatMessage(information.labels.coOwner.nationalId)}
+                  error={
+                    errors &&
+                    getErrorViaPath(errors, `${id}[${index}].nationalId`)
+                  }
                   readOnly
                 />
-              </Box>
-              <Box marginTop={2}>
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
                 <InputController
                   id={`${id}[${index}].email`}
                   name={`${id}[${index}].email`}
@@ -84,10 +119,13 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
                   }
                   type="email"
                   backgroundColor="blue"
+                  error={
+                    errors && getErrorViaPath(errors, `${id}[${index}].email`)
+                  }
                   required
                 />
-              </Box>
-              <Box marginTop={2}>
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
                 <InputController
                   id={`${id}[${index}].phone`}
                   name={`${id}[${index}].phone`}
@@ -101,12 +139,15 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
                   }
                   type="tel"
                   backgroundColor="blue"
+                  error={
+                    errors && getErrorViaPath(errors, `${id}[${index}].phone`)
+                  }
                   required
                 />
-              </Box>
-            </Box>
-          ),
-        )}
+              </GridColumn>
+            </GridRow>
+          </Box>
+        ))}
       </Box>
     ) : null
   ) : error ? (

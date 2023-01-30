@@ -199,11 +199,45 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.REVIEW },
-          // [DefaultEvents.REJECT]: { target: States.REJECTED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      // TODOx rejected state
+      [States.REJECTED]: {
+        meta: {
+          name: 'Rejected',
+          status: 'rejected',
+          progress: 1,
+          lifecycle: pruneAfterDays(3 * 30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.rejectApplication,
+          }),
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardRejected,
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.REVIEWER,
+              formLoader: () =>
+                import('../forms/Rejected').then((module) =>
+                  Promise.resolve(module.Rejected),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

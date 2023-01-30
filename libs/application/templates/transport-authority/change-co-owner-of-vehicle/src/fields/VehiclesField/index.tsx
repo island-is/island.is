@@ -1,14 +1,19 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { VehiclesCurrentVehicle } from '../../types'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
+import { useFormContext } from 'react-hook-form'
 
 export const VehiclesField: FC<FieldBaseProps> = (props) => {
+  const { setValue } = useFormContext()
   const { application } = props
   const currentVehicleList = application.externalData.currentVehicleList
     .data as VehiclesCurrentVehicle[]
+  useEffect(() => {
+    setValue('ownerCoOwners', [])
+  }, [setValue])
   return (
     <Box paddingTop={2}>
       {currentVehicleList.length > 5 ? (
