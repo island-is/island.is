@@ -1,22 +1,27 @@
-import { FC, useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
-import { Location, Routes, useLocation, Route } from 'react-router-dom'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  ReactNode,
+} from 'react'
+import { Location, useLocation } from 'react-router-dom'
 import type { User } from 'oidc-client-ts'
 
-import OidcSignIn from './OidcSignIn'
-import OidcSilentSignIn from './OidcSilentSignIn'
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Authenticator.state'
-import { AuthContext } from './AuthContext'
-import { CheckAuth } from './CheckAuth'
 import { AuthSettings } from '../AuthSettings'
+import { AuthContext } from './AuthContext'
 
-interface Props {
+interface AuthProviderProps {
   /**
    * If true, Authenticator automatically starts login flow and does not render children until user is fully logged in.
    * If false, children are responsible for rendering a login button and loading indicator.
    * Default: true
    */
   autoLogin?: boolean
+  children: ReactNode
 }
 
 const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
@@ -29,46 +34,43 @@ const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
   return returnUrl
 }
 
-export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
-  const reducerInstance = useReducer(reducer, initialState)
-  const [state, dispatch] = reducerInstance
+export const AuthProvider = ({
+  children,
+  autoLogin = true,
+}: AuthProviderProps) => {
+  console.log('AuthProvider')
+  const [state, dispatch] = useReducer(reducer, initialState)
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
   const location = useLocation()
   const locationRef = useRef(location)
   locationRef.current = location
 
-  const signIn = useCallback(
-    async function signIn() {
-      dispatch({
-        type: ActionType.SIGNIN_START,
-      })
-      return userManager.signinRedirect({
-        state: getReturnUrl(locationRef.current, authSettings),
-      })
-      // Nothing more happens here since browser will redirect to IDS.
-    },
-    [dispatch, userManager, authSettings, locationRef],
-  )
+  const signIn = useCallback(async () => {
+    dispatch({
+      type: ActionType.SIGNIN_START,
+    })
+    return userManager.signinRedirect({
+      state: getReturnUrl(locationRef.current, authSettings),
+    })
+    // Nothing more happens here since browser will redirect to IDS.
+  }, [dispatch, userManager, authSettings, locationRef])
 
-  const signInSilent = useCallback(
-    async function signInSilent() {
-      let user = null
-      dispatch({
-        type: ActionType.SIGNIN_START,
-      })
-      try {
-        user = await userManager.signinSilent()
-        dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
-      } catch (error) {
-        console.error('Authenticator: Silent signin failed', error)
-        dispatch({ type: ActionType.SIGNIN_FAILURE })
-      }
+  const signInSilent = useCallback(async () => {
+    let user = null
+    dispatch({
+      type: ActionType.SIGNIN_START,
+    })
+    try {
+      user = await userManager.signinSilent()
+      dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
+    } catch (error) {
+      console.error('Authenticator: Silent signin failed', error)
+      dispatch({ type: ActionType.SIGNIN_FAILURE })
+    }
 
-      return user
-    },
-    [userManager, dispatch],
-  )
+    return user
+  }, [userManager, dispatch])
 
   const switchUser = useCallback(
     async function switchUser(nationalId?: string) {
@@ -112,36 +114,33 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
     [userManager, dispatch],
   )
 
-  const checkLogin = useCallback(
-    async function checkLogin() {
+  const checkLogin = useCallback(async () => {
+    dispatch({
+      type: ActionType.SIGNIN_START,
+    })
+
+    const storedUser = await userManager.getUser()
+
+    // Check expiry.
+    if (storedUser && !storedUser.expired) {
       dispatch({
-        type: ActionType.SIGNIN_START,
+        type: ActionType.SIGNIN_SUCCESS,
+        payload: storedUser,
       })
-
-      const storedUser = await userManager.getUser()
-
-      // Check expiry.
-      if (storedUser && !storedUser.expired) {
-        dispatch({
-          type: ActionType.SIGNIN_SUCCESS,
-          payload: storedUser,
-        })
-      } else if (autoLogin) {
-        // If we find a user in SessionStorage, there's a fine chance that
-        // it's just an expired token and we can silently log in.
-        if (storedUser && (await signInSilent())) {
-          return
-        }
-
-        // If all else fails, redirect to the login page.
-        await signIn()
-      } else {
-        // When not performing autologin, silently check if there's an IDP session.
-        await signInSilent()
+    } else if (autoLogin) {
+      // If we find a user in SessionStorage, there's a fine chance that
+      // it's just an expired token, and we can silently log in.
+      if (storedUser && (await signInSilent())) {
+        return
       }
-    },
-    [userManager, dispatch, signIn, signInSilent, autoLogin],
-  )
+
+      // If all else fails, redirect to the login page.
+      await signIn()
+    } else {
+      // When not performing autologin, silently check if there's an IDP session.
+      await signInSilent()
+    }
+  }, [userManager, dispatch, signIn, signInSilent, autoLogin])
 
   useEffect(() => {
     // Only add events when we have userInfo, to avoid race conditions with
@@ -152,6 +151,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
 
     // This is raised when a new user state has been loaded with a silent login.
     const userLoaded = (user: User) => {
+      console.log('userLoader', user)
       dispatch({
         type: ActionType.USER_LOADED,
         payload: user,
@@ -164,6 +164,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.LOGGED_OUT,
       })
       await userManager.removeUser()
+
       if (autoLogin) {
         signIn()
       }
@@ -189,26 +190,16 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   )
 
   return (
-    // <AuthContext.Provider value={context}>
-    //   <Routes>
-    //     <Route
-    //       path={authSettings.redirectPath as string}
-    //       element={<OidcSignIn authDispatch={dispatch} />}
-    //     />
-    //     <Route
-    //       path={authSettings.redirectPathSilent as string}
-    //       element={<OidcSilentSignIn />}
-    //     />
-    //     <Route
-    //       path="*"
-    //       element={
-    //         <CheckAuth checkLogin={checkLogin} autoLogin={autoLogin}>
-    //           {children}
-    //         </CheckAuth>
-    //       }
-    //     />
-    //   </Routes>
-    // </AuthContext.Provider>
-    <>{children}</>
+    <AuthContext.Provider
+      value={{
+        ...context,
+        dispatch,
+        authSettings,
+        checkLogin,
+        autoLogin,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   )
 }

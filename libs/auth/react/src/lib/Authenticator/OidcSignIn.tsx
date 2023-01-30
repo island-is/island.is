@@ -1,19 +1,17 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 import AuthenticatorErrorScreen from './AuthenticatorErrorScreen'
 import { getUserManager } from '../userManager'
-import { ActionType, AuthDispatch } from './Authenticator.state'
+import { ActionType } from './Authenticator.state'
+import { useAuth } from './AuthContext'
 
-interface Props {
-  authDispatch: AuthDispatch
-}
-
-export const OidcSignIn = ({ authDispatch }: Props): ReactElement => {
+export const OidcSignIn = () => {
   const navigate = useNavigate()
+  const { dispatch: authDispatch } = useAuth()
   const [hasError, setHasError] = useState(false)
 
-  const init = async function init() {
+  const init = async () => {
     const userManager = getUserManager()
     try {
       const user = await userManager.signinRedirectCallback(

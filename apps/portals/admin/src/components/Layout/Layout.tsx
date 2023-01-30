@@ -101,10 +101,14 @@ export const Layout: FC = ({ children }) => {
 
   const moduleLayout = !activeModule ? 'none' : layout
 
-  if (ModuleLayoutWrapper) {
+  if (ModuleLayoutWrapper && moduleProps.userInfo) {
     return (
       <LayoutOuterContainer>
-        <ModuleLayoutWrapper {...moduleProps} portalType={portalType}>
+        <ModuleLayoutWrapper
+          userInfo={moduleProps.userInfo}
+          client={moduleProps.client}
+          portalType={portalType}
+        >
           <LayoutModuleContainer layout={moduleLayout}>
             {children}
           </LayoutModuleContainer>

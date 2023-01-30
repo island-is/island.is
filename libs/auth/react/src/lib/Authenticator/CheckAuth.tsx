@@ -1,17 +1,13 @@
-import React, { FC, useEffect } from 'react'
+import { useEffect } from 'react'
 
 import { getAuthSettings } from '../userManager'
 import { useAuth } from './AuthContext'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 import { CheckIdpSession } from './CheckIdpSession'
+import { Outlet } from 'react-router-dom'
 
-interface Props {
-  autoLogin: boolean
-  checkLogin: () => void
-}
-
-export const CheckAuth: FC<Props> = ({ autoLogin, checkLogin, children }) => {
-  const { userInfo } = useAuth()
+export const CheckAuth = () => {
+  const { userInfo, autoLogin, checkLogin } = useAuth()
   const authSettings = getAuthSettings()
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
 
@@ -22,13 +18,14 @@ export const CheckAuth: FC<Props> = ({ autoLogin, checkLogin, children }) => {
     }
   }, [])
 
-  const renderChildren = !autoLogin || userInfo
-  return renderChildren ? (
-    <>
-      {monitorUserSession && <CheckIdpSession />}
-      {children}
-    </>
-  ) : (
-    <AuthenticatorLoadingScreen />
-  )
+  if (!autoLogin || userInfo) {
+    return (
+      <>
+        {monitorUserSession && <CheckIdpSession />}
+        <Outlet />
+      </>
+    )
+  }
+
+  return <AuthenticatorLoadingScreen />
 }

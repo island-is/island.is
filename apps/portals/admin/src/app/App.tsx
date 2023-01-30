@@ -1,47 +1,25 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { RouterProvider } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
 
-import { client } from '../graphql'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { Authenticator } from '@island.is/auth/react'
-import { FeatureFlagProvider } from '@island.is/react/feature-flags'
-import { Modules, PortalProvider } from '@island.is/portals/core'
-import { modules } from '../lib/modules'
-import environment from '../environments/environment'
-import { Layout } from '../components/Layout/Layout'
 import { ApplicationErrorBoundary } from '@island.is/portals/core'
-import { AdminPortalPaths } from '../lib/paths'
-import { Dashboard } from '../screens/Dashboard/Dashboard'
+import { createRouterTree } from '../lib/router'
+import { client } from '../graphql'
+import { getAuthSettings } from '@island.is/auth/react'
 
 export const App = () => {
+  const { redirectPathSilent, redirectPath } = getAuthSettings()
+  const router = createRouterTree({
+    redirectPathSilent,
+    redirectPath,
+  })
+
   return (
     <ApolloProvider client={client}>
       <LocaleProvider locale={defaultLanguage} messages={{}}>
         <ApplicationErrorBoundary>
-          <BrowserRouter basename={AdminPortalPaths.Base}>
-            <Authenticator>
-              <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                <PortalProvider
-                  modules={modules}
-                  meta={{
-                    basePath: AdminPortalPaths.Base,
-                    portalType: 'admin',
-                  }}
-                >
-                  <Layout>
-                    <Routes>
-                      <Route
-                        path={AdminPortalPaths.Root}
-                        element={<Dashboard />}
-                      />
-                      <Route path="*" element={<Modules />} />
-                    </Routes>
-                  </Layout>
-                </PortalProvider>
-              </FeatureFlagProvider>
-            </Authenticator>
-          </BrowserRouter>
+          <RouterProvider router={router} />
         </ApplicationErrorBoundary>
       </LocaleProvider>
     </ApolloProvider>

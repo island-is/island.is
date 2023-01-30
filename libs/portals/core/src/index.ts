@@ -12,6 +12,7 @@ export * from './screens/Modules'
 export * from './hooks/useModuleProps'
 export * from './hooks/useNavigation'
 export * from './hooks/useQueryParam'
+export * from './hooks/useModulesRoutes'
 
 // utils
 export * from './utils/formatNationalId'

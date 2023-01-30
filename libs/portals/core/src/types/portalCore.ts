@@ -1,6 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FC, LazyExoticComponent } from 'react'
 import { MessageDescriptor } from 'react-intl'
+import { RouteObject } from 'react-router-dom'
 
 import type { Features } from '@island.is/react/feature-flags'
 import { IconProps } from '@island.is/island-ui/core'
@@ -82,7 +83,7 @@ export type PortalModuleRenderValue<
 /**
  * A route defined by a portal module
  */
-export interface PortalRoute {
+export type PortalRoute = RouteObject & {
   /**
    * The title of this route
    */

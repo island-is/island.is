@@ -7,7 +7,6 @@ import {
 } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { LoadingScreen } from '../components/LoadingScreen/LoadingScreen'
 import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
 import { arrangeRoutes, filterEnabledModules } from '../utils/modules'
 
@@ -41,7 +40,6 @@ export const PortalProvider = ({
   const featureFlagClient = useFeatureFlagClient()
   const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>
   const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [modules, setModules] = useState<PortalModule[]>(initialModules)
   const [routes, setRoutes] = useState<PortalRoute[]>([])
 
@@ -63,8 +61,6 @@ export const PortalProvider = ({
   }, [userInfo, modules, apolloClient, pathname])
 
   useEffect(() => {
-    setLoading(true)
-
     if (userInfo) {
       filterEnabledModules({
         modules,
@@ -83,7 +79,6 @@ export const PortalProvider = ({
         })
         .then((routes) => setRoutes(routes))
         .catch((error) => setError(error))
-        .finally(() => setLoading(false))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo])
@@ -101,7 +96,7 @@ export const PortalProvider = ({
         activeModule,
       }}
     >
-      {loading ? <LoadingScreen /> : children}
+      {children}
     </PortalContext.Provider>
   )
 }

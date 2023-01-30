@@ -1,23 +1,38 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, Dispatch } from 'react'
 
-import { AuthReducerState, initialState } from './Authenticator.state'
+import type { AuthSettings } from '../AuthSettings'
+import { AuthReducerState, initialState, Action } from './Authenticator.state'
 
 export interface AuthContextType extends AuthReducerState {
-  signIn: () => void
-  signInSilent: () => void
-  switchUser: (nationalId?: string) => void
-  signOut: () => void
+  signIn(): void
+  signInSilent(): void
+  switchUser(nationalId?: string): void
+  signOut(): void
+
+  dispatch: Dispatch<Action>
+  authSettings: AuthSettings
+  checkLogin(): Promise<void>
+  autoLogin?: boolean
 }
 
 export const defaultAuthContext = {
   ...initialState,
+  authSettings: {} as AuthSettings,
+  autoLogin: undefined,
+  dispatch: () => {
+    // Intentionally empty
+  },
+  checkLogin() {
+    return Promise.resolve()
+    // Intentionally empty
+  },
   signIn() {
     // Intentionally empty
   },
   signInSilent() {
     // Intentionally empty
   },
-  switchUser(nationalId?: string) {
+  switchUser() {
     // Intentionally empty
   },
   signOut() {
