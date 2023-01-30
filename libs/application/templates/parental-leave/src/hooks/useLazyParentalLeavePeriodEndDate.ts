@@ -1,7 +1,5 @@
 import { gql } from '@apollo/client'
-
-import { GetParentalLeavesPeriodEndDateInput } from '@island.is/api/domains/directorate-of-labour'
-
+import { GetParentalLeavesPeriodEndDateInput } from '../types/schema'
 import { useLazyQuery } from './useLazyQuery'
 
 const query = gql`

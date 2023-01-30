@@ -2,7 +2,7 @@ import React, { useContext, useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   MultipleValueList,

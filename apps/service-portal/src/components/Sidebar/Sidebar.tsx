@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { Box, Stack, Logo } from '@island.is/island-ui/core'
 import {
   ServicePortalPath,
