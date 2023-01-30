@@ -8,6 +8,7 @@ import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/u
 import {
   CaseState,
   completedCaseStates,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
@@ -15,7 +16,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isCourtRole } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import { CaseFileList, InfoBox } from '../..'
 import { UploadStateMessage } from './UploadStateMessage'

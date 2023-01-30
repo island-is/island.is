@@ -20,10 +20,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  isProsecutionRole,
-  isCourtRole,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { ReactSelectOption } from '../../../types'
@@ -33,6 +29,10 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
+import {
+  isCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
