@@ -1,9 +1,6 @@
 <!-- gitbook-ignore -->
 
-# application-templates-driving-license-book-update-instructor
+# Driving License Book Update Instructor
 
-This library was generated with [Nx](https://nx.dev).
-
-## Running unit tests
-
-Run `nx test application-templates-driving-license-book-update-instructor` to execute the unit tests via [Jest](https://jestjs.io).
+This is an application for students to use, to be able to update
+the selected driving instructor in their driving license book.

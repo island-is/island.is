@@ -41,6 +41,10 @@ export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiSe
 
     const newInstructorSsn = answers?.newInstructor?.nationalId
 
+    if (!newInstructorSsn) {
+      throw new Error('New instructor national id is empty')
+    }
+
     const {
       success,
     } = await this.drivingLicenseBookService.updateActiveStudentBookInstructor(
