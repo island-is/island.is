@@ -442,8 +442,20 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Náði ekki að sækja fæðingarstað',
     description: 'Not able to fetch birthplace',
   },
+  nationalIdNotFoundInNationalRegistryTitle: {
+    id:
+      'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistryTitle',
+    defaultMessage: 'Ekki tókst að sækja gögn úr Þjóðskrá',
+    description: 'Not able to fetch data from national registry title',
+  },
+  nationalIdNotFoundInNationalRegistrySummary: {
+    id:
+      'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistrySummary',
+    defaultMessage:
+      'Ekki tókst að sækja gögn úr Þjóðskrá fyrir þessa kennitölu.',
+    description: 'Not able to fetch data from national registry description',
+  },
 })
-
 export const coreDelegationsMessages = defineMessages({
   delegationScreenTitle: {
     id: 'application.system:core.delegations.delegationScreenTitle',

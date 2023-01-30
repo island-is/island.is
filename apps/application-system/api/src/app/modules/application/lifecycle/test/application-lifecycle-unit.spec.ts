@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing'
-import { createApplication } from '@island.is/testing/fixtures'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '@island.is/application/api/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
@@ -19,6 +18,7 @@ import { ApplicationChargeService } from '../../charge/application-charge.servic
 import { ConfigModule } from '@nestjs/config'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { FileStorageConfig, FileStorageService } from '@island.is/file-storage'
+import { createApplication } from '@island.is/application/testing'
 
 let lifeCycleService: ApplicationLifeCycleService
 let awsService: AwsService

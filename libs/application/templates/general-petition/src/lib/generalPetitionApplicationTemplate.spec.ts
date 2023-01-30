@@ -6,7 +6,7 @@ import {
   ExternalData,
 } from '@island.is/application/types'
 import GeneralPetitionApplicationTemplate from './generalPetitionApplicationTemplate'
-import { createApplication } from '@island.is/testing/fixtures'
+import { createApplication } from '@island.is/application/testing'
 
 describe('General petition application template', () => {
   describe('state transitions', () => {

@@ -68,7 +68,13 @@
         "production": {
           "buildTarget": "application-system-form:build:production"
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -114,5 +120,5 @@
     },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:application-system-web"]
 }

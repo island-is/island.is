@@ -470,11 +470,17 @@ export const getSelectedChild = (
   externalData: ExternalData,
 ): ChildInformation | null => {
   const { selectedChild: selectedChildIndex } = getApplicationAnswers(answers)
-  const selectedChild = getValueViaPath(
-    externalData,
-    `children.data.children[${selectedChildIndex}]`,
-    null,
-  ) as ChildInformation | null
+  const selectedChild =
+    getValueViaPath(
+      externalData,
+      `children.data.children[${selectedChildIndex}]`,
+      null,
+    ) ??
+    (getValueViaPath(
+      externalData,
+      'noPrimaryChildren.data.children',
+      null,
+    ) as ChildInformation | null)
 
   return selectedChild
 }
@@ -557,11 +563,10 @@ export function getApplicationExternalData(
     'person.data.genderCode',
   )
 
-  const applicantName = getValueViaPath(
+  const applicantName = (getValueViaPath(
     externalData,
-    'person.data.fullName',
-    '',
-  ) as string
+    'person.data.fullname',
+  ) ?? getValueViaPath(externalData, 'person.data.fullName', '')) as string
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
@@ -593,6 +598,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
+
+  const noPrimaryParentBirthDate = getValueViaPath(
+    answers,
+    'noPrimaryParent.birthDate',
+  ) as string
 
   const hasMultipleBirths = getValueViaPath(
     answers,
@@ -852,6 +862,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
+    noPrimaryParentBirthDate,
     hasMultipleBirths,
     multipleBirths,
     multipleBirthsRequestDays: Number(multipleBirthsRequestDays),
@@ -902,6 +913,30 @@ export function getApplicationAnswers(answers: Application['answers']) {
     commonFiles,
     actionName,
   }
+}
+
+export const isParentWithoutBirthParent = (answers: Application['answers']) => {
+  const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
+  const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
+  const questionThree = getValueViaPath(
+    answers,
+    'noPrimaryParent.questionThree',
+  )
+
+  return questionOne === YES && questionTwo === YES && questionThree === NO
+}
+
+export const isNotEligibleForParentWithoutBirthParent = (
+  answers: Application['answers'],
+) => {
+  const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
+  const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
+  const questionThree = getValueViaPath(
+    answers,
+    'noPrimaryParent.questionThree',
+  )
+
+  return questionOne === NO || questionTwo === NO || questionThree === YES
 }
 
 export const requiresOtherParentApproval = (
@@ -980,9 +1015,15 @@ export const allowOtherParent = (answers: Application['answers']) => {
 export const getOtherParentId = (
   application: Application,
 ): string | undefined => {
-  const { otherParent, otherParentId } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    otherParent,
+    otherParentId,
+    noPrimaryParentBirthDate,
+  } = getApplicationAnswers(application.answers)
+
+  if (noPrimaryParentBirthDate) {
+    return ''
+  }
 
   if (otherParent === SPOUSE) {
     const spouse = getSpouse(application)
@@ -1123,6 +1164,15 @@ export const getMinimumStartDate = (application: Application): Date => {
     return lastPeriodEndDate
   } else if (expectedDateOfBirth) {
     const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
+
+    if (isParentalGrant(application)) {
+      const beginningOfMonthOfExpectedDateOfBirth = addDays(
+        expectedDateOfBirthDate,
+        expectedDateOfBirthDate.getDate() * -1 + 1,
+      )
+      return beginningOfMonthOfExpectedDateOfBirth
+    }
+
     const beginningOfMonth = getBeginningOfThisMonth()
     const leastStartDate = addMonths(
       expectedDateOfBirthDate,
@@ -1227,27 +1277,18 @@ export const removeCountryCode = (application: Application) => {
 
 // Functions that determine dynamic text changes in forms based on application type
 export const getPeriodSectionTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.periodsGrantSection
   }
   return parentalLeaveFormMessages.shared.periodsLeaveSection
 }
 
 export const getRightsDescTitle = (application: Application) => {
-  const {
-    applicationType,
-    otherParent,
-    hasMultipleBirths,
-  } = getApplicationAnswers(application.answers)
+  const { otherParent, hasMultipleBirths } = getApplicationAnswers(
+    application.answers,
+  )
 
-  if (
-    applicationType === PARENTAL_GRANT ||
-    applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return otherParent === SINGLE && hasMultipleBirths === YES
       ? parentalLeaveFormMessages.shared
           .singleParentGrantMultipleRightsDescription
@@ -1268,81 +1309,54 @@ export const getRightsDescTitle = (application: Application) => {
 }
 
 export const getPeriodImageTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.periodsImageGrantTitle
   }
   return parentalLeaveFormMessages.shared.periodsImageTitle
 }
 
 export const getFirstPeriodTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.firstPeriodStart.grantTitle
   }
   return parentalLeaveFormMessages.firstPeriodStart.title
 }
 
 export const getDurationTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.duration.grantTitle
   }
   return parentalLeaveFormMessages.duration.title
 }
 
 export const getRatioTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.ratio.grantTitle
   }
   return parentalLeaveFormMessages.ratio.title
 }
 
 export const getLeavePlanTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.leavePlan.grantTitle
   }
   return parentalLeaveFormMessages.leavePlan.title
 }
 
 export const getStartDateTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.startDate.grantTitle
   }
   return parentalLeaveFormMessages.startDate.title
 }
 
 export const getStartDateDesc = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.startDate.grantDescription
   }
   return parentalLeaveFormMessages.startDate.description
 }
+
 const setLoadingStateAndRepeaterItems = async (
   VMSTPeriods: Period[],
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
@@ -1465,4 +1479,12 @@ export const synchronizeVMSTPeriods = (
       }
     }
   }
+}
+
+export const isParentalGrant = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+  return (
+    applicationType === PARENTAL_GRANT ||
+    applicationType === PARENTAL_GRANT_STUDENTS
+  )
 }
