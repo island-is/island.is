@@ -5,7 +5,7 @@ import { AuthReducerState, initialState } from './Authenticator.state'
 export interface AuthContextType extends AuthReducerState {
   signIn: () => void
   signInSilent: () => void
-  switchUser: (nationalId?: string, location?: Location) => void
+  switchUser: (nationalId?: string, newLocation?: Location) => void
   signOut: () => void
 }
 
@@ -17,7 +17,7 @@ export const defaultAuthContext = {
   signInSilent() {
     // Intentionally empty
   },
-  switchUser(nationalId?: string, location?: Location) {
+  switchUser(nationalId?: string, newLocation?: Location) {
     // Intentionally empty
   },
   signOut() {
