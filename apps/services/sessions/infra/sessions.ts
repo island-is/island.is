@@ -1,10 +1,10 @@
 import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const namespace = 'sessions'
+const namespace = 'services-sessions'
 const serviceName = 'services-sessions'
 const workerName = 'services-sessions-worker'
 const imageName = 'services-sessions'
-const dbName = 'sessions'
+const dbName = 'services-sessions'
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
   return service(serviceName)
