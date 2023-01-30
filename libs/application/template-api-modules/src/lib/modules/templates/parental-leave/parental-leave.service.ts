@@ -466,7 +466,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
-
       if (benefitsPdfs?.length) {
         for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
           const pdf = await this.getPdf(

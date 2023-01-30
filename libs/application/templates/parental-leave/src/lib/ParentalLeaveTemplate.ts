@@ -639,11 +639,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: [
-          'createTempPeriods',
-          'removeNullPeriod',
-          'setNavId',
-        ],
+        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
         exit: [
           'restorePeriodsFromTemp',
           'removeNullPeriod',
