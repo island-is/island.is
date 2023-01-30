@@ -26,6 +26,7 @@ export type Icon =
   | 'copy'
   | 'document'
   | 'documents'
+  | 'dots'
   | 'download'
   | 'ellipse'
   | 'ellipsisHorizontal'
@@ -93,6 +94,7 @@ export default {
     copy: 'Copy',
     document: 'Document',
     documents: 'Documents',
+    dots: 'Dots',
     download: 'Download',
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
@@ -159,6 +161,7 @@ export default {
     copy: 'CopyOutline',
     document: 'DocumentOutline',
     documents: 'DocumentsOutline',
+    dots: 'Dots',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',

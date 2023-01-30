@@ -914,4 +914,12 @@ export const m = defineMessages({
     id: 'service.portal:download',
     defaultMessage: 'Niðurhala',
   },
+  zoomIn: {
+    id: 'service.portal:zoom-in',
+    defaultMessage: 'Þysja inn',
+  },
+  zoomOut: {
+    id: 'service.portal:zoom-out',
+    defaultMessage: 'Þysja út',
+  },
 })

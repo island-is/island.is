@@ -44,7 +44,7 @@ export const badge = styleVariants({
   active: {
     position: 'absolute',
     top: 14,
-    left: 88,
+    right: 13,
     height: theme.spacing[1],
     width: theme.spacing[1],
     borderRadius: '50%',

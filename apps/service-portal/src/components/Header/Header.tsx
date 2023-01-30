@@ -12,7 +12,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import cn from 'classnames'
@@ -27,26 +27,27 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { userInfo: user } = useAuth()
   const { unreadCounter } = useListDocuments()
+  const navigate = useNavigate()
 
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
 
-  const closeButton = () => {
-    return (
-      <FocusableBox
-        display="flex"
-        alignItems="center"
-        component="button"
-        onClick={() => setSideMenuOpen(false)}
-        padding={1}
-        borderRadius="circle"
-        background="blue100"
-        className={styles.closeButton}
-      >
-        <Icon icon="close" color="blue400" />
-      </FocusableBox>
-    )
-  }
+  // const closeButton = () => {
+  //   return (
+  //     <FocusableBox
+  //       display="flex"
+  //       alignItems="center"
+  //       component="button"
+  //       onClick={() => setSideMenuOpen(false)}
+  //       padding={1}
+  //       borderRadius="circle"
+  //       background="blue100"
+  //       className={styles.closeButton}
+  //     >
+  //       <Icon icon="close" color="blue400" />
+  //     </FocusableBox>
+  //   )
+  // }
 
   return (
     <div className={styles.placeholder}>
@@ -93,22 +94,31 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                     className={cn(styles.badge[badgeActive])}
                   ></Box>
                 </Box>
+                <Box marginRight={[1, 2]}>
+                  <Button
+                    variant="utility"
+                    colorScheme="white"
+                    icon="dots"
+                    onClick={() => navigate('/')}
+                  >
+                    {formatMessage(m.overview)}
+                  </Button>
+                </Box>
                 <UserMenu
                   fullscreen
                   setUserMenuOpen={setUserMenuOpen}
                   userMenuOpen={userMenuOpen}
                 />
-
-                {userMenuOpen && (
+                {/* {userMenuOpen && (
                   <Hidden above="md">
                     <Box display="flex" flexDirection="row" alignItems="center">
                       {user && <UserLanguageSwitcher user={user} />}
                       {closeButton()}
                     </Box>
                   </Hidden>
-                )}
+                )} */}
 
-                {!sideMenuOpen ? (
+                {/* {!sideMenuOpen ? (
                   <Box marginLeft={[1, 2]}>
                     <Button
                       variant="utility"
@@ -122,7 +132,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                     {user && <UserLanguageSwitcher user={user} />}
                     {closeButton()}
                   </Box>
-                )}
+                )} */}
               </Box>
             </Hidden>
           </Box>
