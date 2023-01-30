@@ -1,3 +1,12 @@
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AuditService } from '@island.is/nest/audit'
 import {
   BadRequestException,
   Body,
@@ -20,22 +29,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { ApiScope } from '@island.is/auth/scopes'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { AuditService } from '@island.is/nest/audit'
 
-import { NationalIdGuard } from '../../common'
-import { IcelandicNameService } from './icelandic-name.service'
+import { CreateIcelandicNameBodyDto, UpdateIcelandicNameBodyDto } from './dto'
 import { IcelandicName } from './icelandic-name.model'
-import { UpdateIcelandicNameBodyDto, CreateIcelandicNameBodyDto } from './dto'
-import { ParseIntPipe, ParseIcelandicAlphabetPipe } from './pipes'
-
+import { IcelandicNameService } from './icelandic-name.service'
+import { ParseIcelandicAlphabetPipe, ParseIntPipe } from './pipes'
 @Controller('api/icelandic-names-registry')
 @ApiTags('icelandic-names-registry')
 export class IcelandicNameController {
@@ -96,8 +94,8 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getBySearch(q)
   }
 
-  @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
-  @Scopes(ApiScope.internal)
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.icelandicNamesRegistry)
   @Patch('names/:id')
   @ApiBearerAuth()
   @ApiOkResponse()
@@ -125,8 +123,8 @@ export class IcelandicNameController {
     return icelandicName
   }
 
-  @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
-  @Scopes(ApiScope.internal)
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.icelandicNamesRegistry)
   @Post('names')
   @ApiBearerAuth()
   @HttpCode(201)
@@ -153,8 +151,8 @@ export class IcelandicNameController {
     )
   }
 
-  @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
-  @Scopes(ApiScope.internal)
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.icelandicNamesRegistry)
   @Delete('names/:id')
   @ApiBearerAuth()
   @ApiOkResponse()
