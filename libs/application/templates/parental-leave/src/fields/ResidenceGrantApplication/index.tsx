@@ -40,10 +40,26 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
   }
 
   const descriptionMap: KeyValue = {
-    rights: ['residenceGrantRights', 'residenceGrantRightsRequirments', 'residenceGrantError'],
-    apply: ['residenceGrantApplication', 'residenceGrantApplicationInfo', 'residenceGrantError'],
-    payment: ['residenceGrantPayment', 'residenceGrantPaymentAmount', 'residenceGrantPaymentCorrection'],
-    submit: ['residenceGrantOpen', 'residenceGrantNotOpen', 'residenceGrantError'],
+    rights: [
+      'residenceGrantRights',
+      'residenceGrantRightsRequirments',
+      'residenceGrantError',
+    ],
+    apply: [
+      'residenceGrantApplication',
+      'residenceGrantApplicationInfo',
+      'residenceGrantError',
+    ],
+    payment: [
+      'residenceGrantPayment',
+      'residenceGrantPaymentAmount',
+      'residenceGrantPaymentCorrection',
+    ],
+    submit: [
+      'residenceGrantOpen',
+      'residenceGrantNotOpen',
+      'residenceGrantError',
+    ],
     nothing: ['residenceGrantError', 'residenceGrantError'],
   }
   const { formatMessage } = useLocale()
@@ -60,12 +76,11 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
 
   const { previousState, ...rest } = application.answers
   const { dateOfBirth } = application.answers
-  const newAnswers = { }
   const canApplyForResidenceGrant =
-    (dateOfBirth &&
-      residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
-      previousState === 'approved') ||
+    (dateOfBirth && residentGrantIsOpenForApplication(`${dateOfBirth}`)) ||
     false
+
+  console.log(canApplyForResidenceGrant)
 
   const handleSubmitApplication = useCallback(async (reject?: boolean) => {
     const res = await submitApplication({
@@ -95,7 +110,7 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
     parentalLeaveFormMessages.residenceGrantMessage[
       descriptionMap[defaultValue][1]
     ]
-  const tertiaryDescription = 
+  const tertiaryDescription =
     parentalLeaveFormMessages.residenceGrantMessage[
       descriptionMap[defaultValue][2]
     ]
@@ -103,7 +118,7 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
     parentalLeaveFormMessages.residenceGrantMessage[
       descriptionMap[defaultValue][canApplyForResidenceGrant ? 0 : 1]
     ]
-    console.log(application)
+  console.log(application)
   return (
     <Box>
       {!displayButtons && (
@@ -113,16 +128,20 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
           </Box>
           <Divider />
           <Box marginTop={4} marginBottom={2}>
-            <FieldDescription description={formatMessage(secondaryDescription)} />
+            <FieldDescription
+              description={formatMessage(secondaryDescription)}
+            />
           </Box>
-          {defaultValue === 'payment' &&
+          {defaultValue === 'payment' && (
             <Box>
               <Divider />
               <Box marginTop={4}>
-                <FieldDescription description={formatMessage(tertiaryDescription)} />
+                <FieldDescription
+                  description={formatMessage(tertiaryDescription)}
+                />
               </Box>
             </Box>
-          }
+          )}
         </Box>
       )}
       {displayButtons && (

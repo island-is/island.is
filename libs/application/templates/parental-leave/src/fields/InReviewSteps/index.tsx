@@ -204,7 +204,6 @@ const InReviewSteps: FC<FieldBaseProps> = ({
       refetch?.()
     }
   }, [])
-  console.log(application)
   return (
     <Box marginBottom={10}>
       <Box
@@ -280,9 +279,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               application={application}
               index={index + 1}
               {...step}
-              notifyParentOnClickEvent={() =>
-                handleSubmit('RESIDENCEGRANTAPPLICATION')
-              }
+              notifyParentOnClickEvent={(e) => handleSubmit(e)}
             />
           ))}
         </Box>

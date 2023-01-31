@@ -6,6 +6,7 @@ import { Application } from '@island.is/application/types'
 import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
+import { residentGrantIsOpenForApplication } from '../../../lib/parentalLeaveUtils'
 
 export enum ReviewSectionState {
   prerequisites = 'Prerequisites',
@@ -21,7 +22,9 @@ type ReviewSectionProps = {
   title: string
   description: string
   state?: ReviewSectionState
-  notifyParentOnClickEvent?: (event: 'RESIDENCEGRANTAPPLICATION') => void
+  notifyParentOnClickEvent?: (
+    event: 'RESIDENCEGRANTAPPLICATIONOPEN' | 'RESIDENCEGRANTAPPLICATIONCLOSED',
+  ) => void
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -33,6 +36,11 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   notifyParentOnClickEvent,
 }) => {
   const { formatMessage } = useLocale()
+  const { dateOfBirth } = application.answers
+
+  const canApplyForResidenceGrant =
+    (dateOfBirth && residentGrantIsOpenForApplication(`${dateOfBirth}`)) ||
+    false
 
   return (
     <Box
@@ -87,10 +95,14 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                     variant="text"
                     icon="arrowForward"
                     onClick={() =>
-                      notifyParentOnClickEvent('RESIDENCEGRANTAPPLICATION')
+                      notifyParentOnClickEvent(
+                        canApplyForResidenceGrant
+                          ? 'RESIDENCEGRANTAPPLICATIONOPEN'
+                          : 'RESIDENCEGRANTAPPLICATIONCLOSED',
+                      )
                     }
                   >
-                    {state === ReviewSectionState.optionalAction
+                    {canApplyForResidenceGrant
                       ? 'Sækja um dvalarstyrk'
                       : 'Upplýsingar um þetta forrit'}
                   </Button>
