@@ -1,8 +1,5 @@
-export const isValidNationalId = (nationalId: string): boolean => {
-  return (
-    sanitizeOnlyNumbers(nationalId).length === 10 &&
-    isNaN(Number(sanitizeOnlyNumbers(nationalId))) === false
-  )
-}
+import kennitala from 'kennitala'
 
-const sanitizeOnlyNumbers = (value: string) => value?.replace(/[^0-9]/g, '')
+export const isValidNationalId = (nationalId: string): boolean => {
+  return kennitala.isValid(nationalId)
+}

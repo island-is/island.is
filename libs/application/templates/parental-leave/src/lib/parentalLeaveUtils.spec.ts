@@ -1147,27 +1147,27 @@ describe('getApplicationExternalData', () => {
 })
 
 describe('ParentWithOutBirthParent', () => {
-  it('should return true if all questions answeres YES', () => {
+  it('should return true if question one and two are answeres YES and thrid question answered NO', () => {
     const application = buildApplication({
       answers: {
         noPrimaryParent: {
           birthDate: '2023-02-03',
           questionOne: 'yes',
           questionTwo: 'yes',
-          questionThree: 'yes',
+          questionThree: 'no',
         },
       },
     })
     expect(isParentWithoutBirthParent(application.answers)).toBe(true)
   })
 
-  it('should return true if some question has been answeres NO', () => {
+  it('should return true if either question one and two are answeres NO and/or thrid question answered YES', () => {
     const application = buildApplication({
       answers: {
         noPrimaryParent: {
           questionOne: 'no',
           questionTwo: 'yes',
-          questionThree: 'yes',
+          questionThree: 'no',
         },
       },
     })
