@@ -33,27 +33,27 @@ describe('CaseController - Transition guards', () => {
     })
   })
 
-  describe('RolesGuard', () => {
+  describe('CaseExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
+    it('should have CaseExistsGuard as quard 2', () => {
+      expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
 
-  describe('CaseExistsGuard', () => {
+  describe('RolesGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[2]()
     })
 
-    it('should have CaseExistsGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
+    it('should have RolesGuard as quard 3', () => {
+      expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
 
