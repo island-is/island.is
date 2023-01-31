@@ -1,2 +1,5 @@
-export * from './lib/applicantInformationMultiField'
-export * from './lib/formConclusionSection/formConclusionSection'
+export {
+  applicantInformationMultiField,
+  applicantInformationSchema,
+} from './lib/applicantInformationMultiField'
+export { formConclusionSection } from './lib/formConclusionSection/formConclusionSection'
