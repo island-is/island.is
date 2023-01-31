@@ -56,7 +56,7 @@ const CaseOverview: React.FC<CaseOverviewProps> = ({ chosenCase }) => {
           </Text>
         </Box>
         <Text variant="eyebrow" color="blue400">
-          {'Tag3'}
+          {chosenCase.policyArea}
         </Text>
       </GridRow>
       <Box marginBottom={4} paddingTop={2}>
