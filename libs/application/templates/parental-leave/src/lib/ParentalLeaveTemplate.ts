@@ -61,13 +61,12 @@ type Events =
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
-  | { type: 'ADDITIONALDOCUMENTREQUIRED' } // Ex: VMST ask for more documents
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
   | { type: 'RESIDENCEGRANTAPPLICATION' } // Ex: when the baby is born a parent can apply for resident grant
   | { type: 'EMPLOYERWAITINGTOASSIGN' }
   | { type: 'VINNUMALASTOFNUNAPPROVAL' }
   | { type: 'EMPLOYERAPPROVAL' }
   | { type: 'APPROVED' }
-  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
   | { type: 'CLOSED' } // Ex: Close application
 
 enum Roles {
@@ -568,13 +567,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
           lifecycle: pruneAfterDays(970),
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
+            throwOnError: true,
+          }),
           progress: 0.5,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ResidenceGrantOpen').then((val) =>
-                  Promise.resolve(val.ResidenceGrantOpen),
+                import('../forms/ResidenceGrant').then((val) =>
+                  Promise.resolve(val.ResidenceGrant),
                 ),
               read: 'all',
               write: 'all',
@@ -591,10 +594,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.REJECT]: { target: States.APPROVED },
-          [DefaultEvents.SUBMIT]: { target: States.APPROVED },
+          [DefaultEvents.APPROVE]: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
           ['APPROVED']: { target: States.APPROVED },
-          ['ADDITIONALDOCUMENTREQUIRED']: {
-            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          ['ADDITIONALDOCUMENTSREQUIRED']: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           ['EMPLOYERWAITINGTOASSIGN']: {
             target: States.EMPLOYER_WAITING_TO_ASSIGN,
@@ -604,9 +609,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.VINNUMALASTOFNUN_APPROVAL,
           },
           ['EMPLOYERAPPROVAL']: { target: States.EMPLOYER_APPROVAL },
-          [DefaultEvents.APPROVE]: {
-            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-          },
         },
       },
       // [States.RECEIVED]: {
@@ -1393,6 +1395,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       })),
       setBirthDate: assign((context) => {
+        // Only for dev should remove 
+        // before merging with main
         const { application } = context
         const { answers } = application
         set(answers, 'dateOfBirth', '20230101')
@@ -1408,8 +1412,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       removePreviousState: assign((context) => {
         const { application } = context
         const { answers } = application
-
         unset(answers, 'previousState')
+        return context
+      }),
       setActionName: assign((context) => {
         const { application } = context
         const { answers } = application

@@ -14,7 +14,7 @@ import {
 } from '../lib/messages'
 import { residentGrantIsOpenForApplication } from '../lib/parentalLeaveUtils'
 
-export const ResidenceGrantOpen: Form = buildForm({
+export const ResidenceGrant: Form = buildForm({
   id: 'ParentalLeaveInReview',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
