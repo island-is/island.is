@@ -11,7 +11,7 @@ export enum RulesType {
   FIELD_VALUES,
 }
 
-type RolessBasicRule = {
+type RolesBasicRule = {
   role: UserRole
   type: RulesType.BASIC
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,6 +37,6 @@ type RolesFieldValuesRule = {
 
 export type RolesRule =
   | UserRole
-  | RolessBasicRule
+  | RolesBasicRule
   | RolesFieldRule
   | RolesFieldValuesRule

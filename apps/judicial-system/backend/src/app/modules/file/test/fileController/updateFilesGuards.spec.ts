@@ -9,7 +9,6 @@ import {
   CaseWriteGuard,
 } from '../../../case'
 import { CaseTypeGuard } from '../../../case/guards/caseType.guard'
-import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Upload case file to court guards', () => {
