@@ -48,12 +48,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  core,
-  rcRuling as m,
-  titles,
-  ruling,
-} from '@island.is/judicial-system-web/messages'
+import { core, titles, ruling } from '@island.is/judicial-system-web/messages'
 import {
   capitalize,
   formatDate,
@@ -62,6 +57,8 @@ import {
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { rcRuling as m } from './Ruling.strings'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -186,8 +183,16 @@ export const Ruling: React.FC = () => {
               date: formatDate(workingCase.courtDate, 'PPP'),
             }),
             prosecutorDemands: workingCase.demands,
-            courtCaseFacts: workingCase.caseFacts,
-            courtLegalArguments: workingCase.legalArguments,
+            courtCaseFacts: formatMessage(
+              ruling.sections.courtCaseFacts.prefill,
+              {
+                caseFacts: workingCase.caseFacts,
+              },
+            ),
+            courtLegalArguments: formatMessage(
+              ruling.sections.courtLegalArguments.prefill,
+              { legalArguments: workingCase.legalArguments },
+            ),
             ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
@@ -490,43 +495,59 @@ export const Ruling: React.FC = () => {
             <Decision
               workingCase={workingCase}
               acceptedLabelText={formatMessage(
-                m.sections.decision.acceptLabel,
+                ruling.restrictionCases.sections.decision.acceptLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               rejectedLabelText={formatMessage(
-                m.sections.decision.rejectLabel,
+                ruling.restrictionCases.sections.decision.rejectLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               partiallyAcceptedLabelText={formatMessage(
-                m.sections.decision.partiallyAcceptLabelV2,
+                ruling.restrictionCases.sections.decision.partiallyAcceptLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               dismissLabelText={formatMessage(
-                m.sections.decision.dismissLabel,
+                ruling.restrictionCases.sections.decision.dismissLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               acceptingAlternativeTravelBanLabelText={formatMessage(
-                m.sections.decision.acceptingAlternativeTravelBanLabelV2,
+                ruling.restrictionCases.sections.decision
+                  .acceptingAlternativeTravelBanLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               onChange={(decision) => {
@@ -568,13 +589,16 @@ export const Ruling: React.FC = () => {
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   {capitalize(
-                    formatMessage(m.sections.decision.caseType, {
-                      caseType:
-                        workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? CaseType.TRAVEL_BAN
-                          : workingCase.type,
-                    }),
+                    formatMessage(
+                      ruling.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType:
+                          workingCase.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                            ? CaseType.TRAVEL_BAN
+                            : workingCase.type,
+                      },
+                    ),
                   )}
                 </Text>
               </Box>
@@ -584,13 +608,16 @@ export const Ruling: React.FC = () => {
                   m.sections.decision.validToDate,
                   {
                     caseType: capitalize(
-                      formatMessage(m.sections.decision.caseType, {
-                        caseType:
-                          workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TRAVEL_BAN
-                            : workingCase.type,
-                      }),
+                      formatMessage(
+                        ruling.restrictionCases.sections.decision.caseType,
+                        {
+                          caseType:
+                            workingCase.decision ===
+                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                              ? CaseType.TRAVEL_BAN
+                              : workingCase.type,
+                        },
+                      ),
                     ),
                   },
                 )}
@@ -660,7 +687,7 @@ export const Ruling: React.FC = () => {
                   <Checkbox
                     name="isCustodyIsolation"
                     label={formatMessage(
-                      m.sections.custodyRestrictions.isolationV1,
+                      m.sections.custodyRestrictions.isolation,
                     )}
                     checked={workingCase.isCustodyIsolation}
                     disabled={isModifyingRuling}
