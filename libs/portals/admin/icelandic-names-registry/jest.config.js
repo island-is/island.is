@@ -1,5 +1,5 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -8,6 +8,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../coverage/libs/service-portal/icelandic-names-registry',
-  displayName: 'service-portal-icelandic-names-registry',
+    '../../../../coverage/libs/portals/admin/icelandic-names-registry',
+  displayName: 'portals-admin-icelandic-names-registry',
 }
