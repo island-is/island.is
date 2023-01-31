@@ -582,7 +582,7 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'fileUpload',
-          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+          title: parentalLeaveFormMessages.attachmentScreen.title,
           children: [
             buildFileUploadField({
               id: 'employer.selfEmployed.file',
@@ -750,9 +750,9 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildFileUploadField({
               id: 'fileUpload.file',
-              title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+              title: parentalLeaveFormMessages.attachmentScreen.title,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.genericDescription,
+                parentalLeaveFormMessages.attachmentScreen.description,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
