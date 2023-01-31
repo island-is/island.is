@@ -3,7 +3,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { createHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
-
+// import { getTemplates } from './queries/getTemplates' 
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -17,7 +17,7 @@ export class NotificationsService {
       locale = 'is-IS'
     }
     this.logger.info(
-      'Fetcing templates from Contentful GQL for locale: ' + locale,
+      'Fetching templates from Contentful GQL for locale: ' + locale,
     )
     try {
       let results = await fetch(
