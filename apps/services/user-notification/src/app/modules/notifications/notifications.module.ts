@@ -25,7 +25,6 @@ import { NotificationsService } from './notifications.service'
       ttl: 60,
       max: 100,
     }),
-
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({
