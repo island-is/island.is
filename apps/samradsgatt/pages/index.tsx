@@ -1,5 +1,11 @@
-import { GridColumn, GridRow, Tiles } from '@island.is/island-ui/core'
-import React from 'react'
+import {
+  AsyncSearch,
+  AsyncSearchOption,
+  GridColumn,
+  GridRow,
+  Tiles,
+} from '@island.is/island-ui/core'
+import React, { useEffect, useState } from 'react'
 import Card from '../components/Card/Card'
 import Layout from '../components/Layout/Layout'
 type arrayDummy = Array<info>
@@ -22,7 +28,7 @@ export const Index = () => {
     {
       id: 0,
       caseNumber: 'NR.S-76/2022',
-      name: 'string',
+      name: 'Titill 1',
       adviceCount: 0,
       shortDescription: 'string',
       status: 'Til umsagnar',
@@ -36,7 +42,7 @@ export const Index = () => {
     {
       id: 0,
       caseNumber: 'NR.S-76/2022',
-      name: 'string',
+      name: 'Titill 2',
       adviceCount: 0,
       shortDescription: 'string',
       status: 'Til umsagnar',
@@ -50,7 +56,7 @@ export const Index = () => {
     {
       id: 0,
       caseNumber: 'NR.S-76/2022',
-      name: 'string',
+      name: 'Titill 3',
       adviceCount: 0,
       shortDescription: 'string',
       status: 'Til umsagnar',
@@ -64,7 +70,7 @@ export const Index = () => {
     {
       id: 0,
       caseNumber: 'NR.S-76/2022',
-      name: 'string',
+      name: 'Titill 4',
       adviceCount: 0,
       shortDescription: 'string',
       status: 'Til umsagnar',
@@ -78,7 +84,7 @@ export const Index = () => {
     {
       id: 0,
       caseNumber: 'NR.S-76/2022',
-      name: 'string',
+      name: 'Titill 5',
       adviceCount: 0,
       shortDescription: 'string',
       status: 'Til umsagnar',
@@ -90,9 +96,9 @@ export const Index = () => {
       created: '2023-01-12T15:41:50.063Z',
     },
     {
-      id: 0,
+      id: 6,
       caseNumber: 'NR.S-76/2022',
-      name: 'string',
+      name: 'Titill 6',
       adviceCount: 0,
       shortDescription: 'string',
       status: 'Til umsagnar',
@@ -104,14 +110,57 @@ export const Index = () => {
       created: '2023-01-12T15:41:50.063Z',
     },
   ]
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [prevSearchValue, setPrevSearchValue] = useState<string>('')
+  const [data, setData] = useState(dummycontent)
+  const [options, setOptions] = useState<AsyncSearchOption[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const clearAll = () => {
+    setIsLoading(false)
+    setOptions([])
+    setData(dummycontent)
+  }
+  useEffect(() => {
+    if (!searchValue) {
+      clearAll()
+    } else if (searchValue != prevSearchValue) {
+      const filtered = dummycontent.filter(
+        (item) =>
+          item.name.includes(searchValue) ||
+          item.caseNumber.includes(searchValue) ||
+          item.institution.includes(searchValue),
+      )
+      setData(filtered)
+      setPrevSearchValue(searchValue)
+    }
+  }, [searchValue])
+
   return (
     <Layout showIcon={false}>
       <GridRow>
+        <GridColumn
+          paddingBottom={2}
+          paddingTop={2}
+          span={['0', '0', '6/12', '6/12', '6/12']}
+        >
+          <AsyncSearch
+            options={options}
+            placeholder="Að hverju ertu að leita?"
+            initialInputValue=""
+            inputValue={searchValue}
+            onInputValueChange={(value) => {
+              setSearchValue(value)
+            }}
+          />
+        </GridColumn>
+      </GridRow>
+      <GridRow>
         <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn>
         <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
-          {dummycontent && (
+          {data && (
             <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-              {dummycontent.map((item, index) => {
+              {data.map((item, index) => {
                 return <Card key={index} {...item} />
               })}
             </Tiles>

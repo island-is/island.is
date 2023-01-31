@@ -343,6 +343,7 @@ components:
         - applicationRights
         - employers
         - testData
+        - type
       properties:
         result:
           type: string
@@ -561,6 +562,9 @@ components:
         testData:
           type: string
         noOfChildren:
+          type: string
+          nullable: true
+        type:
           type: string
           nullable: true
     PaymentInfo:

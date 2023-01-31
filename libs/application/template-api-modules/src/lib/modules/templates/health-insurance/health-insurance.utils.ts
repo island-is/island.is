@@ -275,7 +275,6 @@ export const transformApplicationToHealthInsuranceDTO = (
       attachmentNames,
     }
   } catch (error) {
-    logger.error(`Failed to convert application's information: ${error}`)
     throw new Error(`Failed to convert application's information: ${error}`)
   }
 }
