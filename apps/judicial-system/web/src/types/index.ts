@@ -1,4 +1,9 @@
-import type { Case, User } from '@island.is/judicial-system/types'
+import {
+  Institution,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { Case, UpdateCase } from '@island.is/judicial-system/types'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -69,7 +74,7 @@ export interface SortConfig {
 }
 
 export interface CaseData {
-  case?: Case
+  case?: TempCase
 }
 
 export interface LimitedAccessCaseData {
@@ -225,4 +230,37 @@ export interface Lawyer {
   email: string
   phoneNr: string
   nationalId: string
+}
+
+/**
+ * We are in the process of stopping using the Case type and
+ * using the generated Case type from /graphql/schema.tsx instead.
+ * We use this type so that we don't have to migrate all the code
+ * at once and this type will be removed when we are done.
+ */
+export interface TempCase
+  extends Omit<
+    Case,
+    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments' | 'parentCase'
+  > {
+  sharedWithProsecutorsOffice?: Institution
+  court?: Institution
+  courtDocuments?: CourtDocument[]
+  parentCase?: TempCase
+}
+
+export interface TempUpdateCase
+  extends Omit<
+    UpdateCase,
+    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments' | 'parentCase'
+  > {
+  sharedWithProsecutorsOffice?: Institution
+  court?: Institution
+  courtDocuments?: CourtDocument[]
+  parentCase?: TempCase
+}
+
+export interface CourtDocument {
+  name: string
+  submittedBy: UserRole
 }
