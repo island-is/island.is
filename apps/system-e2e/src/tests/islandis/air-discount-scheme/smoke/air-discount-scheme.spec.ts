@@ -44,7 +44,7 @@ test.describe('Air discount scheme', () => {
       .toHaveLength('X211T12F'.length)
   })
 
-  test('should have user\'s name in the api response', async () => {
+  test("should have user's name in the api response", async () => {
     const page = await context.newPage()
     const { extractor } = await graphqlSpy(
       page,
