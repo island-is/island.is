@@ -4,7 +4,12 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { Case, CreateCase, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseListEntry,
+  CreateCase,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -247,12 +252,14 @@ export interface TempCase
     | 'court'
     | 'courtDocuments'
     | 'parentCase'
+    | 'childCase'
     | 'type'
   > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
   courtDocuments?: CourtDocument[]
   parentCase?: TempCase
+  childCase?: TempCase
   type: CaseType
 }
 
@@ -273,6 +280,10 @@ export interface TempUpdateCase
 }
 
 export interface TempCreateCase extends Omit<CreateCase, 'type'> {
+  type: CaseType
+}
+
+export interface TempCaseListEntry extends Omit<CaseListEntry, 'type'> {
   type: CaseType
 }
 

@@ -163,7 +163,7 @@ export const isDefendantStepValidRC = (
 
 export const isDefendantStepValidIC = (
   workingCase: Case,
-  caseType: CaseType,
+  caseType: CaseType | undefined,
   policeCaseNumbers: string[],
 ): boolean => {
   return (

@@ -19,7 +19,6 @@ import {
   Feature,
   isInvestigationCase,
   isIndictmentCase,
-  CaseListEntry,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -27,6 +26,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseData,
   TempCase as Case,
+  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'

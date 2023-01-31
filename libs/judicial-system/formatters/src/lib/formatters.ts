@@ -263,13 +263,15 @@ export function formatAppeal(
   }
 }
 
-export function formatRequestCaseType(type: CaseType): string {
-  return isRestrictionCase(type) ||
-    type === CaseType.RESTRAINING_ORDER ||
-    type === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
-    type === CaseType.EXPULSION_FROM_HOME ||
-    type === CaseType.PSYCHIATRIC_EXAMINATION
-    ? caseTypes[type]
+export function formatRequestCaseType(type: string): string {
+  const caseType = type as CaseType
+
+  return isRestrictionCase(caseType) ||
+    caseType === CaseType.RESTRAINING_ORDER ||
+    caseType === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
+    caseType === CaseType.EXPULSION_FROM_HOME ||
+    caseType === CaseType.PSYCHIATRIC_EXAMINATION
+    ? caseTypes[caseType]
     : 'rannsóknarheimild'
 }
 
@@ -307,11 +309,12 @@ export const displayFirstPlusRemaining = (
 
 export const formatDefenderRoute = (
   baseUrl: string,
-  caseType: CaseType,
+  caseType: string,
   id: string,
 ) => {
+  const ct = caseType as CaseType
   return `${baseUrl}${DEFENDER_ROUTE}${
-    isIndictmentCase(caseType) ? '/akaera' : ''
+    isIndictmentCase(ct) ? '/akaera' : ''
   }/${id}`
 }
 
