@@ -19,6 +19,7 @@ import type {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
@@ -280,4 +281,7 @@ export class Case implements TCase {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
+
+  @Field(() => [IndictmentCount], { nullable: true })
+  readonly indictmentCounts?: IndictmentCount[]
 }

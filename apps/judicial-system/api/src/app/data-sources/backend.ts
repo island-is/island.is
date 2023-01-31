@@ -38,7 +38,14 @@ import type {
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
-import { UpdateFilesResponse } from '../modules/file/models/updateFiles.response'
+import { UpdateFilesResponse } from '../modules/file'
+import {
+  CreateIndictmentCountInput,
+  DeleteIndictmentCountInput,
+  DeleteIndictmentCountResponse,
+  IndictmentCount,
+  UpdateIndictmentCountInput,
+} from '../modules/indictment-count'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -256,6 +263,33 @@ export class BackendApi extends DataSource<{ req: Request }> {
     defendantId: string,
   ): Promise<DeleteDefendantResponse> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
+  }
+
+  createIndictmentCount(
+    input: CreateIndictmentCountInput,
+  ): Promise<IndictmentCount> {
+    const { caseId, ...createIndictmentCount } = input
+
+    return this.post(`case/${caseId}/indictmentCount`, createIndictmentCount)
+  }
+
+  updateIndictmentCount(
+    input: UpdateIndictmentCountInput,
+  ): Promise<IndictmentCount> {
+    const { caseId, indictmentCountId, ...updateIndictmentCount } = input
+
+    return this.patch(
+      `case/${caseId}/indictmentCount/${indictmentCountId}`,
+      updateIndictmentCount,
+    )
+  }
+
+  deleteIndictmentCount(
+    input: DeleteIndictmentCountInput,
+  ): Promise<DeleteIndictmentCountResponse> {
+    const { caseId, indictmentCountId } = input
+
+    return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
   }
 
   getLimitedAccessCase(id: string): Promise<Case> {
