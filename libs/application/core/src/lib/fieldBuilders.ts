@@ -29,7 +29,7 @@ import {
   CompanySearchField,
   RedirectToServicePortalField,
   MessageWithLinkButtonField,
-  BulletPointExpandableField,
+  ExpandableDescriptionField,
   AlertMessageField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
@@ -443,7 +443,7 @@ export function buildExpendableDescriptionField(data: {
   description: StaticText
   introText: FormText
   startExpanded?: boolean
-}): BulletPointExpandableField {
+}): ExpandableDescriptionField {
   const { id, title, description, introText, startExpanded } = data
   return {
     children: undefined,
