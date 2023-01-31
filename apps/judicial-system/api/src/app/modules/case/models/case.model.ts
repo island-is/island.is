@@ -9,7 +9,6 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseState,
-  CaseType,
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
@@ -17,6 +16,7 @@ import {
   IndictmentSubtypeMap,
   CrimeSceneMap,
 } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
 import { Institution } from '../../institution'
