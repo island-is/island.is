@@ -1,9 +1,19 @@
 import React from 'react'
-import { GridColumn, GridRow, GridContainer } from '@island.is/island-ui/core'
-import LeftSideColumn from '../../components/CaseDetails/LeftSideColumn/LeftSideColumn'
+import {
+  GridColumn,
+  GridRow,
+  GridContainer,
+  Box,
+  Text,
+  Breadcrumbs,
+  Divider,
+} from '@island.is/island-ui/core'
 import MainColumn from '../../components/CaseDetails/MainColumn/MainColumn'
 import RightSideColumn from '../../components/CaseDetails/RightSideColumn/RightSideColumn'
 import { Case, Advice } from '../../types/viewModels'
+import CaseTimeline from '../../../../apps/samradsgatt/components/CaseTimeline/CaseTimeline'
+import SubscriptionBox from '../../../../apps/samradsgatt/components/SubscriptionBox/SubscriptionBox'
+import { useLocation } from 'react-use'
 
 interface DetailsProps {
   chosenCase: Case
@@ -11,6 +21,7 @@ interface DetailsProps {
 }
 
 const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
+  const location = useLocation()
   const dummyCase = {
     id: 3027,
     caseNumber: '3/2023',
@@ -64,7 +75,39 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
     <GridContainer>
       <GridRow>
         <GridColumn span={'3/12'} paddingBottom={3}>
-          <LeftSideColumn chosenCase={chosenCase} />
+          <GridContainer>
+            <Box>
+              <Box paddingY={3}>
+                <Breadcrumbs
+                  items={[
+                    { title: 'Öll mál', href: '/samradsgatt' },
+                    {
+                      title: 'Mál nr. ' + chosenCase.caseNumber,
+                      href: location.href,
+                    },
+                  ]}
+                />
+              </Box>
+              <Divider />
+              <CaseTimeline
+                status="Niðurstöður í vinnslu"
+                updatedDate={chosenCase.changed}
+              />
+            </Box>
+            <Box
+              marginBottom={6}
+              borderBottomWidth={'standard'}
+              borderTopWidth={'standard'}
+              borderColor={'blue200'}
+              paddingY={2}
+              paddingLeft={1}
+            >
+              <Text variant="h3" color="purple400">
+                Fjöldi umsagna: {chosenCase.adviceCount}
+              </Text>
+            </Box>
+            <SubscriptionBox />
+          </GridContainer>
         </GridColumn>
         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
           <MainColumn chosenCase={chosenCase} advices={advices} />
