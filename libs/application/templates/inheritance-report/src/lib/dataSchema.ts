@@ -4,135 +4,169 @@ export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
   /* assets */
-  realEstate: z.object({
-    data: z
+  assets: z.object({
+    realEstate: z
       .object({
-        assetNumber: z.string(),
-        description: z.string(),
-        propertyValuation: z.string().refine((v) => v),
+        data: z
+          .object({
+            assetNumber: z.string(),
+            description: z.string(),
+            propertyValuation: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  vehicles: z.object({
-    data: z
+    vehicles: z
       .object({
-        assetNumber: z.string(),
-        description: z.string(),
-        propertyValuation: z.string().refine((v) => v),
+        data: z
+          .object({
+            assetNumber: z.string(),
+            description: z.string(),
+            propertyValuation: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  inventory: z.object({
-    data: z
+    inventory: z
       .object({
-        inventory: z.string(),
-        inventoryValue: z.string().refine((v) => v),
+        data: z
+          .object({
+            inventory: z.string(),
+            inventoryValue: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  bankAccounts: z.object({
-    data: z
+    bankAccounts: z
       .object({
-        accountNumber: z.string(),
-        balance: z.string().refine((v) => v),
+        data: z
+          .object({
+            accountNumber: z.string(),
+            balance: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  claims: z.object({
-    data: z
+    claims: z
       .object({
-        issuer: z.string(),
-        value: z.string().refine((v) => v),
+        data: z
+          .object({
+            issuer: z.string(),
+            value: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  stocks: z.object({
-    data: z
+    stocks: z
       .object({
-        organization: z.string(),
-        nationalId: z.string(),
-        faceValue: z.string(),
-        rateOfExchange: z.string(),
-        value: z.string().refine((v) => v),
+        data: z
+          .object({
+            organization: z.string(),
+            nationalId: z.string(),
+            faceValue: z.string(),
+            rateOfExchange: z.string(),
+            value: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  money: z.object({
-    data: z
+    money: z
       .object({
-        moneyValue: z.string().refine((v) => v),
+        data: z
+          .object({
+            moneyValue: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  otherAssets: z.object({
-    data: z
+    otherAssets: z
       .object({
-        otherAssets: z.string(),
-        otherAssetsValue: z.string().refine((v) => v),
+        data: z
+          .object({
+            otherAssets: z.string(),
+            otherAssetsValue: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
+    assetsTotal: z.number().optional(),
   }),
 
   /* debts */
-  domesticAndForeignDebts: z.object({
-    data: z
+  debts: z.object({
+    domesticAndForeignDebts: z
       .object({
-        creditorName: z.string(),
-        nationalId: z.string(),
-        balance: z.string().refine((v) => v),
+        data: z
+          .object({
+            creditorName: z.string(),
+            nationalId: z.string(),
+            balance: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  publicCharges: z.object({
-    data: z
+    publicCharges: z
       .object({
-        publicChargesAmount: z.string().refine((v) => v),
+        data: z
+          .object({
+            publicChargesAmount: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
+    debtsTotal: z.number().optional(),
   }),
+
   funeralCostAmount: z.string().refine((v) => v),
 
   /* business */
-  businessAssets: z.object({
-    data: z
+  business: z.object({
+    businessAssets: z
       .object({
-        businessAsset: z.string(),
-        businessAssetValue: z.string().refine((v) => v),
+        data: z
+          .object({
+            businessAsset: z.string(),
+            businessAssetValue: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
-  }),
-  businessDebts: z.object({
-    data: z
+    businessDebts: z
       .object({
-        businessDebt: z.string(),
-        nationalId: z.string(),
-        debtValue: z.string().refine((v) => v),
+        data: z
+          .object({
+            businessDebt: z.string(),
+            nationalId: z.string(),
+            debtValue: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
-      .array()
       .optional(),
-    total: z.number().optional(),
+    businessTotal: z.number().optional(),
   }),
 
   /* heirs */

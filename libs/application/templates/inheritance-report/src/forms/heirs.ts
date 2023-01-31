@@ -8,6 +8,7 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
@@ -32,7 +33,6 @@ export const heirs = buildSection({
               title: m.totalDeduction,
               width: 'half',
               variant: 'currency',
-              defaultValue: '0',
             }),
           ],
         }),
@@ -49,14 +49,17 @@ export const heirs = buildSection({
             buildKeyValueField({
               label: m.netProperty,
               display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
+              value: ({ answers }) => {
+                return formatCurrency(
                   String(
-                    Number(answers.assetsTotal) -
-                      Number(answers.debtsTotal) +
-                      Number(answers.businessTotal),
+                    Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+                      Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+                      Number(
+                        getValueViaPath(answers, 'business.businessTotal'),
+                      ),
                   ),
-                ),
+                )
+              },
             }),
             buildDescriptionField({
               id: 'space',
@@ -81,10 +84,12 @@ export const heirs = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    Number(answers.assetsTotal) -
-                      Number(answers.debtsTotal) +
-                      Number(answers.businessTotal) -
-                      Number(answers.totalDeduction),
+                    Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+                      Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+                      Number(
+                        getValueViaPath(answers, 'business.businessTotal'),
+                      ) -
+                      Number(getValueViaPath(answers, 'totalDeduction')),
                   ),
                 ),
             }),
@@ -215,9 +220,11 @@ export const heirs = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    Number(answers.assetsTotal) -
-                      Number(answers.debtsTotal) +
-                      Number(answers.businessTotal),
+                    Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+                      Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+                      Number(
+                        getValueViaPath(answers, 'business.businessTotal'),
+                      ),
                   ),
                 ),
             }),
@@ -243,10 +250,12 @@ export const heirs = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    Number(answers.assetsTotal) -
-                      Number(answers.debtsTotal) +
-                      Number(answers.businessTotal) -
-                      Number(answers.totalDeduction),
+                    Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+                      Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+                      Number(
+                        getValueViaPath(answers, 'business.businessTotal'),
+                      ) -
+                      Number(getValueViaPath(answers, 'totalDeduction')),
                   ),
                 ),
             }),
@@ -327,7 +336,6 @@ export const heirs = buildSection({
               value: ({ answers }) => {
                 const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
                   (sum, heir) => {
-                    console.log(heir)
                     return sum + heir.taxableInheritance
                   },
                   0,

@@ -105,10 +105,10 @@ export const ReportFieldsRepeater: FC<
   useEffect(() => {
     setTaxFreeInheritance(TaxFreeLimit * percentage)
     setInheritance(
-      (Number(answers.assetsTotal) -
-        Number(answers.debtsTotal) +
-        Number(answers.businessTotal) -
-        Number(answers.totalDeduction)) *
+      (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+        Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+        Number(getValueViaPath(answers, 'business.businessTotal')) -
+        Number(getValueViaPath(answers, 'totalDeduction'))) *
         percentage,
     )
     setTaxableInheritance(inheritance - taxFreeInheritance)
