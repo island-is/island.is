@@ -47,7 +47,7 @@ export const ExpandableDescriptionFormField: FC<Props> = ({
               },
             }}
           >
-            {formatText(field.bulletPoints, application, formatMessage)}
+            {formatText(field.description, application, formatMessage)}
           </Markdown>
         </BulletList>
       </AccordionCard>
