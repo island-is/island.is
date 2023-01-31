@@ -222,6 +222,7 @@
 /libs/api/domains/mortgage-certificate/                                                             @island-is/origo
 
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate                @island-is/origo
 
 /libs/clients/charge-fjs-v2/                                                                        @island-is/origo
 /libs/clients/vehicle-service-fjs-v1/                                                               @island-is/origo
@@ -230,6 +231,9 @@
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/               @island-is/origo
 /libs/api/domains/transport-authority/                                                              @island-is/origo
 /libs/clients/transport-authority/                                                                  @island-is/origo
+
+/libs/application/templates/driving-license-book-update-instructor/                                 @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor  @island-is/origo
 
 
 # Temporary assignment while the QA bootstrap project is in progress
