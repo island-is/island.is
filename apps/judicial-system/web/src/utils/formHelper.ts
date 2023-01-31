@@ -1,11 +1,11 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import type {
-  Case,
-  CaseFile,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import type { CaseFile } from '@island.is/judicial-system/types'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'

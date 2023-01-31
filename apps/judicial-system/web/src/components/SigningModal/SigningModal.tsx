@@ -16,7 +16,7 @@ import {
   core,
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
