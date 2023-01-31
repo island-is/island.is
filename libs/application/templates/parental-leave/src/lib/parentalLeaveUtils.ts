@@ -15,6 +15,7 @@ import {
   Field,
   FormValue,
   Option,
+  RepeaterProps,
 } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -46,7 +47,9 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
   PregnancyStatusAndRightsResults,
+  Files,
   OtherParentObj,
+  VMSTPeriod,
 } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
@@ -560,11 +563,10 @@ export function getApplicationExternalData(
     'person.data.genderCode',
   )
 
-  const applicantName = getValueViaPath(
+  const applicantName = (getValueViaPath(
     externalData,
-    'person.data.fullName',
-    '',
-  ) as string
+    'person.data.fullname',
+  ) ?? getValueViaPath(externalData, 'person.data.fullName', '')) as string
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
@@ -825,6 +827,39 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const firstPeriodStart =
     periods.length > 0 ? periods[0].firstPeriodStart : undefined
 
+  const additionalDocuments = getValueViaPath(
+    answers,
+    'fileUpload.additionalDocuments',
+  ) as Files[]
+
+  const selfEmployedFiles = getValueViaPath(
+    answers,
+    'fileUpload.selfEmployedFile',
+  ) as Files[]
+
+  const studentFiles = getValueViaPath(
+    answers,
+    'fileUpload.studentFile',
+  ) as Files[]
+
+  const singleParentFiles = getValueViaPath(
+    answers,
+    'fileUpload.singleParent',
+  ) as Files[]
+
+  const benefitsFiles = getValueViaPath(
+    answers,
+    'fileUpload.benefitsFile',
+  ) as Files[]
+
+  const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
+
+  const actionName = getValueViaPath(answers, 'actionName') as
+    | 'period'
+    | 'document'
+    | 'documentPeriod'
+    | undefined
+
   return {
     applicationType,
     noPrimaryParentBirthDate,
@@ -870,6 +905,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
     firstPeriodStart,
     isRecivingUnemploymentBenefits,
     unemploymentBenefits,
+    additionalDocuments,
+    selfEmployedFiles,
+    studentFiles,
+    singleParentFiles,
+    benefitsFiles,
+    commonFiles,
+    actionName,
   }
 }
 
@@ -881,7 +923,7 @@ export const isParentWithoutBirthParent = (answers: Application['answers']) => {
     'noPrimaryParent.questionThree',
   )
 
-  return questionOne === YES && questionTwo === YES && questionThree === YES
+  return questionOne === YES && questionTwo === YES && questionThree === NO
 }
 
 export const isNotEligibleForParentWithoutBirthParent = (
@@ -894,7 +936,7 @@ export const isNotEligibleForParentWithoutBirthParent = (
     'noPrimaryParent.questionThree',
   )
 
-  return questionOne === NO || questionTwo === NO || questionThree === NO
+  return questionOne === NO || questionTwo === NO || questionThree === YES
 }
 
 export const requiresOtherParentApproval = (
@@ -1313,6 +1355,130 @@ export const getStartDateDesc = (application: Application) => {
     return parentalLeaveFormMessages.startDate.grantDescription
   }
   return parentalLeaveFormMessages.startDate.description
+}
+
+const setLoadingStateAndRepeaterItems = async (
+  VMSTPeriods: Period[],
+  setRepeaterItems: RepeaterProps['setRepeaterItems'],
+  setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
+) => {
+  setFieldLoadingState?.(true)
+  await setRepeaterItems(VMSTPeriods)
+  setFieldLoadingState?.(false)
+}
+
+export const synchronizeVMSTPeriods = (
+  data: any,
+  rights: number,
+  periods: Period[],
+  setRepeaterItems: RepeaterProps['setRepeaterItems'],
+  setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
+) => {
+  // If periods is not sync with VMST periods, sync it
+  const newPeriods: Period[] = []
+  const temptVMSTPeriods: Period[] = []
+  const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
+  VMSTPeriods?.forEach((period, index) => {
+    /*
+     ** VMST could change startDate but still return 'date_of_birth'
+     ** Make sure if period is in the past then we use the date they sent
+     */
+    let firstPeriodStart =
+      period.firstPeriodStart === 'date_of_birth'
+        ? 'actualDateOfBirth'
+        : 'specificDate'
+    if (new Date(period.from).getTime() < new Date().getTime()) {
+      firstPeriodStart = 'specificDate'
+    }
+
+    // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: firstPeriodStart,
+      useLength: NO as YesOrNo,
+      rightCodePeriod: rightsCodePeriod,
+    }
+    if (
+      period.paid ||
+      new Date(period.from).getTime() <= new Date().getTime()
+    ) {
+      newPeriods.push(obj)
+    }
+    temptVMSTPeriods.push(obj)
+  })
+
+  let index = newPeriods.length
+  if (index > 0) {
+    const VMSTEndDate = new Date(newPeriods[index - 1].endDate)
+    periods.forEach((period) => {
+      if (new Date(period.startDate) > VMSTEndDate) {
+        newPeriods.push({ ...period, rawIndex: index })
+        index += 1
+      }
+    })
+
+    const usedDayNewPeriods = calculateDaysUsedByPeriods(newPeriods)
+    // We don't want update periods if there isn't necessary. Otherwise, enable below code
+    // if (usedDayNewPeriods > rights) {
+    //   syncVMSTPeriods(temptVMSTPeriods)
+    // } else {
+    //   syncVMSTPeriods(newPeriods)
+    // }
+    let isMustSync = false
+    if (periods.length !== newPeriods.length) {
+      if (usedDayNewPeriods > rights) {
+        setLoadingStateAndRepeaterItems(
+          temptVMSTPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
+      } else {
+        setLoadingStateAndRepeaterItems(
+          newPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
+      }
+    } else if (
+      newPeriods[0].rightCodePeriod &&
+      newPeriods[0]?.rightCodePeriod !== periods[0]?.rightCodePeriod
+    ) {
+      isMustSync = true
+    } else {
+      newPeriods.forEach((period, i) => {
+        if (
+          new Date(period.startDate).getTime() !==
+            new Date(periods[i].startDate).getTime() ||
+          new Date(period.endDate).getTime() !==
+            new Date(periods[i].endDate).getTime() ||
+          period.ratio !== periods[i].ratio ||
+          period.firstPeriodStart !== periods[i].firstPeriodStart
+        ) {
+          isMustSync = true
+        }
+      })
+    }
+
+    if (isMustSync) {
+      if (usedDayNewPeriods > rights) {
+        setLoadingStateAndRepeaterItems(
+          temptVMSTPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
+      } else {
+        setLoadingStateAndRepeaterItems(
+          newPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
+      }
+    }
+  }
 }
 
 export const isParentalGrant = (application: Application) => {
