@@ -14,9 +14,6 @@ export class Form {
   @Field()
   intro!: string
 
-  @Field({ nullable: true })
-  recipient?: string
-
   @Field(() => [FormField])
   fields?: Array<FormField>
 
@@ -36,18 +33,22 @@ export class Form {
   recipientList?: string[]
 }
 
-export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
-  typename: 'Form',
-  id: sys.id,
-  title: fields.title ?? '',
-  intro: fields.intro ?? '',
-  recipient: fields.recipient ?? '',
-  fields: (fields.fields ?? []).map(mapFormField),
-  successText: fields.successText ?? '',
-  aboutYouHeadingText: fields.aboutYouHeadingText ?? '',
-  questionsHeadingText: fields.questionsHeadingText ?? '',
-  recipientFormFieldDecider: fields.recipientFormFieldDecider
-    ? mapFormField(fields.recipientFormFieldDecider)
-    : undefined,
-  recipientList: fields.recipientList ?? [],
-})
+export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => {
+  let recipientList = fields.recipientList ?? []
+  if (fields.recipient) recipientList = [fields.recipient]
+
+  return {
+    typename: 'Form',
+    id: sys.id,
+    title: fields.title ?? '',
+    intro: fields.intro ?? '',
+    fields: (fields.fields ?? []).map(mapFormField),
+    successText: fields.successText ?? '',
+    aboutYouHeadingText: fields.aboutYouHeadingText ?? '',
+    questionsHeadingText: fields.questionsHeadingText ?? '',
+    recipientFormFieldDecider: fields.recipientFormFieldDecider
+      ? mapFormField(fields.recipientFormFieldDecider)
+      : undefined,
+    recipientList: recipientList,
+  }
+}

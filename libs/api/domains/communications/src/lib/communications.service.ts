@@ -179,8 +179,7 @@ export class CommunicationsService {
     input: GenericFormInput,
     form: Form,
   ): Promise<boolean> {
-    let recipient: string | string[] =
-      form.recipient || (form.recipientList ?? [])
+    let recipient: string | string[] = form.recipientList ?? []
 
     const emailConfig = form.recipientFormFieldDecider?.emailConfig
     const key: string | undefined = input.recipientFormFieldDeciderValue
