@@ -28,11 +28,11 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
-  Case,
   CaseType,
   Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Button,
@@ -415,10 +415,11 @@ const Defendant = () => {
           </Box>
           <AnimatePresence>
             {[
-              CaseType.RESTRAINING_ORDER,
-              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+              CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
               CaseType.EXPULSION_FROM_HOME,
               CaseType.PSYCHIATRIC_EXAMINATION,
+              CaseType.RESTRAINING_ORDER,
+              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
               CaseType.OTHER,
             ].includes(workingCase.type) && (
               <motion.section

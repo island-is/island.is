@@ -10,12 +10,12 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  isCourtRole,
-  isExtendedCourtRole,
   isIndictmentCase,
-  isProsecutionRole,
   restrictionCases,
   UserRole,
+  isExtendedCourtRole,
+  isProsecutionRole,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 

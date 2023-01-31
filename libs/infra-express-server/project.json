@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/infra-express-server"]
     }
   },
-  "tags": []
+  "tags": ["lib:node", "scope:node"]
 }

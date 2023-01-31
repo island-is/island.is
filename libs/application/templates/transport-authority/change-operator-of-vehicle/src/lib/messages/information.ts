@@ -121,6 +121,11 @@ export const information = {
         defaultMessage: 'Gsm númer',
         description: 'Co-owner phone number label',
       },
+      error: {
+        id: 'ta.cov.application:information.labels.coOwner.error',
+        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
+        description: 'Co-owner error message',
+      },
     }),
     operator: defineMessages({
       sectionTitle: {
@@ -182,6 +187,11 @@ export const information = {
         id: 'ta.cov.application:information.labels.operator.main',
         defaultMessage: 'aðal',
         description: 'Main label - for main operator',
+      },
+      error: {
+        id: 'ta.cov.application:information.labels.operator.error',
+        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
+        description: 'Operator error message',
       },
     }),
     mainOperator: defineMessages({

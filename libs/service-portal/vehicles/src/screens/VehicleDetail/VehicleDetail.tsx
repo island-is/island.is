@@ -1,5 +1,5 @@
 import isNumber from 'lodash/isNumber'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
 import {
@@ -162,10 +162,14 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
   }
 `
 
+type UseParams = {
+  id: string
+}
+
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
@@ -224,7 +228,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={6}>
+      <Box marginBottom={[2, 2, 6]}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
@@ -251,10 +255,16 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
         {!loading && downloadServiceURL && (
-          <GridRow marginTop={6}>
+          <GridRow marginTop={[2, 2, 6]}>
             <GridColumn span="12/12">
-              <Box display="flex" justifyContent="flexStart" printHidden>
-                <Box paddingRight={2}>
+              <Box
+                display="flex"
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <Button
                     colorScheme="default"
                     icon="receipt"
@@ -267,7 +277,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
                 </Box>
-                <Box paddingRight={2}>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <a
                     href={SAMGONGUSTOFA_LINK}
                     target="_blank"
