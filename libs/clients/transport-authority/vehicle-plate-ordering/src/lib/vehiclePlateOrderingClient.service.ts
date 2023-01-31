@@ -1,7 +1,12 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { PlateOrderingApi } from '../../gen/fetch/apis'
-import { DeliveryStation, PlateOrder } from './vehiclePlateOrderingClient.types'
+import {
+  DeliveryStation,
+  SGS_DELIVERY_STATION_CODE,
+  SGS_DELIVERY_STATION_TYPE,
+  PlateOrder,
+} from './vehiclePlateOrderingClient.types'
 
 @Injectable()
 export class VehiclePlateOrderingClient {
@@ -36,8 +41,9 @@ export class VehiclePlateOrderingClient {
   ): Promise<boolean> {
     try {
       // Dummy values
-      const deliveryStationCode = ''
-      const deliveryStationType = ''
+      // Note: option "Pick up at Samgöngustofa" which is always valid
+      const deliveryStationType = SGS_DELIVERY_STATION_TYPE
+      const deliveryStationCode = SGS_DELIVERY_STATION_CODE
       const expressOrder = false
 
       await this.plateOrderingApiWithAuth(auth).orderplatesPost({
@@ -47,8 +53,8 @@ export class VehiclePlateOrderingClient {
           permno: permno,
           frontType: frontType,
           rearType: rearType,
-          stationToDeliverTo: deliveryStationCode || '',
-          stationType: deliveryStationType || '',
+          stationToDeliverTo: deliveryStationCode,
+          stationType: deliveryStationType,
           expressOrder: expressOrder,
           checkOnly: true, // to make sure we are only validating
         },
