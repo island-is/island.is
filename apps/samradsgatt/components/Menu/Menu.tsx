@@ -20,7 +20,7 @@ export const Menu = ({ showIcon = true }: MenuProps) => {
   return (
     <nav className={styles.menu}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '4/12', '6/12']}>
           <Inline>
             <Box>
               <Logo iconOnly width={26} />
@@ -43,7 +43,7 @@ export const Menu = ({ showIcon = true }: MenuProps) => {
             )}
           </Inline>
         </GridColumn>
-        <GridColumn span={['0', '0', '5/12', '5/12']} hiddenBelow={'md'}>
+        <GridColumn span={['0', '0', '0', '6/12', '4/12']} hiddenBelow={'lg'}>
           <Inline align={'right'} space={2}>
             {menuItems.map((item, index) => {
               return (
@@ -59,8 +59,8 @@ export const Menu = ({ showIcon = true }: MenuProps) => {
             })}
           </Inline>
         </GridColumn>
-        <GridColumn span={['0', '0', '1/12', '1/12']} hiddenBelow={'md'}>
-          <Inline align={'right'} space={2}>
+        <GridColumn span={['0', '0', '0', '2/12', '2/12']} hiddenBelow={'lg'}>
+          <Inline justifyContent={'center'}>
             <Button size="small">Innskráning</Button>
           </Inline>
         </GridColumn>
