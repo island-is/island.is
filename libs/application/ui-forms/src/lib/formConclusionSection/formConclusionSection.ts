@@ -36,7 +36,7 @@ export const formConclusionSection = (type: props) =>
             id: 'uiForms.conclusionBullet',
             title: type.bulletHeader,
             introText: type.bulletIntro,
-            bulletPoints: type.bulletPoints,
+            description: type.bulletPoints,
             startExpanded: true,
           }),
           buildMessageWithLinkButtonField({
