@@ -31,9 +31,33 @@ export class VehiclePlateOrderingClient {
   public async checkIfPlateOrderExists(
     auth: User,
     permno: string,
+    frontType: string,
+    rearType: string,
   ): Promise<boolean> {
-    //TODOx waiting for endpoint
-    return true
+    try {
+      // Dummy values
+      const deliveryStationCode = ''
+      const deliveryStationType = ''
+      const expressOrder = false
+
+      await this.plateOrderingApiWithAuth(auth).orderplatesPost({
+        apiVersion: '1.0',
+        apiVersion2: '1.0',
+        postOrderPlatesModel: {
+          permno: permno,
+          frontType: frontType,
+          rearType: rearType,
+          stationToDeliverTo: deliveryStationCode || '',
+          stationType: deliveryStationType || '',
+          expressOrder: expressOrder,
+          checkOnly: true, // to make sure we are only validating
+        },
+      })
+    } catch (e) {
+      return true
+    }
+
+    return false
   }
 
   public async savePlateOrders(
@@ -50,6 +74,7 @@ export class VehiclePlateOrderingClient {
         stationToDeliverTo: plateOrder.deliveryStationCode || '',
         stationType: plateOrder.deliveryStationType || '',
         expressOrder: plateOrder.expressOrder,
+        checkOnly: false,
       },
     })
   }

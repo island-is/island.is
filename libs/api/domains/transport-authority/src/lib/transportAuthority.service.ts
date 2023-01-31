@@ -337,10 +337,22 @@ export class TransportAuthorityApi {
           showOperated: showOperated,
         })
       )?.map(async (vehicle: VehicleMiniDto) => {
+        // Get basic information about vehicle
+        const vehicleInfo = await this.vehiclesApiWithAuth(
+          auth,
+        ).basicVehicleInformationGet({
+          clientPersidno: auth.nationalId,
+          permno: vehicle.permno || '',
+          regno: undefined,
+          vin: undefined,
+        })
+
         // Check if plate order exists
         const exists = await this.vehiclePlateOrderingClient.checkIfPlateOrderExists(
           auth,
           vehicle.permno || '',
+          vehicleInfo?.platetypefront || '',
+          vehicleInfo?.platetyperear || '',
         )
 
         return {
@@ -374,10 +386,22 @@ export class TransportAuthorityApi {
       )
     }
 
+    // Get basic information about vehicle
+    const vehicleInfo = await this.vehiclesApiWithAuth(
+      auth,
+    ).basicVehicleInformationGet({
+      clientPersidno: auth.nationalId,
+      permno: permno,
+      regno: undefined,
+      vin: undefined,
+    })
+
     // Check if plate order exists
     const exists = await this.vehiclePlateOrderingClient.checkIfPlateOrderExists(
       auth,
       permno,
+      vehicleInfo?.platetypefront || '',
+      vehicleInfo?.platetyperear || '',
     )
 
     return {
