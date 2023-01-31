@@ -27,6 +27,14 @@ const url = (path: string) => {
 }
 
 export const requestHandlers = [
+  rest.post(
+    url(
+      `r1/${XROAD_DRIVING_LICENSE_BOOK_PATH}/api/Authentication/Authenticate`,
+    ),
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json({ token: '12345' }))
+    },
+  ),
   rest.get(
     url(
       `r1/${XROAD_DRIVING_LICENSE_BOOK_PATH}/api/Student/GetStudentOverview/:ssn`,
