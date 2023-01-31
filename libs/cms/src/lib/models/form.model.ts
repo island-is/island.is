@@ -14,8 +14,8 @@ export class Form {
   @Field()
   intro!: string
 
-  @Field()
-  recipient!: string
+  @Field({ nullable: true })
+  recipient?: string
 
   @Field(() => [FormField])
   fields?: Array<FormField>
