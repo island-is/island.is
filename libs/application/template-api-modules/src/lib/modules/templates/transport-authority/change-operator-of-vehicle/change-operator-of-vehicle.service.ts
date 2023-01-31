@@ -43,6 +43,42 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
   }
 
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as ChangeOperatorOfVehicleAnswers
+
+    const permno = answers?.pickVehicle?.plate
+
+    const operators = answers?.operators.map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        answers.operators.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
+
+    const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
+      auth,
+      permno,
+      operators,
+    )
+
+    // If we get any error messages, we will just throw an error with a default title
+    // We will fetch these error messages again through graphql in the template, to be able
+    // to translate the error message
+    if (result.hasError && result.errorMessages?.length) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: applicationCheck.validation.alertTitle,
+        },
+        400,
+      )
+    }
+  }
+
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
