@@ -20,6 +20,10 @@ export const AttachmentPaths: AttachmentPath[] = [
     path: 'attachments.outsideBlueprints.file',
     prefix: 'teikning_utisvaedi',
   },
+  {
+    path: 'attachments.otherFiles.file',
+    prefix: 'onnur_gogn',
+  },
 ]
 
 export type ApplicationAttachments = {
