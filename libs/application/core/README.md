@@ -453,7 +453,7 @@ The reason default behavior does not work for all applications is because it cou
 +   draftPageNumber: 3,
     children: [],
     condition: (_formValue) => {
-      _formValue.payment = "TRANSACTION"
+      return _formValue.paymentMethod === "TRANSACTION"
     }
   }),
   buildSection({
@@ -462,7 +462,7 @@ The reason default behavior does not work for all applications is because it cou
 +   draftPageNumber: 3,
     children: [],
     condition: (_formValue) => {
-      _formValue.payment = "VISA"
+      return _formValue.paymentMethod === "VISA"
     }
   }),
 ```
