@@ -442,14 +442,16 @@ export function buildBulletPointField(data: {
   title: FormText
   bulletPoints: StaticText
   introText: FormText
+  startExpanded?: boolean
 }): BulletPointField {
-  const { id, title, bulletPoints, introText } = data
+  const { id, title, bulletPoints, introText, startExpanded } = data
   return {
     children: undefined,
     id,
     title,
     bulletPoints,
     introText,
+    startExpanded,
     type: FieldTypes.BULLET_POINT,
     component: FieldComponents.BULLET_POINT,
   }

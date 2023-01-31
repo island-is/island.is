@@ -287,6 +287,7 @@ export interface BulletPointField extends BaseField {
   component: FieldComponents.BULLET_POINT
   introText: FormText
   bulletPoints: StaticText
+  startExpanded?: boolean
 }
 
 export interface AlertMessageField extends BaseField {

@@ -37,6 +37,7 @@ export const formConclusionSection = (type: props) =>
             title: type.bulletHeader,
             introText: type.bulletIntro,
             bulletPoints: type.bulletPoints,
+            startExpanded: true,
           }),
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionGoToServicePortal',

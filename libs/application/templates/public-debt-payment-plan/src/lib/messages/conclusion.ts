@@ -33,7 +33,7 @@ export const conclusion = {
     bulletList: {
       id: 'pdpp.application:conclusion.information.bulletList#markdown',
       defaultMessage:
-        '<li>Þú getur nálgast upplýsingar um greiðsluáætlun á mínum síðum.</li><li>Staðfesting verður send í rafræn skjöl á Ísland.is.</li><li>Innheimtumaður ríkissjóðs mun hafa samband við þig ef þörf er á frekari gögnum eða upplýsingum.</li>',
+        '* Þú getur nálgast upplýsingar um greiðsluáætlun á mínum síðum.\n* Staðfesting verður send í rafræn skjöl á Ísland.is.\n* Innheimtumaður ríkissjóðs mun hafa samband við þig ef þörf er á frekari gögnum eða upplýsingum.',
       description: 'Conclusion information box bullet list',
     },
   }),

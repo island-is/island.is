@@ -17,9 +17,11 @@ interface Props extends FieldBaseProps {
 
 export const BulletPointFormField: FC<Props> = ({ application, field }) => {
   const { formatMessage } = useLocale()
+
   return (
     <Box marginY={2}>
       <AccordionCard
+        startExpanded={field.startExpanded}
         id={`BulletPointFormField-${field.id}`}
         label={formatText(field.title, application, formatMessage)}
         labelVariant="h3"
