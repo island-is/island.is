@@ -48,7 +48,7 @@ const LeftSideColumn = ({ chosenCase }: LeftSideColumnProps) => {
         paddingLeft={1}
       >
         <Text variant="h3" color="purple400">
-          {'Fjöldi umsagna: X'}
+          Fjöldi umsagna: {chosenCase.adviceCount}
         </Text>
       </Box>
       <SubscriptionBox />
