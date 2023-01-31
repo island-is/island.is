@@ -9,10 +9,10 @@ import {
 import {
   CaseState,
   completedCaseStates,
-  isExtendedCourtRole,
-  isProsecutionRole,
   User,
   UserRole,
+  isProsecutionRole,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'

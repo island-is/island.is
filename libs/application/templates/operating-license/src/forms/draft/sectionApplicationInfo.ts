@@ -95,6 +95,13 @@ export const applicationInfo = buildMultiField({
       title: m.openingHoursOutside,
       options: [{ value: YES, label: m.openingHoursOutsideCheck }],
       defaultValue: [NO],
+      condition: (answers) => {
+        const applicationInfo = answers.applicationInfo as Operation
+        return (
+          applicationInfo?.operation === APPLICATION_TYPES.RESTURANT ||
+          applicationInfo?.category === OPERATION_CATEGORY.FOUR
+        )
+      },
     }),
   ],
 })

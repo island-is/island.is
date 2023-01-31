@@ -232,13 +232,6 @@ export class FileService {
     })
   }
 
-  async getAllCaseFiles(caseId: string): Promise<CaseFile[]> {
-    return this.fileModel.findAll({
-      where: { caseId, state: { [Op.not]: CaseFileState.DELETED } },
-      order: [['created', 'DESC']],
-    })
-  }
-
   async getCaseFileSignedUrl(file: CaseFile): Promise<SignedUrl> {
     if (!file.key) {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)

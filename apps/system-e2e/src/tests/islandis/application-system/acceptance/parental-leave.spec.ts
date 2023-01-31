@@ -239,7 +239,7 @@ test.describe('Parental leave', () => {
 
     await expect(
       findByRole('heading', {
-        name: label(parentalLeaveFormMessages.attachmentScreen.genericTitle),
+        name: label(parentalLeaveFormMessages.attachmentScreen.title),
       }),
     ).toBeVisible()
     await proceed()
