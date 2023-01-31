@@ -1,4 +1,5 @@
 import {
+  AlcoholLicence,
   SyslumennAuction,
   Homestay,
   PaginatedOperatingLicenses,
@@ -33,6 +34,7 @@ import {
   mapEstateInfo,
   mapRealEstateAgent,
   mapLawyer,
+  mapAlcoholLicence,
   cleanPropertyNumber,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
@@ -193,6 +195,16 @@ export class SyslumennService {
         audkenni: id,
       })
     return mapOperatingLicensesCSV(csv)
+  }
+
+  async getAlcoholLicences(): Promise<AlcoholLicence[]> {
+    const { id, api } = await this.createApi()
+
+    const alcoholLicences = await api.afengisleyfiGet({
+      audkenni: id,
+    })
+
+    return (alcoholLicences ?? []).map(mapAlcoholLicence)
   }
 
   async sealDocument(document: string): Promise<SvarSkeyti> {

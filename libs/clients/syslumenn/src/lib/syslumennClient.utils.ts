@@ -15,9 +15,11 @@ import {
   EignirDanarbus,
   Fasteignasalar,
   Logmenn,
+  Afengisleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
+  AlcoholLicence,
   SyslumennAuction,
   DataUploadResponse,
   Homestay,
@@ -84,7 +86,7 @@ export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
     name: homestay.heitiHeimagistingar ?? '',
     address: homestay.heimilisfang ?? '',
     manager: homestay.abyrgdarmadur ?? '',
-    year: homestay.umsoknarAr ? parseFloat(homestay.umsoknarAr) : undefined,
+    year: homestay.umsoknarAr ? parseInt(homestay.umsoknarAr) : undefined,
     city: homestay.sveitarfelag ?? '',
     guests: homestay.gestafjoldi,
     rooms: homestay.fjoldiHerbergja,
@@ -179,6 +181,29 @@ export const mapOperatingLicensesCSV = (
   responseStringCSV: string,
 ): OperatingLicensesCSV => ({
   value: responseStringCSV,
+})
+
+export const mapAlcoholLicence = (
+  alcoholLicence: Afengisleyfi,
+): AlcoholLicence => ({
+  caseType: alcoholLicence.malategund?.trim() ?? '',
+  licenceType: alcoholLicence.tegund?.trim() ?? '',
+  licenceSubType: alcoholLicence.tegundLeyfis?.trim() ?? '',
+  licenseNumber: alcoholLicence.leyfisnumer?.trim() ?? '',
+  issuedBy: alcoholLicence.utgefidAf?.trim() ?? '',
+  year: alcoholLicence.skraningarAr
+    ? parseInt(alcoholLicence.skraningarAr)
+    : undefined,
+  // TODO: Ask for these validFrom and validTo value types to be changed to Date (like we have for Operating Licences)
+  // TODO: Module './AdfaraBeidni' has already exported a member named 'AdfarabeidniFromJSON'. Consider explicitly re-exporting to resolve the ambiguity.
+  validFrom: alcoholLicence.gildirFra
+    ? new Date(alcoholLicence.gildirFra)
+    : undefined,
+  validTo: alcoholLicence.gildirTil
+    ? new Date(alcoholLicence.gildirTil)
+    : undefined,
+  licenseHolder: alcoholLicence.leyfishafi?.trim() ?? '',
+  licenseResponsible: alcoholLicence.abyrgdarmaur?.trim() ?? '',
 })
 
 export function constructUploadDataObject(

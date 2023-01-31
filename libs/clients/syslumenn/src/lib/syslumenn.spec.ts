@@ -26,11 +26,13 @@ import {
   mapEstateRegistrant,
   mapRealEstateAgent,
   mapLawyer,
+  mapAlcoholLicence,
 } from './syslumennClient.utils'
 import {
   SYSLUMENN_AUCTION,
   REAL_ESTATE_AGENTS,
   LAWYERS,
+  ALCOHOL_LICENCES,
 } from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
 import { SyslumennClientModule } from '../lib/syslumennClient.module'
@@ -150,6 +152,15 @@ describe('SyslumennService', () => {
       const response = await service.getOperatingLicensesCSV()
       expect(response).toStrictEqual(
         mapOperatingLicensesCSV(OPERATING_LICENSES_CSV),
+      )
+    })
+  })
+
+  describe('getAlcoholLicences', () => {
+    it('should return alcohol licences', async () => {
+      const response = await service.getAlcoholLicences()
+      expect(response).toStrictEqual(
+        (ALCOHOL_LICENCES ?? []).map(mapAlcoholLicence),
       )
     })
   })

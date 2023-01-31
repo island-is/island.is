@@ -2907,6 +2907,8 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/StraddlingStockCalculator'
     | 'Fiskistofa/SelectedShip'
     | 'Fiskistofa/ShipSearchBoxedInput'
+    | 'Áfengisleyfi/AlcoholLicences'
+    | 'Tækifærisleyfi/TemporaryEventNotices'
     | undefined
 
   /** Localized JSON */
