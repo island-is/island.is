@@ -9,14 +9,15 @@ import {
 import CaseTimeline from './CaseTimeline'
 import SubscriptionBox from '../../SubscriptionBox'
 import { useLocation } from 'react-use'
+import { Case } from '../../../types/viewModels'
 
 interface LeftSideColumnProps {
-  caseNumber: string
+  chosenCase: Case
 }
 
 // TODO: change caseNumber when we have data
 // TODO: add caseNumber to Timeline props
-const LeftSideColumn = ({ caseNumber }: LeftSideColumnProps) => {
+const LeftSideColumn = ({ chosenCase }: LeftSideColumnProps) => {
   const location = useLocation()
   return (
     <GridContainer>
@@ -25,12 +26,18 @@ const LeftSideColumn = ({ caseNumber }: LeftSideColumnProps) => {
           <Breadcrumbs
             items={[
               { title: 'Öll mál', href: '/samradsgatt' },
-              { title: 'Mál nr. ' + caseNumber, href: location.href },
+              {
+                title: 'Mál nr. ' + chosenCase.caseNumber,
+                href: location.href,
+              },
             ]}
           />
         </Box>
         <Divider />
-        <CaseTimeline status="Niðurstöður í vinnslu" />
+        <CaseTimeline
+          status="Niðurstöður í vinnslu"
+          updatedDate={chosenCase.changed}
+        />
       </Box>
       <Box
         marginBottom={6}

@@ -7,12 +7,14 @@ import {
   // FormStepper,
   FormStepperThemes,
 } from '@island.is/island-ui/core'
+import { format } from 'date-fns'
 
 interface CaseTimelineProps {
   status: string
+  updatedDate: string
 }
 
-const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
+const CaseTimeline: React.FC<CaseTimelineProps> = ({ status, updatedDate }) => {
   const sections = [
     {
       section: 'Samráð fyrirhugað',
@@ -50,7 +52,7 @@ const CaseTimeline: React.FC<CaseTimelineProps> = ({ status }) => {
             sectionIndex={index}
             subSections={[
               <Text variant="medium" key="sub1">
-                frá case.updated
+                frá {format(new Date(updatedDate), 'dd.MM.yyyy')}
               </Text>,
             ]}
           />,

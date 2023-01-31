@@ -64,7 +64,7 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
     <GridContainer>
       <GridRow>
         <GridColumn span={'3/12'} paddingBottom={3}>
-          <LeftSideColumn caseNumber={chosenCase.caseNumber} />
+          <LeftSideColumn chosenCase={chosenCase} />
         </GridColumn>
         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
           <MainColumn chosenCase={chosenCase} advices={advices} />
