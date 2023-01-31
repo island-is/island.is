@@ -401,7 +401,6 @@ const useSections = (
             },
             ...(features.includes(Feature.INDICTMENT_ROUTE) &&
             workingCase.type === CaseType.Indictment &&
-            workingCase.indictmentSubtypes &&
             hasIndictmentSubtype(
               workingCase.indictmentSubtypes,
               IndictmentSubtype.TRAFFIC_VIOLATION,
