@@ -4,10 +4,10 @@ import addDays from 'date-fns/addDays'
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Case,
   CaseCustodyRestrictions,
   Gender,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 /**
  * A value is considered dirty if it's a string, either an empty string or not.

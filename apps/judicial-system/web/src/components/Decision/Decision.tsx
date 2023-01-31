@@ -1,7 +1,8 @@
+import React from 'react'
 import { Box, RadioButton } from '@island.is/island-ui/core'
 import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import React from 'react'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
 import { BlueBox } from '..'
 interface Props {
   workingCase: Case
