@@ -1,17 +1,8 @@
-import {
-  buildAlertMessageField,
-  buildBulletPointField,
-  buildForm,
-  buildMessageWithLinkButtonField,
-  buildMultiField,
-  buildSection,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { formConclusionSection } from '@island.is/application/ui-forms'
-import { application, section } from '../lib/messages'
+import { application } from '../lib/messages'
 import { conclusion } from '../lib/messages'
-import react from 'react'
-import { Bullet } from '@island.is/island-ui/core'
 
 export const PaymentPlanSubmittedForm: Form = buildForm({
   id: 'PaymentPlanSubmittedForm',

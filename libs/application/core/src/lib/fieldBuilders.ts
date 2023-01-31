@@ -29,7 +29,7 @@ import {
   CompanySearchField,
   RedirectToServicePortalField,
   MessageWithLinkButtonField,
-  BulletPointField,
+  BulletPointExpandableField,
   AlertMessageField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
@@ -437,13 +437,13 @@ export function buildMessageWithLinkButtonField(data: {
   }
 }
 
-export function buildBulletPointField(data: {
+export function buildBulletPointExpendableField(data: {
   id: string
   title: FormText
   bulletPoints: StaticText
   introText: FormText
   startExpanded?: boolean
-}): BulletPointField {
+}): BulletPointExpandableField {
   const { id, title, bulletPoints, introText, startExpanded } = data
   return {
     children: undefined,
@@ -452,8 +452,8 @@ export function buildBulletPointField(data: {
     bulletPoints,
     introText,
     startExpanded,
-    type: FieldTypes.BULLET_POINT,
-    component: FieldComponents.BULLET_POINT,
+    type: FieldTypes.BULLET_POINT_EXPANDABLE,
+    component: FieldComponents.BULLET_POINT_EXPANDABLE,
   }
 }
 

@@ -8,14 +8,20 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
-import { BulletPointField, FieldBaseProps } from '@island.is/application/types'
+import {
+  BulletPointExpandableField,
+  FieldBaseProps,
+} from '@island.is/application/types'
 import Markdown from 'markdown-to-jsx'
 
 interface Props extends FieldBaseProps {
-  field: BulletPointField
+  field: BulletPointExpandableField
 }
 
-export const BulletPointFormField: FC<Props> = ({ application, field }) => {
+export const BulletPointExpandableFormField: FC<Props> = ({
+  application,
+  field,
+}) => {
   const { formatMessage } = useLocale()
 
   return (

@@ -12,5 +12,5 @@ export { AsyncSelectFormField } from './AsyncSelectFormField/AsyncSelectFormFiel
 export { CompanySearchFormField } from './CompanySearchFormField/CompanySearchFormField'
 export { RedirectToServicePortalFormField } from './RedirectToServicePortalFormField/RedirectToServicePortalFormField'
 export { MessageWithLinkButtonFormField } from './MessageWithLinkButtonFormField/MessageWithLinkButtonFormField'
-export { BulletPointFormField } from './BulletPointFormField/BulletPointFormField'
 export { AlertMessageFormField } from './AlertMessageFormField/AlertMessageFormField'
+export { BulletPointExpandableFormField } from './BulletPointExpandableFormField/BulletPointExpandableFormField'
