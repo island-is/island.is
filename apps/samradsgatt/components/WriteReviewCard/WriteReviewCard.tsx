@@ -1,6 +1,6 @@
 import { ActionCard } from '@island.is/island-ui/core'
 
-const WriteReview = () => {
+const WriteReviewCard = () => {
   return (
     // Add a check whether user is logged in or not and implement accordingly
     // This is an implementation when user is not logged in.
@@ -13,4 +13,4 @@ const WriteReview = () => {
   )
 }
 
-export default WriteReview
+export default WriteReviewCard

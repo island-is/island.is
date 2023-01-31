@@ -8,12 +8,14 @@ import {
   Breadcrumbs,
   Divider,
 } from '@island.is/island-ui/core'
-import MainColumn from '../../components/CaseDetails/MainColumn/MainColumn'
 import RightSideColumn from '../../components/CaseDetails/RightSideColumn/RightSideColumn'
 import { Case, Advice } from '../../types/viewModels'
 import CaseTimeline from '../../../../apps/samradsgatt/components/CaseTimeline/CaseTimeline'
 import SubscriptionBox from '../../../../apps/samradsgatt/components/SubscriptionBox/SubscriptionBox'
 import { useLocation } from 'react-use'
+import CaseOverview from '../../components/CaseOverview/CaseOverview'
+import ReviewCard from '../../components/ReviewCard/ReviewCard'
+import WriteReviewCard from '../../components/WriteReviewCard/WriteReviewCard'
 
 interface DetailsProps {
   chosenCase: Case
@@ -109,9 +111,22 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
             <SubscriptionBox />
           </GridContainer>
         </GridColumn>
+
         <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
-          <MainColumn chosenCase={chosenCase} advices={advices} />
+          <Box paddingLeft={4}>
+            <CaseOverview chosenCase={chosenCase} />
+            <Box marginBottom={6}>
+              <Text variant="h1" color="blue400" paddingY={2}>
+                {'Innsendar umsagnir'}
+              </Text>
+              {advices.map((advice) => {
+                return <ReviewCard advice={advice} key={advice.number} />
+              })}
+            </Box>
+            <WriteReviewCard />
+          </Box>
         </GridColumn>
+
         <GridColumn span={'3/12'}>
           <RightSideColumn chosenCase={chosenCase} />
         </GridColumn>
