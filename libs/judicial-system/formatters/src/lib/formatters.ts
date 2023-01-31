@@ -309,12 +309,12 @@ export const displayFirstPlusRemaining = (
 
 export const formatDefenderRoute = (
   baseUrl: string,
-  caseType: string,
+  type: string,
   id: string,
 ) => {
-  const ct = caseType as CaseType
+  const caseType = type as CaseType
   return `${baseUrl}${DEFENDER_ROUTE}${
-    isIndictmentCase(ct) ? '/akaera' : ''
+    isIndictmentCase(caseType) ? '/akaera' : ''
   }/${id}`
 }
 
