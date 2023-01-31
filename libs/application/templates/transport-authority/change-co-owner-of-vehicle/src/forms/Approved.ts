@@ -6,10 +6,12 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messagesx'
 import { payment } from '../lib/messages'
+import { Logo } from '../assets/Logo'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: '',
+  logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

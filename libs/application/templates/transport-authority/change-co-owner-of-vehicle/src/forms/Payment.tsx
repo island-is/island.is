@@ -9,6 +9,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { payment } from '../lib/messages'
 import { m } from '../lib/messagesx'
+import { Logo } from '../assets/Logo'
 
 type CreateChargeData = {
   data: {
@@ -19,6 +20,7 @@ type CreateChargeData = {
 export const Payment: Form = buildForm({
   id: 'PaymentForm',
   title: '',
+  logo: Logo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: false,
   renderLastScreenBackButton: false,

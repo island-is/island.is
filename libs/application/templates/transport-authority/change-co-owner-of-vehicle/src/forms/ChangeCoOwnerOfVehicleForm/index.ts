@@ -10,10 +10,12 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { payment, conclusion } from '../../lib/messages'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
+import { Logo } from '../../assets/Logo'
 
 export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
   id: 'ChangeCoOwnerOfVehicleFormDraft',
   title: '',
+  logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     externalDataSection,
