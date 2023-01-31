@@ -15,9 +15,9 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
     )
 
-    // Allow if no rules
+    // Deny if no rules
     if (!rolesRules) {
-      return true
+      return false
     }
 
     const request = context.switchToHttp().getRequest()
@@ -38,30 +38,45 @@ export class RolesGuard implements CanActivate {
       return false
     }
 
-    // Allow if the rule is simple a user role
+    // Allow if the rule is simply a user role
     if (typeof rule === 'string') {
       return true
     }
 
-    const dto = request.body
-
-    if (!dto) {
-      return false
+    switch (rule.type) {
+      case RulesType.BASIC:
+        break
+      case RulesType.FIELD:
+        // Deny if some dto fields are not included in the rule
+        if (
+          !request.body ||
+          !Object.keys(request.body).every((field) =>
+            rule.dtoFields?.includes(field),
+          )
+        ) {
+          return false
+        }
+        break
+      case RulesType.FIELD_VALUES:
+        // Deny if the value of the specified dto field is not included in the rule
+        if (
+          !request.body ||
+          !rule.dtoFieldValues?.includes(request.body[rule.dtoField])
+        ) {
+          return false
+        }
+        break
+      default:
+        // Deny if the rule type is unknown
+        return false
     }
 
-    if (rule.type === RulesType.FIELD) {
-      const dtoFields = Object.keys(dto)
-
-      // Allow if all the dto fields are included in the rule
-      return dtoFields.every((field) => rule.dtoFields?.includes(field))
+    if (rule.canActivate) {
+      // Let the rule decide
+      return rule.canActivate(request)
     }
 
-    if (rule.type === RulesType.FIELD_VALUES) {
-      // Allow if the value of the specified dto field is included in the rule
-      return rule.dtoFieldValues?.includes(dto[rule.dtoField])
-    }
-
-    // Deny if the rule type is unknown
-    return false
+    // Accept after all checks succeeded
+    return true
   }
 }

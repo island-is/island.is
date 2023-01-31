@@ -149,7 +149,8 @@ export const Review: FC<ReviewScreenProps> = ({
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  const hasSelectedOtherParent = otherParent !== NO && otherParent !== SINGLE
+  const hasSelectedOtherParent =
+    otherParent !== NO && otherParent !== SINGLE && otherParent !== MANUAL
 
   const otherParentWillApprove = requiresOtherParentApproval(
     application.answers,
