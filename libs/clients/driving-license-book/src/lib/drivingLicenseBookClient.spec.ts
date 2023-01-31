@@ -1,11 +1,10 @@
 import { Test } from '@nestjs/testing'
-import { DrivingLicenseBookService } from './drivingLicenseBook.service'
-import {
-  DrivingLicenseBookClientApiFactory,
-  DrivingLicenseBookClientModule,
-  DrivingLicenseBookClientConfig,
-} from '@island.is/clients/driving-license-book'
 import { startMocking } from '@island.is/shared/mocking'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { LoggingModule } from '@island.is/logging'
+import { DrivingLicenseBookClientApiFactory } from './drivingLicenseBookClient.service'
+import { DrivingLicenseBookClientModule } from './drivingLicenseBookClient.module'
+import { DrivingLicenseBookClientConfig } from './drivingLicenseBookClient.config'
 import {
   MOCK_NATIONAL_ID_STUDENT,
   MOCK_NATIONAL_ID_TEACHER_INVALID,
@@ -14,12 +13,10 @@ import {
   MOCK_USER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-import { LoggingModule } from '@island.is/logging'
 
 startMocking(requestHandlers)
-describe('DrivingLicenseBookService', () => {
-  let service: DrivingLicenseBookService
+describe('DrivingLicenseBookClientApiFactory', () => {
+  let service: DrivingLicenseBookClientApiFactory
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -31,13 +28,10 @@ describe('DrivingLicenseBookService', () => {
         }),
         DrivingLicenseBookClientModule,
       ],
-      providers: [
-        DrivingLicenseBookClientApiFactory,
-        DrivingLicenseBookService,
-      ],
+      providers: [DrivingLicenseBookClientApiFactory],
     }).compile()
 
-    service = module.get(DrivingLicenseBookService)
+    service = module.get(DrivingLicenseBookClientApiFactory)
   })
 
   describe('Service', () => {

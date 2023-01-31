@@ -1,20 +1,21 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { DrivingLicenseBookService } from '@island.is/api/domains/driving-license-book'
 import { DrivingLicenseBookUpdateInstructorAnswers } from '@island.is/application/templates/driving-license-book-update-instructor'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
 
 @Injectable()
 export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiService {
   constructor(
-    private readonly drivingLicenseBookService: DrivingLicenseBookService,
+    @Inject(DrivingLicenseBookClientApiFactory)
+    private drivingLicenseBookClientApiFactory: DrivingLicenseBookClientApiFactory,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR)
   }
 
   async getCurrentInstructor({ auth }: TemplateApiModuleActionProps) {
-    const overview = await this.drivingLicenseBookService.getMostRecentStudentBook(
+    const overview = await this.drivingLicenseBookClientApiFactory.getMostRecentStudentBook(
       auth,
     )
 
@@ -47,7 +48,7 @@ export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiSe
 
     const {
       success,
-    } = await this.drivingLicenseBookService.updateActiveStudentBookInstructor(
+    } = await this.drivingLicenseBookClientApiFactory.updateActiveStudentBookInstructor(
       auth,
       newInstructorSsn,
     )

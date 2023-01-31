@@ -155,17 +155,4 @@ export class DrivingLicenseBookService {
       studentNationalId: student.nationalId,
     })
   }
-
-  async updateActiveStudentBookInstructor(
-    user: User,
-    instructorNationalId: string,
-  ): Promise<{ success: boolean }> {
-    this.logger.debug(
-      `driving-license-book: Update active student book instructor`,
-    )
-    return await this.drivingLicenseBookClientApiFactory.updateActiveStudentBookInstructor(
-      user,
-      instructorNationalId,
-    )
-  }
 }

@@ -34,7 +34,10 @@ export const requestHandlers = [
     (req, res, ctx) => {
       const isFound = req.params.ssn === MOCK_NATIONAL_ID_STUDENT
       if (!isFound) {
-        return res(ctx.status(404), ctx.text('error message'))
+        return res(
+          ctx.status(404),
+          ctx.text('Student overview not found for this student SSN'),
+        )
       }
 
       return res(
@@ -63,7 +66,10 @@ export const requestHandlers = [
     (req, res, ctx) => {
       const isFound = req.params.id === MOCK_LICENSE_BOOK_ID
       if (!isFound) {
-        return res(ctx.status(404), ctx.text('error message'))
+        return res(
+          ctx.status(404),
+          ctx.text('License book not found for this book ID'),
+        )
       }
 
       return res(ctx.status(200), ctx.json({ data: { practiceDriving: true } }))
@@ -78,7 +84,10 @@ export const requestHandlers = [
 
       const isFound = req.params.id === MOCK_LICENSE_BOOK_ID
       if (!isFound) {
-        return res(ctx.status(404), ctx.text('error message'))
+        return res(
+          ctx.status(404),
+          ctx.text('License book not found for this book ID'),
+        )
       }
 
       const isValidTeacher = [
@@ -86,7 +95,10 @@ export const requestHandlers = [
         MOCK_NATIONAL_ID_TEACHER_NEW,
       ].includes(body?.teacherSsn)
       if (!isValidTeacher) {
-        return res(ctx.status(400), ctx.text('error message'))
+        return res(
+          ctx.status(400),
+          ctx.text('Teacher rights not found for this teacher SSN'),
+        )
       }
 
       return res(ctx.status(200))
