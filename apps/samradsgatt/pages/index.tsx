@@ -7,6 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import Card from '../components/Card/Card'
+import Layout from '../components/Layout/Layout'
 type arrayDummy = Array<info>
 type info = {
   caseNumber: string
@@ -136,7 +137,7 @@ export const Index = () => {
   }, [searchValue])
 
   return (
-    <div>
+    <Layout showIcon={false}>
       <GridRow>
         <GridColumn
           paddingBottom={2}
@@ -166,7 +167,7 @@ export const Index = () => {
           )}
         </GridColumn>
       </GridRow>
-    </div>
+    </Layout>
   )
 }
 
