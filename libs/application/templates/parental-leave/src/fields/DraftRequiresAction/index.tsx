@@ -29,7 +29,7 @@ const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
       parentalLeaveFormMessages.draftFlow.draftNotApprovedEmployerDesc,
     [ApplicationStates.VINNUMALASTOFNUN_ACTION]:
       parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc,
-    [ApplicationStates.ADDITIONAL_DOCUMENT_REQUIRED]:
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
       parentalLeaveFormMessages.draftFlow.draftAdditionalDocumentRequiredDesc,
   }
 
