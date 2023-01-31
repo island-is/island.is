@@ -28,11 +28,11 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
-  Case,
   CaseType,
   Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Button,

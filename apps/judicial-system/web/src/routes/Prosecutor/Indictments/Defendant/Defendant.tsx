@@ -20,7 +20,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles, core, errors } from '@island.is/judicial-system-web/messages'
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import {
-  Case,
   Defendant as TDefendant,
   UpdateDefendant,
   IndictmentSubtypeMap,
@@ -28,6 +27,7 @@ import {
   IndictmentSubtype,
   CrimeScene,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
