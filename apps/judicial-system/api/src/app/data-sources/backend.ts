@@ -81,9 +81,9 @@ export class BackendApi extends DataSource<{ req: Request }> {
     })
   }
 
-  private put<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
+  private patch<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
     return this.callBackend<TResult>(route, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify(body),
       headers: this.headers,
     })
@@ -92,14 +92,6 @@ export class BackendApi extends DataSource<{ req: Request }> {
   private delete<TResult>(route: string): Promise<TResult> {
     return this.callBackend<TResult>(route, {
       method: 'DELETE',
-      headers: this.headers,
-    })
-  }
-
-  private patch<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
-    return this.callBackend<TResult>(route, {
-      method: 'PATCH',
-      body: JSON.stringify(body),
       headers: this.headers,
     })
   }
@@ -121,7 +113,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   updateUser(id: string, updateUser: UpdateUser): Promise<User> {
-    return this.put(`user/${id}`, updateUser)
+    return this.patch(`user/${id}`, updateUser)
   }
 
   getCases(): Promise<CaseListEntry[]> {
@@ -137,11 +129,11 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   updateCase(id: string, updateCase: UpdateCase): Promise<Case> {
-    return this.put(`case/${id}`, updateCase)
+    return this.patch(`case/${id}`, updateCase)
   }
 
   transitionCase(id: string, transitionCase: TransitionCase): Promise<Case> {
-    return this.put(`case/${id}/state`, transitionCase)
+    return this.patch(`case/${id}/state`, transitionCase)
   }
 
   requestCourtRecordSignature(id: string): Promise<RequestSignatureResponse> {
@@ -253,7 +245,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     defendantId: string,
     updateDefendant: UpdateDefendant,
   ): Promise<Defendant> {
-    return this.put(`case/${caseId}/defendant/${defendantId}`, updateDefendant)
+    return this.patch(
+      `case/${caseId}/defendant/${defendantId}`,
+      updateDefendant,
+    )
   }
 
   deleteDefendant(
