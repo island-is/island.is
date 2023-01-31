@@ -53,7 +53,7 @@ export enum GenericLicenseDataFieldType {
   Table = 'Table',
 }
 
-export enum GenericUserLicensePkPassStatus {
+export enum LicensePkPassAvailability {
   Available = 'Available',
   NotAvailable = 'NotAvailable',
   Unknown = 'Unknown',
@@ -187,6 +187,66 @@ export type PkPassVerificationInputData = {
   date: string
 }
 
+export type Result<ResultType, ErrorType = ServiceError> =
+  | {
+      ok: true
+      data: ResultType
+    }
+  | {
+      ok: false
+      error: ErrorType
+    }
+
+export interface ServiceError {
+  /** Custom error code pertaining to the external service, or http status */
+  code: number
+  /** Custom message */
+  message?: string
+  /** Optional data */
+  data?: string
+}
+
+/** SERVICE CODES 10+ *
+ *  HTTP CODES 100+ */
+export type ServiceErrorCode =
+  /** No license info found */
+  | 3
+  /** Request contains some field errors */
+  | 4
+  /** Invalid pass */
+  | 5
+  /** Missing PassTemplateId */
+  | 10
+  /** Fetch failed */
+  | 11
+  /** JSON parse failed */
+  | 12
+  /** External service error */
+  | 13
+  /** Incomplete service response */
+  | 14
+  /** Request contains some field errors */
+  | 15
+  /** Generic error code / Unknown */
+  | 99
+
+export interface UpdatedLicenseClient<LicenseType> {
+  // This might be cached
+  getLicense: (user: User) => Promise<Result<LicenseType | null>>
+
+  // This will never be cached
+  getLicenseDetail: (user: User) => Promise<Result<LicenseType | null>>
+
+  getPkPassUrl: (user: User, data?: LicenseType) => Promise<string | null>
+
+  getPkPassQRCode: (user: User, data?: LicenseType) => Promise<string | null>
+
+  verifyPkPass: (
+    data: string,
+    passTemplateId: string,
+  ) => Promise<PkPassVerification | null>
+}
+
 /**
  * Interface for client services, fetches generic payload and status from a third party API.
  * Only one license per client to start with.
@@ -225,5 +285,6 @@ export interface LicenseClient<LicenseType> {
 }
 
 export const LICENSE_CLIENT_FACTORY = 'license_client_factory'
+export const UPDATED_LICENSE_CLIENT_FACTORY = 'updated-license-client-factory'
 
 export const CONFIG_PROVIDER = 'config_provider'

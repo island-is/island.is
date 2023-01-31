@@ -8,6 +8,7 @@ import {
   LICENSE_CLIENT_FACTORY,
   LicenseType,
   LicenseClient,
+  UpdatedLicenseClient,
 } from './licenseClient.type'
 import { LicenseClientService } from './licenseClient.service'
 import {
@@ -76,16 +77,19 @@ import {
         disabilityClient: DisabilityLicenseClient,
       ) => async (
         type: LicenseType,
-      ): Promise<LicenseClient<unknown> | null> => {
+      ): Promise<UpdatedLicenseClient<unknown> | null> => {
         switch (type) {
           case LicenseType.FirearmLicense:
-            return firearmClient
+            //return firearmClient
+            return null
           case LicenseType.AdrLicense:
             return adrClient
           case LicenseType.MachineLicense:
-            return machineClient
+            //return machineClient
+            return null
           case LicenseType.DisabilityLicense:
-            return disabilityClient
+            //return disabilityClient
+            return null
           default:
             return null
         }

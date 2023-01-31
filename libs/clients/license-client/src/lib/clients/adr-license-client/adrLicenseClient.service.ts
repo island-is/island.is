@@ -2,58 +2,113 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import {
-  createPkPassDataInput,
-  parseAdrLicensePayload,
-} from './adrLicenseMapper'
+import { createPkPassDataInput } from './adrLicenseClientMapper'
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
 import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { Locale } from '@island.is/shared/types'
 import compareAsc from 'date-fns/compareAsc'
+import { parseAdrLicenseResponse } from './adrLicenseClientMapper'
 import {
   GenericLicenseLabels,
   GenericLicenseUserdataExternal,
-  GenericUserLicensePkPassStatus,
+  LicensePkPassAvailability,
   GenericUserLicenseStatus,
   LicenseClient,
+  LicenseResponse,
   PkPassVerification,
   PkPassVerificationInputData,
+  Result,
+  UpdatedLicenseClient,
 } from '../../licenseClient.type'
+import { FlattenedAdrDto } from './adrLicenseClient.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
-export class AdrLicenseClient implements LicenseClient<AdrDto> {
+export class AdrLicenseClient implements UpdatedLicenseClient<FlattenedAdrDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private adrApiWithAuth = (user: User) =>
-    this.adrApi.withMiddleware(new AuthMiddleware(user as Auth))
+  public async fetchLicense(user: User): Promise<Result<AdrDto | null>> {
+    try {
+      const licenseInfo = await this.adrApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getAdr()
+      return { ok: true, data: licenseInfo }
+    } catch (e) {
+      //404 - no license for user, still ok!
+      let error
+      if (e instanceof FetchError) {
+        //404 - no license for user, still ok!
+        if (e.status === 404) {
+          this.logger.info('ADR license not found for user', {
+            LOG_CATEGORY,
+          })
+          return { ok: true, data: null }
+        } else {
+          error = {
+            code: 13,
+            message: 'Service failure',
+            data: JSON.stringify(e.body),
+          }
+          this.logger.warn('Expected 200 or 404 status', {
+            status: e.status,
+            statusText: e.statusText,
+            category: LOG_CATEGORY,
+          })
+        }
+      } else {
+        const unknownError = e as Error
+        error = {
+          code: 99,
+          message: 'Unknown error',
+          data: JSON.stringify(unknownError),
+        }
+        this.logger.warn('Unable to query data', {
+          status: e.status,
+          statusText: e.statusText,
+          category: LOG_CATEGORY,
+        })
+      }
 
-  async fetchLicense(user: User) {
-    const license = await this.adrApiWithAuth(user).getAdr().catch(handle404)
-    return license
+      return {
+        ok: false,
+        error,
+      }
+    }
   }
 
-  async getLicense(
-    user: User,
-    locale: Locale,
-    labels: GenericLicenseLabels,
-  ): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(user: User): Promise<Result<FlattenedAdrDto | null>> {
     const licenseData = await this.fetchLicense(user)
 
-    if (!licenseData) {
-      return null
+    if (!licenseData.ok) {
+      return licenseData
     }
+
+    if (licenseData.data === null) {
+      //user doesn't have a license
+      return {
+        ok: true,
+        data: null,
+      }
+    }
+
+    const parsedData = parseAdrLicenseResponse(licenseData.data)
+
+    return {
+      ok: true,
+      data: parsedData,
+    }
+    /*
     const payload = parseAdrLicensePayload(licenseData, locale, labels)
 
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
@@ -66,15 +121,11 @@ export class AdrLicenseClient implements LicenseClient<AdrDto> {
       status: GenericUserLicenseStatus.HasLicense,
       payload,
       pkpassStatus,
-    }
+    }*/
   }
 
-  async getLicenseDetail(
-    user: User,
-    locale: Locale,
-    labels: GenericLicenseLabels,
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user, locale, labels)
+  async getLicenseDetail(user: User): Promise<Result<FlattenedAdrDto | null>> {
+    return this.getLicense(user)
   }
 
   private async createPkPassPayload(user: User): Promise<PassDataInput | null> {
@@ -91,21 +142,21 @@ export class AdrLicenseClient implements LicenseClient<AdrDto> {
     }
   }
 
-  static licenseIsValidForPkpass(
-    licenseInfo: AdrDto | null | undefined,
-  ): GenericUserLicensePkPassStatus {
+  licenseIsValidForPkpass(
+    licenseInfo: FlattenedAdrDto,
+  ): LicensePkPassAvailability {
     if (!licenseInfo || !licenseInfo.gildirTil) {
-      return GenericUserLicensePkPassStatus.Unknown
+      return LicensePkPassAvailability.Unknown
     }
 
     const expired = new Date(licenseInfo.gildirTil)
     const comparison = compareAsc(expired, new Date())
 
     if (isNaN(comparison) || comparison < 0) {
-      return GenericUserLicensePkPassStatus.NotAvailable
+      return LicensePkPassAvailability.NotAvailable
     }
 
-    return GenericUserLicensePkPassStatus.Available
+    return LicensePkPassAvailability.Available
   }
 
   async getPkPassUrl(user: User): Promise<string | null> {

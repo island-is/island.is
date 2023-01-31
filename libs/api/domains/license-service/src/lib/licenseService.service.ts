@@ -24,11 +24,12 @@ import {
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import { AVAILABLE_LICENSES } from './licenseService.module'
-import { FetchError } from '@island.is/clients/middlewares'
 import {
   LicenseClientService,
   LicenseType,
 } from '@island.is/clients/license-client'
+import { FetchError } from '@island.is/clients/middlewares'
+import { parseAdrLicensePayload } from './mappers/adrLicenseMapper'
 
 const CACHE_KEY = 'licenseService'
 const LOG_CATEGORY = 'license-service'
@@ -42,10 +43,6 @@ export type GetGenericLicenseOptions = {
 @Injectable()
 export class LicenseServiceService {
   constructor(
-    @Inject(DRIVING_LICENSE_FACTORY)
-    private drivingLicenseFactory: (
-      cacheManager: CacheManager,
-    ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly licenseClient: LicenseClientService,
@@ -200,12 +197,9 @@ export class LicenseServiceService {
       )
 
       if (!onlyList) {
-        const licenseService =
-          license.type === GenericLicenseType.DriversLicense
-            ? await this.drivingLicenseFactory(this.cacheManager)
-            : await this.licenseClient.createClientByLicenseType(
-                (license.type as unknown) as LicenseType,
-              )
+        const licenseService = await this.licenseClient.createClientByLicenseType(
+          (license.type as unknown) as LicenseType,
+        )
 
         if (!licenseService) {
           this.logger.warn('No license service from generic license factory', {
@@ -275,24 +269,23 @@ export class LicenseServiceService {
     locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<GenericUserLicense> {
-    let licenseUserdata: GenericLicenseUserdataExternal | null = null
+    let licenseData: LicenseType
 
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
-    const licenseService =
-      licenseType === GenericLicenseType.DriversLicense
-        ? await this.drivingLicenseFactory(this.cacheManager)
-        : await this.licenseClient.createClientByLicenseType(
-            (licenseType as unknown) as LicenseType,
-          )
+    const licenseService = await this.licenseClient.createClientByLicenseType(
+      (licenseType as unknown) as LicenseType,
+    )
 
     const licenseLabels = await this.getLicenseLabels(locale)
 
     if (license && licenseService) {
-      licenseUserdata = await licenseService.getLicenseDetail(
-        user,
-        locale,
-        licenseLabels,
-      )
+      const licenseFetch = await licenseService.getLicenseDetail(user)
+
+      if (!licenseFetch.ok) {
+        throw new Error(`license fetch failed for ${licenseType}`)
+      }
+
+      licenseData = licenseFetch.data
     } else {
       throw new Error(`${licenseType} not supported`)
     }
@@ -300,6 +293,11 @@ export class LicenseServiceService {
     const orgData = license.orgSlug
       ? await this.getOrganization(license.orgSlug, locale)
       : undefined
+
+    switch (licenseType) {
+      case GenericLicenseType.AdrLicense:
+        const payload = parseAdrLicensePayload(licenseData)
+    }
 
     return {
       nationalId: user.nationalId,
