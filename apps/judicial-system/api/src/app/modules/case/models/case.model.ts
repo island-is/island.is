@@ -2,7 +2,7 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
-import {
+import type {
   Case as TCase,
   CaseAppealDecision,
   CaseLegalProvisions,
