@@ -5,7 +5,6 @@ import {
   IsISO8601,
   IsJSON,
   IsOptional,
-  IsString,
 } from 'class-validator'
 import { LicenseId, LicenseUpdateType } from '../license.types'
 import { IsNationalId } from '@island.is/nest/validators'
@@ -28,6 +27,7 @@ export class UpdateLicenseRequest {
   readonly licenseUpdateType!: LicenseUpdateType
 
   @ApiPropertyOptional({ description: 'The expiration date of the license' })
+  @IsOptional()
   @IsISO8601()
   readonly expiryDate?: string
 
