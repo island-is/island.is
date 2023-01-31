@@ -9,16 +9,16 @@ import {
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import {
-  BulletPointExpandableField,
+  ExpandableDescriptionField,
   FieldBaseProps,
 } from '@island.is/application/types'
 import Markdown from 'markdown-to-jsx'
 
 interface Props extends FieldBaseProps {
-  field: BulletPointExpandableField
+  field: ExpandableDescriptionField
 }
 
-export const BulletPointExpandableFormField: FC<Props> = ({
+export const ExpandableDescriptionFormField: FC<Props> = ({
   application,
   field,
 }) => {

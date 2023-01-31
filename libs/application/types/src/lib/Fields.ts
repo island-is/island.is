@@ -102,7 +102,7 @@ export enum FieldTypes {
   COMPANY_SEARCH = 'COMPANY_SEARCH',
   REDIRECT_TO_SERVICE_PORTAL = 'REDIRECT_TO_SERVICE_PORTAL',
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MESSAGE_WITH_LINK_BUTTON_FIELD',
-  BULLET_POINT_EXPANDABLE = 'BULLET_POINT_EXPANDABLE',
+  EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
 }
 
@@ -122,7 +122,7 @@ export enum FieldComponents {
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
-  BULLET_POINT_EXPANDABLE = 'BulletPointExpandableFormField',
+  EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
 }
 
@@ -282,11 +282,11 @@ export interface MessageWithLinkButtonField extends BaseField {
   message: FormText
 }
 
-export interface BulletPointExpandableField extends BaseField {
-  readonly type: FieldTypes.BULLET_POINT_EXPANDABLE
-  component: FieldComponents.BULLET_POINT_EXPANDABLE
+export interface ExpandableDescriptionField extends BaseField {
+  readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
+  component: FieldComponents.EXPANDABLE_DESCRIPTION
   introText: FormText
-  bulletPoints: StaticText
+  description: StaticText
   startExpanded?: boolean
 }
 
@@ -313,5 +313,5 @@ export type Field =
   | CompanySearchField
   | RedirectToServicePortalField
   | MessageWithLinkButtonField
-  | BulletPointExpandableField
+  | ExpandableDescriptionField
   | AlertMessageField

@@ -437,23 +437,23 @@ export function buildMessageWithLinkButtonField(data: {
   }
 }
 
-export function buildBulletPointExpendableField(data: {
+export function buildExpendableDescriptionField(data: {
   id: string
   title: FormText
-  bulletPoints: StaticText
+  description: StaticText
   introText: FormText
   startExpanded?: boolean
 }): BulletPointExpandableField {
-  const { id, title, bulletPoints, introText, startExpanded } = data
+  const { id, title, description, introText, startExpanded } = data
   return {
     children: undefined,
     id,
     title,
-    bulletPoints,
+    description,
     introText,
     startExpanded,
-    type: FieldTypes.BULLET_POINT_EXPANDABLE,
-    component: FieldComponents.BULLET_POINT_EXPANDABLE,
+    type: FieldTypes.EXPANDABLE_DESCRIPTION,
+    component: FieldComponents.EXPANDABLE_DESCRIPTION,
   }
 }
 

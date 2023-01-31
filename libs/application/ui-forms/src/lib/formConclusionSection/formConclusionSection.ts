@@ -2,7 +2,7 @@ import {
   buildSection,
   buildMultiField,
   buildAlertMessageField,
-  buildBulletPointExpendableField,
+  buildExpendableDescriptionField,
   buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
 import { MessageDescriptor } from 'react-intl'
@@ -32,7 +32,7 @@ export const formConclusionSection = (type: props) =>
             alertType: 'success',
             message: type.alertMessage,
           }),
-          buildBulletPointExpendableField({
+          buildExpendableDescriptionField({
             id: 'uiForms.conclusionBullet',
             title: type.bulletHeader,
             introText: type.bulletIntro,

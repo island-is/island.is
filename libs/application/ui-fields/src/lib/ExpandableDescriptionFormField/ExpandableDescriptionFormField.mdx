@@ -8,7 +8,7 @@ import {
 } from '@storybook/addon-docs'
 import { dedent } from 'ts-dedent'
 
-import { BulletPointFormField } from './BulletPointFormField'
+import { ExpandableDescriptionFormField } from './ExpandableDescriptionFormField'
 
 export const createMockApplication = (data = {}) => ({
   id: '123',
@@ -24,24 +24,24 @@ export const createMockApplication = (data = {}) => ({
 })
 
 <Meta
-  title="Application System/BulletPointFormField"
-  component={BulletPointFormField}
+  title="Application System/ExpandableDescriptionFormField"
+  component={ExpandableDescriptionFormField}
 />
 
-# BulletPointFormField
+# ExpandableDescriptionFormField
 
 ### Usage in a template
 
-You can create a BulletPointFormField using the following function `BulletPointFormField`.
+You can create a ExpandableDescriptionFormField using the following function `ExpandableDescriptionFormField`.
 
 <Source
   language="typescript"
   code={dedent(`
-    BulletPointFormField({
+    ExpandableDescriptionFormField({
       id: 'field.id',
       title: 'Field title',
       introText: 'Field introText'
-      bulletPoints: '<li>bullet</li>
+      description: '* bullet1\n * bullet2'
     })`)}
 />
 
@@ -49,22 +49,22 @@ The previous configuration object will result in the following component:
 
 <Canvas>
   <Story name="Default">
-    <BulletPointFormField
+    <ExpandableDescriptionFormField
       application={createMockApplication()}
       field={{
         id: 'field.id',
         title: 'Field title',
         introText: 'Field introText',
-        bulletPoints: '<li>bullet</li>',
+        description: '* bullet1\n * bullet2',
       }}
     />
   </Story>
 </Canvas>
 
-You can also use this field into a custom component by using `<BulletPointFormField field={...} />` with the configuration object defined above.
+You can also use this field into a custom component by using `<ExpandableDescriptionFormField field={...} />` with the configuration object defined above.
 
 # Props
 
-## BulletPointFormField
+## ExpandableDescriptionFormField
 
-<ArgsTable of={BulletPointFormField} />
+<ArgsTable of={ExpandableDescriptionFormField} />

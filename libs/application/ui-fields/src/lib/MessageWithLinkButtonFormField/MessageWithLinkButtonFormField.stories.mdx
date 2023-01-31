@@ -8,7 +8,7 @@ import {
 } from '@storybook/addon-docs'
 import { dedent } from 'ts-dedent'
 
-import { GoToServicePortalFormField } from './GoToServicePortalFormField'
+import { MessageWithLinkButtonFormField } from './MessageWithLinkButtonFormField'
 
 export const createMockApplication = (data = {}) => ({
   id: '123',
@@ -24,22 +24,25 @@ export const createMockApplication = (data = {}) => ({
 })
 
 <Meta
-  title="Application System/GoToServicePortalFormField"
-  component={GoToServicePortalFormField}
+  title="Application System/MessageWithLinkButtonFormField"
+  component={MessageWithLinkButtonFormField}
 />
 
-# GoToServicePortalFormField
+# MessageWithLinkButtonFormField
 
 ### Usage in a template
 
-You can create a GoToServicePortalFormField using the following function `GoToServicePortalFormField`.
+You can create a MessageWithLinkButtonFormField using the following function `MessageWithLinkButtonFormField`.
 
 <Source
   language="typescript"
   code={dedent(`
-    GoToServicePortalFormField({
+    MessageWithLinkButtonFormField({
       id: 'field.id',
       title: '',
+      url: '/minarsidur',
+      message: 'Go to my pages',
+      buttonTitle: 'Áfram'
     })`)}
 />
 
@@ -47,20 +50,23 @@ The previous configuration object will result in the following component:
 
 <Canvas>
   <Story name="Default">
-    <GoToServicePortalFormField
+    <MessageWithLinkButtonFormField
       application={createMockApplication()}
       field={{
         id: 'field.id',
         title: '',
+        url: '/minarsidur',
+        message: 'Go to my pages',
+        buttonTitle: 'Áfram',
       }}
     />
   </Story>
 </Canvas>
 
-You can also use this field into a custom component by using `<GoToServicePortalFormField field={...} />` with the configuration object defined above.
+You can also use this field into a custom component by using `<MessageWithLinkButtonFormField field={...} />` with the configuration object defined above.
 
 # Props
 
-## GoToServicePortalFormField
+## MessageWithLinkButtonFormField
 
-<ArgsTable of={GoToServicePortalFormField} />
+<ArgsTable of={MessageWithLinkButtonFormField} />

@@ -13,4 +13,4 @@ export { CompanySearchFormField } from './CompanySearchFormField/CompanySearchFo
 export { RedirectToServicePortalFormField } from './RedirectToServicePortalFormField/RedirectToServicePortalFormField'
 export { MessageWithLinkButtonFormField } from './MessageWithLinkButtonFormField/MessageWithLinkButtonFormField'
 export { AlertMessageFormField } from './AlertMessageFormField/AlertMessageFormField'
-export { BulletPointExpandableFormField } from './BulletPointExpandableFormField/BulletPointExpandableFormField'
+export { ExpandableDescriptionFormField } from './ExpandableDescriptionFormField/ExpandableDescriptionFormField'
