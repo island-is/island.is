@@ -2,6 +2,7 @@ import { User } from '@island.is/auth-nest-tools'
 
 import { PaginatedSessionDto, SessionDto } from './types'
 import { PaginatedSessionResponse } from '../dto/paginated-session.response'
+import { SessionsInput } from '../dto/sessions.input'
 
 const mockData = [
   // Gervimadur session as company
@@ -59,12 +60,16 @@ export class SessionsService {
     // Intentionally empty until service is ready
   }
 
-  getSessions(user: User): Promise<PaginatedSessionDto> {
+  getSessions(user: User, input: SessionsInput): Promise<PaginatedSessionDto> {
     const result = mockData.filter(
       (session) =>
-        session.actorNationalId === user.nationalId ||
-        session.subjectNationalId === user.nationalId,
+        (session.actorNationalId === user.nationalId ||
+          session.subjectNationalId === user.nationalId) &&
+        (!input.nationalId ||
+          input.nationalId === session.subjectNationalId ||
+          input.nationalId === session.actorNationalId),
     )
+
     return Promise.resolve({
       totalCount: result.length,
       pageInfo: {

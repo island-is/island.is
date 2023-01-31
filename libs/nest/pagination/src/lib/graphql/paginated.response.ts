@@ -3,12 +3,11 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { PageInfoDto } from '../dto/pageinfo.dto'
 
 /**
- * This generic implementation for paginated response generated based on the items
- * field type is based on TypeGraphQL's implementation:
+ * This generic implementation for paginated response is based on TypeGraphQL's implementation
  * https://typegraphql.com/docs/generic-types.html
  */
 
-export interface ClassType<T = any> {
+interface ClassType<T = any> {
   new (...args: any[]): T
 }
 
