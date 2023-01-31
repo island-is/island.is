@@ -4,12 +4,12 @@ import { IsNationalId } from '@island.is/nest/validators'
 import { MessageTypes } from '../types'
 
 export class CreateNotificationDto {
-  @IsEnum(MessageTypes)
-  @ApiProperty({
-    enum: MessageTypes,
-    example: 'newDocumentMessage',
-  })
-  type!: MessageTypes
+  // @IsEnum(MessageTypes)
+  // @ApiProperty({
+  //   enum: MessageTypes,
+  //   example: 'newDocumentMessage',
+  // })
+  // type!: MessageTypes
 
   @IsNationalId()
   @ApiProperty({ example: '1234567890' })
