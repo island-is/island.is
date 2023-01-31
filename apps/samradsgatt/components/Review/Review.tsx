@@ -1,6 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { format } from 'date-fns'
-import { Advice } from '../../../types/viewModels'
+import { Advice } from '../../types/viewModels'
 
 interface Props {
   key: number

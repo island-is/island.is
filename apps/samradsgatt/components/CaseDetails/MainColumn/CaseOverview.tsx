@@ -45,7 +45,7 @@ const CaseOverview: React.FC<CaseOverviewProps> = ({ chosenCase }) => {
           </Text>
         </Box>
         <Box
-          marginRight={2}
+          marginRight={1}
           borderRightWidth={'standard'}
           borderColor={'blue200'}
           paddingRight={1}

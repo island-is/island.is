@@ -6,8 +6,8 @@ import {
   Divider,
   Breadcrumbs,
 } from '@island.is/island-ui/core'
-import CaseTimeline from './CaseTimeline'
-import SubscriptionBox from '../../SubscriptionBox'
+import CaseTimeline from '../../CaseTimeline/CaseTimeline'
+import SubscriptionBox from '../../SubscriptionBox/SubscriptionBox'
 import { useLocation } from 'react-use'
 import { Case } from '../../../types/viewModels'
 

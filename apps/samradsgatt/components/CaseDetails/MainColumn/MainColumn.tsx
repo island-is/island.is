@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import CaseOverview from './CaseOverview'
-import Review from './Review'
+import Review from '../../Review/Review'
 import WriteReview from './WriteReview'
 import { Advice, Case } from '../../../types/viewModels'
 
