@@ -1,5 +1,4 @@
 import * as React from 'react'
-import Svg from 'react'
 
 type LogoProps = {
   width?: string
