@@ -432,7 +432,7 @@ The reason default behavior does not work for all applications is because it cou
 - draftTotalSteps
   - Searches all sections, returns the max value for draftPageNumber
 - You can add the page number for each section in the form builder which overrides the default behavior.
-  - If you have for example 10 screens that are dynamic, and only one of them is shown during the application fill out process (some logic chooses between them). Then you can put the same draftPageNumber to all of them.
+  - If you have for example 10 screens that are dynamic, and only one of them is shown during the application fill out process (some logic chooses between them). Then you can put the same draftPageNumber to all of them. For example here below we have two screens with same number but only one is rendered based on a condition.
 
 ```diff
   buildSection({
