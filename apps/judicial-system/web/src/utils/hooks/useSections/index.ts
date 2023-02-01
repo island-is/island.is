@@ -981,7 +981,11 @@ const useSections = (
     }
   }
 
-  const getSections = (workingCase: Case, user?: User): RouteSection[] => {
+  const getSections = (workingCase?: Case, user?: User): RouteSection[] => {
+    if (!workingCase) {
+      return []
+    }
+
     return [
       isRestrictionCase(workingCase.type)
         ? getRestrictionCaseProsecutorSection(workingCase, user)
