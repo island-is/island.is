@@ -128,6 +128,11 @@ export type GenericLicenseUserdata = {
   pkpassStatus: GenericUserLicensePkPassStatus
 }
 
+export type GenericLicenseFetchResult = {
+  data: unknown
+  fetch: GenericLicenseFetch
+}
+
 // Bit of an awkward type, it contains data from any external API, but we don't know if it's
 // too narrow or not until we bring in more licenses
 export type GenericLicenseUserdataExternal = {
@@ -254,6 +259,16 @@ export interface GenericLicenseClient<LicenseType> {
   ) => Promise<PkPassVerification | null>
 }
 
+export interface GenericLicensePayloadMapper<T> {
+  parsePayload: (
+    payload: T,
+    locale?: Locale,
+    labels?: GenericLicenseLabels,
+  ) => GenericUserLicensePayload | null
+}
+
 export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'
+
+export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
 
 export const CONFIG_PROVIDER = 'config_provider'

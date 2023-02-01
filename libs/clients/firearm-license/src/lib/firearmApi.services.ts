@@ -1,15 +1,19 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   FirearmApplicationApi,
   FirearmPropertyList,
   LicenseInfo,
 } from '../../gen/fetch'
+import { FIREARM_API } from './firearmApi.types'
 
 @Injectable()
 export class FirearmApi {
-  constructor(private readonly api: FirearmApplicationApi) {}
+  constructor(
+    @Inject(FIREARM_API)
+    private readonly api: FirearmApplicationApi,
+  ) {}
 
   private firearmApiWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))

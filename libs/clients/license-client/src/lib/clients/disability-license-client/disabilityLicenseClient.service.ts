@@ -2,31 +2,25 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import {
-  createPkPassDataInput,
-  parseDisabilityLicensePayload,
-} from './disabilityLicenseMapper'
+import { createPkPassDataInput } from './disabilityLicenseMapper'
 import {
   DefaultApi,
   OrorkuSkirteini,
 } from '@island.is/clients/disability-license'
 import {
+  Pass,
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
-import { handle404 } from '@island.is/clients/middlewares'
-import { Locale } from '@island.is/shared/types'
+import { FetchError } from '@island.is/clients/middlewares'
 import compareAsc from 'date-fns/compareAsc'
 import {
-  GenericLicenseLabels,
-  GenericLicenseUserdataExternal,
-  GenericUserLicensePkPassStatus,
-  GenericUserLicenseStatus,
   LicenseClient,
+  LicensePkPassAvailability,
   PkPassVerification,
-  PkPassVerificationError,
   PkPassVerificationInputData,
+  Result,
 } from '../../licenseClient.type'
 
 /** Category to attach each log message to */
@@ -40,97 +34,127 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private withAuth = (user: User) =>
-    this.disabilityLicenseApi.withMiddleware(new AuthMiddleware(user as Auth))
-
-  async fetchLicense(user: User) {
-    const license = await this.withAuth(user).faskirteiniGet().catch(handle404)
-    return license
-  }
-
-  async getLicense(
-    user: User,
-    locale: Locale,
-    labels: GenericLicenseLabels,
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    const licenseData = await this.fetchLicense(user)
-    if (!licenseData) {
-      return null
-    }
-    const isEmpty = Object.values(licenseData).every((item) =>
-      item ? false : true,
-    )
-
-    if (isEmpty) {
-      return null
-    }
-
-    const payload = parseDisabilityLicensePayload(licenseData, locale, labels)
-
-    let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
-
-    if (payload) {
-      pkpassStatus = DisabilityLicenseClient.licenseIsValidForPkpass(
-        licenseData,
-      )
-      return {
-        status: GenericUserLicenseStatus.HasLicense,
-        payload,
-        pkpassStatus,
-      }
-    }
-
-    return {
-      status: GenericUserLicenseStatus.NotAvailable,
-      payload,
-      pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
-    }
-  }
-
-  static licenseIsValidForPkpass(
-    licenseInfo: OrorkuSkirteini | null | undefined,
-  ): GenericUserLicensePkPassStatus {
+  licenseIsValidForPkPass(
+    licenseInfo: OrorkuSkirteini,
+  ): LicensePkPassAvailability {
     if (!licenseInfo || !licenseInfo.gildirtil) {
-      return GenericUserLicensePkPassStatus.Unknown
+      return LicensePkPassAvailability.Unknown
     }
 
     const expired = new Date(licenseInfo.gildirtil)
     const comparison = compareAsc(expired, new Date())
 
     if (isNaN(comparison) || comparison < 0) {
-      return GenericUserLicensePkPassStatus.NotAvailable
+      return LicensePkPassAvailability.NotAvailable
     }
 
-    return GenericUserLicensePkPassStatus.Available
+    return LicensePkPassAvailability.Available
   }
 
-  async getLicenseDetail(
+  private async fetchLicense(
     user: User,
-    locale: Locale,
-    labels: GenericLicenseLabels,
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user, locale, labels)
+  ): Promise<Result<OrorkuSkirteini | null>> {
+    try {
+      const licenseInfo = await this.disabilityLicenseApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .faskirteiniGet()
+      return { ok: true, data: licenseInfo }
+    } catch (e) {
+      let error
+      if (e instanceof FetchError) {
+        //404 - no license for user, still ok!
+        error = {
+          code: 13,
+          message: 'Service failure',
+          data: JSON.stringify(e.body),
+        }
+        this.logger.warn('Expected 200 status', {
+          status: e.status,
+          statusText: e.statusText,
+          category: LOG_CATEGORY,
+        })
+      } else {
+        const unknownError = e as Error
+        error = {
+          code: 99,
+          message: 'Unknown error',
+          data: JSON.stringify(unknownError),
+        }
+        this.logger.warn('Unable to query data', {
+          status: e.status,
+          statusText: e.statusText,
+          category: LOG_CATEGORY,
+        })
+      }
+
+      return {
+        ok: false,
+        error,
+      }
+    }
+  }
+
+  async getLicense(user: User): Promise<Result<OrorkuSkirteini | null>> {
+    const licenseData = await this.fetchLicense(user)
+    if (!licenseData.ok) {
+      return licenseData
+    }
+
+    if (!licenseData.data) {
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'No license data returned',
+        },
+      }
+    }
+
+    const isEmpty = Object.values(licenseData.data).every((item) =>
+      item ? false : true,
+    )
+
+    const data = isEmpty ? null : licenseData.data
+
+    return {
+      ok: true,
+      data,
+    }
+  }
+
+  async getLicenseDetail(user: User): Promise<Result<OrorkuSkirteini | null>> {
+    return this.getLicense(user)
   }
 
   private async createPkPassPayload(user: User): Promise<PassDataInput | null> {
     const license = await this.fetchLicense(user)
-    if (!license) {
+    if (!license.ok || !license.data) {
+      this.logger.info(
+        `No license data found for user, no pkpass payload to create`,
+        { LOG_CATEGORY },
+      )
       return null
     }
 
-    const inputValues = createPkPassDataInput(license)
+    const inputValues = createPkPassDataInput(license.data)
     if (!inputValues) return null
     return {
       inputFieldValues: inputValues,
-      expirationDate: license.rennurut?.toISOString(),
+      expirationDate: license.data.rennurut?.toISOString(),
     }
   }
 
-  async getPkPassUrl(user: User): Promise<string | null> {
+  async getPkPass(user: User): Promise<Result<Pass>> {
     const payload = await this.createPkPassPayload(user)
 
     if (!payload) {
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'Missing payload',
+        },
+      }
     }
 
     const pass = await this.smartApi.generatePkPass(
@@ -138,35 +162,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
       format(user.nationalId),
     )
 
-    if (pass.ok) {
-      return pass.data.distributionUrl
-    }
-    /**
-     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
-     * For now we return null, just to keep existing behavior unchanged
-     */
-    return null
-  }
-
-  async getPkPassQRCode(user: User): Promise<string | null> {
-    const payload = await this.createPkPassPayload(user)
-
-    if (!payload) {
-      return null
-    }
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
-
-    if (pass.ok) {
-      return pass.data.distributionQRCode
-    }
-    /**
-     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
-     * For now we return null, just to keep existing behavior unchanged
-     */
-    return null
+    return pass
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

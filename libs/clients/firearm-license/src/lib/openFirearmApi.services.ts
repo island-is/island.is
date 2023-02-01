@@ -1,10 +1,14 @@
 import { handle404 } from '@island.is/clients/middlewares'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { FirearmApplicationApi, LicenseInfo } from '../../gen/fetch'
+import { OPEN_FIREARM_API } from './firearmApi.types'
 
 @Injectable()
 export class OpenFirearmApi {
-  constructor(private readonly api: FirearmApplicationApi) {}
+  constructor(
+    @Inject(OPEN_FIREARM_API)
+    private readonly api: FirearmApplicationApi,
+  ) {}
 
   public async getVerificationLicenseInfo(
     targetNationalId: string,

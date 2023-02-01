@@ -88,8 +88,7 @@ import {
             //return machineClient
             return null
           case LicenseType.DisabilityLicense:
-            //return disabilityClient
-            return null
+            return disabilityClient
           default:
             return null
         }

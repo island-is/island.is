@@ -28,7 +28,7 @@ import { FirearmLicenseClientApiConfig } from './firearmLicenseClient.config'
       inject: [FirearmLicenseClientApiConfig.KEY],
     }),
   ],
-  providers: [FirearmLicenseClient, FirearmLicenseApiProvider],
+  providers: [FirearmLicenseClient],
   exports: [FirearmLicenseClient],
 })
 export class FirearmClientModule {}

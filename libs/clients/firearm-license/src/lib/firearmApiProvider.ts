@@ -8,17 +8,17 @@ import {
 import { FirearmLicenseClientConfig } from './firearmLicenseClient.config'
 import { Configuration, FirearmApplicationApi } from '../../gen/fetch'
 import { Provider } from '@nestjs/common'
-import { FirearmApi } from './firearmApi.services'
+import { FIREARM_API } from './firearmApi.types'
 
-export const FirearmLicenseApiProvider: Provider<FirearmApi> = {
-  provide: FirearmApi,
+export const FirearmLicenseApiProvider: Provider<FirearmApplicationApi> = {
+  provide: FIREARM_API,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof FirearmLicenseClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  ) => {
-    const api = new FirearmApplicationApi(
+  ) =>
+    new FirearmApplicationApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-firearm-license',
@@ -39,10 +39,7 @@ export const FirearmLicenseApiProvider: Provider<FirearmApi> = {
           Accept: 'application/json',
         },
       }),
-    )
-
-    return new FirearmApi(api)
-  },
+    ),
   inject: [
     XRoadConfig.KEY,
     FirearmLicenseClientConfig.KEY,

@@ -6,7 +6,6 @@ import {
   LicenseType,
   LicenseTypeType,
   PassTemplateIds,
-  UpdatedLicenseClient,
 } from './licenseClient.type'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -17,7 +16,7 @@ export class LicenseClientService {
     @Inject(LICENSE_CLIENT_FACTORY)
     private licenseFactory: (
       type: LicenseType,
-    ) => Promise<UpdatedLicenseClient<LicenseType> | null>,
+    ) => Promise<LicenseClient<unknown | null>>,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
   ) {}

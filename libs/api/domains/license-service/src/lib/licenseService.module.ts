@@ -10,8 +10,15 @@ import {
   GenericLicenseProviderId,
   GenericLicenseType,
   GenericLicenseOrganizationSlug,
+  LICENSE_MAPPER_FACTORY,
 } from './licenceService.type'
 import { GenericDrivingLicenseModule } from './client/driving-license-client'
+import {
+  AdrLicensePayloadMapper,
+  parseAdrLicensePayload,
+} from './mappers/adrLicenseMapper'
+import { DisabilityLicensePayloadMapper } from './mappers/disabilityLicenseMapper'
+import { MachineLicensePayloadMapper } from './mappers/machineLicenseMapper'
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.FirearmLicense,
@@ -77,6 +84,21 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     {
       provide: LOGGER_PROVIDER,
       useValue: logger,
+    },
+    {
+      provide: LICENSE_MAPPER_FACTORY,
+      useFactory: (type: GenericLicenseType) => {
+        switch (type) {
+          case GenericLicenseType.AdrLicense:
+            return AdrLicensePayloadMapper
+          case GenericLicenseType.DisabilityLicense:
+            return DisabilityLicensePayloadMapper
+          case GenericLicenseType.MachineLicense:
+            return MachineLicensePayloadMapper
+          default:
+            return null
+        }
+      },
     },
   ],
   exports: [LicenseServiceService],

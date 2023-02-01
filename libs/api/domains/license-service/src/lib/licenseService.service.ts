@@ -10,7 +10,6 @@ import {
   GenericUserLicense,
   GenericLicenseTypeType,
   GenericLicenseType,
-  GenericLicenseClient,
   GenericLicenseMetadata,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseStatus,
@@ -20,7 +19,6 @@ import {
   GenericUserLicensePkPassStatus,
   GenericLicenseOrganizationSlug,
   GenericLicenseLabels,
-  DRIVING_LICENSE_FACTORY,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import { AVAILABLE_LICENSES } from './licenseService.module'
@@ -29,7 +27,6 @@ import {
   LicenseType,
 } from '@island.is/clients/license-client'
 import { FetchError } from '@island.is/clients/middlewares'
-import { parseAdrLicensePayload } from './mappers/adrLicenseMapper'
 
 const CACHE_KEY = 'licenseService'
 const LOG_CATEGORY = 'license-service'

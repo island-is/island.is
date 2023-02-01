@@ -10,8 +10,9 @@ import {
   createPkPassDataInput,
   parseMachineLicensePayload,
 } from './machineLicenseMapper'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import {
+  Pass,
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
@@ -23,8 +24,10 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   LicenseClient,
+  LicensePkPassAvailability,
   PkPassVerification,
   PkPassVerificationInputData,
+  Result,
 } from '../../licenseClient.type'
 
 /** Category to attach each log message to */
@@ -38,50 +41,72 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private machineApiWithAuth = (user: User) =>
-    this.machineApi.withMiddleware(new AuthMiddleware(user as Auth))
-
-  async fetchLicense(user: User) {
-    const license = await this.machineApiWithAuth(user)
-      .getVinnuvela()
-      .catch(handle404)
-    return license
-  }
-
-  async getLicense(
-    user: User,
-    locale: Locale,
-    labels: GenericLicenseLabels,
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    const licenseData = await this.fetchLicense(user)
-
-    if (!licenseData) {
-      return null
+  licenseIsValidForPkPass(
+    licenseInfo: VinnuvelaDto,
+  ): LicensePkPassAvailability {
+    if (!licenseInfo) {
+      return LicensePkPassAvailability.Unknown
     }
 
-    const payload = parseMachineLicensePayload(licenseData, locale, labels)
+    //Nothing to check as of yet
+    return LicensePkPassAvailability.Available
+  }
+  private async fetchLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
+    try {
+      const licenseInfo = await this.machineApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getVinnuvela()
+      return { ok: true, data: licenseInfo }
+    } catch (e) {
+      //404 - no license for user, still ok!
+      let error
+      if (e instanceof FetchError) {
+        //404 - no license for user, still ok!
+        if (e.status === 404) {
+          this.logger.info('Machine license not found for user', {
+            LOG_CATEGORY,
+          })
+          return { ok: true, data: null }
+        } else {
+          error = {
+            code: 13,
+            message: 'Service failure',
+            data: JSON.stringify(e.body),
+          }
+          this.logger.warn('Expected 200 or 404 status', {
+            status: e.status,
+            statusText: e.statusText,
+            category: LOG_CATEGORY,
+          })
+        }
+      } else {
+        const unknownError = e as Error
+        error = {
+          code: 99,
+          message: 'Unknown error',
+          data: JSON.stringify(unknownError),
+        }
+        this.logger.warn('Unable to query data', {
+          status: e.status,
+          statusText: e.statusText,
+          category: LOG_CATEGORY,
+        })
+      }
 
-    if (payload) {
       return {
-        status: GenericUserLicenseStatus.HasLicense,
-        payload,
-        pkpassStatus: GenericUserLicensePkPassStatus.Available,
+        ok: false,
+        error,
       }
     }
-
-    return {
-      status: GenericUserLicenseStatus.NotAvailable,
-      payload,
-      pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
-    }
   }
 
-  async getLicenseDetail(
-    user: User,
-    locale: Locale,
-    labels: GenericLicenseLabels,
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user, locale, labels)
+  async getLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
+    const licenseData = await this.fetchLicense(user)
+    return licenseData
+  }
+
+  async getLicenseDetail(user: User): Promise<Result<VinnuvelaDto | null>> {
+    return this.getLicense(user)
   }
 
   private async createPkPassPayload(
@@ -89,67 +114,47 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     locale: Locale,
   ): Promise<PassDataInput | null> {
     const license = await this.fetchLicense(user)
-    if (!license) {
+    if (!license.ok || !license.data) {
+      this.logger.info(
+        `No license data found for user, no pkpass payload to create`,
+        { LOG_CATEGORY },
+      )
       return null
     }
 
-    const inputValues = createPkPassDataInput(license, user.nationalId, locale)
+    const inputValues = createPkPassDataInput(
+      license.data,
+      user.nationalId,
+      locale,
+    )
     if (!inputValues) return null
-    //Fetch template from api?
     return {
       inputFieldValues: inputValues,
+      //expirationDate???
     }
   }
 
-  async getPkPassUrl(
-    user: User,
-    data?: unknown,
-    locale?: Locale,
-  ): Promise<string | null> {
-    //TODO: Better locale handling thank u
-    const payload = await this.createPkPassPayload(user, locale ?? 'is')
+  async getPkPass(user: User, locale: Locale = 'is'): Promise<Result<Pass>> {
+    const payload = await this.createPkPassPayload(user, locale)
 
     if (!payload) {
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'Missing payload',
+        },
+      }
     }
 
     const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
-    if (pass.ok) {
-      return pass.data.distributionUrl
-    }
-    /**
-     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
-     * For now we return null, just to keep existing behavior unchanged
-     */
-    return null
-  }
-  async getPkPassQRCode(
-    user: User,
-    data?: unknown,
-    locale?: Locale,
-  ): Promise<string | null> {
-    const payload = await this.createPkPassPayload(user, locale ?? 'is')
 
-    if (!payload) {
-      return null
-    }
-
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
-    if (pass.ok) {
-      return pass.data.distributionQRCode
-    }
-    /**
-     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
-     * For now we return null, just to keep existing behavior unchanged
-     */
-    return null
+    return pass
   }
+
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })

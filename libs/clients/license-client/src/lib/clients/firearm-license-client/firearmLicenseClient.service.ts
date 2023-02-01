@@ -23,6 +23,7 @@ import {
   GenericUserLicenseStatus,
   PkPassVerification,
   PkPassVerificationInputData,
+  LicensePkPassAvailability,
 } from '../../licenseClient.type'
 
 /** Category to attach each log message to */
@@ -34,6 +35,21 @@ export class FirearmLicenseClient implements LicenseClient<LicenseInfo> {
     private firearmApi: FirearmApi,
     private smartApi: SmartSolutionsApi,
   ) {}
+
+  licenseIsValidForPkpass(licenseInfo: LicenseInfo): LicensePkPassAvailability {
+    if (!licenseInfo || !licenseInfo.expirationDate) {
+      return LicensePkPassAvailability.Unknown
+    }
+
+    const expired = new Date(licenseInfo.expirationDate)
+    const comparison = compareAsc(expired, new Date())
+
+    if (isNaN(comparison) || comparison < 0) {
+      return LicensePkPassAvailability.NotAvailable
+    }
+
+    return LicensePkPassAvailability.Available
+  }
 
   async fetchLicenseData(user: User) {
     const licenseInfo = await this.firearmApi.getLicenseInfo(user)
@@ -86,23 +102,6 @@ export class FirearmLicenseClient implements LicenseClient<LicenseInfo> {
     labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(user, locale, labels)
-  }
-
-  static licenseIsValidForPkpass(
-    licenseInfo: LicenseInfo | null | undefined,
-  ): GenericUserLicensePkPassStatus {
-    if (!licenseInfo || !licenseInfo.expirationDate) {
-      return GenericUserLicensePkPassStatus.Unknown
-    }
-
-    const expired = new Date(licenseInfo.expirationDate)
-    const comparison = compareAsc(expired, new Date())
-
-    if (isNaN(comparison) || comparison < 0) {
-      return GenericUserLicensePkPassStatus.NotAvailable
-    }
-
-    return GenericUserLicensePkPassStatus.Available
   }
 
   async getPkPassUrl(user: User): Promise<string | null> {

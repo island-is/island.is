@@ -5,25 +5,20 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { createPkPassDataInput } from './adrLicenseClientMapper'
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
 import {
+  Pass,
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
-import { FetchError, handle404 } from '@island.is/clients/middlewares'
-import { Locale } from '@island.is/shared/types'
+import { FetchError } from '@island.is/clients/middlewares'
 import compareAsc from 'date-fns/compareAsc'
 import { parseAdrLicenseResponse } from './adrLicenseClientMapper'
 import {
-  GenericLicenseLabels,
-  GenericLicenseUserdataExternal,
-  LicensePkPassAvailability,
-  GenericUserLicenseStatus,
   LicenseClient,
-  LicenseResponse,
+  LicensePkPassAvailability,
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
-  UpdatedLicenseClient,
 } from '../../licenseClient.type'
 import { FlattenedAdrDto } from './adrLicenseClient.type'
 
@@ -31,14 +26,31 @@ import { FlattenedAdrDto } from './adrLicenseClient.type'
 const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
-export class AdrLicenseClient implements UpdatedLicenseClient<FlattenedAdrDto> {
+export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  public async fetchLicense(user: User): Promise<Result<AdrDto | null>> {
+  licenseIsValidForPkPass(
+    licenseInfo: FlattenedAdrDto,
+  ): LicensePkPassAvailability {
+    if (!licenseInfo || !licenseInfo.gildirTil) {
+      return LicensePkPassAvailability.Unknown
+    }
+
+    const expired = new Date(licenseInfo.gildirTil)
+    const comparison = compareAsc(expired, new Date())
+
+    if (isNaN(comparison) || comparison < 0) {
+      return LicensePkPassAvailability.NotAvailable
+    }
+
+    return LicensePkPassAvailability.Available
+  }
+
+  private async fetchLicense(user: User): Promise<Result<AdrDto | null>> {
     try {
       const licenseInfo = await this.adrApi
         .withMiddleware(new AuthMiddleware(user as Auth))
@@ -108,20 +120,6 @@ export class AdrLicenseClient implements UpdatedLicenseClient<FlattenedAdrDto> {
       ok: true,
       data: parsedData,
     }
-    /*
-    const payload = parseAdrLicensePayload(licenseData, locale, labels)
-
-    let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
-
-    if (payload) {
-      pkpassStatus = AdrLicenseClient.licenseIsValidForPkpass(licenseData)
-    }
-
-    return {
-      status: GenericUserLicenseStatus.HasLicense,
-      payload,
-      pkpassStatus,
-    }*/
   }
 
   async getLicenseDetail(user: User): Promise<Result<FlattenedAdrDto | null>> {
@@ -130,40 +128,37 @@ export class AdrLicenseClient implements UpdatedLicenseClient<FlattenedAdrDto> {
 
   private async createPkPassPayload(user: User): Promise<PassDataInput | null> {
     const license = await this.fetchLicense(user)
-    if (!license) {
+    if (!license.ok || !license.data) {
+      this.logger.info(
+        `No license data found for user, no pkpass payload to create`,
+        { LOG_CATEGORY },
+      )
       return null
     }
 
-    const inputValues = createPkPassDataInput(license, format(user.nationalId))
+    const inputValues = createPkPassDataInput(
+      license.data,
+      format(user.nationalId),
+    )
     if (!inputValues) return null
     //Fetch template from api?
     return {
       inputFieldValues: inputValues,
+      expirationDate: license.data.gildirTil,
     }
   }
 
-  licenseIsValidForPkpass(
-    licenseInfo: FlattenedAdrDto,
-  ): LicensePkPassAvailability {
-    if (!licenseInfo || !licenseInfo.gildirTil) {
-      return LicensePkPassAvailability.Unknown
-    }
-
-    const expired = new Date(licenseInfo.gildirTil)
-    const comparison = compareAsc(expired, new Date())
-
-    if (isNaN(comparison) || comparison < 0) {
-      return LicensePkPassAvailability.NotAvailable
-    }
-
-    return LicensePkPassAvailability.Available
-  }
-
-  async getPkPassUrl(user: User): Promise<string | null> {
+  async getPkPass(user: User): Promise<Result<Pass>> {
     const payload = await this.createPkPassPayload(user)
 
     if (!payload) {
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'Missing payload',
+        },
+      }
     }
 
     const pass = await this.smartApi.generatePkPass(
@@ -171,35 +166,9 @@ export class AdrLicenseClient implements UpdatedLicenseClient<FlattenedAdrDto> {
       format(user.nationalId),
     )
 
-    if (pass.ok) {
-      return pass.data.distributionUrl
-    }
-    /**
-     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
-     * For now we return null, just to keep existing behavior unchanged
-     */
-    return null
+    return pass
   }
-  async getPkPassQRCode(user: User): Promise<string | null> {
-    const payload = await this.createPkPassPayload(user)
 
-    if (!payload) {
-      return null
-    }
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
-
-    if (pass.ok) {
-      return pass.data.distributionQRCode
-    }
-    /**
-     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
-     * For now we return null, just to keep existing behavior unchanged
-     */
-    return null
-  }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
