@@ -44,3 +44,27 @@ export class VehiclesCurrentVehicleWithOperatorChangeChecks extends VehiclesCurr
 
 @ObjectType()
 export class VehicleOperatorChangeChecksByPermno extends VehicleOwnerchangeChecksByPermno {}
+
+@ObjectType()
+export class VehiclesCurrentVehicleWithPlateOrderChecks {
+  @Field({ nullable: true })
+  permno?: string
+
+  @Field({ nullable: true })
+  make?: string
+
+  @Field({ nullable: true })
+  color?: string
+
+  @Field({ nullable: true })
+  role?: string
+
+  @Field(() => Boolean, { nullable: true })
+  duplicateOrderExists?: boolean
+}
+
+@ObjectType()
+export class VehiclePlateOrderChecksByPermno {
+  @Field(() => Boolean, { nullable: true })
+  duplicateOrderExists?: boolean
+}
