@@ -5,20 +5,20 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 
-export const CalculateTotalDebts: FC<FieldBaseProps> = ({ application }) => {
+export const CalculateTotalBusiness: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
   const [total] = useState(
-    (getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total') ||
-      0) + (getValueViaPath<number>(answers, 'debts.publicCharges.total') || 0),
+    (getValueViaPath<number>(answers, 'business.businessAssets.total') || 0) -
+      (getValueViaPath<number>(answers, 'business.businessDebts.total') || 0),
   )
 
   useEffect(() => {
-    setValue('debts.debtsTotal', total)
+    setValue('business.businessTotal', total)
   }, [total, setValue])
 
   return (
@@ -33,4 +33,4 @@ export const CalculateTotalDebts: FC<FieldBaseProps> = ({ application }) => {
   )
 }
 
-export default CalculateTotalDebts
+export default CalculateTotalBusiness
