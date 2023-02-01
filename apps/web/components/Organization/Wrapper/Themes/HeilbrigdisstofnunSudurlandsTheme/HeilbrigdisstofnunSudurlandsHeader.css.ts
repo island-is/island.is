@@ -2,7 +2,6 @@ import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  position: 'relative',
   zIndex: -1,
   height: 385,
   marginTop: -130,
@@ -16,7 +15,7 @@ export const headerImage = style({
   width: 733,
   top: 0,
   left: 0,
-  height: 385,
+  height: 365,
   backgroundRepeat: 'no-repeat',
   opacity: 0.5,
   backgroundSize: 'contain',

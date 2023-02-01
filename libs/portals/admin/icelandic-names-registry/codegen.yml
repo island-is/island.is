@@ -1,0 +1,20 @@
+schema:
+  - apps/api/src/api.graphql
+documents:
+  - libs/portals/admin/icelandic-names-registry/src/queries/*.{ts,tsx}
+  - libs/portals/admin/icelandic-names-registry/src/mutations/*.{ts,tsx}
+generates:
+  libs/portals/admin/icelandic-names-registry/src/graphql/schema.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+    config:
+      exportFragmentSpreadSubTypes: true
+      scalars:
+        DateTime: Date
+        JSON: '{ [key: string]: any }'
+      namingConvention:
+        typeNames: change-case#pascalCase
+hooks:
+  afterAllFileWrite:
+    - prettier --write

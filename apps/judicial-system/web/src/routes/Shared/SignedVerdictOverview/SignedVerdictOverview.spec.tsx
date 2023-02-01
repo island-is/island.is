@@ -1,13 +1,15 @@
 import { createIntl } from 'react-intl'
 
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseType,
+} from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
   User,
   UserRole,
-} from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   getExtensionInfoText,
@@ -126,15 +128,15 @@ describe('rulingDateLabel', () => {
 })
 
 describe('shouldHideNextButton', () => {
-  const prosecutor = { role: UserRole.PROSECUTOR } as User
+  const prosecutor = { role: UserRole.Prosecutor } as User
 
   it.each`
     role
-    ${UserRole.ADMIN}
-    ${UserRole.DEFENDER}
-    ${UserRole.JUDGE}
-    ${UserRole.REGISTRAR}
-    ${UserRole.STAFF}
+    ${UserRole.Admin}
+    ${UserRole.Defender}
+    ${UserRole.Judge}
+    ${UserRole.Registrar}
+    ${UserRole.Staff}
   `('should hide next button for user role: $role', ({ role }) => {
     const theCase = {} as Case
     const res = shouldHideNextButton(theCase, { role } as User)
@@ -184,18 +186,18 @@ describe('getExtensionInfoText', () => {
   const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
     .formatMessage
 
-  const prosecutor = { role: UserRole.PROSECUTOR } as User
+  const prosecutor = { role: UserRole.Prosecutor } as User
 
   const fn = (theCase: Case, user?: User) =>
     getExtensionInfoText(formatMessage, theCase, user)
 
   it.each`
     role
-    ${UserRole.ADMIN}
-    ${UserRole.DEFENDER}
-    ${UserRole.JUDGE}
-    ${UserRole.REGISTRAR}
-    ${UserRole.STAFF}
+    ${UserRole.Admin}
+    ${UserRole.Defender}
+    ${UserRole.Judge}
+    ${UserRole.Registrar}
+    ${UserRole.Staff}
   `('should return undefined for user role: $role', ({ role }) => {
     const theCase = {
       type: CaseType.CUSTODY,

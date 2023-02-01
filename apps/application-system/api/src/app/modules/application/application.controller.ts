@@ -722,9 +722,6 @@ export class ApplicationController {
     })
 
     if (hasError && error) {
-      this.logger.error(
-        `Application submission ended with an error: ${JSON.stringify(error)}`,
-      )
       throw new TemplateApiError(error, 500)
     }
     this.logger.info(`Application submission ended successfully`)

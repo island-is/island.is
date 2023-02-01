@@ -6,11 +6,11 @@ import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize, enumerate } from '@island.is/judicial-system/formatters'
 import {
-  Case,
   CaseType,
   Defendant,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
   policeCaseNumbers,

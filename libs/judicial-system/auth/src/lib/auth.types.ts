@@ -6,21 +6,37 @@ export type Credentials = {
 }
 
 export enum RulesType {
+  BASIC,
   FIELD,
   FIELD_VALUES,
 }
 
-export type RolesFieldRule = {
+type RolesBasicRule = {
+  role: UserRole
+  type: RulesType.BASIC
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  canActivate?: (request: any) => boolean
+}
+
+type RolesFieldRule = {
   role: UserRole
   type: RulesType.FIELD
   dtoFields: string[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  canActivate?: (request: any) => boolean
 }
 
-export type RolesFieldValuesRule = {
+type RolesFieldValuesRule = {
   role: UserRole
   type: RulesType.FIELD_VALUES
   dtoField: string
   dtoFieldValues: string[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  canActivate?: (request: any) => boolean
 }
 
-export type RolesRule = UserRole | RolesFieldRule | RolesFieldValuesRule
+export type RolesRule =
+  | UserRole
+  | RolesBasicRule
+  | RolesFieldRule
+  | RolesFieldValuesRule

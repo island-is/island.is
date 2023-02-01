@@ -1,3 +1,4 @@
+import { icelandicNamesRegistryNavigation } from '@island.is/portals/admin/icelandic-names-registry'
 import { airDiscountSchemeNavigation } from '@island.is/portals/admin/air-discount-scheme'
 import {
   PortalNavigationItem,
@@ -20,6 +21,8 @@ export const TOP_NAVIGATION: PortalNavigationItem = {
   children: [
     // Loftbrú
     airDiscountSchemeNavigation,
+    // Mannanafnaskrá
+    icelandicNamesRegistryNavigation,
   ],
 }
 export const BOTTOM_NAVIGATION: PortalNavigationItem = {
