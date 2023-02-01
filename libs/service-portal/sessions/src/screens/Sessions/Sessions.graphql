@@ -1,0 +1,30 @@
+query SessionList {
+  sessionsList {
+    totalCount,
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    },
+    data {
+      id,
+      actor {
+        nationalId,
+        name
+      },
+      subject {
+        nationalId,
+        name
+      },
+      client {
+        id,
+        name
+      },
+      timestamp,
+      userAgent,
+      ip,
+      ipLocation
+    }
+  }
+}

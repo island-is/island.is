@@ -18,11 +18,11 @@ const mockData = [
   },
   // Gervimadur as self
   {
-    id: '987654321',
+    id: '987654821',
     actorNationalId: '0101307789',
     subjectNationalId: '0101307789',
     clientId: '@island.is/web',
-    timestamp: '2023-01-01T13:00:00.000Z',
+    timestamp: '2023-02-03T13:00:00.000Z',
     userAgent:
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
     ip: '0.0.0.0',
@@ -34,7 +34,7 @@ const mockData = [
     actorNationalId: '0101307789',
     subjectNationalId: '0101302399',
     clientId: '@island.is/web',
-    timestamp: '2023-01-01T13:00:00.000Z',
+    timestamp: '2022-12-11T13:00:00.000Z',
     userAgent:
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
     ip: '0.0.0.0',
@@ -42,11 +42,11 @@ const mockData = [
   },
   // Other user onbehalf of gervimadur
   {
-    id: '987654321',
+    id: '987654391',
     actorNationalId: '0101302399',
     subjectNationalId: '0101307789',
     clientId: '@island.is/web',
-    timestamp: '2023-01-01T13:00:00.000Z',
+    timestamp: '2022-10-11T13:00:00.000Z',
     userAgent:
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
     ip: '0.0.0.0',
@@ -65,6 +65,7 @@ export class SessionsService {
         session.actorNationalId === user.nationalId ||
         session.subjectNationalId === user.nationalId,
     )
+
     return Promise.resolve({
       totalCount: result.length,
       pageInfo: {

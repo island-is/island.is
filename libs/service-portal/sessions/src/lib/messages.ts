@@ -14,4 +14,8 @@ export const m = defineMessages({
     defaultMessage:
       'Hér er yfirlit yfir innskráningar þínar á Ísland.is, sem þú sjálfur, aðrir hafa gert í þínu umboði eða sem þú hefur gert í umboði fyrir aðra.',
   },
+  filter: {
+    id: 'portals-my-pages.session-history:filter',
+    defaultMessage: 'Sía',
+  },
 })
