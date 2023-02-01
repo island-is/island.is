@@ -10,7 +10,7 @@ export const icRuling = {
     alertMessage: defineMessages({
       title: {
         id:
-          'judicial.system.core:core:investigation_cases.ruling.sections.alert_message.title',
+          'judicial.system.core:investigation_cases.ruling.sections.alert_message.title',
         defaultMessage: 'Leiðrétting úrskurðar',
         description:
           'Notaður sem titill í viðvörunarboxi þegar verið er að leiðrétta úrskurð',

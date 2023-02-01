@@ -21,6 +21,11 @@ export const attachmentNames = defineMessages({
     defaultMessage: 'Teikning af útisvæði (valkvætt)',
     description: 'Some description',
   },
+  five: {
+    id: 'ol.application:attachemnt.five',
+    defaultMessage: 'Önnur gögn',
+    description: 'Some description',
+  },
 })
 
 export const m = defineMessages({
@@ -477,7 +482,7 @@ export const m = defineMessages({
   },
   typeHotel: {
     id: 'ol.application:overview.typeHotel',
-    defaultMessage: 'Tegund gististaðar',
+    defaultMessage: 'Tegund staðar',
     description: 'Some description',
   },
   typeResturant: {

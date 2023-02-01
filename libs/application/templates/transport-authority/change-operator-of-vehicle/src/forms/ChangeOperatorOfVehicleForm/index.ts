@@ -34,6 +34,11 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
               title: '',
               component: 'PaymentChargeOverview',
             }),
+            buildCustomField({
+              id: 'ValidationErrorMessages',
+              title: '',
+              component: 'ValidationErrorMessages',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

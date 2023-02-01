@@ -85,7 +85,7 @@ export const Card = (caseData: CardProps) => {
         </Text>
       </Box>
 
-      <ArrowLink href={`case/${caseData.id}`}>Skoða mál</ArrowLink>
+      <ArrowLink href={`/mal/${caseData.id}`}>Skoða mál</ArrowLink>
     </Box>
   )
 }
