@@ -15,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import Illustration from './Illustration'
 import { Locale } from '@island.is/shared/types'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './Footer.css'
@@ -91,6 +92,14 @@ export const Footer: FC<Props> = ({
                                 color="blue600"
                                 underline="normal"
                                 underlineVisibility="always"
+                                onClick={() =>
+                                  window.open(
+                                    href,
+                                    shouldLinkOpenInNewWindow(href)
+                                      ? '_target'
+                                      : '_self',
+                                  )
+                                }
                               >
                                 {children}
                               </Link>
