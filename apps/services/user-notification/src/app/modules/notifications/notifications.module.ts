@@ -20,10 +20,10 @@ import * as userProfile from '@island.is/clients/user-profile'
 
 @Module({
   imports: [
-    CacheModule.register({
-      ttl: 60,
-      max: 100,
-    }),
+    // CacheModule.register({
+    //   ttl: 60,
+    //   max: 100,
+    // }),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({

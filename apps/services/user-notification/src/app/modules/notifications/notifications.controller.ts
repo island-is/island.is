@@ -55,7 +55,7 @@ const validateMessage = async (body: Request['body']): Promise<Message> => {
 }
 
 @Controller('notifications')
-@UseInterceptors(CacheInterceptor) // auto-caching GET responses
+// @UseInterceptors(CacheInterceptor) // auto-caching GET responses
 @ApiExtraModels(NewDocumentMessage)
 export class NotificationsController {
   constructor(
