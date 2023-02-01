@@ -75,7 +75,7 @@ describe('Notifications API', () => {
     const msg: Message = {
       type: MessageTypes.NewDocumentMessage,
       organization: 'Skatturinn',
-      recipient: '0409084390',
+      recipient: '1234567890',
       documentId: '123',
     }
 

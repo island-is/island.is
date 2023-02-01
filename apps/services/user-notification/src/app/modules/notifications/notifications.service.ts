@@ -1,7 +1,7 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { createHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 // import { getTemplates } from './queries/getTemplates'
 @Injectable()
@@ -12,7 +12,7 @@ export class NotificationsService {
   ) {}
 
   // MOVE QUERY TO THE SOMETHING SOEMTHIGN ..................................................................
-  async getTemplates(locale: string = 'is-IS'): Promise<any> {
+  async getTemplates(locale: string): Promise<any> {
     if (locale == 'is') {
       locale = 'is-IS'
     }
@@ -20,7 +20,7 @@ export class NotificationsService {
       'Fetching templates from Contentful GQL for locale: ' + locale,
     )
     try {
-      let results = await fetch(
+      const results = await fetch(
         'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
         {
           method: 'POST',
@@ -48,7 +48,7 @@ export class NotificationsService {
           }),
         },
       )
-      let templates = await results.json()
+      const templates = await results.json()
 
       // date temp check for cache
       for (const item of templates.data.hnippTemplateCollection.items) {
@@ -67,7 +67,7 @@ export class NotificationsService {
 
   async getTemplate(
     templateId: string,
-    locale: string = 'is-IS',
+    locale: string,
   ): Promise<HnippTemplate> {
     if (locale == 'is') {
       locale = 'is-IS'
@@ -89,7 +89,7 @@ export class NotificationsService {
     }
   }
 
-  async validateArgs(body: createHnippNotificationDto) {
+  async validateArgs(body: CreateHnippNotificationDto) {
     // check for template
     const template = await this.getTemplate(body.templateId) // cache ????????????????????????
     // check for args
@@ -106,7 +106,7 @@ export class NotificationsService {
 
   // shorten repetitive code................................
   async formatArguments(
-    body: createHnippNotificationDto,
+    body: CreateHnippNotificationDto,
     template: HnippTemplate,
   ): Promise<any> {
     const re = /{{[^{}]*}}/
@@ -114,7 +114,7 @@ export class NotificationsService {
       // scan object for {{}} for counts
       if (re.test(template.notificationBody)) {
         console.log('######## found')
-        let element = body.args.shift()
+        const element = body.args.shift()
         if (element) {
           template.notificationBody = template.notificationBody.replace(
             re,
@@ -125,7 +125,7 @@ export class NotificationsService {
       if (template.notificationDataCopy) {
         if (re.test(template.notificationDataCopy)) {
           console.log('######## found')
-          let element = body.args.shift()
+          const element = body.args.shift()
           if (element) {
             template.notificationDataCopy = template.notificationDataCopy.replace(
               re,
@@ -137,7 +137,7 @@ export class NotificationsService {
       if (template.clickAction) {
         if (re.test(template.clickAction)) {
           console.log('######## found')
-          let element = body.args.shift()
+          const element = body.args.shift()
           if (element) {
             template.clickAction = template.clickAction.replace(re, element)
           }

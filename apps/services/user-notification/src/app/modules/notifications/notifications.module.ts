@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
 import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
@@ -20,10 +20,6 @@ import * as userProfile from '@island.is/clients/user-profile'
 
 @Module({
   imports: [
-    // CacheModule.register({
-    //   ttl: 60,
-    //   max: 100,
-    // }),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({
