@@ -1,14 +1,16 @@
 import React, { FC, useState, forwardRef } from 'react'
 import {
-  Input,
   Icon,
   InputBackgroundColor,
-  InputProps,
+  Option,
   Box,
+  Select,
+  PhoneInput,
 } from '@island.is/island-ui/core'
 import { Controller, Control, ValidationRules } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { ValueType } from 'react-select'
 
 interface Props {
   autoFocus?: boolean
@@ -78,64 +80,59 @@ export const PhoneInputController = forwardRef(
       autoComplete,
     } = props
 
+    const [areaCode, setAreaCode] = useState<ValueType<Option>>({
+      label: '',
+      value: '',
+    })
+
+    console.log('control', control)
+
+    const handleAreaCodeChange = (value: ValueType<Option>) => {
+      setAreaCode(value)
+    }
+
+    console.log('areaCode', areaCode)
+
     function renderChildInput(c: ChildParams & TestSupport) {
       const { value, onChange, ...props } = c
+
+      console.log('value', value)
+
       return (
-        <Box display="flex">
-          <NumberFormat
-            size={size}
-            id={`cc-${id}`}
-            customInput={Input}
-            name={`cc-${name}`}
-            style={{ maxWidth: '138px' }}
-            prefix="+"
-            disabled={disabled || loading}
-            readOnly={readOnly}
-            label="Land"
-            rightAlign={rightAlign}
-            backgroundColor={backgroundColor}
-            maxLength={3}
-            value={countryCode}
-            onChange={(
-              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-            ) => setCountryCode(+e.target.value)}
-          />
-          <NumberFormat
-            size={size}
-            customInput={Input}
-            icon={icon}
-            id={id}
-            autoFocus={autoFocus}
-            disabled={disabled}
-            readOnly={readOnly}
-            rightAlign={rightAlign}
-            backgroundColor={backgroundColor}
-            data-testid={dataTestId}
-            placeholder={placeholder}
-            label={label}
-            type="tel"
-            value={value}
-            format={format}
-            maxLength={maxLength}
-            autoComplete={autoComplete}
-            loading={loading}
-            onChange={(
-              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-            ) => {
-              if (onInputChange) {
-                onInputChange(e)
-              }
-            }}
-            onValueChange={({ value }) => {
-              onChange(value)
-            }}
-            hasError={error !== undefined}
-            errorMessage={error}
-            required={required}
-            getInputRef={ref}
-            {...props}
-          />
-        </Box>
+        <NumberFormat
+          size={size}
+          customInput={PhoneInput}
+          id={id}
+          autoFocus={autoFocus}
+          disabled={disabled}
+          readOnly={readOnly}
+          rightAlign={rightAlign}
+          backgroundColor={backgroundColor}
+          data-testid={dataTestId}
+          placeholder={placeholder}
+          label={label}
+          type="tel"
+          value={value}
+          format={format}
+          /* maxLength={maxLength} */
+          autoComplete={autoComplete}
+          loading={loading}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
+          onValueChange={({ value }) => {
+            onChange(value)
+          }}
+          hasError={error !== undefined}
+          errorMessage={error}
+          required={required}
+          getInputRef={ref}
+          {...props}
+        />
       )
     }
 

@@ -222,13 +222,9 @@ export const PrerequisitesForm: Form = buildForm({
                 console.log(answ)
                 return true
               },
-              defaultValue: (application: Application) => {
-                const number = removeCountryCode(
-                  application.externalData?.userProfile?.data
-                    ?.mobilePhoneNumber ?? '',
-                )
-                return number
-              },
+              defaultValue: (application: Application) =>
+                (application.externalData as PaymentPlanExternalData)
+                  ?.userProfile?.data?.mobilePhoneNumber ?? '',
             }),
             buildSubmitField({
               id: 'toDraft',

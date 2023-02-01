@@ -1,37 +1,39 @@
-import React, { useState, useRef, forwardRef, useLayoutEffect } from 'react'
+import { forwardRef, useRef, useState } from 'react'
+import { AriaError, InputBackgroundColor, InputProps } from '../Input/types'
+import * as styles from './PhoneInput.css'
 import cn from 'classnames'
-
-import * as styles from './Input.css'
 import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
-import { Icon } from '../IconRC/Icon'
-import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
-import {
-  InputBackgroundColor,
-  InputComponentProps,
-  InputProps,
-  AriaError,
-} from './types'
+import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { useMergeRefs } from '../../hooks/useMergeRefs'
+import { Icon } from '../IconRC/Icon'
+import ReactSelect, { ActionMeta, ValueType } from 'react-select'
+import { Option as OptionType } from '../Select/Select'
+import { CountryCodeSelect } from './CountryCodeSelect/CountryCodeSelect'
+import { countryCodes } from './CountryCodeSelect/countryCodes'
 
-const InputHOC = forwardRef(
-  (
-    props: Omit<InputComponentProps, 'size'>,
-    ref: React.Ref<HTMLInputElement>,
-  ) => <input ref={ref} {...props} />,
-)
-const TextareaHOC = forwardRef(
-  (props: InputComponentProps, ref: React.Ref<HTMLTextAreaElement>) => (
-    <textarea ref={ref} {...props} />
-  ),
-)
+const options = countryCodes.map((x) => ({
+  label: x.dial_code,
+  value: x.dial_code,
+  description: x.name,
+}))
 
-export const Input = forwardRef(
-  (
-    props: InputProps,
-    ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+type PhoneInputProps = Omit<
+  InputProps,
+  'rows' | 'type' | 'icon' | 'iconType' | 'backgroundColor'
+> & {
+  backgroundColor?: InputBackgroundColor
+  countryCodeValue?: ValueType<OptionType>
+  onCountryCodeChange?: ((
+    value: ValueType<OptionType>,
+    actionMeta: ActionMeta<OptionType>,
+  ) => void) &
+    ((value: ValueType<OptionType>, action: ActionMeta<OptionType>) => void)
+}
+
+export const PhoneInput = forwardRef(
+  (props: PhoneInputProps, ref?: React.Ref<HTMLInputElement>) => {
     const {
       name,
       label,
@@ -53,58 +55,36 @@ export const Input = forwardRef(
       onClick,
       onKeyDown,
       textarea,
-      type,
-      icon,
-      iconType = 'filled',
       size = 'md',
       fixedFocusState,
       autoExpand,
       loading,
+      countryCodeValue,
+      onCountryCodeChange,
       ...inputProps
     } = props
+
     const [hasFocus, setHasFocus] = useState(false)
-    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
+    const mergedRefs = useMergeRefs(inputRef, ref || null)
+
     const errorId = `${id}-error`
+    const selectId = `country-code-select-${id}`
     const ariaError = hasError
       ? {
           'aria-invalid': true,
           'aria-describedby': errorId,
         }
       : {}
-    const mergedRefs = useMergeRefs(inputRef, ref || null)
 
-    const InputComponent = textarea ? TextareaHOC : InputHOC
     const mapBlue = (color: InputBackgroundColor) =>
       color === 'blue' ? 'blue100' : color
     const containerBackground = Array.isArray(backgroundColor)
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
 
-    useLayoutEffect(() => {
-      const input = inputRef.current
-
-      if (autoExpand?.on && input) {
-        const handler = () => {
-          input.style.height = 'auto'
-          // The +1 here prevents a scrollbar from appearing in the textarea
-          input.style.height = `${input.scrollHeight + 1}px`
-          input.style.maxHeight = autoExpand.maxHeight
-            ? `${autoExpand.maxHeight}px`
-            : `${window.innerHeight - 50}px`
-        }
-
-        handler()
-
-        input.addEventListener('input', handler, false)
-
-        return function cleanup() {
-          input.removeEventListener('input', handler)
-        }
-      }
-    }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
-
     return (
-      <div>
+      <Box position="relative">
         {/* If size is xs then the label is above the input box */}
         {size === 'xs' && label && (
           <label
@@ -140,12 +120,13 @@ export const Input = forwardRef(
             [styles.containerDisabled]: disabled,
             [styles.readOnly]: readOnly,
           })}
-          onClick={(e) => {
+          /* onClick={(e) => {
             e.preventDefault()
+            console.log(e)
             if (inputRef.current) {
               inputRef.current.focus()
             }
-          }}
+          }} */
         >
           <Box flexGrow={1}>
             {size !== 'xs' && label && (
@@ -170,59 +151,74 @@ export const Input = forwardRef(
                 )}
               </label>
             )}
-            <InputComponent
-              className={cn(
-                styles.input,
-                resolveResponsiveProp(
-                  backgroundColor,
-                  styles.inputBackgroundXs,
-                  styles.inputBackgroundSm,
-                  styles.inputBackgroundMd,
-                  styles.inputBackgroundLg,
-                  styles.inputBackgroundXl,
-                ),
-                styles.inputSize[size],
-                {
-                  [styles.rightAlign]: rightAlign,
-                  [styles.textarea]: textarea,
-                },
-              )}
-              id={id}
-              disabled={disabled}
-              name={name}
-              ref={mergedRefs}
-              placeholder={placeholder}
-              value={value}
-              maxLength={maxLength}
-              defaultValue={defaultValue}
-              onFocus={(e) => {
-                setHasFocus(true)
-                if (onFocus) {
-                  onFocus(e)
-                }
-              }}
-              onClick={(e) => {
-                if (onClick) {
-                  onClick(e)
-                }
-              }}
-              onKeyDown={(e) => {
-                if (onKeyDown) {
-                  onKeyDown(e)
-                }
-              }}
-              onBlur={(e) => {
-                setHasFocus(false)
-                if (onBlur) {
-                  onBlur(e)
-                }
-              }}
-              readOnly={readOnly}
-              type={type}
-              {...(ariaError as AriaError)}
-              {...inputProps}
-              {...(required && { 'aria-required': true })}
-            />
+            <Box display="flex">
+              <CountryCodeSelect
+                id={selectId}
+                name={selectId}
+                onChange={onCountryCodeChange}
+                value={countryCodeValue}
+                options={options}
+                backgroundColor={backgroundColor}
+                size={size}
+                onFocus={() => setHasFocus(true)}
+                onBlur={() => setHasFocus(false)}
+                defaultValue={options.find((x) => x.value === '+354')} // TODO
+                dataTestId={`country-code-test-${id}`}
+              />
+              <input
+                className={cn(
+                  styles.input,
+                  resolveResponsiveProp(
+                    backgroundColor,
+                    styles.inputBackgroundXs,
+                    styles.inputBackgroundSm,
+                    styles.inputBackgroundMd,
+                    styles.inputBackgroundLg,
+                    styles.inputBackgroundXl,
+                  ),
+                  styles.inputSize[size],
+                  {
+                    [styles.rightAlign]: rightAlign,
+                    [styles.textarea]: textarea,
+                  },
+                )}
+                id={id}
+                disabled={disabled}
+                name={name}
+                ref={mergedRefs}
+                placeholder={placeholder}
+                value={value}
+                maxLength={maxLength}
+                defaultValue={defaultValue}
+                onFocus={(e) => {
+                  setHasFocus(true)
+                  if (onFocus) {
+                    onFocus(e)
+                  }
+                }}
+                onClick={(e) => {
+                  if (onClick) {
+                    onClick(e)
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (onKeyDown) {
+                    onKeyDown(e)
+                  }
+                }}
+                onBlur={(e) => {
+                  setHasFocus(false)
+                  if (onBlur) {
+                    onBlur(e)
+                  }
+                }}
+                readOnly={readOnly}
+                type="tel"
+                {...(ariaError as AriaError)}
+                {...inputProps}
+                {...(required && { 'aria-required': true })}
+              />
+            </Box>
           </Box>
           {loading && (
             <Box
@@ -231,23 +227,11 @@ export const Input = forwardRef(
               borderRadius="circle"
             />
           )}
-          {!loading && hasError && !icon && (
+          {!loading && hasError && (
             <Icon
               icon="warning"
               skipPlaceholderSize
               className={cn(styles.icon, styles.iconError)}
-              ariaHidden
-            />
-          )}
-          {!loading && icon && (
-            <Icon
-              icon={icon}
-              type={iconType}
-              skipPlaceholderSize
-              className={cn(styles.icon, {
-                [styles.iconError]: hasError,
-                [styles.iconExtraSmall]: size === 'xs',
-              })}
               ariaHidden
             />
           )}
@@ -262,7 +246,7 @@ export const Input = forwardRef(
             {errorMessage}
           </div>
         )}
-      </div>
+      </Box>
     )
   },
 )

@@ -97,7 +97,7 @@ export const applicantInformationMultiField = buildMultiField({
       width: 'half',
       backgroundColor: 'blue',
       condition: (answ) => {
-        console.log(answ)
+        console.log('answ', answ)
         return true
       },
     }),

@@ -37,7 +37,7 @@ export const PhoneFormField: FC<Props> = ({
     dataTestId,
     onChange = () => undefined,
   } = field
-  const { clearErrors } = useFormContext()
+  const { control, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
   return (
@@ -66,6 +66,7 @@ export const PhoneFormField: FC<Props> = ({
           }
           autoFocus={autoFocus}
           error={error}
+          control={control}
           onChange={(e) => {
             if (error) {
               clearErrors(id)

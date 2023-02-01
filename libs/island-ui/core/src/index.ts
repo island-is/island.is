@@ -86,6 +86,7 @@ export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
 export * from './lib/ToggleSwitch'
+export * from './lib/PhoneInput/PhoneInput'
 
 // Navigation
 export { BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
