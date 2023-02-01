@@ -16,7 +16,6 @@ import {
   IdentityApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { betaTestSection } from './BetaTestSection'
 import { Logo } from '../assets'
 
 import { application, info, section, externalData } from '../lib/messages'
@@ -36,7 +35,6 @@ export const PrerequisitesForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
-    betaTestSection,
     buildSection({
       id: 'externalData',
       title: section.externalData,
