@@ -6,7 +6,7 @@ import {
   ConnectedComponent,
   Query,
 } from '@island.is/api/schema'
-import { useLocalization, useDateFormat } from '../../utils'
+import { useLocalization } from '../../../utils'
 import {
   Box,
   Button,
@@ -16,7 +16,8 @@ import {
   Input,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -28,8 +29,7 @@ type ListState = 'loading' | 'loaded' | 'error'
 
 const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   const t = useLocalization(slice.json)
-  // TODO: Find out if we can easily detect the current active locale
-  const d = useDateFormat('is' as Locale)
+  const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
   const DATE_FORMAT = t('dateFormat', 'd. MMMM yyyy')
 
@@ -76,10 +76,10 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
     const validTo = license.validTo ? new Date(license.validTo) : null
 
     if (validFrom && validTo) {
-      return `${d(validFrom, DATE_FORMAT)} - ${d(validTo, DATE_FORMAT)}`
+      return `${format(validFrom, DATE_FORMAT)} - ${format(validTo, DATE_FORMAT)}`
     }
     if (!validFrom && validTo) {
-      return `${t('validUntil', 'Til')} ${d(validTo, DATE_FORMAT)}`
+      return `${t('validUntil', 'Til')} ${format(validTo, DATE_FORMAT)}`
     }
     if (!validTo) {
       return t('validPeriodIndefinite', 'Ótímabundið')
@@ -222,4 +222,4 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   )
 }
 
-export { AlcoholLicencesList }
+export default AlcoholLicencesList

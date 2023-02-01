@@ -23,6 +23,7 @@ import {
   SidebarShipSearchInput,
   StraddlingStockCalculator,
   TwoColumnTextSlice,
+  AlcoholLicencesList,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -52,6 +53,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <MonthlyStatistics slice={slice} />
     case 'Fiskistofa/ShipSearchBoxedInput':
       return <ShipSearchBoxedInput namespace={data} />
+      case 'Áfengisleyfi/AlcoholLicences':
+      return <AlcoholLicencesList slice={slice} />
     default:
       break
   }
