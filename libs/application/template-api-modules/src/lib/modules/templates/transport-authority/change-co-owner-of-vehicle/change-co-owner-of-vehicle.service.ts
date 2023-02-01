@@ -43,6 +43,66 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     super(ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE)
   }
 
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+
+    // No need to continue with this validation in user is neither seller nor buyer
+    // (only time application data changes is on state change from these roles)
+    const ownerSsn = answers?.owner?.nationalId
+    if (auth.nationalId !== ownerSsn) {
+      return
+    }
+
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      auth,
+      {
+        permno: answers?.pickVehicle?.plate,
+        seller: {
+          ssn: ownerSsn,
+          email: answers?.owner?.email,
+        },
+        buyer: {
+          ssn: ownerSsn,
+          email: answers?.owner?.email,
+        },
+        dateOfPurchase: new Date(),
+        saleAmount: 0,
+        insuranceCompanyCode: null,
+        coOwners: [
+          ...(answers?.ownerCoOwners
+            ? answers.ownerCoOwners.map((x) => ({
+                ssn: x.nationalId,
+                email: x.email,
+              }))
+            : []),
+          ...(answers?.coOwners
+            ? answers.coOwners.map((x) => ({
+                ssn: x.nationalId,
+                email: x.email,
+              }))
+            : []),
+        ],
+        operators: null,
+      },
+    )
+
+    // If we get any error messages, we will just throw an error with a default title
+    // We will fetch these error messages again through graphql in the template, to be able
+    // to translate the error message
+    if (result.hasError && result.errorMessages?.length) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: applicationCheck.validation.alertTitle,
+        },
+        400,
+      )
+    }
+  }
+
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'

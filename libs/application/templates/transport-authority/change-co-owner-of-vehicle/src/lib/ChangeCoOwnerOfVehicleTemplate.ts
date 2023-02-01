@@ -87,6 +87,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -174,9 +177,6 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
-          /* onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }), */
           roles: [
             {
               id: Roles.APPLICANT,
