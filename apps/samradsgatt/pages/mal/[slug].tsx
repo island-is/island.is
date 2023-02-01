@@ -16,6 +16,7 @@ import { useLocation } from 'react-use'
 import CaseOverview from '../../components/CaseOverview/CaseOverview'
 import ReviewCard from '../../components/ReviewCard/ReviewCard'
 import WriteReviewCard from '../../components/WriteReviewCard/WriteReviewCard'
+import Layout from '../../components/Layout/Layout'
 
 interface DetailsProps {
   chosenCase: Case
@@ -75,88 +76,90 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
   advices = dummyAdvices
 
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span={'3/12'} paddingBottom={3}>
-          <GridContainer>
-            <Box>
-              <Box paddingY={3}>
-                <Breadcrumbs
-                  items={[
-                    { title: 'Öll mál', href: '/samradsgatt' },
-                    {
-                      title: 'Mál nr. ' + chosenCase.caseNumber,
-                      href: location.href,
-                    },
-                  ]}
+    <Layout>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={'3/12'} paddingBottom={3}>
+            <GridContainer>
+              <Box>
+                <Box paddingY={3}>
+                  <Breadcrumbs
+                    items={[
+                      { title: 'Öll mál', href: '/samradsgatt' },
+                      {
+                        title: 'Mál nr. ' + chosenCase.caseNumber,
+                        href: location.href,
+                      },
+                    ]}
+                  />
+                </Box>
+                <Divider />
+                <CaseTimeline
+                  status="Niðurstöður í vinnslu"
+                  updatedDate={chosenCase.changed}
                 />
               </Box>
-              <Divider />
-              <CaseTimeline
-                status="Niðurstöður í vinnslu"
-                updatedDate={chosenCase.changed}
-              />
-            </Box>
-            <Box
-              marginBottom={6}
-              borderBottomWidth={'standard'}
-              borderTopWidth={'standard'}
-              borderColor={'blue200'}
-              paddingY={2}
-              paddingLeft={1}
-            >
-              <Text variant="h3" color="purple400">
-                Fjöldi umsagna: {chosenCase.adviceCount}
-              </Text>
-            </Box>
-            <SubscriptionBox />
-          </GridContainer>
-        </GridColumn>
+              <Box
+                marginBottom={6}
+                borderBottomWidth={'standard'}
+                borderTopWidth={'standard'}
+                borderColor={'blue200'}
+                paddingY={2}
+                paddingLeft={1}
+              >
+                <Text variant="h3" color="purple400">
+                  Fjöldi umsagna: {chosenCase.adviceCount}
+                </Text>
+              </Box>
+              <SubscriptionBox />
+            </GridContainer>
+          </GridColumn>
 
-        <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
-          <Box paddingLeft={4}>
-            <CaseOverview chosenCase={chosenCase} />
-            <Box marginBottom={6}>
-              <Text variant="h1" color="blue400" paddingY={2}>
-                {'Innsendar umsagnir'}
-              </Text>
-              {advices.map((advice) => {
-                return <ReviewCard advice={advice} key={advice.number} />
-              })}
+          <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
+            <Box paddingLeft={4}>
+              <CaseOverview chosenCase={chosenCase} />
+              <Box marginBottom={6}>
+                <Text variant="h1" color="blue400" paddingY={2}>
+                  {'Innsendar umsagnir'}
+                </Text>
+                {advices.map((advice) => {
+                  return <ReviewCard advice={advice} key={advice.number} />
+                })}
+              </Box>
+              <WriteReviewCard />
             </Box>
-            <WriteReviewCard />
-          </Box>
-        </GridColumn>
+          </GridColumn>
 
-        <GridColumn span={'3/12'}>
-          <Box paddingY={8}>
-            <Box padding={3}>
-              <CategoryCard
-                heading="Skjöl til samráðs"
-                text={chosenCase.shortDescription}
-                // TODO change size from 18 to 16
-              />
+          <GridColumn span={'3/12'}>
+            <Box paddingY={8}>
+              <Box padding={3}>
+                <CategoryCard
+                  heading="Skjöl til samráðs"
+                  text={chosenCase.shortDescription}
+                  // TODO change size from 18 to 16
+                />
+              </Box>
+              <Box padding={3}>
+                <CategoryCard
+                  heading="Aðillar sem hafa fengið boð um samráð á máli."
+                  text="Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til að skrifa umsögn um málið"
+                />
+              </Box>
+              <Box padding={3}>
+                <CategoryCard
+                  heading="Ábyrgðaraðili"
+                  text={
+                    `${chosenCase.contactName}` +
+                    ` ` +
+                    `${chosenCase.contactEmail}`
+                  }
+                />
+              </Box>
             </Box>
-            <Box padding={3}>
-              <CategoryCard
-                heading="Aðillar sem hafa fengið boð um samráð á máli."
-                text="Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til að skrifa umsögn um málið"
-              />
-            </Box>
-            <Box padding={3}>
-              <CategoryCard
-                heading="Ábyrgðaraðili"
-                text={
-                  `${chosenCase.contactName}` +
-                  ` ` +
-                  `${chosenCase.contactEmail}`
-                }
-              />
-            </Box>
-          </Box>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Layout>
   )
 }
 export default Details
