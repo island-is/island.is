@@ -21,10 +21,10 @@ import { NotificationsService } from './notifications.service'
 
 @Module({
   imports: [
-    CacheModule.register({
-      ttl: 60,
-      max: 100,
-    }),
+    // CacheModule.register({
+    //   ttl: 60,
+    //   max: 100,
+    // }),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({
