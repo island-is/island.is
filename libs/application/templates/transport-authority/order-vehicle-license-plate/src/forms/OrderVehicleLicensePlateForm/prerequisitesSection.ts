@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   DeliveryStationsApi,
@@ -22,11 +22,11 @@ export const prerequisitesSection = buildSection({
       subTitle: externalData.dataProvider.subTitle,
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
-        buildDataProviderItem({
-          provider: NationalRegistryUserApi,
-          title: externalData.nationalRegistry.title,
-          subTitle: externalData.nationalRegistry.subTitle,
-        }),
+        // buildDataProviderItem({
+        //   provider: IdentityApi,
+        //   title: externalData.nationalRegistry.title,
+        //   subTitle: externalData.nationalRegistry.subTitle,
+        // }),
         buildDataProviderItem({
           provider: CurrentVehiclesApi,
           title: externalData.currentVehicles.title,

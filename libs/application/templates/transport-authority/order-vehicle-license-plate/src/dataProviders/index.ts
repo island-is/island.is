@@ -3,7 +3,7 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
-export { NationalRegistryUserApi } from '@island.is/application/types'
+export { IdentityApi } from '@island.is/application/types'
 
 const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
 
