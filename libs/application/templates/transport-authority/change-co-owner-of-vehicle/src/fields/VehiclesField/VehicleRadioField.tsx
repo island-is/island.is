@@ -48,7 +48,6 @@ export const VehicleRadioField: FC<
       | undefined,
   )
 
-  // TODO: Add operator validation query once Samgöngustofa has finished it
   const { data, loading } = useQuery(
     gql`
       ${GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS}
@@ -78,7 +77,7 @@ export const VehicleRadioField: FC<
 
     for (const [index, vehicle] of vehicles.entries()) {
       const disabled =
-        !vehicle.isDebtLess || !!vehicle.ownerChangeErrorMessages?.length
+        !vehicle.isDebtLess || !!vehicle.validationErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
@@ -108,8 +107,8 @@ export const VehicleRadioField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!vehicle.ownerChangeErrorMessages?.length &&
-                          vehicle.ownerChangeErrorMessages?.map((error) => {
+                        {!!vehicle.validationErrorMessages?.length &&
+                          vehicle.validationErrorMessages?.map((error) => {
                             const message = formatMessage(
                               getValueViaPath(
                                 applicationCheck.validation,

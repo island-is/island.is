@@ -39,12 +39,10 @@ export const CoOwnerRepeater: FC<FieldBaseProps> = (props) => {
   }
 
   const handleRemoveOld = (position: number) => {
-    console.log(position, ownerCoOwners.length)
     if (ownerCoOwners.length >= position) {
       setValue(`ownerCoOwners[${position}].wasRemoved`, 'true')
       setOwnerCoOwners(
         ownerCoOwners.map((coOwner, index) => {
-          console.log(index, position)
           if (index === position) {
             return { ...coOwner, wasRemoved: 'true' }
           } else {

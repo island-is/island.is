@@ -15,7 +15,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { m } from './messagesx'
 import { Features } from '@island.is/feature-flags'
 import {
   ApiActions,
@@ -61,7 +60,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE,
   name: determineMessageFromApplicationAnswers,
-  institution: m.institutionName,
+  institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.ChangeCoOwnerOfVehicle.translation,
   ],
@@ -88,6 +87,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -175,9 +177,6 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
-          /* onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }), */
           roles: [
             {
               id: Roles.APPLICANT,

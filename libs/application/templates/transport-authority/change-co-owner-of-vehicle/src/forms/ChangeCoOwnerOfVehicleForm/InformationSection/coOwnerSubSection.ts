@@ -14,12 +14,6 @@ export const coOwnerSubSection = buildSubSection({
       title: information.labels.coOwner.title,
       description: information.labels.coOwner.description,
       children: [
-        // buildCustomField({
-        //   id: 'oldOperators',
-        //   component: 'OldOperators',
-        //   title: '',
-        //   doesNotRequireAnswer: true,
-        // }),
         buildCustomField({
           id: 'coOwners',
           component: 'CoOwnerRepeater',
