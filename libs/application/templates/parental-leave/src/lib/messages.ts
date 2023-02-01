@@ -1912,10 +1912,40 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
   }),
   residenceGrantMessage: defineMessages({
-    residenceGrant: {
-      id: 'pl.application:residence.grant',
+    residenceGrantTitle: {
+      id: 'pl.application:residence.grant.title',
+      defaultMessage: 'Dvalarstyrkur',
+      description: 'Residence grant',
+    },
+    residenceGrantOpenDescription: {
+      id: 'pl.application:residence.grant.open.description',
+      defaultMessage: 'Hér getur þú sótt um dvalarstyrk',
+      description: 'Here you can apply for residence grant',
+    },
+    residenceGrantClosedDescription: {
+      id: 'pl.application:residence.grant.closed.description',
+      defaultMessage: 'Ekki er hægt að sækja um dvalarstyrk fyrr en eftir að barn er fætt',
+      description: 'The residence grant cannot be applied for until after the child is born',
+    },
+    residenceGrantApplyTitle: {
+      id: 'pl.application:residence.grant.apply.title',
       defaultMessage: 'Sækja um dvalarstyrk',
-      description: 'Apply for Residen Grant!',
+      description: 'Apply for residence grant',
+    },
+    residenceGrantActionLinkTitle: {
+      id: 'pl.application:residence.grant.action.link.title',
+      defaultMessage: 'Sjá upplýsingar um dvalarstyrk',
+      description: 'See information on residence grants',
+    },
+    residenceGrantAttachmentTitle: {
+      id: 'pl.application:residence.grant.attachment.title',
+      defaultMessage: 'Vottorð um dvalarstyrk',
+      description: 'A residence grant certificate',
+    },
+    residenceGrantAttachmentDescription: {
+      id: 'pl.application:residence.grant.attachment.description',
+      defaultMessage: 'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns í tengslum við nauðsynlega fæðingarþjónustu vegna fæðingar barns „svo sem vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu“. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description: 'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery relating to necessary maternity services because of the birth of a child, “regarding, for instance, distance, bad weather, strike or pregnancy risk factors”. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
     },
     residenceGrantRights: {
       id: 'pl.application:residence.grant.rights',
