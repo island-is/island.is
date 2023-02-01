@@ -1,0 +1,55 @@
+import { Controller, Get, UseGuards } from '@nestjs/common'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
+
+import { ClientsService, ResourcesService } from '@island.is/auth-api-lib'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AuthScope } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
+
+import { ClientDto } from './client.dto'
+
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AuthScope.delegations)
+@ApiSecurity('ias', [AuthScope.delegations])
+@ApiTags('/clients')
+@Controller({
+  path: 'clients',
+  version: ['1'],
+})
+@Audit({ namespace: '@island.is/auth/delegation-api/clients' })
+export class ClientsController {
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly resourcesService: ResourcesService,
+  ) {}
+
+  @Get()
+  @Documentation({
+    response: { status: 200, type: [ClientDto] },
+  })
+  @Audit<ClientDto[]>({
+    resources: (clients) => clients.map((client) => client.id),
+  })
+  async findAll(): Promise<ClientDto[]> {
+    const clients = await this.clientsService.findAll()
+
+    if (!clients) {
+      return []
+    }
+
+    return Promise.all(
+      clients.map(async (client) => {
+        // Todo: This is a temporary solution until we have linked clients to domains
+        const clientDomain = client.clientId.split('/')[0]
+        const domain = await this.resourcesService.findDomainByPk(clientDomain)
+
+        return {
+          id: client.clientId,
+          name: client.clientName ?? client.clientId,
+          organisationLogoKey: domain?.organisationLogoKey,
+        }
+      }),
+    )
+  }
+}
