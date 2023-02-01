@@ -222,18 +222,32 @@ const Screen: FC<ScreenProps> = ({
         screen,
       )
 
+      let finishedSteps = 0
+      // Defaulting to 5 to show some steps for user experience if the user has not yet finished the first screen
+      let stepsTotal = 5
+
+      if (mode === FormModes.DRAFT) {
+        if (totalDraftScreens === undefined) {
+          // +1 because its an array and starts at 0
+          finishedSteps = activeScreenIndex + 1
+          // -1 because its a length of an array and starts at 1
+          // and we dont want to count the last screen as a step
+          // because its just the conclusion screen
+          stepsTotal = numberOfScreens - 1
+        } else {
+          finishedSteps = currentDraftScreen ?? 0
+          stepsTotal = totalDraftScreens
+        }
+      }
+
       response = await updateApplication({
         variables: {
           input: {
             id: applicationId,
             answers: extractedAnswers,
             draftProgress: {
-              // If there are no total draft screens, then we dont have any draft page info from the template.
-              stepsFinished:
-                totalDraftScreens === undefined
-                  ? activeScreenIndex + 1
-                  : currentDraftScreen,
-              totalSteps: totalDraftScreens ?? numberOfScreens - 1,
+              stepsFinished: finishedSteps,
+              totalSteps: stepsTotal,
             },
           },
           locale,
