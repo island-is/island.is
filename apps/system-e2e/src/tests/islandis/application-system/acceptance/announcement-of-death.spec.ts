@@ -31,35 +31,13 @@ applicationTest.describe('Announcement of Death', () => {
   const submitButton = 'button[type=submit]'
   const nextButton = 'button[data-testid=proceed]'
 
-  applicationTest('test', async ({ browser, applicationPage }) => {
-    const context = await session({
-      browser,
-      homeUrl,
-      phoneNumber: '0102399',
-      idsLoginOn: true,
-    })
-    const page = await context.newPage()
-    await disablePreviousApplications(page)
+  applicationTest('test', async ({ applicationPage }) => {
+    const page = applicationPage
+    await expect(applicationPage).toBeApplication()
 
-  await page.route('*/api/graphql?op=ApplicationApplications', route => {
-    const data: Record<string, unknown[]> = {}
-    data['applicationApplications'] = []
-    const response = {data}
-    route.fulfill({ body: JSON.stringify(response) })
-  })
-
-    await disableI18n(page)
-    await page.goto(homeUrl)
-    await expect(page).toBeApplication()
-
-    //const page = applicationPage
-    await expect(page).toBeApplication()
-
-    /* Should be only one application due to disablers above
     // Should be gone with applicationPage
     await page.locator('[data-testid="create-new-application"]').click()
     await page.locator('[data-testid="create-new-application"]').click()
-    */
 
     await page.locator('data-testid=agree-to-data-providers').click()
     await page.locator(submitButton).click()
