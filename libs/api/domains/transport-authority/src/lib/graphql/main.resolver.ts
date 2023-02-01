@@ -16,13 +16,15 @@ import {
   OperatorChangeAnswers,
 } from './dto'
 import {
-  OwnerChangeValidation,
   CheckTachoNetExists,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-  VehicleOwnerchangeChecksByPermno,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
-  VehicleOperatorChangeChecksByPermno,
   OperatorChangeValidation,
+  OwnerChangeValidation,
+  VehicleOperatorChangeChecksByPermno,
+  VehicleOwnerchangeChecksByPermno,
+  VehiclePlateOrderChecksByPermno,
+  VehiclesCurrentVehicleWithPlateOrderChecks,
+  VehiclesCurrentVehicleWithOperatorChangeChecks,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -124,6 +126,38 @@ export class MainResolver {
     return this.transportAuthorityApi.validateApplicationForOperatorChange(
       user,
       answers,
+    )
+  }
+
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Query(() => [VehiclesCurrentVehicleWithPlateOrderChecks], {
+    name: 'currentVehiclesWithPlateOrderChecks',
+    nullable: true,
+  })
+  async getCurrentVehiclesWithPlateOrderChecks(
+    @Args('input') input: GetCurrentVehiclesInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getCurrentVehiclesWithPlateOrderChecks(
+      user,
+      input.showOwned,
+      input.showCoOwned,
+      input.showOperated,
+    )
+  }
+
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Query(() => VehiclePlateOrderChecksByPermno, {
+    name: 'vehiclePlateOrderChecksByPermno',
+    nullable: true,
+  })
+  async getVehiclePlateOrderChecksByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getVehiclePlateOrderChecksByPermno(
+      user,
+      permno,
     )
   }
 }
