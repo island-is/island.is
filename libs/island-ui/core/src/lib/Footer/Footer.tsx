@@ -6,7 +6,6 @@ import { Logo } from '../Logo/Logo'
 import { Tiles } from '../Tiles/Tiles'
 import { Text } from '../Text/Text'
 import { Inline } from '../Inline/Inline'
-import { Icon as IconDeprecated } from '../Icon/Icon'
 import { Icon } from '../IconRC/Icon'
 import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
@@ -128,11 +127,11 @@ export const Footer = ({
                 <div>
                   <Stack space={1}>
                     <Inline space={1} alignY="center">
-                      <IconDeprecated
-                        type="info"
-                        height="15"
-                        width="15"
+                      <Icon
+                        icon="informationCircle"
+                        size="small"
                         color="blue400"
+                        type="outline"
                       />
                       <Text variant="h5" color="blue600" fontWeight="light">
                         <Link href={privacyPolicyLink.href}>
@@ -153,10 +152,10 @@ export const Footer = ({
                     </Inline>
                     {!hideLanguageSwitch && (
                       <Inline space={1} alignY="center">
-                        <IconDeprecated
-                          height="15"
-                          width="15"
-                          type="globe"
+                        <Icon
+                          size="small"
+                          icon="globe"
+                          type="outline"
                           color="blue400"
                         />
                         <Text variant="h5" color="blue600" fontWeight="light">
@@ -171,12 +170,7 @@ export const Footer = ({
                     )}
 
                     <Inline space={1} alignY="center">
-                      <IconDeprecated
-                        height="15"
-                        width="15"
-                        type="facebook"
-                        color="blue400"
-                      />
+                      <Icon size="small" icon="facebook" color="blue400" />
                       <Text variant="h5" color="blue600" fontWeight="light">
                         <Link href="https://www.facebook.com/islandid">
                           Facebook
