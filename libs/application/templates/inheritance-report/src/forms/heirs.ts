@@ -220,11 +220,14 @@ export const heirs = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-                      Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-                      Number(
-                        getValueViaPath(answers, 'business.businessTotal'),
-                      ),
+                    (getValueViaPath<number>(answers, 'assets.assetsTotal') ||
+                      0) -
+                      (getValueViaPath<number>(answers, 'debts.debtsTotal') ||
+                        0) +
+                      (getValueViaPath<number>(
+                        answers,
+                        'business.businessTotal',
+                      ) || 0),
                   ),
                 ),
             }),
@@ -285,7 +288,7 @@ export const heirs = buildSection({
               label: m.heirsInheritanceRate,
               display: 'flex',
               value: ({ answers }) =>
-                getValueViaPath<string>(answers, 'heirs.total'),
+                String(getValueViaPath<number>(answers, 'heirs.total')),
             }),
             buildDescriptionField({
               id: 'heirs_space1',
