@@ -104,7 +104,6 @@ export const VehicleSelectField: FC<
             !!response?.vehicleOperatorChangeChecksByPermno
               ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
-          setPlate(currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
           setType(currentVehicle.make || undefined)
           setIsLoading(false)

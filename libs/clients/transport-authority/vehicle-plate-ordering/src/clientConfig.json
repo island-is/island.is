@@ -2,6 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
+    "description": "Plate ordering API developed in .Net6.0 - Release-3 : 20230125.2",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -14,10 +15,9 @@
     }
   ],
   "paths": {
-    "/orderplates": {
+    "/authenticate": {
       "post": {
-        "tags": ["PlateOrdering"],
-        "summary": "Post a plate order",
+        "tags": ["Authentication"],
         "parameters": [
           {
             "name": "api-version",
@@ -39,7 +39,132 @@
           }
         ],
         "requestBody": {
-          "description": "",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orderplates": {
+      "post": {
+        "tags": ["PlateOrdering"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "requestBody": {
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -163,7 +288,6 @@
     "/deliverystations": {
       "get": {
         "tags": ["PlateOrdering"],
-        "summary": "Get list of valid stations to deliver plates to",
         "parameters": [
           {
             "name": "api-version",
@@ -236,6 +360,21 @@
   },
   "components": {
     "schemas": {
+      "AuthenticateModel": {
+        "required": ["password", "username"],
+        "type": "object",
+        "properties": {
+          "username": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "PostOrderPlatesModel": {
         "required": ["permno", "stationToDeliverTo", "stationType"],
         "type": "object",
@@ -247,28 +386,27 @@
             "type": "string"
           },
           "frontType": {
-            "maxLength": 1,
-            "minLength": 1,
-            "pattern": "[A,B,C,D]",
             "type": "string",
             "nullable": true
           },
           "rearType": {
-            "maxLength": 1,
-            "minLength": 1,
-            "pattern": "[A,B,C,D]",
             "type": "string",
             "nullable": true
           },
           "stationToDeliverTo": {
+            "minLength": 1,
             "pattern": "[1-9]*",
             "type": "string"
           },
           "stationType": {
-            "pattern": "[S,R]",
+            "minLength": 1,
             "type": "string"
           },
           "expressOrder": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "checkOnly": {
             "type": "boolean",
             "nullable": true
           }
@@ -321,6 +459,11 @@
           "permno": {
             "type": "string",
             "nullable": true
+          },
+          "warningSerialNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -337,6 +480,85 @@
             "nullable": true
           },
           "stationType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "jwtToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
             "type": "string",
             "nullable": true
           }
