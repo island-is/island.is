@@ -83,7 +83,6 @@ const Indictment: React.FC = () => {
                 updateCase,
               )
             }
-            required
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
