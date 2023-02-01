@@ -27,7 +27,7 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
             plate: answers?.pickVehicle?.plate,
           },
           vehicle: {
-            date: new Date(),
+            date: new Date(new Date().toISOString().substring(0, 10)),
           },
           seller: {
             email: answers?.owner?.email,
@@ -61,7 +61,6 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
   )
 
   useEffect(() => {
-    console.log(data?.vehicleOwnerChangeValidation)
     setFieldLoadingState?.(
       loading || data?.vehicleOwnerChangeValidation?.hasError,
     )
