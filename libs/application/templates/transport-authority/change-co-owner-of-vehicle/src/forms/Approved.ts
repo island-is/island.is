@@ -35,11 +35,6 @@ export const Approved: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'payment',
-      title: payment.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
       id: 'confirmation',
       title: conclusion.general.sectionTitle,
       children: [],
