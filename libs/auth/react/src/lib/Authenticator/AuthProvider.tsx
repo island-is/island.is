@@ -234,7 +234,10 @@ export const AuthProvider = ({
   )
 
   const isLoading =
-    !state.userInfo || isCurrentRoute(authSettings?.redirectPath)
+    !state.userInfo ||
+    // We need to display loading screen if current route is the redirect path.
+    // This is because the redirect path in not part of our React Router routes.
+    isCurrentRoute(authSettings?.redirectPath)
 
   return (
     <AuthContext.Provider

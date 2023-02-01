@@ -1,5 +1,6 @@
 import { UserProfile } from '@island.is/api/schema'
 import differenceInMonths from 'date-fns/differenceInMonths'
+import { GetUserProfileQuery } from '../components/UserOnboarding/UserOnboarding.generated'
 
 export const onboardingModalStorage = {
   key: 'ONBOARDING_MODAL',
@@ -15,13 +16,15 @@ export const onboardingModalStorage = {
  */
 const MODIFIED_FALLBACK_TIME = new Date('2022-04-01T00:00:00Z')
 
-export const diffModifiedOverMaxDate = (modified: string | undefined) => {
+export const diffModifiedOverMaxDate = (
+  modified: string | undefined | null,
+) => {
   const modifiedProfileDate = modified ?? MODIFIED_FALLBACK_TIME
   const dateNow = new Date()
   const dateModified = new Date(modifiedProfileDate)
   const diffInMonths = differenceInMonths(dateNow, dateModified)
-  const diffModifiedOverMaxDate = diffInMonths >= 6
-  return diffModifiedOverMaxDate
+
+  return diffInMonths >= 6
 }
 
 export const hideModalWithQueryParam = (): boolean => {
@@ -32,14 +35,15 @@ export const hideModalWithQueryParam = (): boolean => {
       urlSearchParams.get('hide_onboarding_modal') ?? '',
     )
 
-    const shouldHide = queryParam === 'true'
-    return shouldHide
+    return queryParam === 'true'
   } catch {
     return false
   }
 }
 
-export const showModal = (getUserProfile: UserProfile | undefined | null) => {
+export const showUserOnboardingModal = (
+  getUserProfile: GetUserProfileQuery['getUserProfile'] | undefined | null,
+) => {
   if (!getUserProfile) {
     return false
   }
