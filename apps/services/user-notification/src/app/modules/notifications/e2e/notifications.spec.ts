@@ -75,7 +75,8 @@ describe('Notifications API', () => {
     const msg: Message = {
       type: MessageTypes.NewDocumentMessage,
       organization: 'Skatturinn',
-      recipient: '1234567890',
+      // eslint-disable-next-line local-rules/disallow-kennitalas
+      recipient: '0409084390',
       documentId: '123',
     }
 

@@ -12,7 +12,7 @@ export class NotificationsService {
   ) {}
 
   // MOVE QUERY TO THE SOMETHING SOEMTHIGN ..................................................................
-  async getTemplates(locale: string): Promise<any> {
+  async getTemplates(locale: string): Promise<HnippTemplate[]> {
     if (locale == 'is') {
       locale = 'is-IS'
     }
@@ -91,7 +91,7 @@ export class NotificationsService {
 
   async validateArgs(body: CreateHnippNotificationDto) {
     // check for template
-    const template = await this.getTemplate(body.templateId) // cache ????????????????????????
+    const template = await this.getTemplate(body.templateId, 'is-IS') // cache ????????????????????????
     // check for args
     if (template.args?.length != body.args.length) {
       throw new BadRequestException(
@@ -108,7 +108,7 @@ export class NotificationsService {
   async formatArguments(
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
-  ): Promise<any> {
+  ): Promise<HnippTemplate> {
     const re = /{{[^{}]*}}/
     if (body.args?.length == template.args?.length) {
       // scan object for {{}} for counts
