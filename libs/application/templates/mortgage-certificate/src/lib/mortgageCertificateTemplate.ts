@@ -22,7 +22,7 @@ import {
   exists,
 } from '../util/mortgageCertificateValidation'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   NationalRegistryRealEstateApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
@@ -93,7 +93,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 NationalRegistryRealEstateApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
