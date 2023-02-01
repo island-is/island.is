@@ -170,6 +170,36 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
     },
+    noPrimaryParentTitle: {
+      id: 'pl.applications:no.primary.parent.title',
+      defaultMessage: 'Staðfesting á faðerni barns',
+      description: 'Confirmation of paternity',
+    },
+    noPrimaryParentQuestionOne: {
+      id: 'pl.applications:no.primary.parent.question.one',
+      defaultMessage: 'Er barn að fæðast erlendis?',
+      description: 'Is child being born abroad?',
+    },
+    noPrimaryParentQuestionTwo: {
+      id: 'pl.applications:no.primary.parent.question.two',
+      defaultMessage:
+        'Er barnshafandi foreldri búsett erlendis og/eða ekki með íslenska kennitölu?',
+      description:
+        'Is the pregnant parent living abroad and/or does not have an Icelandic social security number?',
+    },
+    noPrimaryParentQuestionThree: {
+      id: 'pl.applications:no.primary.parent.question.three',
+      defaultMessage:
+        'Á barnshafandi foreldri rétt á fæðingarorlofi á Íslandi?',
+      description:
+        'Is the pregnant parent entitled to parental leave in Iceland?',
+    },
+    noPrimaryParentDatePickerTitle: {
+      id: 'pl.applications:no.primary.parent.date.picker.title',
+      defaultMessage:
+        'Settu inn áætlaðan/raunverulegan fæðingardagur barnsins/barnanna?',
+      description: `Please enter the child's/children's expected/actual date of birth?`,
+    },
     otherParentSubSection: {
       id: 'pl.application:otherParent.subSection',
       defaultMessage: 'Hitt foreldrið',
@@ -323,6 +353,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:no.option.label',
       defaultMessage: 'Nei',
       description: 'No',
+    },
+    noPrimaryParentLabel: {
+      id: 'pl.application:no.primary.parent.label',
+      defaultMessage: 'Viltu sækja um Faðir án móður umsókn?',
+      description:
+        'Do you want to apply for Father without mother application?',
     },
     rightsSection: {
       id: 'pl.application:rights.section',
@@ -997,10 +1033,10 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hvað viltu nota hátt hlutfall af persónuafslættinum?',
       description: 'What percentage do you want to use?',
     },
-    zeroToHundred: {
-      id: 'pl.application:personal.allowance.zeroToHundred',
-      defaultMessage: 'Stimplaðu inn tölu á bilinu 0-100',
-      description: 'Type a number from 0 to 100',
+    oneToHundred: {
+      id: 'pl.application:personal.allowance.oneToHundred',
+      defaultMessage: 'Skráðu tölu á bilinu 1-100',
+      description: 'Type a number between 1 and 100',
     },
     allowanceUsage: {
       id: 'pl.application:allowance.allowance.usage',
@@ -1794,13 +1830,13 @@ export const parentalLeaveFormMessages: MessageDir = {
   }),
 
   attachmentScreen: defineMessages({
-    genericTitle: {
-      id: 'pl.application:attachmentscreen.genericTitle',
+    title: {
+      id: 'pl.application:attachmentscreen.title',
       defaultMessage: `Viðbótargögn með umsókn`,
       description: `Additional documentation for application `,
     },
-    genericDescription: {
-      id: 'pl.application:attachmentscreen.genericDescription',
+    description: {
+      id: 'pl.application:attachmentscreen.description',
       defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Til dæmis ef barn tveggja mæðra var getið með tæknifrjóvgun þarf að skila staðfestingu frá Livio að um tæknifrjóvgun sé að ræða með samþykki beggja aðila. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Here you can upload additional documentation for the Parental Leave Fund. For example, if the child of two mothers was conceived via artificial insemination, the parents need to upload confirmation from Livio that artifical insemination was undergone with the consent of both parents. Note that the document needs to be on .pdf format`,
     },
@@ -1834,15 +1870,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
     },
-    fatherWithoutMotherTitle: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
-      defaultMessage: 'Vottorð frá heilsugæslu',
-      description: 'father withouy mother title',
+    parentWithoutBirthParentTitle: {
+      id: 'pl.application:attachmentscreen.parent.without.birth.parent.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation',
     },
-    fatherWithoutMotherDescription: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherDescription',
+    parentWithoutBirthParentDescription: {
+      id:
+        'pl.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
-        'Faðir þarf að skila inn fæðingarvottorði frá heilsugæslu sem staðfestir faðerni barns. Athugaðu að skjalið þarf að vera á .pdf formi',
+        'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afrit af staðfestingu þess lútandi með vottorði um áætlaðan fæðingardag. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',
     },
     permanentFostercareTitle: {
@@ -1855,6 +1892,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Vegna varanlegs fósturs þarf að skila inn staðfestingu frá sveitarfélagi. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'Permanent forstcare description',
+    },
+    additionalDocumentRequired: {
+      id: 'pl.application:attachmentscreen.additionalDocumentRequired',
+      defaultMessage:
+        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögn á næstu síðu',
+      description:
+        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
+    },
+    additionalDocumentRequiredTag: {
+      id: 'pl.application:attachmentscreen.additionalDocumentRequiredTag',
+      defaultMessage: 'Vantar',
+      description: 'Missing',
+    },
+    additionalDocumentsEditSubmit: {
+      id: 'pl.application:attachmentscreen.additionalDocumentsEditSubmit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
     },
   }),
 }
@@ -2276,6 +2330,13 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Ekki er hægt að óska eftir dögum ef ekki er nýttur allur sameiginlegur réttur vegna fjölbura. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to request days!',
+  },
+  notAllowedToGiveRightsOtherParentNotAllowed: {
+    id:
+      'pl.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
+    defaultMessage:
+      'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
+    description: 'Unable to transfer days!',
   },
 })
 
