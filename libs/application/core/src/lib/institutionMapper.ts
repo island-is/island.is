@@ -6,6 +6,7 @@ import {
 export const institutionMapper = {
   [ApplicationTypes.EXAMPLE]: InstitutionTypes.STAFRAENT_ISLAND,
   [ApplicationTypes.PASSPORT]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.PASSPORT_ANNULMENT]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.DRIVING_LICENSE]: InstitutionTypes.RIKISLOGREGLUSTJORI,
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]:
     InstitutionTypes.SAMGONGUSTOFA,

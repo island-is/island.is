@@ -19,9 +19,10 @@ import {
   UserProfileApi,
   DistrictsApi,
   YES,
+  PassportsApi,
 } from '@island.is/application/types'
 import {
-  IdentityDocumentApi,
+  // IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import {
@@ -64,7 +65,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: IdentityDocumentApi,
+              provider: PassportsApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),

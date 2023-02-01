@@ -23,20 +23,6 @@ export class PassportService extends BaseTemplateApiService {
     super(ApplicationTypes.PASSPORT)
   }
 
-  async identityDocument({ application, auth }: TemplateApiModuleActionProps) {
-    const identityDocument = await this.passportApi.getCurrentPassport(auth)
-    if (!identityDocument) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.failedDataProvider,
-          summary: coreErrorMessages.errorDataProvider,
-        },
-        400,
-      )
-    }
-    return identityDocument
-  }
-
   async createCharge({
     application: { id, answers },
     auth,

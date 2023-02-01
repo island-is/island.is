@@ -8,11 +8,12 @@ export {
   UserProfileApi,
   MockProviderApi,
   DistrictsApi,
+  PassportsApi,
 } from '@island.is/application/types'
 
-export const IdentityDocumentApi = defineTemplateApi({
-  action: 'identityDocument',
-})
+// export const IdentityDocumentApi = defineTemplateApi({
+//   action: 'identityDocument',
+// })
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {

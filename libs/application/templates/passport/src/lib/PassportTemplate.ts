@@ -11,11 +11,12 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   DistrictsApi,
+  PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
-  IdentityDocumentApi,
+  // IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { m } from '../lib/messages'
@@ -83,7 +84,7 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
-                IdentityDocumentApi,
+                PassportsApi,
                 DistrictsApi,
               ],
             },
@@ -163,7 +164,7 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
-                IdentityDocumentApi,
+                PassportsApi,
                 DistrictsApi,
               ],
             },
