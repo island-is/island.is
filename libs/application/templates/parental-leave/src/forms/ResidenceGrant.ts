@@ -1,52 +1,35 @@
 import {
   buildCustomField,
   buildDateField,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
-import { Form } from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
 import {
-  inReviewFormMessages,
   parentalLeaveFormMessages,
 } from '../lib/messages'
-import { residentGrantIsOpenForApplication } from '../lib/parentalLeaveUtils'
 
 export const ResidenceGrant: Form = buildForm({
-  id: 'residenceGrantApplication',
-  title: inReviewFormMessages.formTitle,
+  id: 'ParentalLeaveResidenceGrant',
+  title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
   logo: Logo,
+  mode: FormModes.IN_PROGRESS, // is this correct mode? or should we skip this?
   children: [
     buildSection({
-      id: 'residenceGrantApplication',
-      title: '',
+      id: 'residentGrantApplication',
+      title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantApplyTitle,
       children: [
-        buildCustomField({
-          id: 'residenceGrantApplication.rights',
-          title: 'Réttur til dvalarstyrks',
-          description: '',
-          defaultValue: 'rights',
-          component: 'ResidenceGrantApplication',
-        }),
-        buildCustomField({
-          id: 'residenceGrantApplication.application',
-          title: 'Umsókn um dvalarstyrk',
-          description:
-            'Ekki er hægt að sækja um styrkinn fyrr en eftir að barn er fætt. Sækja skal um innan sex mánaða frá fæðingardegi barns.',
-          defaultValue: 'apply',
-          component: 'ResidenceGrantApplication',
-        }),
-        buildCustomField({
-          id: 'residenceGrantApplication.payment',
-          title: 'Greiðsla dvalarstyrks',
-          description:
-            'Greiðsla dvalarstyrks er innt af hendi eftir fæðingardag barns. Réttur til styrks fellur niður sex mánuðum eftir fæðingardag barns hafi umsókn ekki borist Vinnumálastofnun fyrir þann tíma.',
-          defaultValue: 'payment',
-          component: 'ResidenceGrantApplication',
+        buildDescriptionField({
+          id: 'residenceGrantApplication.information',
+          title: 'Hvað á að vera hér',
+          description: 'upplýsingar '
         }),
         buildMultiField({
           title: 'DateField',
@@ -72,32 +55,45 @@ export const ResidenceGrant: Form = buildForm({
           ],
         }),
         buildFileUploadField({
-          condition: (application) => {
-            const { dateOfBirth } = application
-            if (
-              dateOfBirth &&
-              residentGrantIsOpenForApplication(`${dateOfBirth}`)
-            )
-              return true
-            return false
-          },
-          id: 'fileUpload.dvalarstyrk',
-          title: 'Umsókn um dvalarstyrk',
-          description: 'File upload',
+          id: 'residenceGrantApplication.fileUpload',
+          title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantAttachmentTitle,
+          introduction: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantAttachmentDescription,
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText: '',
           uploadAccept: '.pdf',
-          uploadHeader: 'Hladdu inn umsókn þinni hér',
+          uploadHeader: '',
           uploadDescription: '',
           uploadButtonLabel:
             parentalLeaveFormMessages.selfEmployed.attachmentButton,
         }),
-        buildCustomField({
-          id: 'residenceGrantApplication.custom',
-          defaultValue: 'submit',
-          title: '',
-          description: '',
-          component: 'ResidenceGrantApplication',
+        // buildCustomField({
+        //   id: 'residenceGrantApplication',
+        //   defaultValue: 'submit',
+        //   title: '',
+        //   description: '',
+        //   component: 'ResidenceGrantApplication',
+        // }),
+        buildSubmitField({
+          id: 'residenceGrantApplication.submit',
+          placement: 'footer',
+          title: parentalLeaveFormMessages.confirmation.title,
+          actions: [
+            {
+              event: 'ABORT',
+              name: parentalLeaveFormMessages.confirmation.cancel,
+              type: 'reject',
+            },
+            {
+              event: 'SUBMIT',
+              name: parentalLeaveFormMessages.confirmation.title,
+              type: 'primary',
+            },
+          ],
+        }),
+        buildCustomField({ 
+          id: 'residenceGrantApplication.thankYou',
+          title: parentalLeaveFormMessages.finalScreen.title,
+          component: 'Conclusion',
         }),
       ],
     }),

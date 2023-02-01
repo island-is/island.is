@@ -158,15 +158,14 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   ) {
     steps.push({
       state: ReviewSectionState.optionalAction,
-      title: 'Opið er fyrir umsókn',
-      description: 'Nú er hægt að sækja um dvalarstyrkur',
+      title: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle),
+      description: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantOpenDescription),
     })
   } else {
     steps.push({
       state: ReviewSectionState.prerequisites,
-      title: 'Umsóknin er ekki opin ennþá',
-      description:
-        'Þetta forrit opnast eftir að barnið fæðist. Smelltu til að fá frekari upplýsingar.',
+      title: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle),
+      description: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantClosedDescription),
     })
   }
 

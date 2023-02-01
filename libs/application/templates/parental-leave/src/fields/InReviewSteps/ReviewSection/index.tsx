@@ -3,10 +3,11 @@ import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Link, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
 import { residentGrantIsOpenForApplication } from '../../../lib/parentalLeaveUtils'
+import { parentalLeaveFormMessages } from '../../..'
 
 export enum ReviewSectionState {
   prerequisites = 'Prerequisites',
@@ -89,15 +90,34 @@ const ReviewSection: FC<ReviewSectionProps> = ({
               state === ReviewSectionState.prerequisites) && (
               <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
                 <Box>
-                  <Button
-                    variant="text"
-                    icon="arrowForward"
-                    onClick={() => notifyParentOnClickEvent()}
-                  >
-                    {canApplyForResidenceGrant
-                      ? 'Sækja um dvalarstyrk'
-                      : 'Upplýsingar um þetta forrit'}
-                  </Button>
+                  {canApplyForResidenceGrant ? (
+                    <Button
+                      variant="text"
+                      size="small"
+                      icon="arrowForward"
+                      onClick={() =>
+                        notifyParentOnClickEvent()
+                      }
+                    >
+                      {formatMessage(
+                        parentalLeaveFormMessages.residenceGrantMessage
+                          .residenceGrantApplyTitle,
+                      )}
+                    </Button>
+                  ) : (
+                    <Link
+                      href={
+                        'https://www.vinnumalastofnun.is/faedingarorlofssjodur/dvalarstyrkur'
+                      }
+                    >
+                      <Button variant="text" size="small" icon="arrowForward">
+                        {formatMessage(
+                          parentalLeaveFormMessages.residenceGrantMessage
+                            .residenceGrantActionLinkTitle,
+                        )}
+                      </Button>
+                    </Link>
+                  )}
                 </Box>
               </Box>
             )}
