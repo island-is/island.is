@@ -16,8 +16,8 @@ const SubscriptionBox = () => {
     >
       <Text variant="h3">{'Skrá áskrift'}</Text>
       <Text variant="default">
-        {''} Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus
-        exercitationem placeat necessitatibus.....
+        {''} Skráðu þig í áskrift af þessu máli. Þú færð e-mail til
+        staðfestingar.
       </Text>
       <Box paddingTop={2} paddingBottom={1}>
         <form>

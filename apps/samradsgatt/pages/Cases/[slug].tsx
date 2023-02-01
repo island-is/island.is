@@ -7,6 +7,7 @@ import {
   Text,
   Breadcrumbs,
   Divider,
+  CategoryCard,
 } from '@island.is/island-ui/core'
 import RightSideColumn from '../../components/CaseDetails/RightSideColumn/RightSideColumn'
 import { Case, Advice } from '../../types/viewModels'
@@ -128,7 +129,31 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
         </GridColumn>
 
         <GridColumn span={'3/12'}>
-          <RightSideColumn chosenCase={chosenCase} />
+          <Box paddingY={8}>
+            <Box padding={3}>
+              <CategoryCard
+                heading="Skjöl til samráðs"
+                text={chosenCase.shortDescription}
+                // TODO change size from 18 to 16
+              />
+            </Box>
+            <Box padding={3}>
+              <CategoryCard
+                heading="Aðillar sem hafa fengið boð um samráð á máli."
+                text="Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til að skrifa umsögn um málið"
+              />
+            </Box>
+            <Box padding={3}>
+              <CategoryCard
+                heading="Ábyrgðaraðili"
+                text={
+                  `${chosenCase.contactName}` +
+                  ` ` +
+                  `${chosenCase.contactEmail}`
+                }
+              />
+            </Box>
+          </Box>
         </GridColumn>
       </GridRow>
     </GridContainer>

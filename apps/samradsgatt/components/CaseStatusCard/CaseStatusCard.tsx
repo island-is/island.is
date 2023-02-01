@@ -7,10 +7,8 @@ const CaseStatusCard = () => {
     <Box paddingTop={4}>
       <CategoryCard
         heading="Niðurstöður í vinnslu"
-        text=" Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-          Repellat dolorem perspiciatis aperiam. Itaque, ipsa ea.
-          Nesciunt labore eveniet, ducimus ullam illo saepe animi. Nemo,
-          fugiat? Corrupti rem expedita magni totam."
+        text=" Umsagnarfrestur er liðinn (01.01.2023–13.01.2023). Umsagnir voru birtar jafnóðum og þær bárust. Skoða umsagnir. Niðurstöður samráðsins verða birtar þegar unnið hefur verið úr þeim ábendingum og athugasemdum sem bárust."
+        // TODO: change text to 16px
       />
     </Box>
   )
