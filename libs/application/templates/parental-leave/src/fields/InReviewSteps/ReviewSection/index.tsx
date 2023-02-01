@@ -22,9 +22,7 @@ type ReviewSectionProps = {
   title: string
   description: string
   state?: ReviewSectionState
-  notifyParentOnClickEvent?: (
-    event: 'RESIDENCEGRANTAPPLICATIONOPEN' | 'RESIDENCEGRANTAPPLICATIONCLOSED',
-  ) => void
+  notifyParentOnClickEvent?: () => void
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -94,13 +92,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                   <Button
                     variant="text"
                     icon="arrowForward"
-                    onClick={() =>
-                      notifyParentOnClickEvent(
-                        canApplyForResidenceGrant
-                          ? 'RESIDENCEGRANTAPPLICATIONOPEN'
-                          : 'RESIDENCEGRANTAPPLICATIONCLOSED',
-                      )
-                    }
+                    onClick={() => notifyParentOnClickEvent()}
                   >
                     {canApplyForResidenceGrant
                       ? 'Sækja um dvalarstyrk'

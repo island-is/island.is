@@ -279,7 +279,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               application={application}
               index={index + 1}
               {...step}
-              notifyParentOnClickEvent={(e) => handleSubmit(e)}
+              notifyParentOnClickEvent={() =>
+                handleSubmit('RESIDENCEGRANTAPPLICATION')
+              }
             />
           ))}
         </Box>

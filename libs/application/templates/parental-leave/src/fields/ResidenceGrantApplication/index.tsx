@@ -9,6 +9,7 @@ import WomanWithLaptopIllustration from '../../assets/Images/WomanWithLaptopIllu
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { States } from '../../constants'
 
 const ResidentGrantApplication: FC<FieldBaseProps> = ({
   application,
@@ -60,7 +61,11 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
       'residenceGrantNotOpen',
       'residenceGrantError',
     ],
-    nothing: ['residenceGrantError', 'residenceGrantError'],
+    nothing: [
+      'residenceGrantError',
+      'residenceGrantError',
+      'residenceGrantError',
+    ],
   }
   const { formatMessage } = useLocale()
 
@@ -80,18 +85,16 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
     (dateOfBirth && residentGrantIsOpenForApplication(`${dateOfBirth}`)) ||
     false
 
-  console.log(canApplyForResidenceGrant)
 
-  const handleSubmitApplication = useCallback(async (reject?: boolean) => {
+  const handleSubmitApplication = useCallback(async (event?: string) => {
     const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
-          event: reject
-            ? 'REJECT'
-            : canApplyForResidenceGrant
-            ? 'SUBMIT'
-            : eventsMap[`${previousState}`],
+          event:
+            event === 'APPROVE'
+              ? 'APPROVE'
+              : `${eventsMap[`${previousState}`]}${event || ''}`,
           answers: rest,
         },
       },
@@ -118,8 +121,23 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
     parentalLeaveFormMessages.residenceGrantMessage[
       descriptionMap[defaultValue][canApplyForResidenceGrant ? 0 : 1]
     ]
-  console.log(application)
-  return (
+
+  return application.state ===
+    States.RESIDENCE_GRAND_APPLICATION_IN_PROGRESS ? (
+    <Box>
+      <Box>
+        <Box>
+          <Button variant="ghost" onClick={() => handleSubmitApplication()}>
+            {
+              parentalLeaveFormMessages.residenceGrantMessage[
+                'residenceGrantSubmit'
+              ].defaultMessage
+            }
+          </Button>
+        </Box>
+      </Box>
+    </Box>
+  ) : (
     <Box>
       {!displayButtons && (
         <Box>
@@ -157,54 +175,34 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
           </Text>
           <FieldDescription description={formatMessage(submitDescription)} />
           <Box>
-            {canApplyForResidenceGrant ? (
-              <Box
-                marginTop={5}
-                display={'flex'}
-                justifyContent={'spaceAround'}
-              >
-                <Box>
-                  <Button
-                    variant="ghost"
-                    colorScheme="destructive"
-                    onClick={() => handleSubmitApplication(true)}
-                  >
-                    {
-                      parentalLeaveFormMessages.residenceGrantMessage[
-                        'residenceGrantReject'
-                      ].defaultMessage
-                    }
-                  </Button>
-                </Box>
-                <Box>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSubmitApplication()}
-                  >
-                    {
-                      parentalLeaveFormMessages.residenceGrantMessage[
-                        'residenceGrantSubmit'
-                      ].defaultMessage
-                    }
-                  </Button>
-                </Box>
-              </Box>
-            ) : (
+            <Box marginTop={5} display={'flex'} justifyContent={'spaceAround'}>
               <Box>
-                <Box marginTop={5} display={'flex'} justifyContent={'center'}>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSubmitApplication()}
-                  >
-                    {
-                      parentalLeaveFormMessages.residenceGrantMessage[
-                        'residenceGrantGoBack'
-                      ].defaultMessage
-                    }
-                  </Button>
-                </Box>
+                <Button
+                  variant="ghost"
+                  colorScheme="destructive"
+                  onClick={() => handleSubmitApplication('REJECT')}
+                >
+                  {
+                    parentalLeaveFormMessages.residenceGrantMessage[
+                      'residenceGrantReject'
+                    ].defaultMessage
+                  }
+                </Button>
               </Box>
-            )}
+              <Box>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleSubmitApplication('APPROVE')}
+                >
+                  {
+                    parentalLeaveFormMessages.residenceGrantMessage[
+                      'residenceGrantSubmit'
+                    ].defaultMessage
+                  }
+                </Button>
+              </Box>
+            </Box>
+
             <Box>
               <DottetBackgroundImage
                 field={field}

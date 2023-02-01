@@ -1,7 +1,9 @@
 import {
   buildCustomField,
+  buildDateField,
   buildFileUploadField,
   buildForm,
+  buildMultiField,
   buildSection,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
@@ -15,23 +17,23 @@ import {
 import { residentGrantIsOpenForApplication } from '../lib/parentalLeaveUtils'
 
 export const ResidenceGrant: Form = buildForm({
-  id: 'ParentalLeaveInReview',
+  id: 'residenceGrantApplication',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
   children: [
     buildSection({
-      id: 'residentGrantApplication',
+      id: 'residenceGrantApplication',
       title: '',
       children: [
         buildCustomField({
-          id: 'residenceGrantApplication',
+          id: 'residenceGrantApplication.rights',
           title: 'Réttur til dvalarstyrks',
           description: '',
           defaultValue: 'rights',
           component: 'ResidenceGrantApplication',
         }),
         buildCustomField({
-          id: 'residenceGrantApplication',
+          id: 'residenceGrantApplication.application',
           title: 'Umsókn um dvalarstyrk',
           description:
             'Ekki er hægt að sækja um styrkinn fyrr en eftir að barn er fætt. Sækja skal um innan sex mánaða frá fæðingardegi barns.',
@@ -39,12 +41,35 @@ export const ResidenceGrant: Form = buildForm({
           component: 'ResidenceGrantApplication',
         }),
         buildCustomField({
-          id: 'residenceGrantApplication',
+          id: 'residenceGrantApplication.payment',
           title: 'Greiðsla dvalarstyrks',
           description:
             'Greiðsla dvalarstyrks er innt af hendi eftir fæðingardag barns. Réttur til styrks fellur niður sex mánuðum eftir fæðingardag barns hafi umsókn ekki borist Vinnumálastofnun fyrir þann tíma.',
           defaultValue: 'payment',
           component: 'ResidenceGrantApplication',
+        }),
+        buildMultiField({
+          title: 'DateField',
+          id: 'dvalarstyrk',
+          description:
+            'Add the date form when you wish to apply for Dvalastyrkur',
+          space: 2,
+          children: [
+            buildDateField({
+              id: 'dvalarstyrk.dateFrom',
+              title: 'From',
+              placeholder: '',
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildDateField({
+              id: 'dvalarstyrk.dateTo',
+              title: 'To',
+              placeholder: '',
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+          ],
         }),
         buildFileUploadField({
           condition: (application) => {
@@ -68,7 +93,7 @@ export const ResidenceGrant: Form = buildForm({
             parentalLeaveFormMessages.selfEmployed.attachmentButton,
         }),
         buildCustomField({
-          id: 'residenceGrantApplication',
+          id: 'residenceGrantApplication.custom',
           defaultValue: 'submit',
           title: '',
           description: '',
