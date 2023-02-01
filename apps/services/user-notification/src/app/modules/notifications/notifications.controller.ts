@@ -1,4 +1,11 @@
-import { Inject } from '@nestjs/common'
+import {
+  CacheInterceptor,
+  CACHE_MANAGER,
+  Get,
+  Inject,
+  UseInterceptors,
+} from '@nestjs/common'
+import { Cache } from 'cache-manager'
 import {
   Controller,
   Post,
@@ -54,12 +61,13 @@ const validateMessage = async (body: Request['body']): Promise<Message> => {
 }
 
 @Controller('notifications')
-// @UseInterceptors(CacheInterceptor) // auto-caching GET responses
+@UseInterceptors(CacheInterceptor) // auto-caching GET responses
 @ApiExtraModels(NewDocumentMessage)
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Post()
@@ -78,5 +86,20 @@ export class NotificationsController {
     const id = await this.queue.add(message)
     this.logger.info('Message queued', { messageId: id, ...message })
     return { id }
+  }
+
+  @Get('/test')
+  async test(): Promise<any> {
+    return { date: new Date().toISOString() }
+    // const key = "rabbz"
+    // const value = await this.cacheManager.get(key)
+    // if(value){
+    //  return value
+
+    // } else{
+    //   const value = {date: new Date().toISOString()}
+    //   this.cacheManager.set(key, value, {ttl: 10});
+    //   return value
+    // }
   }
 }

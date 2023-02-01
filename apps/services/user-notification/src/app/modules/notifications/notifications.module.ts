@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { CacheModule, Module } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
 import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
@@ -17,9 +17,16 @@ import {
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import * as userProfile from '@island.is/clients/user-profile'
+// import { CacheModule as NestCacheModule, DynamicModule } from '@nestjs/common'
 
+// let CacheModule: DynamicModule
+// CacheModule = NestCacheModule.register()
 @Module({
   imports: [
+    CacheModule.register({
+      ttl: 60,
+      max: 100,
+    }),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({

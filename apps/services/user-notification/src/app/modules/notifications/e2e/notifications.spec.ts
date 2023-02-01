@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { INestApplication, Injectable } from '@nestjs/common'
+import { CacheModule, INestApplication, Injectable } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { NotificationsController } from '../notifications.controller'
 import { NotificationsWorkerService } from '../notificationsWorker.service'
@@ -46,6 +46,10 @@ describe('Notifications API', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
+        CacheModule.register({
+          ttl: 60,
+          max: 100,
+        }),
         LoggingModule,
         QueueModule.register({
           client: environment.sqsConfig,
@@ -76,7 +80,7 @@ describe('Notifications API', () => {
       type: MessageTypes.NewDocumentMessage,
       organization: 'Skatturinn',
       // eslint-disable-next-line local-rules/disallow-kennitalas
-      recipient: '0409084390',
+      recipient: '0409084390', // this valid kt needed for test to pass
       documentId: '123',
     }
 
