@@ -11,7 +11,7 @@ test.describe('Admin portal', () => {
     context = await session({
       browser: browser,
       homeUrl: `/stjornbord`,
-      phoneNumber: '0103019',
+      phoneNumber: '0102399',
       idsLoginOn: true,
     })
   })
