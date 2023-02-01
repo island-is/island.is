@@ -9,7 +9,6 @@ import {
   Divider,
   CategoryCard,
 } from '@island.is/island-ui/core'
-import RightSideColumn from '../../components/CaseDetails/RightSideColumn/RightSideColumn'
 import { Case, Advice } from '../../types/viewModels'
 import CaseTimeline from '../../../../apps/samradsgatt/components/CaseTimeline/CaseTimeline'
 import SubscriptionBox from '../../../../apps/samradsgatt/components/SubscriptionBox/SubscriptionBox'
