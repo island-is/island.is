@@ -12,6 +12,7 @@ import {
   PdfViewer,
   Button,
   Tooltip,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
@@ -322,7 +323,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
       // Form values
       form.method = 'post'
-      // TODO: Use correct url
       form.action = activeDocument?.downloadUrl ?? ''
       form.target = '_blank'
 
@@ -340,6 +340,71 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
       form.submit()
       document.body.removeChild(form)
     }
+  }
+
+  const PDF = () => {
+    return (
+      <>
+        <Box display="flex" flexDirection="row" paddingBottom={2}>
+          <Tooltip placement="top" as="span" text={formatMessage(m.zoomOut)}>
+            <Button
+              circle
+              icon="remove"
+              variant="ghost"
+              size="small"
+              onClick={() => setScalePDF(scalePDF - 0.1)}
+            />
+          </Tooltip>
+          <Box
+            paddingX={1}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text variant="small">{(scalePDF * 100).toFixed(0) + '%'}</Text>
+          </Box>
+          <Tooltip placement="top" as="span" text={formatMessage(m.zoomIn)}>
+            <Button
+              circle
+              icon="add"
+              variant="ghost"
+              size="small"
+              onClick={() => setScalePDF(scalePDF + 0.1)}
+            />
+          </Tooltip>
+          <Box paddingLeft={2}>
+            <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
+              <Button
+                variant="ghost"
+                size="small"
+                circle
+                icon="download"
+                onClick={() => downloadFile()}
+              />
+            </Tooltip>
+          </Box>
+          <Box paddingLeft={2}>
+            <Tooltip placement="top" as="span" text={formatMessage(m.print)}>
+              <Button
+                variant="ghost"
+                size="small"
+                circle
+                icon="print"
+                onClick={() => downloadFile()}
+              />
+            </Tooltip>
+          </Box>
+        </Box>
+        <Box overflow="auto" boxShadow="subtle">
+          <PdfViewer
+            file={`data:application/pdf;base64,${activeDocument?.document.content}`}
+            renderMode="canvas"
+            showAllPages
+            scale={scalePDF}
+          />
+        </Box>
+      </>
+    )
   }
 
   const goBack = () => {
@@ -360,7 +425,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     )
   }
 
-  if (loading && !error && filteredDocuments.length) {
+  if (loading && !error) {
     return (
       <Box
         display="flex"
@@ -400,7 +465,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         <GridColumn span="5/12">{goBack()}</GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span="5/12" paddingBottom={3}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={3}
+        >
           <DocumentsFilter
             filterValue={filterValue}
             categories={categoriesAvailable}
@@ -427,26 +495,35 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             documentsLength={totalCount}
           />
         </GridColumn>
-        {activeDocument?.document && (
-          <GridColumn span="7/12">
-            <Box paddingLeft={8}>
-              <Text variant="h5" paddingBottom={1}>
-                {activeDocument.subject}
-              </Text>
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-              >
-                <Text variant="medium">{activeDocument.sender}</Text>
-                <Text variant="medium">{activeDocument.date}</Text>
+        <Hidden below="md">
+          {activeDocument?.document && (
+            <GridColumn span="7/12">
+              <Box paddingLeft={8}>
+                <Text variant="h5" paddingBottom={1}>
+                  {activeDocument.subject}
+                </Text>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="spaceBetween"
+                >
+                  <Text variant="medium">{activeDocument.sender}</Text>
+                  <Text variant="medium">{activeDocument.date}</Text>
+                </Box>
               </Box>
-            </Box>
-          </GridColumn>
-        )}
+            </GridColumn>
+          )}
+        </Hidden>
       </GridRow>
+      <Hidden above="md">
+        <GridRow>
+          <GridColumn span="12/12" position="relative">
+            <Box>{activeDocument?.document.content && <Box>{PDF()}</Box>}</Box>
+          </GridColumn>
+        </GridRow>
+      </Hidden>
       <GridRow>
-        <GridColumn span="5/12">
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <Box marginTop={[2, 0]}>
             {loading && <CardLoader />}
             <Stack space={2}>
@@ -471,88 +548,18 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             style={{ top: SERVICE_PORTAL_HEADER_HEIGHT_LG }}
             paddingLeft={8}
           >
-            {activeDocument?.document.content ? (
-              <Box>
-                <Box display="flex" flexDirection="row" paddingBottom={2}>
-                  <Tooltip
-                    placement="top"
-                    as="span"
-                    text={formatMessage(m.zoomOut)}
-                  >
-                    <Button
-                      circle
-                      icon="remove"
-                      variant="ghost"
-                      size="small"
-                      onClick={() => setScalePDF(scalePDF - 0.1)}
-                    />
-                  </Tooltip>
-                  <Box paddingX={1}>
-                    <Text variant="small">
-                      {(scalePDF * 100).toFixed(0) + '%'}
-                    </Text>
-                  </Box>
-                  <Tooltip
-                    placement="top"
-                    as="span"
-                    text={formatMessage(m.zoomIn)}
-                  >
-                    <Button
-                      circle
-                      icon="add"
-                      variant="ghost"
-                      size="small"
-                      onClick={() => setScalePDF(scalePDF + 0.1)}
-                    />
-                  </Tooltip>
-                  <Box paddingLeft={2}>
-                    <Tooltip
-                      placement="top"
-                      as="span"
-                      text={formatMessage(m.download)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        circle
-                        icon="download"
-                        onClick={() => downloadFile()}
-                      />
-                    </Tooltip>
-                  </Box>
-                  <Box paddingLeft={2}>
-                    <Tooltip
-                      placement="top"
-                      as="span"
-                      text={formatMessage(m.print)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        circle
-                        icon="print"
-                        onClick={() => downloadFile()}
-                      />
-                    </Tooltip>
-                  </Box>
-                </Box>
-                <Box overflow="auto" boxShadow="subtle">
-                  <PdfViewer
-                    file={`data:application/pdf;base64,${activeDocument?.document.content}`}
-                    renderMode="canvas"
-                    showAllPages
-                    scale={scalePDF}
-                  />
-                </Box>
-              </Box>
-            ) : (
-              <NoPDF />
-            )}
+            <Hidden below="md">
+              {activeDocument?.document.content ? (
+                <Box>{PDF()}</Box>
+              ) : (
+                <NoPDF />
+              )}
+            </Hidden>
           </Box>
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span="5/12">
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           {filteredDocuments && (
             <Box marginTop={4}>
               <Pagination

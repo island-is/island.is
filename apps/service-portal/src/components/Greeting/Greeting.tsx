@@ -22,7 +22,10 @@ const Greeting: FC<{}> = () => {
   return (
     <GridContainer>
       <GridRow className={styles.greetingContainer} marginTop={4}>
-        <GridColumn span="5/12" offset={['0', '0', '0', '1/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          offset={['0', '0', '0', '1/12']}
+        >
           <Box
             marginTop={[2, 3, 4]}
             paddingLeft={[2, 2, 2, 0]}

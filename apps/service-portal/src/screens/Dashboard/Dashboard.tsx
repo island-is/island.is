@@ -26,11 +26,11 @@ import * as styles from './Dashboard.css'
 import cn from 'classnames'
 
 export const Dashboard: FC<{}> = () => {
-  const location = useLocation()
   const { unreadCounter } = useListDocuments()
-  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
+  const location = useLocation()
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
   useEffect(() => {
     PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
@@ -108,12 +108,12 @@ export const Dashboard: FC<{}> = () => {
   return (
     <Box>
       <Greeting />
-      <Box paddingTop={[3, 3, 3, 6]} marginBottom={3}>
+      <Box paddingTop={[0, 0, 0, 6]} marginBottom={3}>
         <GridContainer>
           <GridRow>{displayCards(true)}</GridRow>
         </GridContainer>
       </Box>
-      <Box paddingTop={6}>
+      <Box paddingTop={[0, 0, 0, 6]}>
         <GridContainer>
           <GridRow>
             <GridColumn offset={['0', '0', '0', '1/12']}>
@@ -127,14 +127,6 @@ export const Dashboard: FC<{}> = () => {
           </GridRow>
         </GridContainer>
       </Box>
-      {/* 
-      {userInfo !== null && !modulesPending && (
-        <WidgetLoader
-          modules={Object.values(modules)}
-          userInfo={userInfo}
-          client={client}
-        />
-      )} */}
     </Box>
   )
 }

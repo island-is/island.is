@@ -6,6 +6,7 @@ import {
   Navigation,
   NavigationItem,
   Hidden,
+  Button,
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
@@ -17,8 +18,6 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocation, matchPath } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import MobileMenu from '../MobileMenu/MobileMenu'
-import { RemoveScroll } from 'react-remove-scroll'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
 import {
   GET_ORGANIZATIONS_QUERY,
@@ -43,7 +42,6 @@ const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const { width } = useWindowSize()
   const [isDashboard, setIsDashboard] = useState(true)
   const [isMailbox, setIsMailbox] = useState(false)
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
@@ -54,13 +52,13 @@ const Layout: FC = ({ children }) => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const activeParent = navigation?.children?.find((item) => item.active)
   useScrollTopOnUpdate([pathname])
-
-  const isMobile = width < theme.breakpoints.sm
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
   const globalBanners = banners.filter((banner) =>
     banner.servicePortalPaths?.includes('*'),
   )
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const mapChildren = (item: ServicePortalNavigationItem): any => {
     if (item.children) {
@@ -132,12 +130,9 @@ const Layout: FC = ({ children }) => {
         {globalBanners.length > 0 && (
           <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
         )}
-        <Header
-          setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
-          sideMenuOpen={sideMenuOpen}
-          position={height ? height : 0}
-        />
-        {!isDashboard && !isMailbox && (
+        <Header position={height ? height : 0} />
+
+        {!isDashboard && !isMailbox && activeParent && (
           <SidebarLayout
             isSticky={true}
             sidebarContent={
@@ -169,7 +164,7 @@ const Layout: FC = ({ children }) => {
                         }}
                         baseId={'service-portal-navigation'}
                         title={formatMessage(
-                          activeParent?.name ?? m.tableOfContents,
+                          activeParent.name ?? m.tableOfContents,
                         )}
                         items={subNavItems ?? []}
                         expand
@@ -182,12 +177,14 @@ const Layout: FC = ({ children }) => {
           >
             <Box as="main" component="main" style={{ marginTop: height }}>
               <ContentBreadcrumbs
-                tag={{
-                  variant: 'purple',
-                  href: currentOrganization?.link ?? '',
-                  children: currentOrganization?.title ?? '',
-                  active: currentOrganization?.link ? true : false,
-                }}
+                tag={
+                  currentOrganization && {
+                    variant: 'purple',
+                    href: currentOrganization?.link ?? '',
+                    children: currentOrganization?.title ?? '',
+                    active: currentOrganization?.link ? true : false,
+                  }
+                }
               />
 
               {children}
@@ -195,9 +192,9 @@ const Layout: FC = ({ children }) => {
           </SidebarLayout>
         )}
 
-        {(isDashboard || isMailbox) && (
+        {(isDashboard || isMailbox || !activeParent) && (
           <Box as="main" component="main" style={{ marginTop: height }}>
-            {!isMailbox && <ContentBreadcrumbs />}
+            {!isMailbox && !activeParent && <ContentBreadcrumbs />}
             {children}
           </Box>
         )}
@@ -208,28 +205,27 @@ const Layout: FC = ({ children }) => {
         setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
         sideMenuOpen={sideMenuOpen}
       />
-      {subNavItems && subNavItems.length > 0 && (
-        <Hidden above="sm">
-          <Box paddingBottom={3}>
-            <Navigation
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <ReactLink to={item?.href}>{link}</ReactLink>
-                ) : (
-                  link
-                )
-              }}
-              baseId={'service-portal-mobile-navigation'}
-              title={
-                activeParent?.name
-                  ? formatMessage(activeParent?.name)
-                  : formatMessage(m.tableOfContents)
-              }
-              items={subNavItems}
-              isMenuDialog={true}
-            />
-          </Box>
-        </Hidden>
+      {isMobile && subNavItems && subNavItems.length > 0 && (
+        <Box paddingTop={3} position="fixed" bottom={0} width="full">
+          <Navigation
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <ReactLink to={item?.href}>{link}</ReactLink>
+              ) : (
+                link
+              )
+            }}
+            baseId={'service-portal-mobile-navigation'}
+            title={
+              activeParent?.name
+                ? formatMessage(activeParent?.name)
+                : formatMessage(m.tableOfContents)
+            }
+            items={subNavItems}
+            isMenuDialog={true}
+            upwards
+          />
+        </Box>
       )}
     </>
   )

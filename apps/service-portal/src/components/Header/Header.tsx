@@ -5,55 +5,38 @@ import {
   Button,
   Logo,
   FocusableBox,
-  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.css'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
+import { UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 interface Props {
   position: number
-  sideMenuOpen: boolean
-  setSideMenuOpen: (set: boolean) => void
 }
-export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
+export const Header = ({ position }: Props) => {
   const { formatMessage } = useLocale()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const { userInfo: user } = useAuth()
   const { unreadCounter } = useListDocuments()
   const navigate = useNavigate()
+  const { width } = useWindowSize()
+
+  const isMobile = width < theme.breakpoints.md
 
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
-
-  // const closeButton = () => {
-  //   return (
-  //     <FocusableBox
-  //       display="flex"
-  //       alignItems="center"
-  //       component="button"
-  //       onClick={() => setSideMenuOpen(false)}
-  //       padding={1}
-  //       borderRadius="circle"
-  //       background="blue100"
-  //       className={styles.closeButton}
-  //     >
-  //       <Icon icon="close" color="blue400" />
-  //     </FocusableBox>
-  //   )
-  // }
 
   return (
     <div className={styles.placeholder}>
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header className={styles.header} style={{ top: position }}>
-        <Box width="full" paddingX={6}>
+        <Box width="full" paddingX={[3, 3, 3, 6, 6]}>
           <Box
             display="flex"
             justifyContent="spaceBetween"
@@ -86,7 +69,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                       icon="mail"
                       iconType="outline"
                     >
-                      {formatMessage(m.documents)}
+                      {!isMobile && formatMessage(m.documents)}
                     </Button>
                   </Link>
                   <Box
@@ -101,7 +84,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                     icon="dots"
                     onClick={() => navigate('/')}
                   >
-                    {formatMessage(m.overview)}
+                    {!isMobile && formatMessage(m.overview)}
                   </Button>
                 </Box>
                 <UserMenu
@@ -109,30 +92,6 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                   setUserMenuOpen={setUserMenuOpen}
                   userMenuOpen={userMenuOpen}
                 />
-                {/* {userMenuOpen && (
-                  <Hidden above="md">
-                    <Box display="flex" flexDirection="row" alignItems="center">
-                      {user && <UserLanguageSwitcher user={user} />}
-                      {closeButton()}
-                    </Box>
-                  </Hidden>
-                )} */}
-
-                {/* {!sideMenuOpen ? (
-                  <Box marginLeft={[1, 2]}>
-                    <Button
-                      variant="utility"
-                      colorScheme="white"
-                      icon="menu"
-                      onClick={() => setSideMenuOpen(true)}
-                    />
-                  </Box>
-                ) : (
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    {user && <UserLanguageSwitcher user={user} />}
-                    {closeButton()}
-                  </Box>
-                )} */}
               </Box>
             </Hidden>
           </Box>
