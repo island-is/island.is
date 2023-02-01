@@ -14,6 +14,7 @@ import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
 import { useDraftingState } from '../state/useDraftingState'
 import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
+import { formatAmendingRegName } from '../utils/formatAmendingRegulationName'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
@@ -35,7 +36,7 @@ export const EditBasics = () => {
         updateState('title', 'Reglugerð um ')
       }
       if (draft.type.value === 'amending') {
-        updateState('title', 'Reglugerð um breytingu á reglugerð um ')
+        updateState('title', formatAmendingRegName(draft))
       }
     }
   }, [draft.type.value])

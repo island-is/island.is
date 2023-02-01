@@ -16,6 +16,8 @@ import {
   RegDraftForm,
 } from '../../state/types'
 import {
+  getDiff,
+  HTMLDump,
   HTMLText,
   PlainText,
   RegName,
@@ -244,6 +246,7 @@ export const EditChange = (props: EditChangeProp) => {
           if (res.errors && res.errors.length > 1) {
             throw res.errors[0]
           }
+          console.log('res', res)
           return { success: true, error: undefined }
         })
         .catch((error) => {
@@ -268,6 +271,25 @@ export const EditChange = (props: EditChangeProp) => {
           if (res.errors && res.errors.length > 1) {
             throw res.errors[0]
           }
+          console.log('res', res)
+
+          const emptyHTML = '' as HTMLText
+          const currentWithChange =
+            (res.data?.updateDraftRegulationChange?.text as
+              | HTMLText
+              | undefined) || emptyHTML
+          const currentWithNoChange = previousRegulation?.text || emptyHTML
+          const diffIt = getDiff(currentWithNoChange, currentWithChange)
+          console.log('getDiff', diffIt)
+          console.log('currentWithNoChange', currentWithNoChange)
+          console.log('currentWithChange', currentWithChange)
+          /**
+           * Finna current-með-change úr res
+           * Finna current-án-change úr previousRegulation
+           * Gera diff með getDiff()
+           * Vista diff í draftingState með actionhandlers + draftingstate
+           * ... finna út úr staðsetningu diffs í EditBasics þegar búið er að pulla diff úr drafting state!
+           */
           return { success: true, error: undefined }
         })
         .catch((error) => {
@@ -382,8 +404,37 @@ export const EditChange = (props: EditChangeProp) => {
     )
   }
 
+  const emptyHTML = '' as HTMLText
+  const prev = previousRegulation?.text || emptyHTML
+  // console.log('cleanupSingleEditorOutput', cleanupSingleEditorOutput)
+  // console.log('importText prev ', importText(prev))
+  // console.log('importText activechange ', importText(activeChange.text.value))
+  // console.log('activeChange', fHtml(previousRegulation?.text || ''))
+  // console.log('change', change)
+  // console.log('previousRegulation', fHtml(activeChange.text.value))
+  // console.log('activeChange importText', tidyUp.html(activeChange.text.value))
+  // console.log(
+  //   'previousRegulation cleanUp.cleanupSingleEditorOutput',
+  //   tidyUp.html(previousRegulation?.text || ''),
+  // )
+  // console.log(
+  //   'getTextContentDiff',
+  //   getDiff(fHtml(prev).value, fHtml(activeChange.text.value).value),
+  // )
+
+  console.log('activeChange', activeChange)
   return (
     <LayoverModal closeModal={closeModal} id="EditChangeModal">
+      <HTMLDump
+        html={
+          `<h3 class="article__title"><del class="diffdel">&nbsp;</del>1. gr. <em class="article__name">Gildissvið.</em><del class="diffdel">&nbsp;</del></h3><del class="diffmod">  </del><p><del class="diffdel">&nbsp;</del>Reglugerð þessi gildir um desemberuppbætur til þeirra sem fá greiddar maka- eða umönnunarbætur á árinu <del class="diffmod">2022. </del><ins class="diffmod">2022.</ins></p><del class="diffmod">  </del><p><del class="diffdel">&nbsp;</del>Tryggingastofnun ríkisins annast framkvæmd <del class="diffmod">reglugerðarinnar. </del><ins class="diffmod">reglugerðarinnar.</ins></p><del class="diffmod">  </del><h3 class="article__title"><del class="diffdel">&nbsp;</del>2. gr. <em class="article__name">Desemberuppbót.</em><del class="diffdel">&nbsp;</del></h3><del class="diffmod">  </del><p><del class="diffdel">&nbsp;</del>Einstaklingur sem hefur fengið greiddar maka- eða umönnunarbætur skv. 5. gr. laga um félagslega aðstoð, nr. 99/2007, á árinu 2022 skal fá greidda desemberuppbót að fjárhæð 54.674 kr. enda hafi greiðsluþegi fengið mánaðarlegar greiðslur allt árið <del class="diffmod">2022. </del><ins class="diffmod">2022.</ins></p><del class="diffmod">  </del><p><del class="diffdel">&nbsp;</del>Greiðsluþegi sem hefur fengið greiddar maka- eða umönnunarbætur skemur en tólf mánuði á árinu 2022 á rétt á hlutfallslegri desemberuppbót skv. 1. mgr. í samræmi við þann tíma sem hann hefur fengið greiðslur á árinu. Miða skal við 1/12 fyrir hvern <del class="diffmod">mánuð. </del><ins class="diffmod">mánuð.</ins></p><del class="diffmod">  </del><h3 class="article__title"><del class="diffdel">&nbsp;</del>3. gr. <em class="article__name">Gildistaka.</em><del class="diffdel">&nbsp;</del></h3><del class="diffmod">  </del><p><del class="diffdel">&nbsp;</del>Reglugerð þessi, sem sett er með stoð í 70. gr., sbr. 69. gr., laga nr. 100/2007, um almannatryggingar, með síðari breytingum, og 2. mgr. 14. gr. laga nr. 99/2007, um félagslega aðstoð, með síðari breytingum, öðlast þegar gildi. Frá sama tíma falla úr gildi reglugerðir nr. 1260/2020, um desemberuppbætur til maka- og umönnunarbótaþega árið 2020 og nr. 1408/2021, um desemberuppbætur til maka- og umönnunarbótaþega árið 2021. <ins class="diffins">2022. 2023. 2024.</ins></p><del class="diffmod">  </del><p class="Dags" style="text-align: center;"><del class="diffdel">&nbsp;</del><em>Félags- og vinnumarkaðsráðuneytinu, 15. desember 2022.</em><del class="diffdel">&nbsp;</del></p><del class="diffmod">  </del><p style="text-align: center;"><del class="diffdel">&nbsp;</del><strong>Guðmundur Ingi Guðbrandsson.</strong><del class="diffdel">&nbsp;</del></p><del class="diffmod">  </del><p style="text-align: right;"><del class="diffdel">&nbsp;</del><em>Jóna Guðný Eyjólfsdóttir.</em><del class="diffdel">&nbsp;</del></p>` as HTMLText
+        }
+      />
+      <HTMLDump
+        html={
+          getDiff(fHtml(prev).value, fHtml(activeChange.text.value).value).diff
+        }
+      />
       {draft && (
         <ReferenceText
           regulation={
