@@ -20,7 +20,7 @@ import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   DeliveryStationsApi,
@@ -94,7 +94,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 DeliveryStationsApi,

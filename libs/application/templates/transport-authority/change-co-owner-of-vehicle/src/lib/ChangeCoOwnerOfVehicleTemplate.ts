@@ -23,7 +23,7 @@ import {
 } from '../shared'
 import { ChangeCoOwnerOfVehicleSchema } from './dataSchema'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
@@ -109,7 +109,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
