@@ -13,14 +13,14 @@ export const CalculateTotalAssets: FC<FieldBaseProps> = ({ application }) => {
   const { setValue } = useFormContext()
 
   const [total] = useState(
-    (getValueViaPath(answers, 'assets.otherAssets.total') as number) +
-      (getValueViaPath(answers, 'assets.money.total') as number) +
-      (getValueViaPath(answers, 'assets.stocks.total') as number) +
-      (getValueViaPath(answers, 'assets.claims.total') as number) +
-      (getValueViaPath(answers, 'assets.bankAccounts.total') as number) +
-      (getValueViaPath(answers, 'assets.inventory.total') as number) +
-      (getValueViaPath(answers, 'assets.vehicles.total') as number) +
-      (getValueViaPath(answers, 'assets.realEstate.total') as number),
+    (getValueViaPath<number>(answers, 'assets.otherAssets.total') || 0) +
+      (getValueViaPath<number>(answers, 'assets.money.total') || 0) +
+      (getValueViaPath<number>(answers, 'assets.stocks.total') || 0) +
+      (getValueViaPath<number>(answers, 'assets.claims.total') || 0) +
+      (getValueViaPath<number>(answers, 'assets.bankAccounts.total') || 0) +
+      (getValueViaPath<number>(answers, 'assets.inventory.total') || 0) +
+      (getValueViaPath<number>(answers, 'assets.vehicles.total') || 0) +
+      (getValueViaPath<number>(answers, 'assets.realEstate.total') || 0),
   )
 
   useEffect(() => {

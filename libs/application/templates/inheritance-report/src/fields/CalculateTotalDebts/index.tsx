@@ -13,11 +13,8 @@ export const CalculateTotalDebts: FC<FieldBaseProps> = ({ application }) => {
   const { setValue } = useFormContext()
 
   const [total] = useState(
-    (getValueViaPath(
-      answers,
-      'debts.domesticAndForeignDebts.total',
-    ) as number) +
-      (getValueViaPath(answers, 'debts.publicCharges.total') as number),
+    (getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total') ||
+      0) + (getValueViaPath<number>(answers, 'debts.publicCharges.total') || 0),
   )
 
   useEffect(() => {

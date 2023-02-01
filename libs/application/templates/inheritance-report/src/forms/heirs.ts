@@ -301,7 +301,7 @@ export const heirs = buildSection({
                     return sum + heir.inheritance
                   },
                   0,
-                ) as number
+                )
 
                 return formatCurrency(String(total))
               },
@@ -320,7 +320,7 @@ export const heirs = buildSection({
                     return sum + heir.taxFreeInheritance
                   },
                   0,
-                ) as number
+                )
 
                 return formatCurrency(String(total))
               },
@@ -339,7 +339,7 @@ export const heirs = buildSection({
                     return sum + heir.taxableInheritance
                   },
                   0,
-                ) as number
+                )
 
                 return formatCurrency(String(total))
               },
@@ -358,7 +358,7 @@ export const heirs = buildSection({
                     return sum + heir.inheritanceTax
                   },
                   0,
-                ) as number
+                )
 
                 return formatCurrency(String(total))
               },

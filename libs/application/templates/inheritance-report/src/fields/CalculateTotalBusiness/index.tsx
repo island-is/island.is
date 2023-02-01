@@ -13,8 +13,8 @@ export const CalculateTotalBusiness: FC<FieldBaseProps> = ({ application }) => {
   const { setValue } = useFormContext()
 
   const [total] = useState(
-    (getValueViaPath(answers, 'business.businessAssets.total') as number) -
-      (getValueViaPath(answers, 'business.businessDebts.total') as number),
+    (getValueViaPath<number>(answers, 'business.businessAssets.total') || 0) -
+      (getValueViaPath<number>(answers, 'business.businessDebts.total') || 0),
   )
 
   useEffect(() => {

@@ -36,10 +36,14 @@ export const ReportFieldsRepeater: FC<
 > = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
-  const error = errors
-    ? (errors[id.replace('.data', '')] as any)?.data ||
-      (errors[id.replace('.data', '')] as any)?.total
-    : undefined
+  const splitId = id.split('.')
+
+  const error =
+    errors && errors[splitId[0]]
+      ? (errors[splitId[0]] as any)[splitId[1]]?.data ||
+        (errors[splitId[0]] as any)?.total
+      : undefined
+
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
@@ -163,7 +167,7 @@ export const ReportFieldsRepeater: FC<
       {fields.map((repeaterField, index) => {
         const fieldIndex = `${id}[${index}]`
         return (
-          <Box position="relative" key={repeaterField.id} marginTop={3}>
+          <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
               <Text variant="h4" marginBottom={2}>
                 {props.repeaterHeaderText + ' ' + (index + 1)}

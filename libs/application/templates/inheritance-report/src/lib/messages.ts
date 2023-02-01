@@ -295,7 +295,7 @@ export const m = defineMessages({
   },
   inventoryTextFieldPlaceholder: {
     id: 'ir.application:inventoryTextFieldPlaceholder',
-    defaultMessage: 'Skráðu inn upplýsingar um innbú hér.',
+    defaultMessage: 'Skráðu inn upplýsingar um innbú hér',
     description: '',
   },
   addInventory: {
