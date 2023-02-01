@@ -73,12 +73,13 @@ describe('IndictmentCountController - Update', () => {
     })
 
     it('should update the indictment count', () => {
-      expect(
-        mockIndictmentCountModel.update,
-      ).toHaveBeenCalledWith(indictmentCountToUpdate, {
-        where: { id: indictmentCountId, caseId },
-        returning: true,
-      })
+      expect(mockIndictmentCountModel.update).toHaveBeenCalledWith(
+        indictmentCountToUpdate,
+        {
+          where: { id: indictmentCountId, caseId },
+          returning: true,
+        },
+      )
       expect(then.result).toBe(updatedIndictmentCount)
     })
   })

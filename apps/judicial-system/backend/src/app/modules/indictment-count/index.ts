@@ -1,1 +1,1 @@
-export { IndictmentCount} from './models/indictmentCount.model'
+export { IndictmentCount } from './models/indictmentCount.model'
