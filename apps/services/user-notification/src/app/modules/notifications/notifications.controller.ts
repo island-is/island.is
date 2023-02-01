@@ -88,18 +88,18 @@ export class NotificationsController {
     return { id }
   }
 
-  @Get('/test')
-  async test(): Promise<any> {
-    return { date: new Date().toISOString() }
-    // const key = "rabbz"
-    // const value = await this.cacheManager.get(key)
-    // if(value){
-    //  return value
+  // @Get('/test')
+  // async test(): Promise<any> {
+  //   return { date: new Date().toISOString() }
+  //   // const key = "rabbz"
+  //   // const value = await this.cacheManager.get(key)
+  //   // if(value){
+  //   //  return value
 
-    // } else{
-    //   const value = {date: new Date().toISOString()}
-    //   this.cacheManager.set(key, value, {ttl: 10});
-    //   return value
-    // }
-  }
+  //   // } else{
+  //   //   const value = {date: new Date().toISOString()}
+  //   //   this.cacheManager.set(key, value, {ttl: 10});
+  //   //   return value
+  //   // }
+  // }
 }
