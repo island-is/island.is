@@ -32,19 +32,20 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
     shortDescription:
       'Drög að frumvarpi til laga vegna tilfærslu fasteingaskrár',
     detailedDescription:
-      'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat dolorem perspiciatis aperiam. Itaque, ipsa ea. Nesciunt labore eveniet, ducimus ullam illo saepe animi. Nemo, fugiat? Corrupti rem expedita magni totam',
+      'Frumvarp þetta mælir fyrir um breytingar á lögum vegna flutnings fasteignaskrár frá Þjóðskrá Íslands til Húsnæðis- og mannvirkjastofnunar. Tilfærslan hefur og fyrst og fremst þann tilgang að þjónusta á vegum hins opinbera á sviði húsnæðismála verður aukin og samhæfð, ásamt því sem breytingin veitir stjórnvöldum aukna yfirsýn til að gera markvissari aðgerðir til að ná jafnvægi á húsnæðismarkaði. Þjóðskrá Íslands mun áfram veita öfluga þjónustu við skráningu einstaklinga í grunnskrám landsins og veitir breytingin jafnframt tækifæri til að skilgreina framtíðarsýn Þjóðskrár með skýrum hætti og með skýrum skilum á milli stofnananna. Í frumvarpinu eru lagðar til breytingar á lögum um skráningu og mat fasteigna nr. 6/2001, lögum um Þjóðskrá Íslands nr. 70/2018 og lögum um Húsnæðis- og mannvirkjastofnun nr. 137/2019, í þeim tilgangi að færa ábyrgð á fasteignaskrá frá Þjóðskrá Íslands til Húsnæðis- og mannvirkjastofnunar. Er hér aðallega um orðalagsbreytingar að ræða auk þess sem lagt er til að í lögum um Húsnæðis- og mannvirkjastofnun verði verkefni tengd skráningu og mati fasteigna tilgreind.',
     contactName: 'Skrifstofa sveitarfélaga og byggðamála',
     contactEmail: 'irn@irn.is',
     status: 'Til umsagnar',
-    institution: 'Fjármála- og efnahagsráðuneytið',
-    type: 'Drög að stefnu',
-    policyArea: 'Fjölmiðlun',
+    institution: 'Innviðaráðuneytið',
+    type: 'Drög að frumvarpi til laga',
+    policyArea: 'Húsnæðis- og skipulagsmál',
     processBegins: '2023-01-13T00:00:00',
     processEnds: '2023-01-27T23:59:59',
-    announcementText: 'Lorem ipsum..........',
+    announcementText:
+      'Innviðaráðuneytið birtir til umsagnar drög að frumvarpi til laga um breytingu á ýmsum lagaákvæðum vegna tilfærslu fasteignaskrár frá Þjóðskrá Íslands til Húsnæðis-og mannvirkjastofnunar.',
     summaryDate: null,
     summaryText: null,
-    adviceCount: 0,
+    adviceCount: 2,
     created: '2023-01-13T15:46:27.82',
     changed: '2023-01-13T15:47:07.703',
     oldInstitutionName: null,
@@ -56,8 +57,8 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
       number: 1,
       participantName: 'Sævar Þór Halldórsson ',
       participantEmail: 'sthh@test.is',
-      content: 'Ég styð þetta. Vil að þetta fari í gegn.',
-      created: '2023-01-17T14:01:51.040Z',
+      content: 'Ég styð þetta.',
+      created: '2023-01-10T14:01:51.040Z',
     },
     {
       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
@@ -65,7 +66,7 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
       participantName: 'Þór Jónsson ',
       participantEmail: 'sthh@test.is',
       content: 'Ég er mótfallinn þessu.',
-      created: '2023-01-17T14:01:51.040Z',
+      created: '2023-01-09T14:01:51.040Z',
     },
   ]
 
