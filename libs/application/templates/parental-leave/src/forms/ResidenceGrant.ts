@@ -1,8 +1,10 @@
 import {
   buildCustomField,
+  buildDateField,
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
+  buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
@@ -28,6 +30,29 @@ export const ResidenceGrant: Form = buildForm({
           id: 'residenceGrantApplication.information',
           title: 'Hvað á að vera hér',
           description: 'upplýsingar '
+        }),
+        buildMultiField({
+          title: 'DateField',
+          id: 'dvalarstyrk',
+          description:
+            'Add the date form when you wish to apply for Dvalastyrkur',
+          space: 2,
+          children: [
+            buildDateField({
+              id: 'dvalarstyrk.dateFrom',
+              title: 'From',
+              placeholder: '',
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildDateField({
+              id: 'dvalarstyrk.dateTo',
+              title: 'To',
+              placeholder: '',
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+          ],
         }),
         buildFileUploadField({
           id: 'residenceGrantApplication.fileUpload',

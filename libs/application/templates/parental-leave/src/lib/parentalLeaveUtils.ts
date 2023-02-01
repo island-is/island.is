@@ -11,6 +11,7 @@ import round from 'lodash/round'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
+  DefaultEvents,
   ExternalData,
   Field,
   FormValue,
@@ -61,6 +62,7 @@ import {
   multipleBirthsDefaultDays,
 } from '../config'
 import { isAfter, isBefore } from 'date-fns'
+import { AnyEventObject } from 'xstate'
 
 export function getExpectedDateOfBirth(
   application: Application,

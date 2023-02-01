@@ -79,8 +79,8 @@ export enum States {
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
-  RESIDENCE_GRAND_APPLICATION_OPEN = 'residenceGrantApplicationOpen',
-  RESIDENCE_GRAND_APPLICATION_CLOSED = 'residenceGrantApplicationClosed',
+  RESIDENCE_GRAND_APPLICATION = 'residenceGrantApplication',
+  RESIDENCE_GRAND_APPLICATION_IN_PROGRESS = 'residenceGrantApplicationInProgress',
 }
 
 export enum AnswerValidationConstants {

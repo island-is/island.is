@@ -23,7 +23,7 @@ type ReviewSectionProps = {
   title: string
   description: string
   state?: ReviewSectionState
-  notifyParentOnClickEvent?: (event: 'RESIDENCEGRANTAPPLICATIONOPEN') => void
+  notifyParentOnClickEvent?: () => void
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -96,9 +96,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                       size="small"
                       icon="arrowForward"
                       onClick={() =>
-                        notifyParentOnClickEvent(
-                          'RESIDENCEGRANTAPPLICATIONOPEN',
-                        )
+                        notifyParentOnClickEvent()
                       }
                     >
                       {formatMessage(
