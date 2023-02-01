@@ -88,7 +88,7 @@ export const Footer: FC<Props> = ({
                           value={{
                             linkRenderer: (href, children) => (
                               <Link
-                                href={href}
+                                href="" // Skip using href since we want the page to load via window.open() so the web chat will load correctly
                                 color="blue600"
                                 underline="normal"
                                 underlineVisibility="always"
