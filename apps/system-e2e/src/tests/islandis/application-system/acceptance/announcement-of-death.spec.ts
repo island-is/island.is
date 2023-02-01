@@ -1,10 +1,14 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { disableI18n, disablePreviousApplications } from '../../../../support/disablers'
+import {
+  disableI18n,
+  disablePreviousApplications,
+  mockQGL,
+} from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 
 const homeUrl = '/umsoknir/andlatstilkynningar'
 
-const applicationTest = base.extend<{applicationPage: Page}>({
+const applicationTest = base.extend<{ applicationPage: Page }>({
   applicationPage: async ({ browser }, use) => {
     const applicationContext = await session({
       browser,
@@ -15,15 +19,14 @@ const applicationTest = base.extend<{applicationPage: Page}>({
 
     const applicationPage = await applicationContext.newPage()
     await disablePreviousApplications(applicationPage)
-    await disableI18n(applicationPage)
+    //await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
     await expect(applicationPage).toBeApplication()
     await use(applicationPage)
 
     await applicationPage.close()
     await applicationContext.close()
-
-  }
+  },
 })
 
 applicationTest.describe('Announcement of Death', () => {
@@ -33,17 +36,31 @@ applicationTest.describe('Announcement of Death', () => {
 
   applicationTest('test', async ({ applicationPage }) => {
     const page = applicationPage
-    await expect(applicationPage).toBeApplication()
+    await expect(page).toBeApplication()
+    await page.locator('[aria-label="island.is logo"]').isVisible()
 
+    await disablePreviousApplications(page)
+    /*
+    const routeRegex = '** /graphql?op=ApplicationApplications'
+    await page.route(routeRegex, route => {
+      console.log(`Got a match for ${routeRegex}!`)
+      route.fulfill({ body: 'mocked-data' })
+    })
+    */
+
+    /* Not needed since we have successfully disabled old applications
     // Should be gone with applicationPage
     await page.locator('[data-testid="create-new-application"]').click()
     await page.locator('[data-testid="create-new-application"]').click()
+    */
 
     await page.locator('data-testid=agree-to-data-providers').click()
     await page.locator(submitButton).click()
 
+    /* Disabled
     // Multiple announcements screen
     await page.locator('text=Hefja umsókn').click()
+    */
 
     // Accept handling the announcement
     await page.locator('input[value=continue]').click()
@@ -77,10 +94,11 @@ applicationTest.describe('Announcement of Death', () => {
     await page.locator('#react-select').first().click()
     await page.locator('label[for=authorizationForFuneralExpenses]').click()
     await page.locator('#react-select').first().click()
-    await page.locator('[data-testid=select-financesDataCollectionPermission]').click()
+    await page
+      .locator('[data-testid=select-financesDataCollectionPermission]')
+      .click()
     await page.locator('#react-select').first().click()
     await page.locator(nextButton).click()
-
 
     // Overview screen
     await page.locator('textarea[name=additionalInfo]').fill('test test þæö')
