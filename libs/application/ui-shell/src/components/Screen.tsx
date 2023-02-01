@@ -228,7 +228,7 @@ const Screen: FC<ScreenProps> = ({
 
       if (mode === FormModes.DRAFT) {
         if (totalDraftScreens === undefined) {
-          // +1 because its an array and starts at 0
+          // +1 because its index in array and starts at 0
           finishedSteps = activeScreenIndex + 1
           // -1 because its a length of an array and starts at 1
           // and we dont want to count the last screen as a step
