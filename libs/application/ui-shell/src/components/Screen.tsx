@@ -67,7 +67,6 @@ type ScreenProps = {
   renderLastScreenButton?: boolean
   renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
-  stateName: string
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -97,7 +96,6 @@ const Screen: FC<ScreenProps> = ({
   renderLastScreenButton,
   renderLastScreenBackButton,
   screen,
-  stateName,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const { lang: locale, formatMessage } = useLocale()
@@ -227,7 +225,7 @@ const Screen: FC<ScreenProps> = ({
       // Defaulting to 5 to show some steps for user experience if the user has not yet finished the first screen
       let stepsTotal = 5
 
-      if (stateName === 'draft') {
+      if (mode === 'draft') {
         if (totalDraftScreens === undefined) {
           // +1 because its index in array and starts at 0
           finishedSteps = activeScreenIndex + 1
