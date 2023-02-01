@@ -4,6 +4,8 @@ import { QueueModule } from '@island.is/message-queue'
 import { openApi } from './openApi'
 import { NotificationsController } from './app/modules/notifications/notifications.controller'
 
+
+// just a trigger to push and build
 @Module({
   imports: [
     QueueModule.register({
