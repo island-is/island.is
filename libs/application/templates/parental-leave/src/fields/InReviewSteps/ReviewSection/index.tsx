@@ -2,8 +2,9 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/types'
+import { Box, Icon, Tag, Text, Button } from '@island.is/island-ui/core'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 
 import * as styles from './ReviewSection.css'
 
@@ -14,21 +15,27 @@ export enum ReviewSectionState {
 }
 
 type ReviewSectionProps = {
-  application: Application
   index: number
   title: string
   description: string
   state?: ReviewSectionState
 }
 
-const ReviewSection: FC<ReviewSectionProps> = ({
+const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
   application,
   index,
   title,
   description,
   state,
+  goToScreen,
 }) => {
   const { formatMessage } = useLocale()
+
+  const goToAttachmentScreen = () => {
+    goToScreen && goToScreen('uploadAdditionalFilesInfoScreen')
+  }
+
+  const isRequiredAction = state === ReviewSectionState.requiresAction
 
   return (
     <Box
@@ -48,8 +55,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           [styles.sectionNumberNotStarted]: state === undefined,
           [styles.sectionNumberInProgress]:
             state === ReviewSectionState.inProgress,
-          [styles.sectionNumberRequiresAction]:
-            state === ReviewSectionState.requiresAction,
+          [styles.sectionNumberRequiresAction]: isRequiredAction,
           [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
         })}
       >
@@ -83,7 +89,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
             </Tag>
           </Box>
         )}
-        {state === ReviewSectionState.requiresAction && (
+        {isRequiredAction && (
           <Box pointerEvents="none">
             <Tag variant="red">
               {formatText(
@@ -95,6 +101,20 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           </Box>
         )}
       </Box>
+      {isRequiredAction && (
+        <Box display="flex" justifyContent="flexEnd">
+          <Button
+            icon="attach"
+            variant="utility"
+            onClick={goToAttachmentScreen}
+          >
+            {formatMessage(
+              parentalLeaveFormMessages.reviewScreen
+                .additionalDocumentRequiredButton,
+            )}
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }

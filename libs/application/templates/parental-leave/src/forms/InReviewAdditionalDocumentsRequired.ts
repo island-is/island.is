@@ -24,7 +24,6 @@ export const InReviewAdditionalDocumentsRequired: Form = buildForm({
     buildSection({
       id: 'reviewUpload',
       title: parentalLeaveFormMessages.attachmentScreen.title,
-
       children: [
         buildCustomField({
           id: 'additionalDocumentsRequired',

@@ -1486,6 +1486,22 @@ export const parentalLeaveFormMessages: MessageDir = {
   }),
 
   reviewScreen: defineMessages({
+    additionalDocumentRequiredDesc: {
+      id: 'pl.application:draftFlow.requiresAction.additionalDocumentDesc',
+      defaultMessage:
+        'Vinnumalastofnun vantar frekari gögn vegna umsóknarinnar',
+      description: 'Additional document required',
+    },
+    additionalDocumentRequiredButton: {
+      id: 'pl.application:draftFlow.requiresAction.additionalDocumentButton',
+      defaultMessage: 'Bæta við skjölum',
+      description: 'Add documents',
+    },
+    additionalDocumentRequiredTitle: {
+      id: 'pl.application:draftFlow.requiresAction.additionalDocumentTitle',
+      defaultMessage: 'Vinnumalastofnun vantar frekari gögn',
+      description: 'Additional document required',
+    },
     titleInReview: {
       id: 'pl.application:review.titleInReview',
       defaultMessage: 'Umsókn þín er í skoðun',
