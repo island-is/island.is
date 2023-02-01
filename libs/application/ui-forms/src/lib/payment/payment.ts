@@ -2,11 +2,11 @@ import * as m from './messages'
 import {
   buildForm,
   buildSection,
-  buildCustomField,
+  buildPaymentPendingField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 
-export const paymentForm: Form = buildForm({
+export const PaymentForm: Form = buildForm({
   id: 'ExamplePaymentPaymentForm',
   title: '',
   mode: FormModes.DRAFT,
@@ -21,10 +21,9 @@ export const paymentForm: Form = buildForm({
       id: 'awaitingPayment',
       title: m.messages.paymentConfirmation,
       children: [
-        buildCustomField({
-          component: 'PaymentPendingScreen',
-          id: 'paymentPendingField',
-          title: '',
+        buildPaymentPendingField({
+          id: 'paymentPending',
+          title: m.messages.paymentConfirmation,
         }),
       ],
     }),

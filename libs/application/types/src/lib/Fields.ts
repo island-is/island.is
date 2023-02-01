@@ -113,9 +113,9 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
-  PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
+  PAYMENT_PENDING = 'PaymentPendingFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -265,6 +265,11 @@ export interface RedirectToServicePortalField extends BaseField {
   component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL
 }
 
+export interface PaymentPendingField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_PENDING
+  component: FieldComponents.PAYMENT_PENDING
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -280,3 +285,4 @@ export type Field =
   | AsyncSelectField
   | CompanySearchField
   | RedirectToServicePortalField
+  | PaymentPendingField

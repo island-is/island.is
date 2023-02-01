@@ -6,7 +6,7 @@ export interface PaymentCatalogParameters {
 
 export const PaymentCatalogApi = defineTemplateApi<PaymentCatalogParameters>({
   action: 'paymentCatalog',
-  namespace: 'PaymentCatalog',
+  namespace: 'Payment',
   params: {
     organizationId: '6509142520',
   },

@@ -4,21 +4,19 @@ import {
   PaymentCatalogParameters,
 } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import {
-  ChargeFjsV2ClientService,
-  ExtraData,
-} from '@island.is/clients/charge-fjs-v2'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { PaymentService } from '@island.is/application/api/payment'
+import { PaymentService as PaymentModelService } from '@island.is/application/api/payment'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
-export class PaymentCatalogService extends BaseTemplateApiService {
+export class PaymentService extends BaseTemplateApiService {
   constructor(
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
-    private readonly paymentService: PaymentService,
+    private readonly paymentModelService: PaymentModelService,
   ) {
-    super('PaymentCatalog')
+    super('Payment')
   }
 
   async paymentCatalog({
@@ -55,7 +53,7 @@ export class PaymentCatalogService extends BaseTemplateApiService {
     const extraDataItems =
       typeof extraData === 'function' ? extraData(application) : extraData ?? []
 
-    const response = await this.paymentService.createCharge(
+    const response = await this.paymentModelService.createCharge(
       auth,
       organizationId,
       codes,
@@ -68,5 +66,27 @@ export class PaymentCatalogService extends BaseTemplateApiService {
     }
 
     return response
+  }
+
+  async verifyPayment({
+    application,
+    auth,
+    params,
+  }: TemplateApiModuleActionProps<CreateChargeParameters>) {
+    const paymentStatus = await this.paymentModelService.getStatus(
+      auth,
+      application.id,
+    )
+
+    if (paymentStatus?.fulfilled !== true) {
+      throw new TemplateApiError(
+        {
+          title: 'Payment not completed',
+          description:
+            'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+        },
+        500,
+      )
+    }
   }
 }

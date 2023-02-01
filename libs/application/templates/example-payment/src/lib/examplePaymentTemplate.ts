@@ -13,13 +13,14 @@ import {
   defineTemplateApi,
   CreateChargeApi,
   Application,
+  VerifyPaymentApi,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { PaymentCatalogApi } from '@island.is/application/types'
-import { paymentForm } from '@island.is/application/ui-forms'
+import { PaymentForm } from '@island.is/application/ui-forms'
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 
 const getCodes = (application: Application) => {
@@ -96,7 +97,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: async () => {
-                return paymentForm
+                return PaymentForm
               },
               actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
@@ -116,9 +117,15 @@ const template: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-          }),
+          onEntry: [
+            VerifyPaymentApi.configure({
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

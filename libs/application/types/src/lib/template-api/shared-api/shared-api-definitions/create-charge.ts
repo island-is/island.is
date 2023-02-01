@@ -16,5 +16,5 @@ export interface CreateChargeParameters {
 
 export const CreateChargeApi = defineTemplateApi<CreateChargeParameters>({
   action: 'createCharge',
-  namespace: 'PaymentCatalog',
+  namespace: 'Payment',
 })
