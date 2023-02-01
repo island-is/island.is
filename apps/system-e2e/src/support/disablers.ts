@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test'
 
 async function mockQGL<T>(page: Page, op: string, mockData: T) {
-  await page.route('*/api/graphql?op=ApplicationApplications', route => {
+  await page.route('**/graphql?op=ApplicationApplications', route => {
     const data: Record<string, T> = {}
     data[op] = mockData
     const response = {data}
