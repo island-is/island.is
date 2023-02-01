@@ -598,7 +598,7 @@ export const assets = buildSection({
             buildDividerField({}),
             buildCustomField({
               title: '',
-              id: 'calculateAssets',
+              id: 'assets.assetsTotal',
               doesNotRequireAnswer: true,
               component: 'CalculateTotalAssets',
             }),

@@ -167,7 +167,7 @@ export const business = buildSection({
             buildDividerField({}),
             buildCustomField({
               title: '',
-              id: 'calculateBusiness',
+              id: 'business.businessTotal',
               doesNotRequireAnswer: true,
               component: 'CalculateTotalBusiness',
             }),

@@ -161,7 +161,7 @@ export const debts = buildSection({
             buildDividerField({}),
             buildCustomField({
               title: '',
-              id: 'calculateDebts',
+              id: 'debts.debtsTotal',
               doesNotRequireAnswer: true,
               component: 'CalculateTotalDebts',
             }),
