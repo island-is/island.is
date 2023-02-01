@@ -225,7 +225,7 @@ const Screen: FC<ScreenProps> = ({
       // Defaulting to 5 to show some steps for user experience if the user has not yet finished the first screen
       let stepsTotal = 5
 
-      if (mode === 'draft') {
+      if (mode === FormModes.DRAFT) {
         if (totalDraftScreens === undefined) {
           // +1 because its index in array and starts at 0
           finishedSteps = activeScreenIndex + 1

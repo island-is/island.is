@@ -45,6 +45,7 @@ export enum FormItemTypes {
 export type Schema = ZodObject<any>
 
 export enum FormModes {
+  NOT_STARTED = 'notstarted',
   DRAFT = 'draft',
   IN_PROGRESS = 'inprogress',
   COMPLETED = 'completed',

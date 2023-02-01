@@ -34,7 +34,7 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: application.name,
   logo: Logo,
-  mode: FormModes.DRAFT,
+  mode: FormModes.NOT_STARTED,
   children: [
     betaTestSection,
     buildSection({
