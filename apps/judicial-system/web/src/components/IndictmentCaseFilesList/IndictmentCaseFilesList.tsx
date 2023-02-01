@@ -3,15 +3,15 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import {
-  Case,
   CaseFile,
   CaseFileCategory,
   completedCaseStates,
   isExtendedCourtRole,
-  UserRole,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core, errors } from '@island.is/judicial-system-web/messages'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import PdfButton from '../PdfButton/PdfButton'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -154,7 +154,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        {user?.role !== UserRole.DEFENDER && (
+        {user?.role !== UserRole.Defender && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(strings.caseFileTitle)}

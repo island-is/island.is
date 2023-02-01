@@ -15,25 +15,29 @@ import {
 import {
   CaseState,
   CaseTransition,
-  InstitutionType,
   isRestrictionCase,
-  UserRole,
   Feature,
   isInvestigationCase,
   isIndictmentCase,
-  isExtendedCourtRole,
-  User,
   CaseListEntry,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseData } from '@island.is/judicial-system-web/src/types'
+import {
+  CaseData,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
-import type { Case } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ActiveCases from './ActiveCases'
@@ -50,7 +54,7 @@ const CreateCaseButton: React.FC<{
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
-    if (user.role === UserRole.REPRESENTATIVE) {
+    if (user.role === UserRole.Representative) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -59,7 +63,7 @@ const CreateCaseButton: React.FC<{
       ]
     }
 
-    if (user.role === UserRole.PROSECUTOR) {
+    if (user.role === UserRole.Prosecutor) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -124,12 +128,12 @@ export const Cases: React.FC = () => {
 
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
-  const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isProsecutor = user?.role === UserRole.Prosecutor
+  const isRepresentative = user?.role === UserRole.Representative
+  const isHighCourtUser = user?.institution?.type === InstitutionType.HighCourt
   const isPrisonAdminUser =
-    user?.institution?.type === InstitutionType.PRISON_ADMIN
-  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
+    user?.institution?.type === InstitutionType.PrisonAdmin
+  const isPrisonUser = user?.institution?.type === InstitutionType.Prison
 
   const { data, error, loading, refetch } = useQuery<{
     cases?: CaseListEntry[]

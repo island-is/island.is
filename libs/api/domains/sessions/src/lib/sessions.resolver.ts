@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { Client, ClientLoader } from '@island.is/api/domains/auth'
 import type { ClientDataLoader } from '@island.is/api/domains/auth'
@@ -13,6 +13,7 @@ import { Session } from './models/session.model'
 import { SessionsService } from './services/sessions.service'
 import { PaginatedSessionDto, SessionDto } from './services/types'
 import { PaginatedSessionResponse } from './dto/paginated-session.response'
+import { SessionsInput } from './dto/sessions.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Session)
@@ -20,8 +21,11 @@ export class SessionsResolver {
   constructor(private readonly sessionsService: SessionsService) {}
 
   @Query(() => PaginatedSessionResponse, { name: 'sessionsList' })
-  getSessions(@CurrentUser() user: User): Promise<PaginatedSessionDto> {
-    return this.sessionsService.getSessions(user)
+  getSessions(
+    @CurrentUser() user: User,
+    @Args('input') input: SessionsInput,
+  ): Promise<PaginatedSessionDto> {
+    return this.sessionsService.getSessions(user, input)
   }
 
   @ResolveField('actor', () => Identity)
