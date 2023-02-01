@@ -285,7 +285,7 @@ export const heirs = buildSection({
               label: m.heirsInheritanceRate,
               display: 'flex',
               value: ({ answers }) =>
-                String((answers as InheritanceReport)?.heirs?.total) + ' %',
+                getValueViaPath<string>(answers, 'heirs.total'),
             }),
             buildDescriptionField({
               id: 'heirs_space1',
@@ -373,7 +373,8 @@ export const heirs = buildSection({
             }),
             buildKeyValueField({
               label: m.info,
-              value: ({ answers }) => answers.heirsAdditionalInfo as string,
+              value: ({ answers }) =>
+                getValueViaPath<string>(answers, 'heirsAdditionalInfo'),
             }),
             buildSubmitField({
               id: 'inheritanceReport.submit',
