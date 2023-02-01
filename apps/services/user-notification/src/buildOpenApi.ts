@@ -3,6 +3,7 @@ import { buildOpenApi } from '@island.is/infra-nest-server'
 import { QueueModule } from '@island.is/message-queue'
 import { openApi } from './openApi'
 import { NotificationsController } from './app/modules/notifications/notifications.controller'
+import { AppModule } from './app/app.module'
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ class BuildModule {}
 
 buildOpenApi({
   path: 'apps/services/user-notification/src/openapi.yaml',
-  appModule: BuildModule,
+  appModule: AppModule,
   openApi,
 })
