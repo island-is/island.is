@@ -1,12 +1,10 @@
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
-  AccordionCard,
   AlertMessage,
   Box,
   Bullet,
   BulletList,
-  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
