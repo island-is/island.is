@@ -99,7 +99,7 @@ export const ReportFieldsRepeater: FC<
   /* ------ Set stocks value ------ */
   useEffect(() => {
     setValue(`${index}.value`, String(faceValue * rateOfExchange))
-  }, [faceValue, rateOfExchange, setValue])
+  }, [faceValue, index, rateOfExchange, setValue])
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
@@ -112,12 +112,12 @@ export const ReportFieldsRepeater: FC<
         percentage,
     )
     setTaxableInheritance(inheritance - taxFreeInheritance)
-    setInheritanceTax((inheritance - taxFreeInheritance) * 0.1)
+    setInheritanceTax(Math.round(taxableInheritance * 0.01))
 
     setValue(`${index}.taxFreeInheritance`, taxFreeInheritance)
     setValue(`${index}.inheritance`, inheritance)
+    setValue(`${index}.inheritanceTax`, Math.round(taxableInheritance * 0.01))
     setValue(`${index}.taxableInheritance`, taxableInheritance)
-    setValue(`${index}.inheritanceTax`, inheritanceTax)
   }, [
     index,
     percentage,
@@ -126,6 +126,7 @@ export const ReportFieldsRepeater: FC<
     taxableInheritance,
     inheritanceTax,
     setValue,
+    answers,
   ])
 
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
