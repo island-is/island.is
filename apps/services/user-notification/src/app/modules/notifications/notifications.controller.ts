@@ -1,4 +1,11 @@
-import { CacheInterceptor, Get, Inject, Param, Query, UseInterceptors } from '@nestjs/common'
+import {
+  CacheInterceptor,
+  Get,
+  Inject,
+  Param,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common'
 import {
   Controller,
   Post,
@@ -109,6 +116,6 @@ export class NotificationsController {
     templateId: string,
     @Query('locale') locale: string = 'is-IS',
   ): Promise<any> {
-    return {date: new Date().toISOString()}
+    return { date: new Date().toISOString() }
   }
 }

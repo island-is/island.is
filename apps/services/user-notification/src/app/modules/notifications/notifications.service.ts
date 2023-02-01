@@ -3,7 +3,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { createHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
-// import { getTemplates } from './queries/getTemplates' 
+// import { getTemplates } from './queries/getTemplates'
 @Injectable()
 export class NotificationsService {
   constructor(
