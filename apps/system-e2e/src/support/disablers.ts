@@ -1,10 +1,22 @@
 import { Page } from '@playwright/test'
 
-async function mockQGL<T>(page: Page, op: string, mockData: T) {
-  await page.route('**/graphql?op=ApplicationApplications', route => {
+type MockGQLOptions = {
+  responseKey?: string
+  camelCaseResponseKey?: boolean
+}
+
+async function mockQGL<T>(
+  page: Page,
+  op: string,
+  mockData: T,
+  options: MockGQLOptions = { responseKey: op, camelCaseResponseKey: true },
+) {
+  await page.route(new RegExp(`/graphql?op=${op}$`), (route) => {
     const data: Record<string, T> = {}
-    data[op] = mockData
-    const response = {data}
+    if (options.camelCaseResponseKey)
+      op = op.replace(/^(.)/, (s) => s.toLowerCase())
+    data[options?.responseKey ?? op] = mockData
+    const response = { data }
     route.fulfill({ body: JSON.stringify(response) })
   })
 }
@@ -14,5 +26,5 @@ export async function disablePreviousApplications(page: Page) {
 }
 
 export async function disableI18n(page: Page) {
-  await mockQGL(page, 'getTranslations', {})
+  await mockQGL(page, 'GetTranslations', {})
 }
