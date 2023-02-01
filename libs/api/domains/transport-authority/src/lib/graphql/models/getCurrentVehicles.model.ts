@@ -17,12 +17,12 @@ export class VehiclesCurrentVehicleWithOwnerchangeChecks {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 
-  @Field(() => [OwnerChangeVehicleValidationMessage], { nullable: true })
-  ownerChangeErrorMessages?: OwnerChangeVehicleValidationMessage[] | null
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 
 @ObjectType()
-export class OwnerChangeVehicleValidationMessage {
+export class VehicleValidationErrorMessage {
   @Field(() => String, { nullable: true })
   errorNo?: string | null
 
@@ -35,6 +35,12 @@ export class VehicleOwnerchangeChecksByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 
-  @Field(() => [OwnerChangeVehicleValidationMessage], { nullable: true })
-  ownerChangeErrorMessages?: OwnerChangeVehicleValidationMessage[] | null
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
+
+@ObjectType()
+export class VehiclesCurrentVehicleWithOperatorChangeChecks extends VehiclesCurrentVehicleWithOwnerchangeChecks {}
+
+@ObjectType()
+export class VehicleOperatorChangeChecksByPermno extends VehicleOwnerchangeChecksByPermno {}
