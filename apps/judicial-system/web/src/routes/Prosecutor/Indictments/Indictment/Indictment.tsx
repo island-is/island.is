@@ -15,20 +15,32 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
+import { Box, Input } from '@island.is/island-ui/core'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { indictment } from './Indictment.strings'
+import { indictment as strings } from './Indictment.strings'
 
 const Indictment: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const { formatMessage } = useIntl()
+  const { updateCase } = useCase()
   const stepIsValid = true
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
+
+  useDeb(workingCase, 'indictmentIntroduction')
 
   return (
     <PageLayout
@@ -44,7 +56,39 @@ const Indictment: React.FC = () => {
         title={formatMessage(titles.prosecutor.indictments.indictment)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(indictment.heading)}</PageTitle>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <Box marginBottom={5}>
+          <Input
+            name="indictmentsIntroduction"
+            label={formatMessage(strings.indictmentIntroductionLabel)}
+            placeholder={formatMessage(
+              strings.indictmentIntroductionPlaceholder,
+            )}
+            value={workingCase.indictmentIntroduction || ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'indictmentIntroduction',
+                event.target.value,
+                [],
+                workingCase,
+                setWorkingCase,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'indictmentIntroduction',
+                event.target.value,
+                [],
+                workingCase,
+                updateCase,
+              )
+            }
+            required
+            textarea
+            rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

@@ -282,4 +282,7 @@ export class Case implements TCase {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentIntroduction?: string
 }

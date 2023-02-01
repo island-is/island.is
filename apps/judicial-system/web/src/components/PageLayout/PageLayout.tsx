@@ -111,7 +111,7 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
 
 interface SidePanelProps {
   user: User | undefined
-  workingCase?: Case
+  workingCase: Case
   activeSection?: number
   activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -145,10 +145,10 @@ const SidePanel: React.FC<SidePanelProps> = ({
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                isIndictmentCase(workingCase?.type)
+                isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
                   : formStepperSections.title,
-                { caseType: workingCase?.type },
+                { caseType: workingCase.type },
               )}
             </Text>
           </Box>
@@ -170,7 +170,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
 }
 interface PageProps {
   children: ReactNode
-  workingCase?: Case
+  workingCase: Case
   activeSection?: number
   isLoading: boolean
   notFound: boolean

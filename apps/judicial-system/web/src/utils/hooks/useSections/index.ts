@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -17,13 +18,12 @@ import {
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { hasIndictmentSubtype } from '../../stepHelper'
-import { useContext } from 'react'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -410,7 +410,7 @@ const useSections = (
                     name: formatMessage(
                       sections.indictmentCaseProsecutorSection.indictment,
                     ),
-                    href: `${constants.INDICTMENT_TRAFFIC_VIOLATION_ROUTE}/${id}`,
+                    href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
                     onClick:
                       validateFormStepper(
                         isValid,
@@ -424,7 +424,7 @@ const useSections = (
                       ) && onNavigationTo
                         ? async () =>
                             await onNavigationTo(
-                              constants.INDICTMENT_TRAFFIC_VIOLATION_ROUTE,
+                              constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
                             )
                         : undefined,
                   },
@@ -981,37 +981,28 @@ const useSections = (
     }
   }
 
-  const getSections = (workingCase?: Case, user?: User): RouteSection[] => {
+  const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     return [
-      isRestrictionCase(workingCase?.type)
-        ? getRestrictionCaseProsecutorSection(workingCase || ({} as Case), user)
-        : isInvestigationCase(workingCase?.type)
-        ? getInvestigationCaseProsecutorSection(
-            workingCase || ({} as Case),
-            user,
-          )
-        : getIndictmentCaseProsecutorSection(workingCase || ({} as Case)),
-      isRestrictionCase(workingCase?.type)
-        ? getRestrictionCaseCourtSections(workingCase || ({} as Case), user)
-        : isInvestigationCase(workingCase?.type)
-        ? getInvestigationCaseCourtSections(workingCase || ({} as Case), user)
-        : getIndictmentsCourtSections(workingCase || ({} as Case)),
+      isRestrictionCase(workingCase.type)
+        ? getRestrictionCaseProsecutorSection(workingCase, user)
+        : isInvestigationCase(workingCase.type)
+        ? getInvestigationCaseProsecutorSection(workingCase, user)
+        : getIndictmentCaseProsecutorSection(workingCase),
+      isRestrictionCase(workingCase.type)
+        ? getRestrictionCaseCourtSections(workingCase, user)
+        : isInvestigationCase(workingCase.type)
+        ? getInvestigationCaseCourtSections(workingCase, user)
+        : getIndictmentsCourtSections(workingCase),
       {
         name: caseResult(formatMessage, workingCase),
         children: [],
       },
-      isRestrictionCase(workingCase?.type)
-        ? getRestrictionCaseExtenstionSections(
-            workingCase || ({} as Case),
-            user,
-          )
-        : getInvestigationCaseExtenstionSections(
-            workingCase || ({} as Case),
-            user,
-          ),
-      isRestrictionCase(workingCase?.type)
-        ? getRestrictionCaseCourtSections(workingCase || ({} as Case), user)
-        : getInvestigationCaseCourtSections(workingCase || ({} as Case), user),
+      isRestrictionCase(workingCase.type)
+        ? getRestrictionCaseExtenstionSections(workingCase, user)
+        : getInvestigationCaseExtenstionSections(workingCase, user),
+      isRestrictionCase(workingCase.type)
+        ? getRestrictionCaseCourtSections(workingCase, user)
+        : getInvestigationCaseCourtSections(workingCase, user),
     ]
   }
 

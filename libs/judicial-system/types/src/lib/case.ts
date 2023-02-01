@@ -241,6 +241,7 @@ export interface Case {
   subpoenaType?: SubpoenaType
   defendantWaivesRightToCounsel?: boolean
   crimeScenes?: CrimeSceneMap
+  indictmentIntroduction?: string
 }
 
 export interface CaseListEntry
@@ -350,6 +351,7 @@ export interface UpdateCase
     | 'subpoenaType'
     | 'defendantWaivesRightToCounsel'
     | 'crimeScenes'
+    | 'indictmentIntroduction'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
