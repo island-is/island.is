@@ -48,12 +48,12 @@ const EMPTY_SESSION: UserSessionState = {
 
 /**
  * This component monitors if the user session is active on the Identity Provider (IDP).
- * When it detects that the user session is expired it redirects to the sign in page on the IDP.
+ * When it detects that the user session is expired it redirects to the sign-in page on the IDP.
  *
  * It loads a script from the IDP's 'connect/sessioninfo' endpoint into an iframe.
  * The script uses the postMessage API to post UserSessionMessage, which contains
  * details if the session is expired or after how many seconds it will expire.
- * We use these details to register a interval to monitor the session expiration.
+ * We use these details to register an interval to monitor the session expiration.
  */
 export const CheckIdpSession = () => {
   const userManager = getUserManager()

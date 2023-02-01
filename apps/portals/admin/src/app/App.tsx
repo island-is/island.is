@@ -1,27 +1,32 @@
-import { RouterProvider } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
-
+import { AuthProvider } from '@island.is/auth/react'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { ApplicationErrorBoundary } from '@island.is/portals/core'
-import { createRouterTree } from '../lib/router'
+import { FeatureFlagProvider } from '@island.is/react/feature-flags'
+import { ApplicationErrorBoundary, PortalRouter } from '@island.is/portals/core'
+import { modules } from '../lib/modules'
 import { client } from '../graphql'
-import { getAuthSettings } from '@island.is/auth/react'
+import environment from '../environments/environment'
+import { AdminPortalPaths } from '../lib/paths'
+import { createRoutes } from '../lib/createRoutes'
 
-export const App = () => {
-  const { redirectPathSilent, redirectPath } = getAuthSettings()
-  const router = createRouterTree({
-    redirectPathSilent,
-    redirectPath,
-  })
-
-  return (
-    <ApolloProvider client={client}>
-      <LocaleProvider locale={defaultLanguage} messages={{}}>
-        <ApplicationErrorBoundary>
-          <RouterProvider router={router} />
-        </ApplicationErrorBoundary>
-      </LocaleProvider>
-    </ApolloProvider>
-  )
-}
+export const App = () => (
+  <ApolloProvider client={client}>
+    <LocaleProvider locale={defaultLanguage} messages={{}}>
+      <AuthProvider basePath={AdminPortalPaths.Base}>
+        <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+          <ApplicationErrorBoundary>
+            <PortalRouter
+              modules={modules}
+              createRoutes={createRoutes}
+              portalMeta={{
+                portalType: 'admin',
+                basePath: AdminPortalPaths.Base,
+              }}
+            />
+          </ApplicationErrorBoundary>
+        </FeatureFlagProvider>
+      </AuthProvider>
+    </LocaleProvider>
+  </ApolloProvider>
+)

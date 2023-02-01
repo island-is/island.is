@@ -1,12 +1,12 @@
 // Components
-export * from './lib/Authenticator/Authenticator'
 export * from './lib/Authenticator/AuthProvider'
-export * from './lib/Authenticator/AuthLayout'
 export * from './lib/Authenticator/MockedAuthenticator'
 export * from './lib/Authenticator/AuthContext'
-export * from './lib/Authenticator/OidcSilentSignIn'
-export * from './lib/Authenticator/OidcSignIn'
-export * from './lib/Authenticator/CheckAuth'
+export * from './lib/Authenticator/AuthenticatorLoadingScreen'
+export * from './lib/Authenticator/CheckIdpSession'
+
+// Hooks
+export * from './lib/hooks/useCheckAuth'
 
 // Lib
 export * from './lib/userManager'

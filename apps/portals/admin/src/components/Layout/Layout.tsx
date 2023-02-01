@@ -106,7 +106,6 @@ export const Layout: FC = ({ children }) => {
       <LayoutOuterContainer>
         <ModuleLayoutWrapper
           userInfo={moduleProps.userInfo}
-          client={moduleProps.client}
           portalType={portalType}
         >
           <LayoutModuleContainer layout={moduleLayout}>

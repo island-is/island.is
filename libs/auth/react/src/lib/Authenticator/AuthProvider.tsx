@@ -1,18 +1,22 @@
-import {
+import React, {
   useCallback,
   useEffect,
   useMemo,
   useReducer,
   useRef,
   ReactNode,
+  useState,
 } from 'react'
-import { Location, useLocation } from 'react-router-dom'
 import type { User } from 'oidc-client-ts'
 
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Authenticator.state'
 import { AuthSettings } from '../AuthSettings'
 import { AuthContext } from './AuthContext'
+import { AuthenticatorErrorScreen } from './AuthenticatorErrorScreen'
+import { AuthenticatorLoadingScreen } from './AuthenticatorLoadingScreen'
+import { CheckIdpSession } from './CheckIdpSession'
+import { isDefined } from '@island.is/shared/utils'
 
 interface AuthProviderProps {
   /**
@@ -21,12 +25,14 @@ interface AuthProviderProps {
    * Default: true
    */
   autoLogin?: boolean
+  /**
+   * The base path of the application.
+   */
+  basePath: string
   children: ReactNode
 }
 
-const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
-  const returnUrl = location.pathname + location.search
-
+const getReturnUrl = (returnUrl: string, { redirectPath }: AuthSettings) => {
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
     return '/'
   }
@@ -37,24 +43,25 @@ const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
 export const AuthProvider = ({
   children,
   autoLogin = true,
+  basePath,
 }: AuthProviderProps) => {
-  console.log('AuthProvider')
   const [state, dispatch] = useReducer(reducer, initialState)
+  const [hasError, setHasError] = useState(false)
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
-  const location = useLocation()
-  const locationRef = useRef(location)
-  locationRef.current = location
+  const monitorUserSession = !authSettings.scope?.includes('offline_access')
+  const urlRef = useRef<string>()
+  urlRef.current = `${window.location.pathname}${window.location.search}`
 
   const signIn = useCallback(async () => {
     dispatch({
       type: ActionType.SIGNIN_START,
     })
     return userManager.signinRedirect({
-      state: getReturnUrl(locationRef.current, authSettings),
+      state: getReturnUrl(urlRef.current as string, authSettings),
     })
     // Nothing more happens here since browser will redirect to IDS.
-  }, [dispatch, userManager, authSettings, locationRef])
+  }, [dispatch, userManager, authSettings, urlRef])
 
   const signInSilent = useCallback(async () => {
     let user = null
@@ -65,7 +72,7 @@ export const AuthProvider = ({
       user = await userManager.signinSilent()
       dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
     } catch (error) {
-      console.error('Authenticator: Silent signin failed', error)
+      console.error('AuthProvider: Silent signin failed', error)
       dispatch({ type: ActionType.SIGNIN_FAILURE })
     }
 
@@ -96,12 +103,12 @@ export const AuthProvider = ({
       return userManager.signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
-          getReturnUrl(locationRef.current, authSettings),
+          getReturnUrl(urlRef.current as string, authSettings),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch, authSettings, locationRef],
+    [userManager, dispatch, authSettings, urlRef],
   )
 
   const signOut = useCallback(
@@ -151,7 +158,6 @@ export const AuthProvider = ({
 
     // This is raised when a new user state has been loaded with a silent login.
     const userLoaded = (user: User) => {
-      console.log('userLoader', user)
       dispatch({
         type: ActionType.USER_LOADED,
         payload: user,
@@ -178,6 +184,44 @@ export const AuthProvider = ({
     }
   }, [dispatch, userManager, signIn, autoLogin, state.userInfo === null])
 
+  const isCurrentRoute = (path?: string) =>
+    isDefined(path) && urlRef.current?.includes(basePath + path)
+
+  const init = async () => {
+    if (isCurrentRoute(authSettings?.redirectPath)) {
+      try {
+        const user = await userManager.signinRedirectCallback(
+          window.location.href,
+        )
+
+        dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
+
+        const url = typeof user.state === 'string' ? user.state : '/'
+        window.location.replace(url)
+      } catch (error) {
+        if (error.error === 'login_required') {
+          // If trying to switch delegations and the IDS session is expired, we'll
+          // see this error. So we'll try a proper signin.
+          return userManager.signinRedirect({ state: error.state })
+        }
+        console.error('Error in oidc callback', error)
+        setHasError(true)
+      }
+    } else if (isCurrentRoute(authSettings?.redirectPathSilent)) {
+      const userManager = getUserManager()
+      userManager.signinSilentCallback().catch((error) => {
+        // TODO: Handle error
+        console.log(error)
+      })
+    } else {
+      checkLogin()
+    }
+  }
+
+  useEffect(() => {
+    init()
+  }, [])
+
   const context = useMemo(
     () => ({
       ...state,
@@ -189,6 +233,9 @@ export const AuthProvider = ({
     [state, signIn, signInSilent, switchUser, signOut],
   )
 
+  const isLoading =
+    !state.userInfo || isCurrentRoute(authSettings?.redirectPath)
+
   return (
     <AuthContext.Provider
       value={{
@@ -199,7 +246,16 @@ export const AuthProvider = ({
         autoLogin,
       }}
     >
-      {children}
+      {hasError ? (
+        <AuthenticatorErrorScreen basePath={basePath} />
+      ) : isLoading ? (
+        <AuthenticatorLoadingScreen />
+      ) : (
+        <>
+          {monitorUserSession && <CheckIdpSession />}
+          {children}
+        </>
+      )}
     </AuthContext.Provider>
   )
 }

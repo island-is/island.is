@@ -1,4 +1,3 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FC, LazyExoticComponent } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { RouteObject } from 'react-router-dom'
@@ -63,7 +62,6 @@ export interface PortalNavigationItem {
  */
 export interface PortalModuleProps {
   userInfo: User
-  client: ApolloClient<NormalizedCacheObject>
 }
 
 /**
@@ -124,7 +122,7 @@ export type PortalType = 'admin' | 'my-pages'
 
 /**
  * A global component provides functionality that
- * is applicable system wide and does not belong in one route
+ * is applicable system-wide and does not belong in one route
  */
 export interface PortalGlobalComponent {
   /**
@@ -151,7 +149,7 @@ export interface PortalModule {
   /**
    * Works the same way as routes.
    * The key difference is that if there are company routes present when
-   * the logged in user is a company SSN only the company routes will be rendered.
+   * the logged-in user is a company SSN only the company routes will be rendered.
    */
   companyRoutes?: (props: PortalModuleProps) => PortalRoute[]
   /**
