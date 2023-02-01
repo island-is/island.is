@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common'
+import { CacheInterceptor, Get, Inject, Param, Query, UseInterceptors } from '@nestjs/common'
 import {
   Controller,
   Post,
@@ -24,6 +24,7 @@ import {
 } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
+import { Documentation } from '@island.is/nest/swagger'
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -54,6 +55,7 @@ const validateMessage = async (body: Request['body']): Promise<Message> => {
 }
 
 @Controller('notifications')
+@UseInterceptors(CacheInterceptor) // auto-caching GET responses
 @ApiExtraModels(NewDocumentMessage)
 export class NotificationsController {
   constructor(
@@ -77,5 +79,36 @@ export class NotificationsController {
     const id = await this.queue.add(message)
     this.logger.info('Message queued', { messageId: id, ...message })
     return { id }
+  }
+
+  // @Documentation({
+  //   description: 'Fetches a single template',
+  //   summary: 'Fetches a single template',
+  //   includeNoContentResponse: true,
+  //   response: { status: 200, type: HnippTemplate },
+  //   request: {
+  //     query: {
+  //       locale: {
+  //         required: false,
+  //         type: 'string',
+  //         example: 'is-IS',
+  //       },
+  //     },
+  //     params: {
+  //       templateId: {
+  //         type: 'string',
+  //         description: 'ID of the template',
+  //         example: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+  //       },
+  //     },
+  //   },
+  // })
+  @Get('/template/:templateId')
+  async getNotificationTemplate(
+    @Param('templateId')
+    templateId: string,
+    @Query('locale') locale: string = 'is-IS',
+  ): Promise<any> {
+    return {date: new Date().toISOString()}
   }
 }
