@@ -104,6 +104,7 @@ const ShellWrapper: FC<{
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
   const { formatMessage } = useLocale()
+  const [stateName, setStateName] = useState('')
   const featureFlagClient = useFeatureFlagClient()
 
   useApplicationNamespaces(application.typeId)
@@ -139,6 +140,7 @@ const ShellWrapper: FC<{
               const formDescriptor = await currentRole.formLoader({
                 featureFlagClient,
               })
+              setStateName(stateInformation.name)
               setForm(formDescriptor)
               setDataSchema(template.dataSchema)
               fieldsDispatch(applicationFields)
@@ -167,6 +169,7 @@ const ShellWrapper: FC<{
       application={application}
       dataSchema={dataSchema}
       form={form}
+      stateName={stateName}
       nationalRegistryId={nationalRegistryId}
     />
   )

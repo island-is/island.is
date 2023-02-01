@@ -31,7 +31,8 @@ export const FormShell: FC<{
   nationalRegistryId: string
   form: Form
   dataSchema: Schema
-}> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  stateName: string
+}> = ({ application, nationalRegistryId, form, dataSchema, stateName }) => {
   const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -108,6 +109,7 @@ export const FormShell: FC<{
               >
                 <Screen
                   application={storedApplication}
+                  stateName={stateName}
                   addExternalData={(payload) =>
                     dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
                   }
