@@ -1206,8 +1206,6 @@ license-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_ENVIRONMENT: 'staging'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'

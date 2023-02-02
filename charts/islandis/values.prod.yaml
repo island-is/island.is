@@ -1199,8 +1199,6 @@ license-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    SI_PUBLIC_ENVIRONMENT: 'prod'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'

@@ -1392,8 +1392,6 @@ license-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
-    SI_PUBLIC_ENVIRONMENT: 'dev'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
