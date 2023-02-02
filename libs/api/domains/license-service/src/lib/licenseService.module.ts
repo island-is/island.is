@@ -1,7 +1,6 @@
 import { Module, CacheModule } from '@nestjs/common'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
-import { LicenseServiceService } from './licenseService.service'
 import { LicenseClientModule } from '@island.is/clients/license-client'
 import { MainResolver } from './graphql/main.resolver'
 //import { LicenseClientModule } from '@island.is/clients/license'

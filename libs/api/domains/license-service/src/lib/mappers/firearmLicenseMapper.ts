@@ -118,12 +118,12 @@ export class FirearmLicensePayloadMapper
   }
 
   private parseProperties = (
-    labels: GenericLicenseLabels,
+    labels?: GenericLicenseLabels,
     property?: FirearmProperty,
     locale: Locale = 'is',
   ): Array<GenericLicenseDataField> | null => {
     if (!property) return null
-    const label = labels.labels
+    const label = labels?.labels
 
     const mappedProperty = [
       {
