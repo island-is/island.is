@@ -27,6 +27,6 @@ export class PassportAnnulmentService extends BaseTemplateApiService {
       comment,
       productionRequestID,
     })
-    return { success: false }
+    return result
   }
 }

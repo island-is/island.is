@@ -6,13 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
-import format from 'date-fns/format'
 import {
-  DistrictCommissionerAgencies,
-  Service,
-  Services,
-  IdentityDocumentData,
   STATUS,
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
