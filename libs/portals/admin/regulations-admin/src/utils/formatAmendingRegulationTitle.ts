@@ -1,14 +1,10 @@
-import {
-  prettyName,
-  RegName,
-  RegulationOptionList,
-} from '@island.is/regulations'
-import { SelRegOption } from '../components/EditImpacts'
 import { RegDraftForm } from '../state/types'
 const PREFIX_AMENDING = 'Reglugerð um breytingu á reglugerð nr. '
-const PREFIX_REPEALING = 'Reglugerð um breytingu á reglugerð nr. ' // repealingTitleRe
 
-export const formatAmendingRegName = (draft: RegDraftForm) => {
+// TODO: Bæta við brottfellingartitlum.
+const PREFIX_REPEALING = 'Reglugerð um brottfellingu á reglugerð nr. ' // repealingTitleRe
+
+export const formatAmendingRegTitle = (draft: RegDraftForm) => {
   const impactArray = Object.values(draft.impacts)
 
   if (impactArray.length > 0) {
