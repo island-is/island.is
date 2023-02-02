@@ -5,14 +5,13 @@ import {
   buildForm,
   buildSection,
   buildSubmitField,
+  buildSubSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
-import {
-  parentalLeaveFormMessages,
-} from '../lib/messages'
+import { parentalLeaveFormMessages } from '../lib/messages'
 
 export const ResidenceGrant: Form = buildForm({
   id: 'ParentalLeaveResidenceGrant',
@@ -22,17 +21,23 @@ export const ResidenceGrant: Form = buildForm({
   children: [
     buildSection({
       id: 'residentGrantApplication',
-      title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantApplyTitle,
+      title:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantApplyTitle,
       children: [
         buildDescriptionField({
           id: 'residenceGrantApplication.information',
-          title: 'Hvað á að vera hér',
-          description: 'upplýsingar '
+          title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+          description: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantInformation,
         }),
         buildFileUploadField({
-          id: 'residenceGrantApplication.fileUpload',
-          title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantAttachmentTitle,
-          introduction: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantAttachmentDescription,
+          id: 'fileUpload.residenceGrant',
+          title:
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantAttachmentTitle,
+          introduction:
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantAttachmentDescription,
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText: '',
           uploadAccept: '.pdf',
@@ -65,7 +70,7 @@ export const ResidenceGrant: Form = buildForm({
             },
           ],
         }),
-        buildCustomField({ 
+        buildCustomField({
           id: 'residenceGrantApplication.thankYou',
           title: parentalLeaveFormMessages.finalScreen.title,
           component: 'Conclusion',

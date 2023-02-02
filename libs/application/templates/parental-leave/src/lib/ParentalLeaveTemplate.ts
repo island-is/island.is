@@ -556,13 +556,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.APPROVE]: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
           ['RESIDENCEGRANTAPPLICATIONCLOSED']: {
             target: States.RESIDENCE_GRAND_APPLICATION_CLOSED,
           },
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION_OPEN]: {
-        entry: ['assignToVMST', 'setPreviousState'],
+        entry: ['assignToVMST', 'setPreviousState', 'setResidenceGrant'],
         exit: 'removePreviousState',
         meta: {
           status: 'inprogress',
@@ -1299,6 +1302,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      setResidenceGrant: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'isResidenceGrant', YES)
+
+        return context
+      }),
       setEmployerReviewerNationalRegistryId: assign((context, event) => {
         // Only set if employer gets assigned
         if (event.type !== DefaultEvents.ASSIGN) {
@@ -1434,7 +1445,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         // before merging with main
         const { application } = context
         const { answers } = application
-        set(answers, 'dateOfBirth', '20230501')
+        set(answers, 'dateOfBirth', '20220501')
         return context
       }),
       setPreviousState: assign((context) => {
