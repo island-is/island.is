@@ -34,7 +34,7 @@ import {
 import {
   GenericDrivingLicenseApi,
   GenericDrivingLicenseConfig,
-} from './client/driving-license-client'
+} from './client/old-driving-license-client'
 import {
   GenericDisabilityLicenseModule,
   GenericDisabilityLicenseConfig,
