@@ -1,6 +1,8 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
+export type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',

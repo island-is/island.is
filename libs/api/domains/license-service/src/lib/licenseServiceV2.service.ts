@@ -1,7 +1,4 @@
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
-import { Cache as CacheManager } from 'cache-manager'
-import add from 'date-fns/add'
-import compareAsc from 'date-fns/compareAsc'
+import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
@@ -10,17 +7,11 @@ import {
   GenericUserLicense,
   GenericLicenseTypeType,
   GenericLicenseType,
-  GenericLicenseClient,
-  GenericLicenseMetadata,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseStatus,
-  GenericLicenseCached,
-  GenericLicenseUserdataExternal,
   PkPassVerification,
   GenericUserLicensePkPassStatus,
   GenericLicenseOrganizationSlug,
-  GenericLicenseLabels,
-  DRIVING_LICENSE_FACTORY,
   GenericLicensePayloadMapper,
   GenericLicenseUserdata,
   GenericLicenseFetchResult,
@@ -29,9 +20,7 @@ import {
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import { AVAILABLE_LICENSES } from './licenseService.module'
-import { FetchError } from '@island.is/clients/middlewares'
 import {
-  FlattenedAdrDto,
   LicenseClient,
   LicenseClientService,
   LicenseType,

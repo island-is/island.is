@@ -1,6 +1,8 @@
 export const FIREARM_API = 'firearm-api'
 export const OPEN_FIREARM_API = 'open-firearm-api'
 
+export type FirearmCategories = { [key: string]: string }
+
 export type Result<ResultType, ErrorType = ServiceError> =
   | {
       ok: true

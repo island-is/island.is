@@ -13,12 +13,11 @@ import {
   LICENSE_MAPPER_FACTORY,
 } from './licenceService.type'
 import { GenericDrivingLicenseModule } from './client/driving-license-client'
-import {
-  AdrLicensePayloadMapper,
-  parseAdrLicensePayload,
-} from './mappers/adrLicenseMapper'
+import { AdrLicensePayloadMapper } from './mappers/adrLicenseMapper'
 import { DisabilityLicensePayloadMapper } from './mappers/disabilityLicenseMapper'
 import { MachineLicensePayloadMapper } from './mappers/machineLicenseMapper'
+import { FirearmLicensePayloadMapper } from './mappers/firearmLicenseMapper'
+import { LicenseServiceServiceV2 } from './licenseServiceV2.service'
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.FirearmLicense,
@@ -80,7 +79,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   ],
   providers: [
     MainResolver,
-    LicenseServiceService,
+    LicenseServiceServiceV2,
     {
       provide: LOGGER_PROVIDER,
       useValue: logger,
@@ -95,12 +94,14 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
             return DisabilityLicensePayloadMapper
           case GenericLicenseType.MachineLicense:
             return MachineLicensePayloadMapper
+          case GenericLicenseType.FirearmLicense:
+            return FirearmLicensePayloadMapper
           default:
             return null
         }
       },
     },
   ],
-  exports: [LicenseServiceService],
+  exports: [LicenseServiceServiceV2],
 })
 export class LicenseServiceModule {}
