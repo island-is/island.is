@@ -91,30 +91,31 @@ const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
         )}
         {isRequiredAction && (
           <Box pointerEvents="none">
-            <Tag variant="red">
-              {formatText(
-                coreMessages.tagsRequiresAction,
-                application,
-                formatMessage,
-              )}
-            </Tag>
+            <Box marginBottom={1}>
+              <Tag variant="red">
+                {formatText(
+                  coreMessages.tagsRequiresAction,
+                  application,
+                  formatMessage,
+                )}
+              </Tag>
+            </Box>
+            <Box display="flex" justifyContent="flexEnd" marginTop={1}>
+              <Button
+                icon="arrowForward"
+                variant="text"
+                size="small"
+                onClick={goToAttachmentScreen}
+              >
+                {formatMessage(
+                  parentalLeaveFormMessages.reviewScreen
+                    .additionalDocumentRequiredButton,
+                )}
+              </Button>
+            </Box>
           </Box>
         )}
       </Box>
-      {isRequiredAction && (
-        <Box display="flex" justifyContent="flexEnd">
-          <Button
-            icon="attach"
-            variant="utility"
-            onClick={goToAttachmentScreen}
-          >
-            {formatMessage(
-              parentalLeaveFormMessages.reviewScreen
-                .additionalDocumentRequiredButton,
-            )}
-          </Button>
-        </Box>
-      )}
     </Box>
   )
 }
