@@ -1,7 +1,7 @@
 // Components
-export * from './lib/Authenticator/AuthProvider'
-export * from './lib/Authenticator/MockedAuthProvider'
-export * from './lib/Authenticator/AuthContext'
+export * from './lib/auth/AuthProvider'
+export * from './lib/auth/MockedAuthProvider'
+export * from './lib/auth/AuthContext'
 
 // Lib
 export * from './lib/userManager'
