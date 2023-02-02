@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { conclusion } from '../../lib/messages'
-import { Rejecter } from '../../types'
+import { Rejecter } from '../../shared'
 
 export const RejectedConclusion: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
