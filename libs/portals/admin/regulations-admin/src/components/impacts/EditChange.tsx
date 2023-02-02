@@ -17,7 +17,6 @@ import {
 } from '../../state/types'
 import {
   getDiff,
-  HTMLDump,
   HTMLText,
   PlainText,
   RegName,
@@ -281,8 +280,6 @@ export const EditChange = (props: EditChangeProp) => {
           if (res.errors && res.errors.length > 1) {
             throw res.errors[0]
           }
-          console.log('resresresresres', res)
-          console.log('resresresresres', JSON.stringify(res))
           return { success: true, error: undefined }
         })
         .catch((error) => {

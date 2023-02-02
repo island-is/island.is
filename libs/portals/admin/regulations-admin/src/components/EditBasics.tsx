@@ -14,7 +14,12 @@ import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
 import { useDraftingState } from '../state/useDraftingState'
 import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
-import { formatAmendingRegTitle } from '../utils/formatAmendingRegulationTitle'
+import {
+  formatAmendingRegTitle,
+  formatAmendingRegBody,
+} from '../utils/formatAmendingRegulation'
+import { DraftChangeForm } from '../state/types'
+import { HTMLText } from '@island.is/regulations'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
@@ -41,13 +46,23 @@ export const EditBasics = () => {
     }
   }, [draft.type.value])
 
+  useEffect(() => {
+    if (!text.value && draft.type.value === 'amending') {
+      const THE_IMPACT = draft.impacts?.['0221/2001']?.[0] as DraftChangeForm
+      const additions = formatAmendingRegBody(THE_IMPACT.diff?.value)
+
+      const additionString = additions.join('') as HTMLText
+
+      updateState('text', additionString)
+    }
+  }, [draft.impacts])
+
   return (
     <>
       <Box marginBottom={3}>
         <MagicTextarea
           label={t(msg.title)}
           name="title"
-          defaultValue={draft.title.value}
           value={draft.title.value}
           onChange={(value) => {
             updateState('title', value)
@@ -74,14 +89,26 @@ export const EditBasics = () => {
             startExpanded={startTextExpanded}
           >
             <Box marginBottom={3}>
-              <EditorInput
-                label={t(msg.text)}
-                hiddenLabel
-                draftId={draft.id}
-                value={text.value}
-                onChange={(value) => updateState('text', value)}
-                error={text.showError && text.error && t(text.error)}
-              />
+              {draft.text.value ? (
+                // Force re-render of TinyMCE editor for inital and empty values
+                <EditorInput
+                  label={t(msg.text)}
+                  hiddenLabel
+                  draftId={draft.id}
+                  value={draft.text.value}
+                  onChange={(value) => updateState('text', value)}
+                  error={text.showError && text.error && t(text.error)}
+                />
+              ) : (
+                <EditorInput
+                  label={t(msg.text)}
+                  hiddenLabel
+                  draftId={draft.id}
+                  value={draft.text.value}
+                  onChange={(value) => updateState('text', value)}
+                  error={text.showError && text.error && t(text.error)}
+                />
+              )}
             </Box>
             <Box>
               <Divider />
