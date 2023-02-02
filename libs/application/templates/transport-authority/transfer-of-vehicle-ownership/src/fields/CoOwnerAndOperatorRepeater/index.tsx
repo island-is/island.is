@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { information } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorField } from '../../types'
+import { ReviewCoOwnerAndOperatorField } from '../../shared'
 import { repeaterButtons } from './CoOwnerAndOperatorRepeater.css'
 import { CoOwnerAndOperatorRepeaterItem } from './CoOwnerAndOperatorRepeaterItem'
 

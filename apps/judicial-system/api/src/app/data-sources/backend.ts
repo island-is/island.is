@@ -207,10 +207,6 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/file/${id}`)
   }
 
-  getCaseFiles(id: string): Promise<CaseFile[]> {
-    return this.get(`case/${id}/files`)
-  }
-
   uploadCaseFileToCourt(
     caseId: string,
     id: string,

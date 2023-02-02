@@ -290,4 +290,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly indictmentIntroduction?: string
 }

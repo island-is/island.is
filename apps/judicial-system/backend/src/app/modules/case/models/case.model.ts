@@ -942,6 +942,16 @@ export class Case extends Model {
   crimeScenes?: CrimeSceneMap
 
   /**********
+   * The introduction to a traffic violation case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  indictmentIntroduction?: string
+
+  /**********
    * The case's counts - only used if the case is an indictment
    **********/
   @HasMany(() => IndictmentCount, 'caseId')

@@ -184,7 +184,7 @@ export class CaseController {
     return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
     representativeTransitionRule,
