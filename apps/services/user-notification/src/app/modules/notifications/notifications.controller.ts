@@ -45,7 +45,7 @@ export class NotificationsController {
     },
   })
   @ApiOkResponse({ type: CreateNotificationResponse })
-  @ApiOperation({deprecated: true})
+  @ApiOperation({ deprecated: true })
   @HttpCode(201)
   @Post()
   async createNotification(
