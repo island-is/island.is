@@ -39,7 +39,9 @@ export type GetGenericLicenseOptions = {
 export class LicenseServiceServiceV2 {
   constructor(
     @Inject(LICENSE_MAPPER_FACTORY)
-    private licenseMapperFactory: (type: GenericLicenseType) => GenericLicensePayloadMapper<unknown>
+    private licenseMapperFactory: (
+      type: GenericLicenseType,
+    ) => GenericLicensePayloadMapper<unknown>,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly licenseClient: LicenseClientService,
     private readonly cmsContentfulService: CmsContentfulService,
@@ -70,8 +72,12 @@ export class LicenseServiceServiceV2 {
     }
   }
 
-  private async fetchLicense(user: User, licenseClient: LicenseClient<unknown>): Promise<GenericLicenseFetchResult>{
-    let fetchStatus : GenericUserLicenseFetchStatus = GenericUserLicenseFetchStatus.NotFetched
+  private async fetchLicense(
+    user: User,
+    licenseClient: LicenseClient<unknown>,
+  ): Promise<GenericLicenseFetchResult> {
+    let fetchStatus: GenericUserLicenseFetchStatus =
+      GenericUserLicenseFetchStatus.NotFetched
 
     if (!licenseClient) {
       throw new Error('License service failed')
@@ -80,14 +86,16 @@ export class LicenseServiceServiceV2 {
     fetchStatus = GenericUserLicenseFetchStatus.Fetching
     const licenseRes = await licenseClient.getLicenseDetail(user)
 
-    fetchStatus = licenseRes.ok ? GenericUserLicenseFetchStatus.Fetched : GenericUserLicenseFetchStatus.Error
+    fetchStatus = licenseRes.ok
+      ? GenericUserLicenseFetchStatus.Fetched
+      : GenericUserLicenseFetchStatus.Error
 
     return {
       data: licenseRes,
       fetch: {
         status: fetchStatus,
-        updated: new Date()
-      }
+        updated: new Date(),
+      },
     }
   }
 
@@ -134,32 +142,34 @@ export class LicenseServiceServiceV2 {
 
     if (!license || !licenseService) {
       this.logger.warn(`Invalid license type. type: ${licenseType}`)
-      return null;
+      return null
     }
 
     const licenseLabels = await this.getLicenseLabels(locale)
 
-    let licenseUserData : GenericLicenseUserdata = {
+    const licenseUserData: GenericLicenseUserdata = {
       status: GenericUserLicenseStatus.Unknown,
-      pkpassStatus: GenericUserLicensePkPassStatus.Unknown
+      pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
     }
 
     const licenseRes = await this.fetchLicense(user, licenseService)
-    let licensePayload: GenericUserLicensePayload | null = null;
+    const licensePayload: GenericUserLicensePayload | null = null
 
     if (licenseRes.fetch.status !== GenericUserLicenseFetchStatus.Error) {
       const licenseMapper = this.licenseMapperFactory(license.type)
-      const licensePayload = licenseMapper.parsePayload(licenseRes.data, locale, licenseLabels)
+      const licensePayload = licenseMapper.parsePayload(
+        licenseRes.data,
+        locale,
+        licenseLabels,
+      )
 
       if (licensePayload) {
         //licenseUserData.pkpassStatus = licenseService.licenseIsValidForPkPass(licenseRes.data) as unknown as GenericUserLicensePkPassStatus
         licenseUserData.status = GenericUserLicenseStatus.HasLicense
-      }
-      else {
+      } else {
         licenseUserData.status = GenericUserLicenseStatus.NotAvailable
       }
     }
-
 
     const orgData = license.orgSlug
       ? await this.getOrganization(license.orgSlug, locale)
@@ -185,12 +195,12 @@ export class LicenseServiceServiceV2 {
     licenseType: GenericLicenseType,
   ) {
     const licenseService = await this.licenseClient.createClientByLicenseType(
-            (licenseType as unknown) as LicenseType,
-          )
+      (licenseType as unknown) as LicenseType,
+    )
 
     if (!licenseService) {
       this.logger.warn(`Invalid license type. type: ${licenseType}`)
-      return null;
+      return null
     }
 
     const pkPassRes = await licenseService.getPkPass(user)
@@ -199,14 +209,10 @@ export class LicenseServiceServiceV2 {
       return pkPassRes.data
     }
 
-    throw new Error(
-      `Unable to get pkpass for ${licenseType} for user`
-    )
+    throw new Error(`Unable to get pkpass for ${licenseType} for user`)
   }
 
-  async verifyPkPass(
-    data: string,
-  ): Promise<PkPassVerification> {
+  async verifyPkPass(data: string): Promise<PkPassVerification> {
     if (!data) {
       throw new Error(`Missing input data`)
     }
