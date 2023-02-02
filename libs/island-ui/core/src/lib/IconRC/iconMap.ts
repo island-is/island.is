@@ -32,6 +32,7 @@ export type Icon =
   | 'ellipsisVertical'
   | 'eye'
   | 'eyeOff'
+  | 'facebook'
   | 'fileTrayFull'
   | 'filter'
   | 'heart'
@@ -98,6 +99,7 @@ export default {
     ellipsisVertical: 'EllipsisVertical',
     eye: 'Eye',
     eyeOff: 'EyeOff',
+    facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
     heart: 'Heart',
@@ -163,6 +165,7 @@ export default {
     ellipsisVertical: 'EllipsisVerticalOutline',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
+    facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
     heart: 'HeartOutline',

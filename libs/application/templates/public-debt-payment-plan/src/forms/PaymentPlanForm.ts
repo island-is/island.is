@@ -26,7 +26,6 @@ import {
   overview,
   section,
   paymentPlan,
-  betaTest,
 } from '../lib/messages'
 import { isApplicantPerson } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
@@ -72,12 +71,6 @@ export const PaymentPlanForm: Form = buildForm({
   mode: FormModes.DRAFT,
   logo: Logo,
   children: [
-    // TODO remove section on official release
-    buildSection({
-      id: 'betaTest.section',
-      title: betaTest.title,
-      children: [],
-    }),
     buildSection({
       id: 'externalData',
       title: section.externalData,
