@@ -16,10 +16,22 @@ import {
   Input,
   AlertMessage,
 } from '@island.is/island-ui/core'
+import { SyslumennListCsvExport } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 
 const DEFAULT_PAGE_SIZE = 10
+const CSV_COLUMN_SEPARATOR = ','
+const CSV_ROW_SEPARATOR = '\n'
+
+const csvColumnSeparatorSafeValue = (value: string): string => {
+  /**
+   * Note:
+   *    This handles the case if the value it self contains the CSV column separator character.
+   *    E.g. in many cases, the address field contains ','.
+   */
+  return value?.includes(CSV_COLUMN_SEPARATOR) ? `"${value}"` : value
+}
 
 interface AlcoholLicencesListProps {
   slice: ConnectedComponent
@@ -59,6 +71,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
 
   const onSearch = (searchString: string) => {
     setSearchString(searchString)
+    setShowCount(PAGE_SIZE)
   }
 
   useQuery<Query>(GET_ALCOHOL_LICENCES_QUERY, {
@@ -84,6 +97,47 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
     if (!validTo) {
       return t('validPeriodIndefinite', 'Ótímabundið')
     }
+  }
+
+  const csvStringProvider = () => {
+    return new Promise<string>((resolve, reject) => {
+      if (alcoholLicences) {
+        // CSV Header row
+        const headerRow = [
+          'Málategund',
+          'Tegund',
+          'Tegund leyfis',
+          'Leyfisnúmer',
+          'Leyfishafi',
+          'Ábyrgðarmaður',
+          'Skráningarár',
+          'Gildir frá',
+          'Gildir til',
+          'Útgefið af',
+        ].join(CSV_COLUMN_SEPARATOR)
+        const rows = [headerRow]
+
+        // CSV Value rows
+        for (const alcoholLicence of alcoholLicences) {
+          const columnValues = [
+            alcoholLicence.caseType,  // Málategund
+            alcoholLicence.licenceType,  // Tegund
+            alcoholLicence.licenceSubType,  // Tegund leyfis
+            alcoholLicence.licenseNumber,  // Leyfisnúmer
+            alcoholLicence.licenseHolder,  // Leyfishafi
+            alcoholLicence.licenseResponsible,  // Ábyrgðarmaður
+            alcoholLicence.year?.toString(),  // Skráningarár
+            alcoholLicence.validFrom?.toString(),  // Gildir frá
+            alcoholLicence.validTo?.toString(),  // Gildir til
+            alcoholLicence.issuedBy,  // Útgefið af
+          ].map((x) => csvColumnSeparatorSafeValue(x))
+          rows.push(columnValues.join(CSV_COLUMN_SEPARATOR))
+        }
+
+        return resolve(rows.join(CSV_ROW_SEPARATOR))
+      }
+      reject('Alcohol Licences data has not been loaded.')
+    })
   }
 
   const filteredAlcoholLicences = alcoholLicences.filter((alcoholLicence) => {
@@ -118,7 +172,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
         />
       )}
       {listState === 'loaded' && (
-        <Box marginBottom={4}>
+        <Box marginBottom={3}>
           <Input
             name="alcoholLicencesSearchInput"
             placeholder={t('searchPlaceholder', 'Leita')}
@@ -128,6 +182,27 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
             iconType="outline"
             onChange={(event) => onSearch(event.target.value)}
           />
+          <Box textAlign="right" marginRight={1} marginTop={1}>
+            <SyslumennListCsvExport
+              defaultLabel={t(
+                'csvButtonLabelDefault',
+                'Sækja öll leyfi (CSV)',
+              )}
+              loadingLabel={t(
+                'csvButtonLabelLoading',
+                'Sæki öll leyfi...',
+              )}
+              errorLabel={t(
+                'csvButtonLabelError',
+                'Ekki tókst að sækja leyfi, reyndu aftur',
+              )}
+              csvFilenamePrefix={t(
+                'csvFileTitlePrefix',
+                'Áfengisleyfi',
+              )}
+              csvStringProvider={csvStringProvider}
+            />
+          </Box>
         </Box>
       )}
       {listState === 'loaded' && filteredAlcoholLicences.length === 0 && (
