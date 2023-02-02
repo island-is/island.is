@@ -93,26 +93,7 @@ describe('Notifications API', () => {
     await app.close()
   })
 
-  // it('Accepts a valid message input', async () => {
-  //   const msg: Message = {
-  //     type: MessageTypes.NewDocumentMessage,
-  //     organization: 'Skatturinn',
-  //     // eslint-disable-next-line local-rules/disallow-kennitalas
-  //     recipient: '0409084390', // this valid kt needed for test to pass
-  //     documentId: '123',
-  //   }
-
-  //   await request(app.getHttpServer())
-  //     .post('/notifications/create-notification')
-  //     .send(msg)
-  //     .expect(201)
-
-  //   const worker = app.get(NotificationsWorkerService) as WorkerMock
-  //   await waitForDelivery(worker, (msgs) => msgs.length > 0)
-  //   expect(worker.received).toEqual([msg])
-  // })
-
-  it('gets a templates', async () => {
+  it('Accepts a valid message input', async () => {
     const msg: Message = {
       type: MessageTypes.NewDocumentMessage,
       organization: 'Skatturinn',
@@ -122,7 +103,26 @@ describe('Notifications API', () => {
     }
 
     await request(app.getHttpServer())
-      .get('/notifications/templates?locale=is-IS')
-      .expect(200)
+      .post('/notifications/create-notification')
+      .send(msg)
+      .expect(201)
+
+    const worker = app.get(NotificationsWorkerService) as WorkerMock
+    await waitForDelivery(worker, (msgs) => msgs.length > 0)
+    expect(worker.received).toEqual([msg])
   })
+
+  // it('gets a templates', async () => {
+  //   const msg: Message = {
+  //     type: MessageTypes.NewDocumentMessage,
+  //     organization: 'Skatturinn',
+  //     // eslint-disable-next-line local-rules/disallow-kennitalas
+  //     recipient: '0409084390', // this valid kt needed for test to pass
+  //     documentId: '123',
+  //   }
+
+  //   await request(app.getHttpServer())
+  //     .get('/notifications/templates?locale=is-IS')
+  //     .expect(200)
+  // })
 })
