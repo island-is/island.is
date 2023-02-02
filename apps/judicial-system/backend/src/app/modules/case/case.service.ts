@@ -615,7 +615,7 @@ export class CaseService {
   getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
       include: caseListInclude,
-      order,
+      order: listOrder,
       where: getCasesQueryFilter(user),
     })
   }
