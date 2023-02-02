@@ -14,7 +14,10 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/types'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  formConclusionSection,
+} from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
 import {
   application,
@@ -218,16 +221,12 @@ export const PaymentPlanForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'confirmation',
-      title: section.confirmation,
-      children: [
-        buildCustomField({
-          id: 'conclusion',
-          title: conclusion.general.title,
-          component: 'FormConclusion',
-        }),
-      ],
+    formConclusionSection({
+      alertMessage: conclusion.general.alertMessage,
+      alertTitle: conclusion.general.alertTitle,
+      bulletHeader: conclusion.information.title,
+      bulletIntro: conclusion.information.intro,
+      bulletPoints: conclusion.information.bulletList,
     }),
   ],
 })
