@@ -31,30 +31,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
-  nationalRegistryTitle: {
-    id: 'ndc.application:nationalRegistry.title',
-    defaultMessage: 'Þjóðskrá Íslands / Fyrirtækjaskrá',
-    description: 'National Registry / Company registry',
-  },
-  nationalRegistrySubTitle: {
-    id: 'ndc.application:nationalRegistry.subTitle',
-    defaultMessage:
-      'Til þess að auðvelda fyrir sækjum við þessar upplýsingar til þess að fylla út umsóknina',
-    description:
-      'This information will be used to prefill the data in the application',
-  },
-  userProfileInformationTitle: {
-    id: 'ndc.application:userprofile.title',
-    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
-    description: 'Your user profile information',
-  },
-  userProfileInformationSubTitle: {
-    id: 'ndc.application:userprofile.subTitle',
-    defaultMessage:
-      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
-    description:
-      'In order to apply for this application we need your email and phone number',
-  },
   actionCardDraft: {
     id: 'ndc.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
