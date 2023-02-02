@@ -6,14 +6,10 @@ import {
 } from 'react-router-dom'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useAuth } from '@island.is/auth/react'
-import {
-  prepareRouterData,
-  PortalModule,
-  PortalProvider,
-  PortalMeta,
-  PortalRoute,
-} from '@island.is/portals/core'
 import { createModuleRoutes } from '../utils/router/createModuleRoutes'
+import { PortalModule, PortalRoute } from '../types/portalCore'
+import { PortalMeta, PortalProvider } from './PortalProvider'
+import { prepareRouterData } from '../utils/router/prepareRouterData'
 
 type PortalRouterProps = {
   modules: PortalModule[]
@@ -44,7 +40,7 @@ export const PortalRouter = ({
         .then((data) => setRouterData(data))
         .catch((err) => setError(err))
     }
-  }, [userInfo])
+  }, [userInfo, modules, featureFlagClient])
 
   if (error) {
     throw error
