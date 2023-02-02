@@ -113,7 +113,6 @@ describe('Notifications API', () => {
   // })
 
   it('gets a templates', async () => {
-
     await request(app.getHttpServer())
       .get('/notifications/templates?locale=is-IS')
       .expect(200)
