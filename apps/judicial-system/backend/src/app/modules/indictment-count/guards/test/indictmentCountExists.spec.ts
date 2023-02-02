@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { DefendantExistsGuard } from '../defendantExists.guard'
+import { IndictmentCountExistsGuard } from '../indictmentCountExists.guard'
 
 interface Then {
   result: boolean
@@ -15,13 +15,13 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('Defendant Exists Guard', () => {
+describe('Indictment Count Exists Guard', () => {
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new DefendantExistsGuard()
+      const guard = new IndictmentCountExistsGuard()
       const then = {} as Then
 
       try {
@@ -36,15 +36,15 @@ describe('Defendant Exists Guard', () => {
     }
   })
 
-  describe('defendant exists', () => {
+  describe('indictment count exists', () => {
     const caseId = uuid()
-    const defendantId = uuid()
-    const defendant = { id: defendantId, caseId }
-    const theCase = { id: caseId, defendants: [defendant] }
+    const indictmentCountId = uuid()
+    const indictmentCount = { id: indictmentCountId, caseId }
+    const theCase = { id: caseId, indictmentCounts: [indictmentCount] }
     const request = {
-      params: { caseId, defendantId },
+      params: { caseId, indictmentCountId },
       case: theCase,
-      defendant: undefined,
+      indictmentCount: undefined,
     }
     let then: Then
 
@@ -56,19 +56,19 @@ describe('Defendant Exists Guard', () => {
 
     it('should activate', () => {
       expect(then.result).toBe(true)
-      expect(request.defendant).toBe(defendant)
+      expect(request.indictmentCount).toBe(indictmentCount)
     })
   })
 
-  describe('defendant does not exist', () => {
+  describe('indictment count does not exist', () => {
     const caseId = uuid()
-    const defendantId = uuid()
-    const theCase = { id: caseId, defendants: [] }
+    const indictmentCountId = uuid()
+    const theCase = { id: caseId, indictmentCounts: [] }
     let then: Then
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce({
-        params: { caseId, defendantId },
+        params: { caseId, indictmentCountId },
         case: theCase,
       })
 
@@ -78,7 +78,7 @@ describe('Defendant Exists Guard', () => {
     it('should throw NotFoundException', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(
-        `Defendant ${defendantId} of case ${caseId} does not exist`,
+        `Indictment count ${indictmentCountId} of case ${caseId} does not exist`,
       )
     })
   })
@@ -98,9 +98,9 @@ describe('Defendant Exists Guard', () => {
     })
   })
 
-  describe('missing defendant id', () => {
+  describe('missing indictment count id', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, defendants: [] }
+    const theCase = { id: caseId, indictmentCounts: [] }
     let then: Then
 
     beforeEach(async () => {
@@ -111,7 +111,7 @@ describe('Defendant Exists Guard', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Missing defendant id')
+      expect(then.error.message).toBe('Missing indictment count id')
     })
   })
 })
