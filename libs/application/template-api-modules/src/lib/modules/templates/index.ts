@@ -56,6 +56,8 @@ import { InheritanceReportService } from './inheritance-report/inheritance-repor
 import { InheritanceReportModule } from './inheritance-report/inheritance-report.module'
 import { EstateTemplateModule } from './estate/estate.module'
 import { EstateTemplateService } from './estate/estate.service'
+import { PassportAnnulmentModule } from './passport-annulment/passport-annulment.module'
+import { PassportAnnulmentService } from './passport-annulment/passport-annulment.service'
 
 //TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
@@ -119,6 +121,7 @@ export const modules = [
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
   EstateTemplateModule,
+  PassportAnnulmentModule,
 ]
 
 export const services = [
@@ -162,4 +165,5 @@ export const services = [
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
   EstateTemplateService,
+  PassportAnnulmentService,
 ]

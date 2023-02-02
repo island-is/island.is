@@ -61,7 +61,7 @@ export const m = defineMessages({
   },
   passportNumber: {
     id: 'pa.application:selectPassport.passportNumber',
-    defaultMessage: 'Vegabréfsnúmer:',
+    defaultMessage: 'Vegabréfsnúmer',
     description: 'Some description',
   },
   validTag: {
@@ -140,7 +140,7 @@ export const m = defineMessages({
   },
   commentTitle: {
     id: 'pa.application:personalInfo.commentTitle',
-    defaultMessage: 'Hvað og hvenær glataðist vegabréfið?',
+    defaultMessage: 'Hvað og hvenær glataðist vegabréfið',
     description: 'Some description',
   },
   commentPlaceholder: {
@@ -186,9 +186,9 @@ export const m = defineMessages({
     defaultMessage: 'Ég mun mæta með núverandi vegabréf í myndatökuna.',
     description: 'Some description',
   },
-  proceedToPayment: {
-    id: 'pa.application:payment.proceedToPayment',
-    defaultMessage: 'Greiða',
+  submitApplication: {
+    id: 'pa.application:submitApplication',
+    defaultMessage: 'Staðfesta',
     description: 'Some description',
   },
 

@@ -3,8 +3,9 @@ import {
   buildDividerField,
   buildKeyValueField,
   buildMultiField,
+  buildSubmitField,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
 import {
@@ -12,6 +13,7 @@ import {
   Service,
   Services,
   IdentityDocumentData,
+  STATUS,
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
@@ -33,15 +35,15 @@ export const overview = buildMultiField({
       label: m.name,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.info as {
-          name?: string
-        })?.name,
+        (application.answers as {
+          passportName?: string
+        })?.passportName,
     }),
     buildKeyValueField({
       label: m.passportNumber,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.info as {
+        (application.answers as {
           passportNumber?: string
         })?.passportNumber,
     }),
@@ -53,18 +55,12 @@ export const overview = buildMultiField({
       space: 'gutter',
     }),
     buildKeyValueField({
-      label: m.currentPassportStatus,
-      width: 'half',
-      value: (application: Application) => {
-        console.log(application.answers)
-        const date = (application.externalData.identityDocument
-          .data as IdentityDocumentData).userPassport?.expirationDate
-        return date
-          ? m.currentPassportExpiration.defaultMessage +
-              ' ' +
-              format(new Date(date), 'dd/MM/yy')
-          : m.noPassport.defaultMessage
-      },
+      label: m.statusTitle,
+      width: 'full',
+      value: (application: Application) =>
+        application.answers.status === STATUS.LOST
+          ? m.statusLost
+          : m.statusStolen,
     }),
     buildDescriptionField({
       id: 'overview.space3',
@@ -72,6 +68,32 @@ export const overview = buildMultiField({
       description: '',
       space: 'gutter',
     }),
-    buildDividerField({}),
+    buildKeyValueField({
+      label: m.commentTitle,
+      width: 'full',
+      value: (application: Application) =>
+        (application.answers as {
+          comment?: string
+        })?.comment,
+    }),
+    buildDescriptionField({
+      id: 'overview.space3',
+      title: '',
+      description: '',
+      space: 'gutter',
+    }),
+    buildSubmitField({
+      id: 'submit',
+      placement: 'footer',
+      title: '',
+      refetchApplicationAfterSubmit: true,
+      actions: [
+        {
+          event: DefaultEvents.SUBMIT,
+          name: m.submitApplication,
+          type: 'primary',
+        },
+      ],
+    }),
   ],
 })

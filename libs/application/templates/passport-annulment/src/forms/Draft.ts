@@ -5,6 +5,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -61,6 +62,14 @@ export const Draft: Form = buildForm({
               id: 'passport',
               title: '',
               component: 'PassportSelection',
+            }),
+            buildDescriptionField({
+              id: 'passportNumber',
+              title: '',
+            }),
+            buildDescriptionField({
+              id: 'passportName',
+              title: '',
             }),
           ],
         }),

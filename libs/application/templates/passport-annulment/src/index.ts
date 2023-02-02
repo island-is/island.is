@@ -6,4 +6,4 @@ export const getDataProviders = () => import('./dataProviders')
 export const getFields = () => import('./fields')
 
 export default PassportAnnulmentTemplate
-export type PassportSchema = z.TypeOf<typeof dataSchema>
+export type PassportAnnulmentSchema = z.TypeOf<typeof dataSchema>

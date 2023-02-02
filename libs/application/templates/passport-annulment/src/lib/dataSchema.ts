@@ -1,16 +1,13 @@
 import { z } from 'zod'
 import { error } from './error'
+import { STATUS } from './constants'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  passportNumber: z.string(),
-  passportName: z.string(),
-  info: z.object({
-    name: z.string(),
-    passportNumber: z.string(),
-  }),
-  status: z.string(),
-  comment: z.string(),
+  passportNumber: z.string().min(1),
+  passportName: z.string().min(1),
+  status: z.enum([STATUS.LOST, STATUS.STOLEN]),
+  comment: z.string().min(1),
   passport: z
     .object({
       userPassport: z.string(),
@@ -26,4 +23,4 @@ export const dataSchema = z.object({
     ),
 })
 
-export type PassportSchema = z.TypeOf<typeof dataSchema>
+export type PassportAnnulmentSchema = z.TypeOf<typeof dataSchema>

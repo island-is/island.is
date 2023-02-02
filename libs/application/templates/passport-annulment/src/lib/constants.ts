@@ -21,21 +21,17 @@ export enum Services {
   EXPRESS = 'express',
 }
 
-export enum PASSPORT_CHARGE_CODES {
-  REGULAR = 'AY105',
-  EXPRESS = 'AY106',
-  DISCOUNT_REGULAR = 'AY107',
-  DISCOUNT_EXPRESS = 'AY108',
-}
-
 export enum ApiActions {
   submitApplication = 'submitApplication',
 }
 
+export enum STATUS {
+  LOST = 'lost',
+  STOLEN = 'stolen',
+}
+
 export const YES = 'yes'
 export const NO = 'no'
-
-export const SYSLUMADUR_NATIONAL_ID = '6509142520'
 
 export type Service = {
   type: Services
@@ -58,30 +54,6 @@ export type SubmitResponse = {
 export type Passport = {
   userPassport: string
   childPassport: string
-}
-
-export type Guardian = {
-  name: string
-  nationalId: string
-  email: string
-  phoneNumber: string
-}
-
-export type PersonalInfo = {
-  name: string
-  nationalId: string
-  email: string
-  phoneNumber: string
-  hasDisabilityDiscount: string[]
-  hasDisabilityDiscountChecked: boolean
-}
-
-export type ChildsPersonalInfo = {
-  name: string
-  nationalId: string
-  hasDisabilityDiscount: Array<string>
-  guardian1: Guardian
-  guardian2: Guardian
 }
 
 export type IdentityDocument = {
@@ -114,19 +86,3 @@ export interface IdentityDocumentData {
 
 export const twoDays = 24 * 3600 * 1000 * 2
 export const sixtyDays = 24 * 3600 * 1000 * 60
-
-export const IdentityDocumentProviderMock = {
-  productionRequestID: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-  number: 'A1234567',
-  type: 'P',
-  verboseType: 'Vegabréf: Almennt',
-  subType: 'A',
-  status: 'ISSUED',
-  issuingDate: new Date('2012-10-02'),
-  expirationDate: new Date('2022-10-02'),
-  displayFirstName: 'Gervimaður',
-  displayLastName: 'Mock',
-  mrzFirstName: 'GERVIMAÐUR',
-  mrzLastName: 'MOCK',
-  sex: 'X',
-}

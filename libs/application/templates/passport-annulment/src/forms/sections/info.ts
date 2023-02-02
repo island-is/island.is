@@ -15,7 +15,7 @@ export const info = buildMultiField({
   description: m.personalInfoSubtitle,
   children: [
     buildTextField({
-      id: 'info.name',
+      id: 'passportName',
       title: m.name,
       backgroundColor: 'white',
       width: 'half',
@@ -24,7 +24,7 @@ export const info = buildMultiField({
         application.answers.passportName,
     }),
     buildTextField({
-      id: 'info.passportNumber',
+      id: 'passportNumber',
       title: m.passportNumber,
       backgroundColor: 'white',
       width: 'half',
@@ -58,7 +58,7 @@ export const info = buildMultiField({
       ],
     }),
     buildTextField({
-      id: 'otherInfoText',
+      id: 'comment',
       title: m.commentTitle,
       variant: 'textarea',
       doesNotRequireAnswer: true,
