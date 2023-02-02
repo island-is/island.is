@@ -46,37 +46,5 @@ export const externalDataSection = buildSection({
         }),
       ],
     }),
-
-    // buildMultiField({
-    //   id: 'intro',
-    //   title: e.introScreen.sectionLabel,
-    //   children: [
-    //     buildCustomField(
-    //       {
-    //         id: 'introScreen',
-    //         title: e.introScreen.sectionTitle,
-    //         component: 'IntroScreen',
-    //       },
-    //       {
-    //         subTitle: e.introScreen.sectionDescription,
-    //       },
-    //     ),
-    //     // buildSubmitField({
-    //     //   id: 'getDataSuccess.toDraft',
-    //     //   title: 'externalData.dataProvider.submitButton',
-    //     //   refetchApplicationAfterSubmit: true,
-    //     //   placement: 'footer',
-    //     //   actions: [
-    //     //     {
-    //     //       event: 'SUBMIT',
-    //     //       name: 'externalData.dataProvider.submitButton',
-    //     //       type: 'primary',
-    //     //     },
-    //     //   ],
-    //     // }),
-    //   ],
-    // }),
-    // Has to be here so that the submit button appears (does not appear if no screen is left).
-    // Tackle that as AS task.
   ],
 })
