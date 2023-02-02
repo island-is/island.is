@@ -152,7 +152,7 @@ export class LicenseServiceServiceV2 {
       const licensePayload = licenseMapper.parsePayload(licenseRes.data, locale, licenseLabels)
 
       if (licensePayload) {
-        licenseUserData.pkpassStatus = licenseService.licenseIsValidForPkPass(licenseRes.data) as unknown as GenericUserLicensePkPassStatus
+        //licenseUserData.pkpassStatus = licenseService.licenseIsValidForPkPass(licenseRes.data) as unknown as GenericUserLicensePkPassStatus
         licenseUserData.status = GenericUserLicenseStatus.HasLicense
       }
       else {
