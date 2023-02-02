@@ -34,7 +34,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  licenseIsValidForPkPass(
+  private licenseIsValidForPkPass(
     licenseInfo: OrorkuSkirteini,
   ): LicensePkPassAvailability {
     if (!licenseInfo || !licenseInfo.gildirtil) {
@@ -126,26 +126,46 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     return this.getLicense(user)
   }
 
-  private async createPkPassPayload(user: User): Promise<PassDataInput | null> {
+  private async createPkPassPayload(
+    data: OrorkuSkirteini,
+  ): Promise<PassDataInput | null> {
+    const inputValues = createPkPassDataInput(data)
+    if (!inputValues) return null
+    return {
+      inputFieldValues: inputValues,
+      expirationDate: data.rennurut?.toISOString(),
+    }
+  }
+
+  async getPkPass(user: User): Promise<Result<Pass>> {
     const license = await this.fetchLicense(user)
+
     if (!license.ok || !license.data) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
         { LOG_CATEGORY },
       )
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No disability license data found',
+        },
+      }
     }
 
-    const inputValues = createPkPassDataInput(license.data)
-    if (!inputValues) return null
-    return {
-      inputFieldValues: inputValues,
-      expirationDate: license.data.rennurut?.toISOString(),
-    }
-  }
+    const valid = this.licenseIsValidForPkPass(license.data)
 
-  async getPkPass(user: User): Promise<Result<Pass>> {
-    const payload = await this.createPkPassPayload(user)
+    if (!valid) {
+      return {
+        ok: false,
+        error: {
+          code: 5,
+          message: 'Pass is invalid for pkpass generation',
+        },
+      }
+    }
+    const payload = await this.createPkPassPayload(license.data)
 
     if (!payload) {
       return {

@@ -30,7 +30,9 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  licenseIsValidForPkPass(data: FirearmLicenseDto): LicensePkPassAvailability {
+  private licenseIsValidForPkPass(
+    data: FirearmLicenseDto,
+  ): LicensePkPassAvailability {
     if (!data || !data.licenseInfo?.expirationDate) {
       return LicensePkPassAvailability.Unknown
     }
@@ -144,25 +146,18 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     return this.getLicense(user)
   }
 
-  private async createPkPassPayload(user: User): Promise<PassDataInput | null> {
-    const license = await this.fetchLicenseData(user)
-
-    if (!license.ok || !license.data) {
-      this.logger.info(
-        `No license data found for user, no pkpass payload to create`,
-        { LOG_CATEGORY },
-      )
-      return null
-    }
-
+  private async createPkPassPayload(
+    data: FirearmLicenseDto,
+    nationalId: string,
+  ): Promise<PassDataInput | null> {
     const inputValues = createPkPassDataInput(
-      license.data.licenseInfo,
-      license.data.properties,
-      user.nationalId,
+      data.licenseInfo,
+      data.properties,
+      nationalId,
     )
 
     //slice out headers from base64 image string
-    const image = license.data.licenseInfo?.licenseImgBase64
+    const image = data.licenseInfo?.licenseImgBase64
     const parsedImage = image?.substring(image.indexOf(',') + 1).trim() ?? ''
 
     if (!inputValues) return null
@@ -179,7 +174,38 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
   }
 
   async getPkPass(user: User): Promise<Result<Pass>> {
-    const payload = await this.createPkPassPayload(user)
+    const license = await this.fetchLicenseData(user)
+
+    if (!license.ok || !license.data) {
+      this.logger.info(
+        `No license data found for user, no pkpass payload to create`,
+        { LOG_CATEGORY },
+      )
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No firearm license data found',
+        },
+      }
+    }
+
+    const valid = this.licenseIsValidForPkPass(license.data)
+
+    if (!valid) {
+      return {
+        ok: false,
+        error: {
+          code: 5,
+          message: 'Pass is invalid for pkpass generation',
+        },
+      }
+    }
+
+    const payload = await this.createPkPassPayload(
+      license.data,
+      user.nationalId,
+    )
 
     if (!payload) {
       return {

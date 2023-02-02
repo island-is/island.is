@@ -33,8 +33,8 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  licenseIsValidForPkPass(
-    licenseInfo: FlattenedAdrDto,
+  private licenseIsValidForPkPass(
+    licenseInfo: AdrDto,
   ): LicensePkPassAvailability {
     if (!licenseInfo || !licenseInfo.gildirTil) {
       return LicensePkPassAvailability.Unknown
@@ -126,30 +126,53 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     return this.getLicense(user)
   }
 
-  private async createPkPassPayload(user: User): Promise<PassDataInput | null> {
+  private async createPkPassPayload(
+    data: AdrDto,
+    nationalId: string,
+  ): Promise<PassDataInput | null> {
+    const inputValues = createPkPassDataInput(data, format(nationalId))
+
+    if (!inputValues) return null
+    //Fetch template from api?
+    return {
+      inputFieldValues: inputValues,
+      expirationDate: data.gildirTil,
+    }
+  }
+
+  async getPkPass(user: User): Promise<Result<Pass>> {
     const license = await this.fetchLicense(user)
+
     if (!license.ok || !license.data) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
         { LOG_CATEGORY },
       )
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No adr license data found',
+        },
+      }
     }
 
-    const inputValues = createPkPassDataInput(
+    const valid = this.licenseIsValidForPkPass(license.data)
+
+    if (!valid) {
+      return {
+        ok: false,
+        error: {
+          code: 5,
+          message: 'Pass is invalid for pkpass generation',
+        },
+      }
+    }
+
+    const payload = await this.createPkPassPayload(
       license.data,
-      format(user.nationalId),
+      user.nationalId,
     )
-    if (!inputValues) return null
-    //Fetch template from api?
-    return {
-      inputFieldValues: inputValues,
-      expirationDate: license.data.gildirTil,
-    }
-  }
-
-  async getPkPass(user: User): Promise<Result<Pass>> {
-    const payload = await this.createPkPassPayload(user)
 
     if (!payload) {
       return {

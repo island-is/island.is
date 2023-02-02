@@ -121,10 +121,6 @@ export interface LicenseClient<ResultType> {
     data: string,
     passTemplateId: string,
   ) => Promise<PkPassVerification | null>
-
-  licenseIsValidForPkPass: (
-    licenseInfo: ResultType,
-  ) => LicensePkPassAvailability
 }
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'

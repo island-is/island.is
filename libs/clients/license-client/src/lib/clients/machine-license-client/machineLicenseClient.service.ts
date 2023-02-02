@@ -6,11 +6,8 @@ import {
   VinnuvelaApi,
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
-import {
-  createPkPassDataInput,
-  parseMachineLicensePayload,
-} from './machineLicenseMapper'
-import { FetchError, handle404 } from '@island.is/clients/middlewares'
+import { createPkPassDataInput } from './machineLicenseMapper'
+import { FetchError } from '@island.is/clients/middlewares'
 import {
   Pass,
   PassDataInput,
@@ -19,10 +16,6 @@ import {
 import { format } from 'kennitala'
 import { Locale } from 'locale'
 import {
-  GenericLicenseLabels,
-  GenericLicenseUserdataExternal,
-  GenericUserLicensePkPassStatus,
-  GenericUserLicenseStatus,
   LicenseClient,
   LicensePkPassAvailability,
   PkPassVerification,
@@ -41,7 +34,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  licenseIsValidForPkPass(
+  private licenseIsValidForPkPass(
     licenseInfo: VinnuvelaDto,
   ): LicensePkPassAvailability {
     if (!licenseInfo) {
@@ -135,6 +128,33 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
   }
 
   async getPkPass(user: User, locale: Locale = 'is'): Promise<Result<Pass>> {
+    const license = await this.fetchLicense(user)
+    if (!license.ok || !license.data) {
+      this.logger.info(
+        `No license data found for user, no pkpass payload to create`,
+        { LOG_CATEGORY },
+      )
+
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No machine license data found',
+        },
+      }
+    }
+
+    const valid = this.licenseIsValidForPkPass(license.data)
+
+    if (!valid) {
+      return {
+        ok: false,
+        error: {
+          code: 5,
+          message: 'Pass is invalid for pkpass generation',
+        },
+      }
+    }
     const payload = await this.createPkPassPayload(user, locale)
 
     if (!payload) {
