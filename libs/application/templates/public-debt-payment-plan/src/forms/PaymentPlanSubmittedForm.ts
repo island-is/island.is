@@ -1,26 +1,20 @@
-import {
-  buildCustomField,
-  buildForm,
-  buildSection,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { application, conclusion, section } from '../lib/messages'
+import { formConclusionSection } from '@island.is/application/ui-forms'
+import { application } from '../lib/messages'
+import { conclusion } from '../lib/messages'
 
 export const PaymentPlanSubmittedForm: Form = buildForm({
   id: 'PaymentPlanSubmittedForm',
   title: application.name,
   mode: FormModes.COMPLETED,
   children: [
-    buildSection({
-      id: 'confirmation',
-      title: section.confirmation,
-      children: [
-        buildCustomField({
-          id: 'conclusion',
-          title: conclusion.general.title,
-          component: 'FormConclusion',
-        }),
-      ],
+    formConclusionSection({
+      alertMessage: conclusion.general.alertMessage,
+      alertTitle: conclusion.general.alertTitle,
+      bulletHeader: conclusion.information.title,
+      bulletIntro: conclusion.information.intro,
+      bulletPoints: conclusion.information.bulletList,
     }),
   ],
 })
