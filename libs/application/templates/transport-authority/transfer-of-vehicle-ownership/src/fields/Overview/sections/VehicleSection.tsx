@@ -8,7 +8,7 @@ import parseISO from 'date-fns/parseISO'
 import { useLocale } from '@island.is/localization'
 import { information, overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
-import { CoOwnerAndOperator, ReviewScreenProps } from '../../../types'
+import { CoOwnerAndOperator, ReviewScreenProps } from '../../../shared'
 import { formatIsk } from '../../../utils'
 
 export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({

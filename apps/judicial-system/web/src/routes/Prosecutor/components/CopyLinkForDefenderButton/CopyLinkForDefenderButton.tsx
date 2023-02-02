@@ -8,7 +8,7 @@ import {
   errors as errorMessage,
 } from '@island.is/judicial-system-web/messages'
 import { formatDefenderRoute } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   caseId: string

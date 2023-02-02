@@ -10,7 +10,7 @@ import {
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { MCEvents } from '../../lib/constants'
 import { useMutation } from '@apollo/client'
-import { PropertyDetail } from '../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
