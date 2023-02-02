@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDateField,
   buildDescriptionField,
   buildFileUploadField,
@@ -23,7 +22,7 @@ export const ResidenceGrant: Form = buildForm({
   children: [
     buildSection({
       id: 'residentGrantApplication',
-      title: '',
+      title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantApplyTitle,
       children: [
         buildMultiField({
           title: 'DateField',
