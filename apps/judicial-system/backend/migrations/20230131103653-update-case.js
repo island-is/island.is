@@ -13,15 +13,6 @@ module.exports = {
           },
           { transaction: t },
         ),
-        queryInterface.addColumn(
-          'case',
-          'request_drivers_licence_suspension',
-          {
-            type: Sequelize.BOOLEAN,
-            allowNull: true,
-          },
-          { transaction: t },
-        ),
       ]),
     )
   },
@@ -32,13 +23,6 @@ module.exports = {
         queryInterface.removeColumn('case', 'indictment_introduction', {
           transaction: t,
         }),
-        queryInterface.removeColumn(
-          'case',
-          'request_drivers_licence_suspension',
-          {
-            transaction: t,
-          },
-        ),
       ]),
     )
   },
