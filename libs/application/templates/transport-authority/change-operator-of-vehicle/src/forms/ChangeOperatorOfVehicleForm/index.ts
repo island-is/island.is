@@ -7,7 +7,9 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { ChangeOperatorOfVehicle } from '../../lib/dataSchema'
 import { conclusion, payment } from '../../lib/messages'
+import { getChargeItemCodes } from '../../utils'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
 
@@ -32,6 +34,11 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
               title: '',
               component: 'PaymentChargeOverview',
             }),
+            buildCustomField({
+              id: 'ValidationErrorMessages',
+              title: '',
+              component: 'ValidationErrorMessages',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -42,6 +49,22 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
                   event: DefaultEvents.SUBMIT,
                   name: payment.general.confirm,
                   type: 'primary',
+                  condition: (formValue, externalData) => {
+                    const chargeItemCodes = getChargeItemCodes(
+                      formValue as ChangeOperatorOfVehicle,
+                    )
+                    const allItems = externalData?.payment?.data as [
+                      {
+                        priceAmount: number
+                        chargeItemName: string
+                        chargeItemCode: string
+                      },
+                    ]
+                    const items = allItems.filter(({ chargeItemCode }) =>
+                      chargeItemCodes.includes(chargeItemCode),
+                    )
+                    return items.length > 0
+                  },
                 },
               ],
             }),

@@ -72,7 +72,7 @@ export const mapLinkToStatus = (link: string) => {
     return ApplicationOverViewStatus.incomplete
   }
   if (link === ServicePortalPath.ApplicationCompleteApplications) {
-    return ApplicationOverViewStatus.finished
+    return ApplicationOverViewStatus.completed
   }
   return ApplicationOverViewStatus.all
 }
