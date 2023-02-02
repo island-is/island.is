@@ -8,7 +8,7 @@ import {
   buildDescriptionField,
   buildMultiField,
 } from '@island.is/application/core'
-import { Application } from '../../../types/schema'
+import { Application } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import {
   newestCardExists,
