@@ -15,7 +15,7 @@ export const error = defineMessages({
   minAgeNotFulfilled: {
     id: 'ta.cov.application:error.minAgeNotFulfilled',
     defaultMessage:
-      'Lágmarksaldur til að taka þátt í tilkynnu um eigendaskipti er 18 ára',
+      'Lágmarksaldur til að mega vera umráðamaður ökutækis er 18 ára',
     description: 'Min age not fulfilled error',
   },
 })
