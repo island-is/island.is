@@ -19,7 +19,8 @@ import { prepareRouterData } from '@island.is/portals/core'
 import { createMockUser } from '../../../../auth/react/src/lib/createMockUser'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
 
-const userInfo = createMockUser({ profile: { name: 'Peter' } })
+const user = { profile: { name: 'Peter' } }
+const userInfo = createMockUser(user)
 
 const MockedPortalProvider: FC<{
   meta: PortalMeta
@@ -39,8 +40,6 @@ const MockedPortalProvider: FC<{
 )
 
 describe('useSingleNavigationItem hook', () => {
-  beforeEach(() => {})
-
   describe.each(Object.keys(testCases))('%s', (testCaseName) => {
     const { modules, navigationTrees, expected } = testCases[testCaseName]
     const testModules: PortalModule[] = modules.map((module) => ({
@@ -71,7 +70,7 @@ describe('useSingleNavigationItem hook', () => {
             // Ignoring error because we don't need translations for tests
           }}
         >
-          <MockedAuthProvider user={{ profile: { name: 'Peter' } }}>
+          <MockedAuthProvider user={user}>
             <BrowserRouter>
               <MockedPortalProvider
                 meta={{ portalType: 'admin', basePath: '/' }}

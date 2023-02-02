@@ -9,6 +9,10 @@ export const useModuleProps = () => {
   const { userInfo } = useAuth()
   const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
 
+  if (userInfo === null) {
+    throw new Error('Missing userInfo')
+  }
+
   return {
     userInfo,
     client,
