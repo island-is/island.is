@@ -9,6 +9,7 @@ import {
   Tiles,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
+import { HeroBanner } from '../components'
 import Card from '../components/Card/Card'
 import Layout from '../components/Layout/Layout'
 type arrayDummy = Array<info>
@@ -190,6 +191,11 @@ export const Index = () => {
                 <div></div>
               </Column>
             </Columns>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn>
+            <HeroBanner />
           </GridColumn>
         </GridRow>
         <GridRow>

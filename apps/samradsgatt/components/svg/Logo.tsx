@@ -8,8 +8,8 @@ type LogoProps = {
 function Logo({ width, height }: LogoProps) {
   return (
     <svg
-      width={width ?? 217}
-      height={height ?? 47}
+      width={width ? parseFloat(width) * 217 : 217}
+      height={height ? parseFloat(height) * 47 : 47}
       viewBox="0 0 217 47"
       aria-label="samradsgatt logo"
       fill="none"
