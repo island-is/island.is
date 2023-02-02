@@ -97,7 +97,7 @@ export const vehicleSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+            application.externalData?.identity?.data?.name,
         }),
         buildTextField({
           id: 'owner.nationalId',
@@ -107,7 +107,7 @@ export const vehicleSubSection = buildSubSection({
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.nationalId,
+            application.externalData?.identity?.data?.nationalId,
         }),
         buildTextField({
           id: 'owner.address',
@@ -123,8 +123,7 @@ export const vehicleSubSection = buildSubSection({
             return vehicle?.role === 'Eigandi'
           },
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.address
-              ?.streetAddress,
+            application.externalData?.identity?.data?.address?.streetAddress,
         }),
         buildTextField({
           id: 'owner.postalCode',
@@ -140,8 +139,7 @@ export const vehicleSubSection = buildSubSection({
             return vehicle?.role === 'Eigandi'
           },
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.address
-              ?.postalCode,
+            application.externalData?.identity?.data?.address?.postalCode,
         }),
       ],
     }),
