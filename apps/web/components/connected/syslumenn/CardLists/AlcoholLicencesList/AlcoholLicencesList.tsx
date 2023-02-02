@@ -19,7 +19,6 @@ import {
 import { SyslumennListCsvExport } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-
 const DEFAULT_PAGE_SIZE = 10
 const CSV_COLUMN_SEPARATOR = ','
 const CSV_ROW_SEPARATOR = '\n'
@@ -89,7 +88,10 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
     const validTo = license.validTo ? new Date(license.validTo) : null
 
     if (validFrom && validTo) {
-      return `${format(validFrom, DATE_FORMAT)} - ${format(validTo, DATE_FORMAT)}`
+      return `${format(validFrom, DATE_FORMAT)} - ${format(
+        validTo,
+        DATE_FORMAT,
+      )}`
     }
     if (!validFrom && validTo) {
       return `${t('validUntil', 'Til')} ${format(validTo, DATE_FORMAT)}`
@@ -120,16 +122,16 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
         // CSV Value rows
         for (const alcoholLicence of alcoholLicences) {
           const columnValues = [
-            alcoholLicence.caseType,  // Málategund
-            alcoholLicence.licenceType,  // Tegund
-            alcoholLicence.licenceSubType,  // Tegund leyfis
-            alcoholLicence.licenseNumber,  // Leyfisnúmer
-            alcoholLicence.licenseHolder,  // Leyfishafi
-            alcoholLicence.licenseResponsible,  // Ábyrgðarmaður
-            alcoholLicence.year?.toString(),  // Skráningarár
-            alcoholLicence.validFrom?.toString(),  // Gildir frá
-            alcoholLicence.validTo?.toString(),  // Gildir til
-            alcoholLicence.issuedBy,  // Útgefið af
+            alcoholLicence.caseType, // Málategund
+            alcoholLicence.licenceType, // Tegund
+            alcoholLicence.licenceSubType, // Tegund leyfis
+            alcoholLicence.licenseNumber, // Leyfisnúmer
+            alcoholLicence.licenseHolder, // Leyfishafi
+            alcoholLicence.licenseResponsible, // Ábyrgðarmaður
+            alcoholLicence.year?.toString(), // Skráningarár
+            alcoholLicence.validFrom?.toString(), // Gildir frá
+            alcoholLicence.validTo?.toString(), // Gildir til
+            alcoholLicence.issuedBy, // Útgefið af
           ].map((x) => csvColumnSeparatorSafeValue(x))
           rows.push(columnValues.join(CSV_COLUMN_SEPARATOR))
         }
@@ -184,22 +186,13 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
           />
           <Box textAlign="right" marginRight={1} marginTop={1}>
             <SyslumennListCsvExport
-              defaultLabel={t(
-                'csvButtonLabelDefault',
-                'Sækja öll leyfi (CSV)',
-              )}
-              loadingLabel={t(
-                'csvButtonLabelLoading',
-                'Sæki öll leyfi...',
-              )}
+              defaultLabel={t('csvButtonLabelDefault', 'Sækja öll leyfi (CSV)')}
+              loadingLabel={t('csvButtonLabelLoading', 'Sæki öll leyfi...')}
               errorLabel={t(
                 'csvButtonLabelError',
                 'Ekki tókst að sækja leyfi, reyndu aftur',
               )}
-              csvFilenamePrefix={t(
-                'csvFileTitlePrefix',
-                'Áfengisleyfi',
-              )}
+              csvFilenamePrefix={t('csvFileTitlePrefix', 'Áfengisleyfi')}
               csvStringProvider={csvStringProvider}
             />
           </Box>
@@ -207,9 +200,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
       )}
       {listState === 'loaded' && filteredAlcoholLicences.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">
-            {t('noResults', 'Engin leyfi fundust.')}
-          </Text>
+          <Text variant="h3">{t('noResults', 'Engin leyfi fundust.')}</Text>
         </Box>
       )}
       {listState === 'loaded' && filteredAlcoholLicences.length > 0 && (
