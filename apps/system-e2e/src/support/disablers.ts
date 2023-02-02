@@ -3,6 +3,7 @@ import { Page } from '@playwright/test'
 type MockGQLOptions = {
   responseKey?: string
   camelCaseResponseKey?: boolean
+  patchResponse?: boolean
 }
 
 function toCamelCase(s: string) {
@@ -22,21 +23,24 @@ export async function mockQGL<T>(
   page: Page,
   op: string,
   mockData: T,
-  options = { responseKey: op, camelCaseResponseKey: true, patchResponse: false },
+  { responseKey= op, camelCaseResponseKey= true, patchResponse= false }: MockGQLOptions = {},
 ) {
     // Override op if given in options
-    op = options?.responseKey ?? op
+    op = responseKey ?? op
 
     const pattern = `**/graphql?op=${op}`
-    const key = options.camelCaseResponseKey? toCamelCase(op) : op
+    const key = camelCaseResponseKey? toCamelCase(op) : op
 
-    console.log(`Setting up mock for ${pattern}`)
+    console.log(`Setting up mock (key=${key}) for ${pattern}`)
     await page.route(pattern, async route => {
       // Set mock
-      const response = options.patchResponse? await (await route.fetch()).json() : {}
-      const payload = {...response}
+      const response = patchResponse? await (await route.fetch()).json() : {}
+      const payload = {...response?.data}
+      console.log("Payload:", payload)
+      console.log("Payload (externalData):", payload[key]?.externalData)
+
       // TODO handle nested object
-      payload[key] = mockData
+      payload[key] = Array.isArray(mockData)? mockData: {...mockData}
       const data = {data: payload}
 
       console.log(`Got a mock-match for > ${route.request().url()} <`)
@@ -46,7 +50,8 @@ export async function mockQGL<T>(
 }
 
 export async function disablePreviousApplications(page: Page) {
-  return await mockQGL(page, 'ApplicationApplications', [])
+  await mockQGL(page, 'ApplicationApplications', [])
+  await mockQGL(page, 'UpdateApplication', {externalData: {existingApplication: null}}, {patchResponse: true})
 }
 
 export async function disableI18n(page: Page) {

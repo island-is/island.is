@@ -17,8 +17,8 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     })
 
     const applicationPage = await applicationContext.newPage()
-    //await disablePreviousApplications(applicationPage)
-    //await disableI18n(applicationPage)
+    await disablePreviousApplications(applicationPage)
+    await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
     await expect(applicationPage).toBeApplication()
     await use(applicationPage)
@@ -36,10 +36,6 @@ applicationTest.describe('Announcement of Death', () => {
   applicationTest('test', async ({ applicationPage }) => {
     const page = applicationPage
     await expect(page).toBeApplication()
-
-    await disablePreviousApplications(page)
-    await disableI18n(page)
-
 
     await page.locator('data-testid=agree-to-data-providers').click()
     await page.locator(submitButton).click()
