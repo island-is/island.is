@@ -14,8 +14,7 @@ export const information = {
     },
     description: {
       id: 'ta.ovlp.application:information.general.description',
-      defaultMessage:
-        'Skráningarskírteini er aðeins sent á lögheimili eigendEt sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+      defaultMessage: 'Skráningarskírteini er aðeins sent á lögheimili eigenda',
       description: 'Description of information page',
     },
   }),
