@@ -9,6 +9,7 @@ import { Form } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { inReviewFormMessages } from '../lib/messages'
+import { actionsResidenceGrant } from '../lib/parentalLeaveUtils'
 
 export const ResidenceGrantInProgress: Form = buildForm({
   id: 'ParentalLeaveInReview',
@@ -16,20 +17,14 @@ export const ResidenceGrantInProgress: Form = buildForm({
   logo: Logo,
   children: [
     buildSection({
-      id: 'residentGrantApplication',
+      id: 'residentGrantApplicationInProgress',
       title: 'Dvalarstyrkur',
       children: [
-        buildCustomField({
-          id: 'residentGrantApplicationInfo',
-          title: 'Réttur til dvalarstyrks',
-          description:
-            'Dvalarstyrkur er fjárstyrkur til barnshafandi foreldris sem er nauðsynlegt að mati sérfræðilæknis að dvelja fjarri heimili sínu í tengslum við nauðsynlega þjónustu vegna fæðingar barns, svo sem vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu. Styrkurinn er greiddur eftir á.',
-          component: 'ResidenceGrantApplication',
-        }),
         buildSubmitField({
-          id: 'residentGrantApplicationInfo',
-          title: '',
-          actions: [],
+          id: 'residentGrantApplicationInProgress2',
+          title: 'Dvalarstyrkur',
+          refetchApplicationAfterSubmit: true,
+          actions: actionsResidenceGrant('confirm', []),
         }),
         buildDescriptionField({
           id: 'unused',

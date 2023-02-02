@@ -11,6 +11,7 @@ import round from 'lodash/round'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
+  CallToAction,
   DefaultEvents,
   ExternalData,
   Field,
@@ -33,6 +34,7 @@ import {
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   SINGLE,
+  Events,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -1525,4 +1527,47 @@ export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
   const fullPeriod = addMonths(birthDay, 6)
   if (!isBefore(dateToday, fullPeriod)) return false
   return true
+}
+
+export const actionsResidenceGrant = (
+  event: 'reject' | 'confirm',
+  buttons: CallToAction<AnyEventObject>[] | [],
+) => {
+  const events = [
+    'CLOSED',
+    'APPROVED',
+    'EMPLOYERAPPROVAL',
+    'EMPLOYERWAITINGTOASSIGN',
+    'VINNUMALASTOFNUNAPPROVAL',
+    'ADDITIONALDOCUMENTSREQUIRED',
+  ]
+
+  type eventType = {
+    [key: string]: any
+  }
+  const eventsMap: eventType = {
+    closed: 'CLOSED',
+    approved: 'APPROVED',
+    employerApproval: 'EMPLOYERAPPROVAL',
+    employerWaitingToAssign: 'EMPLOYERWAITINGTOASSIGN',
+    vinnumalastofnunApproval: 'VINNUMALASTOFNUNAPPROVAL',
+    additionalDocumentsRequired: 'ADDITIONALDOCUMENTSREQUIRED',
+  }
+
+  const actions: CallToAction<AnyEventObject>[] = events.map((e) => {
+    return {
+      condition: (answer: FormValue) => {
+        const { previousState } = answer
+        if (eventsMap[`${previousState}`] === e) return true
+        return false
+      },
+      event: ((event === 'reject' ? `${e}REJECT` : e) as unknown) as Events,
+      name: event === 'reject' ? 'Reject' : 'Confirm',
+      type: event === 'reject' ? 'reject' : 'primary',
+    }
+  })
+
+  const mergedActions: CallToAction<AnyEventObject>[] =
+    [...actions, ...buttons] || []
+  return mergedActions
 }

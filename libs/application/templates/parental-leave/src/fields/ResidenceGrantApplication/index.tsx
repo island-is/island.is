@@ -85,7 +85,6 @@ const ResidentGrantApplication: FC<FieldBaseProps> = ({
     (dateOfBirth && residentGrantIsOpenForApplication(`${dateOfBirth}`)) ||
     false
 
-
   const handleSubmitApplication = useCallback(async (event?: string) => {
     const res = await submitApplication({
       variables: {

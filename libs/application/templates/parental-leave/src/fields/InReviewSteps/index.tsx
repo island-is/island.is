@@ -158,14 +158,24 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   ) {
     steps.push({
       state: ReviewSectionState.optionalAction,
-      title: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle),
-      description: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantOpenDescription),
+      title: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantOpenDescription,
+      ),
     })
   } else {
     steps.push({
       state: ReviewSectionState.prerequisites,
-      title: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle),
-      description: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantClosedDescription),
+      title: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantClosedDescription,
+      ),
     })
   }
 

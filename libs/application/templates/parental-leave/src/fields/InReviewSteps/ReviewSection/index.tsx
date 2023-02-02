@@ -95,9 +95,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                       variant="text"
                       size="small"
                       icon="arrowForward"
-                      onClick={() =>
-                        notifyParentOnClickEvent()
-                      }
+                      onClick={() => notifyParentOnClickEvent()}
                     >
                       {formatMessage(
                         parentalLeaveFormMessages.residenceGrantMessage

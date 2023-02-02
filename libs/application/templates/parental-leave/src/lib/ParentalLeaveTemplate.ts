@@ -623,7 +623,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.RESIDENCE_GRAND_APPLICATION_IN_PROGRESS]: {
         entry: 'assignToVMST',
-        exit: 'removePreviousState',
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION_IN_PROGRESS,
@@ -1460,8 +1459,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         return context
       }),
       setPreviousState: assign((context, event) => {
-        const e = event.type as unknown as any
-        if (e === "xstate.init") {
+        const e = (event.type as unknown) as any
+        if (e === 'xstate.init') {
           return context
         }
         const { application } = context
