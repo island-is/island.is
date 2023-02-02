@@ -19,12 +19,17 @@ import {
   GenericUserLicenseStatus,
   PkPassVerification,
   PkPassVerificationError,
+  PkPassVerificationInputData,
 } from '../../licenceService.type'
-import { PkPassClient } from './pkpass.client'
-import { PkPassPayload } from './pkpass.type'
 import { Locale } from '@island.is/shared/types'
 import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+import {
+  Pass,
+  PassDataInput,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
+import { createPkPassDataInput } from './drivingLicenseMapper'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -53,14 +58,14 @@ export class GenericDrivingLicenseApi
   private readonly xroadPath: string
   private readonly xroadSecret: string
 
-  private pkpassClient: PkPassClient
+  //private pkpassClient: PkPassClient
 
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(XRoadConfig.KEY)
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private config: ConfigType<typeof GenericDrivingLicenseConfig>,
-    private cacheManager?: CacheManager | null,
+    private smartApi: SmartSolutionsApi,
   ) {
     // TODO inject the actual RLS x-road client
     this.xroadApiUrl = xroadConfig.xRoadBasePath
@@ -69,10 +74,9 @@ export class GenericDrivingLicenseApi
     this.xroadSecret = config.xroad.secret
 
     this.logger = logger
-    this.cacheManager = cacheManager
 
     // TODO this should be injected by nest
-    this.pkpassClient = new PkPassClient(config, logger, cacheManager)
+    //this.pkpassClient = new PkPassClient(config, logger, cacheManager)
   }
 
   private headers() {
@@ -171,6 +175,7 @@ export class GenericDrivingLicenseApi
     return licenses
   }
 
+  /*
   private drivingLicenseToPkpassPayload(
     license: GenericDrivingLicenseResponse,
   ): PkPassPayload {
@@ -204,7 +209,7 @@ export class GenericDrivingLicenseApi
         tegund: license.mynd?.tegund,
       },
     }
-  }
+  }*/
 
   static licenseIsValidForPkpass(
     license: GenericDrivingLicenseResponse,
@@ -249,7 +254,7 @@ export class GenericDrivingLicenseApi
     }
   }
 
-  async getPkPassUrlByNationalId(nationalId: string): Promise<string | null> {
+  async getPkPassByNationalId(nationalId: string): Promise<Pass | null> {
     const licenses = await this.requestFromXroadApi(nationalId)
 
     if (!licenses) {
@@ -269,56 +274,41 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    const payload = this.drivingLicenseToPkpassPayload(license)
+    const image = license.mynd
 
-    const pkPassUrl = await this.pkpassClient.getPkPassUrl(payload)
+    const inputValues = createPkPassDataInput(license)
+    if (!inputValues) return null
 
-    if (pkPassUrl) {
-      this.notifyPkPassCreated(nationalId)
+    const payload: PassDataInput = {
+      inputFieldValues: inputValues,
+      thumbnail: license.mynd
+        ? {
+            imageBase64String: license.mynd.mynd,
+          }
+        : null,
     }
 
-    return pkPassUrl
+    const pass = await this.smartApi.generatePkPass(
+      payload,
+      kennitala.format(nationalId),
+    )
+
+    if (pass.ok) {
+      this.notifyPkPassCreated(nationalId)
+      return pass.data
+    }
+
+    return null
   }
 
   async getPkPassUrl(user: User): Promise<string | null> {
-    return this.getPkPassUrlByNationalId(user.nationalId)
-  }
-
-  async getPkPassQRCodeByNationalId(
-    nationalId: string,
-  ): Promise<string | null> {
-    const licenses = await this.requestFromXroadApi(nationalId)
-
-    if (!licenses) {
-      return null
-    }
-
-    const license = licenses[0]
-
-    if (!license) {
-      return null
-    }
-
-    if (!GenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
-      this.logger.info('License is not valid for pkpass generation', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    const payload = this.drivingLicenseToPkpassPayload(license)
-
-    const qrCode = await this.pkpassClient.getPkPassQRCode(payload)
-
-    if (qrCode) {
-      this.notifyPkPassCreated(nationalId)
-    }
-
-    return qrCode
+    const pass = await this.getPkPassByNationalId(user.nationalId)
+    return pass?.distributionUrl ?? null
   }
 
   async getPkPassQRCode(user: User): Promise<string | null> {
-    return this.getPkPassQRCodeByNationalId(user.nationalId)
+    const pass = await this.getPkPassByNationalId(user.nationalId)
+    return pass?.distributionQRCode ?? null
   }
 
   /**
@@ -364,6 +354,49 @@ export class GenericDrivingLicenseApi
     return this.getLicense(user, locale, labels)
   }
 
+  async verifyPkPass(data: string): Promise<PkPassVerification | null> {
+    const { code, date } = JSON.parse(data) as PkPassVerificationInputData
+    const result = await this.smartApi.verifyPkPass({ code, date })
+
+    if (!result) {
+      this.logger.warn('Missing pkpass verify from client', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    if (!result.ok) {
+      return {
+        valid: false,
+        data: undefined,
+        error: {
+          status: result.error.code.toString(),
+          message: result.error.message ?? '',
+          data: result.error.data,
+        },
+      }
+    }
+
+    /*HERE we should compare fetch the driving license using the national id of the
+      user being scanned, NOT the logged in user, but this is impossible as it stands!
+      TO_DO: Implement that!
+
+      const nationalIdFromPkPass = result.data.pass.inputFieldValues
+      .find((i) => i.passInputField.identifier === 'kt')
+      ?.value?.replace('-', '')
+
+      if (nationalIdFromPkPass) {
+        const license await this.fetchLicenseData(nationalIdFromPkPass)
+        // and then compare to verify that the licenses sync up
+      }
+    */
+
+    return {
+      valid: result.data.valid,
+    }
+  }
+
+  /*
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const result = await this.pkpassClient.verifyPkpassByPdf417(data)
 
@@ -438,5 +471,5 @@ export class GenericDrivingLicenseApi
       data: response ? JSON.stringify(response) : undefined,
       error,
     }
-  }
+  }*/
 }

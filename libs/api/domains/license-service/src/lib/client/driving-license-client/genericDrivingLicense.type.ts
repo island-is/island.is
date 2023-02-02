@@ -51,3 +51,11 @@ export interface GenericDrivingLicenseResponse {
     endurupptakaSkirteinis?: number | null
   }
 }
+
+export interface DrivingLicenseQualification {
+  id?: number
+  nr?: string
+  utgafuDags?: string
+  gildirTil?: string
+  aths?: string
+}
