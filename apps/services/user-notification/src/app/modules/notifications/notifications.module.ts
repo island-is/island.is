@@ -17,10 +17,7 @@ import {
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import * as userProfile from '@island.is/clients/user-profile'
-// import { CacheModule as NestCacheModule, DynamicModule } from '@nestjs/common'
 
-// let CacheModule: DynamicModule
-// CacheModule = NestCacheModule.register()
 @Module({
   imports: [
     CacheModule.register({
