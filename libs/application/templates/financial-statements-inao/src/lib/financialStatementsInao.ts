@@ -1,4 +1,4 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { DefaultStateLifeCycle, pruneAfterDays } from '@island.is/application/core'
 
 import {
   ApplicationTemplate,
@@ -71,7 +71,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
           }),
 
           progress: 0.4,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT,
