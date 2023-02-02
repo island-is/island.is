@@ -12,15 +12,18 @@ const mockedGetUserManager = getUserManager as jest.Mock
 const mockedGetAuthSettings = getAuthSettings as jest.Mock
 
 const RootRoute: FC = ({ children }) => <MemoryRouter>{children}</MemoryRouter>
+
 const CallbackRoute: FC = ({ children }) => (
   <MemoryRouter initialEntries={[mockedGetAuthSettings().redirectPath]}>
     {children}
   </MemoryRouter>
 )
+
 const Greeting = () => {
   const { userInfo } = useAuth()
   return <>Hello {userInfo?.profile.name}</>
 }
+
 const renderAuthenticator = ({ wrapper = RootRoute } = {}) =>
   render(
     <AuthProvider basePath="/basepath">

@@ -5,19 +5,17 @@ import { renderHook } from '@testing-library/react-hooks'
 import { IntlProvider } from 'react-intl'
 import { MockedAuthProvider } from '@island.is/auth/react'
 import { defaultLanguage } from '@island.is/shared/constants'
-
 import { testCases } from '../../test/useSingleNavigationItem-test-cases'
 import {
   PortalModule,
   PortalNavigationItem,
   PortalRoute,
 } from '../types/portalCore'
-import { useSingleNavigationItem } from './useSingleNavigationItem'
-
-import { PortalContext, PortalMeta } from '../components/PortalProvider'
-import { prepareRouterData } from '@island.is/portals/core'
-import { createMockUser } from '../../../../auth/react/src/lib/createMockUser'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
+import { createMockUser } from '@island.is/auth/react'
+import { useSingleNavigationItem } from './useSingleNavigationItem'
+import { prepareRouterData } from '../utils/router/prepareRouterData'
+import { PortalContext, PortalMeta } from '../components/PortalProvider'
 
 const user = { profile: { name: 'Peter' } }
 const userInfo = createMockUser(user)

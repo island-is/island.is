@@ -11,3 +11,4 @@ export { getAccessToken } from './lib/getAccessToken'
 // Types
 export type { MockUser } from './lib/createMockUser'
 export type { AuthSettings } from './lib/AuthSettings'
+export * from './lib/createMockUser'

@@ -52,7 +52,6 @@ export const AuthProvider = ({
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
   const urlRef = useRef<string>()
   urlRef.current = `${window.location.pathname}${window.location.search}`
-
   const signIn = useCallback(async () => {
     dispatch({
       type: ActionType.SIGNIN_START,
