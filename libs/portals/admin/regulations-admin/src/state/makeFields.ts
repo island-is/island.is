@@ -19,6 +19,8 @@ import {
 import { errorMsgs } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
+const emptyHtml = '' as HTMLText
+
 // ---------------------------------------------------------------------------
 
 export const stepsBase: Record<Step, StepNav> = {
@@ -145,6 +147,7 @@ export const makeDraftChangeForm = (
     makeDraftAppendixForm(a, String(i)),
   ),
   comments: fHtml(change.comments),
+  diff: fHtml(change.diff || emptyHtml),
 })
 
 // ---------------------------------------------------------------------------

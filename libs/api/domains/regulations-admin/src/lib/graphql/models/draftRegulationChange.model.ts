@@ -41,4 +41,7 @@ export class DraftRegulationChangeModel {
 
   @Field(() => Boolean, { nullable: true })
   dropped?: boolean
+
+  @Field(() => String, { nullable: true })
+  diff?: HTMLText
 }

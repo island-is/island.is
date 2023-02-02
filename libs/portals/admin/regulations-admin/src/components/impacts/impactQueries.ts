@@ -51,6 +51,7 @@ export const CREATE_DRAFT_REGULATION_CHANGE = gql`
       date
       title
       text
+      diff
       appendixes {
         title
         text
@@ -72,6 +73,7 @@ export const UPDATE_DRAFT_REGULATION_CHANGE = gql`
       date
       title
       text
+      diff
       appendixes {
         title
         text

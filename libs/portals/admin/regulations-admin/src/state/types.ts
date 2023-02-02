@@ -90,6 +90,7 @@ export type DraftChangeForm = DraftImpactBaseFields<DraftRegulationChange> &
   BodyDraftFields & {
     /** A.k.a. „Athugsemdir ritstjóra“ */
     comments: HtmlDraftField
+    diff?: HtmlDraftField
   }
 
 export type DraftCancelForm = DraftImpactBaseFields<DraftRegulationCancel>

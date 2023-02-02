@@ -79,4 +79,10 @@ export class DraftRegulationChangeModel extends Model {
   })
   @ApiProperty()
   comments!: HTMLText
+
+  @Column({
+    type: DataType.TEXT,
+  })
+  @ApiProperty()
+  diff?: HTMLText
 }

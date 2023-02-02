@@ -196,6 +196,7 @@ export class DraftRegulationService {
         comments: change.comments || '',
         // About the impaced stofnreglugerð
         name: change.regulation, // primary-key reference to the stofnreglugerð
+        diff: change.diff,
         regTitle:
           impactOptions.find((opt) => opt.name === change.regulation)?.title ??
           '', // helpful for human-readable display in the UI
@@ -387,6 +388,7 @@ export class DraftRegulationService {
         type: 'amend',
         name: imp.regulation,
         regTitle: imp.regulation,
+        diff: imp.diff,
         changingId: imp.changing_id,
         date: imp.date,
         title: imp.title,

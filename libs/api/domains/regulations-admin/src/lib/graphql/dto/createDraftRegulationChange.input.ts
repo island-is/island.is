@@ -31,4 +31,7 @@ export class CreateDraftRegulationChangeInput {
 
   @Field(() => String, { nullable: true })
   comments!: HTMLText
+
+  @Field(() => String, { nullable: true })
+  diff?: HTMLText
 }

@@ -63,7 +63,7 @@ export class DraftRegulationChangeController {
   @Put('draft_regulation_change/:id')
   @ApiOkResponse({
     type: DraftRegulationChangeModel,
-    description: 'Updates an existing user',
+    description: 'Updates an existing DraftRegulationChange',
   })
   @Audit<DraftRegulationChangeModel>({
     resources: (DraftRegulationChange) => DraftRegulationChange.id,

@@ -16,12 +16,14 @@ import {
   RegDraftForm,
 } from '../../state/types'
 import {
+  getDiff,
   HTMLText,
   PlainText,
   RegName,
   Regulation,
   toISODate,
 } from '@island.is/regulations'
+import dirtyClean from '@island.is/regulations-tools/dirtyClean-browser'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import {
@@ -223,6 +225,14 @@ export const EditChange = (props: EditChangeProp) => {
     validateImpact(activeChange)
   }, [activeChange])
 
+  const getDiffHtml = () => {
+    const emptyHTML = '' as HTMLText
+    const prev = previousRegulation?.text || emptyHTML
+    const current = activeChange.text.value || emptyHTML
+
+    return getDiff(dirtyClean(prev), dirtyClean(current)).diff || emptyHTML
+  }
+
   const saveChange = async () => {
     if (!activeChange.id) {
       await createDraftRegulationChange({
@@ -232,6 +242,7 @@ export const EditChange = (props: EditChangeProp) => {
             regulation: activeChange.name,
             title: activeChange.title.value,
             text: activeChange.text.value,
+            diff: getDiffHtml(),
             appendixes: activeChange.appendixes.map((apx) => ({
               title: apx.title.value,
               text: apx.text.value,
@@ -256,6 +267,7 @@ export const EditChange = (props: EditChangeProp) => {
             id: activeChange.id,
             title: activeChange.title.value,
             text: activeChange.text.value,
+            diff: getDiffHtml(),
             appendixes: activeChange.appendixes.map((apx) => ({
               title: apx.title.value,
               text: apx.text.value,

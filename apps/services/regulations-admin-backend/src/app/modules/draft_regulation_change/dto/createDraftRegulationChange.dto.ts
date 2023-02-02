@@ -39,4 +39,9 @@ export class CreateDraftRegulationChangeDto {
   @IsString()
   @ApiProperty()
   readonly comments?: HTMLText
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly diff?: HTMLText
 }
