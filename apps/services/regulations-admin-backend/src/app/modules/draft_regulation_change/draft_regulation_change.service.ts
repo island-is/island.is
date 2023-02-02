@@ -38,6 +38,7 @@ export class DraftRegulationChangeService {
       text: draftRegulationChangeToCreate.text,
       appendixes: draftRegulationChangeToCreate.appendixes,
       comments: draftRegulationChangeToCreate.comments,
+      diff: draftRegulationChangeToCreate.diff,
     }
 
     const createResponce = await this.draftRegulationChangeModel.create(
@@ -56,6 +57,7 @@ export class DraftRegulationChangeService {
       text: createResponce.text,
       appendixes: createResponce.appendixes,
       comments: createResponce.comments,
+      diff: createResponce.diff,
     }
   }
 
@@ -88,6 +90,7 @@ export class DraftRegulationChangeService {
       text: updateData.text,
       appendixes: updateData.appendixes,
       comments: updateData.comments,
+      diff: updateData.diff,
     }
 
     return { numberOfAffectedRows, updatedDraftRegulationChange }
