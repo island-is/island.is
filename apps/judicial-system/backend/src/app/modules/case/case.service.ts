@@ -130,7 +130,6 @@ export const caseListInclude: Includeable[] = [
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
-  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
 ]
 
 @Injectable()
