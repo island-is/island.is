@@ -10,11 +10,11 @@ import {
 import {
   ContainerRunHelm,
   OutputFormat,
-  OutputPersistentVolumeClaimHelm,
+  OutputVolumeMountNative,
   SerializeErrors,
   SerializeMethod,
   SerializeSuccess,
-  HelmService,
+  KubeService,
 } from '../types/output-types'
 import { ReferenceResolver, EnvironmentConfig } from '../types/charts'
 import { checksAndValidations } from './errors'
@@ -29,7 +29,7 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-const serializeService: SerializeMethod<HelmService> = async (
+const serializeService: SerializeMethod<KubeService> = async (
   service: ServiceDefinitionForEnv,
   deployment: ReferenceResolver,
   env1: EnvironmentConfig,
@@ -44,7 +44,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     namespace,
     securityContext,
   } = serviceDef
-  const result: HelmService = {
+  const result: KubeService = {
     enabled: true,
     grantNamespaces: grantNamespaces,
     grantNamespacesEnabled: grantNamespacesEnabled,

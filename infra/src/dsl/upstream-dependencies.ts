@@ -28,6 +28,7 @@ class UpstreamDependencyTracer implements ReferenceResolver {
 }
 
 export const renderers = {
+  kube: KubeOutput,
   helm: HelmOutput,
   localrun: LocalrunOutput({ secrets: SecretOptions.withSecrets }),
 }

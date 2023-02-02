@@ -1,5 +1,7 @@
 import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
 import { ReferenceResolver, EnvironmentConfig } from './charts'
+import { metadataKey } from 'aws-sdk/clients/health'
+import { string } from 'yargs'
 
 // Output types
 export type ContainerRunHelm = {
@@ -18,7 +20,7 @@ export type ContainerRunHelm = {
   }
 }
 export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
-export type OutputPersistentVolumeClaim = {
+export type OutputPersistentVolumeClaimHelm = {
   name?: string
   size: string
   accessModes: OutputAccessModes
@@ -29,8 +31,113 @@ export type OutputPersistentVolumeClaim = {
    */
   storageClass: 'efs-csi'
 }
+
+export type OutputVolumeMountNative = {
+  name: string
+  mountPath: string
+}
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
+
+export interface KubeService {
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  metadata: {
+    name: string
+    namespace: string
+  }
+  labels: {
+    [name: string]: string
+  }
+  spec: {
+    replicas: number
+    strategy: string
+    selector: {
+      matchLabels: string
+    }
+    template: {
+      metadata: {
+        labels: {
+          [name: string]: string
+        }
+        annotations: {
+          [name: string]: string
+        }
+      }
+    }
+    spec: {
+      imagePullSecrets?: string
+      securityContext?: {
+        allowPrivilegeEscalation: boolean
+        privileged: boolean
+      }
+      serviceAccountName?: string
+      initContainers?: {
+        name: string
+        securityContext?: string
+        image: string
+        command?: string[]
+        args?: string[]
+        env?: ContainerEnvironmentVariables
+        resources?: {
+          limits?: {
+            cpu: string
+            memory: string
+          }
+          requests: {
+            cpu: string
+            memory: string
+          }
+        }
+      }
+      containers: {
+        name: string
+        securityContext?: string
+        image: string
+        imagePullPolicy: 'IfNotPresent' | 'Always' | 'Never'
+        command?: string[]
+        args?: string[]
+        livenessProbe: {
+          httpGet: {
+            path: string
+            port: number
+          }
+          initialDelaySeconds: number
+          timeoutSeconds: number
+        }
+        readinessProbe: {
+          httpGet: {
+            path: string
+            port: number
+          }
+          initialDelaySeconds: number
+          timeoutSeconds: number
+        }
+        env?: ContainerEnvironmentVariables
+        resources?: {
+          limits?: {
+            cpu: string
+            memory: string
+          }
+          requests: {
+            cpu: string
+            memory: string
+          }
+        }
+        volumeMounts?: OutputVolumeMountNative[]
+        nodeSelector?: { [name: string]: string }
+        affinity?: { [name: string]: string }
+        tolerations?: { [name: string]: string }
+        volumes?: {
+          name: string
+          persistentVolumeClaim?: {
+            claimName: string
+          }
+        }[]
+      }
+    }
+  }
+}
 
 export interface HelmService {
   replicaCount?: {
@@ -111,7 +218,7 @@ export interface HelmService {
       memory: string
     }
   }
-  pvcs?: OutputPersistentVolumeClaim[]
+  pvcs?: OutputPersistentVolumeClaimHelm[]
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
@@ -162,7 +269,7 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type ServiceOutputType = HelmService | LocalrunService
+export type ServiceOutputType = HelmService | LocalrunService | KubeService
 
 export type SerializeMethod<T extends ServiceOutputType> = (
   service: ServiceDefinitionForEnv,
@@ -179,6 +286,12 @@ export type HelmValueFile = {
   namespaces: string[]
   services: Services<HelmService>
 }
+
+export type KubeValueFile = {
+  namespaces: string[]
+  services: Services<KubeService>
+}
+
 export type LocalrunValueFile = {
   services: Services<LocalrunService>
   mocks: string
