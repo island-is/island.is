@@ -6,7 +6,6 @@ import { Application } from '@island.is/application/types'
 import { Box, Button, Icon, Link, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
-import { residentGrantIsOpenForApplication } from '../../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../..'
 
 export enum ReviewSectionState {
@@ -35,11 +34,6 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   notifyParentOnClickEvent,
 }) => {
   const { formatMessage } = useLocale()
-  const { dateOfBirth } = application.answers
-
-  const canApplyForResidenceGrant =
-    (dateOfBirth && residentGrantIsOpenForApplication(`${dateOfBirth}`)) ||
-    false
 
   return (
     <Box
@@ -90,7 +84,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
               state === ReviewSectionState.prerequisites) && (
               <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
                 <Box>
-                  {canApplyForResidenceGrant ? (
+                  {state === ReviewSectionState.optionalAction ? (
                     <Button
                       variant="text"
                       size="small"

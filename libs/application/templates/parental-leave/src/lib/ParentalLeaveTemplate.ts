@@ -68,18 +68,12 @@ type Events =
    *  a postfix of REJECT if rejected button is pushed
    */
   | { type: 'APPROVED' }
-  | { type: 'EMPLOYERAPPROVAL' }
-  | { type: 'EMPLOYERWAITINGTOASSIGN' }
-  | { type: 'VINNUMALASTOFNUNAPPROVAL' }
   | { type: 'RESIDENCEGRANTAPPLICATION' } // Ex: when the baby is born a parent can apply for resident grant
   | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
-  | { type: 'CLOSEDREJECT' }
   | { type: 'APPROVEDREJECT' }
-  | { type: 'EMPLOYERAPPROVALREJECT' }
-  | { type: 'EMPLOYERWAITINGTOASSIGNREJECT' }
   | { type: 'VINNUMALASTOFNUNAPPROVALREJECT' }
   | { type: 'RESIDENCEGRANTAPPLICATIONREJECT' }
-  | { type: 'ADDITIONALDOCUMENTSREQUIREDREJECT' }
+  | { type: 'VINNUMALASTOFNUNAPPROVEEDITSREJECT' }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -342,9 +336,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
           [DefaultEvents.EDIT]: { target: States.DRAFT },
-          ['RESIDENCEGRANTAPPLICATION']: {
-            target: States.RESIDENCE_GRAND_APPLICATION,
-          },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -416,9 +407,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
           [DefaultEvents.EDIT]: { target: States.DRAFT },
-          ['RESIDENCEGRANTAPPLICATION']: {
-            target: States.RESIDENCE_GRAND_APPLICATION,
-          },
         },
       },
       [States.EMPLOYER_ACTION]: {
@@ -567,9 +555,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
-          ['RESIDENCEGRANTAPPLICATION']: {
-            target: States.RESIDENCE_GRAND_APPLICATION,
-          },
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION]: {
@@ -605,66 +590,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: {
-            target: States.RESIDENCE_GRAND_APPLICATION_IN_PROGRESS,
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
           ['APPROVEDREJECT']: { target: States.APPROVED },
-          ['ADDITIONALDOCUMENTSREQUIREDREJECT']: {
-            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
-          },
-          ['EMPLOYERWAITINGTOASSIGNREJECT']: {
-            target: States.EMPLOYER_WAITING_TO_ASSIGN,
-          },
-          ['CLOSEDREJECT']: { target: States.CLOSED },
+
           ['VINNUMALASTOFNUNAPPROVALREJECT']: {
             target: States.VINNUMALASTOFNUN_APPROVAL,
           },
-          ['EMPLOYERAPPROVALREJECT']: { target: States.EMPLOYER_APPROVAL },
-        },
-      },
-      [States.RESIDENCE_GRAND_APPLICATION_IN_PROGRESS]: {
-        entry: 'assignToVMST',
-        meta: {
-          status: 'inprogress',
-          name: States.RESIDENCE_GRAND_APPLICATION_IN_PROGRESS,
-          lifecycle: pruneAfterDays(970),
-          onEntry: defineTemplateApi({
-            action: ApiModuleActions.sendApplication,
-            throwOnError: true,
-          }),
-          progress: 0.5,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/ResidenceGrantInProgress').then((val) =>
-                  Promise.resolve(val.ResidenceGrantInProgress),
-                ),
-              read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          ['APPROVED']: { target: States.APPROVED },
-          ['ADDITIONALDOCUMENTSREQUIRED']: {
-            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          ['VINNUMALASTOFNUNAPPROVEEDITSREJECT']: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
-          ['EMPLOYERWAITINGTOASSIGN']: {
-            target: States.EMPLOYER_WAITING_TO_ASSIGN,
-          },
-          ['CLOSED']: { target: States.CLOSED },
-          ['VINNUMALASTOFNUNAPPROVAL']: {
-            target: States.VINNUMALASTOFNUN_APPROVAL,
-          },
-          ['EMPLOYERAPPROVAL']: { target: States.EMPLOYER_APPROVAL },
         },
       },
       // [States.RECEIVED]: {
@@ -760,11 +695,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
             },
           ],
-        },
-        on: {
-          ['RESIDENCEGRANTAPPLICATION']: {
-            target: States.RESIDENCE_GRAND_APPLICATION,
-          },
         },
       },
       // Edit Flow States
@@ -1029,6 +959,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
+          },
+          ['RESIDENCEGRANTAPPLICATION']: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
           },
         },
       },

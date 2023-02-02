@@ -1533,24 +1533,18 @@ export const actionsResidenceGrant = (
   buttons: CallToAction<AnyEventObject>[] | [],
 ) => {
   const events = [
-    'CLOSED',
     'APPROVED',
-    'EMPLOYERAPPROVAL',
-    'EMPLOYERWAITINGTOASSIGN',
     'VINNUMALASTOFNUNAPPROVAL',
-    'ADDITIONALDOCUMENTSREQUIRED',
+    'VINNUMALASTOFNUNAPPROVEEDITS',
   ]
 
   type eventType = {
     [key: string]: any
   }
   const eventsMap: eventType = {
-    closed: 'CLOSED',
     approved: 'APPROVED',
-    employerApproval: 'EMPLOYERAPPROVAL',
-    employerWaitingToAssign: 'EMPLOYERWAITINGTOASSIGN',
     vinnumalastofnunApproval: 'VINNUMALASTOFNUNAPPROVAL',
-    additionalDocumentsRequired: 'ADDITIONALDOCUMENTSREQUIRED',
+    vinnumalastofnunApproveEdits: 'VINNUMALASTOFNUNAPPROVEEDITS',
   }
 
   const actions: CallToAction<AnyEventObject>[] = events.map((e) => {

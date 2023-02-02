@@ -7,7 +7,7 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
@@ -18,11 +18,12 @@ export const ResidenceGrant: Form = buildForm({
   id: 'residenceGrantApplication',
   title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
   logo: Logo,
-  mode: FormModes.IN_PROGRESS, // is this correct mode? or should we skip this?
   children: [
     buildSection({
       id: 'residentGrantApplication',
-      title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantApplyTitle,
+      title:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantApplyTitle,
       children: [
         buildMultiField({
           title: 'DateField',

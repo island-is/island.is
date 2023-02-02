@@ -121,15 +121,9 @@ export type Events =
    *  a postfix of REJECT if rejected button is pushed
    */
   | { type: 'APPROVED' }
-  | { type: 'EMPLOYERAPPROVAL' }
-  | { type: 'EMPLOYERWAITINGTOASSIGN' }
-  | { type: 'VINNUMALASTOFNUNAPPROVAL' }
   | { type: 'RESIDENCEGRANTAPPLICATION' } // Ex: when the baby is born a parent can apply for resident grant
   | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
-  | { type: 'CLOSEDREJECT' }
   | { type: 'APPROVEDREJECT' }
-  | { type: 'EMPLOYERAPPROVALREJECT' }
-  | { type: 'EMPLOYERWAITINGTOASSIGNREJECT' }
   | { type: 'VINNUMALASTOFNUNAPPROVALREJECT' }
   | { type: 'RESIDENCEGRANTAPPLICATIONREJECT' }
-  | { type: 'ADDITIONALDOCUMENTSREQUIREDREJECT' }
+  | { type: 'VINNUMALASTOFNUNAPPROVEEDITSREJECT' }
