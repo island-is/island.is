@@ -15,7 +15,9 @@ export type PortalContextProps = {
   routes: PortalRoute[]
 }
 
-const PortalContext = createContext<PortalContextProps | undefined>(undefined)
+export const PortalContext = createContext<PortalContextProps | undefined>(
+  undefined,
+)
 
 type PortalProviderProps = Omit<PortalContextProps, 'activeModule'>
 
@@ -66,7 +68,7 @@ const useDynamicHook = <T extends keyof PortalContextProps>(
   const context = useContext(PortalContext)
 
   if (context === undefined) {
-    throw new Error(`${fnName} must be used under ModulesProvider`)
+    throw new Error(`${fnName} must be used under PortalProvider`)
   }
 
   return context[key]
