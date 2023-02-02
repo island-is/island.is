@@ -105,3 +105,31 @@ export enum AnswerValidationConstants {
 }
 
 export const DATE_FORMAT = 'yyyy-MM-dd'
+
+export type Events =
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.EDIT }
+  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
+  | { type: 'CLOSED' } // Ex: Close application
+  /**
+   * States for routing Dvalarstyrkur
+   *  Takes previous state and add
+   *  a postfix of REJECT if rejected button is pushed
+   */
+  | { type: 'APPROVED' }
+  | { type: 'EMPLOYERAPPROVAL' }
+  | { type: 'EMPLOYERWAITINGTOASSIGN' }
+  | { type: 'VINNUMALASTOFNUNAPPROVAL' }
+  | { type: 'RESIDENCEGRANTAPPLICATION' } // Ex: when the baby is born a parent can apply for resident grant
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
+  | { type: 'CLOSEDREJECT' }
+  | { type: 'APPROVEDREJECT' }
+  | { type: 'EMPLOYERAPPROVALREJECT' }
+  | { type: 'EMPLOYERWAITINGTOASSIGNREJECT' }
+  | { type: 'VINNUMALASTOFNUNAPPROVALREJECT' }
+  | { type: 'RESIDENCEGRANTAPPLICATIONREJECT' }
+  | { type: 'ADDITIONALDOCUMENTSREQUIREDREJECT' }
