@@ -90,8 +90,8 @@ const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
           </Box>
         )}
         {isRequiredAction && (
-          <Box pointerEvents="none">
-            <Box marginBottom={1}>
+          <Box>
+            <Box pointerEvents="none" marginBottom={1}>
               <Tag variant="red">
                 {formatText(
                   coreMessages.tagsRequiresAction,
