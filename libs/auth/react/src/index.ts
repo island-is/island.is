@@ -1,6 +1,6 @@
 // Components
 export * from './lib/Authenticator/AuthProvider'
-export * from './lib/Authenticator/MockedAuthenticator'
+export * from './lib/Authenticator/MockedAuthProvider'
 export * from './lib/Authenticator/AuthContext'
 export * from './lib/Authenticator/AuthenticatorLoadingScreen'
 export * from './lib/Authenticator/CheckIdpSession'

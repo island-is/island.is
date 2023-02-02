@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 
 import { configureMock } from '../userManager'
 import { useAuth } from './AuthContext'
-import { Authenticator } from './Authenticator'
+import { AuthProvider } from './AuthProvider'
 
 const Wrapper: FC = ({ children }) => <MemoryRouter>{children}</MemoryRouter>
 const Greeting = () => {
@@ -13,15 +13,15 @@ const Greeting = () => {
 }
 const renderAuthenticator = () =>
   render(
-    <Authenticator>
+    <AuthProvider basePath="/basepath">
       <h2>
         <Greeting />
       </h2>
-    </Authenticator>,
+    </AuthProvider>,
     { wrapper: Wrapper },
   )
 
-describe('Authenticator', () => {
+describe('AuthProvider', () => {
   const expectAuthenticated = (name: string) =>
     screen.findByText(`Hello ${name}`)
 

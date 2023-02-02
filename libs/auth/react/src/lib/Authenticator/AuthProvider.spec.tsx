@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 
 import { getAuthSettings, getUserManager } from '../userManager'
 import { useAuth } from './AuthContext'
-import { Authenticator } from './Authenticator'
+import { AuthProvider } from './AuthProvider'
 
 jest.mock('../userManager')
 const mockedGetUserManager = getUserManager as jest.Mock
@@ -23,11 +23,11 @@ const Greeting = () => {
 }
 const renderAuthenticator = ({ wrapper = RootRoute } = {}) =>
   render(
-    <Authenticator>
+    <AuthProvider basePath="/basepath">
       <h2>
         <Greeting />
       </h2>
-    </Authenticator>,
+    </AuthProvider>,
     { wrapper },
   )
 
@@ -39,7 +39,7 @@ type MinimalUser = {
 }
 type MinimalUserManager = {
   events: {
-    addUserLoaded: (cb: UserManagerEvents.UserLoadedCallback) => void
+    addUserLoaded: (cb: UserManagerEvents) => void
     addUserSignedOut: jest.Mock
     removeUserLoaded: () => void
     removeUserSignedOut: () => void
@@ -51,7 +51,7 @@ type MinimalUserManager = {
   removeUser: jest.Mock
 }
 
-describe('Authenticator', () => {
+describe('AuthProvider', () => {
   let userManager: MinimalUserManager
 
   const expectSignin = () =>
