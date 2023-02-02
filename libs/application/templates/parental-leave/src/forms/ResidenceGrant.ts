@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDateField,
   buildDescriptionField,
   buildFileUploadField,
@@ -8,29 +7,24 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
-import {
-  parentalLeaveFormMessages,
-} from '../lib/messages'
+import { parentalLeaveFormMessages } from '../lib/messages'
+import { actionsResidenceGrant } from '../lib/parentalLeaveUtils'
 
 export const ResidenceGrant: Form = buildForm({
-  id: 'ParentalLeaveResidenceGrant',
+  id: 'residenceGrantApplication',
   title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
   logo: Logo,
-  mode: FormModes.IN_PROGRESS, // is this correct mode? or should we skip this?
   children: [
     buildSection({
       id: 'residentGrantApplication',
-      title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantApplyTitle,
+      title:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantApplyTitle,
       children: [
-        buildDescriptionField({
-          id: 'residenceGrantApplication.information',
-          title: 'Hvað á að vera hér',
-          description: 'upplýsingar '
-        }),
         buildMultiField({
           title: 'DateField',
           id: 'dvalarstyrk',
@@ -56,8 +50,12 @@ export const ResidenceGrant: Form = buildForm({
         }),
         buildFileUploadField({
           id: 'residenceGrantApplication.fileUpload',
-          title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantAttachmentTitle,
-          introduction: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantAttachmentDescription,
+          title:
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantAttachmentTitle,
+          introduction:
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantAttachmentDescription,
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText: '',
           uploadAccept: '.pdf',
@@ -66,34 +64,23 @@ export const ResidenceGrant: Form = buildForm({
           uploadButtonLabel:
             parentalLeaveFormMessages.selfEmployed.attachmentButton,
         }),
-        // buildCustomField({
-        //   id: 'residenceGrantApplication',
-        //   defaultValue: 'submit',
-        //   title: '',
-        //   description: '',
-        //   component: 'ResidenceGrantApplication',
-        // }),
         buildSubmitField({
           id: 'residenceGrantApplication.submit',
           placement: 'footer',
           title: parentalLeaveFormMessages.confirmation.title,
-          actions: [
+          refetchApplicationAfterSubmit: true,
+          actions: actionsResidenceGrant('reject', [
             {
-              event: 'ABORT',
-              name: parentalLeaveFormMessages.confirmation.cancel,
-              type: 'reject',
-            },
-            {
-              event: 'SUBMIT',
+              event: 'APPROVE',
               name: parentalLeaveFormMessages.confirmation.title,
               type: 'primary',
             },
-          ],
+          ]),
         }),
-        buildCustomField({ 
-          id: 'residenceGrantApplication.thankYou',
-          title: parentalLeaveFormMessages.finalScreen.title,
-          component: 'Conclusion',
+        buildDescriptionField({
+          id: 'unused',
+          title: '',
+          description: '',
         }),
       ],
     }),

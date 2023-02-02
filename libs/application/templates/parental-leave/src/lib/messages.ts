@@ -1924,8 +1924,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     residenceGrantClosedDescription: {
       id: 'pl.application:residence.grant.closed.description',
-      defaultMessage: 'Ekki er hægt að sækja um dvalarstyrk fyrr en eftir að barn er fætt',
-      description: 'The residence grant cannot be applied for until after the child is born',
+      defaultMessage:
+        'Ekki er hægt að sækja um dvalarstyrk fyrr en eftir að barn er fætt',
+      description:
+        'The residence grant cannot be applied for until after the child is born',
     },
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',
@@ -1944,88 +1946,15 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     residenceGrantAttachmentDescription: {
       id: 'pl.application:residence.grant.attachment.description',
-      defaultMessage: 'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns í tengslum við nauðsynlega fæðingarþjónustu vegna fæðingar barns „svo sem vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu“. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description: 'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery relating to necessary maternity services because of the birth of a child, “regarding, for instance, distance, bad weather, strike or pregnancy risk factors”. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
-    },
-    residenceGrantRights: {
-      id: 'pl.application:residence.grant.rights',
       defaultMessage:
-        'Dvalarstyrkur er fjárstyrkur til barnshafandi foreldris sem er nauðsynlegt að mati sérfræðilæknis að dvelja fjarri heimili sínu í tengslum við nauðsynlega þjónustu vegna fæðingar barns, svo sem vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu. Styrkurinn er greiddur eftir á.',
+        'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns í tengslum við nauðsynlega fæðingarþjónustu vegna fæðingar barns „svo sem vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu“. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
-        'A residence grant is a financial grant to a pregnant mother who, in the opinion of a specialist doctor, must live far from her home for services needed due to the birth of a child, such as distance, bad weather, a workplace strike or pregnancy risk factors. The grant is paid retroactively. ',
-    },
-    residenceGrantRightsRequirments: {
-      id: 'pl.application:residence.grant.rights.requirments',
-      defaultMessage:
-        'Réttur til dvalarstyrks er bundinn við barnshafandi foreldri sem á rétt á fæðingarorlofi eða fæðingarstyrk. ' +
-        'Heimilt er að greiða dvalarkostnað barnshafandi foreldris fjarri heimili 14 dögum fyrir áætlaðan fæðingardag og fram að fæðingu. ' +
-        'Ef um fjölburameðgöngu er að ræða er heimilt að byrja að greiða dvalarkostnað 28 dögum fyrir áætlaðan fæðingardag og fram að fæðingu. ' +
-        'Ekki er greiddur dvalarstyrkur þann tíma sem barnshafandi foreldri dvelur á sjúkrahúsi eða heilbrigðisstofnun.',
-      description:
-        'The right to a residence grant applies to a pregnant parent who is entitled to maternity leave or maternity grant.' +
-        'It is permitted to pay residence expenses of a pregnant parent who resides far from home 14 days before the expected date of delivery and until the day of birth.' +
-        'In the case of multiple births, it is permitted to begin paying residence expenses 28 days before the expected date of delivery and until the day of birth.' +
-        'A residence grant is not paid during the time a pregnant parent stays in a hospital or a health institute.',
-    },
-    residenceGrantApplication: {
-      id: 'pl.application:residence.grant.application',
-      defaultMessage:
-        'Ekki er hægt að sækja um styrkinn fyrr en eftir að barn er fætt. Sækja skal um innan sex mánaða frá fæðingardegi barns.',
-      description:
-        'The grant cannot be applied for until after the child is born. Applications shall be applied for within six months from the date of delivery.',
-    },
-    residenceGrantApplicationInfo: {
-      id: 'pl.application:residence.grant.application.info',
-      defaultMessage:
-        'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Unnið er að því að tengja vottorðið í Heilsuveru.' +
-        'Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns í tengslum við nauðsynlega fæðingarþjónustu vegna fæðingar barns „svo sem vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu“.' +
-        'Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili.' +
-        'Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis.',
-      description:
-        'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. We are working on connecting the certificate in Heilsuvera.is.' +
-        'The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery relating to necessary maternity services because of the birth of a child, “regarding, for instance, distance, bad weather, strike or pregnancy risk factors”.' +
-        'The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period.' +
-        'The original certificate must be submitted with a doctor’s signature.',
-    },
-    residenceGrantPayment: {
-      id: 'pl.application:residence.grant.payment',
-      defaultMessage:
-        'Greiðsla dvalarstyrks er innt af hendi eftir fæðingardag barns. Réttur til styrks fellur niður sex mánuðum eftir fæðingardag barns hafi umsókn ekki borist Vinnumálastofnun fyrir þann tíma.',
-      description:
-        'A residence grant is paid after the date of delivery. The right to a grant expires six months after the date of delivery if an application has not been submitted to The Directorate of Labour before that time. ',
-    },
-    residenceGrantPaymentAmount: {
-      id: 'pl.application:residence.grant.payment.amount',
-      defaultMessage:
-        'Fjárhæð styrks miðast við sömu reglur og gilda um dagpeninga ríkisstarfsmanna á ferðalögum innanlands – og er upphæðin 13.000 kr á dag. Sjá nánar hér' +
-        'Athugið að í samræmi við upplýsingar frá Skattinum er dregin staðgreiðsla af dvalarstyrknum. Viljir þú nýta persónuafslátt þinn þarf að senda inn beiðni um nýtingu persónuafsláttar. Eyðublaðið má finna hér. (linkur: https://vinnumalastofnun.is/faedingarorlofssjodur/umsoknir/beidni-um-nytingu-personuafslattar)',
-      description:
-        'The amount of a grant is based on the same rules that apply to a daily allowance for state employees on domestic travels and the amount is 13.000 kr. per day. More information can be found here' +
-        'Please note that according to information from Iceland Revenue and Customs the residence grant is subject to taxation. If you want to use your personal tax credits, please send a request for the use of tax credit. The request form can be found here.',
-    },
-    residenceGrantPaymentCorrection: {
-      id: 'pl.application:residence.grant.payment.correction',
-      defaultMessage:
-        'Hafi styrkþegi ranglega fengið dvalarstyrk skal hann endurgreiða þá fjárhæð sem ofgreidd var. Þá ákvörðun er heimilt að kæra til Úrskurðarnefndar velferðarmála.',
-      description:
-        'If a person has incorrectly received a residence grant, they must reimburse the amount that was overpaid. A complaint can be made regarding such decisions to the Welfare Appeals Committee. ',
-    },
-    residenceGrantNotOpen: {
-      id: 'pl.application:residence.grant.not.open',
-      defaultMessage:
-        'Þegar þú getur sótt um dvalarstyrk. Þú getur sótt um á þessari síðu.',
-      description:
-        'When you can apply for a residence grant. You can apply on this page.',
+        'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery relating to necessary maternity services because of the birth of a child, “regarding, for instance, distance, bad weather, strike or pregnancy risk factors”. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
     },
     residenceGrantOpen: {
       id: 'pl.application:residence.grant.open',
       defaultMessage: 'Hér getur þú sent inn umsókn þína.',
       description: 'Here you can submit your application',
-    },
-    residenceGrantNotOpenTitle: {
-      id: 'pl.application:residence.grant.not.open.title',
-      defaultMessage: 'Umsóknin er ekki opin ennþá',
-      description: 'The application is not open',
     },
     residenceGrantOpenTitle: {
       id: 'pl.application:residence.grant.open.title',
