@@ -12,7 +12,6 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   CallToAction,
-  DefaultEvents,
   ExternalData,
   Field,
   FormValue,
