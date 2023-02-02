@@ -7,6 +7,7 @@ import {
   Query,
 } from '@island.is/api/schema'
 import { useLocalization } from '../../../utils'
+import { prepareCsvString } from '../../utils'
 import {
   Box,
   Button,
@@ -20,17 +21,6 @@ import { SyslumennListCsvExport } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 const DEFAULT_PAGE_SIZE = 10
-const CSV_COLUMN_SEPARATOR = ','
-const CSV_ROW_SEPARATOR = '\n'
-
-const csvColumnSeparatorSafeValue = (value: string): string => {
-  /**
-   * Note:
-   *    This handles the case if the value it self contains the CSV column separator character.
-   *    E.g. in many cases, the address field contains ','.
-   */
-  return value?.includes(CSV_COLUMN_SEPARATOR) ? `"${value}"` : value
-}
 
 interface AlcoholLicencesListProps {
   slice: ConnectedComponent
@@ -104,7 +94,6 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   const csvStringProvider = () => {
     return new Promise<string>((resolve, reject) => {
       if (alcoholLicences) {
-        // CSV Header row
         const headerRow = [
           'Málategund',
           'Tegund',
@@ -116,12 +105,10 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
           'Gildir frá',
           'Gildir til',
           'Útgefið af',
-        ].join(CSV_COLUMN_SEPARATOR)
-        const rows = [headerRow]
-
-        // CSV Value rows
+        ]
+        const dataRows = []
         for (const alcoholLicence of alcoholLicences) {
-          const columnValues = [
+          dataRows.push([
             alcoholLicence.caseType, // Málategund
             alcoholLicence.licenceType, // Tegund
             alcoholLicence.licenceSubType, // Tegund leyfis
@@ -132,11 +119,9 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
             alcoholLicence.validFrom?.toString(), // Gildir frá
             alcoholLicence.validTo?.toString(), // Gildir til
             alcoholLicence.issuedBy, // Útgefið af
-          ].map((x) => csvColumnSeparatorSafeValue(x))
-          rows.push(columnValues.join(CSV_COLUMN_SEPARATOR))
+          ])
         }
-
-        return resolve(rows.join(CSV_ROW_SEPARATOR))
+        return resolve(prepareCsvString(headerRow, dataRows))
       }
       reject('Alcohol Licences data has not been loaded.')
     })
