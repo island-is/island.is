@@ -3,7 +3,7 @@ import { CacheModule, INestApplication, Injectable } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { NotificationsController } from '../notifications.controller'
 import { NotificationsWorkerService } from '../notificationsWorker.service'
-import { Message } from '../dto/createNotification.dto'
+import { CreateNotificationDto as Message } from '../dto/createNotification.dto'
 import { LoggingModule } from '@island.is/logging'
 import { environment } from '../../../../environments/environment'
 import {
@@ -13,6 +13,7 @@ import {
 } from '@island.is/message-queue'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import { MessageTypes } from '../types'
+import { NotificationsService } from '../notifications.service'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
@@ -60,7 +61,8 @@ describe('Notifications API', () => {
         }),
       ],
       controllers: [NotificationsController],
-      providers: [NotificationsWorkerService],
+      providers: [NotificationsWorkerService,NotificationsService],
+      // exports: [NotificationsService],
     })
       .overrideProvider(NotificationsWorkerService)
       .useClass(WorkerMock)
@@ -85,7 +87,7 @@ describe('Notifications API', () => {
     }
 
     await request(app.getHttpServer())
-      .post('/notifications')
+      .post('/notifications/create-notification')
       .send(msg)
       .expect(201)
 

@@ -3,9 +3,11 @@ import { buildOpenApi } from '@island.is/infra-nest-server'
 import { QueueModule } from '@island.is/message-queue'
 import { openApi } from './openApi'
 import { NotificationsController } from './app/modules/notifications/notifications.controller'
+import { NotificationsService } from './app/modules/notifications/notifications.service'
 
 @Module({
   imports: [
+    // NotificationsService,
     CacheModule.register({
       ttl: 60,
       max: 100,
@@ -19,6 +21,8 @@ import { NotificationsController } from './app/modules/notifications/notificatio
     }),
   ],
   controllers: [NotificationsController],
+  providers: [NotificationsService],
+  // exports: [NotificationsService],
 })
 class BuildModule {}
 
