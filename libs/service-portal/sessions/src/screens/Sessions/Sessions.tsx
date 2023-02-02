@@ -15,10 +15,9 @@ import HistoryTable from '../../components/HistoryTable/HistoryTable'
 import HistoryTableMobile from '../../components/HistoryTable/HistoryTableMobile'
 
 import { m } from '../../lib/messages'
-import { useWindowSize } from 'react-use'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import PersonIcon from '../../components/PersonIcon/PersonIcon'
-import { useSessionListQuery } from './Sessions.generated'
+import { useGetSessionsListQuery } from './Sessions.generated'
 import {
   SessionsPaginatedSessionResponse,
   SessionsSession,
@@ -26,14 +25,23 @@ import {
 import { SessionType } from '../../lib/types/sessionTypes'
 
 const Sessions = () => {
+  const SESSION_LIMIT = 10
   const { formatMessage } = useLocale()
-  const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState<number>(1)
 
-  const { data, loading } = useSessionListQuery({
+  const { data, loading } = useGetSessionsListQuery({
     fetchPolicy: 'network-only',
+    variables: {
+      input: {
+        limit: SESSION_LIMIT,
+        before: '',
+        after: '',
+        nationalId: '',
+        toDate: '',
+        fromDate: '',
+      },
+    },
     onCompleted(data) {
       const session = data?.sessionsList
         ? (data.sessionsList as SessionsPaginatedSessionResponse)
@@ -44,13 +52,6 @@ const Sessions = () => {
       console.log(error)
     },
   })
-
-  useEffect(() => {
-    if (width < theme.breakpoints.lg) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
 
   const handleChange = (value: any) => {
     setSearch(value)
@@ -84,7 +85,11 @@ const Sessions = () => {
       </Hidden>
       {data && !loading ? (
         <Fragment>
-          <Box paddingBottom={[3, 3, 4, 4]}>
+          <Box
+            style={{ maxWidth: '318px' }}
+            width={'full'}
+            paddingBottom={[3, 3, 4, 4]}
+          >
             <FilterInput
               placeholder={'Leita'}
               name="filterInput"

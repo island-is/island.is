@@ -1,5 +1,6 @@
-query SessionList {
-  sessionsList {
+query GetSessionsList($input: SessionsInput!)
+{
+  sessionsList (input: $input) {
     totalCount,
     pageInfo {
       hasNextPage
