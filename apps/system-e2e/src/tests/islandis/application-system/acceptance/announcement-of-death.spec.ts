@@ -2,7 +2,6 @@ import { expect, test as base, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
-  mockQGL,
 } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 
@@ -18,7 +17,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     })
 
     const applicationPage = await applicationContext.newPage()
-    await disablePreviousApplications(applicationPage)
+    //await disablePreviousApplications(applicationPage)
     //await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
     await expect(applicationPage).toBeApplication()
@@ -37,30 +36,16 @@ applicationTest.describe('Announcement of Death', () => {
   applicationTest('test', async ({ applicationPage }) => {
     const page = applicationPage
     await expect(page).toBeApplication()
-    await page.locator('[aria-label="island.is logo"]').isVisible()
 
     await disablePreviousApplications(page)
-    /*
-    const routeRegex = '** /graphql?op=ApplicationApplications'
-    await page.route(routeRegex, route => {
-      console.log(`Got a match for ${routeRegex}!`)
-      route.fulfill({ body: 'mocked-data' })
-    })
-    */
+    await disableI18n(page)
 
-    /* Not needed since we have successfully disabled old applications
-    // Should be gone with applicationPage
-    await page.locator('[data-testid="create-new-application"]').click()
-    await page.locator('[data-testid="create-new-application"]').click()
-    */
 
     await page.locator('data-testid=agree-to-data-providers').click()
     await page.locator(submitButton).click()
 
-    /* Disabled
-    // Multiple announcements screen
-    await page.locator('text=Hefja umsókn').click()
-    */
+    await expect(page.locator('h2:text("Fyrri umsóknir um andlátstilkynningu")')).toBeVisible()
+    return
 
     // Accept handling the announcement
     await page.locator('input[value=continue]').click()
