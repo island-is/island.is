@@ -2,12 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Operators API developed in .Net6.0",
+    "description": "Operators API developed in .Net6.0 - Release-8 : 20230124.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
-    "version": "2.0"
+    "version": "3.0"
   },
   "servers": [
     {
@@ -26,7 +26,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           },
           {
@@ -36,7 +36,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           }
         ],
@@ -61,21 +61,6 @@
               "schema": {
                 "$ref": "#/components/schemas/AuthenticateModel"
               }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
             }
           }
         },
@@ -97,16 +82,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/User"
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
               }
             }
           },
@@ -124,16 +99,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -162,7 +127,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           },
           {
@@ -172,7 +137,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           }
         ],
@@ -203,22 +168,6 @@
                     "$ref": "#/components/schemas/OperatorDto"
                   }
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
-                }
               }
             }
           },
@@ -236,16 +185,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -284,7 +223,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           },
           {
@@ -294,7 +233,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           }
         ],
@@ -325,22 +264,6 @@
                     "$ref": "#/components/schemas/OperatorDto"
                   }
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
-                }
               }
             }
           },
@@ -358,16 +281,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -413,7 +326,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           },
           {
@@ -423,7 +336,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           }
         ],
@@ -445,16 +358,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/OperatorDto"
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
-                }
               }
             }
           },
@@ -472,16 +375,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -510,7 +403,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           },
           {
@@ -520,7 +413,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           }
         ],
@@ -551,22 +444,6 @@
                     "$ref": "#/components/schemas/OperatorDto"
                   }
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
-                }
               }
             }
           },
@@ -584,16 +461,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -614,7 +481,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           },
           {
@@ -624,7 +491,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           }
         ],
@@ -632,37 +499,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                "$ref": "#/components/schemas/PostOperatorsWithBase64ContractModel"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                "$ref": "#/components/schemas/PostOperatorsWithBase64ContractModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                "$ref": "#/components/schemas/PostOperatorsWithBase64ContractModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                "$ref": "#/components/schemas/PostOperatorsWithBase64ContractModel"
               }
             }
           }
@@ -688,22 +540,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -718,27 +554,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                  "$ref": "#/components/schemas/PostOperatorsWithBase64ContractModel"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                  "$ref": "#/components/schemas/PostOperatorsWithBase64ContractModel"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                  "$ref": "#/components/schemas/PostOperatorsWithBase64ContractModel"
                 }
               }
             }
@@ -760,16 +586,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
               }
             }
           },
@@ -787,190 +603,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["Operator"],
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              }
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -991,7 +623,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           },
           {
@@ -1001,7 +633,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           }
         ],
@@ -1026,28 +658,11 @@
               "schema": {
                 "$ref": "#/components/schemas/PostOperatorsWithoutContractModel"
               }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithoutContractModel"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithoutContractModel"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOperatorsWithoutContractModel"
-              }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": ""
-          },
+          "200": { "description": "" },
           "201": {
             "description": "Created",
             "content": {
@@ -1062,16 +677,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithoutContractModel"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithoutContractModel"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/PostOperatorsWithoutContractModel"
                 }
@@ -1095,16 +700,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
               }
             }
           },
@@ -1125,22 +720,14 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
               }
             }
           }
         }
-      },
-      "put": {
+      }
+    },
+    "/close/withcontract": {
+      "post": {
         "tags": ["Operator"],
         "parameters": [
           {
@@ -1150,7 +737,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           },
           {
@@ -1160,7 +747,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "default": "2.0"
+              "default": "3.0"
             }
           }
         ],
@@ -1168,37 +755,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithoutContractModel"
+                "$ref": "#/components/schemas/PostCloseOperatorsWithBase64ContractModel"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithoutContractModel"
+                "$ref": "#/components/schemas/PostCloseOperatorsWithBase64ContractModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithoutContractModel"
+                "$ref": "#/components/schemas/PostCloseOperatorsWithBase64ContractModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithoutContractModel"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithoutContractModel"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithoutContractModel"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PutOperatorsWithoutContractModel"
+                "$ref": "#/components/schemas/PostCloseOperatorsWithBase64ContractModel"
               }
             }
           }
@@ -1230,22 +802,6 @@
                     "$ref": "#/components/schemas/ReturnTypeMessage"
                   }
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
               }
             }
           },
@@ -1269,16 +825,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
               }
             }
           },
@@ -1299,13 +845,100 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
-              },
-              "application/xml": {
+              }
+            }
+          }
+        }
+      }
+    },
+    "/close/withoutcontract": {
+      "post": {
+        "tags": ["Operator"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "3.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "3.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostCloseOperatorsWithoutContractModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostCloseOperatorsWithoutContractModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostCloseOperatorsWithoutContractModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostCloseOperatorsWithoutContractModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "" },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
-              "text/xml": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -1377,26 +1010,80 @@
         "additionalProperties": false,
         "description": "Operator entity"
       },
-      "PostOperatorsEntityWithContract": {
-        "required": ["mainOperator", "personIdNumber", "startDate"],
+      "PostCloseOperatorsWithBase64ContractModel": {
+        "required": [
+          "contract",
+          "endDate",
+          "permno",
+          "reportingPersonIdNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "type": "string",
+            "description": "Vehicle permanent number"
+          },
+          "endDate": {
+            "minLength": 1,
+            "type": "string",
+            "description": "End date",
+            "format": "date-time"
+          },
+          "reportingPersonIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
+            "type": "string",
+            "description": "Reporting person's social security number"
+          },
+          "contract": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Contract of operator change (pdf file) form US142"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model to post entity to close latest operators with contract"
+      },
+      "PostCloseOperatorsWithoutContractModel": {
+        "required": ["endDate", "permno", "reportingPersonIdNumber"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "type": "string",
+            "description": "Vehicle permanent number"
+          },
+          "endDate": {
+            "minLength": 1,
+            "type": "string",
+            "description": "End date",
+            "format": "date-time"
+          },
+          "reportingPersonIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
+            "type": "string",
+            "description": "Reporting person's social security number"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model to post entity to close latest operators"
+      },
+      "PostOperatorsEntityWithContractModel": {
+        "required": ["mainOperator"],
         "type": "object",
         "properties": {
           "personIdNumber": {
-            "maxLength": 10,
-            "minLength": 10,
-            "pattern": "^[0-9]{1,10}$",
+            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
             "type": "string",
-            "description": "Person id number"
-          },
-          "startDate": {
-            "type": "string",
-            "description": "Operator startdate",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "description": "Operator enddate",
-            "format": "date-time",
+            "description": "Person id number",
             "nullable": true
           },
           "mainOperator": {
@@ -1408,28 +1095,16 @@
           }
         },
         "additionalProperties": false,
-        "description": "Entity to post when posting multiple operators"
+        "description": "Entity to post when posting multiple operators, version 3"
       },
       "PostOperatorsEntityWithoutContractModel": {
-        "required": ["mainOperator", "startDate"],
+        "required": ["mainOperator"],
         "type": "object",
         "properties": {
           "personIdNumber": {
             "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
             "type": "string",
             "description": "Person id number",
-            "nullable": true
-          },
-          "startDate": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Operator startdate",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "description": "Operator enddate",
-            "format": "date-time",
             "nullable": true
           },
           "mainOperator": {
@@ -1443,42 +1118,13 @@
         "additionalProperties": false,
         "description": "Entity to post when posting multiple operators without contract, validation done in fluent validation"
       },
-      "PostOperatorsWithBase64Contract": {
-        "required": ["contract", "operators", "permno"],
-        "type": "object",
-        "properties": {
-          "permno": {
-            "maxLength": 5,
-            "minLength": 5,
-            "type": "string",
-            "description": "Vehicle permanent number"
-          },
-          "reportingPersonIdNumber": {
-            "maxLength": 10,
-            "minLength": 10,
-            "pattern": "^[0-9]{1,10}$",
-            "type": "string",
-            "description": "Person id of reporter",
-            "nullable": true
-          },
-          "operators": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PostOperatorsEntityWithContract"
-            },
-            "description": "List of operators"
-          },
-          "contract": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Contract of operator change (pdf file) form US142"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Class to post operators with contract"
-      },
-      "PostOperatorsWithoutContractModel": {
-        "required": ["permno", "reportingPersonIdNumber"],
+      "PostOperatorsWithBase64ContractModel": {
+        "required": [
+          "contract",
+          "permno",
+          "reportingPersonIdNumber",
+          "startDate"
+        ],
         "type": "object",
         "properties": {
           "permno": {
@@ -1488,12 +1134,64 @@
             "type": "string",
             "description": "Vehicle permanent number"
           },
+          "startDate": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Start date",
+            "format": "date-time"
+          },
+          "reportingPersonIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
+            "type": "string",
+            "description": "Person id of reporter"
+          },
+          "operators": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PostOperatorsEntityWithContractModel"
+            },
+            "description": "List of operators",
+            "nullable": true
+          },
+          "contract": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Contract of operator change (pdf file) form US142"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Class to post operators with contract, version 3"
+      },
+      "PostOperatorsWithoutContractModel": {
+        "required": ["permno", "reportingPersonIdNumber", "startDate"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "type": "string",
+            "description": "Vehicle permanent number"
+          },
+          "startDate": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Start date",
+            "format": "date-time"
+          },
           "reportingPersonIdNumber": {
             "maxLength": 10,
             "minLength": 10,
             "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
             "type": "string",
             "description": "Social security number of reporting person/company"
+          },
+          "onlyRunFlexibleWarning": {
+            "type": "boolean",
+            "description": "Only try operator change, do not commit changes",
+            "nullable": true
           },
           "operators": {
             "type": "array",
@@ -1534,138 +1232,6 @@
         },
         "additionalProperties": false
       },
-      "PutOperatorsEntityWithContract": {
-        "required": ["mainOperator", "personIdNumber", "startDate"],
-        "type": "object",
-        "properties": {
-          "personIdNumber": {
-            "maxLength": 10,
-            "minLength": 10,
-            "pattern": "^[0-9]{1,10}$",
-            "type": "string",
-            "description": "Person id number"
-          },
-          "startDate": {
-            "type": "string",
-            "description": "Startdate",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "description": "Enddate",
-            "format": "date-time",
-            "nullable": true
-          },
-          "mainOperator": {
-            "maximum": 1,
-            "minimum": 0,
-            "type": "integer",
-            "description": "Is this person the main operator",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Entity for operator when updating multiple operators"
-      },
-      "PutOperatorsEntityWithoutContractModel": {
-        "required": ["mainOperator", "startDate"],
-        "type": "object",
-        "properties": {
-          "personIdNumber": {
-            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
-            "type": "string",
-            "description": "Person id number",
-            "nullable": true
-          },
-          "startDate": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Operator startdate",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "description": "Operator enddate",
-            "format": "date-time",
-            "nullable": true
-          },
-          "mainOperator": {
-            "maximum": 1,
-            "minimum": 0,
-            "type": "integer",
-            "description": "Is this person the main operator",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Entity to update operators without contract, validation done in fluent validation"
-      },
-      "PutOperatorsWithBase64Contract": {
-        "required": ["contract", "operators", "permno"],
-        "type": "object",
-        "properties": {
-          "permno": {
-            "maxLength": 5,
-            "minLength": 5,
-            "type": "string",
-            "description": "Vehicle permno",
-            "example": "AB123"
-          },
-          "reportingPersonIdNumber": {
-            "maxLength": 10,
-            "minLength": 10,
-            "pattern": "^[0-9]{1,10}$",
-            "type": "string",
-            "description": "Person id of reporter",
-            "nullable": true
-          },
-          "operators": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PutOperatorsEntityWithContract"
-            },
-            "description": "List of operators"
-          },
-          "contract": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Contract of operator change"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Model to update operators, with attached contract"
-      },
-      "PutOperatorsWithoutContractModel": {
-        "required": ["permno", "reportingPersonIdNumber"],
-        "type": "object",
-        "properties": {
-          "permno": {
-            "maxLength": 5,
-            "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
-            "type": "string",
-            "description": "Vehicle permno",
-            "example": "AB123"
-          },
-          "reportingPersonIdNumber": {
-            "maxLength": 10,
-            "minLength": 10,
-            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
-            "type": "string",
-            "description": "Person id of reporter"
-          },
-          "operators": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PutOperatorsEntityWithoutContractModel"
-            },
-            "description": "List of operators",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Model to update operators, without contract"
-      },
       "ReturnTypeMessage": {
         "type": "object",
         "properties": {
@@ -1684,6 +1250,11 @@
           },
           "permno": {
             "type": "string",
+            "nullable": true
+          },
+          "warningSerialNumber": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },

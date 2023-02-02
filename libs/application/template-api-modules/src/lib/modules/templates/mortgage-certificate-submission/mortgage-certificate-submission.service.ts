@@ -13,7 +13,7 @@ import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNo
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
 import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
-  NationalRegistry,
+  Identity,
   UserProfile,
   SubmitRequestToSyslumennResult,
   ValidateMortgageCertificateResult,
@@ -134,19 +134,18 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     const { propertyNumber } = application.answers.selectProperty as {
       propertyNumber: string
     }
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+    const identityData = application.externalData.identity?.data as Identity
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
 
     const person: Person = {
-      name: nationalRegistryData?.fullName,
-      ssn: nationalRegistryData?.nationalId,
+      name: identityData?.name,
+      ssn: identityData?.nationalId,
       phoneNumber: userProfileData?.mobilePhoneNumber,
       email: userProfileData?.email,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: identityData?.address?.streetAddress || '',
+      postalCode: identityData?.address?.postalCode || '',
+      city: identityData?.address?.city || '',
       signed: true,
       type: PersonType.MortgageCertificateApplicant,
     }
@@ -155,7 +154,7 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     const attachments: Attachment[] = [
       {
-        name: `vedbokarvottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
+        name: `vedbokarvottord_${identityData?.nationalId}_${dateStr}.pdf`,
         content: document.contentBase64,
       },
     ]
@@ -184,19 +183,18 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     const { propertyNumber } = application.answers.selectProperty as {
       propertyNumber: string
     }
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+    const identityData = application.externalData.identity?.data as Identity
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
 
     const person: Person = {
-      name: nationalRegistryData?.fullName,
-      ssn: nationalRegistryData?.nationalId,
+      name: identityData?.name,
+      ssn: identityData?.nationalId,
       phoneNumber: userProfileData?.mobilePhoneNumber,
       email: userProfileData?.email,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: identityData?.address?.streetAddress || '',
+      postalCode: identityData?.address?.postalCode || '',
+      city: identityData?.address?.city || '',
       signed: true,
       type: PersonType.MortgageCertificateApplicant,
     }
