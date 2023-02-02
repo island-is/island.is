@@ -20,7 +20,7 @@ const PersonalAllowance = z
     usePersonalAllowance: z.enum([YES, NO]),
     usage: z
       .string()
-      .refine((x) => parseFloat(x) > 0 && parseFloat(x) <= 100)
+      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
       .optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
@@ -58,7 +58,9 @@ export const dataSchema = z.object({
         return (
           phoneNumber &&
           phoneNumber.isValid() &&
-          phoneNumberStartStr.some((substr) => p.startsWith(substr))
+          phoneNumberStartStr.some((substr) =>
+            phoneNumber.nationalNumber.startsWith(substr),
+          )
         )
       },
       { params: errorMessages.phoneNumber },
@@ -95,7 +97,9 @@ export const dataSchema = z.object({
         if (phoneNumber)
           return (
             phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
           )
         else return true
       },
@@ -156,7 +160,9 @@ export const dataSchema = z.object({
         if (phoneNumber)
           return (
             phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
           )
         else return true
       },

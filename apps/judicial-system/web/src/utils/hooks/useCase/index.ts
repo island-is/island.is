@@ -9,12 +9,14 @@ import isNil from 'lodash/isNil'
 import type {
   NotificationType,
   SendNotificationResponse,
-  Case,
   CaseTransition,
   RequestSignatureResponse,
-  UpdateCase,
   CreateCase,
 } from '@island.is/judicial-system/types'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 

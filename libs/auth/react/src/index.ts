@@ -5,9 +5,6 @@ export * from './lib/Authenticator/AuthContext'
 export * from './lib/Authenticator/AuthenticatorLoadingScreen'
 export * from './lib/Authenticator/CheckIdpSession'
 
-// Hooks
-export * from './lib/hooks/useCheckAuth'
-
 // Lib
 export * from './lib/userManager'
 export * from './lib/authLink'

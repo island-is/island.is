@@ -23,6 +23,7 @@ if (userMocked) {
       'profile',
       AdminPortalScope.delegations,
       AdminPortalScope.airDiscountScheme,
+      AdminPortalScope.icelandicNamesRegistry,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'ap.',

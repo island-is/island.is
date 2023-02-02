@@ -80,7 +80,11 @@ export const AuthProvider = ({
   }, [userManager, dispatch])
 
   const switchUser = useCallback(
-    async function switchUser(nationalId?: string) {
+    async function switchUser(nationalId?: string, newLocation?: Location) {
+      if (newLocation) {
+        urlRef.current = `${newLocation.pathname}${newLocation.search}`
+      }
+
       const args =
         nationalId !== undefined
           ? {
@@ -240,15 +244,7 @@ export const AuthProvider = ({
     isCurrentRoute(authSettings?.redirectPath)
 
   return (
-    <AuthContext.Provider
-      value={{
-        ...context,
-        dispatch,
-        authSettings,
-        checkLogin,
-        autoLogin,
-      }}
-    >
+    <AuthContext.Provider value={context}>
       {hasError ? (
         <AuthenticatorErrorScreen basePath={basePath} />
       ) : isLoading ? (

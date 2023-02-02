@@ -45,25 +45,27 @@ export interface UpdateUser {
   institutionId?: string
   active?: boolean
 }
-
-export const prosecutionRoles = [UserRole.PROSECUTOR, UserRole.REPRESENTATIVE]
-
-export function isProsecutionRole(role: UserRole): boolean {
-  return prosecutionRoles.includes(role)
-}
-
-export const courtRoles = [UserRole.JUDGE, UserRole.REGISTRAR]
-
-export function isCourtRole(role: UserRole): boolean {
-  return courtRoles.includes(role)
-}
-
-export const extendedCourtRoles = [
+const extendedCourtRoles: string[] = [
   UserRole.JUDGE,
   UserRole.REGISTRAR,
   UserRole.ASSISTANT,
 ]
 
-export function isExtendedCourtRole(role: UserRole): boolean {
-  return extendedCourtRoles.includes(role)
+export function isExtendedCourtRole(role: string): boolean {
+  return Object.values(extendedCourtRoles).includes(role)
+}
+
+export const prosecutionRoles: string[] = [
+  UserRole.PROSECUTOR,
+  UserRole.REPRESENTATIVE,
+]
+
+export function isProsecutionRole(role: string): boolean {
+  return prosecutionRoles.includes(role)
+}
+
+export const courtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
+
+export function isCourtRole(role: string): boolean {
+  return courtRoles.includes(role)
 }
