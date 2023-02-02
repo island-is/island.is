@@ -28,7 +28,6 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
-  CaseType,
   Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
@@ -45,6 +44,7 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -308,7 +308,9 @@ const Defendant = () => {
                   value={
                     workingCase.id
                       ? {
-                          value: CaseType[workingCase.type],
+                          value: Object.keys(CaseType).indexOf(
+                            workingCase.type,
+                          ),
                           label: capitalize(caseTypes[workingCase.type]),
                         }
                       : undefined
@@ -415,12 +417,12 @@ const Defendant = () => {
           </Box>
           <AnimatePresence>
             {[
-              CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-              CaseType.EXPULSION_FROM_HOME,
-              CaseType.PSYCHIATRIC_EXAMINATION,
-              CaseType.RESTRAINING_ORDER,
-              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-              CaseType.OTHER,
+              CaseType.ElectronicDataDiscoveryInvestigation,
+              CaseType.ExpulsionFromHome,
+              CaseType.PsychiatricExamination,
+              CaseType.RestrainingOrder,
+              CaseType.RestrainingOrderAndExpulsionFromHome,
+              CaseType.Other,
             ].includes(workingCase.type) && (
               <motion.section
                 initial={{ opacity: 0, y: 10 }}
