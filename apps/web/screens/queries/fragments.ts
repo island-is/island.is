@@ -484,7 +484,6 @@ export const slices = gql`
     id
     title
     intro
-    recipient
     fields {
       title
       name
