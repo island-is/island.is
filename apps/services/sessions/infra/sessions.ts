@@ -1,10 +1,10 @@
 import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const namespace = 'services-sessions'
-const serviceName = 'services-sessions'
-const workerName = 'services-sessions-worker'
+const namespace = 'services_sessions'
+const serviceName = 'services_sessions'
+const workerName = 'services_sessions_read'
 const imageName = 'services-sessions'
-const dbName = 'services-sessions'
+const dbName = 'services_sessions'
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
   return service(serviceName)
@@ -14,7 +14,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
       // The service has only read permissions
       username: serviceName,
       name: dbName,
-      passwordSecret: '/k8s/services/sessions/DB_PASSWORD',
+      passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
@@ -77,7 +77,7 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
       // Worker has write permissions
       username: workerName,
       name: dbName,
-      passwordSecret: '/k8s/services/sessions/worker/DB_PASSWORD',
+      passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
