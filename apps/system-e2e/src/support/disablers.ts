@@ -5,6 +5,13 @@ type MockGQLOptions = {
   camelCaseResponseKey?: boolean
 }
 
+function toCamelCase(s: string) {
+  const loweredHead = s[0].toLowerCase() ?? ''
+  const camelCased = s.replace(/^./, loweredHead)
+  console.log(`camelcased: ${s} -> ${camelCased}`)
+  return camelCased
+}
+
 /**
  * Mock any graphql operation, returning the given mockData
  *
@@ -15,28 +22,33 @@ export async function mockQGL<T>(
   page: Page,
   op: string,
   mockData: T,
-  options: MockGQLOptions = { responseKey: op, camelCaseResponseKey: true },
+  options = { responseKey: op, camelCaseResponseKey: true, patchResponse: false },
 ) {
-  // Key in return data; using options on instantiation
-  const key = (options?.responseKey ?? op).replace(/^(.)/, (s) =>
-    options?.camelCaseResponseKey ? s.toLowerCase() : s,
-  )
-  const routeRegex = `**/graphql?op=${key}`
-  console.log(`Returning ${mockData} for all calls to ${routeRegex}`)
-  await page.route(routeRegex, (route) => {
-    console.log(`Matched route ${route} for ${routeRegex}!`)
-    const data: Record<string, T> = {}
-    data[key] = mockData
-    const response = { data }
-    console.log('Setting mocked response:', response)
-    route.fulfill({ body: JSON.stringify(response) })
-  })
+    // Override op if given in options
+    op = options?.responseKey ?? op
+
+    const pattern = `**/graphql?op=${op}`
+    const key = options.camelCaseResponseKey? toCamelCase(op) : op
+
+    console.log(`Setting up mock for ${pattern}`)
+    await page.route(pattern, async route => {
+      // Set mock
+      const response = options.patchResponse? await (await route.fetch()).json() : {}
+      const payload = {...response}
+      // TODO handle nested object
+      payload[key] = mockData
+      const data = {data: payload}
+
+      console.log(`Got a mock-match for > ${route.request().url()} <`)
+      console.log('MOCKING ->', data)
+      route.fulfill({ body: JSON.stringify(data) })
+    })
 }
 
 export async function disablePreviousApplications(page: Page) {
-  await mockQGL(page, 'ApplicationApplications', [])
+  return await mockQGL(page, 'ApplicationApplications', [])
 }
 
 export async function disableI18n(page: Page) {
-  await mockQGL(page, 'GetTranslations', {})
+    return await mockQGL(page, 'GetTranslations', {'mock.translation': "YES-mocked"})
 }
