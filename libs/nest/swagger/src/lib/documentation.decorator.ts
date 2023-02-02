@@ -36,7 +36,7 @@ export interface Options {
     header?: Record<string, DocumentationHeaderOptions>
   }
   response?: {
-    status?: 200 | 201 | 204
+    status?: 200 | 201 | 202 | 204
     type?: ApiResponseMetadata['type']
   }
   isAuthorized?: boolean
