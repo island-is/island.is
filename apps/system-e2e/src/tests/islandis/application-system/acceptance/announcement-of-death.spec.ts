@@ -40,7 +40,9 @@ applicationTest.describe('Announcement of Death', () => {
     await page.locator('data-testid=agree-to-data-providers').click()
     await page.locator(submitButton).click()
 
-    await expect(page.locator('h2:text("Fyrri umsóknir um andlátstilkynningu")')).toBeVisible()
+    await expect(
+      page.locator('h2:text("Fyrri umsóknir um andlátstilkynningu")'),
+    ).toBeVisible()
     return
 
     // Accept handling the announcement

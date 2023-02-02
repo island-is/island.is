@@ -23,37 +23,48 @@ export async function mockQGL<T>(
   page: Page,
   op: string,
   mockData: T,
-  { responseKey= op, camelCaseResponseKey= true, patchResponse= false }: MockGQLOptions = {},
+  {
+    responseKey = op,
+    camelCaseResponseKey = true,
+    patchResponse = false,
+  }: MockGQLOptions = {},
 ) {
-    // Override op if given in options
-    op = responseKey ?? op
+  // Override op if given in options
+  op = responseKey ?? op
 
-    const pattern = `**/graphql?op=${op}`
-    const key = camelCaseResponseKey? toCamelCase(op) : op
+  const pattern = `**/graphql?op=${op}`
+  const key = camelCaseResponseKey ? toCamelCase(op) : op
 
-    console.log(`Setting up mock (key=${key}) for ${pattern}`)
-    await page.route(pattern, async route => {
-      // Set mock
-      const response = patchResponse? await (await route.fetch()).json() : {}
-      const payload = {...response?.data}
-      console.log("Payload:", payload)
-      console.log("Payload (externalData):", payload[key]?.externalData)
+  console.log(`Setting up mock (key=${key}) for ${pattern}`)
+  await page.route(pattern, async (route) => {
+    // Set mock
+    const response = patchResponse ? await (await route.fetch()).json() : {}
+    const payload = { ...response?.data }
+    console.log('Payload:', payload)
+    console.log('Payload (externalData):', payload[key]?.externalData)
 
-      // TODO handle nested object
-      payload[key] = Array.isArray(mockData)? mockData: {...mockData}
-      const data = {data: payload}
+    // TODO handle nested object
+    payload[key] = Array.isArray(mockData) ? mockData : { ...mockData }
+    const data = { data: payload }
 
-      console.log(`Got a mock-match for > ${route.request().url()} <`)
-      console.log('MOCKING ->', data)
-      route.fulfill({ body: JSON.stringify(data) })
-    })
+    console.log(`Got a mock-match for > ${route.request().url()} <`)
+    console.log('MOCKING ->', data)
+    route.fulfill({ body: JSON.stringify(data) })
+  })
 }
 
 export async function disablePreviousApplications(page: Page) {
   await mockQGL(page, 'ApplicationApplications', [])
-  await mockQGL(page, 'UpdateApplication', {externalData: {existingApplication: null}}, {patchResponse: true})
+  await mockQGL(
+    page,
+    'UpdateApplication',
+    { externalData: { existingApplication: null } },
+    { patchResponse: true },
+  )
 }
 
 export async function disableI18n(page: Page) {
-    return await mockQGL(page, 'GetTranslations', {'mock.translation': "YES-mocked"})
+  return await mockQGL(page, 'GetTranslations', {
+    'mock.translation': 'YES-mocked',
+  })
 }
