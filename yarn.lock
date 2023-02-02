@@ -7207,15 +7207,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.25.2":
-  version: 1.25.2
-  resolution: "@playwright/test@npm:1.25.2"
+"@playwright/test@npm:1.29":
+  version: 1.29.2
+  resolution: "@playwright/test@npm:1.29.2"
   dependencies:
     "@types/node": "*"
-    playwright-core: 1.25.2
+    playwright-core: 1.29.2
   bin:
     playwright: cli.js
-  checksum: 3c24027bd9b305a3985cae35a4046e656dd0ffb76ef4dfcfc864f6c8492a643fc21c79048ee8169c5c1562d3cae493e7223a5473b127fef3bda7c7c52795c17d
+  checksum: 614cd4ed3baa4e41a6c7865f3c49733caef2c9d5a1aae5832b3d145ffdb0be2dd9d30136c0cb8aed5f9d452782baf2f380e5b12092958bf9fa7578a6d5fa61bf
   languageName: node
   linkType: hard
 
@@ -25280,7 +25280,7 @@ __metadata:
     "@nrwl/web": 13.10.5
     "@nrwl/workspace": 13.10.5
     "@openapitools/openapi-generator-cli": 1.0.15-4.3.1
-    "@playwright/test": 1.25.2
+    "@playwright/test": 1.29
     "@rehooks/component-size": 1.0.3
     "@sindresorhus/slugify": 1.0.0
     "@statoscope/webpack-plugin": 5.20.1
@@ -32642,12 +32642,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.25.2":
-  version: 1.25.2
-  resolution: "playwright-core@npm:1.25.2"
+"playwright-core@npm:1.29.2":
+  version: 1.29.2
+  resolution: "playwright-core@npm:1.29.2"
   bin:
     playwright: cli.js
-  checksum: 24ada61e2132bd7278cf0aa0ef711280e1519c437efa0088a99c47ef994202f4c9880521d8c0c51ab854bef08806f372477d754aac1e790ea64f18cd346b5b2f
+  checksum: 19e00e162a24eb99878408518930346c1d2c8ce83bb02993e3dd890c99df4530240cfebe4ec4e5aca01656462695b6328fb8f913cf2e229c2c73941623ac524e
   languageName: node
   linkType: hard
 
