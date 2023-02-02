@@ -10,6 +10,7 @@ import {
   Configuration,
   IdentityDocumentApi,
   PreregistrationApi,
+  DocumentLossApi,
 } from '../../gen/fetch'
 import { PassportsClientConfig } from './passports.config'
 
@@ -45,13 +46,15 @@ export const ApiConfiguration = {
   inject: [XRoadConfig.KEY, IdsClientConfig.KEY, PassportsClientConfig.KEY],
 }
 
-export const PassportsApis = [IdentityDocumentApi, PreregistrationApi].map(
-  (Api) => ({
-    provide: Api,
-    scope: LazyDuringDevScope,
-    useFactory: (configuration: Configuration) => {
-      return new Api(configuration)
-    },
-    inject: [ApiConfiguration.provide],
-  }),
-)
+export const PassportsApis = [
+  IdentityDocumentApi,
+  PreregistrationApi,
+  DocumentLossApi,
+].map((Api) => ({
+  provide: Api,
+  scope: LazyDuringDevScope,
+  useFactory: (configuration: Configuration) => {
+    return new Api(configuration)
+  },
+  inject: [ApiConfiguration.provide],
+}))

@@ -20,11 +20,13 @@ export class PassportAnnulmentService extends BaseTemplateApiService {
     const {
       status,
       comment,
-      passportNumber,
+      productionRequestID,
     } = application.answers as PassportAnnulmentAnswers
-    // const result = await this.passportApi.
-    console.log(status, comment, passportNumber)
-    // {"status":"lost","comment":"Týndist í fluttningum síðasta haust.Týndist í fluttningum síðasta haust.Týndist í fluttningum síðasta haust.Týndist í fluttningum síðasta haust.Týndist í fluttningum síðasta haust.","passport":{"userPassport":"A2276548,Gervimaður Ameríku ","childPassport":""},"passportName":"Gervimaður Ameríku ","passportNumber":"A2276548","approveExternalData":true}
+    const result = await this.passportApi.annulPassport(auth, {
+      status,
+      comment,
+      productionRequestID,
+    })
     return { success: false }
   }
 }

@@ -69,6 +69,8 @@ export type IdentityDocument = {
   mrzFirstName: string
   mrzLastName: string
   sex: string
+  numberWithType: string
+  productionRequestID: string
 }
 
 export interface IdentityDocumentChild {

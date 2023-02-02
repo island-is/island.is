@@ -71,6 +71,10 @@ export const Draft: Form = buildForm({
               id: 'passportName',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'productionRequestID',
+              title: '',
+            }),
           ],
         }),
       ],

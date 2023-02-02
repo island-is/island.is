@@ -34,7 +34,6 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
-  console.log(application.externalData)
   const identityDocumentData = application.externalData.identityDocument
     .data as IdentityDocumentData
 
@@ -80,7 +79,6 @@ export const PassportSelection: FC<FieldBaseProps> = ({
 
     return tagObject
   }
-
   return (
     <Box>
       <RadioFormField
@@ -99,16 +97,16 @@ export const PassportSelection: FC<FieldBaseProps> = ({
               label: (application.externalData.nationalRegistry.data as any)
                 ?.fullName,
               value:
-                identityDocumentData.userPassport?.subType +
-                identityDocumentData?.userPassport?.number +
+                identityDocumentData.userPassport?.productionRequestID +
+                ',' +
+                identityDocumentData.userPassport?.numberWithType +
                 ',' +
                 (application.externalData.nationalRegistry.data as any)
                   ?.fullName,
               subLabel: identityDocumentData.userPassport
                 ? formatMessage(m.passportNumber) +
                   ' ' +
-                  identityDocumentData.userPassport?.subType +
-                  identityDocumentData?.userPassport?.number
+                  identityDocumentData.userPassport?.numberWithType
                 : '',
               tag: tag(identityDocumentData.userPassport),
               disabled:
@@ -116,10 +114,9 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             },
           ],
           onSelect: (e) => {
-            console.log(e.split(',')[0])
-            console.log(e.split(',')[1])
-            setValue('passportNumber', e.split(',')[0])
-            setValue('passportName', e.split(',')[1])
+            setValue('productionRequestID', e.split(',')[0])
+            setValue('passportNumber', e.split(',')[1])
+            setValue('passportName', e.split(',')[2])
             setValue(childPassportRadio, '')
           },
         }}
@@ -143,17 +140,25 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           defaultValue: '',
           options: identityDocumentData.childPassports.map(
             (child: IdentityDocumentChild) => {
+              const passport = child.passports?.length
+                ? child.passports[0]
+                : undefined
               const disabled = child.passports
                 ? tag(child.passports?.[0]).variant !== 'mint'
                 : true
-              const passportNumber: string = child.passports?.length
-                ? child.passports[0].subType + child.passports[0].number
-                : '0'
+
               return {
                 label: child.childName,
-                value: passportNumber + ',' + child.childName,
+                value:
+                  passport?.productionRequestID +
+                  ',' +
+                  passport?.numberWithType +
+                  ',' +
+                  child.childName,
                 subLabel: child.passports?.length
-                  ? formatMessage(m.passportNumber) + ' ' + passportNumber
+                  ? formatMessage(m.passportNumber) +
+                    ' ' +
+                    passport?.numberWithType
                   : '',
                 tag: child.passports ? tag(child.passports?.[0]) : undefined,
                 disabled,
@@ -161,9 +166,9 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             },
           ),
           onSelect: (e) => {
-            console.log(e.split(','))
-            setValue('passportNumber', e.split(',')[0])
-            setValue('passportName', e.split(',')[1])
+            setValue('productionRequestID', e.split(',')[0])
+            setValue('passportNumber', e.split(',')[1])
+            setValue('passportName', e.split(',')[2])
             setValue(userPassportRadio, '')
           },
         }}

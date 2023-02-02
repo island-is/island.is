@@ -6,8 +6,10 @@ import {
   IdentityDocumentApi,
   IdentityDocumentResponse,
   PreregistrationApi,
+  DocumentLossApi,
 } from '../../gen/fetch'
 import {
+  DocumentLossnInput,
   Gender,
   IdentityDocument,
   IdentityDocumentChild,
@@ -35,6 +37,7 @@ export class PassportsService {
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private identityDocumentApi: IdentityDocumentApi,
     private preregistrationApi: PreregistrationApi,
+    private documentLossApi: DocumentLossApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -50,8 +53,8 @@ export class PassportsService {
   }
 
   private resolvePassports(passportData: IdentityDocumentResponse[]) {
-    const passportArray = passportData.map((item) => {
-      const { productionRequestID, ...passport } = item
+    const passportArray = passportData.map((passport) => {
+      // const { productionRequestID, ...passport } = item
 
       /**
        * Expiration status: string
@@ -213,6 +216,23 @@ export class PassportsService {
       userPassport: userPassports ? userPassports[0] : undefined,
       childPassports: childPassports,
     }
+  }
+
+  async annulPassport(
+    user: User,
+    input: DocumentLossnInput,
+  ): Promise<PreregisterResponse> {
+    const res = await this.documentLossApi
+      .withMiddleware(new AuthMiddleware(user))
+      .documentLossDocumentLoss({
+        xRoadClient: this.xroadConfig.xRoadClient,
+        documentLossAnnouncementRequest: {
+          ...input,
+          announcedByPersonId: user.nationalId,
+        },
+      })
+
+    return { success: !!res }
   }
 
   async createDocumentBuffer({

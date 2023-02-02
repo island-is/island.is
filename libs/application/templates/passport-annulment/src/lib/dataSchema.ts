@@ -6,6 +6,7 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   passportNumber: z.string().min(1),
   passportName: z.string().min(1),
+  productionRequestID: z.string().min(1),
   status: z.enum([STATUS.LOST, STATUS.STOLEN]),
   comment: z.string().min(1),
   passport: z
