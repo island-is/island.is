@@ -1,0 +1,9 @@
+{
+  "@odata.context": "https://dev-re.crm4.dynamics.com/api/data/v9.1/$metadata#star_elections(star_electiontype,star_electiondate)/$entity",
+  "@odata.etag": "W/\"3387582\"",
+  "star_electiontype@OData.Community.Display.V1.FormattedValue": "Forsetakosningar",
+  "star_electiontype": 150000000,
+  "star_electiondate@OData.Community.Display.V1.FormattedValue": "6/27/2020",
+  "star_electiondate": "2020-06-27T00:00:00Z",
+  "star_electionid": "32291daa-5ce6-ec11-bb3c-0022489dce97"
+}
