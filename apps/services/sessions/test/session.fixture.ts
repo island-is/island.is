@@ -1,15 +1,25 @@
 import faker from 'faker'
 
+import { createNationalId } from '@island.is/testing/fixtures'
+
 import { CreateSessionDto } from '../src/app/sessions/create-session.dto'
 
-export const createRandomSession = (
-  actorNationalId: string,
+export interface CreateSessionDtoOptions {
+  subjectType?: any
+  actorNationalId?: string
+  subjectNationalId?: string
+}
+
+export const createSessionDto = (
+  options?: CreateSessionDtoOptions,
 ): CreateSessionDto => ({
-  id: faker.random.word(),
-  actorNationalId: actorNationalId,
-  subjectNationalId: faker.datatype.string(10),
+  id: faker.datatype.uuid(),
+  actorNationalId: options?.actorNationalId ?? createNationalId('person'),
+  subjectNationalId:
+    options?.subjectNationalId ??
+    createNationalId(options?.subjectType ?? 'person'),
   clientId: faker.random.word(),
-  timestamp: new Date(),
+  timestamp: faker.datatype.datetime(),
   userAgent: faker.internet.userAgent(),
   ip: faker.internet.ip(),
 })
