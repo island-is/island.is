@@ -437,7 +437,7 @@ export function buildMessageWithLinkButtonField(data: {
   }
 }
 
-export function buildExpendableDescriptionField(data: {
+export function buildExpandableDescriptionField(data: {
   id: string
   title: FormText
   description: StaticText
