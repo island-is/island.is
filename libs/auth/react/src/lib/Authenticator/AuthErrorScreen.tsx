@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
-import * as styles from './Authenticator.css'
+import * as styles from './Auth.css'
 
 type AuthenticatorErrorScreenProps = {
   basePath: string
@@ -8,7 +8,7 @@ type AuthenticatorErrorScreenProps = {
 
 // This screen is unfortunately not translated because at this point we don't
 // have a user locale, nor an access token to fetch translations.
-export const AuthenticatorErrorScreen = ({
+export const AuthErrorScreen = ({
   basePath,
 }: AuthenticatorErrorScreenProps) => {
   const onTryAgainHandler = () => {

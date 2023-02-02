@@ -1,6 +1,5 @@
 import addSeconds from 'date-fns/addSeconds'
 import { useCallback, useEffect, useReducer, useRef } from 'react'
-
 import { getAuthSettings, getUserManager } from '../userManager'
 
 const UserSessionMessageType = 'SessionInfo'

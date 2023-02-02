@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
-import * as styles from './Authenticator.css'
+import * as styles from './Auth.css'
 
-export const AuthenticatorLoadingScreen = () => (
+export const AuthLoadingScreen = () => (
   <Box
     display="flex"
     justifyContent="center"

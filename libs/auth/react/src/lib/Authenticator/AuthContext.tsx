@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { AuthReducerState, initialState } from './Authenticator.state'
+import { AuthReducerState, initialState } from './Auth.state'
 
 export interface AuthContextType extends AuthReducerState {
   signIn(): void

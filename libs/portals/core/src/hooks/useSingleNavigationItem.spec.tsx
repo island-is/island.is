@@ -3,7 +3,7 @@ import { ReactNode, FC } from 'react'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react-hooks'
 import { IntlProvider } from 'react-intl'
-import { MockedAuthenticator } from '@island.is/auth/react'
+import { MockedAuthProvider } from '@island.is/auth/react'
 import { defaultLanguage } from '@island.is/shared/constants'
 
 import { testCases } from '../../test/useSingleNavigationItem-test-cases'
@@ -71,7 +71,7 @@ describe('useSingleNavigationItem hook', () => {
             // Ignoring error because we don't need translations for tests
           }}
         >
-          <MockedAuthenticator user={{ profile: { name: 'Peter' } }}>
+          <MockedAuthProvider user={{ profile: { name: 'Peter' } }}>
             <BrowserRouter>
               <MockedPortalProvider
                 meta={{ portalType: 'admin', basePath: '/' }}
@@ -81,7 +81,7 @@ describe('useSingleNavigationItem hook', () => {
                 {children}
               </MockedPortalProvider>
             </BrowserRouter>
-          </MockedAuthenticator>
+          </MockedAuthProvider>
         </IntlProvider>
       </ApolloProvider>
     )
