@@ -84,14 +84,19 @@ export class NotificationsService {
       )
     } catch {
       throw new BadRequestException(
-        `Requested template ${templateId} not found`,
+        `Requested template ${templateId} not found ***`,
       ) // ??
     }
   }
 
-  async validateArgs(body: CreateHnippNotificationDto) {
+  async validateArgs(
+    body: CreateHnippNotificationDto,
+    template: HnippTemplate,
+  ) {
+    console.log(template.args?.length != body.args.length)
+    console.log(template.args?.length, body.args.length)
     // check for template
-    const template = await this.getTemplate(body.templateId, 'is-IS') // cache ????????????????????????
+    // const template = await this.getTemplate(body.templateId, 'is-IS') // cache ????????????????????????
     // check for args
     if (template.args?.length != body.args.length) {
       throw new BadRequestException(
@@ -113,7 +118,6 @@ export class NotificationsService {
     if (body.args?.length == template.args?.length) {
       // scan object for {{}} for counts
       if (re.test(template.notificationBody)) {
-        console.log('######## found')
         const element = body.args.shift()
         if (element) {
           template.notificationBody = template.notificationBody.replace(
@@ -124,7 +128,6 @@ export class NotificationsService {
       }
       if (template.notificationDataCopy) {
         if (re.test(template.notificationDataCopy)) {
-          console.log('######## found')
           const element = body.args.shift()
           if (element) {
             template.notificationDataCopy = template.notificationDataCopy.replace(
@@ -136,7 +139,6 @@ export class NotificationsService {
       }
       if (template.clickAction) {
         if (re.test(template.clickAction)) {
-          console.log('######## found')
           const element = body.args.shift()
           if (element) {
             template.clickAction = template.clickAction.replace(re, element)

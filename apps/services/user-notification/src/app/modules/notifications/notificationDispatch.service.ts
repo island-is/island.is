@@ -50,6 +50,7 @@ export class NotificationDispatchService {
     nationalId: string
     messageId: string
   }): Promise<void> {
+    // add user profile to readme and setup instructions
     const deviceTokensResponse = await this.userProfileApi.userTokenControllerGetDeviceTokens(
       { nationalId },
     )
@@ -84,8 +85,11 @@ export class NotificationDispatchService {
           },
         },
       },
+      // test matrix of situations - deep link vs url link
       data: {
         ...(notification.appURI && { url: notification.appURI }),
+        ...(notification.appURI && { islandIsUrl: notification.appURI }),
+        ...(notification.dataCopy && { copy: notification.dataCopy }), // confirm this guy
       },
     })
 

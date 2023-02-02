@@ -75,7 +75,7 @@ export class NotificationsController {
   })
   @Get('/templates')
   async getNotificationTemplates(
-    @Query('locale') locale: string = 'is-IS',
+    @Query('locale') locale: string,
   ): Promise<HnippTemplate[]> {
     return await this.notificationsService.getTemplates(locale)
   }
@@ -106,7 +106,7 @@ export class NotificationsController {
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
-    @Query('locale') locale: string = 'is-IS',
+    @Query('locale') locale: string,
   ): Promise<HnippTemplate> {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
@@ -115,8 +115,12 @@ export class NotificationsController {
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
+    const template = await this.notificationsService.getTemplate(
+      body.templateId,
+      'is-IS',
+    )
     // validate
-    this.notificationsService.validateArgs(body)
+    this.notificationsService.validateArgs(body, template)
     // add to queue
     const id = await this.queue.add(body)
     this.logger.info('Message queued ... ...', { messageId: id, ...body })

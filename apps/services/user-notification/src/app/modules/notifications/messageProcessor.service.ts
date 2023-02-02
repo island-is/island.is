@@ -25,9 +25,8 @@ export class MessageProcessorService {
   ): Promise<Notification> {
     const template = await this.notificationsService.getTemplate(
       message.templateId,
-      profile.locale ?? 'is-IS', // defaults or error to fix userprofile serivcd ?????
+      profile.locale,
     )
-
     const notification = await this.notificationsService.formatArguments(
       message,
       template,
@@ -36,6 +35,7 @@ export class MessageProcessorService {
     return {
       title: notification.notificationTitle,
       body: notification.notificationBody,
+      dataCopy: notification.notificationDataCopy,
       category: notification.category,
       appURI: notification.clickAction,
     }

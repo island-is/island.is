@@ -41,20 +41,20 @@ class WorkerMock {
   }
 }
 
-class mockNotificationsService {
-  async createNotification(input: Message) {
-    return { id: '123' }
-  }
-  async getTemplates() {
-    return [
-      {
-        bob: 1,
-      },
-    ]
-  }
-  async validateArgs() {
-    return true
-  }
+class MockNotificationsService {
+  // async createNotification(input: Message) {
+  //   return { id: '123' }
+  // }
+  // async getTemplates() {
+  //   return [
+  //     {
+  //       bob: 1,
+  //     },
+  //   ]
+  // }
+  // async validateArgs() {
+  //   return true
+  // }
 }
 describe('Notifications API', () => {
   let app: INestApplication
@@ -81,7 +81,7 @@ describe('Notifications API', () => {
       .overrideProvider(NotificationsWorkerService)
       .useClass(WorkerMock)
       .overrideProvider(NotificationsService)
-      .useClass(mockNotificationsService)
+      .useClass(MockNotificationsService)
       .compile()
 
     app = await module.createNestApplication().init()
