@@ -1,4 +1,4 @@
-import { Application, PaymentScheduleDebts } from '@island.is/api/schema'
+import { PaymentScheduleDebts } from '@island.is/api/schema'
 import {
   buildCompanySearchField,
   buildCustomField,
@@ -7,7 +7,6 @@ import {
   buildRadioField,
   buildSection,
   buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
 import {
   CustomField,
@@ -15,17 +14,18 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/types'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  formConclusionSection,
+} from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
 import {
   application,
   conclusion,
   employer,
-  info,
   overview,
   section,
   paymentPlan,
-  betaTest,
 } from '../lib/messages'
 import { isApplicantPerson } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
@@ -71,12 +71,6 @@ export const PaymentPlanForm: Form = buildForm({
   mode: FormModes.DRAFT,
   logo: Logo,
   children: [
-    // TODO remove section on official release
-    buildSection({
-      id: 'betaTest.section',
-      title: betaTest.title,
-      children: [],
-    }),
     buildSection({
       id: 'externalData',
       title: section.externalData,
@@ -227,16 +221,12 @@ export const PaymentPlanForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'confirmation',
-      title: section.confirmation,
-      children: [
-        buildCustomField({
-          id: 'conclusion',
-          title: conclusion.general.title,
-          component: 'FormConclusion',
-        }),
-      ],
+    formConclusionSection({
+      alertMessage: conclusion.general.alertMessage,
+      alertTitle: conclusion.general.alertTitle,
+      bulletHeader: conclusion.information.title,
+      bulletIntro: conclusion.information.intro,
+      bulletPoints: conclusion.information.bulletList,
     }),
   ],
 })

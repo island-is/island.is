@@ -20,7 +20,7 @@ const PersonalAllowance = z
     usePersonalAllowance: z.enum([YES, NO]),
     usage: z
       .string()
-      .refine((x) => parseFloat(x) > 0 && parseFloat(x) <= 100)
+      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
       .optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
@@ -42,6 +42,10 @@ export const dataSchema = z.object({
   selectedChild: z.string().min(1),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
+  }),
+  dvalarstyrk: z.object({
+    dateFrom: z.string(),
+    dateTo: z.string(),
   }),
   noPrimaryParent: z.object({
     questionOne: z.enum([YES, NO]),

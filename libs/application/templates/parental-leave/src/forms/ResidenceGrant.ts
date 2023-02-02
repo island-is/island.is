@@ -1,11 +1,11 @@
 import {
-  buildCustomField,
+  buildDateField,
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
+  buildMultiField,
   buildSection,
   buildSubmitField,
-  buildSubSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 
@@ -13,8 +13,10 @@ import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
 import { parentalLeaveFormMessages } from '../lib/messages'
 
+import { actionsResidenceGrant } from '../lib/parentalLeaveUtils'
+
 export const ResidenceGrant: Form = buildForm({
-  id: 'ParentalLeaveResidenceGrant',
+  id: 'residenceGrantApplication',
   title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS, // is this correct mode? or should we skip this?
@@ -29,6 +31,29 @@ export const ResidenceGrant: Form = buildForm({
           id: 'residenceGrantApplication.information',
           title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
           description: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantInformation,
+        }),
+        buildMultiField({
+          title: 'DateField',
+          id: 'dvalarstyrk',
+          description:
+            'Add the date form when you wish to apply for Dvalastyrkur',
+          space: 2,
+          children: [
+            buildDateField({
+              id: 'dvalarstyrk.dateFrom',
+              title: 'From',
+              placeholder: '',
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildDateField({
+              id: 'dvalarstyrk.dateTo',
+              title: 'To',
+              placeholder: '',
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+          ],
         }),
         buildFileUploadField({
           id: 'fileUpload.residenceGrant',
@@ -46,34 +71,23 @@ export const ResidenceGrant: Form = buildForm({
           uploadButtonLabel:
             parentalLeaveFormMessages.selfEmployed.attachmentButton,
         }),
-        // buildCustomField({
-        //   id: 'residenceGrantApplication',
-        //   defaultValue: 'submit',
-        //   title: '',
-        //   description: '',
-        //   component: 'ResidenceGrantApplication',
-        // }),
         buildSubmitField({
           id: 'residenceGrantApplication.submit',
           placement: 'footer',
           title: parentalLeaveFormMessages.confirmation.title,
-          actions: [
+          refetchApplicationAfterSubmit: true,
+          actions: actionsResidenceGrant('reject', [
             {
-              event: 'ABORT',
-              name: parentalLeaveFormMessages.confirmation.cancel,
-              type: 'reject',
-            },
-            {
-              event: 'SUBMIT',
+              event: 'APPROVE',
               name: parentalLeaveFormMessages.confirmation.title,
               type: 'primary',
             },
-          ],
+          ]),
         }),
-        buildCustomField({
-          id: 'residenceGrantApplication.thankYou',
-          title: parentalLeaveFormMessages.finalScreen.title,
-          component: 'Conclusion',
+        buildDescriptionField({
+          id: 'unused',
+          title: '',
+          description: '',
         }),
       ],
     }),

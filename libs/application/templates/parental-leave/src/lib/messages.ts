@@ -1959,11 +1959,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hér getur þú sent inn umsókn þína.',
       description: 'Here you can submit your application',
     },
-    residenceGrantNotOpenTitle: {
-      id: 'pl.application:residence.grant.not.open.title',
-      defaultMessage: 'Umsóknin er ekki opin ennþá',
-      description: 'The application is not open',
-    },
     residenceGrantOpenTitle: {
       id: 'pl.application:residence.grant.open.title',
       defaultMessage: 'Sendu inn umsókn þína',
@@ -2409,6 +2404,13 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Ekki er hægt að óska eftir dögum ef ekki er nýttur allur sameiginlegur réttur vegna fjölbura. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to request days!',
+  },
+  notAllowedToGiveRightsOtherParentNotAllowed: {
+    id:
+      'pl.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
+    defaultMessage:
+      'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
+    description: 'Unable to transfer days!',
   },
 })
 

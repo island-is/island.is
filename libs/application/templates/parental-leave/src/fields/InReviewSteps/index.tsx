@@ -106,6 +106,8 @@ const InReviewSteps: FC<FieldBaseProps> = ({
       ? isRecivingUnemploymentBenefits === YES
       : false
     : false
+  const { state } = application
+  const { dateOfBirth } = application.answers
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -154,18 +156,32 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   }
 
   if (
-    residentGrantIsOpenForApplication(`${application.answers['dateOfBirth']}`)
+    dateOfBirth &&
+    residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
+    (state === 'approved' ||
+      state === 'vinnumalastofnunApproveEdits' ||
+      state === 'vinnumalastofnunApproval')
   ) {
     steps.push({
       state: ReviewSectionState.optionalAction,
-      title: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle),
-      description: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantOpenDescription),
+      title: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantOpenDescription,
+      ),
     })
   } else {
     steps.push({
       state: ReviewSectionState.prerequisites,
-      title: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle),
-      description: formatMessage(parentalLeaveFormMessages.residenceGrantMessage.residenceGrantClosedDescription),
+      title: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantClosedDescription,
+      ),
     })
   }
 
@@ -278,7 +294,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               application={application}
               index={index + 1}
               {...step}
-              notifyParentOnClickEvent={(e) => handleSubmit(e)}
+              notifyParentOnClickEvent={() =>
+                handleSubmit('RESIDENCEGRANTAPPLICATION')
+              }
             />
           ))}
         </Box>

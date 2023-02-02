@@ -11,6 +11,7 @@ import round from 'lodash/round'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
+  CallToAction,
   ExternalData,
   Field,
   FormValue,
@@ -32,6 +33,7 @@ import {
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   SINGLE,
+  Events,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -61,6 +63,7 @@ import {
   multipleBirthsDefaultDays,
 } from '../config'
 import { isAfter, isBefore } from 'date-fns'
+import { AnyEventObject } from 'xstate'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -1530,4 +1533,41 @@ export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
   const fullPeriod = addMonths(birthDay, 6)
   if (!isBefore(dateToday, fullPeriod)) return false
   return true
+}
+
+export const actionsResidenceGrant = (
+  event: 'reject' | 'confirm',
+  buttons: CallToAction<AnyEventObject>[] | [],
+) => {
+  const events = [
+    'APPROVED',
+    'VINNUMALASTOFNUNAPPROVAL',
+    'VINNUMALASTOFNUNAPPROVEEDITS',
+  ]
+
+  type eventType = {
+    [key: string]: any
+  }
+  const eventsMap: eventType = {
+    approved: 'APPROVED',
+    vinnumalastofnunApproval: 'VINNUMALASTOFNUNAPPROVAL',
+    vinnumalastofnunApproveEdits: 'VINNUMALASTOFNUNAPPROVEEDITS',
+  }
+
+  const actions: CallToAction<AnyEventObject>[] = events.map((e) => {
+    return {
+      condition: (answer: FormValue) => {
+        const { previousState } = answer
+        if (eventsMap[`${previousState}`] === e) return true
+        return false
+      },
+      event: ((event === 'reject' ? `${e}REJECT` : e) as unknown) as Events,
+      name: event === 'reject' ? 'Reject' : 'Confirm',
+      type: event === 'reject' ? 'reject' : 'primary',
+    }
+  })
+
+  const mergedActions: CallToAction<AnyEventObject>[] =
+    [...actions, ...buttons] || []
+  return mergedActions
 }
