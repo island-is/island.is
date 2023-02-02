@@ -104,6 +104,11 @@ export const include: Includeable[] = [
   },
 ]
 
+export const order: OrderItem[] = [
+  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+]
+
 export const caseListInclude: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   {
@@ -128,7 +133,7 @@ export const caseListInclude: Includeable[] = [
   },
 ]
 
-export const order: OrderItem[] = [
+export const listOrder: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
 ]
 
