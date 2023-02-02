@@ -56,8 +56,7 @@ export class FinancialStatementsInaoClientService {
 
   async getClientTypes(): Promise<ClientType[] | null> {
     const url = `${this.basePath}/GlobalOptionSetDefinitions(Name='star_clienttypechoice')`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data || !data.Options) return null
 
@@ -88,8 +87,7 @@ export class FinancialStatementsInaoClientService {
       nationalId,
     )}'`
     const url = `${this.basePath}/star_clients?${select}&${filter}`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
@@ -117,8 +115,7 @@ export class FinancialStatementsInaoClientService {
       nationalId,
     )}'`
     const url = `${this.basePath}/star_clients?${select}&${filter}`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
@@ -165,8 +162,7 @@ export class FinancialStatementsInaoClientService {
 
   async getElections(): Promise<Election[] | null> {
     const url = `${this.basePath}/star_elections`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
@@ -185,8 +181,7 @@ export class FinancialStatementsInaoClientService {
   async getElectionInfo(electionId: string): Promise<ElectionInfo | null> {
     const select = '$select=star_electiontype, star_electiondate'
     const url = `${this.basePath}/star_elections(${electionId})?${select}`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data) return null
 
@@ -203,8 +198,7 @@ export class FinancialStatementsInaoClientService {
     const select = '$select=star_value,star_years'
     const filter = `$filter=star_client_type eq ${clientType}`
     const url = `${this.basePath}/star_clientfinanciallimits?${select}&${filter}`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
@@ -221,8 +215,7 @@ export class FinancialStatementsInaoClientService {
     const select =
       '$select=star_name,star_code,star_numeric,star_istaxinformation,star_supertype'
     const url = `${this.basePath}/star_financialtypes?${select}`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
@@ -314,9 +307,6 @@ export class FinancialStatementsInaoClientService {
   }
 
   async postFinancialStatementForPoliticalParty(
-    // nationalId: string,
-    // actorNationalId: string | undefined,
-
     client: Client,
     contacts: Contact[],
     digitalSignee: DigitalSignee,
@@ -389,9 +379,6 @@ export class FinancialStatementsInaoClientService {
   }
 
   async postFinancialStatementForCemetery(
-    // clientNationalId: string,
-    // actorNationalId: string | undefined,
-
     client: Client,
     contacts: Contact[],
     digitalSignee: DigitalSignee,
@@ -469,8 +456,7 @@ export class FinancialStatementsInaoClientService {
   async getConfig(): Promise<Config[]> {
     const select = '$select=star_key,star_value'
     const url = `${this.basePath}/star_configs?${select}`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data || !data.value) return []
 
@@ -489,8 +475,7 @@ export class FinancialStatementsInaoClientService {
       '$select=star_value&$expand=star_FinancialType($select=star_numeric,star_name)'
     const filter = `$filter=star_TaxInformationEntry/star_year eq ${year} and star_TaxInformationEntry/star_national_id eq '${nationalId}'`
     const url = `${this.basePath}/star_taxinformationvalues?${filter}&${select}`
-    const response = await this.fetch(url)
-    const data = await response.json()
+    const data = await this.getData(url)
 
     if (!data || !data.value) return []
 
@@ -504,7 +489,7 @@ export class FinancialStatementsInaoClientService {
     return taxInfo
   }
 
-  private async postFinancialStatement(body: any): Promise<string | undefined> {
+  async postFinancialStatement(body: any): Promise<string | undefined> {
     try {
       const url = `${this.basePath}/star_financialstatements`
       const res = await this.fetch(url, {
@@ -527,16 +512,16 @@ export class FinancialStatementsInaoClientService {
     }
   }
 
-  private async sendFile(
+  async sendFile(
     financialStatementId: string,
     fileName: string,
     fileContent: string,
-  ) {
+  ): Promise<boolean> {
     const buffer = Buffer.from(fileContent, 'base64')
 
     try {
       const url = `${this.basePath}/star_financialstatements(${financialStatementId})/star_file`
-      return await this.fetch(url, {
+      await this.fetch(url, {
         method: 'PATCH',
         body: buffer,
         headers: {
@@ -544,9 +529,11 @@ export class FinancialStatementsInaoClientService {
           'x-ms-file-name': fileName,
         },
       })
+      return true
     } catch (error) {
       this.logger.info('file', fileName, fileContent)
       this.logger.error('Failed to upload financial statement file.', error)
+      return false
     }
   }
 
@@ -568,5 +555,10 @@ export class FinancialStatementsInaoClientService {
 
       return contactDto
     })
+  }
+
+  async getData(url: string) {
+    const response = await this.fetch(url)
+    return await response.json()
   }
 }
