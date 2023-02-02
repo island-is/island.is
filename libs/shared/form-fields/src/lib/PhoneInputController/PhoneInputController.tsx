@@ -17,7 +17,6 @@ interface Props {
   defaultValue?: string
   disabled?: boolean
   control?: Control
-  icon?: React.ComponentProps<typeof Icon>['icon']
   rules?: ValidationRules
   error?: string
   id: string
@@ -30,13 +29,9 @@ interface Props {
   textarea?: boolean
   backgroundColor?: InputBackgroundColor
   currency?: boolean
-  suffix?: string
-  rows?: number
-  format?: string | FormatInputValueFunction
   required?: boolean
   readOnly?: boolean
   rightAlign?: boolean
-  maxLength?: number
   loading?: boolean
   size?: 'xs' | 'sm' | 'md'
   autoComplete?: 'off' | 'on'
@@ -61,19 +56,16 @@ export const PhoneInputController = forwardRef(
       disabled = false,
       error,
       id,
-      icon,
       label,
       name = id,
       placeholder,
       control,
       rules,
       backgroundColor,
-      format,
       onChange: onInputChange,
       required,
       rightAlign,
       readOnly,
-      maxLength,
       loading,
       size = 'md',
       dataTestId,
@@ -113,8 +105,7 @@ export const PhoneInputController = forwardRef(
           label={label}
           type="tel"
           value={value}
-          format={format}
-          /* maxLength={maxLength} */
+          format="###-####"
           autoComplete={autoComplete}
           loading={loading}
           onChange={(

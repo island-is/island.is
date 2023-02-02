@@ -80,14 +80,22 @@ export const valueContainer = style(
   {
     selectors: {
       [`${wrapper} &`]: {
-        paddingTop: '32px',
-        paddingBottom: 0,
+        paddingTop: theme.spacing[4],
+        paddingBottom: theme.spacing[2],
         paddingLeft: 0,
         marginLeft: 0,
       },
     },
   },
   'valueContainer',
+)
+
+export const optionFlag = style(
+  {
+    paddingRight: theme.spacing[3],
+    fontSize: 32,
+  },
+  'option-flag',
 )
 
 globalStyle(`${wrapper} ${valueContainer} .css-b8ldur-Input`, {
@@ -138,16 +146,19 @@ export const containerDisabled = style({
 export const container = style(
   {
     height: '100%',
+    ':before': {
+      content: '',
+      position: 'absolute',
+      top: 1,
+      right: 0,
+      width: 1,
+      bottom: 1,
+      backgroundColor: theme.color.blue200,
+    },
   },
   'container',
 )
 export const containerSizes = styleVariants(inputMixins.containerSizes)
-
-const containerFocusMixin = {
-  borderTop: `3px solid ${theme.color.mint400}`,
-  borderLeft: `3px solid ${theme.color.mint400}`,
-  borderBottom: `3px solid ${theme.color.mint400}`,
-}
 
 globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
   color: theme.color.dark400,
@@ -158,6 +169,8 @@ globalStyle(`${wrapper} .css-1g6gooi`, {
 })
 globalStyle(`${wrapper} .country-code-select__control${container}`, {
   ...inputMixins.container,
+  backgroundColor: 'transparent',
+  boxShadow: 'inset 0 0 0 1px transparent',
   width: '140px',
   borderBottomRightRadius: 0,
   borderTopRightRadius: 0,
@@ -166,7 +179,7 @@ globalStyle(`${wrapper} .country-code-select__control${container}`, {
 globalStyle(
   `${wrapper}${wrapperColor.blue} .country-code-select__control${container}`,
   {
-    background: theme.color.blue100,
+    background: 'transparent',
   },
 )
 
@@ -174,14 +187,7 @@ globalStyle(
   `${wrapper} .country-code-select__control${container}${hasError}`,
   inputMixins.inputErrorState,
 )
-globalStyle(
-  `${wrapper} .country-code-select__control${container}:hover:not(.country-code-select__control--is-focused):not(${containerDisabled})`,
-  inputMixins.containerHover,
-)
-globalStyle(
-  `${wrapper} .country-code-select__control${container}.country-code-select__control--is-focused`,
-  containerFocusMixin,
-)
+
 globalStyle(
   `${wrapper} .country-code-select__control${container}.country-code-select__control--menu-is-open`,
   {
@@ -380,6 +386,14 @@ globalStyle(
     backgroundColor: theme.color.white,
   },
 )
+
+globalStyle(`${wrapper} .country-code-select__single-value--is-disabled`, {
+  color: theme.color.dark400,
+})
+
+globalStyle(`${wrapper} .country-code-select__control--is-disabled`, {
+  opacity: 1,
+})
 
 export const isRequiredStar = style({
   color: theme.color.red600,

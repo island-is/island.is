@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps, PhoneField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -9,7 +8,6 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-
 import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
@@ -30,8 +28,6 @@ export const PhoneFormField: FC<Props> = ({
     description,
     placeholder,
     backgroundColor,
-    format,
-    rows,
     required,
     readOnly,
     dataTestId,
@@ -73,11 +69,8 @@ export const PhoneFormField: FC<Props> = ({
             }
             onChange(e)
           }}
-          maxLength={7}
-          format={format ?? '###-####'}
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
-          rows={rows}
           required={required}
         />
       </Box>

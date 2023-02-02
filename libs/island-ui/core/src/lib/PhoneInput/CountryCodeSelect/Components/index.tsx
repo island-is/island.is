@@ -18,7 +18,7 @@ import { Icon } from '../../../IconRC/Icon'
 import * as styles from '../CountryCodeSelect.css'
 import { CountryCodeSelectProps } from '../../PhoneInput.types'
 import { Option as ReactSelectOption } from '../../../Select/Select'
-import { labelSizes } from '../../../Input/Input.mixins'
+import { Box } from '../../../Box/Box'
 
 export const Menu = (props: MenuProps<ReactSelectOption>) => (
   <components.Menu className={styles.menu} {...props} />
@@ -28,31 +28,17 @@ type NonNullableSize = NonNullable<CountryCodeSelectProps['size']>
 
 export const Option = (props: OptionProps<ReactSelectOption>) => {
   const size: NonNullableSize = props.selectProps.size || 'md'
-  const description = props.data?.description
-  // Truncate description by default
-  const descriptionTruncated =
-    !!description && props.data?.descriptionTruncate !== false
+  const description = props.data?.description // Flag in this case
 
   return (
     <components.Option
       className={cn(styles.option, styles.optionSizes[size])}
       {...props}
     >
-      <>
-        {props.children}
-        {!!description && (
-          <div
-            data-testid={props.data?.dataTestId}
-            className={cn(
-              styles.optionDescription,
-              styles.optionDescriptionSizes[size],
-              { [styles.optionDescriptionTruncated]: descriptionTruncated },
-            )}
-          >
-            {description}
-          </div>
-        )}
-      </>
+      <Box display="flex" alignItems="center">
+        <span className={styles.optionFlag}>{description}</span>
+        <div>{props.children}</div>
+      </Box>
     </components.Option>
   )
 }
@@ -96,11 +82,16 @@ export const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
 
 export const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
   const size: NonNullableSize = props.selectProps.size || 'md'
+  const value = (props.hasValue ? props.getValue() : null) as
+    | ReactSelectOption[]
+    | null
   return (
     <components.SingleValue
       className={cn(styles.singleValue, styles.singleValueSizes[size])}
       {...props}
-    />
+    >
+      {value ? value[0].value : ''}
+    </components.SingleValue>
   )
 }
 

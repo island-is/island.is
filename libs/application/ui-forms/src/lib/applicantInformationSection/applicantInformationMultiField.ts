@@ -83,14 +83,6 @@ export const applicantInformationMultiField = buildMultiField({
       defaultValue: '',
       maxLength: 100,
     }),
-    /* buildTextField({
-      id: 'applicant.phoneNumber',
-      title: applicantInformation.labels.tel,
-      format: '###-####',
-      width: 'half',
-      variant: 'tel',
-      defaultValue: '',
-    }), */
     buildPhoneField({
       id: 'applicant.phoneNumber',
       title: applicantInformation.labels.tel,

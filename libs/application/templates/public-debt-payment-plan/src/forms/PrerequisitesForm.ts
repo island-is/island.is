@@ -19,7 +19,6 @@ import {
 } from '@island.is/application/types'
 import { betaTestSection } from './BetaTestSection'
 import { Logo } from '../assets'
-
 import { application, info, section, externalData } from '../lib/messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { NO, YES } from '../shared/constants'
@@ -27,7 +26,6 @@ import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
 import { isApplicantCompany, isApplicantPerson } from '../lib/paymentPlanUtils'
 import { PaymentPlanPrerequisitesApi } from '../dataProviders'
-import { removeCountryCode } from '@island.is/application/ui-components'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -198,21 +196,6 @@ export const PrerequisitesForm: Form = buildForm({
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.email,
             }),
-            /* buildTextField({
-              id: 'applicant.phoneNumber',
-              title: info.labels.tel,
-              format: '###-####',
-              width: 'half',
-              variant: 'tel',
-              backgroundColor: 'blue',
-              defaultValue: (application: Application) => {
-                const number = removeCountryCode(
-                  application.externalData?.userProfile?.data
-                    ?.mobilePhoneNumber ?? '',
-                )
-                return number
-              },
-            }), */
             buildPhoneField({
               id: 'applicant.phoneNumber',
               title: info.labels.tel,

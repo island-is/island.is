@@ -21,15 +21,17 @@ export const CountryCodeSelect = ({
   id = name,
   disabled,
   options,
-  onChange,
-  onFocus,
-  onBlur,
   value,
   placeholder = '',
   defaultValue,
   size = 'md',
   backgroundColor = 'white',
   dataTestId,
+  onChange,
+  onFocus,
+  onBlur,
+  onMenuOpen,
+  onMenuClose,
 }: CountryCodeSelectProps & TestSupport) => {
   return (
     <div
@@ -53,6 +55,8 @@ export const CountryCodeSelect = ({
         styles={customStyles}
         onFocus={onFocus}
         onBlur={onBlur}
+        onMenuOpen={onMenuOpen}
+        onMenuClose={onMenuClose}
         dataTestId={dataTestId}
         placeholder={placeholder}
         defaultValue={defaultValue}

@@ -102,14 +102,24 @@ export const isRequiredStar = style({
   color: theme.color.red600,
 })
 
+export const menuOpen = style({
+  borderBottomLeftRadius: 0,
+  borderBottomRightRadius: 0,
+})
+
+const focusStyles = {
+  outline: 'none !important',
+  boxShadow: `inset 0 0 0 3px ${theme.color.mint400} !important`,
+}
+
 export const hasFocus = style({
   selectors: {
-    [`&${container}`]: inputMixins.containerFocus,
+    [`&${container}`]: focusStyles,
   },
 })
 export const fixedFocusState = style({
   selectors: {
-    [`&${container}${container}`]: inputMixins.containerFocus,
+    [`&${container}${container}`]: focusStyles,
   },
 })
 

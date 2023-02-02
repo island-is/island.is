@@ -21,6 +21,9 @@ export interface CountryCodeSelectProps {
   backgroundColor?: InputBackgroundColor
   ariaError?: AriaError
   isClearable?: boolean
+  inputHasFocus?: boolean
   onFocus?: () => void
   onBlur?: () => void
+  onMenuOpen?: () => void
+  onMenuClose?: () => void
 }
