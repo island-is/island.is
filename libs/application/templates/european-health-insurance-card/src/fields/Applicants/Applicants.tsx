@@ -31,49 +31,44 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
     nationalId: nationalRegistryDataSpouse?.nationalId,
   }
 
-  const childrenCustody = [];
   const nationalRegistryDataChildren = application?.externalData?.childrenCustodyInformation as unknown as NationalRegistry
-  for (var i = 0; i < nationalRegistryDataChildren.data.length; i++) {
-    childrenCustody.push(nationalRegistryDataChildren.data[i])
-  }
 
   return (
     <Box>
       <Stack space={2}>
         <ApplicantsController
-          id={`${applicant.nationalId}`}
-          checkboxId={`${applicant.nationalId}`}
+          id={`apply-${applicant.nationalId}`}
+          checkboxId={`apply-${applicant.nationalId}`}
           label={formatText(
             applicant.name,
             application,
             formatMessage,
           )}
-          defaultValue={getConstraintVal(`${applicant.nationalId}`)}
+          defaultValue={getConstraintVal(`apply-${applicant.nationalId}`)}
         />
         {nationalRegistryDataSpouse !== null && (
           <ApplicantsController
-            id={`${spouse.nationalId}`}
-            checkboxId={`${spouse.nationalId}`}
+            id={`apply-${spouse.nationalId}`}
+            checkboxId={`apply-${spouse.nationalId}`}
             label={formatText(
               spouse.name,
               application,
               formatMessage,
             )}
-            defaultValue={getConstraintVal(`${spouse.nationalId}`)}
+            defaultValue={getConstraintVal(`apply-${spouse.nationalId}`)}
           />
         )}
-
         {nationalRegistryDataChildren?.data?.length > 0 && (
           nationalRegistryDataChildren?.data?.map((item: any) => (
             <ApplicantsController
-              id={`${item.nationalId}`}
-              checkboxId={`${item.nationalId}`}
+              id={`apply-${item.nationalId}`}
+              checkboxId={`apply-${item.nationalId}`}
               label={formatText(
                 item.fullName,
                 application,
                 formatMessage,
               ) as string}
-              defaultValue={getConstraintVal(`${item.nationalId}`)}
+              defaultValue={getConstraintVal(`apply-${item.nationalId}`)}
             />
           ))
         )}

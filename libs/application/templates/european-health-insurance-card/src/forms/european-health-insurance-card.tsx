@@ -4,12 +4,10 @@ import {
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import {
-  Comparators,
   Form,
   FormModes,
 } from '@island.is/application/types'
 import {
-  buildCompanySearchField,
   buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
@@ -22,8 +20,6 @@ import {
 
 import { EhicCardResponseApi } from '../dataProviders'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
-import { externalDataSection } from '../fields/externalDataSection'
-import styles from './european-health-insurance-card.module.scss'
 
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps { }
@@ -37,15 +33,32 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
       id: 'intro',
       title: e.introScreen.sectionLabel,
       children: [
+        buildCustomField(
+          {
+            id: 'introScreen',
+            title: e.introScreen.sectionTitle,
+            component: 'IntroScreen',
+          }, {
+          subTitle: e.introScreen.sectionDescription,
+        },
+        ),
+      ],
+    }), 
+    
+    buildSection({
+      id: 'data',
+      title: e.data.sectionLabel,
+      children: [
         buildExternalDataProvider({
-          title: e.introScreen.sectionTitle,
-          id: 'introScreen',
-          description: e.introScreen.sectionDescription,
+          title: e.data.sectionTitle,
+          checkboxLabel: e.data.dataCollectionCheckboxLabel,
+          id: 'dataScreen',
+          description: '',
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: '',
-              subTitle: '',
+              title: 'Þjóðskrá Íslands',
+              subTitle: 'Við þurfum að sækja þessi gögn úr þjóðskrá. Lögheimili, hjúskaparstaða, maki og afkvæmi.',
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
@@ -59,8 +72,8 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: EhicCardResponseApi,
-              title: '',
-              subTitle: '',
+              title: 'Sjúkratryggingar',
+              subTitle: 'Upplýsingar um stöðu heimildar á evrópska sjúktryggingakortinu',
             }),
           ],
         }),

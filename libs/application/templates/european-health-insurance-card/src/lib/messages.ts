@@ -27,14 +27,33 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
     sectionTitle: {
       id: 'ehic.application:applicant.section.title',
-      defaultMessage: 'Evrópska sjúkratryggingakortið',
+      defaultMessage: 'Upplýsingar um Evrópska sjúkratryggingakortið',
       description: 'Section title',
     },
 
     sectionDescription: {
       id: 'ehic.application:applicant.section.description',
       defaultMessage:
-        'Kostir þess að hafa plastskírteinið meðferðis erlendi, kortið er gefið út x ára og ekki hægt að endurnýja ef glatast fyrr en eftir 6 mánuði. Plastkort þýir að á opinberum sjúkrahúsum þarftu ekki að borga.',
+        'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss. Korthafi greiðir þá sama gjald fyrir heilbrigðisþjónustuna og þeir sem eru tryggðir í almannatryggingakerfi viðkomandi lands. Kortið gildir aðeins hjá opinberum heilbrigðisþjónustuveitendum, ekki á einkastofum. Kortið gildir almennt í þrjú ár í senn en fimm ár fyrir elli- og örorkulífeyrisþega. Sækja má um nýtt kort þegar 6 mánuðir eru eftir af gildistíma núgildandi korts.',
+      description: 'Section description',
+    },
+  }),
+
+  data: defineMessages({
+    sectionLabel: {
+      id: 'ehic.application:data.section.label',
+      defaultMessage: 'Gagnaöflun',
+      description: 'Section label',
+    },
+    sectionTitle: {
+      id: 'ehic.application:data.name',
+      defaultMessage: 'Gagnaöflun',
+      description: 'Applicants for European Health Insurance Card',
+    },
+    dataCollectionCheckboxLabel: {
+      id: 'ehic.application:data.dataCollectionCheckboxLabel',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað.',
       description: 'Section description',
     },
   }),
