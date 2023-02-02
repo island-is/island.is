@@ -1,16 +1,25 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react-hooks'
-import { ReactNode } from 'react'
 import { IntlProvider } from 'react-intl'
-import { BrowserRouter } from 'react-router-dom'
-
 import { MockedAuthenticator } from '@island.is/auth/react'
 import { defaultLanguage } from '@island.is/shared/constants'
 
 import { testCases } from '../../test/useSingleNavigationItem-test-cases'
-import { PortalProvider } from '../components/PortalProvider'
 import { PortalModule, PortalNavigationItem } from '../types/portalCore'
 import { useSingleNavigationItem } from './useSingleNavigationItem'
+import { PortalRouter } from '../components/PortalRouter'
+import { Outlet, RouteObject } from 'react-router-dom'
+
+const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
+  {
+    element: (
+      <div>
+        <Outlet />
+      </div>
+    ),
+    children: moduleRoutes,
+  },
+]
 
 describe('useSingleNavigationItem hook', () => {
   describe.each(Object.keys(testCases))('%s', (testCaseName) => {
@@ -22,7 +31,7 @@ describe('useSingleNavigationItem hook', () => {
       routes: module.routes,
     }))
 
-    const wrapper = ({ children }: { children?: ReactNode }) => (
+    const wrapper = () => (
       <ApolloProvider client={new ApolloClient({ cache: new InMemoryCache() })}>
         <IntlProvider
           locale={defaultLanguage}
@@ -31,14 +40,14 @@ describe('useSingleNavigationItem hook', () => {
           }}
         >
           <MockedAuthenticator user={{ profile: { name: 'Peter' } }}>
-            <BrowserRouter>
-              <PortalProvider
-                meta={{ portalType: 'admin', basePath: '/' }}
-                modules={testModules}
-              >
-                {children}
-              </PortalProvider>
-            </BrowserRouter>
+            <PortalRouter
+              modules={testModules}
+              createRoutes={createRoutes}
+              portalMeta={{
+                portalType: 'admin',
+                basePath: '/',
+              }}
+            />
           </MockedAuthenticator>
         </IntlProvider>
       </ApolloProvider>
