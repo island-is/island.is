@@ -1,5 +1,5 @@
 import { configure, configureMock } from '@island.is/auth/react'
-import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 import environment from './environments/environment'
 
@@ -25,6 +25,7 @@ if (userMocked) {
       AdminPortalScope.airDiscountScheme,
       AdminPortalScope.regulationAdmin,
       AdminPortalScope.regulationAdminManage,
+      AdminPortalScope.icelandicNamesRegistry,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'ap.',

@@ -15,16 +15,18 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import {
-  Case,
-  CaseType,
-  UpdateCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
+import {
+  UserRole,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface DateTime {
   value?: Date
@@ -90,7 +92,7 @@ const getModificationSuccessText = (
     modifiedIsolationToDate?.value,
   )
 
-  if (workingCase.type === CaseType.TRAVEL_BAN) {
+  if (workingCase.type === CaseType.TravelBan) {
     return formatMessage(m.sections.modifyDatesModal.travelBanSuccessText, {
       date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
         'dagur,',
@@ -151,7 +153,7 @@ const getModificationSuccessText = (
   return formatMessage(m.sections.modifyDatesModal.successText, {
     modification,
     courtOrProsecutor:
-      userRole === UserRole.PROSECUTOR ? 'héraðsdómstól' : 'saksóknaraembætti',
+      userRole === UserRole.Prosecutor ? 'héraðsdómstól' : 'saksóknaraembætti',
   })
 }
 
@@ -193,7 +195,7 @@ const ModifyDatesModal: React.FC<Props> = ({
     if (!modifiedValidToDate?.value) return
 
     if (
-      [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
+      [CaseType.Custody, CaseType.AdmissionToFacility].includes(
         workingCase.type,
       )
     ) {
@@ -369,7 +371,7 @@ const ModifyDatesModal: React.FC<Props> = ({
           caseType: workingCase.type,
         })}
         text={
-          workingCase.type === CaseType.TRAVEL_BAN
+          workingCase.type === CaseType.TravelBan
             ? formatMessage(m.sections.modifyDatesModal.travelBanText)
             : formatMessage(m.sections.modifyDatesModal.textV2, {
                 caseType: workingCase.type,

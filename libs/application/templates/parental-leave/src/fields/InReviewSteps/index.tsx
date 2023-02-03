@@ -49,6 +49,8 @@ const statesMap: StatesMap = {
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   employer: {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
@@ -62,8 +64,12 @@ const statesMap: StatesMap = {
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   vinnumalastofnun: {
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.requiresAction,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
       ReviewSectionState.inProgress,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
@@ -165,7 +171,6 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
-
   return (
     <Box marginBottom={10}>
       <Box

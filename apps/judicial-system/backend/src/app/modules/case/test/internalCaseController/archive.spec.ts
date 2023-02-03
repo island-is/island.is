@@ -9,6 +9,7 @@ import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { uuidFactory } from '../../../../factories'
 import { Defendant, DefendantService } from '../../../defendant'
+import { IndictmentCount } from '../../../indictment-count'
 import { CaseFile, FileService } from '../../../file'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
@@ -79,10 +80,16 @@ describe('InternalCaseController - Archive', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include: [
           { model: Defendant, as: 'defendants' },
+          { model: IndictmentCount, as: 'indictmentCounts' },
           { model: CaseFile, as: 'caseFiles' },
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+          [
+            { model: IndictmentCount, as: 'indictmentCounts' },
+            'created',
+            'ASC',
+          ],
           [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
         ],
         where: {

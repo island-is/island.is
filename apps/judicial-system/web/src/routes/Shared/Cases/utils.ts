@@ -6,12 +6,12 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseState,
-  CaseType,
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { cases as m } from './Cases.strings'
 
@@ -21,7 +21,7 @@ export const displayCaseType = (
   decision?: CaseDecision,
 ) => {
   if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
-    return capitalize(caseTypes[CaseType.TRAVEL_BAN])
+    return capitalize(caseTypes[CaseType.TravelBan])
   }
 
   const type = isIndictmentCase(caseType)

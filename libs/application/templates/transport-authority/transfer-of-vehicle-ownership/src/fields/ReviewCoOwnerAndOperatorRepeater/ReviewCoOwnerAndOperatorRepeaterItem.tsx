@@ -8,7 +8,7 @@ import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import debounce from 'lodash/debounce'
-import { ReviewCoOwnerAndOperatorField } from '../../types'
+import { ReviewCoOwnerAndOperatorField } from '../../shared'
 
 const DEBOUNCE_INTERVAL = 300
 

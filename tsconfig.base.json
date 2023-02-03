@@ -592,6 +592,9 @@
         "libs/portals/admin/air-discount-scheme/src/index.ts"
       ],
       "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
+      "@island.is/portals/admin/icelandic-names-registry": [
+        "libs/portals/admin/icelandic-names-registry/src/index.ts"
+      ],
       "@island.is/portals/admin/regulations-admin": [
         "libs/portals/admin/regulations-admin/src/index.ts"
       ],
@@ -652,9 +655,6 @@
       ],
       "@island.is/service-portal/health": [
         "libs/service-portal/health/src/index.ts"
-      ],
-      "@island.is/service-portal/icelandic-names-registry": [
-        "libs/service-portal/icelandic-names-registry/src/index.ts"
       ],
       "@island.is/service-portal/information": [
         "libs/service-portal/information/src/index.ts"
