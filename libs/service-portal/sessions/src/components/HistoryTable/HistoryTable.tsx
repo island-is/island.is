@@ -6,21 +6,24 @@ import { formatNationalId, getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
 import { dateFormat } from '@island.is/shared/constants'
 import { formatDate, getTime } from '@island.is/shared/utils'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 interface IProps {
   data: SessionsSession[]
 }
 const HistoryTable: React.FC<IProps> = ({ data }) => {
   const { userInfo } = useAuth()
+  const { formatMessage } = useLocale()
   console.log(userInfo)
   return (
     <Table.Table>
       <Table.Head>
         <Table.Row>
-          <Table.HeadData>Dags</Table.HeadData>
-          <Table.HeadData>Tæki og staður</Table.HeadData>
-          <Table.HeadData>Kerfi</Table.HeadData>
-          <Table.HeadData>Aðili</Table.HeadData>
+          <Table.HeadData>{formatMessage(m.date)}</Table.HeadData>
+          <Table.HeadData>{formatMessage(m.geolocation)}</Table.HeadData>
+          <Table.HeadData>{formatMessage(m.client)}</Table.HeadData>
+          <Table.HeadData>{formatMessage(m.person)}</Table.HeadData>
         </Table.Row>
       </Table.Head>
       <Table.Body>

@@ -1,12 +1,15 @@
 import {
   Box,
+  Breadcrumbs,
   Filter,
   FilterInput,
   FilterMultiChoice,
   Hidden,
   LoadingDots,
   Pagination,
+  BreadCrumbItem,
   Text,
+  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
@@ -23,12 +26,13 @@ import {
   SessionsSession,
 } from '@island.is/api/schema'
 import { SessionType } from '../../lib/types/sessionTypes'
+import Link from 'next/link'
 
 const Sessions = () => {
-  const SESSION_LIMIT = 10
+  const SESSION_LIMIT = 2
   const { formatMessage } = useLocale()
   const [search, setSearch] = useState('')
-  const [page, setPage] = useState<number>(1)
+  const [page, setPage] = useState<number>(0)
 
   const { data, loading } = useGetSessionsListQuery({
     fetchPolicy: 'network-only',
@@ -57,16 +61,38 @@ const Sessions = () => {
     setSearch(value)
   }
 
-  const goToPage = (page = 1, scrollTop = true) => {
-    setPage(page)
-
-    if (scrollTop) {
-      window.scrollTo(0, 0)
+  const handlePageChange = (action: 'next' | 'prev') => {
+    if (!data) return
+    if (page === 0 && action === 'prev') return
+    if (
+      page * SESSION_LIMIT + SESSION_LIMIT >= data?.sessionsList?.totalCount &&
+      action === 'next'
+    )
+      return
+    if (action === 'next') {
+      setPage(page + 1)
+    } else {
+      setPage(page - 1)
     }
   }
-
   return (
     <>
+      <Box paddingBottom={'containerGutter'}>
+        <Breadcrumbs
+          items={
+            [
+              {
+                title: formatMessage(m.delegations),
+                href: '/minarsidur',
+              },
+              {
+                title: formatMessage(m.sessions),
+                href: '/minarsidur/innskraningar',
+              },
+            ] as BreadCrumbItem[]
+          }
+        />
+      </Box>
       <IntroHeader
         title={formatMessage(m.sessions)}
         intro={formatMessage(m.sessionsHeaderIntro)}
@@ -75,27 +101,49 @@ const Sessions = () => {
         <Box columnGap="gutter" display="flex" paddingBottom={4}>
           <Box columnGap="smallGutter" display="flex" alignItems="center">
             <PersonIcon sessionType={SessionType.onBehalf} />
-            <Text>Þú í umboði</Text>
+            <Text>{formatMessage(m.onBehalfOF)}</Text>
           </Box>
           <Box columnGap="smallGutter" display="flex" alignItems="center">
             <PersonIcon sessionType={SessionType.myBehalf} />
-            <Text>Aðrir í þínu umboði</Text>
+            <Text>{formatMessage(m.inYourBehalf)}</Text>
           </Box>
         </Box>
       </Hidden>
       {data && !loading ? (
         <Fragment>
           <Box
-            style={{ maxWidth: '318px' }}
-            width={'full'}
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            // style={{ maxWidth: '318px' }}
+            // width={'full'}
             paddingBottom={[3, 3, 4, 4]}
           >
             <FilterInput
-              placeholder={'Leita'}
+              placeholder={formatMessage(m.search)}
               name="filterInput"
               value={search}
               onChange={handleChange}
             />
+            <Box columnGap="gutter" display="flex" alignItems="center">
+              <Button
+                circle
+                size="small"
+                colorScheme="light"
+                icon={'arrowBack'}
+                onClick={() => handlePageChange('prev')}
+              />
+              <Text variant="eyebrow">
+                {page * SESSION_LIMIT} - {page * SESSION_LIMIT + SESSION_LIMIT}
+              </Text>
+              <Button
+                circle
+                size="small"
+                colorScheme="light"
+                icon={'arrowForward'}
+                onClick={() => handlePageChange('next')}
+              />
+            </Box>
           </Box>
           <Hidden below={'lg'}>
             <HistoryTable data={data.sessionsList.data as SessionsSession[]} />
@@ -105,22 +153,6 @@ const Sessions = () => {
               sessions={data.sessionsList.data as SessionsSession[]}
             />
           </Hidden>
-          <Box paddingTop={[3, 3, 4]}>
-            <Pagination
-              page={page}
-              totalPages={data.sessionsList.totalCount}
-              renderLink={(page, className, children) => (
-                <button
-                  onClick={() => {
-                    goToPage(page)
-                  }}
-                >
-                  <span className={helperStyles.srOnly}>Síða</span>
-                  <span className={className}>{children}</span>
-                </button>
-              )}
-            />
-          </Box>
         </Fragment>
       ) : loading ? (
         <Box width="full" display="flex" justifyContent="center">
