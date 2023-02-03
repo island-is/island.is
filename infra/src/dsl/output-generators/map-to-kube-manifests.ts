@@ -32,97 +32,96 @@ import {
 const serializeService: SerializeMethod<KubeService> = async (
   service: ServiceDefinitionForEnv,
   deployment: ReferenceResolver,
-  env1: EnvironmentConfig,
+  opsenv: EnvironmentConfig,
 ) => {
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
   )
   const serviceDef = service
-  const {
-    grantNamespaces,
-    grantNamespacesEnabled,
-    namespace,
-    securityContext,
-  } = serviceDef
+  const { namespace, securityContext } = serviceDef
   const result: KubeService = {
-    enabled: true,
-    grantNamespaces: grantNamespaces,
-    grantNamespacesEnabled: grantNamespacesEnabled,
-    namespace: namespace,
-    image: {
-      repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
-        serviceDef.image ?? serviceDef.name
+    metadata: {
+      name: service.name,
+      namespace: namespace,
+    },
+    labels: {
+      'tags.datadoghq.com/env': opsenv.type,
+      'tags.datadoghq.com/service': service.name,
+      'tags.datadoghq.com/version': `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
+        service.image ?? service.name
       }`,
     },
-    env: {
-      SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${
-        parseInt(serviceDef.resources.limits.memory, 10) - 48
-      }`,
-    },
-    secrets: {},
-    healthCheck: {
-      port: serviceDef.healthPort,
-      liveness: {
-        path: serviceDef.liveness.path,
-        initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
-        timeoutSeconds: serviceDef.liveness.timeoutSeconds,
+    spec: {
+      strategy: {
+        type: 'RollingUpdate',
+        rollingUpdate: {
+          maxSurge: '25%',
+          maxUnavailable: '25%',
+        },
       },
-      readiness: {
-        path: serviceDef.readiness.path,
-        initialDelaySeconds: serviceDef.readiness.initialDelaySeconds,
-        timeoutSeconds: serviceDef.readiness.timeoutSeconds,
+      template: {
+        metadata: {
+          labels: {
+            'tags.datadoghq.com/env': opsenv.type,
+            'tags.datadoghq.com/service': service.name,
+            'tags.datadoghq.com/version': `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
+              service.image ?? service.name
+            }`,
+          },
+          annotations: {
+            [`ad.datadoghq.com/${service.name}.logs`]: `[{
+              "log_processing_rules": [{
+                "type": "mask_sequences", 
+                "name": "mask_national_ids", 
+                "replace_placeholder": "--MASKED--", 
+                "pattern" : "\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b"
+              }]
+            }]`,
+          },
+        },
+      },
+      spec: {
+        containers: {
+          name: service.name,
+          securityContext: service.securityContext,
+          image: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
+            service.image ?? service.name
+          }`,
+          imagePullPolicy: 'IfNotPresent',
+          livenessProbe: {
+            httpGet: {
+              path: service.liveness.path,
+              port: service.healthPort,
+            },
+            initialDelaySeconds: service.liveness.initialDelaySeconds,
+            timeoutSeconds: service.liveness.timeoutSeconds,
+          },
+          readinessProbe: {
+            httpGet: {
+              path: service.readiness.path,
+              port: service.healthPort,
+            },
+            initialDelaySeconds: service.readiness.initialDelaySeconds,
+            timeoutSeconds: service.readiness.timeoutSeconds,
+          },
+          env: {
+            SERVERSIDE_FEATURES_ON: opsenv.featuresOn.join(','),
+            NODE_OPTIONS: `--max-old-space-size=${
+              parseInt(serviceDef.resources.limits.memory, 10) - 48
+            }`,
+          },
+          resources: service.resources,
+        },
       },
     },
-    securityContext,
   }
 
   // command and args
   if (serviceDef.cmds) {
-    result.command = [serviceDef.cmds]
+    result.spec.spec.containers.command = [serviceDef.cmds]
   }
   if (serviceDef.args) {
-    result.args = serviceDef.args
-  }
-
-  // resources
-  result.resources = serviceDef.resources
-
-  // replicas
-  if (serviceDef.replicaCount) {
-    result.replicaCount = {
-      min: serviceDef.replicaCount.min,
-      max: serviceDef.replicaCount.max,
-      default: serviceDef.replicaCount.default,
-    }
-  } else {
-    result.replicaCount = {
-      min: env1.defaultMinReplicas,
-      max: env1.defaultMaxReplicas,
-      default: env1.defaultMinReplicas,
-    }
-  }
-
-  result.hpa = {
-    scaling: {
-      replicas: {
-        min: result.replicaCount.min,
-        max: result.replicaCount.max,
-      },
-      metric: {
-        cpuAverageUtilization: 70,
-      },
-    },
-  }
-  result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 2
-
-  if (serviceDef.extraAttributes) {
-    result.extra = serviceDef.extraAttributes
-  }
-  // target port
-  if (typeof serviceDef.port !== 'undefined') {
-    result.service = { targetPort: serviceDef.port }
+    result.spec.spec.containers.args = serviceDef.args
   }
 
   // environment vars
@@ -131,14 +130,30 @@ const serializeService: SerializeMethod<KubeService> = async (
       service,
       deployment,
       serviceDef.env,
-      env1,
+      opsenv,
     )
-    mergeObjects(result.env, envs)
+    mergeObjects(
+      result.spec.spec.containers.env as { [name: string]: string },
+      envs,
+    )
   }
 
   // secrets
   if (Object.keys(serviceDef.secrets).length > 0) {
-    result.secrets = { ...serviceDef.secrets }
+    result.spec.spec.containers.env = serviceDef.secrets
+    Object.entries(serviceDef.secrets).forEach(([key, value]) => {
+       
+        name = `${key}`: {
+        valueFrom: {
+          secretKeyRef: {
+            name: key,
+            key: value
+          }
+        }
+      }
+    
+    });
+
   }
   if (Object.keys(serviceDef.files).length > 0) {
     result.files = []
@@ -158,7 +173,7 @@ const serializeService: SerializeMethod<KubeService> = async (
       create: true,
       name: serviceAccountName,
       annotations: {
-        'eks.amazonaws.com/role-arn': `arn:aws:iam::${env1.awsAccountId}:role/${serviceAccountName}`,
+        'eks.amazonaws.com/role-arn': `arn:aws:iam::${opsenv.awsAccountId}:role/${serviceAccountName}`,
       },
     }
   }
@@ -171,7 +186,7 @@ const serializeService: SerializeMethod<KubeService> = async (
           serviceDef.initContainers.containers,
         ),
         env: {
-          SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
+          SERVERSIDE_FEATURES_ON: opsenv.featuresOn.join(','),
         },
         secrets: {},
       }
@@ -180,7 +195,7 @@ const serializeService: SerializeMethod<KubeService> = async (
           service,
           deployment,
           serviceDef.initContainers.envs,
-          env1,
+          opsenv,
         )
         mergeObjects(result.initContainer.env, envs)
       }
@@ -191,7 +206,7 @@ const serializeService: SerializeMethod<KubeService> = async (
         const { env, secrets, errors } = serializePostgres(
           serviceDef,
           deployment,
-          env1,
+          opsenv,
           service,
           serviceDef.initContainers.postgres,
         )
@@ -209,7 +224,7 @@ const serializeService: SerializeMethod<KubeService> = async (
   if (Object.keys(serviceDef.ingress).length > 0) {
     result.ingress = Object.entries(serviceDef.ingress).reduce(
       (acc, [ingressName, ingressConf]) => {
-        const ingress = serializeIngress(serviceDef, ingressConf, env1)
+        const ingress = serializeIngress(serviceDef, ingressConf, opsenv)
         return {
           ...acc,
           [`${ingressName}-alb`]: ingress,
@@ -223,7 +238,7 @@ const serializeService: SerializeMethod<KubeService> = async (
     const { env, secrets, errors } = serializePostgres(
       serviceDef,
       deployment,
-      env1,
+      opsenv,
       service,
       serviceDef.postgres,
     )

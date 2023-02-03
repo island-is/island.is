@@ -37,11 +37,19 @@ export type OutputVolumeMountNative = {
   mountPath: string
 }
 export type ContainerEnvironmentVariables = { [name: string]: string }
+export type ContainerEnvironmentVariablesOrSecrets = {
+  [name: string]:
+    | string
+    | { valueFrom: { secretKeyRef: { name: string; key: string } } }
+}
 export type ContainerSecrets = { [name: string]: string }
-
+export type SecurityContext = {
+  allowPrivilegeEscalation: boolean
+  privileged: boolean
+}
 export interface KubeService {
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
+  apiVersion?: 'apps/v1'
+  kind?: 'Deployment'
   metadata: {
     name: string
     namespace: string
@@ -50,9 +58,12 @@ export interface KubeService {
     [name: string]: string
   }
   spec: {
-    replicas: number
-    strategy: string
-    selector: {
+    replicas?: number
+    strategy: {
+      type: 'Recreate' | 'RollingUpdate'
+      rollingUpdate?: { maxSurge: string; maxUnavailable: string }
+    }
+    selector?: {
       matchLabels: string
     }
     template: {
@@ -67,10 +78,7 @@ export interface KubeService {
     }
     spec: {
       imagePullSecrets?: string
-      securityContext?: {
-        allowPrivilegeEscalation: boolean
-        privileged: boolean
-      }
+      securityContext?: SecurityContext
       serviceAccountName?: string
       initContainers?: {
         name: string
@@ -78,7 +86,7 @@ export interface KubeService {
         image: string
         command?: string[]
         args?: string[]
-        env?: ContainerEnvironmentVariables
+        env: ContainerEnvironmentVariablesOrSecrets
         resources?: {
           limits?: {
             cpu: string
@@ -92,7 +100,7 @@ export interface KubeService {
       }
       containers: {
         name: string
-        securityContext?: string
+        securityContext?: SecurityContext
         image: string
         imagePullPolicy: 'IfNotPresent' | 'Always' | 'Never'
         command?: string[]
@@ -100,7 +108,7 @@ export interface KubeService {
         livenessProbe: {
           httpGet: {
             path: string
-            port: number
+            port?: number
           }
           initialDelaySeconds: number
           timeoutSeconds: number
@@ -108,12 +116,12 @@ export interface KubeService {
         readinessProbe: {
           httpGet: {
             path: string
-            port: number
+            port?: number
           }
           initialDelaySeconds: number
           timeoutSeconds: number
         }
-        env?: ContainerEnvironmentVariables
+        env: ContainerEnvironmentVariablesOrSecrets
         resources?: {
           limits?: {
             cpu: string
