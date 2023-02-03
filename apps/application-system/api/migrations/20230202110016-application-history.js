@@ -17,7 +17,7 @@ module.exports = {
           key: 'id',
         },
       },
-      contentfulId: {
+      contentful_id: {
         type: Sequelize.STRING,
         allowNull: true,
       },

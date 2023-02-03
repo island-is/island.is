@@ -22,11 +22,12 @@ export class HistoryService {
   }
 
   async createHistoryEntry(
-    entry: Partial<Pick<History, 'application_id' | 'contentfulId'>>,
+    entry: Partial<Pick<History, 'application_id' | 'contentful_id'>>,
   ): Promise<History> {
+    console.log({ entry })
     return this.historyModel.create({
       application_id: entry.application_id,
-      ContentfulId: entry.contentfulId,
+      contentful_id: entry.contentful_id,
     })
   }
 }

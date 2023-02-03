@@ -14,6 +14,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
+  ApplicationHistoryApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
@@ -141,6 +142,13 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           actionCard: {
             description: m.draftDescription,
           },
+          onEntry: [
+            ApplicationHistoryApi.configure({
+              params: {
+                contentId: m.career.id,
+              },
+            }),
+          ],
           progress: 0.25,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,

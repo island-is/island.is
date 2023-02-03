@@ -4,14 +4,12 @@ import {
   Model,
   Table,
   ForeignKey,
-  CreatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Application } from '@island.is/application/api/core'
 @Table({
   tableName: 'history',
-  timestamps: true,
-  freezeTableName: true,
+  timestamps: false,
   indexes: [
     {
       fields: ['application_id'],
@@ -28,7 +26,6 @@ export class History extends Model {
   @ApiProperty()
   id!: string
 
-  @CreatedAt
   @ApiProperty()
   date!: Date
 
@@ -45,5 +42,5 @@ export class History extends Model {
     allowNull: true,
   })
   @ApiProperty()
-  contentfulId?: string
+  contentful_id?: string
 }
