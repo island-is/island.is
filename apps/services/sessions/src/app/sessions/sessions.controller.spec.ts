@@ -329,7 +329,7 @@ describe('SessionsController', () => {
     let factory: FixtureFactory
     let sessions: Session[]
     const user = createCurrentUser({
-      scope: [ApiScope.internal, SessionsScope.sessionsWrite],
+      scope: [ApiScope.internalProcuring, SessionsScope.sessionsWrite],
       nationalIdType: 'company',
       delegationType: AuthDelegationType.ProcurationHolder,
     })
