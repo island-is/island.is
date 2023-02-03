@@ -288,41 +288,6 @@ describe('SessionsController', () => {
     })
   })
 
-  describe('with personal delegation', () => {
-    let app: TestApp
-    let server: request.SuperTest<request.Test>
-    const user = createCurrentUser({
-      scope: [ApiScope.internal, SessionsScope.sessionsWrite],
-      nationalIdType: 'person',
-      delegationType: AuthDelegationType.LegalGuardian,
-    })
-
-    beforeAll(async () => {
-      // Arrange
-      app = await setupWithAuth({ user })
-
-      server = request(app.getHttpServer())
-    })
-
-    afterAll(() => {
-      app.cleanUp()
-    })
-
-    it('GET /v1/me/sessions should return forbidden', async () => {
-      // Act
-      const res = await server.get(`/v1/me/sessions`)
-
-      // Assert
-      expect(res.status).toEqual(403)
-      expect(res.body).toMatchObject({
-        status: 403,
-        type: 'https://httpstatuses.org/403',
-        title: 'Forbidden',
-        detail: 'Personal delegations are not allowed to get session data.',
-      })
-    })
-  })
-
   describe('with company delegation', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>

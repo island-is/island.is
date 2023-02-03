@@ -22,12 +22,6 @@ export class SessionsService {
     otherUser: string,
     query: SessionsQueryDto,
   ): Promise<SessionsResultDto> {
-    if (user.actor && !kennitala.isCompany(user.nationalId)) {
-      throw new ForbiddenException(
-        'Personal delegations are not allowed to get session data.',
-      )
-    }
-
     let whereOptions: WhereOptions
 
     if (user.actor) {
