@@ -50,12 +50,14 @@ export const sharedMessages = defineMessages({
   },
   switchToEnglish: {
     id: 'global:switch-to-english',
-    description: 'Button under usermenu to switch language to english',
-    defaultMessage: 'Skipta á ensku',
+    description:
+      'Icelandic translation should be on english. Button under usermenu to switch language to english.',
+    defaultMessage: 'Switch to english',
   },
   switchToIcelandic: {
     id: 'global:switch-to-icelandic',
-    description: 'Button under usermenu to switch language to icelandic',
+    description:
+      'English translation should be on icelandic. Button under usermenu to switch language to english.',
     defaultMessage: 'Skipta á íslensku',
   },
 })

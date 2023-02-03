@@ -172,7 +172,7 @@ export const UserDropdown = ({
                     ? formatMessage(sharedMessages.switchToEnglish)
                     : formatMessage(sharedMessages.switchToIcelandic)
                 }
-                icon={{ icon: 'en' }}
+                icon={lang === 'is' ? { icon: 'en' } : { icon: 'is' }}
                 data-testid="language-switcher-button"
               />
             </Box>
