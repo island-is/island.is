@@ -118,12 +118,14 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         adrConfig: ConfigType<typeof GenericAdrLicenseConfig>,
         machineConfig: ConfigType<typeof GenericMachineLicenseConfig>,
         disabilityConfig: ConfigType<typeof GenericDisabilityLicenseConfig>,
+        drivingConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
       ) => {
         const ids: PassTemplateIds = {
           firearmLicense: firearmConfig.passTemplateId,
           adrLicense: adrConfig.passTemplateId,
           machineLicense: machineConfig.passTemplateId,
           disabilityLicense: disabilityConfig.passTemplateId,
+          drivingLicense: drivingConfig.passTemplateId,
         }
         return ids
       },
@@ -132,6 +134,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         GenericAdrLicenseConfig.KEY,
         GenericMachineLicenseConfig.KEY,
         GenericDisabilityLicenseConfig.KEY,
+        GenericDrivingLicenseConfig.KEY,
       ],
     },
     {

@@ -1,8 +1,9 @@
-import {
-  DrivingLicenseQualification,
-  GenericDrivingLicenseResponse,
-} from './genericDrivingLicense.type'
-import { format, info } from 'kennitala'
+import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
+import * as kennitala from 'kennitala'
+import format from 'date-fns/format'
+
+const formatDateString = (dateTime: string) =>
+  dateTime ? format(new Date(dateTime), 'dd-MM-yyyy') : ''
 
 export const createPkPassDataInput = (
   license: GenericDrivingLicenseResponse,
@@ -12,7 +13,7 @@ export const createPkPassDataInput = (
   return [
     {
       identifier: 'gildir',
-      value: license.gildirTil ?? '',
+      value: license.gildirTil ? formatDateString(license.gildirTil) : '',
     },
     {
       identifier: 'nafn',
@@ -21,16 +22,20 @@ export const createPkPassDataInput = (
     {
       identifier: 'faedingardagur',
       value: license.kennitala
-        ? info(license.kennitala).birthday.toISOString()
+        ? formatDateString(
+            kennitala.info(license.kennitala).birthday.toISOString(),
+          )
         : '',
     },
     {
       identifier: 'utgafudagur',
-      value: license.utgafuDagsetning ?? '',
+      value: license.utgafuDagsetning
+        ? formatDateString(license.utgafuDagsetning)
+        : '',
     },
     {
       identifier: 'kennitala',
-      value: license.kennitala ? format(license.kennitala) : '',
+      value: license.kennitala ? kennitala.format(license.kennitala) : '',
     },
     {
       identifier: 'numer',

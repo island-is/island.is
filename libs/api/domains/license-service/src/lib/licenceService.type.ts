@@ -193,6 +193,7 @@ export type PassTemplateIds = {
   adrLicense: string
   machineLicense: string
   disabilityLicense: string
+  drivingLicense: string
 }
 
 export type PkPassVerificationData = {

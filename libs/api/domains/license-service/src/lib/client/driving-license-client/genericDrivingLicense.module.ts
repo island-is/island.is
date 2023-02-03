@@ -33,7 +33,7 @@ import {
         xRoadConfig: ConfigType<typeof XRoadConfig>,
         logger: Logger,
         smartApi: SmartSolutionsApi,
-      ) => async (): Promise<GenericLicenseClient<unknown> | null> =>
+      ) =>
         new GenericDrivingLicenseApi(
           logger,
           xRoadConfig,

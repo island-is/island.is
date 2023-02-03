@@ -324,6 +324,8 @@ export class SmartSolutionsApi {
       },
     })
 
+    this.logger.debug(JSON.stringify(graphql))
+
     const response = await this.fetchData(graphql)
 
     if (response.apiResponse) {

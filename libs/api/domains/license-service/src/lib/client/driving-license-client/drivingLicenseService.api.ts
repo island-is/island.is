@@ -274,8 +274,6 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    const image = license.mynd
-
     const inputValues = createPkPassDataInput(license)
     if (!inputValues) return null
 
@@ -303,6 +301,7 @@ export class GenericDrivingLicenseApi
 
   async getPkPassUrl(user: User): Promise<string | null> {
     const pass = await this.getPkPassByNationalId(user.nationalId)
+    this.logger.debug(JSON.stringify(pass))
     return pass?.distributionUrl ?? null
   }
 
