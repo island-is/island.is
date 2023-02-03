@@ -3,4 +3,5 @@ export enum AdminPortalScope {
   delegations = '@admin.island.is/delegations',
   regulationAdmin = '@admin.island.is/regulations',
   regulationAdminManage = '@admin.island.is/regulations:manage',
+  icelandicNamesRegistry = '@admin.island.is/icelandic-names-registry',
 }

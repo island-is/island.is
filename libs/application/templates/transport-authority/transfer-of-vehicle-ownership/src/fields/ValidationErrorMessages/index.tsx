@@ -4,19 +4,19 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { TransferOfVehicleOwnershipAnswers } from '../..'
 import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
 import { applicationCheck, payment } from '../../lib/messages'
 
-export const ValidationErrorMessages: FC<FieldBaseProps> = ({
-  application,
-}) => {
+export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
+  const { application, setFieldLoadingState } = props
+
   const { formatMessage } = useLocale()
 
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
-  const { data } = useQuery(
+  const { data, loading } = useQuery(
     gql`
       ${VALIDATE_VEHICLE_OWNER_CHANGE}
     `,
@@ -57,6 +57,12 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = ({
       },
     },
   )
+
+  useEffect(() => {
+    setFieldLoadingState?.(
+      loading || data?.vehicleOwnerChangeValidation?.hasError,
+    )
+  }, [loading, data?.vehicleOwnerChangeValidation?.hasError])
 
   return data?.vehicleOwnerChangeValidation?.hasError &&
     data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (

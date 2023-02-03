@@ -53,6 +53,11 @@ export const serviceSetup = (services: {
       AIR_DISCOUNT_SCHEME_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
+      AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
+        dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
+        staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
+        prod: ref((h) => h.svc('loftbru.island.is')),
+      },
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
         staging: 'island-is-staging-upload-api',
@@ -171,6 +176,7 @@ export const serviceSetup = (services: {
         prod: ref((h) => h.svc('https://soffia2.skra.is')),
         local: ref((h) => h.svc('https://localhost:8443')),
       },
+      HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
     })
 
     .secrets({
@@ -252,6 +258,8 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
+      HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
+      HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET',
     })
     .xroad(
       AdrAndMachine,

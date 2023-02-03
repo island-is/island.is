@@ -104,6 +104,28 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
   }
 }
 
+export interface IAppUriFields {
+  /** URI */
+  uri: string
+}
+
+export interface IAppUri extends Entry<IAppUriFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'appUri'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IArticleFields {
   /** Content status */
   contentStatus:
@@ -786,6 +808,53 @@ export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
   }
 }
 
+export interface IFeaturedSupportQnAsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Rendered Title */
+  renderedTitle?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Automatically Fetch SupportQNAs */
+  automaticallyFetchSupportQNAs?: boolean | undefined
+
+  /** SupportQNA count */
+  supportQnaCount?: number | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** Support Category */
+  supportCategory?: ISupportCategory | undefined
+
+  /** Support Subcategory */
+  supportSubcategory?: ISupportSubCategory | undefined
+
+  /** SupportQNAs */
+  supportQNAs?: ISupportQna[] | undefined
+}
+
+export interface IFeaturedSupportQnAs
+  extends Entry<IFeaturedSupportQnAsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredSupportQNAs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFooterItemFields {
   /** Title */
   title: string
@@ -841,6 +910,9 @@ export interface IFormFields {
 
   /** Recipient Form Field Decider */
   recipientFormFieldDecider?: IFormField | undefined
+
+  /** Recipient List */
+  recipientList?: string[] | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -881,6 +953,7 @@ export interface IFormFieldFields {
     | 'checkboxes'
     | 'file'
     | 'nationalId (kennitala)'
+    | 'information'
 
   /** Required */
   required?: boolean | undefined
@@ -890,6 +963,9 @@ export interface IFormFieldFields {
 
   /** Email Config */
   emailConfig?: Record<string, any> | undefined
+
+  /** Information Text */
+  informationText?: string | undefined
 }
 
 export interface IFormField extends Entry<IFormFieldFields> {
@@ -1219,6 +1295,51 @@ export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
     contentType: {
       sys: {
         id: 'groupedMenu'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IHnippTemplateFields {
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** TemplateId */
+  templateId: string
+
+  /** Notification Title */
+  notificationTitle: string
+
+  /** Notification Body */
+  notificationBody: string
+
+  /** Notification Data Copy */
+  notificationDataCopy?: string | undefined
+
+  /** Click Action */
+  clickAction?: string | undefined
+
+  /** Category */
+  category?: 'NEW_DOCUMENT' | 'ISLANDIS_LINK' | undefined
+
+  /** Args */
+  args?: string[] | undefined
+}
+
+/** push notification templates for island.is */
+
+export interface IHnippTemplate extends Entry<IHnippTemplateFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'hnippTemplate'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1620,70 +1741,6 @@ export interface ILogoListSlice extends Entry<ILogoListSliceFields> {
     contentType: {
       sys: {
         id: 'logoListSlice'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IMailingListSignupFields {
-  /** Title */
-  title: string
-
-  /** Variant */
-  variant: 'default' | 'conference' | 'categories'
-
-  /** Description */
-  description?: string | undefined
-
-  /** Email label */
-  inputLabel: string
-
-  /** Name label */
-  fullNameLabel: string
-
-  /** QuestionLabel */
-  questionLabel?: string | undefined
-
-  /** Yes Label */
-  yesLabel?: string | undefined
-
-  /** No Label */
-  noLabel?: string | undefined
-
-  /** Disclaimer Label */
-  disclaimerLabel?: string | undefined
-
-  /** Category Label */
-  categoryLabel?: string | undefined
-
-  /** Inputs */
-  inputs?: Record<string, any> | undefined
-
-  /** Categories */
-  categories?: Record<string, any> | undefined
-
-  /** Submit button text */
-  buttonText: string
-
-  /** Signup URL */
-  signupUrl: string
-
-  /** Image */
-  image?: Asset | undefined
-}
-
-export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'mailingListSignup'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3546,6 +3603,28 @@ export interface ITellUsAStory extends Entry<ITellUsAStoryFields> {
   }
 }
 
+export interface ITestHnippFieldFields {
+  /** Key */
+  key?: string | undefined
+}
+
+export interface ITestHnippField extends Entry<ITestHnippFieldFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'testHnippField'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -3915,6 +3994,7 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
+  | 'appUri'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -3933,6 +4013,7 @@ export type CONTENT_TYPE =
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
+  | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'
   | 'formField'
@@ -3944,6 +4025,7 @@ export type CONTENT_TYPE =
   | 'genericTagGroup'
   | 'graphCard'
   | 'groupedMenu'
+  | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
   | 'latestNewsSlice'
@@ -3956,7 +4038,6 @@ export type CONTENT_TYPE =
   | 'linkUrl'
   | 'location'
   | 'logoListSlice'
-  | 'mailingListSignup'
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'
@@ -4001,6 +4082,7 @@ export type CONTENT_TYPE =
   | 'teamList'
   | 'teamMember'
   | 'tellUsAStory'
+  | 'testHnippField'
   | 'timeline'
   | 'timelineEvent'
   | 'twoColumnText'
