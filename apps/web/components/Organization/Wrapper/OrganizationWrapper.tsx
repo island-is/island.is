@@ -145,7 +145,11 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (theme === 'sjukratryggingar' || theme === 'rikislogmadur')
+  if (
+    theme === 'sjukratryggingar' ||
+    theme === 'rikislogmadur' ||
+    theme === 'tryggingastofnun'
+  )
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -202,7 +206,7 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return null
     case 'fjarsysla-rikisins':
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
-    case 'tryggingastofnun':
+    case 'default':
       return <TryggingastofnunHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
