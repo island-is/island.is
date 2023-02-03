@@ -167,8 +167,13 @@ export const UserDropdown = ({
             <Box paddingTop={1}>
               <UserDropdownItem
                 onClick={() => handleLanguageChange()}
-                text={formatMessage(sharedMessages.switchToEnglish)}
+                text={
+                  lang === 'is'
+                    ? formatMessage(sharedMessages.switchToEnglish)
+                    : formatMessage(sharedMessages.switchToIcelandic)
+                }
                 icon={{ icon: 'en' }}
+                data-testid="language-switcher-button"
               />
             </Box>
           )}
