@@ -71,6 +71,7 @@ const Layout: FC = ({ children }) => {
           .map((child) => {
             return mapChildren(child)
           }),
+        accordion: true,
       }
     } else {
       return {
