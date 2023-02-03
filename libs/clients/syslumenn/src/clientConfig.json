@@ -2178,7 +2178,6 @@
     },
     "Afengisleyfi": {
       "type": "object",
-      "required": ["gildirFra", "gildirTil"],
       "properties": {
         "tegund": {
           "type": "string"

@@ -183,14 +183,6 @@ export const mapOperatingLicensesCSV = (
   value: responseStringCSV,
 })
 
-// TODO: Remove this helper method once the Syslumenn API has been fixed and returns null for empty dates
-const nullHandledDate = (date: Date): Date | undefined => {
-  if (date.getFullYear() === 1) {
-    return undefined
-  }
-  return date
-}
-
 export const mapAlcoholLicence = (
   alcoholLicence: Afengisleyfi,
 ): AlcoholLicence => ({
@@ -202,12 +194,8 @@ export const mapAlcoholLicence = (
     ? parseInt(alcoholLicence.skraningarAr)
     : undefined,
   // TODO: Module './AdfaraBeidni' has already exported a member named 'AdfarabeidniFromJSON'. Consider explicitly re-exporting to resolve the ambiguity.
-  validFrom: alcoholLicence.gildirFra
-    ? nullHandledDate(alcoholLicence.gildirFra)
-    : undefined,
-  validTo: alcoholLicence.gildirTil
-    ? nullHandledDate(alcoholLicence.gildirTil)
-    : undefined,
+  validFrom: alcoholLicence.gildirFra ? alcoholLicence.gildirFra : undefined,
+  validTo: alcoholLicence.gildirTil ? alcoholLicence.gildirTil : undefined,
   licenseHolder: alcoholLicence.leyfishafi?.trim() ?? '',
   licenseResponsible: alcoholLicence.abyrgdarmadur?.trim() ?? '',
 })
