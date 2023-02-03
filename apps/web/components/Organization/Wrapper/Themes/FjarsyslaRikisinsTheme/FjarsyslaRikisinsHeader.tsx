@@ -61,11 +61,9 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
                 </Text>
               </Hidden>
               <Hidden below="md">
-                <img
-                  width="253px"
-                  src="https://images.ctfassets.net/8k0h54kbe6bj/TqkgXfX1Zv8DGPDpNFA6U/e4fd87176da12c972df40512ee323d84/fjs-header-texti.svg"
-                  alt="Fjársýsla ríkisins"
-                />
+                <Text fontWeight="semiBold" variant="h1" as="h1" color="white">
+                  {organizationPage.title}
+                </Text>
               </Hidden>
             </Link>
           </Box>
