@@ -9,9 +9,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const LandlaeknirHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const LandlaeknirHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -70,3 +68,5 @@ export const LandlaeknirHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default LandlaeknirHeader

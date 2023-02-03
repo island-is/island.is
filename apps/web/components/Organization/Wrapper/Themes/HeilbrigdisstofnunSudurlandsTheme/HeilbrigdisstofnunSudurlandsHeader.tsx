@@ -9,7 +9,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
+const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
@@ -70,3 +70,5 @@ export const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default HeilbrigdisstofnunSudurlandsHeader

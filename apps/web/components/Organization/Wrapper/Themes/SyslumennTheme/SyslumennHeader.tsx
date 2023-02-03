@@ -9,9 +9,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const SyslumennHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const SyslumennHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -67,3 +65,5 @@ export const SyslumennHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default SyslumennHeader

@@ -3,13 +3,15 @@ import React from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './FiskistofaHeader.css'
+import * as styles from './TryggingastofnunHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const FiskistofaHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const TryggingastofnunHeader: React.FC<HeaderProps> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -27,7 +29,7 @@ const FiskistofaHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="fiskistofa-logo"
+                  alt="tryggingastofnun-logo"
                 />
               </Link>
             )
@@ -55,8 +57,8 @@ const FiskistofaHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" as="h1" color="blue600" fontWeight="semiBold">
-                <span className={styles.title}>{organizationPage.title}</span>
+              <Text variant="h1" as="h1" fontWeight="semiBold">
+                {organizationPage.title}
               </Text>
             </Link>
           </Box>
@@ -66,4 +68,4 @@ const FiskistofaHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   )
 }
 
-export default FiskistofaHeader
+export default TryggingastofnunHeader

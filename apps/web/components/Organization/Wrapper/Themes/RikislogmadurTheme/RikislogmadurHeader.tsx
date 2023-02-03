@@ -9,7 +9,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const RikislogmadurHeader = ({ organizationPage }: HeaderProps) => {
+const RikislogmadurHeader = ({ organizationPage }: HeaderProps) => {
   const { linkResolver } = useLinkResolver()
   return (
     <Box className={styles.headerBg}>
@@ -64,3 +64,5 @@ export const RikislogmadurHeader = ({ organizationPage }: HeaderProps) => {
     </Box>
   )
 }
+
+export default RikislogmadurHeader

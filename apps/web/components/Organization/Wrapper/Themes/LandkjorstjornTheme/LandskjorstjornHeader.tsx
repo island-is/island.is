@@ -15,9 +15,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const LandskjorstjornHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const LandskjorstjornHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -80,3 +78,5 @@ export const LandskjorstjornHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default LandskjorstjornHeader
