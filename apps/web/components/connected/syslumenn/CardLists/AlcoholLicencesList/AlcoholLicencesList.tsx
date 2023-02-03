@@ -1,13 +1,14 @@
 import { FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_ALCOHOL_LICENCES_QUERY } from './queries'
-import {
-  AlcoholLicence,
-  ConnectedComponent,
-  Query,
-} from '@island.is/api/schema'
+import { ConnectedComponent, Query } from '@island.is/api/schema'
 import { useLocalization } from '../../../utils'
-import { prepareCsvString } from '../../utils'
+import {
+  prepareCsvString,
+  textSearch,
+  getNormalizedSearchTerms,
+  getValidPeriodRepresentation,
+} from '../../utils'
 import {
   Box,
   Button,
@@ -42,21 +43,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
 
   const [searchTerms, _setSearchTerms] = useState([] as string[])
   const setSearchString = (searchString: string) =>
-    _setSearchTerms(
-      searchString
-        // In some operating systems, when the user is typing a diacritic letter (e.g. á, é, í) that requires two key presses,
-        // the diacritic mark is added to the search string on the first key press and is then replaced with the diacritic letter
-        // on the second key press. For the intermediate state, we remove the diacritic mark so that it does
-        // not affect the search results.
-        .replace('´', '')
-
-        // Normalize the search string
-        .trim()
-        .toLowerCase()
-
-        // Split the search string into terms.
-        .split(' '),
-    )
+    _setSearchTerms(getNormalizedSearchTerms(searchString))
 
   const onSearch = (searchString: string) => {
     setSearchString(searchString)
@@ -72,24 +59,6 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
       setListState('error')
     },
   })
-
-  const getLicenseValidPeriod = (license: AlcoholLicence) => {
-    const validFrom = license.validFrom ? new Date(license.validFrom) : null
-    const validTo = license.validTo ? new Date(license.validTo) : null
-
-    if (validFrom && validTo) {
-      return `${format(validFrom, DATE_FORMAT)} - ${format(
-        validTo,
-        DATE_FORMAT,
-      )}`
-    }
-    if (!validFrom && validTo) {
-      return `${t('validUntil', 'Til')} ${format(validTo, DATE_FORMAT)}`
-    }
-    if (!validTo) {
-      return t('validPeriodIndefinite', 'Ótímabundið')
-    }
-  }
 
   const csvStringProvider = () => {
     return new Promise<string>((resolve, reject) => {
@@ -127,17 +96,15 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
     })
   }
 
-  const filteredAlcoholLicences = alcoholLicences.filter((alcoholLicence) => {
-    return searchTerms.every(
-      (searchTerm) =>
-        // TODO: Search more fields.
-        alcoholLicence.licenseHolder
-          ?.trim()
-          .toLowerCase()
-          .includes(searchTerm) ||
-        alcoholLicence.licenceType?.trim().toLowerCase().includes(searchTerm),
-    )
-  })
+  const filteredAlcoholLicences = alcoholLicences.filter((alcoholLicence) =>
+    textSearch(searchTerms, [
+      // Fields to search
+      alcoholLicence.licenceType,
+      alcoholLicence.licenseHolder,
+      alcoholLicence.licenseNumber,
+      alcoholLicence.licenseResponsible,
+    ]),
+  )
 
   return (
     <Box>
@@ -232,8 +199,15 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                       </Text>
 
                       <Text>
-                        {t('validPeriod', 'Gildistími')}:{' '}
-                        {getLicenseValidPeriod(alcoholLicence)}
+                        {t('validPeriodLabel', 'Gildistími')}:{' '}
+                        {getValidPeriodRepresentation(
+                          alcoholLicence.validFrom,
+                          alcoholLicence.validTo,
+                          DATE_FORMAT,
+                          format,
+                          t('validPeriodUntil', 'Til'),
+                          t('validPeriodIndefinite', 'Ótímabundið'),
+                        )}
                       </Text>
 
                       <Text>
@@ -262,7 +236,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
           >
             {showCount < filteredAlcoholLicences.length && (
               <Button onClick={() => setShowCount(showCount + PAGE_SIZE)}>
-                {t('seeMore', 'Sjá fleiri')} (
+                {t('loadMore', 'Sjá fleiri')} (
                 {filteredAlcoholLicences.length - showCount})
               </Button>
             )}
