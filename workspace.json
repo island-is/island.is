@@ -278,6 +278,7 @@
     "services-documents": "apps/services/documents",
     "services-endorsements-api": "apps/services/endorsements/api",
     "services-search-indexer": "apps/services/search-indexer",
+    "services-sessions": "apps/services/sessions",
     "services-user-notification": "apps/services/user-notification",
     "services-user-profile": "apps/services/user-profile",
     "services-xroad-collector": "apps/services/xroad-collector",

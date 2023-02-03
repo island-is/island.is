@@ -19,7 +19,7 @@ import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
@@ -50,7 +50,7 @@ export const VehicleSelectField: FC<
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
           isDebtLess: true,
-          ownerChangeErrorMessages: [],
+          validationErrorMessages: [],
         }
       : null,
   )
@@ -79,15 +79,15 @@ export const VehicleSelectField: FC<
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
             isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
-            ownerChangeErrorMessages:
+            validationErrorMessages:
               response?.vehicleOwnerchangeChecksByPermno
-                ?.ownerChangeErrorMessages,
+                ?.validationErrorMessages,
           })
 
           const disabled =
             !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
             !!response?.vehicleOwnerchangeChecksByPermno
-              ?.ownerChangeErrorMessages?.length
+              ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
           setValue('vehicle.plate', currentVehicle.permno)
@@ -112,7 +112,7 @@ export const VehicleSelectField: FC<
   const disabled =
     selectedVehicle &&
     (!selectedVehicle.isDebtLess ||
-      !!selectedVehicle.ownerChangeErrorMessages?.length)
+      !!selectedVehicle.validationErrorMessages?.length)
 
   return (
     <Box>
@@ -159,8 +159,8 @@ export const VehicleSelectField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!selectedVehicle.ownerChangeErrorMessages?.length &&
-                          selectedVehicle.ownerChangeErrorMessages?.map(
+                        {!!selectedVehicle.validationErrorMessages?.length &&
+                          selectedVehicle.validationErrorMessages?.map(
                             (error) => {
                               const message = formatMessage(
                                 getValueViaPath(

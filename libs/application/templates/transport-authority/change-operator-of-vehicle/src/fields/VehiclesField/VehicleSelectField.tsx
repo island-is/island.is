@@ -10,14 +10,14 @@ import {
   BulletList,
   InputError,
 } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
+  VehiclesCurrentVehicleWithOperatorChangeChecks,
 } from '@island.is/api/schema'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 
@@ -42,7 +42,7 @@ export const VehicleSelectField: FC<
   const [
     selectedVehicle,
     setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
+  ] = useState<VehiclesCurrentVehicleWithOperatorChangeChecks | null>(
     currentVehicle && currentVehicle.permno
       ? {
           permno: currentVehicle.permno,
@@ -50,7 +50,7 @@ export const VehicleSelectField: FC<
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
           isDebtLess: true,
-          ownerChangeErrorMessages: [],
+          validationErrorMessages: [],
         }
       : null,
   )
@@ -69,7 +69,6 @@ export const VehicleSelectField: FC<
   )
 
   const getVehicleDetails = useLazyVehicleDetails()
-  // TODO: Add operator validation query once Samgöngustofa has finished it
   const getVehicleDetailsCallback = useCallback(
     async ({ permno }: GetVehicleDetailInput) => {
       const { data } = await getVehicleDetails({
@@ -93,18 +92,18 @@ export const VehicleSelectField: FC<
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
-            ownerChangeErrorMessages:
-              response?.vehicleOwnerchangeChecksByPermno
-                ?.ownerChangeErrorMessages,
+            isDebtLess:
+              response?.vehicleOperatorChangeChecksByPermno?.isDebtLess,
+            validationErrorMessages:
+              response?.vehicleOperatorChangeChecksByPermno
+                ?.validationErrorMessages,
           })
 
-          // const disabled =
-          //   !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
-          //   !!response?.vehicleOwnerchangeChecksByPermno
-          //     ?.ownerChangeErrorMessages?.length
-          // setPlate(disabled ? '' : currentVehicle.permno || '')
-          setPlate(currentVehicle.permno || '')
+          const disabled =
+            !response?.vehicleOperatorChangeChecksByPermno?.isDebtLess ||
+            !!response?.vehicleOperatorChangeChecksByPermno
+              ?.validationErrorMessages?.length
+          setPlate(disabled ? '' : currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
           setType(currentVehicle.make || undefined)
           setIsLoading(false)
@@ -113,10 +112,10 @@ export const VehicleSelectField: FC<
     }
   }
 
-  const disabled = false
-  // selectedVehicle &&
-  // (!selectedVehicle.isDebtLess ||
-  //   !!selectedVehicle.ownerChangeErrorMessages?.length)
+  const disabled =
+    selectedVehicle &&
+    (!selectedVehicle.isDebtLess ||
+      !!selectedVehicle.validationErrorMessages?.length)
 
   return (
     <Box>
@@ -163,8 +162,8 @@ export const VehicleSelectField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!selectedVehicle.ownerChangeErrorMessages?.length &&
-                          selectedVehicle.ownerChangeErrorMessages?.map(
+                        {!!selectedVehicle.validationErrorMessages?.length &&
+                          selectedVehicle.validationErrorMessages?.map(
                             (error) => {
                               const message = formatMessage(
                                 getValueViaPath(

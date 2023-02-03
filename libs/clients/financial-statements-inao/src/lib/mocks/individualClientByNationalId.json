@@ -1,0 +1,12 @@
+{
+  "@odata.context": "https://dev-re.crm4.dynamics.com/api/data/v9.1/$metadata#star_clients(star_nationalid,star_name,star_type)",
+  "value": [
+    {
+      "@odata.etag": "W/\"3046026\"",
+      "star_nationalid": "1234567890",
+      "star_name": "Svampur Sveinsson",
+      "star_type": 150000000,
+      "star_clientid": "424f22f1-b240-ed11-9db0-000d3adb5677"
+    }
+  ]
+}
