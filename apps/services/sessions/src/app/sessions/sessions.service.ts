@@ -4,7 +4,7 @@ import * as kennitala from 'kennitala'
 import { Op, WhereOptions } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
-import { PageInfo, paginate } from '@island.is/nest/pagination'
+import { paginate } from '@island.is/nest/pagination'
 
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'

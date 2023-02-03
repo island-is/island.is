@@ -1,10 +1,10 @@
 import { getQueueToken } from '@nestjs/bull'
-import { AuthDelegationType } from 'delegation'
 import faker from 'faker'
 import sortBy from 'lodash/sortBy'
 import request from 'supertest'
 
 import { ApiScope, SessionsScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
   getRequestMethod,
