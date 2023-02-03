@@ -206,7 +206,7 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return null
     case 'fjarsysla-rikisins':
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
-    case 'default':
+    case 'tryggingastofnun':
       return <TryggingastofnunHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
