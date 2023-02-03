@@ -1,11 +1,11 @@
 import faker from 'faker'
 
-import { createNationalId } from '@island.is/testing/fixtures'
+import { createNationalId, NationalIdType } from '@island.is/testing/fixtures'
 
 import { CreateSessionDto } from '../src/app/sessions/create-session.dto'
 
 export interface CreateSessionDtoOptions {
-  subjectType?: any
+  subjectType?: NationalIdType
   actorNationalId?: string
   subjectNationalId?: string
 }
