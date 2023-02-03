@@ -29,8 +29,10 @@ import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { CaseType, UpdateDefendant } from '@island.is/judicial-system/types'
+import { UpdateDefendant } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -38,7 +40,6 @@ import {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
 } from '../../components'
-import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const StepOne: React.FC = () => {
   const {
@@ -180,7 +181,7 @@ export const StepOne: React.FC = () => {
                 setWorkingCase={setWorkingCase}
               />
             </Box>
-            {workingCase.type !== CaseType.TRAVEL_BAN && (
+            {workingCase.type !== CaseType.TravelBan && (
               <Box component="section" marginBottom={10}>
                 <Box
                   display="flex"

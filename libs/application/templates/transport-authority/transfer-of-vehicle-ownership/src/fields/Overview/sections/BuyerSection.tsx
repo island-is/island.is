@@ -7,7 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { information, overview } from '../../../lib/messages'
 import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
-import { ReviewScreenProps } from '../../../types'
+import { ReviewScreenProps } from '../../../shared'
 import { formatPhoneNumber, hasReviewerApproved } from '../../../utils'
 import kennitala from 'kennitala'
 
