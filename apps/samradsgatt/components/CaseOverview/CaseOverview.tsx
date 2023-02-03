@@ -1,7 +1,7 @@
 import { Box, GridRow, Text } from '@island.is/island-ui/core'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
 import { Advice, Case } from '../../types/viewModels'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 interface CaseOverviewProps {
   chosenCase: Case
