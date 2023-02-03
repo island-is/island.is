@@ -25,36 +25,25 @@ export class SessionsService {
     let whereOptions: WhereOptions
 
     if (user.actor) {
-      if (otherUser) {
-        whereOptions = {
-          actorNationalId: otherUser,
-          subjectNationalId: user.nationalId,
-        }
-      } else {
-        whereOptions = {
-          subjectNationalId: user.nationalId,
-        }
+      // Finding sessions on behalf of a company
+      whereOptions = {
+        subjectNationalId: user.nationalId,
+        // With otherUser as a specific actor
+        ...(otherUser && { actorNationalId: otherUser }),
       }
     } else {
-      if (otherUser) {
-        whereOptions = {
-          [Op.or]: [
-            {
-              actorNationalId: user.nationalId,
-              subjectNationalId: otherUser,
-            },
-            { actorNationalId: otherUser, subjectNationalId: user.nationalId },
-          ],
-        }
-      } else {
-        whereOptions = {
-          [Op.or]: [
-            {
-              actorNationalId: user.nationalId,
-            },
-            { subjectNationalId: user.nationalId },
-          ],
-        }
+      // Finding sessions for a user
+      whereOptions = {
+        [Op.or]: [
+          {
+            actorNationalId: user.nationalId,
+            ...(otherUser && { subjectNationalId: otherUser }),
+          },
+          {
+            subjectNationalId: user.nationalId,
+            ...(otherUser && { actorNationalId: otherUser }),
+          },
+        ],
       }
     }
 
