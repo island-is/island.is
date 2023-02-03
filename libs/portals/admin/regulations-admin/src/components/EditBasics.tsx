@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as s from './EditBasics.css'
 import {
   Box,
@@ -24,6 +24,7 @@ import { HTMLText } from '@island.is/regulations'
 export const EditBasics = () => {
   const t = useLocale().formatMessage
   const { draft, actions } = useDraftingState()
+  const [editorKey, setEditorKey] = useState('abc123')
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -52,8 +53,8 @@ export const EditBasics = () => {
       const additions = formatAmendingRegBody(THE_IMPACT.diff?.value)
 
       const additionString = additions.join('') as HTMLText
-
       updateState('text', additionString)
+      setEditorKey('newKey')
     }
   }, [draft.impacts])
 
@@ -89,26 +90,15 @@ export const EditBasics = () => {
             startExpanded={startTextExpanded}
           >
             <Box marginBottom={3}>
-              {draft.text.value ? (
-                // Force re-render of TinyMCE editor for inital and empty values
-                <EditorInput
-                  label={t(msg.text)}
-                  hiddenLabel
-                  draftId={draft.id}
-                  value={draft.text.value}
-                  onChange={(value) => updateState('text', value)}
-                  error={text.showError && text.error && t(text.error)}
-                />
-              ) : (
-                <EditorInput
-                  label={t(msg.text)}
-                  hiddenLabel
-                  draftId={draft.id}
-                  value={draft.text.value}
-                  onChange={(value) => updateState('text', value)}
-                  error={text.showError && text.error && t(text.error)}
-                />
-              )}
+              <EditorInput
+                label={t(msg.text)}
+                key={editorKey} // Force re-render of TinyMCE
+                hiddenLabel
+                draftId={draft.id}
+                value={text.value}
+                onChange={(value) => updateState('text', value)}
+                error={text.showError && text.error && t(text.error)}
+              />
             </Box>
             <Box>
               <Divider />
