@@ -69,6 +69,7 @@ const Sessions = () => {
       action === 'next'
     )
       return
+
     if (action === 'next') {
       setPage(page + 1)
     } else {
