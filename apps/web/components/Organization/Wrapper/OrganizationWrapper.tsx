@@ -273,7 +273,6 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
     [],
   )
-  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -285,18 +284,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
-          questionsAndAnswersText={n(
-            'questionsAndAnswers',
-            'Spurningar og svör',
-          )}
-          canWeHelpText={n('canWeHelp', 'Getum við aðstoðað?')}
+          namespace={namespace}
         />
       )
       break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
       OrganizationFooterComponent = (
-        <SjukratryggingarFooter footerItems={organization.footerItems} />
+        <SjukratryggingarFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'utlendingastofnun':
@@ -321,13 +319,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'landlaeknir':
     case 'directorate-of-health':
       OrganizationFooterComponent = (
-        <LandlaeknirFooter footerItems={organization.footerItems} />
+        <LandlaeknirFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'hsn':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunNordurlandsFooter
           footerItems={organization.footerItems}
+          namespace={namespace}
         />
       )
       break
@@ -335,18 +337,25 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunSudurlandsFooter
           footerItems={organization.footerItems}
+          namespace={namespace}
         />
       )
       break
     case 'fiskistofa':
     case 'directorate-of-fisheries':
       OrganizationFooterComponent = (
-        <FiskistofaFooter footerItems={organization.footerItems} />
+        <FiskistofaFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'landskjorstjorn':
       OrganizationFooterComponent = (
-        <LandskjorstjornFooter footerItems={organization.footerItems} />
+        <LandskjorstjornFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'rikislogmadur':
@@ -365,6 +374,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <FjarsyslaRikisinsFooter
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
+          namespace={namespace}
         />
       )
   }
