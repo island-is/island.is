@@ -67,7 +67,7 @@ const CareerCards = () => {
         </Box>
       ))}
       {educationExamFamilyOverviews.length === 0 && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState
             title={defineMessage({
               id: 'sp.education-career:education-no-data',

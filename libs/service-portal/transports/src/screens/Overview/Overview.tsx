@@ -175,7 +175,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
       <IntroHeader title={messages.title} intro={messages.intro} />
 
       {!loading && !error && vehicles.length === 0 && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState />
         </Box>
       )}

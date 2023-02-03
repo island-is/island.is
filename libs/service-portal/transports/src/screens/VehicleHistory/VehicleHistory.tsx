@@ -162,7 +162,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
       />
 
       {!loading && !error && vehicles.length === 0 && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState />
         </Box>
       )}

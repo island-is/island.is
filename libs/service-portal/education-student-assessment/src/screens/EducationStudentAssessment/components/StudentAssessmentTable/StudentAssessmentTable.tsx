@@ -226,7 +226,7 @@ const StudentAssessmentTable = () => {
       ))}
 
       {data?.educationExamResult.grades.length === 0 && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState title={m.noDataFound} />
         </Box>
       )}

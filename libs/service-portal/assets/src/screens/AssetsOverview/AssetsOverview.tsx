@@ -146,7 +146,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         !error &&
         assetData?.properties &&
         assetData?.properties?.length === 0 && (
-          <Box marginTop={8}>
+          <Box marginTop={[0, 8]}>
             <EmptyState />
           </Box>
         )}
