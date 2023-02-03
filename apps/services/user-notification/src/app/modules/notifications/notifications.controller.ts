@@ -114,13 +114,22 @@ export class NotificationsController {
   @Post('/create-notification')
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
-  ): Promise<CreateNotificationResponse> {
+  ): Promise<any | CreateNotificationResponse> {
     const template = await this.notificationsService.getTemplate(
       body.templateId,
-      'is-IS',
     )
+    // return this.notificationsService.formatArguments(body, template)
     // validate
-    this.notificationsService.validateArgs(body, template)
+    this.notificationsService.validateArgCounts(body, template)
+    // if (template.args?.length != body.args.length) {
+    //   throw new BadRequestException(
+    //     "Number of arguments doesn't match - template requires " +
+    //       template.args?.length +
+    //       ' arguments but ' +
+    //       body.args?.length +
+    //       ' were provided',
+    //   )
+    // }
     // add to queue
     const id = await this.queue.add(body)
     this.logger.info('Message queued ... ...', { messageId: id, ...body })

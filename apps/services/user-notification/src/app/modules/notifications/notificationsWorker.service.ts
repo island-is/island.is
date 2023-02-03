@@ -2,15 +2,10 @@ import { Injectable, Inject, OnApplicationBootstrap } from '@nestjs/common'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  UserProfile,
-  UserProfileApi,
-  UserProfileLocaleEnum,
-} from '@island.is/clients/user-profile'
+import { UserProfileApi } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { STATUS_CODES } from 'http'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 
@@ -40,30 +35,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         const messageId = job.id
         this.logger.info('Message received by worker ... ...', { messageId })
 
-        //
-        // Mocking user profile
-        const profile = <UserProfile>{
-          nationalId: message.recipient,
-          mobilePhoneNumber: '1234567',
-          email: 'rafnarnason@gmail.com',
-          name: 'Rafn Arnason',
-          locale: UserProfileLocaleEnum.En,
-          notifications: {},
-          created: new Date(),
-          modified: new Date(),
-          documentNotifications: true,
-          emailNotifications: true,
-          smsNotifications: true,
-          pushNotifications: true,
-          id: '1234567',
-          emailVerified: true,
-          mobilePhoneNumberVerified: true,
-          profileImageUrl: '',
-          emailStatus: STATUS_CODES.emailVerified,
-          mobileStatus: STATUS_CODES.mobilePhoneNumberVerified,
-        }
-
-        console.log(profile)
+        const profile = await this.userProfileApi.userTokenControllerFindOneByNationalId(
+          {
+            nationalId: message.recipient,
+          },
+        )
 
         // can't send message if user has no user profile
         if (!profile) {

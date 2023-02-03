@@ -41,31 +41,13 @@ class WorkerMock {
   }
 }
 
-class MockNotificationsService {
-  async createNotification(input: Message) {
-    return { id: '123' }
-  }
-  async getTemplates() {
-    return [
-      {
-        bob: 1,
-      },
-    ]
-  }
-  async validateArgs() {
-    return true
-  }
-}
 describe('Notifications API', () => {
   let app: INestApplication
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        CacheModule.register({
-          ttl: 60,
-          max: 100,
-        }),
+        CacheModule.register({}),
         LoggingModule,
         QueueModule.register({
           client: environment.sqsConfig,
@@ -76,12 +58,10 @@ describe('Notifications API', () => {
         }),
       ],
       controllers: [NotificationsController],
-      providers: [NotificationsWorkerService, NotificationsService],
+      providers: [NotificationsWorkerService,NotificationsService],
     })
       .overrideProvider(NotificationsWorkerService)
       .useClass(WorkerMock)
-      .overrideProvider(NotificationsService)
-      .useClass(MockNotificationsService)
       .compile()
 
     app = await module.createNestApplication().init()
@@ -93,28 +73,26 @@ describe('Notifications API', () => {
     await app.close()
   })
 
-  // it('Accepts a valid message input', async () => {
-  //   const msg: Message = {
-  //     type: MessageTypes.NewDocumentMessage,
-  //     organization: 'Skatturinn',
-  //     // eslint-disable-next-line local-rules/disallow-kennitalas
-  //     recipient: '0409084390', // this valid kt needed for test to pass
-  //     documentId: '123',
-  //   }
+  it('Accepts a valid message input', async () => {
+    const msg: Message = {
+      type: "newDocumentMessage",
+      organization: 'Skatturinn',
+      recipient: '0409084390',
+      documentId: '123',
+    }
 
-  //   await request(app.getHttpServer())
-  //     .post('/notifications/create-notification')
-  //     .send(msg)
-  //     .expect(201)
-
-  //   const worker = app.get(NotificationsWorkerService) as WorkerMock
-  //   await waitForDelivery(worker, (msgs) => msgs.length > 0)
-  //   expect(worker.received).toEqual([msg])
-  // })
-
-  it('gets a templates', async () => {
     await request(app.getHttpServer())
-      .get('/notifications/templates?locale=is-IS')
-      .expect(200)
+      .post('/notifications')
+      .send(msg)
+      .expect(201)
+
+    const msgTransformed = {
+      recipient: msg.recipient,
+      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+      args: [msg.organization, msg.documentId],
+    }
+    const worker = app.get(NotificationsWorkerService) as WorkerMock
+    await waitForDelivery(worker, (msgs) => msgs.length > 0)
+    expect(worker.received).toEqual([msgTransformed])
   })
 })

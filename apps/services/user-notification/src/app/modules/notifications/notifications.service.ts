@@ -4,6 +4,11 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 // import { getTemplates } from './queries/getTemplates'
+
+// CHECK OUT
+// import { HttpService } from '@nestjs/axios'; ////
+// import { createMock, DeepMocked } from '@golevelup/ts-jest';
+
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -12,8 +17,9 @@ export class NotificationsService {
   ) {}
 
   // MOVE QUERY TO THE SOMETHING SOEMTHIGN ..................................................................
-  async getTemplates(locale: string): Promise<HnippTemplate[]> {
-    if (locale == 'is') {
+  async getTemplates(locale?: string): Promise<HnippTemplate[]> {
+    // DO WE NEED TO CACHE HERE AS WELL ????? OR WILL THE GQL DO IT FOR US
+    if (locale == 'is' || locale === undefined) {
       locale = 'is-IS'
     }
     this.logger.info(
@@ -27,7 +33,7 @@ export class NotificationsService {
 
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + process.env.CONTENTFUL_DELIVERY_KEY, // TODO check for other envs
+            Authorization: 'Bearer ' + process.env.CONTENTFUL_ACCESS_TOKEN, // TODO check for other envs
           },
 
           body: JSON.stringify({
@@ -67,7 +73,7 @@ export class NotificationsService {
 
   async getTemplate(
     templateId: string,
-    locale: string,
+    locale?: string,
   ): Promise<HnippTemplate> {
     if (locale == 'is') {
       locale = 'is-IS'
@@ -89,62 +95,42 @@ export class NotificationsService {
     }
   }
 
-  async validateArgs(
+  validateArgCounts(
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
-  ) {
-    console.log(template.args?.length != body.args.length)
-    console.log(template.args?.length, body.args.length)
-    // check for template
-    // const template = await this.getTemplate(body.templateId, 'is-IS') // cache ????????????????????????
-    // check for args
-    if (template.args?.length != body.args.length) {
-      throw new BadRequestException(
-        "Number of arguments doesn't match - template requires " +
-          template.args?.length +
-          ' arguments but ' +
-          body.args?.length +
-          ' were provided',
-      )
-    }
+  ): boolean {
+    return template.args.length == body.args.length
   }
 
-  // shorten repetitive code................................
-  async formatArguments(
+  formatArguments(
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
-  ): Promise<HnippTemplate> {
-    const re = /{{[^{}]*}}/
-    if (body.args?.length == template.args?.length) {
-      // scan object for {{}} for counts
-      if (re.test(template.notificationBody)) {
-        const element = body.args.shift()
-        if (element) {
-          template.notificationBody = template.notificationBody.replace(
-            re,
-            element,
-          )
-        }
-      }
-      if (template.notificationDataCopy) {
-        if (re.test(template.notificationDataCopy)) {
-          const element = body.args.shift()
-          if (element) {
-            template.notificationDataCopy = template.notificationDataCopy.replace(
-              re,
-              element,
-            )
+  ): HnippTemplate {
+    if(template.args.length != body.args.length) {
+      throw new BadRequestException("Argument count mismatch")
+    }
+    if (template.args.length > 0) {
+      const allowedReplaceProperties = [
+        'notificationTitle',
+        'notificationBody',
+        'notificationDataCopy',
+        'clickAction',
+      ]
+      const regex = /{{[^{}]*}}/ // "finds {{placholder}} in string"
+      Object.keys(template).forEach((key) => {
+        if (allowedReplaceProperties.includes(key)) {
+          if (template[key as keyof HnippTemplate]) {
+            if (regex.test(template[key as keyof HnippTemplate] as string)) {
+              const element = body.args.shift()
+              if (element) {
+                template[key as keyof Omit<HnippTemplate, 'args'>] = (template[
+                  key as keyof Omit<HnippTemplate, 'args'>
+                ] as string).replace(regex, element)
+              }
+            }
           }
         }
-      }
-      if (template.clickAction) {
-        if (re.test(template.clickAction)) {
-          const element = body.args.shift()
-          if (element) {
-            template.clickAction = template.clickAction.replace(re, element)
-          }
-        }
-      }
+      })
     }
     return template
   }
