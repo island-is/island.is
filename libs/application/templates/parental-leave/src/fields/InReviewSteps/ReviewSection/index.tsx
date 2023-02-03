@@ -1,8 +1,11 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
+import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { handleServerError } from '@island.is/application/ui-components'
 import { Box, Icon, Tag, Text, Button } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 
@@ -27,13 +30,15 @@ const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
   title,
   description,
   state,
-  goToScreen,
+  refetch,
 }) => {
   const { formatMessage } = useLocale()
-
-  const goToAttachmentScreen = () => {
-    goToScreen && goToScreen('uploadAdditionalFilesInfoScreen')
-  }
+  const [submitApplication, { loading: loadingSubmit }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      onError: (e) => handleServerError(e, formatMessage),
+    },
+  )
 
   const isRequiredAction = state === ReviewSectionState.requiresAction
 
@@ -105,7 +110,24 @@ const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
                 icon="arrowForward"
                 variant="text"
                 size="small"
-                onClick={goToAttachmentScreen}
+                loading={loadingSubmit}
+                disabled={loadingSubmit}
+                onClick={async () => {
+                  const res = await submitApplication({
+                    variables: {
+                      input: {
+                        id: application.id,
+                        event: 'EDIT',
+                        answers: application.answers,
+                      },
+                    },
+                  })
+
+                  if (res?.data) {
+                    // Takes them to the next state (which loads the relevant form)
+                    refetch?.()
+                  }
+                }}
               >
                 {formatMessage(
                   parentalLeaveFormMessages.reviewScreen

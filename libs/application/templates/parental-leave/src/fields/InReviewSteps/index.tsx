@@ -51,6 +51,8 @@ const statesMap: StatesMap = {
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
     [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.complete,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   employer: {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
@@ -66,9 +68,13 @@ const statesMap: StatesMap = {
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
     [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.complete,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   vinnumalastofnun: {
     [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.requiresAction,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.requiresAction,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
       ReviewSectionState.inProgress,
@@ -113,6 +119,8 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     'steps',
   )
   const isAdditionalDocumentRequiredState =
+    application.state ===
+      ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED ||
     application.state === ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED
 
   const steps = [
