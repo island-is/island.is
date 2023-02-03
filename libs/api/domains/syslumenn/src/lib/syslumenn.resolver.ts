@@ -25,6 +25,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { SearchForPropertyInput } from './dto/searchForProperty.input'
 import { EstateRelations } from './models/relations'
 import { AlcoholLicence } from './models/alcoholLicence'
+import { TemporaryEventLicence } from './models/temporaryEventLicence'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -87,6 +88,13 @@ export class SyslumennResolver {
   @BypassAuth()
   getAlcoholLicences(): Promise<AlcoholLicence[]> {
     return this.syslumennService.getAlcoholLicences()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [TemporaryEventLicence])
+  @BypassAuth()
+  getTemporaryEventLicences(): Promise<TemporaryEventLicence[]> {
+    return this.syslumennService.getTemporaryEventLicences()
   }
 
   @Query(() => CertificateInfoResponse)

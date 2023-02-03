@@ -16,6 +16,7 @@ import {
   Fasteignasalar,
   Logmenn,
   Afengisleyfi,
+  Taekifaerisleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -40,6 +41,7 @@ import {
   RealEstateAgent,
   Lawyer,
   OperatingLicensesCSV,
+  TemporaryEventLicence,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -197,6 +199,23 @@ export const mapAlcoholLicence = (
   validTo: alcoholLicence.gildirTil ? alcoholLicence.gildirTil : undefined,
   licenseHolder: alcoholLicence.leyfishafi?.trim() ?? '',
   licenseResponsible: alcoholLicence.abyrgdarmadur?.trim() ?? '',
+})
+
+export const mapTemporaryEventLicence = (
+  temporaryEventLicence: Taekifaerisleyfi,
+): TemporaryEventLicence => ({
+  licenceType: temporaryEventLicence.tegund?.trim() ?? '',
+  licenceSubType: temporaryEventLicence.tegundLeyfis?.trim() ?? '',
+  licenseNumber: temporaryEventLicence.leyfisnumer?.trim() ?? '',
+  issuedBy: temporaryEventLicence.utgefidAf?.trim() ?? '',
+  year: temporaryEventLicence.skraningarAr
+    ? parseInt(temporaryEventLicence.skraningarAr)
+    : undefined,
+  validFrom: temporaryEventLicence.gildirFra ? temporaryEventLicence.gildirFra : undefined,
+  validTo: temporaryEventLicence.gildirTil ? temporaryEventLicence.gildirTil : undefined,
+  licenseHolder: temporaryEventLicence.leyfishafi?.trim() ?? '',
+  // TODO: Ask for this to be fixed in Syslumenn API: abyrgdarmaur -> abyrgdarmadur
+  licenseResponsible: temporaryEventLicence.abyrgdarmaur?.trim() ?? '',
 })
 
 export function constructUploadDataObject(

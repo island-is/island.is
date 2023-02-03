@@ -8,6 +8,7 @@ import {
   Fasteignasalar,
   Logmenn,
   Afengisleyfi,
+  Taekifaerisleyfi,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -133,6 +134,21 @@ export const ALCOHOL_LICENCES = [
     abyrgdarmadur: 'string',
   },
 ] as Afengisleyfi[]
+
+export const TEMPORARY_EVENT_LICENCES = [
+  {
+    tegund: 'string',
+    tegundLeyfis: 'string',
+    leyfisnumer: 'string',
+    utgefidAf: 'string',
+    skraningarAr: '2021',
+    gildirFra: new Date('2022-05-01'),
+    gildirTil: new Date('2023-05-01'),
+    leyfishafi: 'string',
+    // TODO: Ask for this to be fixed in Syslumenn API: abyrgdarmaur -> abyrgdarmadur
+    abyrgdarmaur: 'string',
+  }
+] as Taekifaerisleyfi[]
 
 export const DATA_UPLOAD: Skilabod = {
   skilabod: 'Gögn móttekin',

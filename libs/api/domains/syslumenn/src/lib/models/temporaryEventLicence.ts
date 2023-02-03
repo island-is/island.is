@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class AlcoholLicence {
+export class TemporaryEventLicence {
   @Field({ nullable: true })
   licenceType?: string
 

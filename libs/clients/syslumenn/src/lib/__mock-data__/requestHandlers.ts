@@ -18,6 +18,7 @@ import {
   REAL_ESTATE_AGENTS,
   LAWYERS,
   ALCOHOL_LICENCES,
+  TEMPORARY_EVENT_LICENCES,
 } from './responses'
 
 export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
@@ -102,6 +103,14 @@ export const requestHandlers = [
     const success = req.params.id ? true : false
     if (success) {
       return res(ctx.status(200), ctx.json(ALCOHOL_LICENCES))
+    } else {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+  }),
+  rest.get(url('/api/Taekifaerisleyfi/:id'), (req, res, ctx) => {
+    const success = req.params.id ? true : false
+    if (success) {
+      return res(ctx.status(200), ctx.json(TEMPORARY_EVENT_LICENCES))
     } else {
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
