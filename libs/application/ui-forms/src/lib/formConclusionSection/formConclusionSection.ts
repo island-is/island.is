@@ -11,10 +11,10 @@ import { conclusion } from './messages'
 
 type props = {
   alertTitle: MessageDescriptor
-  alertMessage: MessageDescriptor
-  bulletHeader: MessageDescriptor
-  bulletIntro: MessageDescriptor
-  bulletPoints: StaticText
+  alertMessage?: MessageDescriptor
+  expandableHeader: MessageDescriptor
+  expandableIntro: MessageDescriptor
+  expandableDescription: StaticText
 }
 
 export const formConclusionSection = (type: props) =>
@@ -34,9 +34,9 @@ export const formConclusionSection = (type: props) =>
           }),
           buildExpandableDescriptionField({
             id: 'uiForms.conclusionBullet',
-            title: type.bulletHeader,
-            introText: type.bulletIntro,
-            description: type.bulletPoints,
+            title: type.expandableHeader,
+            introText: type.expandableIntro,
+            description: type.expandableDescription,
             startExpanded: true,
           }),
           buildMessageWithLinkButtonField({
