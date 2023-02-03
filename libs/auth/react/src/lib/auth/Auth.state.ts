@@ -1,4 +1,3 @@
-import { Dispatch } from 'react'
 import { User } from '@island.is/shared/types'
 import { getBirthday } from '../utils/getBirthday'
 
@@ -37,8 +36,6 @@ export const initialState: AuthReducerState = {
   authState: 'logged-out',
   isAuthenticated: false,
 }
-
-export type AuthDispatch = Dispatch<Action>
 
 // Add dateOfBirth Date object to user profile
 const formatUser = (payload: User): User | null => {

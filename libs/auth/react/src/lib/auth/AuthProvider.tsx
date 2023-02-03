@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react'
 import type { User } from 'oidc-client-ts'
-
+import { Location } from 'react-router-dom'
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Auth.state'
 import { AuthSettings } from '../AuthSettings'
