@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  CaseState,
   Feature,
   Gender,
   isInvestigationCase,
@@ -316,13 +317,11 @@ const useSections = (
   ): RouteSection => {
     const { id } = workingCase
 
-    const caseHasBeenReceivedByCourt =
-      workingCase.courtCaseNumber !== undefined &&
-      workingCase.courtCaseNumber !== null
+    const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
-      // Prosecutor can only view the overview when case has been submitted to court
+      // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
         ? []
         : [

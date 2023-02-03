@@ -53,9 +53,7 @@ const Overview: React.FC = () => {
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
 
-  const caseHasBeenReceivedByCourt =
-    workingCase.courtCaseNumber !== undefined &&
-    workingCase.courtCaseNumber !== null
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
