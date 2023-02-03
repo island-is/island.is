@@ -5,12 +5,12 @@ import { PageInfo } from '@island.is/nest/pagination'
 import { Session } from './session.model'
 
 export class SessionsResultDto {
-  @ApiProperty({ required: true })
+  @ApiProperty()
   totalCount!: number
 
-  @ApiProperty({ type: () => [Session], required: true })
+  @ApiProperty({ type: [Session] })
   data!: Session[]
 
-  @ApiProperty({ required: true })
+  @ApiProperty()
   pageInfo!: PageInfo
 }
