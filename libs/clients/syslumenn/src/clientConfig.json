@@ -2178,10 +2178,8 @@
     },
     "Afengisleyfi": {
       "type": "object",
+      "required": ["gildirFra", "gildirTil"],
       "properties": {
-        "malategund": {
-          "type": "string"
-        },
         "tegund": {
           "type": "string"
         },
@@ -2198,15 +2196,17 @@
           "type": "string"
         },
         "gildirFra": {
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "gildirTil": {
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "leyfishafi": {
           "type": "string"
         },
-        "abyrgdarmaður": {
+        "abyrgdarmadur": {
           "type": "string"
         }
       }
