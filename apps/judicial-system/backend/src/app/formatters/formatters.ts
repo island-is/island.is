@@ -294,7 +294,6 @@ export function formatPrisonCourtDateEmailNotification(
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
-  accusedName?: string,
   accusedGender?: Gender,
   requestedValidToDate?: Date,
   isolation?: boolean,
