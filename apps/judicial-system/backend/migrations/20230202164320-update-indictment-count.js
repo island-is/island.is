@@ -38,12 +38,20 @@ module.exports = {
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.removeColumn('indictment_count', 'vehicle_registration_number', {
-          transaction: t,
-        }),
-        queryInterface.removeColumn('indictment_count', 'incident_description', {
-          transaction: t,
-        }),
+        queryInterface.removeColumn(
+          'indictment_count',
+          'vehicle_registration_number',
+          {
+            transaction: t,
+          },
+        ),
+        queryInterface.removeColumn(
+          'indictment_count',
+          'incident_description',
+          {
+            transaction: t,
+          },
+        ),
         queryInterface.removeColumn('indictment_count', 'legal_arguments', {
           transaction: t,
         }),
