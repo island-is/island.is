@@ -12,10 +12,6 @@ const csvColumnSeparatorSafeValue = (
   value: string,
   columnSeparator: string,
 ): string => {
-  /**
-   * Note:
-   *
-   */
   return value?.includes(columnSeparator) ? `"${value}"` : value
 }
 
