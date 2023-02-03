@@ -193,7 +193,6 @@ export const mapAlcoholLicence = (
   year: alcoholLicence.skraningarAr
     ? parseInt(alcoholLicence.skraningarAr)
     : undefined,
-  // TODO: Module './AdfaraBeidni' has already exported a member named 'AdfarabeidniFromJSON'. Consider explicitly re-exporting to resolve the ambiguity.
   validFrom: alcoholLicence.gildirFra ? alcoholLicence.gildirFra : undefined,
   validTo: alcoholLicence.gildirTil ? alcoholLicence.gildirTil : undefined,
   licenseHolder: alcoholLicence.leyfishafi?.trim() ?? '',
