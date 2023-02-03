@@ -4,7 +4,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
-import { PropertyDetail } from '../../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 
 export const PropertiesManager: FC<FieldBaseProps> = ({
   application,

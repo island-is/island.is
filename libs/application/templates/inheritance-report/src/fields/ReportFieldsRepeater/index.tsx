@@ -36,10 +36,14 @@ export const ReportFieldsRepeater: FC<
 > = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
-  const error = errors
-    ? (errors[id.replace('.data', '')] as any)?.data ||
-      (errors[id.replace('.data', '')] as any)?.total
-    : undefined
+  const splitId = id.split('.')
+
+  const error =
+    errors && errors[splitId[0]]
+      ? (errors[splitId[0]] as any)[splitId[1]]?.data ||
+        (errors[splitId[0]] as any)?.total
+      : undefined
+
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
@@ -99,25 +103,25 @@ export const ReportFieldsRepeater: FC<
   /* ------ Set stocks value ------ */
   useEffect(() => {
     setValue(`${index}.value`, String(faceValue * rateOfExchange))
-  }, [faceValue, rateOfExchange, setValue])
+  }, [faceValue, index, rateOfExchange, setValue])
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
     setTaxFreeInheritance(TaxFreeLimit * percentage)
     setInheritance(
-      (Number(answers.assetsTotal) -
-        Number(answers.debtsTotal) +
-        Number(answers.businessTotal) -
-        Number(answers.totalDeduction)) *
+      (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+        Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+        Number(getValueViaPath(answers, 'business.businessTotal')) -
+        Number(getValueViaPath(answers, 'totalDeduction'))) *
         percentage,
     )
     setTaxableInheritance(inheritance - taxFreeInheritance)
-    setInheritanceTax((inheritance - taxFreeInheritance) * 0.1)
+    setInheritanceTax(Math.round(taxableInheritance * 0.01))
 
     setValue(`${index}.taxFreeInheritance`, taxFreeInheritance)
     setValue(`${index}.inheritance`, inheritance)
+    setValue(`${index}.inheritanceTax`, Math.round(taxableInheritance * 0.01))
     setValue(`${index}.taxableInheritance`, taxableInheritance)
-    setValue(`${index}.inheritanceTax`, inheritanceTax)
   }, [
     index,
     percentage,
@@ -126,6 +130,7 @@ export const ReportFieldsRepeater: FC<
     taxableInheritance,
     inheritanceTax,
     setValue,
+    answers,
   ])
 
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
@@ -162,7 +167,7 @@ export const ReportFieldsRepeater: FC<
       {fields.map((repeaterField, index) => {
         const fieldIndex = `${id}[${index}]`
         return (
-          <Box position="relative" key={repeaterField.id} marginTop={3}>
+          <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
               <Text variant="h4" marginBottom={2}>
                 {props.repeaterHeaderText + ' ' + (index + 1)}
@@ -204,13 +209,13 @@ export const ReportFieldsRepeater: FC<
                         repeaterField[field.id]
                           ? repeaterField[field.id]
                           : field.id === 'taxFreeInheritance'
-                          ? formatCurrency(String(taxFreeInheritance))
+                          ? taxFreeInheritance
                           : field.id === 'inheritance'
-                          ? formatCurrency(String(inheritance))
+                          ? inheritance
                           : field.id === 'taxableInheritance'
-                          ? formatCurrency(String(taxableInheritance))
+                          ? taxableInheritance
                           : field.id === 'inheritanceTax'
-                          ? formatCurrency(String(inheritanceTax))
+                          ? inheritanceTax
                           : ''
                       }
                       format={field.format}

@@ -4,9 +4,9 @@ import { render, screen } from '@testing-library/react'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import RestrctionTags from './RestrictionTags'
 
@@ -16,7 +16,7 @@ const renderRestrictionTags = (workingCase: Case) =>
 describe('<RestrictionTags />', () => {
   const selector = { selector: 'span' }
   test('should not render for investication cases', () => {
-    const theCase = { type: CaseType.BODY_SEARCH } as Case
+    const theCase = { type: CaseType.BodySearch } as Case
     const result = renderRestrictionTags(theCase)
 
     expect(result.container).toBeEmptyDOMElement()
@@ -44,7 +44,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted travel ban cases', () => {
     const theCase = {
-      type: CaseType.TRAVEL_BAN,
+      type: CaseType.TravelBan,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.MEDIA,
@@ -63,7 +63,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted travel ban cases', () => {
     const theCase = {
-      type: CaseType.TRAVEL_BAN,
+      type: CaseType.TravelBan,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -90,7 +90,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted custody cases', () => {
     const theCase = {
-      type: CaseType.CUSTODY,
+      type: CaseType.Custody,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -119,7 +119,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted admission cases', () => {
     const theCase = {
-      type: CaseType.ADMISSION_TO_FACILITY,
+      type: CaseType.AdmissionToFacility,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
