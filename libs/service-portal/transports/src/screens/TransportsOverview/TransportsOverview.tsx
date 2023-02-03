@@ -1,15 +1,13 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
-import {
-  ServicePortalPath,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
+import { Navigate } from 'react-router-dom'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useNamespaces } from '@island.is/localization'
+import { TransportPaths } from '../..'
 
 export const TransportsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
 
-  return <Redirect to={ServicePortalPath.TransportMyVehicles} />
+  return <Navigate to={TransportPaths.AssetsMyVehicles} />
 }
 
 export default TransportsOverview

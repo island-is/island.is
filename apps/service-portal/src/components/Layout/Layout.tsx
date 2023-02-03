@@ -65,8 +65,7 @@ const Layout: FC = ({ children }) => {
       return {
         title: formatMessage(item.name),
         href: item.path,
-        active:
-          item.path && matchPath({ path: item.path, end: true }, pathname),
+        active: item.path && pathname.includes(item.path),
         items: item.children
           .filter((x) => !x.navHide)
           .map((child) => {

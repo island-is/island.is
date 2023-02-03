@@ -8,14 +8,21 @@ export const transportsModule: PortalModule = {
   name: 'Farartæki',
   routes: ({ userInfo }) => [
     {
-      name: m.yourVehicles,
+      name: m.transports,
+      path: TransportPaths.TransportRoot,
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      render: () =>
+        lazy(() => import('./screens/TransportsOverview/TransportsOverview')),
+    },
+    {
+      name: m.myVehicles,
       path: TransportPaths.AssetsVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
     {
       name: m.myVehicles,
-      path: TransportPaths.AssetsVehicles,
+      path: TransportPaths.AssetsMyVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
@@ -47,6 +54,14 @@ export const transportsModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
       key: 'VehicleLookup',
+      render: () => lazy(() => import('./screens/Lookup/Lookup')),
+    },
+    {
+      name: 'Loftbrú',
+      path: TransportPaths.TransportAirDiscount,
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.internalProcuring),
       render: () => lazy(() => import('./screens/Lookup/Lookup')),
     },
   ],
