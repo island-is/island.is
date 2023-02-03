@@ -801,7 +801,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Adfarabeidni"
+              "$ref": "#/definitions/AdfarabeidniSimple"
             },
             "x-nullable": false
           }
@@ -2617,7 +2617,7 @@
         }
       }
     },
-    "Adfarabeidni": {
+    "AdfarabeidniSimple": {
       "type": "object",
       "properties": {
         "audkenni": {
