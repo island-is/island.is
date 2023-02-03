@@ -57,7 +57,12 @@ const TryggingastofnunHeader: React.FC<HeaderProps> = ({
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" as="h1" fontWeight="semiBold">
+              <Text
+                variant="h1"
+                as="h1"
+                color="blueberry600"
+                fontWeight="semiBold"
+              >
                 {organizationPage.title}
               </Text>
             </Link>
