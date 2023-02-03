@@ -194,7 +194,6 @@ const nullHandledDate = (date: Date): Date | undefined => {
 export const mapAlcoholLicence = (
   alcoholLicence: Afengisleyfi,
 ): AlcoholLicence => ({
-  caseType: alcoholLicence.malategund?.trim() ?? '',
   licenceType: alcoholLicence.tegund?.trim() ?? '',
   licenceSubType: alcoholLicence.tegundLeyfis?.trim() ?? '',
   licenseNumber: alcoholLicence.leyfisnumer?.trim() ?? '',
@@ -202,16 +201,15 @@ export const mapAlcoholLicence = (
   year: alcoholLicence.skraningarAr
     ? parseInt(alcoholLicence.skraningarAr)
     : undefined,
-  // TODO: Ask for these validFrom and validTo value types to be changed to Date (like we have for Operating Licences)
   // TODO: Module './AdfaraBeidni' has already exported a member named 'AdfarabeidniFromJSON'. Consider explicitly re-exporting to resolve the ambiguity.
   validFrom: alcoholLicence.gildirFra
-    ? nullHandledDate(new Date(alcoholLicence.gildirFra))
+    ? nullHandledDate(alcoholLicence.gildirFra)
     : undefined,
   validTo: alcoholLicence.gildirTil
-    ? nullHandledDate(new Date(alcoholLicence.gildirTil))
+    ? nullHandledDate(alcoholLicence.gildirTil)
     : undefined,
   licenseHolder: alcoholLicence.leyfishafi?.trim() ?? '',
-  licenseResponsible: alcoholLicence.abyrgdarmaur?.trim() ?? '',
+  licenseResponsible: alcoholLicence.abyrgdarmadur?.trim() ?? '',
 })
 
 export function constructUploadDataObject(
