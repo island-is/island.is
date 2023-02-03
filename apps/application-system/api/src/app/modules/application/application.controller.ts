@@ -259,6 +259,7 @@ export class ApplicationController {
         templateTypeToIsReady[application.typeId] = false
       }
     }
+
     return filteredApplications
   }
 

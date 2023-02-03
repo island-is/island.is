@@ -106,6 +106,7 @@ export class ApplicationSerializer
         },
         deleteButton: roleInState?.delete,
       },
+      pendingAction: helper.getCurrentStatePendingAction(application, userRole),
       name: getApplicationName(),
       institution: template.institution
         ? intl.formatMessage(template.institution)
