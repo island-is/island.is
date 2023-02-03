@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import merge from 'deepmerge'
 
 type MockGQLOptions = {
   responseKey?: string
@@ -39,26 +40,39 @@ export async function mockQGL<T>(
   await page.route(pattern, async (route) => {
     // Set mock
     const response = patchResponse ? await (await route.fetch()).json() : {}
-    const payload = { ...response?.data }
-    console.log('Payload:', payload)
-    console.log('Payload (externalData):', payload[key]?.externalData)
-
-    // TODO handle nested object
-    payload[key] = Array.isArray(mockData) ? mockData : { ...mockData }
-    const data = { data: payload }
+    const originalData = { ...response?.data }
+    const patchedData = merge(
+      originalData,
+      Object.fromEntries([[key, mockData]]),
+      { arrayMerge: (_, source) => source },
+    )
+    const data = { data: patchedData }
 
     console.log(`Got a mock-match for > ${route.request().url()} <`)
     console.log('MOCKING ->', data)
-    route.fulfill({ body: JSON.stringify(data) })
+    console.log('(original):', originalData)
+    console.log('(mocked): ', mockData)
+    console.log('(merged): ', patchedData)
+
+    const body = JSON.stringify(data)
+    console.log('Body:', body)
+    route.fulfill({ body })
   })
 }
 
 export async function disablePreviousApplications(page: Page) {
   await mockQGL(page, 'ApplicationApplications', [])
+  await mockQGL(page, 'UpdateApplication', { patchResponse: true })
+  //syslumennOnEntry.data.estates
   await mockQGL(
     page,
     'UpdateApplication',
-    { externalData: { existingApplication: null } },
+    {
+      externalData: {
+        existingApplication: { data: ["I'm MOCKED"] },
+        syslumennOnEntry: { data: { estate: ["I'm MOCKED"] } },
+      },
+    },
     { patchResponse: true },
   )
 }
