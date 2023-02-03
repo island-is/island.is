@@ -42,8 +42,7 @@ applicationTest.describe('Announcement of Death', () => {
 
     await expect(
       page.locator('h2:text("Fyrri umsóknir um andlátstilkynningu")'),
-    ).toBeVisible()
-    return
+    ).not.toBeVisible()
 
     // Accept handling the announcement
     await page.locator('input[value=continue]').click()
