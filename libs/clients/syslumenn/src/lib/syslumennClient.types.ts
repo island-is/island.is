@@ -74,7 +74,6 @@ export interface OperatingLicensesCSV {
 }
 
 export interface AlcoholLicence {
-  caseType?: string
   licenceType?: string
   licenceSubType?: string
   licenseNumber?: string
