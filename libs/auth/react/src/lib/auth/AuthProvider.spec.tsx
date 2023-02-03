@@ -74,8 +74,8 @@ describe('AuthProvider', () => {
     }
     mockedGetUserManager.mockReturnValue(userManager)
     mockedGetAuthSettings.mockReturnValue({
-      redirectPath: `/callback`,
-      redirectPathSilent: `/callback-silent`,
+      redirectPath: '/callback',
+      redirectPathSilent: '/callback-silent',
     })
   })
 

@@ -8,6 +8,9 @@ import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
 import { Layout } from '../components/Layout/Layout'
 
+/**
+ * Creates routes for application-system. All routes are defined here.
+ */
 export const createRoutes = (basename: string) =>
   createBrowserRouter(
     [

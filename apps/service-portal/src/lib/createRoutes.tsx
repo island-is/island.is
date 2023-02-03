@@ -3,7 +3,7 @@ import { Dashboard } from '../screens/Dashboard/Dashboard'
 import { Root } from '../components/Root'
 
 /**
- * Create the router for the my-pages portal. All routes are defined here.
+ * Creates routes for the my-pages portal. All routes are defined here.
  */
 export const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
   {

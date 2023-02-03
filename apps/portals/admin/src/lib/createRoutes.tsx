@@ -3,7 +3,7 @@ import { Dashboard } from '../screens/Dashboard/Dashboard'
 import { Layout } from '../components/Layout/Layout'
 
 /**
- * Create the router for the admin portal. All routes are defined here.
+ * Creates routes for the admin portal. All routes are defined here.
  */
 export const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
   {

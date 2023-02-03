@@ -12,7 +12,7 @@ export const AuthErrorScreen = ({
   basePath,
 }: AuthenticatorErrorScreenProps) => {
   const onTryAgainHandler = () => {
-    window.location.href = basePath ? `/${basePath}` : '/'
+    window.location.href = `/${basePath}`
   }
 
   return (
