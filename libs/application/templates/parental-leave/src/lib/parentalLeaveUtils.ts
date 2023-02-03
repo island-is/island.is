@@ -645,7 +645,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     '0',
   ) as string
 
-  const isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
+  let isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
+  // olf Empployer obj
+  if (!isSelfEmployed){
+    isSelfEmployed = getValueViaPath(answers, 'employer.isSelfEmployed') as YesOrNo
+  }
 
   let isReceivingUnemploymentBenefits = getValueViaPath(
     answers,
@@ -716,7 +720,20 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
-  const employers = getValueViaPath(answers, 'employers') as EmployerRow[]
+  let employers = getValueViaPath(answers, 'employers') as EmployerRow[]
+  // old employer object
+  if (!employers || employers.length === 0){
+    const employerEmailObj = getValueViaPath(answers, 'employer.email')
+    if (employerEmailObj){
+      employers.push({
+        email: employerEmailObj,
+        ratio: '100%',
+        phoneNumber: getValueViaPath(answers, 'employerPhoneNumber'),
+        reviewerNationalRegistryId: getValueViaPath(answers, 'employerReviewerNationalRegistryId'),
+        companyNationalRegistryId: getValueViaPath(answers, 'employerNationalRegistryId')
+      } as EmployerRow)
+    }
+  }
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
