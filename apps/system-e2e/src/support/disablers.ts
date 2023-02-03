@@ -69,8 +69,8 @@ export async function disablePreviousApplications(page: Page) {
     'UpdateApplication',
     {
       externalData: {
-        existingApplication: { data: ["I'm MOCKED"] },
-        syslumennOnEntry: { data: { estate: ["I'm MOCKED"] } },
+        existingApplication: { data: [], mocked: true },
+        syslumennOnEntry: { data: { estate: {}, mocked: true } },
       },
     },
     { patchResponse: true },
