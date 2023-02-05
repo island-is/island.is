@@ -21,11 +21,5 @@ component_management:
     - component_id: api-graphql # this is an identifier that should not be changed
       name: Portal GraphQL
       paths:
-        - apps/front1/**
-        - libs/lib2/**
-    - component_id: backend1app
-      name: The backend
-      paths:
-        - apps/back1/**
-        - libs/lib1/**
-        - libs/lib2/**
+        - apps/api/**
+        - libs/api/domains/**
