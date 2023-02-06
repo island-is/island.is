@@ -108,19 +108,12 @@ export const sections = {
       defaultMessage: 'Ákærumeðferð',
       description: 'Notaður sem titill í hliðarstiku í ákærum hjá sækjendum',
     },
-    processing: {
+    policeCaseFiles: {
       id:
-        'judicial.system.core:sections.indictment_case_prosecutor_section.processing',
-      defaultMessage: 'Málsmeðferð',
+        'judicial.system.core:sections.indictment_case_prosecutor_section.police_case_files',
+      defaultMessage: 'Málsgögn',
       description:
-        'Notaður sem texti fyrir Málsmeðferð skref í hliðarstiku í ákærum hjá sækjendum',
-    },
-    caseFiles: {
-      id:
-        'judicial.system.core:sections.indictment_case_prosecutor_section.case_files',
-      defaultMessage: 'Dómskjöl',
-      description:
-        'Notaður sem texti fyrir Dómskjöl skref í hliðarstiku í ákærum hjá sækjendum',
+        'Notaður sem texti fyrir Málsgögn skref í hliðarstiku í ákærum hjá sækjendum',
     },
     caseFile: {
       id:
@@ -129,12 +122,26 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Skjalaskrá skref í hliðarstiku í ákærum hjá sækjendum',
     },
-    policeCaseFiles: {
+    processing: {
       id:
-        'judicial.system.core:sections.indictment_case_prosecutor_section.police_case_files',
-      defaultMessage: 'Málsgögn',
+        'judicial.system.core:sections.indictment_case_prosecutor_section.processing',
+      defaultMessage: 'Málsmeðferð',
       description:
-        'Notaður sem texti fyrir Málsgögn skref í hliðarstiku í ákærum hjá sækjendum',
+        'Notaður sem texti fyrir Málsmeðferð skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+    indictment: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.indictment',
+      defaultMessage: 'Ákæra',
+      description:
+        'Notaður sem texti fyrir Ákæra skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+    caseFiles: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.case_files',
+      defaultMessage: 'Dómskjöl',
+      description:
+        'Notaður sem texti fyrir Dómskjöl skref í hliðarstiku í ákærum hjá sækjendum',
     },
     overview: {
       id:

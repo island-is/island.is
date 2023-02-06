@@ -20,11 +20,11 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { CoOwnerAndOperator, UserInformation } from '../types'
+import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
@@ -108,7 +108,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,

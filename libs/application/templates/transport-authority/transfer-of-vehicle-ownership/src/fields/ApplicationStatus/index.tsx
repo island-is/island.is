@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { review } from '../../lib/messages'
 import { States } from '../../lib/constants'
-import { ReviewScreenProps } from '../../types'
+import { ReviewScreenProps } from '../../shared'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
 

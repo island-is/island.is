@@ -5,7 +5,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { ReviewCoOwnerAndOperatorField } from '../../../types'
+import { ReviewCoOwnerAndOperatorField } from '../../../shared'
 
 export const mainOperatorSubSection = buildSubSection({
   id: 'buyerMainOperator',

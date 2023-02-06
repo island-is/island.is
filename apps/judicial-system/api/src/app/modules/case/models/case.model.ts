@@ -1,6 +1,6 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import type {
   Case as TCase,
@@ -9,7 +9,6 @@ import type {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseState,
-  CaseType,
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
@@ -17,12 +16,16 @@ import type {
   IndictmentSubtypeMap,
   CrimeSceneMap,
 } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
+
+registerEnumType(CaseType, { name: 'CaseType' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -38,7 +41,7 @@ export class Case implements TCase {
   @Field(() => String)
   readonly origin!: CaseOrigin
 
-  @Field(() => String)
+  @Field(() => CaseType)
   readonly type!: CaseType
 
   @Field(() => GraphQLJSONObject, { nullable: true })
@@ -280,4 +283,10 @@ export class Case implements TCase {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentIntroduction?: string
+
+  @Field(() => [IndictmentCount], { nullable: true })
+  readonly indictmentCounts?: IndictmentCount[]
 }
