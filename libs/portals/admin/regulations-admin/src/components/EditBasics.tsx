@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import * as s from './EditBasics.css'
 import {
   Box,
@@ -18,12 +18,12 @@ import {
   formatAmendingRegTitle,
   formatAmendingRegBody,
 } from '../utils/formatAmendingRegulation'
-import { DraftChangeForm } from '../state/types'
 import { HTMLText } from '@island.is/regulations'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
   const { draft, actions } = useDraftingState()
+  const [editorKey, setEditorKey] = useState('initial')
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -51,6 +51,7 @@ export const EditBasics = () => {
     if (!text.value && draft.type.value === 'amending') {
       let additionString = ''
       let repealString = ''
+
       Object.values(draft.impacts).forEach(([impact]) => {
         if (impact.type === 'amend') {
           const additions = formatAmendingRegBody(impact.diff?.value)
@@ -62,6 +63,7 @@ export const EditBasics = () => {
       })
 
       updateState('text', (additionString + repealString) as HTMLText)
+      setEditorKey('redraw')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
@@ -98,27 +100,15 @@ export const EditBasics = () => {
             startExpanded={startTextExpanded}
           >
             <Box marginBottom={3}>
-              {draft.text.value ? (
-                // Force re-render of TinyMCE editor for inital and empty values
-                // If we display the editor before we generate ammending regulation the editor is empty
-                <EditorInput
-                  label={t(msg.text)}
-                  hiddenLabel
-                  draftId={draft.id}
-                  value={draft.text.value}
-                  onChange={(value) => updateState('text', value)}
-                  error={text.showError && text.error && t(text.error)}
-                />
-              ) : (
-                <EditorInput
-                  label={t(msg.text)}
-                  hiddenLabel
-                  draftId={draft.id}
-                  value={draft.text.value}
-                  onChange={(value) => updateState('text', value)}
-                  error={text.showError && text.error && t(text.error)}
-                />
-              )}
+              <EditorInput
+                key={editorKey} // Force re-render of TinyMCE
+                label={t(msg.text)}
+                hiddenLabel
+                draftId={draft.id}
+                value={draft.text.value}
+                onChange={(value) => updateState('text', value)}
+                error={text.showError && text.error && t(text.error)}
+              />
             </Box>
             <Box>
               <Divider />
