@@ -21,6 +21,16 @@ import {
 } from './dto/european-health-insurance-card.dtos'
 import { TemplateApiModuleActionProps } from '../../../types'
 
+export interface NationalRegistry {
+  address: any
+  nationalId: string
+  fullName: string
+  name: string
+  ssn: string
+  length: number
+  data: any
+}
+
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   constructor(
@@ -31,34 +41,41 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
   }
 
+  getObjectKey(obj: any, value: any) {
+    return Object.keys(obj).filter((key) => obj[key] === value)
+  }
+
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
+    // const nridArr = []
+    // const nationalRegistryData = application.externalData.nationalRegistry
+    //   ?.data as NationalRegistry
+    // nridArr.push(nationalRegistryData.nationalId)
+
+    // const nationalRegistryDataSpouse = application?.externalData
+    //   ?.nationalRegistrySpouse?.data as NationalRegistry
+    // nridArr.push(nationalRegistryDataSpouse.nationalId)
+
+    // const nationalRegistryDataChildren = (application?.externalData
+    //   ?.childrenCustodyInformation as unknown) as NationalRegistry[]
+    // for (let i = 0; i < nationalRegistryDataChildren.length; i++) {
+    //   nridArr.push(nationalRegistryDataChildren[i].nationalId)
+    // }
+
+    this.logger.info('EHIC: Getting response from service')
+
     const resp = await this.ehic.cardStatus({
-      usernationalid: auth.nationalId,
-      applicantnationalids: ['1010101010'],
+      usernationalid: '0000000000',
+      applicantnationalids: ['0000000000'],
     })
-    console.log(resp)
-    console.log(auth)
-    console.log(application)
-    return {
-      isInsured: true,
-      nrid: '0004764579',
-      cards: [
-        {
-          id: '12346',
-          expires: new Date(),
-          reSent: new Date(),
-          issued: new Date(),
-          sentStatus: SentStatus.SENT,
-          type: CardType.PHYSICAL,
-        },
-      ],
-    } as CardResponse
+
+    return resp
   }
 
   async applyForPhysicalCard({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
+    const applicants = this.getObjectKey(application.answers, true)
     console.log(auth)
     console.log(application)
     return {
