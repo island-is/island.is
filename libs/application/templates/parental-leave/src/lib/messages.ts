@@ -2532,7 +2532,7 @@ export const statesMessages = defineMessages({
   },
   vinnumalastofnunApproveEditsDescription: {
     id: 'pl.application:vinnumalastofnunApproveEdits.description',
-    defaultMessage: 'Vinnumálastofnun er að fara yfir tímabilbreytingar þínar.',
+    defaultMessage: 'Vinnumálastofnun er að fara yfir breytingar þínar.',
     description: 'Description of the state - vinnumalastofnunApproveEdits',
   },
 

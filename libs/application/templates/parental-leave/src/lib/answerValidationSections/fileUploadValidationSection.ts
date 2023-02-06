@@ -103,11 +103,10 @@ export const fileUploadValidationSection = (
       additionalDocuments ||
       isEmpty((obj as { additionalDocuments: unknown[] }).additionalDocuments)
     ) {
-      return buildError(
-        errorMessages.requiredAttachment,
-        'additionalDocuments',
-        FILEUPLOAD,
-      )
+      return {
+        path: 'additionalDocumentsScreen.fileUpload.additionalDocuments',
+        message: errorMessages.requiredAttachment,
+      }
     }
 
     return undefined
