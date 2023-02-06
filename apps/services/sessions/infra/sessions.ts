@@ -6,16 +6,24 @@ const workerName = 'services-sessions-read'
 const imageName = 'services-sessions'
 const dbName = 'services_sessions'
 
+const servicePostgresInfo = {
+  // The service has only read permissions
+  username: serviceName,
+  name: dbName,
+  passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
+}
+
+const workerPostgresInfo = {
+  // Worker has write permissions
+  username: workerName,
+  name: dbName,
+  passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
+}
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
   return service(serviceName)
     .namespace(namespace)
     .image(imageName)
-    .postgres({
-      // The service has only read permissions
-      username: serviceName,
-      name: dbName,
-      passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
-    })
+    .postgres(servicePostgresInfo)
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -73,11 +81,13 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
-    .postgres({
-      // Worker has write permissions
-      username: workerName,
-      name: dbName,
-      passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
+    .postgres(workerPostgresInfo)
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: workerPostgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
