@@ -5,17 +5,6 @@ export const headerBg = style({
   height: 385,
   marginTop: -130,
   paddingTop: 130,
-  backgroundRepeat: 'no-repeat',
-  backgroundSize: 'cover',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      backgroundColor: '#c5e9ac',
-    },
-    lg: {
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/43iXK31NyP2Uv2Unxn9teW/b2b246e15c0b7f055c8c33782620b02e/TR-Header.jpg')",
-    },
-  }),
 })
 
 export const iconCircle = style({

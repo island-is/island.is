@@ -1,9 +1,23 @@
 import { OrganizationPage } from '@island.is/web/graphql/schema'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import * as styles from './HeilbrigdisstofnunNordurlandsHeader.css'
+
+const getDefaultStyle = () => {
+  return {
+    backgroundColor: '#004065',
+    backgroundRepeat: 'no-repeat',
+    backgroundPositionX: '110%',
+    backgroundPositionY: '30%',
+    backgroundImage:
+      'url(https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg)',
+  }
+}
 
 interface HeaderProps {
   organizationPage: OrganizationPage
@@ -13,9 +27,20 @@ const HeilbrigdisstofnunNordurlandsHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
+    [organizationPage.organization.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+  const { width } = useWindowSize()
+
+  const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box className={styles.headerBg}>
+    <Box
+      style={n(`hsnHeader-${screenWidth}`, getDefaultStyle())}
+      className={styles.headerBg}
+    >
       <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={

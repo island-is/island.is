@@ -10,14 +10,23 @@ import { useNamespace } from '@island.is/web/hooks'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './SyslumennHeader.css'
 
-const getDefaultBackgroundStyle = (width: number) => {
+const getDefaultStyle = (width: number) => {
   if (width >= theme.breakpoints.lg) {
-    return `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
-    linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%),
-    url('https://images.ctfassets.net/8k0h54kbe6bj/47lCoLCMeg5tCuc6HXbKyg/dc0ca3f94f536ad62e40398baa90db04/Group.svg')`
+    return {
+      background: `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
+      linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%),
+      url('https://images.ctfassets.net/8k0h54kbe6bj/47lCoLCMeg5tCuc6HXbKyg/dc0ca3f94f536ad62e40398baa90db04/Group.svg')`,
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: '5% 25%',
+      backgroundSize: '100%, 100%, 60%',
+      backgroundBlendMode: 'saturation',
+    }
   }
-  return `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
-  linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
+  return {
+    background: `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
+    linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`,
+    backgroundBlendMode: 'saturation',
+  }
 }
 
 interface HeaderProps {
@@ -37,12 +46,7 @@ const SyslumennHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
 
   return (
     <Box
-      style={{
-        background: n(
-          `syslumennHeaderBackground-${screenWidth}`,
-          getDefaultBackgroundStyle(width),
-        ),
-      }}
+      style={n(`syslumennHeader-${screenWidth}`, getDefaultStyle(width))}
       className={cn(styles.headerBg)}
     >
       <Box className={styles.headerWrapper}>

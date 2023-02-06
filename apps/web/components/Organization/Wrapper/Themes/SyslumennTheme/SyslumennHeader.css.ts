@@ -5,15 +5,6 @@ export const headerBg = style({
   height: 385,
   marginTop: -130,
   paddingTop: 130,
-  backgroundBlendMode: 'saturation',
-  ...themeUtils.responsiveStyle({
-    xs: {},
-    lg: {
-      backgroundRepeat: 'no-repeat !important',
-      backgroundPosition: '5% 25% !important',
-      backgroundSize: '100%, 100%, 60% !important',
-    },
-  }),
 })
 
 export const iconCircle = style({
