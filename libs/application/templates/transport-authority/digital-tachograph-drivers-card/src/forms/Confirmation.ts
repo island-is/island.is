@@ -4,7 +4,6 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import {
   cardType,
   applicant,
@@ -12,6 +11,7 @@ import {
   payment,
   confirmation,
 } from '../lib/messages'
+import { Logo } from '../assets/Logo'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
