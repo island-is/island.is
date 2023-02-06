@@ -142,46 +142,57 @@ const serializeService: SerializeMethod<KubeService> = async (
   if (Object.keys(serviceDef.secrets).length > 0) {
     result.spec.spec.containers.env = serviceDef.secrets
     Object.entries(serviceDef.secrets).forEach(([key, value]) => {
-       
-        name = `${key}`: {
-        valueFrom: {
-          secretKeyRef: {
-            name: key,
-            key: value
-          }
-        }
+      result.spec.spec.containers.env = {
+        [`${key}`]: {
+          valueFrom: {
+            secretKeyRef: {
+              name: key,
+              key: value,
+            },
+          },
+        },
       }
-    
-    });
-
+    })
   }
+
   if (Object.keys(serviceDef.files).length > 0) {
-    result.files = []
     serviceDef.files.forEach((f) => {
-      result.files!.push(f.filename)
-      mergeObjects(result.env, { [f.env]: `/etc/config/${f.filename}` })
+      result.spec.spec.containers.volumeMounts = []
+      result.spec.spec.containers.volumeMounts.push({
+        name: f.filename,
+        mountPath: `/etc/config/${f.filename}`,
+      })
     })
   }
 
   // service account
   if (serviceDef.serviceAccountEnabled) {
-    result.podSecurityContext = {
+    result.spec.spec.containers.securityContext = {
+      allowPrivilegeEscalation: false,
+      privileged: false,
       fsGroup: 65534,
     }
     const serviceAccountName = serviceDef.accountName ?? serviceDef.name
-    result.serviceAccount = {
-      create: true,
-      name: serviceAccountName,
-      annotations: {
-        'eks.amazonaws.com/role-arn': `arn:aws:iam::${opsenv.awsAccountId}:role/${serviceAccountName}`,
-      },
-    }
+    result.spec.spec.serviceAccountName = serviceAccountName
   }
 
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
     if (serviceDef.initContainers.containers.length > 0) {
-      result.initContainer = {
+      serviceDef.initContainers.containers.forEach((c) => {
+        const legacyCommand = []
+        legacyCommand.push(c.command)
+        result.spec.spec.initContainers.push({
+          args: c.args,
+          command: legacyCommand,
+          name: c.name,
+          image: c,
+          env: c.
+        })
+      })
+      result.spec.spec.initContainers, serviceDef.initContainers.containers
+
+      result.initcontainersblah = {
         containers: serializeContainerRuns(
           serviceDef.initContainers.containers,
         ),

@@ -1,7 +1,5 @@
 import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
 import { ReferenceResolver, EnvironmentConfig } from './charts'
-import { metadataKey } from 'aws-sdk/clients/health'
-import { string } from 'yargs'
 
 // Output types
 export type ContainerRunHelm = {
@@ -36,6 +34,24 @@ export type OutputVolumeMountNative = {
   name: string
   mountPath: string
 }
+export type InitContainerKube = {
+  name?: string
+  securityContext?: string
+  image: string
+  command?: string[]
+  args?: string[]
+  env: ContainerEnvironmentVariablesOrSecrets
+  resources?: {
+    limits?: {
+      cpu: string
+      memory: string
+    }
+    requests: {
+      cpu: string
+      memory: string
+    }
+  }
+}
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerEnvironmentVariablesOrSecrets = {
   [name: string]:
@@ -46,6 +62,7 @@ export type ContainerSecrets = { [name: string]: string }
 export type SecurityContext = {
   allowPrivilegeEscalation: boolean
   privileged: boolean
+  fsGroup?: number
 }
 export interface KubeService {
   apiVersion?: 'apps/v1'
@@ -80,24 +97,7 @@ export interface KubeService {
       imagePullSecrets?: string
       securityContext?: SecurityContext
       serviceAccountName?: string
-      initContainers?: {
-        name: string
-        securityContext?: string
-        image: string
-        command?: string[]
-        args?: string[]
-        env: ContainerEnvironmentVariablesOrSecrets
-        resources?: {
-          limits?: {
-            cpu: string
-            memory: string
-          }
-          requests: {
-            cpu: string
-            memory: string
-          }
-        }
-      }
+      initContainers: InitContainerKube[]
       containers: {
         name: string
         securityContext?: SecurityContext
