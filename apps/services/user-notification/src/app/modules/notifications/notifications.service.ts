@@ -58,6 +58,8 @@ export class NotificationsService {
       const templates = await results.json()
 
       for (const item of templates.data.hnippTemplateCollection.items) {
+        //cache check
+        item.date = new Date().toISOString()
         if (item.args == null) {
           item.args = []
         }

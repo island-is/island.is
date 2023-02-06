@@ -6,6 +6,7 @@ import {
   Query,
   CacheInterceptor,
   UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common'
 import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
@@ -118,18 +119,17 @@ export class NotificationsController {
     const template = await this.notificationsService.getTemplate(
       body.templateId,
     )
-    // return this.notificationsService.formatArguments(body, template)
     // validate
     this.notificationsService.validateArgCounts(body, template)
-    // if (template.args?.length != body.args.length) {
-    //   throw new BadRequestException(
-    //     "Number of arguments doesn't match - template requires " +
-    //       template.args?.length +
-    //       ' arguments but ' +
-    //       body.args?.length +
-    //       ' were provided',
-    //   )
-    // }
+    if (template.args?.length != body.args.length) {
+      throw new BadRequestException(
+        "Number of arguments doesn't match - template requires " +
+          template.args?.length +
+          ' arguments but ' +
+          body.args?.length +
+          ' were provided',
+      )
+    }
     // add to queue
     const id = await this.queue.add(body)
     this.logger.info('Message queued ... ...', { messageId: id, ...body })
