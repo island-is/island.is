@@ -81,7 +81,7 @@ export type PortalModuleRenderValue<
 /**
  * A route defined by a portal module. Note that we are extending the React router RouteObject
  */
-export type PortalRoute = RouteObject & {
+export type PortalRoute = Omit<RouteObject, 'children'> & {
   /**
    * The title of this route
    */
@@ -114,8 +114,14 @@ export type PortalRoute = RouteObject & {
 
   /**
    * The render value of this component
+   * TODO - Remove render for RR element property
    */
-  render?: (props: PortalModuleProps) => PortalModuleRenderValue
+  render?(props: PortalModuleProps): PortalModuleRenderValue
+
+  /**
+   * Child routes of this route
+   */
+  children?: PortalRoute[]
 }
 
 export type PortalType = 'admin' | 'my-pages'
