@@ -8,21 +8,15 @@ import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { useMergeRefs } from '../../hooks/useMergeRefs'
 import { Icon } from '../IconRC/Icon'
-import { ActionMeta, ValueType } from 'react-select'
+import { ActionMeta, OptionsType, ValueType } from 'react-select'
 import { Option as OptionType } from '../Select/Select'
 import { CountryCodeSelect } from './CountryCodeSelect/CountryCodeSelect'
-import { countryCodes } from './CountryCodeSelect/countryCodes'
-
-const options = countryCodes.map((x) => ({
-  label: `${x.name} ${x.dial_code}`,
-  value: x.dial_code,
-  description: x.flag,
-}))
 
 type PhoneInputProps = Omit<
   InputProps,
   'rows' | 'type' | 'icon' | 'iconType' | 'backgroundColor'
 > & {
+  countryCodes: OptionsType<OptionType>
   backgroundColor?: InputBackgroundColor
   countryCodeValue?: ValueType<OptionType>
   onCountryCodeChange?: ((
@@ -48,17 +42,18 @@ export const PhoneInput = forwardRef(
       placeholder,
       tooltip,
       backgroundColor = 'white',
-      onFocus,
-      onBlur,
       readOnly,
-      onClick,
-      onKeyDown,
       textarea,
       size = 'md',
       fixedFocusState,
       autoExpand,
       loading,
       countryCodeValue,
+      countryCodes,
+      onFocus,
+      onBlur,
+      onClick,
+      onKeyDown,
       onCountryCodeChange,
       ...inputProps
     } = props
@@ -162,7 +157,7 @@ export const PhoneInput = forwardRef(
                   name={selectId}
                   onChange={handleSelectChange}
                   value={countryCodeValue}
-                  options={options}
+                  options={countryCodes}
                   disabled={disabled || readOnly}
                   backgroundColor={backgroundColor}
                   size={size}
@@ -170,7 +165,6 @@ export const PhoneInput = forwardRef(
                   onBlur={() => setHasFocus(false)}
                   onMenuOpen={() => setIsMenuOpen(true)}
                   onMenuClose={() => setIsMenuOpen(false)}
-                  defaultValue={options.find((x) => x.value === '+354')} // TODO
                   dataTestId={`country-code-test-${id}`}
                 />
                 <input

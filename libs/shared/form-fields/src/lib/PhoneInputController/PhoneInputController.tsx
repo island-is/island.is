@@ -1,16 +1,19 @@
-import React, { FC, useState, forwardRef } from 'react'
+import React, { useState, forwardRef } from 'react'
 import {
-  Icon,
   InputBackgroundColor,
   Option,
-  Box,
-  Select,
   PhoneInput,
 } from '@island.is/island-ui/core'
-import { Controller, Control, ValidationRules } from 'react-hook-form'
-import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
+import {
+  Controller,
+  Control,
+  ValidationRules,
+  useFormContext,
+} from 'react-hook-form'
+import NumberFormat from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { ValueType } from 'react-select'
+import { countryCodes as countryCodesJSON } from './countryCodes'
 
 interface Props {
   autoFocus?: boolean
@@ -26,7 +29,6 @@ interface Props {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   placeholder?: string
-  textarea?: boolean
   backgroundColor?: InputBackgroundColor
   currency?: boolean
   required?: boolean
@@ -37,6 +39,12 @@ interface Props {
   autoComplete?: 'off' | 'on'
 }
 
+const countryCodes = countryCodesJSON.map((x) => ({
+  label: `${x.name} ${x.dial_code}`,
+  value: x.dial_code,
+  description: x.flag,
+}))
+
 interface ChildParams {
   value?: string
   onBlur: () => void
@@ -44,12 +52,19 @@ interface ChildParams {
   name: string
 }
 
+const DEFAULT_COUNTRY_CODE = '+354'
+
+const getDefaultCountryCode = (phoneNumber?: string) => {
+  if (!phoneNumber) return DEFAULT_COUNTRY_CODE
+  const countryCode = phoneNumber.slice(0, -7) || DEFAULT_COUNTRY_CODE
+  return countryCode
+}
+
 export const PhoneInputController = forwardRef(
   (
     props: Props & TestSupport,
     ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const [countryCode, setCountryCode] = useState(354)
     const {
       autoFocus,
       defaultValue,
@@ -72,58 +87,75 @@ export const PhoneInputController = forwardRef(
       autoComplete,
     } = props
 
-    const [areaCode, setAreaCode] = useState<ValueType<Option>>({
-      label: '',
-      value: '',
-    })
+    const { watch, setValue } = useFormContext()
+    const formValue = watch(name) as string
 
-    console.log('control', control)
+    const defaultCountryCode = getDefaultCountryCode(defaultValue)
 
-    const handleAreaCodeChange = (value: ValueType<Option>) => {
-      setAreaCode(value)
+    const [countryCode, setCountryCode] = useState<ValueType<Option>>(
+      countryCodes.find((x) => x.value === defaultCountryCode),
+    )
+
+    const cc = (countryCode as Option).value.toString()
+
+    const handleCountryCodeChange = (value: ValueType<Option>) => {
+      // Update the form value with country code prefix
+      if (!formValue.startsWith('+')) {
+        setValue(name, `${(value as Option).value.toString()}${formValue}`)
+      } else if (formValue.startsWith(cc)) {
+        const updatedValue = formValue.replace(
+          cc,
+          (value as Option).value.toString(),
+        )
+        setValue(name, updatedValue)
+      }
+
+      setCountryCode(value)
     }
-
-    console.log('areaCode', areaCode)
 
     function renderChildInput(c: ChildParams & TestSupport) {
       const { value, onChange, ...props } = c
 
-      console.log('value', value)
-
       return (
-        <NumberFormat
-          size={size}
-          customInput={PhoneInput}
-          id={id}
-          autoFocus={autoFocus}
-          disabled={disabled}
-          readOnly={readOnly}
-          rightAlign={rightAlign}
-          backgroundColor={backgroundColor}
-          data-testid={dataTestId}
-          placeholder={placeholder}
-          label={label}
-          type="tel"
-          value={value}
-          format="###-####"
-          autoComplete={autoComplete}
-          loading={loading}
-          onChange={(
-            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-          ) => {
-            if (onInputChange) {
-              onInputChange(e)
-            }
-          }}
-          onValueChange={({ value }) => {
-            onChange(value)
-          }}
-          hasError={error !== undefined}
-          errorMessage={error}
-          required={required}
-          getInputRef={ref}
-          {...props}
-        />
+        <>
+          <NumberFormat
+            size={size}
+            customInput={PhoneInput}
+            id={id}
+            autoFocus={autoFocus}
+            disabled={disabled}
+            readOnly={readOnly}
+            rightAlign={rightAlign}
+            countryCodes={countryCodes}
+            backgroundColor={backgroundColor}
+            data-testid={dataTestId}
+            placeholder={placeholder}
+            label={label}
+            type="tel"
+            value={value?.replace(cc, '')}
+            format="###-####"
+            autoComplete={autoComplete}
+            loading={loading}
+            countryCodeValue={countryCode}
+            onCountryCodeChange={handleCountryCodeChange}
+            hasError={error !== undefined}
+            errorMessage={error}
+            required={required}
+            getInputRef={ref}
+            onChange={(
+              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+            ) => {
+              if (onInputChange) {
+                onInputChange(e)
+              }
+            }}
+            onValueChange={({ value }) => {
+              value ? onChange(cc + value) : onChange(value)
+            }}
+            {...props}
+          />
+          {formValue}
+        </>
       )
     }
 
@@ -132,7 +164,9 @@ export const PhoneInputController = forwardRef(
         name={name}
         control={control}
         rules={rules}
-        {...(defaultValue !== undefined && { defaultValue })}
+        {...(defaultValue !== undefined && {
+          defaultValue: `${defaultCountryCode}${defaultValue}`,
+        })}
         render={renderChildInput}
       />
     )
