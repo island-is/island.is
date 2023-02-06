@@ -130,6 +130,7 @@
     "clients-documents": "libs/clients/documents",
     "clients-driving-license": "libs/clients/driving-license",
     "clients-driving-license-book": "libs/clients/driving-license-book",
+    "clients-ehic-client-v1": "libs/clients/ehic-client-v1",
     "clients-electronic-registration-statistics": "libs/clients/electronic-registration-statistics",
     "clients-finance": "libs/clients/finance",
     "clients-financial-statements-inao": "libs/clients/financial-statements-inao",
