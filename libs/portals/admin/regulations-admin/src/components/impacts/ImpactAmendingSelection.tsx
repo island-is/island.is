@@ -4,7 +4,6 @@ import { impactMsgs } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   ensureRegName,
-  RegName,
   RegulationOptionList,
   RegulationType,
 } from '@island.is/regulations'
@@ -65,7 +64,9 @@ export const ImpactAmendingSelection = ({
 
   useEffect(() => {
     const regulationListRes =
-      (regulationList?.getRegulationOptionList as RegulationOptionList) || []
+      (ensureRegName(value) &&
+        (regulationList?.getRegulationOptionList as RegulationOptionList)) ||
+      []
 
     const optionNames = regulationListRes
       .filter((reg) => reg.type === 'base')
@@ -80,13 +81,15 @@ export const ImpactAmendingSelection = ({
         t(impactMsgs.regSelect_mentionedRepealed),
         regulationListRes,
       )
-    } else if (ensureRegName(value)) {
+    } else {
       selRegOptionsArray = [
         {
           type: '',
           disabled: true,
           value: '',
-          label: t(impactMsgs.regSelect_baseNotFound) + ' ' + value,
+          label: ensureRegName(value)
+            ? t(impactMsgs.regSelect_baseNotFound) + ' ' + value
+            : 'Nafn reglugerðar ekki rétt slegið inn',
         },
       ]
     }
@@ -110,8 +113,10 @@ export const ImpactAmendingSelection = ({
       inputValue={value}
       initialInputValue={undefined}
       label={t(impactMsgs.regSelect)}
-      onChange={(i, option) => {
-        handleOptionSelect(option.selectedItem as SelRegOption)
+      onChange={(option) => {
+        return option?.disabled
+          ? false
+          : handleOptionSelect(option as SelRegOption)
       }}
     />
   )
