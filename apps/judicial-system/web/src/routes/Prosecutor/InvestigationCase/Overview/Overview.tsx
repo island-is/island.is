@@ -355,6 +355,10 @@ export const Overview: React.FC = () => {
               <CopyLinkForDefenderButton
                 caseId={workingCase.id}
                 type={workingCase.type}
+                disabled={
+                  workingCase.state !== CaseState.RECEIVED ||
+                  !workingCase.courtDate
+                }
               >
                 {formatMessage(m.sections.copyLinkForDefenderButton)}
               </CopyLinkForDefenderButton>

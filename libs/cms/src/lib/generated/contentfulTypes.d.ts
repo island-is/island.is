@@ -910,6 +910,9 @@ export interface IFormFields {
 
   /** Recipient Form Field Decider */
   recipientFormFieldDecider?: IFormField | undefined
+
+  /** Recipient List */
+  recipientList?: string[] | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
