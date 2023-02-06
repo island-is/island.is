@@ -1,12 +1,12 @@
 import {
   Box,
+  BreadCrumbItem,
   Breadcrumbs,
+  Button,
   FilterInput,
   Hidden,
   LoadingDots,
-  BreadCrumbItem,
   Text,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
@@ -29,19 +29,20 @@ import {
 import { SessionType } from '../../lib/types/sessionTypes'
 import { useSearchParams } from 'react-router-dom'
 import { QueryHookOptions } from '@apollo/client'
+import { SessionsPaths } from '../../lib/paths'
+
+const enum PaginationNavigation {
+  NEXT = 'next',
+  PREV = 'prev',
+}
 
 const Sessions = () => {
   const SESSION_LIMIT = 2
   const QUERY_PARAM_NAME = 'pageNo'
   const [searchParams] = useSearchParams()
-  console.log(searchParams.get(QUERY_PARAM_NAME))
   const { formatMessage } = useLocale()
   const [searchNationalId, setSearchNationalId] = useState('')
   const [page, setPage] = useState<number>(1)
-  const [
-    paginatedSessions,
-    setPaginatedSessions,
-  ] = useState<SessionsPaginatedSessionResponse>()
 
   const getOptions = (): QueryHookOptions<
     GetSessionsListQuery,
@@ -64,12 +65,6 @@ const Sessions = () => {
 
   const { data, loading, error, refetch } = useGetSessionsListQuery({
     ...getOptions(),
-    onCompleted(data) {
-      console.log('test')
-      setPaginatedSessions(
-        data?.sessionsList as SessionsPaginatedSessionResponse,
-      )
-    },
   })
 
   React.useEffect(() => {
@@ -82,7 +77,7 @@ const Sessions = () => {
     setSearchNationalId(value)
   }
 
-  const handlePageChange = (action: 'next' | 'prev'): void => {
+  const handlePageChange = (action: PaginationNavigation): void => {
     if (
       !data ||
       (page === 1 && action === 'prev') ||
@@ -93,7 +88,7 @@ const Sessions = () => {
     let temp: number = page
     action === 'next' ? (temp = temp + 1) : (temp = temp - 1)
     setPage(temp)
-    const path = `/minarsidur/adgangsstyring/innskraningar?${QUERY_PARAM_NAME}=${temp}`
+    const path = `${SessionsPaths.LoginHistory}?${QUERY_PARAM_NAME}=${temp}`
 
     window.history.pushState({ path: path }, '', path)
   }
@@ -106,11 +101,11 @@ const Sessions = () => {
             [
               {
                 title: formatMessage(m.delegations),
-                href: '/minarsidur',
+                href: SessionsPaths.Delegate,
               },
               {
                 title: formatMessage(m.sessions),
-                href: '/minarsidur/innskraningar',
+                href: SessionsPaths.LoginHistory,
               },
             ] as BreadCrumbItem[]
           }
@@ -150,14 +145,14 @@ const Sessions = () => {
             size="small"
             colorScheme="light"
             icon={'arrowBack'}
-            onClick={() => handlePageChange('prev')}
+            onClick={() => handlePageChange(PaginationNavigation.PREV)}
           />
           <Button
             circle
             size="small"
             colorScheme="light"
             icon={'arrowForward'}
-            onClick={() => handlePageChange('next')}
+            onClick={() => handlePageChange(PaginationNavigation.NEXT)}
           />
         </Box>
       </Box>
