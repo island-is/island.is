@@ -1,5 +1,11 @@
 import { defineMessages } from 'react-intl'
 
+const bulletOne =
+  'Við munum nú fara yfir umsóknina og hafa svo samband við ábyrgðaraðila í kjölfarið.'
+const bulletTwo = 'Við verðum í sambandi ef okkur vantar frekari upplýsingar.'
+const bulletThree =
+  'Ef þú þarft frekari upplýsingar þá getur þú haft samband með tölvupósti á netfangið [island@island.is](mailto:island@island.is)'
+
 export const submitted = {
   general: defineMessages({
     pageTitle: {
@@ -7,8 +13,18 @@ export const submitted = {
       defaultMessage: 'Takk fyrir umsóknina!',
       description: 'submitted page title',
     },
+    expandableTitle: {
+      id: `ls.application:section.submitted.expandableTitle`,
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'submitted expandable title',
+    },
   }),
   labels: defineMessages({
+    desceriptionBulletPoints: {
+      id: `ls.application:section.submitted.desceriptionBulletPoints`,
+      defaultMessage: `* ${bulletOne}\n* ${bulletTwo}\n* ${bulletThree}`,
+      description: 'submitted desceriptionBulletPoints',
+    },
     descriptionBulletOne: {
       id: `ls.application:section.submitted.descriptionBulletOne`,
       defaultMessage:
