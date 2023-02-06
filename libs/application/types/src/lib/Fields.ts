@@ -222,6 +222,7 @@ export interface PhoneField extends BaseField {
   rightAlign?: boolean
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
+  allowedCountryCodes?: string[]
   required?: boolean
   onChange?: (...event: any[]) => void
 }

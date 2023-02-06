@@ -31,6 +31,7 @@ export const PhoneFormField: FC<Props> = ({
     required,
     readOnly,
     dataTestId,
+    allowedCountryCodes,
     onChange = () => undefined,
   } = field
   const { control, clearErrors } = useFormContext()
@@ -50,6 +51,7 @@ export const PhoneFormField: FC<Props> = ({
           readOnly={readOnly}
           id={id}
           dataTestId={dataTestId}
+          allowedCountryCodes={allowedCountryCodes}
           placeholder={formatText(
             placeholder || '',
             application,

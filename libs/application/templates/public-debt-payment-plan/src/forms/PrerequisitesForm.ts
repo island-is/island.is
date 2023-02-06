@@ -201,10 +201,6 @@ export const PrerequisitesForm: Form = buildForm({
               title: info.labels.tel,
               width: 'half',
               backgroundColor: 'blue',
-              condition: (answ) => {
-                console.log(answ)
-                return true
-              },
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.mobilePhoneNumber ?? '',

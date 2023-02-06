@@ -13,7 +13,7 @@ import {
 import NumberFormat from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { ValueType } from 'react-select'
-import { countryCodes as countryCodesJSON } from './countryCodes'
+import { countryCodes as countryCodeList } from './countryCodes'
 
 interface Props {
   autoFocus?: boolean
@@ -37,13 +37,8 @@ interface Props {
   loading?: boolean
   size?: 'xs' | 'sm' | 'md'
   autoComplete?: 'off' | 'on'
+  allowedCountryCodes?: string[]
 }
-
-const countryCodes = countryCodesJSON.map((x) => ({
-  label: `${x.name} ${x.dial_code}`,
-  value: x.dial_code,
-  description: x.flag,
-}))
 
 interface ChildParams {
   value?: string
@@ -53,6 +48,18 @@ interface ChildParams {
 }
 
 const DEFAULT_COUNTRY_CODE = '+354'
+
+const getCountryCodes = (allowedCountryCodes?: string[]) => {
+  return countryCodeList
+    .filter((x) =>
+      allowedCountryCodes ? allowedCountryCodes.includes(x.code) : true,
+    )
+    .map((x) => ({
+      label: `${x.name} ${x.dial_code}`,
+      value: x.dial_code,
+      description: x.flag,
+    }))
+}
 
 const getDefaultCountryCode = (phoneNumber?: string) => {
   if (!phoneNumber) return DEFAULT_COUNTRY_CODE
@@ -85,13 +92,13 @@ export const PhoneInputController = forwardRef(
       size = 'md',
       dataTestId,
       autoComplete,
+      allowedCountryCodes,
     } = props
 
     const { watch, setValue } = useFormContext()
     const formValue = watch(name) as string
-
-    const defaultCountryCode = getDefaultCountryCode(defaultValue)
-
+    const countryCodes = getCountryCodes(allowedCountryCodes)
+    const defaultCountryCode = getDefaultCountryCode(formValue)
     const [countryCode, setCountryCode] = useState<ValueType<Option>>(
       countryCodes.find((x) => x.value === defaultCountryCode),
     )
@@ -100,9 +107,9 @@ export const PhoneInputController = forwardRef(
 
     const handleCountryCodeChange = (value: ValueType<Option>) => {
       // Update the form value with country code prefix
-      if (!formValue.startsWith('+')) {
+      if (formValue && !formValue.startsWith('+')) {
         setValue(name, `${(value as Option).value.toString()}${formValue}`)
-      } else if (formValue.startsWith(cc)) {
+      } else if (formValue?.startsWith(cc)) {
         const updatedValue = formValue.replace(
           cc,
           (value as Option).value.toString(),
@@ -117,45 +124,42 @@ export const PhoneInputController = forwardRef(
       const { value, onChange, ...props } = c
 
       return (
-        <>
-          <NumberFormat
-            size={size}
-            customInput={PhoneInput}
-            id={id}
-            autoFocus={autoFocus}
-            disabled={disabled}
-            readOnly={readOnly}
-            rightAlign={rightAlign}
-            countryCodes={countryCodes}
-            backgroundColor={backgroundColor}
-            data-testid={dataTestId}
-            placeholder={placeholder}
-            label={label}
-            type="tel"
-            value={value?.replace(cc, '')}
-            format="###-####"
-            autoComplete={autoComplete}
-            loading={loading}
-            countryCodeValue={countryCode}
-            onCountryCodeChange={handleCountryCodeChange}
-            hasError={error !== undefined}
-            errorMessage={error}
-            required={required}
-            getInputRef={ref}
-            onChange={(
-              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-            ) => {
-              if (onInputChange) {
-                onInputChange(e)
-              }
-            }}
-            onValueChange={({ value }) => {
-              value ? onChange(cc + value) : onChange(value)
-            }}
-            {...props}
-          />
-          {formValue}
-        </>
+        <NumberFormat
+          size={size}
+          customInput={PhoneInput}
+          id={id}
+          autoFocus={autoFocus}
+          disabled={disabled}
+          readOnly={readOnly}
+          rightAlign={rightAlign}
+          countryCodes={countryCodes}
+          backgroundColor={backgroundColor}
+          data-testid={dataTestId}
+          placeholder={placeholder}
+          label={label}
+          type="tel"
+          value={value?.replace(cc, '')}
+          format="###-####"
+          autoComplete={autoComplete}
+          loading={loading}
+          countryCodeValue={countryCode}
+          onCountryCodeChange={handleCountryCodeChange}
+          hasError={error !== undefined}
+          errorMessage={error}
+          required={required}
+          getInputRef={ref}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
+          onValueChange={({ value }) => {
+            value ? onChange(cc + value) : onChange(value)
+          }}
+          {...props}
+        />
       )
     }
 

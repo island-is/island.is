@@ -269,6 +269,7 @@ export function buildPhoneField(
     required,
     readOnly,
     rightAlign,
+    allowedCountryCodes,
   } = data
   return {
     ...extractCommonFields(data),
@@ -277,6 +278,7 @@ export function buildPhoneField(
     backgroundColor,
     required,
     readOnly,
+    allowedCountryCodes,
     rightAlign,
     type: FieldTypes.PHONE,
     component: FieldComponents.PHONE,

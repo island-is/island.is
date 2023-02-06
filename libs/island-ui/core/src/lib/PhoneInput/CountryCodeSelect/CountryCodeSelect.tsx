@@ -1,3 +1,4 @@
+import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import ReactSelect from 'react-select'
 import cn from 'classnames'

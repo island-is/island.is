@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState } from 'react'
+import React, { forwardRef, useRef, useState } from 'react'
 import { AriaError, InputBackgroundColor, InputProps } from '../Input/types'
 import * as styles from './PhoneInput.css'
 import cn from 'classnames'
