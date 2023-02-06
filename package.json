@@ -177,7 +177,7 @@
     "graphql-type-json": "0.3.2",
     "handlebars": "4.7.7",
     "hot-shots": "9.0.0",
-    "http-cache-semantics": "4.1.0",
+    "http-cache-semantics": "4.1.1",
     "http-proxy-middleware": "2.0.6",
     "hypher": "0.2.5",
     "identicon.js": "2.3.3",
