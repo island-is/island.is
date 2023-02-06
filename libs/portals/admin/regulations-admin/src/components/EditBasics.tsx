@@ -49,12 +49,16 @@ export const EditBasics = () => {
 
   useEffect(() => {
     if (!text.value && draft.type.value === 'amending') {
+      const draftImpactLength = Object.entries(draft.impacts).length
       let additionString = ''
       let repealString = ''
 
       Object.values(draft.impacts).forEach(([impact]) => {
         if (impact.type === 'amend') {
-          const additions = formatAmendingRegBody(impact.diff?.value)
+          const additions = formatAmendingRegBody(
+            impact.diff?.value,
+            draftImpactLength > 1 ? impact.name : undefined,
+          )
           additionString += additions.join('')
         } else {
           // TODO: Handle repeals
