@@ -1,7 +1,11 @@
 import { FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_TEMPORARY_EVENT_LICENCES } from './queries'
-import { ConnectedComponent, Query } from '@island.is/api/schema'
+import {
+  ConnectedComponent,
+  Query,
+  TemporaryEventLicence,
+} from '@island.is/api/schema'
 import { useLocalization } from '../../../utils'
 import {
   prepareCsvString,
@@ -50,6 +54,20 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
   const onSearch = (searchString: string) => {
     setSearchString(searchString)
     setShowCount(PAGE_SIZE)
+  }
+
+  const getLicenceTypeRepresentation = (
+    licence: TemporaryEventLicence,
+  ): string => {
+    let result = licence.licenceType
+    if (
+      licence.licenceSubType &&
+      licence.licenceSubType !== licence.licenceType
+    ) {
+      // Add the subtype, but only if it's not redundant
+      result += ' - ' + licence.licenceSubType
+    }
+    return result
   }
 
   useQuery<Query>(GET_TEMPORARY_EVENT_LICENCES, {
@@ -182,8 +200,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                       justifyContent="spaceBetween"
                     >
                       <Text variant="eyebrow" color="purple400" paddingTop={1}>
-                        {temporaryEventLicence.licenceType} -{' '}
-                        {temporaryEventLicence.licenceSubType}
+                        {getLicenceTypeRepresentation(temporaryEventLicence)}
                       </Text>
                       <Box marginBottom={[2, 2, 2, 0]}>
                         <Tag disabled>{temporaryEventLicence.issuedBy}</Tag>

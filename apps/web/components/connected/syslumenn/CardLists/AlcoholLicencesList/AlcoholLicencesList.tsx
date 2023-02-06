@@ -1,7 +1,11 @@
 import { FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_ALCOHOL_LICENCES_QUERY } from './queries'
-import { ConnectedComponent, Query } from '@island.is/api/schema'
+import {
+  AlcoholLicence,
+  ConnectedComponent,
+  Query,
+} from '@island.is/api/schema'
 import { useLocalization } from '../../../utils'
 import {
   prepareCsvString,
@@ -48,6 +52,18 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   const onSearch = (searchString: string) => {
     setSearchString(searchString)
     setShowCount(PAGE_SIZE)
+  }
+
+  const getLicenceTypeRepresentation = (licence: AlcoholLicence): string => {
+    let result = licence.licenceType
+    if (
+      licence.licenceSubType &&
+      licence.licenceSubType !== licence.licenceType
+    ) {
+      // Add the subtype, but only if it's not redundant
+      result += ' - ' + licence.licenceSubType
+    }
+    return result
   }
 
   useQuery<Query>(GET_ALCOHOL_LICENCES_QUERY, {
@@ -179,8 +195,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                       justifyContent="spaceBetween"
                     >
                       <Text variant="eyebrow" color="purple400" paddingTop={1}>
-                        {alcoholLicence.licenceType} -{' '}
-                        {alcoholLicence.licenceSubType}
+                        {getLicenceTypeRepresentation(alcoholLicence)}
                       </Text>
                       <Box marginBottom={[2, 2, 2, 0]}>
                         <Tag disabled>{alcoholLicence.issuedBy}</Tag>
