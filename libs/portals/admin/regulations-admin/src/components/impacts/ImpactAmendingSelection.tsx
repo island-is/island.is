@@ -36,15 +36,15 @@ export const ImpactAmendingSelection = ({
     SelRegOption[] | undefined
   >()
   const [isLoading, setIsLoading] = useState(false)
-  const [value, setValue] = useState<RegName | undefined>(undefined)
+  const [value, setValue] = useState<string | undefined>()
   const t = useLocale().formatMessage
 
-  const [getRegulationList, { data, loading, error }] = useLazyQuery<Query>(
-    RegulationOptionListQuery,
-    {
-      fetchPolicy: 'no-cache',
-    },
-  )
+  const [
+    getRegulationList,
+    { data: regulationList, loading, error },
+  ] = useLazyQuery<Query>(RegulationOptionListQuery, {
+    fetchPolicy: 'no-cache',
+  })
 
   const handleOptionSelect = (selected: SelRegOption) => {
     setImpactRegOption(selected)
@@ -52,7 +52,7 @@ export const ImpactAmendingSelection = ({
 
   useDebounce(
     () => {
-      if (value) {
+      if (ensureRegName(value)) {
         getRegulationList({
           variables: { input: { names: [value] } },
         })
@@ -64,38 +64,48 @@ export const ImpactAmendingSelection = ({
   )
 
   useEffect(() => {
-    const dataRes =
-      (data?.getRegulationOptionList as RegulationOptionList) || []
+    const regulationListRes =
+      (regulationList?.getRegulationOptionList as RegulationOptionList) || []
 
-    const optionNames = dataRes
+    const optionNames = regulationListRes
       .filter((reg) => reg.type === 'base')
       .map((reg) => reg.name)
 
-    const relRegOptionsArray = formatSelRegOptions(
-      optionNames,
-      t(impactMsgs.regSelect_mentionedNotFound),
-      t(impactMsgs.regSelect_mentionedRepealed),
-      dataRes,
-    )
+    let selRegOptionsArray: SelRegOption[] = []
 
-    setSelRegOptions(relRegOptionsArray)
+    if (optionNames.length) {
+      selRegOptionsArray = formatSelRegOptions(
+        optionNames,
+        t(impactMsgs.regSelect_mentionedNotFound),
+        t(impactMsgs.regSelect_mentionedRepealed),
+        regulationListRes,
+      )
+    } else if (ensureRegName(value)) {
+      selRegOptionsArray = [
+        {
+          type: '',
+          disabled: true,
+          value: '',
+          label: t(impactMsgs.regSelect_baseNotFound) + ' ' + value,
+        },
+      ]
+    }
+
+    setSelRegOptions(selRegOptionsArray)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
+  }, [regulationList, value])
+
+  const updateValue = (val: string) => {
+    setIsLoading(val !== value)
+    setValue(val)
+  }
 
   return (
     <AsyncSearch
       placeholder={t(impactMsgs.regSelectAmmending_placeholder)}
-      onInputValueChange={(newValue) => {
-        const regName = ensureRegName(newValue)
-        setIsLoading(regName !== value)
-        setValue(regName)
-      }}
+      onInputValueChange={(newValue) => updateValue(newValue)}
       loading={loading || isLoading}
-      onSubmit={(newValue) => {
-        const regName = ensureRegName(newValue)
-        setIsLoading(regName !== value)
-        setValue(regName)
-      }}
+      onSubmit={(newValue) => updateValue(newValue)}
       options={selRegOptions || []}
       inputValue={value}
       initialInputValue={undefined}

@@ -5,8 +5,14 @@ import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 
 export const ButtonBar = () => {
-  const { step, actions } = useDraftingState()
+  const { draft, step, actions } = useDraftingState()
   const t = useLocale().formatMessage
+
+  // Disable forward button when creating amending regulation with 0 impacts
+  const emptyAmmendingImpacts =
+    draft.type.value === 'amending' &&
+    step.name === 'impacts' &&
+    Object.keys(draft.impacts).length === 0
 
   return (
     <Box className={s.wrapper} marginTop={[4, 4, 6]} paddingTop={3}>
@@ -16,6 +22,7 @@ export const ButtonBar = () => {
             onClick={actions.goForward}
             icon="arrowForward"
             iconType="outline"
+            disabled={emptyAmmendingImpacts}
           >
             {t(step.next === 'review' ? msg.prepShipping : msg.continue)}
           </Button>

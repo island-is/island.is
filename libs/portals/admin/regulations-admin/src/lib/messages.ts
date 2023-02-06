@@ -410,6 +410,10 @@ export const impactMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-opts-mentionedrepealed',
     defaultMessage: 'brottfallin',
   },
+  regSelect_baseNotFound: {
+    id: 'ap.regulations-admin:draft-opts-mentionednotfound',
+    defaultMessage: 'Stofnreglugerð fannst ekki við leit að ',
+  },
   regSelect_placeholder: {
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
