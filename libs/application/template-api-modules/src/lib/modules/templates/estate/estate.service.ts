@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
 import {
+  DataUploadResponse,
   EstateInfo,
   Person,
   PersonType,
@@ -11,13 +12,12 @@ import {
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
 import cloneDeep from 'lodash/cloneDeep'
-import { estateTransformer } from './utils'
+import { estateTransformer, filterAndRemoveRepeaterMetadata } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
 
 type EstateSchema = zinfer<typeof estateSchema>
-type EstateData = EstateSchema['estate']
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
@@ -121,9 +121,15 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async completeApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
+
+    const externalData = application.externalData.syslumennOnEntry
+      ?.data as EstateSchema
 
     const person: Person = {
       name: nationalRegistryData?.fullName,
@@ -140,59 +146,97 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const uploadDataName = 'danarbusskipti1.0'
     const uploadDataId = 'danarbusskipti1.0'
 
-    const estateData = ((application.externalData
-      ?.syslumennOnEntry as unknown) as { data: EstateSchema }).data.estate
+    const answers = (application.answers as unknown) as EstateSchema
 
-    // TODO: hook up fields to answers when ready
+    const relation =
+      externalData?.estate.estateMembers?.find(
+        (member) => member.nationalId === answers.applicant.nationalId,
+      )?.relation ?? ''
+
+    console.log('ANSWERS ANSWERS ANSWERS')
+    console.log('ANSWERS ANSWERS ANSWERS')
+    console.log('ANSWERS ANSWERS ANSWERS')
+    console.log(JSON.stringify(answers))
+
+    console.log('EXTERNAL EXTERNAL EXTERNAL')
+    console.log('EXTERNAL EXTERNAL EXTERNAL')
+    console.log('EXTERNAL EXTERNAL EXTERNAL')
+    console.log(JSON.stringify(externalData))
+
+    const processedAssets = filterAndRemoveRepeaterMetadata<
+      EstateSchema['estate']['assets']
+    >(answers?.estate?.assets ?? externalData?.estate?.assets ?? [])
+
+    const processedVehicles = filterAndRemoveRepeaterMetadata<
+      EstateSchema['estate']['vehicles']
+    >(answers?.estate?.vehicles ?? externalData?.estate?.vehicles ?? [])
+
+    const processedEstateMembers = filterAndRemoveRepeaterMetadata<
+      EstateSchema['estate']['estateMembers']
+    >(
+      answers?.estate?.estateMembers ??
+        externalData?.estate?.estateMembers ??
+        [],
+    )
+
     const uploadData: UploadData = {
-      //caseNumber: estateData.caseNumber,
-      applicantHasLegalCustodyOverEstate: 'no',
-      assets: [],
-      bankAccounts: [],
-      debts: [],
-      estateMembers: [],
-      inventory: '',
-      inventoryValue: '',
-      moneyAndDepositBoxesInfo: '',
-      moneyAndDepositBoxesValue: '',
+      applicationType: answers.selectedEstate,
+      applicantHasLegalCustodyOverEstate:
+        answers.applicantHasLegalCustodyOverEstate,
+      assets: processedAssets,
+      claims: answers.claims ?? [],
+      bankAccounts: answers.bankAccounts ?? [],
+      debts: answers.debts ?? [],
+      estateMembers: processedEstateMembers,
+      inventory: answers.inventory ?? '',
+      inventoryValue: answers.inventoryValue ?? '',
+      moneyAndDepositBoxesInfo: answers.moneyAndDepositBoxesInfo ?? '',
+      moneyAndDepositBoxesValue: answers.moneyAndDepositBoxesValue ?? '',
       notifier: {
-        email: '',
-        name: '',
-        phoneNumber: '',
-        relation: '',
-        ssn: '',
+        email: answers.applicant.email ?? '',
+        name: answers.applicant.name,
+        phoneNumber: answers.applicant.phone,
+        relation: relation ?? '',
+        ssn: answers.applicant.nationalId,
       },
-      otherAssets: '',
-      otherAssetsValue: '',
-      stocks: [],
-      undividedEstateResidencePermission: 'no',
-      vehicles: [],
+      otherAssets: answers.otherAssets ?? '',
+      otherAssetsValue: answers.otherAssetsValue ?? '',
+      stocks: answers.stocks ?? [],
+      undividedEstateResidencePermission:
+        answers.undividedEstateResidencePermission,
+      vehicles: processedVehicles,
     }
 
-    // TODO: uncomment once data is ready to be uploaded
-    /*
-    const result: DataUploadResponse = await this.syslumennService
-      .uploadData(
-        [person],
-        undefined,
-        this.stringifyObject(uploadData),
-        uploadDataName,
-        uploadDataId,
-      )
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message
-        }
-      })
-    
-    if (!result.success) {
-      throw new Error(
-        'Application submission failed on syslumadur upload data'
-      )
-    }
-    return { sucess: result.success, id: result.caseNumber }
-    */
-    return { success: 'false', id: '1234' }
+    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
+    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
+    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
+    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
+    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
+    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
+    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
+    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
+    console.log(this.stringifyObject(uploadData))
+    return { success: true }
+    //const result: DataUploadResponse = await this.syslumennService
+    //  .uploadData(
+    //    [person],
+    //    undefined,
+    //    this.stringifyObject(uploadData),
+    //    uploadDataName,
+    //    uploadDataId,
+    //  )
+    //  .catch((e) => {
+    //    return {
+    //      success: false,
+    //      errorMessage: e.message
+    //    }
+    //  })
+
+    //if (!result.success) {
+    //  throw new Error(
+    //    'Application submission failed on syslumadur upload data'
+    //  )
+    //}
+    //return { sucess: result.success, id: result.caseNumber }
   }
 }

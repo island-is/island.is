@@ -20,34 +20,34 @@ type Notifier = {
 
 type EstateMember = {
   name: string
-  ssn: string
-  relation: string
+  ssn?: string
+  relation?: string
   dateOfBirth?: string
   foreignCitizenShip?: 'yes' | 'no'
 }
 
 type AssetFrame = {
-  assetNumber: string
-  description: string
+  assetNumber?: string
+  description?: string
 }
 
 type BankAccount = {
-  accountNumber: string
-  balance: string | number
+  accountNumber?: string
+  balance?: string | number
 }
 
 type Stock = {
-  organization: string
-  ssn: string
-  faceValue: string | number
-  rateOfExchange: string | number
-  value: string | number
+  organization?: string
+  ssn?: string
+  faceValue?: string | number
+  rateOfExchange?: string | number
+  value?: string | number
 }
 
 type Debt = {
-  creditorName: string
-  ssn: string
-  balance: string | number
+  creditorName?: string
+  ssn?: string
+  balance?: string | number
 }
 
 export interface UploadData {
@@ -60,8 +60,8 @@ export interface UploadData {
     | BankAccount[]
     | Stock[]
     | Debt[]
-    | 'yes'
-    | 'no'
+    | 'Yes'
+    | 'No'
   //caseNumber: string
   notifier: Notifier
   estateMembers: EstateMember[]
@@ -76,6 +76,6 @@ export interface UploadData {
   otherAssets: string
   otherAssetsValue: string
   debts: Debt[]
-  undividedEstateResidencePermission: 'yes' | 'no'
-  applicantHasLegalCustodyOverEstate: 'yes' | 'no'
+  undividedEstateResidencePermission: 'Yes' | 'No'
+  applicantHasLegalCustodyOverEstate: 'Yes' | 'No'
 }
