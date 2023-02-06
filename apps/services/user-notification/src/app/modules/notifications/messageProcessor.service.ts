@@ -11,9 +11,7 @@ export interface MessageProcessorServiceConfig {
 
 @Injectable()
 export class MessageProcessorService {
-  constructor(
-    private readonly notificationsService: NotificationsService,
-  ) {}
+  constructor(private readonly notificationsService: NotificationsService) {}
 
   async convertToNotification(
     message: CreateHnippNotificationDto,

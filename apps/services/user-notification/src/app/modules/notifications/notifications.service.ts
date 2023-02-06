@@ -11,7 +11,6 @@ import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
 import { environment } from '../../../environments/environment'
 
-
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -67,7 +66,7 @@ export class NotificationsService {
 
         body: JSON.stringify(contentfulHnippTemplatesQuery),
       })
-      
+
       const templates = await results.json()
       for (const item of templates.data.hnippTemplateCollection.items) {
         //cache check
@@ -77,7 +76,7 @@ export class NotificationsService {
         }
       }
       return templates.data.hnippTemplateCollection.items
-    } catch(e) {
+    } catch (e) {
       throw new Error(e)
     }
   }
