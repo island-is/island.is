@@ -18,6 +18,9 @@ export const getValidPeriodRepresentation = (
   labelValidPeriodIndefinite: string,
 ): string => {
   if (validFrom && validTo) {
+    if (validFrom === validTo) {
+      return format(new Date(validFrom), dateFormat)
+    }
     return `${format(new Date(validFrom), dateFormat)} - ${format(
       new Date(validTo),
       dateFormat,
