@@ -80,14 +80,14 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
     return new Promise<string>((resolve, reject) => {
       if (alcoholLicences) {
         const headerRow = [
-          'Tegund',
-          'Tegund leyfis',
-          'Leyfisnúmer',
-          'Leyfishafi',
-          'Ábyrgðarmaður',
-          'Gildir frá',
-          'Gildir til',
-          'Útgefið af',
+          t('csvHeaderLicenceType', 'Tegund'),
+          t('csvHeaderLicenceSubType', 'Tegund leyfis'),
+          t('csvHeaderLicenseNumber', 'Leyfisnúmer'),
+          t('csvHeaderLicenseHolder', 'Leyfishafi'),
+          t('csvHeaderLicenseResponsible', 'Ábyrgðarmaður'),
+          t('csvHeaderValidFrom', 'Gildir frá'),
+          t('csvHeaderValidTo', 'Gildir til'),
+          t('csvHeaderIssuedBy', 'Útgefið af'),
         ]
         const dataRows = []
         for (const alcoholLicence of alcoholLicences) {
