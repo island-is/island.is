@@ -33,6 +33,7 @@ const Indictment: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
@@ -45,7 +46,11 @@ const Indictment: React.FC = () => {
   useDeb(workingCase, 'indictmentIntroduction')
 
   useEffect(() => {
-    if (workingCase.defendants && workingCase.defendants.length > 0) {
+    if (
+      isCaseUpToDate &&
+      workingCase.defendants &&
+      workingCase.defendants.length > 0
+    ) {
       const indictmentIntroductionAutofill = [
         workingCase.prosecutor?.institution?.name.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
@@ -73,7 +78,13 @@ const Indictment: React.FC = () => {
         setWorkingCase,
       )
     }
-  }, [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase])
+  }, [
+    formatMessage,
+    isCaseUpToDate,
+    setAndSendCaseToServer,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
