@@ -69,7 +69,6 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({ slice
           'Leyfisnúmer',
           'Leyfishafi',
           'Ábyrgðarmaður',
-          'Skráningarár',
           'Gildir frá',
           'Gildir til',
           'Útgefið af',
@@ -82,7 +81,6 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({ slice
             temporaryEventLicence.licenseNumber, // Leyfisnúmer
             temporaryEventLicence.licenseHolder, // Leyfishafi
             temporaryEventLicence.licenseResponsible, // Ábyrgðarmaður
-            temporaryEventLicence.year?.toString(), // Skráningarár
             temporaryEventLicence.validFrom?.toString(), // Gildir frá
             temporaryEventLicence.validTo?.toString(), // Gildir til
             temporaryEventLicence.issuedBy, // Útgefið af
@@ -206,11 +204,6 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({ slice
                           t('validPeriodUntil', 'Til'),
                           t('validPeriodIndefinite', 'Ótímabundið'),
                         )}
-                      </Text>
-
-                      <Text>
-                        {t('issuedAtYear', 'Skráningarár')}:{' '}
-                        {temporaryEventLicence.year}
                       </Text>
 
                       <Text>

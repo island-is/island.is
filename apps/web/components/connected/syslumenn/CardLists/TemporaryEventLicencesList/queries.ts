@@ -7,7 +7,6 @@ export const GET_TEMPORARY_EVENT_LICENCES = gql`
       licenceSubType
       licenseNumber
       issuedBy
-      year
       validFrom
       validTo
       licenseHolder

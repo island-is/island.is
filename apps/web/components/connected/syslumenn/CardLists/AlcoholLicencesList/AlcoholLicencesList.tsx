@@ -69,7 +69,6 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
           'Leyfisnúmer',
           'Leyfishafi',
           'Ábyrgðarmaður',
-          'Skráningarár',
           'Gildir frá',
           'Gildir til',
           'Útgefið af',
@@ -82,7 +81,6 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
             alcoholLicence.licenseNumber, // Leyfisnúmer
             alcoholLicence.licenseHolder, // Leyfishafi
             alcoholLicence.licenseResponsible, // Ábyrgðarmaður
-            alcoholLicence.year?.toString(), // Skráningarár
             alcoholLicence.validFrom?.toString(), // Gildir frá
             alcoholLicence.validTo?.toString(), // Gildir til
             alcoholLicence.issuedBy, // Útgefið af
@@ -206,11 +204,6 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                           t('validPeriodUntil', 'Til'),
                           t('validPeriodIndefinite', 'Ótímabundið'),
                         )}
-                      </Text>
-
-                      <Text>
-                        {t('issuedAtYear', 'Skráningarár')}:{' '}
-                        {alcoholLicence.year}
                       </Text>
 
                       <Text>

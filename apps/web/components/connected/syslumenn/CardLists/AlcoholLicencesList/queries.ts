@@ -7,7 +7,6 @@ export const GET_ALCOHOL_LICENCES_QUERY = gql`
       licenceSubType
       licenseNumber
       issuedBy
-      year
       validFrom
       validTo
       licenseHolder
