@@ -83,6 +83,9 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+
+  @Field(() => [ApplicationHistory], { nullable: true })
+  history?: ApplicationHistory[] | []
 }
 
 @ObjectType()
@@ -92,4 +95,16 @@ export class ApplicationPayment {
 
   @Field()
   paymentUrl!: string
+}
+
+@ObjectType()
+export class ApplicationHistory {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => Date)
+  date!: Date
+
+  @Field(() => String, { nullable: true })
+  contentfulId?: string
 }

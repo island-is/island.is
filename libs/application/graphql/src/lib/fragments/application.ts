@@ -25,5 +25,9 @@ export const ApplicationFragment = gql`
     name
     institution
     status
+    history {
+      id
+      contentfulId
+    }
   }
 `
