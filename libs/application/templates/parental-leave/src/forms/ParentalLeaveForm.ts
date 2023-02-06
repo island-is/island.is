@@ -70,7 +70,10 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { YesOrNo } from '../types'
-import { formatPhoneNumber, removeCountryCode } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -111,11 +114,14 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.phoneNumber,
                   defaultValue: (application: Application) => {
-                    const phoneNumber = (application.externalData.userProfile?.data as {
+                    const phoneNumber = (application.externalData.userProfile
+                      ?.data as {
                       mobilePhoneNumber?: string
                     })?.mobilePhoneNumber
-                    
-                    return formatPhoneNumber(removeCountryCode(phoneNumber ?? ''))
+
+                    return formatPhoneNumber(
+                      removeCountryCode(phoneNumber ?? ''),
+                    )
                   },
                   id: 'applicant.phoneNumber',
                   dataTestId: 'phone',
