@@ -130,6 +130,7 @@ describe('Formatters utils', () => {
   })
 })
 
+describe('Step helper', () => {
   describe('insertAt', () => {
     test('should insert a string at a certain position into another string', () => {
       // Arrange
