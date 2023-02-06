@@ -26,7 +26,6 @@ import {
   isParentWithoutBirthParent,
   getApplicationAnswers,
   allowOtherParent,
-  removeCountryCode,
   getApplicationExternalData,
   getMaxMultipleBirthsDays,
   getDurationTitle,
@@ -71,7 +70,7 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { YesOrNo } from '../types'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/application/ui-components'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -111,8 +110,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.phoneNumber,
-                  defaultValue: (application: Application) =>
-                    formatPhoneNumber(removeCountryCode(application) ?? ''),
+                  defaultValue: (application: Application) => {
+                    const phoneNumber = (application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    })?.mobilePhoneNumber
+                    
+                    return formatPhoneNumber(removeCountryCode(phoneNumber ?? ''))
+                  },
                   id: 'applicant.phoneNumber',
                   dataTestId: 'phone',
                   variant: 'tel',
