@@ -28,7 +28,7 @@
           },
           {
             "name": "applicantnationalids",
-            "in": "query",
+            "in": "path",
             "required": true,
             "style": "form",
             "schema": {
