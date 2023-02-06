@@ -91,7 +91,7 @@ export class NotificationsService {
     } catch {
       throw new BadRequestException(
         `Requested template ${templateId} not found ***`,
-      ) // ??
+      )
     }
   }
 
