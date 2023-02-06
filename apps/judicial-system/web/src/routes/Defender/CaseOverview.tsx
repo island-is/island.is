@@ -17,7 +17,6 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseType,
@@ -25,6 +24,7 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   AlertMessage,
   Box,

@@ -28,6 +28,7 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
 
   const employers = getUnApprovedEmployers(application.answers)
 
+  // TODO: Check employers email
   const employerEmail = employers.length > 0 ? employers[0].email : ''
   const applicantName = get(application.externalData, 'person.data.fullName')
   const subject = 'Yfirferð á umsókn um fæðingarorlof'

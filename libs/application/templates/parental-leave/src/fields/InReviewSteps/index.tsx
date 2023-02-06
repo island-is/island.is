@@ -49,6 +49,10 @@ const statesMap: StatesMap = {
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   employer: {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
@@ -62,8 +66,16 @@ const statesMap: StatesMap = {
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   vinnumalastofnun: {
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.requiresAction,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.requiresAction,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
       ReviewSectionState.inProgress,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
@@ -82,12 +94,8 @@ const descKey: { [key: string]: MessageDescriptor } = {
     parentalLeaveFormMessages.editFlow.employerApprovesDesc,
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({
-  application,
-  field,
-  refetch,
-  errors,
-}) => {
+const InReviewSteps: FC<FieldBaseProps> = (props) => {
+  const { application, field, refetch, errors } = props
   const {
     isSelfEmployed,
     applicationType,
@@ -110,13 +118,25 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
   )
+  const isAdditionalDocumentRequiredState =
+    application.state ===
+      ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED ||
+    application.state === ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED
 
   const steps = [
     {
       state: statesMap['vinnumalastofnun'][application.state],
-      title: formatMessage(parentalLeaveFormMessages.reviewScreen.deptTitle),
+      title: formatMessage(
+        isAdditionalDocumentRequiredState
+          ? parentalLeaveFormMessages.reviewScreen
+              .additionalDocumentRequiredTitle
+          : parentalLeaveFormMessages.reviewScreen.deptTitle,
+      ),
       description: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.deptDesc,
+        isAdditionalDocumentRequiredState
+          ? parentalLeaveFormMessages.reviewScreen
+              .additionalDocumentRequiredDesc
+          : parentalLeaveFormMessages.reviewScreen.deptDesc,
       ),
     },
   ]
@@ -165,7 +185,6 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
-
   return (
     <Box marginBottom={10}>
       <Box
@@ -250,12 +269,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
       {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
           {steps.map((step, index) => (
-            <ReviewSection
-              key={index}
-              application={application}
-              index={index + 1}
-              {...step}
-            />
+            <ReviewSection key={index} index={index + 1} {...props} {...step} />
           ))}
         </Box>
       ) : (

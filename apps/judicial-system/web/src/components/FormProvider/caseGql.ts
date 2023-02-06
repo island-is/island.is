@@ -142,7 +142,11 @@ const CaseQuery = gql`
         id
       }
       notifications {
+        created
         type
+        recipients {
+          success
+        }
       }
       caseFiles {
         id
@@ -169,6 +173,7 @@ const CaseQuery = gql`
       subpoenaType
       defendantWaivesRightToCounsel
       crimeScenes
+      indictmentIntroduction
     }
   }
 `

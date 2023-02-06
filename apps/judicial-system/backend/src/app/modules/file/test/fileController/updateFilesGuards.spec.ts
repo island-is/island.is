@@ -1,5 +1,6 @@
 import { CanActivate } from '@nestjs/common'
 
+import { RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
@@ -21,18 +22,30 @@ describe('FileController - Upload case file to court guards', () => {
     )
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have five guards', () => {
+    expect(guards).toHaveLength(5)
   })
 
-  describe('CaseExistsGuard', () => {
+  describe('RolesGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as quard 1', () => {
+    it('should have RolesGuard as quard 1', () => {
+      expect(guard).toBeInstanceOf(RolesGuard)
+    })
+  })
+
+  describe('CaseExistsGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[1]()
+    })
+
+    it('should have CaseExistsGuard as quard 2', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -41,10 +54,10 @@ describe('FileController - Upload case file to court guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = guards[1]
+      guard = guards[2]
     })
 
-    it('should have CaseTypeGuard as quard 2', () => {
+    it('should have CaseTypeGuard as quard 3', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...indictmentCases],
@@ -56,10 +69,10 @@ describe('FileController - Upload case file to court guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[2]()
+      guard = new guards[3]()
     })
 
-    it('should have CaseWriteGuard as quard 3', () => {
+    it('should have CaseWriteGuard as quard 4', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })
@@ -68,10 +81,10 @@ describe('FileController - Upload case file to court guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[3]()
+      guard = new guards[4]()
     })
 
-    it('should have CaseNotCompletedGuard as quard 4', () => {
+    it('should have CaseNotCompletedGuard as quard 5', () => {
       expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
     })
   })

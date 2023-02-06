@@ -4,9 +4,10 @@ import { FC } from 'react'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { information } from '../../../lib/messages'
-import { ReviewScreenProps } from '../../../types'
+import { ReviewScreenProps } from '../../../shared'
 import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
+import { formatPhoneNumber } from '../../../utils'
 
 export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   coOwnersAndOperators = [],
@@ -36,7 +37,7 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                 <Text>{name}</Text>
                 <Text>{kennitala.format(nationalId, '-')}</Text>
                 <Text>{email}</Text>
-                <Text>{phone}</Text>
+                <Text>{formatPhoneNumber(phone)}</Text>
               </Box>
             </GridColumn>
           )

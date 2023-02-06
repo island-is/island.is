@@ -6,11 +6,10 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
-  buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
-import { Application } from '@island.is/api/schema'
 
 export const business = buildSection({
   id: 'business',
@@ -32,13 +31,13 @@ export const business = buildSection({
               titleVariant: 'h3',
             }),
             buildDescriptionField({
-              id: 'businessAssets.total',
+              id: 'business.businessAssets.total',
               title: '',
             }),
             buildCustomField(
               {
                 title: '',
-                id: 'businessAssets.data',
+                id: 'business.businessAssets.data',
                 doesNotRequireAnswer: true,
                 component: 'ReportFieldsRepeater',
               },
@@ -51,6 +50,7 @@ export const business = buildSection({
                   {
                     title: m.businessAssetAmount.defaultMessage,
                     id: 'businessAssetValue',
+                    required: true,
                     currency: true,
                     width: 'half',
                   },
@@ -82,13 +82,13 @@ export const business = buildSection({
               titleVariant: 'h3',
             }),
             buildDescriptionField({
-              id: 'businessDebts.total',
+              id: 'business.businessDebts.total',
               title: '',
             }),
             buildCustomField(
               {
                 title: '',
-                id: 'businessDebts.data',
+                id: 'business.businessDebts.data',
                 doesNotRequireAnswer: true,
                 component: 'ReportFieldsRepeater',
               },
@@ -106,6 +106,7 @@ export const business = buildSection({
                   {
                     title: m.debtsBalance.defaultMessage,
                     id: 'debtValue',
+                    required: true,
                     currency: true,
                     width: 'half',
                   },
@@ -126,7 +127,6 @@ export const business = buildSection({
         buildMultiField({
           id: 'businessOverview',
           title: m.businessOverview,
-          description: m.businessOverviewDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -138,8 +138,13 @@ export const business = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
-                formatCurrency(String((answers.businessAssets as any).total)),
+                formatCurrency(
+                  String(
+                    getValueViaPath(answers, 'business.businessAssets.total'),
+                  ),
+                ),
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -151,32 +156,20 @@ export const business = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
-                formatCurrency(String((answers.businessDebts as any).total)),
+                formatCurrency(
+                  String(
+                    getValueViaPath(answers, 'business.businessDebts.total'),
+                  ),
+                ),
             }),
             buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewBusinessOwnedMoney',
-              title: m.businessEquity,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildTextField({
-              id: 'businessTotal',
-              title: m.total,
-              readOnly: true,
-              width: 'half',
-              variant: 'currency',
-              rightAlign: true,
-              backgroundColor: 'white',
-              defaultValue: ({ answers }: Application) => {
-                const total =
-                  (answers.businessAssets as any).total -
-                  (answers.businessDebts as any).total
-
-                return total
-              },
+            buildCustomField({
+              title: '',
+              id: 'business.businessTotal',
+              doesNotRequireAnswer: true,
+              component: 'CalculateTotalBusiness',
             }),
           ],
         }),

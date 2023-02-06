@@ -30,6 +30,12 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
 
+// Check whether phoneNumber is GSM
+export const checkIfPhoneNumberIsGSM = (phoneNumber: string): boolean => {
+  const phoneNumberStartStr = ['6', '7', '8']
+  return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
+}
+
 export const getPersonalAllowance = (
   application: Application,
   fromSpouse = false,
@@ -262,6 +268,7 @@ export const transformApplicationToParentalLeaveDTO = (
   periods: Period[],
   attachments?: Attachment[],
   onlyValidate?: boolean,
+  type?: 'period' | 'documentPeriod' | 'document' | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -331,6 +338,7 @@ export const transformApplicationToParentalLeaveDTO = (
       multipleBirths && multipleBirths > 1
         ? multipleBirths.toString()
         : undefined,
+    type,
   }
 }
 

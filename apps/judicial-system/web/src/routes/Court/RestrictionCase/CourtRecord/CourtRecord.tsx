@@ -25,7 +25,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
@@ -46,6 +45,7 @@ import {
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -147,8 +147,8 @@ export const CourtRecord: React.FC = () => {
       )
 
       if (
-        workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.ADMISSION_TO_FACILITY
+        workingCase.type === CaseType.Custody ||
+        workingCase.type === CaseType.AdmissionToFacility
       ) {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
@@ -178,12 +178,12 @@ export const CourtRecord: React.FC = () => {
               caseType:
                 workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? CaseType.TRAVEL_BAN
+                  ? CaseType.TravelBan
                   : workingCase.type,
             }),
           )
         }
-      } else if (workingCase.type === CaseType.TRAVEL_BAN) {
+      } else if (workingCase.type === CaseType.TravelBan) {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
             m.sections.sessionBookings.autofillPresentationsTravelBan,

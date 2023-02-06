@@ -34,6 +34,7 @@ export enum ApiModuleActions {
   notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
   validateApplication = 'validateApplication',
   notifyApplicantOfRejectionFromEmployer = 'notifyApplicantOfRejectionFromEmployer',
+  setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
 }
 
 export enum StartDateOptions {
@@ -64,7 +65,9 @@ export enum States {
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
-  ADDITIONAL_DOCUMENT_REQUIRED = 'additionalDocumentRequired',
+  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
+  INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED = 'inReviewAdditionalDocumentsRequired',
+
   APPROVED = 'approved',
   CLOSED = 'closed',
 

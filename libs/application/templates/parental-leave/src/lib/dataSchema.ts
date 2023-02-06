@@ -20,7 +20,7 @@ const PersonalAllowance = z
     usePersonalAllowance: z.enum([YES, NO]),
     usage: z
       .string()
-      .refine((x) => parseFloat(x) > 0 && parseFloat(x) <= 100)
+      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
       .optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
@@ -43,12 +43,25 @@ export const dataSchema = z.object({
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
+  noPrimaryParent: z.object({
+    questionOne: z.enum([YES, NO]),
+    questionTwo: z.enum([YES, NO]),
+    questionThree: z.enum([YES, NO]),
+    birthDate: z.string(),
+  }),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        return phoneNumber && phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        return (
+          phoneNumber &&
+          phoneNumber.isValid() &&
+          phoneNumberStartStr.some((substr) =>
+            phoneNumber.nationalNumber.startsWith(substr),
+          )
+        )
       },
       { params: errorMessages.phoneNumber },
     ),
@@ -106,6 +119,28 @@ export const dataSchema = z.object({
     }),
   ),
   isReceivingUnemploymentBenefits: z.enum([YES, NO]),
+  employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
+    params: errorMessages.employerNationalRegistryId,
+  }),
+  employerPhoneNumber: z
+    .string()
+    .refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
+          )
+        else return true
+      },
+      { params: errorMessages.phoneNumber },
+    )
+    .optional(),
+  isRecivingUnemploymentBenefits: z.enum([YES, NO]),
   unemploymentBenefits: z.string().min(1),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
@@ -155,7 +190,14 @@ export const dataSchema = z.object({
     .refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        if (phoneNumber) return phoneNumber.isValid()
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
+          )
         else return true
       },
       { params: errorMessages.phoneNumber },

@@ -1,12 +1,12 @@
 // TODO: Add tests
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  Case,
-  CaseType,
-  isIndictmentCase,
   User,
-} from '@island.is/judicial-system/types'
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './stepHelper'
+import { TempCase as Case } from '../types'
 
 export type Validation =
   | 'empty'
@@ -154,7 +154,7 @@ export const isDefendantStepValidRC = (
       ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
-      workingCase.type === CaseType.TRAVEL_BAN
+      workingCase.type === CaseType.TravelBan
         ? 'valid'
         : [workingCase.leadInvestigator, ['empty']],
     ]).isValid
@@ -209,7 +209,7 @@ export const isHearingArrangementsStepValidRC = (
       workingCase.court &&
       validate([
         [workingCase.requestedCourtDate, ['empty', 'date-format']],
-        workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
+        workingCase.type !== CaseType.TravelBan && !workingCase.parentCase
           ? [workingCase.arrestDate, ['empty', 'date-format']]
           : 'valid',
       ]).isValid) ||
@@ -233,6 +233,13 @@ export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
   return workingCase.prosecutor && workingCase.court ? true : false
+}
+
+// TODO: Add validation for traffic violation
+export const isTrafficViolationStepValidIndictments = (
+  workingCase: Case,
+): boolean => {
+  return true
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {

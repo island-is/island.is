@@ -15,26 +15,29 @@ import {
 import {
   CaseState,
   CaseTransition,
-  InstitutionType,
-  NotificationType,
   isRestrictionCase,
-  UserRole,
   Feature,
   isInvestigationCase,
   isIndictmentCase,
   isExtendedCourtRole,
-  User,
-  CaseListEntry,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseData } from '@island.is/judicial-system-web/src/types'
+import {
+  CaseData,
+  TempCase as Case,
+  TempCaseListEntry as CaseListEntry,
+} from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
-import type { Case } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ActiveCases from './ActiveCases'
@@ -51,7 +54,7 @@ const CreateCaseButton: React.FC<{
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
-    if (user.role === UserRole.REPRESENTATIVE) {
+    if (user.role === UserRole.Representative) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -60,7 +63,7 @@ const CreateCaseButton: React.FC<{
       ]
     }
 
-    if (user.role === UserRole.PROSECUTOR) {
+    if (user.role === UserRole.Prosecutor) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -92,6 +95,7 @@ const CreateCaseButton: React.FC<{
         '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
         '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
         'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
+        '53581d7b-0591-45e5-9cbe-c96b2f82da85', // Lögreglustjórinn á höfuðborgarsvæðinu
       ].includes(user.institution?.id ?? '')
     ) {
       return items
@@ -124,12 +128,12 @@ export const Cases: React.FC = () => {
 
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
-  const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isProsecutor = user?.role === UserRole.Prosecutor
+  const isRepresentative = user?.role === UserRole.Representative
+  const isHighCourtUser = user?.institution?.type === InstitutionType.HighCourt
   const isPrisonAdminUser =
-    user?.institution?.type === InstitutionType.PRISON_ADMIN
-  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
+    user?.institution?.type === InstitutionType.PrisonAdmin
+  const isPrisonUser = user?.institution?.type === InstitutionType.Prison
 
   const { data, error, loading, refetch } = useQuery<{
     cases?: CaseListEntry[]
@@ -150,7 +154,6 @@ export const Cases: React.FC = () => {
   const {
     transitionCase,
     isTransitioningCase,
-    sendNotification,
     isSendingNotification,
   } = useCase()
 
@@ -204,7 +207,6 @@ export const Cases: React.FC = () => {
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED
     ) {
-      await sendNotification(caseToDelete.id, NotificationType.REVOKED)
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
     }

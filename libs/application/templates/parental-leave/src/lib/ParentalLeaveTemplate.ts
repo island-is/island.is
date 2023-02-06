@@ -38,6 +38,7 @@ import { answerValidators } from './answerValidators'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   allEmployersHaveApproved,
+  findActionName,
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
@@ -50,6 +51,7 @@ import {
   getOtherParentId,
   getSelectedChild,
   isParentalGrant,
+  isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
@@ -61,7 +63,7 @@ type Events =
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
-  | { type: 'ADDITIONALDOCUMENTREQUIRED' } // Ex: VMST ask for more documents
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
   | { type: 'CLOSED' } // Ex: Close application
 
 enum Roles {
@@ -106,6 +108,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
+            externalDataId: 'noPrimaryChildren',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -190,7 +197,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_APPROVAL]: {
-        entry: 'assignToOtherParent',
+        entry: ['assignToOtherParent'],
         exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
@@ -351,7 +358,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -428,7 +440,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setNavId'],
+        exit: ['clearAssignees', 'setNavId', 'resetAdditionalDocumentsArray'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           status: 'inprogress',
@@ -464,15 +476,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
-          ADDITIONALDOCUMENTREQUIRED: {
-            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
-        entry: 'assignToVMST',
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
           status: 'inprogress',
@@ -505,11 +516,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      [States.ADDITIONAL_DOCUMENT_REQUIRED]: {
+      [States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]: {
         entry: 'assignToVMST',
         meta: {
           status: 'inprogress',
-          name: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          name: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
           actionCard: {
             description: statesMessages.additionalDocumentRequiredDescription,
           },
@@ -519,8 +530,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DraftRequiresAction').then((val) =>
-                  Promise.resolve(val.DraftRequiresAction),
+                import(
+                  '../forms/InReviewAdditionalDocumentsRequired'
+                ).then((val) =>
+                  Promise.resolve(val.InReviewAdditionalDocumentsRequired),
                 ),
               read: 'all',
               write: 'all',
@@ -536,7 +549,46 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+        },
+      },
+      [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        entry: 'assignToVMST',
+        exit: 'setActionName',
+        meta: {
+          status: 'inprogress',
+          name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          actionCard: {
+            description: statesMessages.additionalDocumentRequiredDescription,
+          },
+          lifecycle: pruneAfterDays(970),
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AdditionalDocumentsRequired').then((val) =>
+                  Promise.resolve(val.AdditionalDocumentsRequired),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
         },
       },
       // [States.RECEIVED]: {
@@ -567,7 +619,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //     ],
       //   },
       //   on: {
-      //     ADDITIONALDOCUMENTREQUIRED: { target: States.ADDITIONAL_DOCUMENT_REQUIRED },
+      //     ADDITIONALDOCUMENTSREQUIRED: { target: States.ADDITIONAL_DOCUMENTS_REQUIRED },
       //     [DefaultEvents.APPROVE]: { target: States.APPROVED },
       //     [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
       //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
@@ -632,14 +684,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: [
-          'createTempPeriods',
-          'assignToVMST',
+        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
+        exit: [
+          'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
           'clearEmployers',
+          'setActionName',
         ],
-        exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           status: 'inprogress',
@@ -755,7 +807,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -808,7 +865,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
-        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
@@ -851,7 +907,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: 'clearTemp',
+        exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -887,8 +943,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
-          ADDITIONALDOCUMENTREQUIRED: {
-            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           [DefaultEvents.REJECT]: {
@@ -897,7 +953,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
-        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
@@ -1094,6 +1149,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      resetAdditionalDocumentsArray: assign((context) => {
+        const { application } = context
+        unset(application.answers, 'fileUpload.additionalDocuments')
+
+        return context
+      }),
       setNavId: assign((context) => {
         const { application } = context
 
@@ -1244,7 +1305,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers, externalData } = application
         const selectedChild = getSelectedChild(answers, externalData)
 
-        if (!selectedChild) {
+        if (!selectedChild || isParentWithoutBirthParent(application.answers)) {
           return context
         }
 
@@ -1352,6 +1413,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      setActionName: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const actionName = findActionName(context)
+        set(answers, 'actionName', actionName)
+        return context
+      }),
     },
   },
   mapUserToRole(
