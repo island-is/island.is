@@ -6,9 +6,9 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { createRedisCluster } from '@island.is/cache'
 
 import {
+  bullModuleName,
   SessionsConfig,
   sessionsQueueName,
-  bullModuleName,
 } from '../sessions.config'
 import { Session } from './session.model'
 import { SessionsController } from './sessions.controller'
