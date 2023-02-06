@@ -18,6 +18,17 @@ export class NotificationsService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
+  async addToCache(key: string, item: any) {
+    // item = JSON.stringify(item)
+    const res = await this.cacheManager.set(key, item)
+    console.log(res)
+  }
+
+  async getFromCache(key: string) {
+    const item = await this.cacheManager.get(key)
+    return item
+  }
+
   async getTemplates(locale?: string): Promise<HnippTemplate[]> {
     if (locale == 'is' || locale === undefined) {
       locale = 'is-IS'
@@ -77,17 +88,19 @@ export class NotificationsService {
     if (locale == 'is') {
       locale = 'is-IS'
     }
-    //  //check cache
-    //  const cacheKey = templateId + '-' + locale
-    //  const cachedTemplate = await this.cacheManager.get(cacheKey)
-    //  if (cachedTemplate) {
-    //    return cachedTemplate
-    //  }
+    //check cache
+    const cacheKey = templateId + '-' + locale
+    const cachedTemplate = await this.getFromCache(cacheKey)
+    if (cachedTemplate) {
+      console.log('cache hit')
+      return cachedTemplate as HnippTemplate
+    }
 
     const templates = await this.getTemplates(locale)
     try {
       for (const template of templates) {
         if (template.templateId == templateId) {
+          await this.addToCache(cacheKey, template)
           return template
         }
       }

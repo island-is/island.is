@@ -30,7 +30,7 @@ import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor) // auto-caching GET responses
+// @UseInterceptors(CacheInterceptor) // auto-caching GET responses
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
