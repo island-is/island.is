@@ -72,9 +72,9 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.authIdsApi)}`,
       ),
       PersistenceSettings__SessionsBaseAddress: {
-        dev: 'http://web-services_sessions.services_sessions.svc.cluster.local',
+        dev: 'http://web-services-sessions.services-sessions.svc.cluster.local',
         staging:
-          'http://web-services_sessions.services_sessions.svc.cluster.local',
+          'http://web-services-sessions.services-sessions.svc.cluster.local',
         prod: 'https://sessions-api.internal.island.is',
       },
       Application__MinCompletionPortThreads: '10',
