@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { IntlService } from '@island.is/cms-translations'
 import { Notification } from './types'
 import { UserProfile } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
@@ -13,9 +12,8 @@ export interface MessageProcessorServiceConfig {
 @Injectable()
 export class MessageProcessorService {
   constructor(
-    private intlService: IntlService,
-    @Inject(APP_PROTOCOL)
-    private readonly appProtocol: string,
+    // @Inject(APP_PROTOCOL)
+    // private readonly appProtocol: string,
     private readonly notificationsService: NotificationsService,
   ) {}
 
@@ -27,6 +25,7 @@ export class MessageProcessorService {
       message.templateId,
       profile.locale,
     )
+    console.log("template******************+", template)
     const notification = await this.notificationsService.formatArguments(
       message,
       template,
