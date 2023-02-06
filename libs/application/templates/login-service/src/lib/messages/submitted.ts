@@ -21,7 +21,7 @@ export const submitted = {
   }),
   labels: defineMessages({
     desceriptionBulletPoints: {
-      id: `ls.application:section.submitted.desceriptionBulletPoints`,
+      id: `ls.application:section.submitted.desceriptionBulletPoints#markdown`,
       defaultMessage: `* ${bulletOne}\n* ${bulletTwo}\n* ${bulletThree}`,
       description: 'submitted desceriptionBulletPoints',
     },
