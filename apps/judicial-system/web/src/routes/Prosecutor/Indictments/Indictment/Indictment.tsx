@@ -1,14 +1,16 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 
 import {
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -24,6 +26,7 @@ import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { indictment as strings } from './Indictment.strings'
+import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Indictment: React.FC = () => {
   const {
@@ -31,16 +34,28 @@ const Indictment: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
-  const stepIsValid = true
+  const { updateCase, setAndSendCaseToServer } = useCase()
+  const stepIsValid = isTrafficViolationStepValidIndictments(workingCase)
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
+  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
 
   useDeb(workingCase, 'indictmentIntroduction')
+
+  useEffect(() => {
+    if (isCaseUpToDate && !workingCase.demands) {
+      setAndSendCaseToServer(
+        [{ demands: formatMessage(strings.demandsAutofill) }],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  })
 
   return (
     <PageLayout
@@ -57,7 +72,10 @@ const Indictment: React.FC = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <Box marginBottom={5}>
+        <Box component="section" marginBottom={3}>
+          <SectionHeading
+            title={formatMessage(strings.indictmentIntroductionTitle)}
+          />
           <Input
             name="indictmentsIntroduction"
             label={formatMessage(strings.indictmentIntroductionLabel)}
@@ -87,6 +105,44 @@ const Indictment: React.FC = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
           />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <SectionHeading title={formatMessage(strings.demandsTitle)} />
+          <BlueBox>
+            <Input
+              name="demands"
+              label={formatMessage(strings.demandsLabel)}
+              placeholder={formatMessage(strings.demandsPlaceholder)}
+              value={workingCase.demands || ''}
+              errorMessage={demandsErrorMessage}
+              hasError={demandsErrorMessage !== ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'demands',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  demandsErrorMessage,
+                  setDemandsErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'demands',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setDemandsErrorMessage,
+                )
+              }
+              textarea
+              required
+              rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
+            />
+          </BlueBox>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

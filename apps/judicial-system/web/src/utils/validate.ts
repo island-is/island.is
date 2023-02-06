@@ -235,11 +235,10 @@ export const isProcessingStepValidIndictments = (
   return workingCase.prosecutor && workingCase.court ? true : false
 }
 
-// TODO: Add validation for traffic violation
 export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return true
+  return workingCase.demands ? true : false
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
