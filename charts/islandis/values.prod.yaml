@@ -1644,13 +1644,13 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions:
+services-sessions-api:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services-sessions'
+    DB_USER: 'services_sessions'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -1706,7 +1706,7 @@ services-sessions:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-read:
+services-sessions-worker:
   args:
     - 'main.js'
     - '--job=worker'
@@ -1717,7 +1717,7 @@ services-sessions-read:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services-sessions-read'
+    DB_USER: 'services_sessions_worker'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -1764,7 +1764,7 @@ services-sessions-read:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_sessions'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
-      DB_USER: 'services-sessions-read'
+      DB_USER: 'services_sessions_worker'
       NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:

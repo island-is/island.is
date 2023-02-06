@@ -1,27 +1,25 @@
 import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
-const serviceName = 'services-sessions'
-const workerName = 'services-sessions-read'
 const imageName = 'services-sessions'
 const dbName = 'services_sessions'
 
 const servicePostgresInfo = {
   // The service has only read permissions
-  username: serviceName,
+  username: 'services_sessions',
   name: dbName,
   passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
 }
 
 const workerPostgresInfo = {
   // Worker has write permissions
-  username: workerName,
+  username: 'services_sessions_worker',
   name: dbName,
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
 }
 
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
-  return service(serviceName)
+export const serviceSetup = (): ServiceBuilder<'services-sessions-api'> => {
+  return service('services-sessions-api')
     .namespace(namespace)
     .image(imageName)
     .postgres(servicePostgresInfo)
@@ -75,8 +73,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     .grantNamespaces('nginx-ingress-internal', 'identity-server')
 }
 
-export const workerSetup = (): ServiceBuilder<typeof workerName> =>
-  service(workerName)
+export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
+  service('services-sessions-worker')
     .image(imageName)
     .namespace(namespace)
     .serviceAccount('sessions-worker')
