@@ -13,7 +13,5 @@ export const applicantInformationSchema = z.object({
   email: z.string().refine((x) => isValidEmail(x), {
     params: applicantInformation.error.email,
   }),
-  phoneNumber: z.string().refine((x) => x.length > 7 || !x, {
-    params: applicantInformation.error.phoneNumber,
-  }),
+  phoneNumber: z.string(),
 })

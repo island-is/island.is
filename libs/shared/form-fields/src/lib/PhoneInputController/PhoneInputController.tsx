@@ -61,6 +61,30 @@ const getCountryCodes = (allowedCountryCodes?: string[]) => {
     }))
 }
 
+/**
+ * Gets default value for the controller.
+ * If the incoming value is empty or starts with "+",
+ * then we don't have to prefix it with the country code.
+ */
+const getDefaultValue = (
+  defaultValue?: string,
+  defaultCountryCode?: string,
+) => {
+  return defaultValue === '' || defaultValue?.startsWith('+')
+    ? defaultValue
+    : `${defaultCountryCode ?? ''}${defaultValue}`
+}
+
+/**
+ * Gets default country code.
+ * This function tries to extract a country calling code from a phone number,
+ * and it assumes that the phone number itself is always 7 characters
+ * Might need to rethink this logic in the future when more country calling codes are allowed.
+ *
+ * Example outputs:
+ * getDefaultCountryCode("+3545812345") // +354
+ * getDefaultCountryCode("+455812345") // +45
+ */
 const getDefaultCountryCode = (phoneNumber?: string) => {
   if (!phoneNumber) return DEFAULT_COUNTRY_CODE
   const countryCode = phoneNumber.slice(0, -7) || DEFAULT_COUNTRY_CODE
@@ -98,7 +122,7 @@ export const PhoneInputController = forwardRef(
     const { watch, setValue } = useFormContext()
     const formValue = watch(name) as string
     const countryCodes = getCountryCodes(allowedCountryCodes)
-    const defaultCountryCode = getDefaultCountryCode(formValue)
+    const defaultCountryCode = getDefaultCountryCode(defaultValue)
     const [countryCode, setCountryCode] = useState<ValueType<Option>>(
       countryCodes.find((x) => x.value === defaultCountryCode),
     )
@@ -156,6 +180,7 @@ export const PhoneInputController = forwardRef(
             }
           }}
           onValueChange={({ value }) => {
+            // Don't prefix value with country code it it's empty.
             value ? onChange(cc + value) : onChange(value)
           }}
           {...props}
@@ -169,7 +194,7 @@ export const PhoneInputController = forwardRef(
         control={control}
         rules={rules}
         {...(defaultValue !== undefined && {
-          defaultValue: `${defaultCountryCode}${defaultValue}`,
+          defaultValue: getDefaultValue(defaultValue, defaultCountryCode),
         })}
         render={renderChildInput}
       />

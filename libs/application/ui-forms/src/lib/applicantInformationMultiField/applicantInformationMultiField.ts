@@ -88,6 +88,7 @@ export const applicantInformationMultiField = buildMultiField({
       title: applicantInformation.labels.tel,
       width: 'half',
       backgroundColor: 'blue',
+      defaultValue: '',
     }),
   ],
 })
