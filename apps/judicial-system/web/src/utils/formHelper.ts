@@ -9,8 +9,8 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
-import * as validations from './validate'
 import { TUploadFile } from './hooks'
+import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -203,6 +203,7 @@ export type stepValidationsType = {
   [constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
+  [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
@@ -282,6 +283,8 @@ export const stepValidations = (): stepValidationsType => {
     [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => true,
     [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) =>
       validations.isProcessingStepValidIndictments(theCase),
+    [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
+      validations.isTrafficViolationStepValidIndictments(theCase),
     [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,

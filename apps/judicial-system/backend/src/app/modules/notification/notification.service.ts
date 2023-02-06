@@ -565,9 +565,6 @@ export class NotificationService {
       theCase.court?.name,
       theCase.courtDate,
       theCase.defendants && theCase.defendants.length > 0
-        ? theCase.defendants[0].name
-        : undefined,
-      theCase.defendants && theCase.defendants.length > 0
         ? theCase.defendants[0].gender
         : undefined,
       theCase.requestedValidToDate,
@@ -864,6 +861,24 @@ export class NotificationService {
     )
   }
 
+  private async shouldSendCustodyNoticeToPrison(
+    theCase: Case,
+  ): Promise<boolean> {
+    if (theCase.type === CaseType.CUSTODY) {
+      return true
+    }
+
+    if (theCase.type !== CaseType.ADMISSION_TO_FACILITY) {
+      return false
+    }
+
+    if (theCase.defendants && theCase.defendants[0]?.noNationalId) {
+      return true
+    }
+
+    return this.defendantService.isDefendantInActiveCustody(theCase.defendants)
+  }
+
   private async sendRulingNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -907,26 +922,20 @@ export class NotificationService {
     }
 
     if (
-      CaseDecision.ACCEPTING === theCase.decision ||
-      CaseDecision.ACCEPTING_PARTIALLY === theCase.decision
+      theCase.decision === CaseDecision.ACCEPTING ||
+      theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      if (theCase.type === CaseType.CUSTODY) {
+      const shouldSendCustodyNoticeToPrison = await this.shouldSendCustodyNoticeToPrison(
+        theCase,
+      )
+
+      if (shouldSendCustodyNoticeToPrison) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
-      } else if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
-        const inCustody = await this.defendantService.isDefendantInActiveCustody(
-          theCase.defendants,
-        )
-        if (
-          inCustody ||
-          (theCase.defendants && theCase.defendants[0]?.noNationalId === true)
-        ) {
-          promises.push(this.sendRulingEmailNotificationToPrison(theCase))
-        }
       }
     } else if (
-      CaseType.CUSTODY === theCase.type &&
-      (CaseDecision.REJECTING === theCase.decision ||
-        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN === theCase.decision)
+      theCase.type === CaseType.CUSTODY &&
+      (theCase.decision === CaseDecision.REJECTING ||
+        theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
     ) {
       const prisonWasNotified = await this.hasReceivedNotification(
         theCase.id,
@@ -990,10 +999,11 @@ export class NotificationService {
       ),
     ]
 
-    if (
-      theCase.type === CaseType.CUSTODY ||
-      theCase.type === CaseType.ADMISSION_TO_FACILITY
-    ) {
+    const shouldSendCustodyNoticeToPrison = await this.shouldSendCustodyNoticeToPrison(
+      theCase,
+    )
+
+    if (shouldSendCustodyNoticeToPrison) {
       const custodyNoticePdf = await getCustodyNoticePdfAsString(
         theCase,
         this.formatMessage,
