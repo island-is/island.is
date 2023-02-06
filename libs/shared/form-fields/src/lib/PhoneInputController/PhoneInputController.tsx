@@ -84,6 +84,7 @@ const getDefaultValue = (
  * Example outputs:
  * getDefaultCountryCode("+3545812345") // +354
  * getDefaultCountryCode("+455812345") // +45
+ * getDefaultCountryCode("5812345") // +354
  */
 const getDefaultCountryCode = (phoneNumber?: string) => {
   if (!phoneNumber) return DEFAULT_COUNTRY_CODE
@@ -130,17 +131,17 @@ export const PhoneInputController = forwardRef(
     const cc = (countryCode as Option).value.toString()
 
     const handleCountryCodeChange = (value: ValueType<Option>) => {
-      // Update the form value with country code prefix
       if (formValue && !formValue.startsWith('+')) {
+        // Form value has no country code prefix, set it
         setValue(name, `${(value as Option).value.toString()}${formValue}`)
       } else if (formValue?.startsWith(cc)) {
+        // Update existing country code with updated value
         const updatedValue = formValue.replace(
           cc,
           (value as Option).value.toString(),
         )
         setValue(name, updatedValue)
       }
-
       setCountryCode(value)
     }
 
