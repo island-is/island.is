@@ -441,7 +441,7 @@ export function buildExpandableDescriptionField(data: {
   id: string
   title: FormText
   description: StaticText
-  introText: FormText
+  introText?: FormText
   startExpanded?: boolean
 }): ExpandableDescriptionField {
   const { id, title, description, introText, startExpanded } = data

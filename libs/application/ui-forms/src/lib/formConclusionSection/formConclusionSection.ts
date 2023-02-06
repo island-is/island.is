@@ -13,7 +13,7 @@ type props = {
   alertTitle: MessageDescriptor
   alertMessage?: MessageDescriptor
   expandableHeader: MessageDescriptor
-  expandableIntro: MessageDescriptor
+  expandableIntro?: MessageDescriptor
   expandableDescription: StaticText
 }
 
