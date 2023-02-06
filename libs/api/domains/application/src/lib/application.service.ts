@@ -70,7 +70,6 @@ export class ApplicationService {
       typeId: input?.typeId?.join(','),
       status: input?.status?.join(','),
     })
-    console.log('pending aciont  ' + sall[0].pendingAction)
     return sall
   }
 

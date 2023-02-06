@@ -104,9 +104,13 @@ export class ApplicationSerializer
             ? intl.formatMessage(actionCardMeta.tag.label)
             : null,
         },
+        pendingAction: helper.getCurrentStatePendingAction(
+          application,
+          userRole,
+          intl.formatMessage,
+        ),
         deleteButton: roleInState?.delete,
       },
-      pendingAction: helper.getCurrentStatePendingAction(application, userRole),
       name: getApplicationName(),
       institution: template.institution
         ? intl.formatMessage(template.institution)

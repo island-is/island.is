@@ -264,24 +264,33 @@ export class ApplicationTemplateHelper<
   getCurrentStatePendingAction(
     application: Application,
     currentRole: ApplicationRole,
+    formatMessage: FormatMessage,
     stateKey: string = this.application.state,
   ): PendingAction {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
-    const actionStatus = stateInfo?.pendingAction
+    const pendingAction = stateInfo?.actionCard?.pendingAction
 
-    if (!actionStatus) {
-      console.log('no action status')
+    if (!pendingAction) {
       return {
-        displayStatus: 'rejected',
-        content: 'Vantar Status',
+        displayStatus: 'inprogress',
       }
     }
-    console.log('has action status')
-    if (typeof actionStatus === 'function') {
-      return actionStatus(application, currentRole)
+
+    if (typeof pendingAction === 'function') {
+      const action = pendingAction(application, currentRole)
+
+      return {
+        displayStatus: action.displayStatus,
+        content: action.content ? formatMessage(action.content) : undefined,
+      }
     }
 
-    return actionStatus
+    return {
+      displayStatus: pendingAction.displayStatus,
+      content: pendingAction.content
+        ? formatMessage(pendingAction.content)
+        : undefined,
+    }
   }
 }

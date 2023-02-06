@@ -80,7 +80,7 @@ export type PendingActionDisplayStatus =
 
 export type PendingAction = {
   displayStatus: PendingActionDisplayStatus
-  content?: FormText
+  content?: StaticText
 }
 
 export interface ApplicationStateMeta<
@@ -92,11 +92,13 @@ export interface ApplicationStateMeta<
   actionCard?: {
     title?: StaticText
     description?: StaticText
+
+    pendingAction?:
+      | PendingAction
+      | ((application: Application, role: ApplicationRole) => PendingAction)
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
-  pendingAction?:
-    | PendingAction
-    | ((application: Application, role: ApplicationRole) => PendingAction)
+
   progress?: number
   /**
    * Represents the current status of the application in the state, defaults to draft

@@ -10,8 +10,6 @@ import * as styles from './ComplaintConfirmation.css'
 
 export const ComplaintConfirmation: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const st = application.externalData
-  console.log({ st })
   const submitData = application.externalData
     .sendApplication as SubmittedApplicationData
 

@@ -24,6 +24,15 @@ class ActionCardTag {
 }
 
 @ObjectType()
+class PendingAction {
+  @Field(() => String, { nullable: true })
+  displayStatus?: string
+
+  @Field(() => String, { nullable: true })
+  content?: string
+}
+
+@ObjectType()
 class ActionCardMetaData {
   @Field(() => String, { nullable: true })
   title?: string
@@ -36,15 +45,9 @@ class ActionCardMetaData {
 
   @Field(() => Boolean, { nullable: true })
   deleteButton?: boolean
-}
 
-@ObjectType()
-class PendingAction {
-  @Field(() => String, { nullable: true })
-  displayStatus?: string
-
-  @Field(() => String, { nullable: true })
-  content?: string
+  @Field(() => PendingAction, { nullable: true })
+  pendingAction?: PendingAction
 }
 
 @ObjectType()
@@ -93,9 +96,6 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
-
-  @Field(() => PendingAction, { nullable: true })
-  pendingAction?: PendingAction
 }
 
 @ObjectType()
