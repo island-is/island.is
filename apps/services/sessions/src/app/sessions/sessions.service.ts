@@ -49,7 +49,7 @@ export class SessionsService {
 
     return paginate({
       Model: this.sessionModel,
-      limit: query.limit || 10,
+      limit: Math.min(query.limit || 10, 100),
       after: query.after ?? '',
       before: query.before ?? '',
       primaryKeyField: 'timestamp',

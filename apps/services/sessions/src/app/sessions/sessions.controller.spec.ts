@@ -188,6 +188,34 @@ describe('SessionsController', () => {
       )
     })
 
+    it('GET /v1/me/sessions should limit limit parameter', async () => {
+      // Act
+      const res1 = await server.get(`/v1/me/sessions`)
+      const res2 = await server.get(
+        `/v1/me/sessions?after=${res1.body.pageInfo.endCursor}&limit=200`,
+      )
+
+      // Assert
+      expect(res1.status).toEqual(200)
+      expect(res2.status).toEqual(200)
+      expect(
+        res2.body.data.every(
+          (session: Session) => session.actorNationalId === user.nationalId,
+        ),
+      )
+      expect(res2.body.data).toMatchObject(
+        sortBy(sessions, 'timestamp')
+          .reverse()
+          .filter(
+            (session) =>
+              session.actorNationalId === user.nationalId ||
+              session.subjectNationalId == user.nationalId,
+          )
+          .map((session) => ({ id: session.id }))
+          .slice(10, 110),
+      )
+    })
+
     it('GET /v1/me/sessions should support order parameter', async () => {
       // Act
       const res = await server.get(`/v1/me/sessions?order=ASC`)
