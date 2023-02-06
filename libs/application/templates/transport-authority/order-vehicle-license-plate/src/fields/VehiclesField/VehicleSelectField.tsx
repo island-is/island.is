@@ -1,12 +1,25 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
-import { Box, CategoryCard, SkeletonLoader } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../types'
-import { information } from '../../lib/messages'
+import { FC, useCallback, useState } from 'react'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  CategoryCard,
+  InputError,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
+import { VehiclesCurrentVehicle } from '../../shared'
+import { error, information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
+import {
+  GetVehicleDetailInput,
+  VehiclesCurrentVehicleWithPlateOrderChecks,
+} from '@island.is/api/schema'
+import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
@@ -14,7 +27,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application }) => {
+> = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
 
@@ -29,13 +42,14 @@ export const VehicleSelectField: FC<
   const [
     selectedVehicle,
     setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicle | null>(
+  ] = useState<VehiclesCurrentVehicleWithPlateOrderChecks | null>(
     currentVehicle && currentVehicle.permno
       ? {
           permno: currentVehicle.permno,
           make: currentVehicle?.make || '',
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
+          duplicateOrderExists: false,
         }
       : null,
   )
@@ -43,20 +57,44 @@ export const VehicleSelectField: FC<
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
 
+  const getVehicleDetails = useLazyVehicleDetails()
+  const getVehicleDetailsCallback = useCallback(
+    async ({ permno }: GetVehicleDetailInput) => {
+      const { data } = await getVehicleDetails({
+        permno,
+      })
+      return data
+    },
+    [getVehicleDetails],
+  )
+
   const onChange = (option: Option) => {
     const currentVehicle = currentVehicleList[parseInt(option.value, 10)]
     setIsLoading(true)
     if (currentVehicle.permno) {
-      setSelectedVehicle({
+      getVehicleDetailsCallback({
         permno: currentVehicle.permno,
-        make: currentVehicle?.make || '',
-        color: currentVehicle?.color || '',
-        role: currentVehicle?.role,
       })
-      setPlate(currentVehicle.permno || '')
-      setIsLoading(false)
+        .then((response) => {
+          setSelectedVehicle({
+            permno: currentVehicle.permno,
+            make: currentVehicle?.make || '',
+            color: currentVehicle?.color || '',
+            role: currentVehicle?.role,
+            duplicateOrderExists:
+              response?.vehiclePlateOrderChecksByPermno?.duplicateOrderExists,
+          })
+
+          const disabled =
+            response?.vehiclePlateOrderChecksByPermno?.duplicateOrderExists
+          setPlate(disabled ? '' : currentVehicle.permno || '')
+          setIsLoading(false)
+        })
+        .catch((error) => console.error(error))
     }
   }
+
+  const disabled = selectedVehicle && selectedVehicle.duplicateOrderExists
 
   return (
     <Box>
@@ -81,10 +119,34 @@ export const VehicleSelectField: FC<
           <Box>
             {selectedVehicle && (
               <CategoryCard
-                colorScheme="blue"
+                colorScheme={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
               />
+            )}
+            {selectedVehicle && disabled && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="error"
+                  title={formatMessage(
+                    information.labels.pickVehicle.hasErrorTitle,
+                  )}
+                  message={
+                    <Box>
+                      <BulletList>
+                        {selectedVehicle.duplicateOrderExists && (
+                          <Bullet>
+                            {formatMessage(
+                              information.labels.pickVehicle
+                                .duplicateOrderExistsTag,
+                            )}
+                          </Bullet>
+                        )}
+                      </BulletList>
+                    </Box>
+                  }
+                />
+              </Box>
             )}
           </Box>
         )}
@@ -95,6 +157,9 @@ export const VehicleSelectField: FC<
         ref={register({ required: true })}
         name="pickVehicle.plate"
       />
+      {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
+        <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
+      )}
     </Box>
   )
 }

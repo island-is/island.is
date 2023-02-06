@@ -172,6 +172,7 @@ export const serviceSetup = (services: {
         prod: ref((h) => h.svc('https://soffia2.skra.is')),
         local: ref((h) => h.svc('https://localhost:8443')),
       },
+      HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
     })
 
     .secrets({
@@ -247,6 +248,8 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
+      HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
+      HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET',
     })
     .xroad(
       AdrAndMachine,

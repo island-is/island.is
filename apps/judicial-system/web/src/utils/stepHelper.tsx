@@ -1,11 +1,15 @@
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
+import concat from 'lodash/concat'
+import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   Gender,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -87,4 +91,16 @@ export const createCaseResentExplanation = (
       ? `${workingCase.caseResentExplanation}<br/><br/>`
       : ''
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
+}
+
+export const hasIndictmentSubtype = (
+  indictmentSubtypes: IndictmentSubtypeMap | undefined,
+  indictmentSubType: IndictmentSubtype,
+): boolean => {
+  return Boolean(
+    indictmentSubtypes &&
+      flatten(concat(Object.values(indictmentSubtypes))).includes(
+        indictmentSubType,
+      ),
+  )
 }

@@ -5,7 +5,7 @@ import {
   Inject,
   Param,
   Post,
-  Put,
+  Patch,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -66,7 +66,7 @@ export class DefendantController {
     registrarRule,
     assistantRule,
   )
-  @Put(':defendantId')
+  @Patch(':defendantId')
   @ApiOkResponse({
     type: Defendant,
     description: 'Updates a defendant',

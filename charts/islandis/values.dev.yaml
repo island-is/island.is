@@ -285,6 +285,7 @@ api:
     FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token'
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
+    HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -336,7 +337,7 @@ api:
     XROAD_VEHICLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
-    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2'
+    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3'
     XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
     XROAD_VEHICLE_PLATE_ORDERING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
@@ -427,6 +428,8 @@ api:
     FISKISTOFA_ZENTER_CLIENT_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD'
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
+    HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET'
+    HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
@@ -541,7 +544,7 @@ application-system-api:
     XROAD_VEHICLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
-    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2'
+    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3'
     XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
     XROAD_VEHICLE_PLATE_ORDERING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
@@ -1406,6 +1409,7 @@ namespaces:
     - 'user-notification'
     - 'external-contracts-tests'
     - 'contentful-entry-tagger'
+    - 'services-sessions'
 portals-admin:
   enabled: true
   env:
@@ -1889,6 +1893,134 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+services-sessions:
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_sessions'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_USER: 'services-sessions'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    REDIS_USE_SSL: 'true'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  ingress:
+    internal-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'sessions-api.internal.dev01.devland.is'
+          paths:
+            - '/'
+  namespace: 'services-sessions'
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-sessions-read:
+  args:
+    - 'main.js'
+    - '--job=worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_sessions'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_USER: 'services-sessions-read'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    REDIS_USE_SSL: 'true'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 3
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  namespace: 'services-sessions'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/sessions-worker'
+    create: true
+    name: 'sessions-worker'
 skilavottord-web:
   enabled: true
   env:

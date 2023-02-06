@@ -6,7 +6,7 @@ import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
 import { Insurance } from '../Insurance'
 import { ReviewCoOwnerAndOperatorRepeater } from '../ReviewCoOwnerAndOperatorRepeater'
-import { ReviewCoOwnerAndOperatorField, ReviewState } from '../../types'
+import { ReviewCoOwnerAndOperatorField, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 

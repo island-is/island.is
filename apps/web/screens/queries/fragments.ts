@@ -484,7 +484,6 @@ export const slices = gql`
     id
     title
     intro
-    recipient
     fields {
       title
       name
@@ -616,6 +615,7 @@ export const slices = gql`
   fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
     __typename
     id
+    renderedTitle
     resolvedSupportQNAs {
       id
       title
