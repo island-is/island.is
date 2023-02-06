@@ -31,7 +31,7 @@ export const submitted = {
       description: 'Conclusion information box intro',
     },
     bulletList: {
-      id: `affgp.application:section.submitted.bulletList`,
+      id: `affgp.application:section.submitted.bulletList#markdown`,
       defaultMessage: `* ${bulletOne}\n* ${bulletTwo}\n* ${bulletThree}`,
       description: 'BulletList',
     },

@@ -24,7 +24,7 @@ export const conclusion = {
       description: 'Conclusion information box intro',
     },
     bulletList: {
-      id: 'gfl.application:conclusion.information.bulletList',
+      id: 'gfl.application:conclusion.information.bulletList#markdown',
       defaultMessage: `* ${bulletOne}\n* ${bulletTwo}`,
       description: 'BulletList for conclusion information box',
     },
