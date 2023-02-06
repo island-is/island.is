@@ -4,20 +4,21 @@ import { LoggingModule } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { BadRequestException } from '@nestjs/common'
+import { CacheModule } from '@nestjs/common'
 import { NotificationsService } from './notifications.service'
 import {
   UserProfile,
   UserProfileLocaleEnum,
 } from '@island.is/clients/user-profile'
+import { Notification as NotificationType } from './types'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
-  notificationTitle: 'Demo title ',
+  notificationTitle: 'Demo title',
   notificationBody: 'Demo body {{arg1}}',
   notificationDataCopy: 'Demo data copy',
-  clickAction: 'Demo click action {{arg2}}',
-  category: 'Demo category',
+  clickAction: '//demo/{{arg2}}',
+  category: 'DEMO',
   args: ['arg1', 'arg2'],
 }
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
@@ -25,7 +26,7 @@ const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
 const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
   recipient: '1234567890',
   templateId: 'HNIPP.DEMO.ID',
-  args: ['asdf', 'qwer'],
+  args: ['hello', 'world'],
 }
 
 const mockProfile: UserProfile = {
@@ -50,7 +51,7 @@ describe('MessageProcessorService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggingModule],
+      imports: [CacheModule.register({}), LoggingModule],
       providers: [
         MessageProcessorService,
         NotificationsService,
@@ -62,22 +63,28 @@ describe('MessageProcessorService', () => {
     }).compile()
 
     service = module.get<MessageProcessorService>(MessageProcessorService)
+    notificationsService = module.get<any>(NotificationsService)
   })
 
   it('should be defined', () => {
     expect(service).toBeDefined()
   })
 
-  // it('process message', async () => {
-  //   jest
-  //     .spyOn(notificationsService, 'getTemplates')
-  //     .mockImplementation(() => Promise.resolve(mockTemplates))
-  //   jest
-  //     .spyOn(notificationsService, 'getTemplate')
-  //     .mockImplementation(() => Promise.resolve(mockHnippTemplate))
+  it('process message', async () => {
+    jest
+      .spyOn(notificationsService, 'getTemplates')
+      .mockImplementation(() => Promise.resolve(mockTemplates))
+    jest
+      .spyOn(notificationsService, 'getTemplate')
+      .mockImplementation(() => Promise.resolve(mockHnippTemplate))
 
-  //   const notification = await service.convertToNotification(mockCreateHnippNotificationDto,mockProfile)
-  //   expect(notification).toBeInstanceOf(Notification)
-  //   // expect(templates).toEqual(mockTemplates)
-  // })
+    const notification = await service.convertToNotification(
+      mockCreateHnippNotificationDto,
+      mockProfile,
+    )
+    expect(notification.title).toMatch('Demo title')
+    expect(notification.body).toMatch('Demo body hello')
+    expect(notification.category).toMatch('DEMO')
+    expect(notification.appURI).toMatch('//demo/world')
+  })
 })

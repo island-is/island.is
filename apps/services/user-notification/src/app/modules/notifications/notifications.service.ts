@@ -1,70 +1,67 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  CACHE_MANAGER,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
-// import { getTemplates } from './queries/getTemplates'
-
-// CHECK OUT
-// import { HttpService } from '@nestjs/axios'; ////
-// import { createMock, DeepMocked } from '@golevelup/ts-jest';
+import { Cache } from 'cache-manager'
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  // MOVE QUERY TO THE SOMETHING SOEMTHIGN ..................................................................
   async getTemplates(locale?: string): Promise<HnippTemplate[]> {
-    // DO WE NEED TO CACHE HERE AS WELL ????? OR WILL THE GQL DO IT FOR US
     if (locale == 'is' || locale === undefined) {
       locale = 'is-IS'
     }
+
     this.logger.info(
       'Fetching templates from Contentful GQL for locale: ' + locale,
     )
+    const contentfulGqlUrl =
+      'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
+    const contentfulHnippTemplatesQuery = {
+      query: ` {
+      hnippTemplateCollection(locale: "${locale}") {
+        items {
+          templateId
+          notificationTitle
+          notificationBody
+          notificationDataCopy
+          clickAction
+          category
+          args
+        }
+      }
+    }
+    `,
+    }
     try {
-      const results = await fetch(
-        'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
-        {
-          method: 'POST',
+      const results = await fetch(contentfulGqlUrl, {
+        method: 'POST',
 
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + process.env.CONTENTFUL_ACCESS_TOKEN, // TODO check for other envs
-          },
-
-          body: JSON.stringify({
-            query: ` {
-            hnippTemplateCollection(locale: "${locale}") {
-              items {
-                templateId
-                notificationTitle
-                notificationBody
-                notificationDataCopy
-                clickAction
-                category
-                args
-              }
-            }
-          }
-          `,
-          }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + process.env.CONTENTFUL_ACCESS_TOKEN,
         },
-      )
+
+        body: JSON.stringify(contentfulHnippTemplatesQuery),
+      })
       const templates = await results.json()
 
-      // date temp check for cache
       for (const item of templates.data.hnippTemplateCollection.items) {
-        item.date = new Date() // temp during cache testing
-        // check for null args - can this be done in contentful?
         if (item.args == null) {
           item.args = []
         }
       }
-
       return templates.data.hnippTemplateCollection.items
     } catch {
       throw new BadRequestException('Error fetching templates from Contentful')
@@ -78,6 +75,13 @@ export class NotificationsService {
     if (locale == 'is') {
       locale = 'is-IS'
     }
+    //  //check cache
+    //  const cacheKey = templateId + '-' + locale
+    //  const cachedTemplate = await this.cacheManager.get(cacheKey)
+    //  if (cachedTemplate) {
+    //    return cachedTemplate
+    //  }
+
     const templates = await this.getTemplates(locale)
     try {
       for (const template of templates) {

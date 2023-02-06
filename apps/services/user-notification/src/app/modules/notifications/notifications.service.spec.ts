@@ -4,7 +4,7 @@ import { LoggingModule } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, CacheModule, CACHE_MANAGER } from '@nestjs/common'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
@@ -25,10 +25,11 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
 
 describe('NotificationsService', () => {
   let service: NotificationsService
+  let cacheManager: any
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggingModule],
+      imports: [CacheModule.register({}), LoggingModule],
       providers: [
         NotificationsService,
         {
@@ -39,6 +40,7 @@ describe('NotificationsService', () => {
     }).compile()
 
     service = module.get<NotificationsService>(NotificationsService)
+    cacheManager = module.get<any>(CACHE_MANAGER)
   })
 
   it('should be defined', () => {

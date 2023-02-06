@@ -69,10 +69,7 @@ export class NotificationDispatchService {
       )
     }
 
-    const {
-      responses,
-      successCount,
-    } = await this.firebase.messaging().sendMulticast({
+    const multiCastMessage = {
       tokens,
       notification: {
         title: notification.title,
@@ -85,13 +82,17 @@ export class NotificationDispatchService {
           },
         },
       },
-      // test matrix of situations - deep link vs url link
       data: {
         ...(notification.appURI && { url: notification.appURI }),
         ...(notification.appURI && { islandIsUrl: notification.appURI }),
-        ...(notification.dataCopy && { copy: notification.dataCopy }), // confirm this guy
+        ...(notification.dataCopy && { copy: notification.dataCopy }),
       },
-    })
+    }
+
+    const {
+      responses,
+      successCount,
+    } = await this.firebase.messaging().sendMulticast(multiCastMessage)
 
     const errors = responses
       .map((r) => r.error)
