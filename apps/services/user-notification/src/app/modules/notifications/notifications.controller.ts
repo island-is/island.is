@@ -121,7 +121,7 @@ export class NotificationsController {
     )
     // validate
     this.notificationsService.validateArgCounts(body, template)
-    if (template.args?.length != body.args.length) {
+    if (template.args.length != body.args.length) {
       throw new BadRequestException(
         "Number of arguments doesn't match - template requires " +
           template.args?.length +
