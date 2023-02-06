@@ -9,7 +9,7 @@ type MockGQLOptions = {
   deepMockKey?: boolean
 }
 
-type Dict = Record<string, unknown>
+type Dict<T=unknown> = Record<string, T>
 /**
  * Return a copy of the `eroginal` object with any sub-objects mocked as `mockData`
  */
@@ -46,10 +46,10 @@ export async function mockQGL<T>(
   }: MockGQLOptions = {},
 ) {
   const pattern = `**/graphql?op=${op}`
-  responseKey = responseKey ?? op
+  if (!responseKey) responseKey = op
   const key = camelCaseResponseKey ? camelCase(responseKey) : responseKey
 
-  console.log(`Setting up mock (key=${key}) for ${pattern}`)
+  console.log(`Setting up mock (key=${key}) for ${pattern} (deepmock=${deepMockKey})`)
   await page.route(pattern, async (route) => {
     // Set mock
     const response = patchResponse ? await (await route.fetch()).json() : {}
@@ -61,14 +61,16 @@ export async function mockQGL<T>(
       ],
     ])
 
-    const patchedData = deepMerge(originalResponse, mockResponse)
-    const data = { data: {} }
-
     // Debug logging
-    console.log(`Got a mock-match for > ${route.request().url()} <`)
-    console.log('MOCKING ->', data)
+    console.log(`Got a mock-match for > ${route.request().url()} < (via key ${key})`)
     console.log('(original):', originalResponse)
-    console.log('(mocked): ', mockData)
+
+    const patchedData = deepMerge({...originalResponse}, mockResponse)
+    const data: Dict<Dict> = { data: {} }
+    data.data = patchedData
+    data.data.mocked = true
+
+    console.log('(mocked): ', mockResponse)
     console.log('(merged): ', patchedData)
 
     // Mock injection
@@ -79,7 +81,7 @@ export async function mockQGL<T>(
 }
 
 export async function disableObjectKey(page: Page, key: string) {
-  return await mockQGL(page, '*', {}, { responseKey: key, deepMockKey: true })
+  return await mockQGL(page, '**', {}, { responseKey: key, deepMockKey: true, patchResponse: true })
 }
 
 export async function disablePreviousApplications(page: Page) {
@@ -91,8 +93,8 @@ export async function disablePreviousApplications(page: Page) {
     'UpdateApplication',
     {
       externalData: {
-        existingApplication: { data: [], mocked: true },
-        syslumennOnEntry: { data: { estate: {}, mocked: true } },
+        existingApplication: { data: [] },
+        syslumennOnEntry: { data: { estate: {} } },
       },
     },
     { patchResponse: true },
