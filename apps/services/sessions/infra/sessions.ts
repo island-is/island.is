@@ -14,7 +14,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
       // The service has only read permissions
       username: serviceName,
       name: dbName,
-      passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
+      passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
@@ -77,7 +77,7 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
       // Worker has write permissions
       username: workerName,
       name: dbName,
-      passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
+      passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
