@@ -49,12 +49,19 @@ export const EditBasics = () => {
 
   useEffect(() => {
     if (!text.value && draft.type.value === 'amending') {
-      const THE_IMPACT = draft.impacts?.['0221/2001']?.[0] as DraftChangeForm
-      const additions = formatAmendingRegBody(THE_IMPACT.diff?.value)
+      let additionString = ''
+      let repealString = ''
+      Object.values(draft.impacts).forEach(([impact]) => {
+        if (impact.type === 'amend') {
+          const additions = formatAmendingRegBody(impact.diff?.value)
+          additionString += additions.join('')
+        } else {
+          // TODO: Handle repeals
+          repealString += '<p>Fellir brott ' + impact.name + '</p>'
+        }
+      })
 
-      const additionString = additions.join('') as HTMLText
-
-      updateState('text', additionString)
+      updateState('text', (additionString + repealString) as HTMLText)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
