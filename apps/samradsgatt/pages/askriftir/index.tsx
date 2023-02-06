@@ -1,6 +1,7 @@
 import {
     Box,
     Breadcrumbs,
+    Button,
     GridContainer,
     GridRow,
     ResponsiveSpace,
@@ -19,6 +20,10 @@ import {
     const paddingXContent = [3, 3, 3, 22] as ResponsiveSpace
     const paddingXTable = [0, 0, 0, 22] as ResponsiveSpace
     const paddingBottom = [5, 5, 5, 5] as ResponsiveSpace
+
+    const onLoadMore = () => {
+
+    }
   
     return (
       <Layout>
@@ -59,6 +64,11 @@ import {
           <GridRow>
             <Box paddingX={paddingXTable}>
                 <SubscriptionTable />
+            </Box>
+          </GridRow>
+          <GridRow>
+            <Box paddingX={paddingXContent} paddingBottom={paddingBottom} paddingTop={1}>
+                <Button icon="eye" variant="text" onClick={onLoadMore}>Sýna fleiri mál</Button>
             </Box>
           </GridRow>
         </GridContainer>

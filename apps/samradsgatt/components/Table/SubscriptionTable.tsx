@@ -1,5 +1,4 @@
 import { Icon, Table as T, Checkbox, Text, Box } from '@island.is/island-ui/core'
-import { useState } from 'react'
 import isEvenCheck from '../../utils/helpers/isEvenCheck'
 import SubscriptionDummyData from '../DummyData/SubscriptionDummyData'
 
@@ -8,8 +7,6 @@ const Headers = {
     institutions: ['Stofnun'],
     policyAreas: ['Málefnasvið']
 }
-
-
 
 const BackgroundColor = (idx: number) => {
     const isEven = isEvenCheck(idx)
@@ -30,7 +27,7 @@ const SubscriptionTable = ({ }) => {
         <T.Table>
             <T.Head>
                 <T.Row>
-                <T.HeadData box={{ marginRight: "none" ,background: 'transparent', borderColor: 'transparent' }} key={headerKey++}><Icon icon="checkmark" /></T.HeadData>
+                <T.HeadData box={{ background: 'transparent', borderColor: 'transparent' }} key={headerKey++}><Icon icon="checkmark" color="blue400" /></T.HeadData>
                 {Headers[chosenTab].map((header) => (
                     <T.HeadData box={{ background: 'transparent', borderColor: 'transparent' }} key={headerKey++}>{header}</T.HeadData>
                 ))}
