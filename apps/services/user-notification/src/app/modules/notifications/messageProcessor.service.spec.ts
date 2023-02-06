@@ -10,7 +10,6 @@ import {
   UserProfile,
   UserProfileLocaleEnum,
 } from '@island.is/clients/user-profile'
-import { Notification as NotificationType } from './types'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
