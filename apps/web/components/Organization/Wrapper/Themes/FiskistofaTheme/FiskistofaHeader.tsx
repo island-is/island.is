@@ -1,21 +1,52 @@
+import React, { useMemo } from 'react'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
-import React from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { theme } from '@island.is/island-ui/theme'
+import { useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import * as styles from './FiskistofaHeader.css'
+
+const getDefaultStyle = (width: number) => {
+  if (width >= theme.breakpoints.md) {
+    return {
+      backgroundRepeat: 'no-repeat',
+      backgroundPositionX: '52%',
+      backgroundPositionY: '30%',
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/7otUOlYNXerZwr0fRxkQA8/580fa8074fdb790a21e34c203658aad1/Fiskistofa-header-image.png'), linear-gradient(180deg, #E6F2FB 21.56%, #90D9E3 239.74%)",
+    }
+  }
+  return {
+    backgroundRepeat: 'no-repeat',
+    backgroundPositionX: '52%',
+    backgroundPositionY: '30%',
+    backgroundImage: 'linear-gradient(180deg, #E6F2FB 21.56%, #90D9E3 239.74%)',
+  }
+}
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const FiskistofaHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const FiskistofaHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
+    [organizationPage.organization.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+  const { width } = useWindowSize()
+
+  const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box className={styles.headerBg}>
+    <Box
+      style={n(`fiskistofaHeader-${screenWidth}`, getDefaultStyle(width))}
+      className={styles.headerBg}
+    >
       <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
@@ -67,3 +98,5 @@ export const FiskistofaHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default FiskistofaHeader
