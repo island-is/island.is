@@ -14,19 +14,15 @@ export const Card = (caseData: CardProps) => {
   return (
     <Box
       style={{
-        width: '358px',
+        width: '328px',
         minWidth: '287px',
         height: '460px',
         flexWrap: 'wrap',
       }}
       padding={3}
-      // margin={1}
       borderRadius="standard"
       borderWidth="standard"
       borderColor="purple300"
-      display="flex"
-      flexDirection="column"
-      justifyContent="spaceBetween"
     >
       <Box
         display="flex"
@@ -36,7 +32,7 @@ export const Card = (caseData: CardProps) => {
       >
         <Tag variant={getTagVariants(caseData.status)}>{caseData.status}</Tag>
         <Text as="p" variant="eyebrow" color="purple400">
-          {caseData.caseNumber}
+          Nr. S-{caseData.caseNumber}
         </Text>
       </Box>
       <Box display="flex" flexDirection="row" alignItems="center" paddingY={1}>
@@ -85,7 +81,7 @@ export const Card = (caseData: CardProps) => {
         </Text>
       </Box>
 
-      <ArrowLink href={`case/${caseData.id}`}>Skoða mál</ArrowLink>
+      <ArrowLink href={`/mal/${caseData.id}`}>Skoða mál</ArrowLink>
     </Box>
   )
 }

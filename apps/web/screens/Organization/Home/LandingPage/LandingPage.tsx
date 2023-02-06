@@ -76,7 +76,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
           lang: activeLocale,
           organization: organization.slug,
           sort: SortField.Popular,
-          size: ARTICLES_PAGE_SIZE,
+          size: ARTICLES_PAGE_SIZE + 1,
         },
       },
     },
@@ -164,8 +164,10 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
                   slice={{
                     articles: [],
                     id: `featured-articles-${organization.slug}`,
-                    resolvedArticles: articleResponse.data
-                      .getArticles as Article[],
+                    resolvedArticles: articleResponse.data.getArticles.slice(
+                      0,
+                      ARTICLES_PAGE_SIZE,
+                    ) as Article[],
                     sortBy: SortField.Popular,
                     title: n(
                       'agencyServicesTitle',

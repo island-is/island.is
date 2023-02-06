@@ -12,18 +12,14 @@ export class BucketService {
 
   async getFileContentAsBase64(filename: string): Promise<string> {
     this.logger.info('getFileContent base64...')
-    try {
-      const { region, bucket, key } = AmazonS3URI(filename)
-      const sm = await this.getFile(key, bucket)
-      if (sm.Body) {
-        this.logger.info('found file:' + key)
-        return sm.Body.toString('base64')
-      } else {
-        throw new Error('error getting file:' + key)
-      }
-    } catch (error) {
-      this.logger.error(error.message)
-      throw new Error(error.message)
+
+    const { region, bucket, key } = AmazonS3URI(filename)
+    const sm = await this.getFile(key, bucket)
+    if (sm.Body) {
+      this.logger.info('found file:' + key)
+      return sm.Body.toString('base64')
+    } else {
+      throw new Error('error getting file:' + key)
     }
   }
 

@@ -34,6 +34,7 @@ import { CaseFile } from '../../file'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { Defendant } from '../../defendant'
+import { IndictmentCount } from '../../indictment-count'
 
 @Table({
   tableName: 'case',
@@ -939,4 +940,21 @@ export class Case extends Model {
   })
   @ApiProperty()
   crimeScenes?: CrimeSceneMap
+
+  /**********
+   * The introduction to a traffic violation case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  indictmentIntroduction?: string
+
+  /**********
+   * The case's counts - only used if the case is an indictment
+   **********/
+  @HasMany(() => IndictmentCount, 'caseId')
+  @ApiProperty({ type: IndictmentCount, isArray: true })
+  indictmentCounts?: IndictmentCount[]
 }

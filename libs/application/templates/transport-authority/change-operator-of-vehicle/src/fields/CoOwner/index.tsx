@@ -1,21 +1,27 @@
 import { gql, useLazyQuery } from '@apollo/client'
 import { VehiclesCurrentOwnerInfo } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../types'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Text,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { UserInformation } from '../../shared'
+import { UserInformation, VehiclesCurrentVehicle } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 
 export const CoOwner: FC<FieldBaseProps> = ({
   application,
   field,
   setFieldLoadingState,
+  errors,
 }) => {
   const { formatMessage } = useLocale()
   const { id } = field
@@ -79,58 +85,73 @@ export const CoOwner: FC<FieldBaseProps> = ({
               {formatMessage(information.labels.coOwner.title)}
               {coOwners.length > 1 ? ` ${index + 1}` : ''}
             </Text>
-            <Box marginTop={2}>
-              <InputController
-                id={`${id}[${index}].name`}
-                name={`${id}[${index}].name`}
-                defaultValue={coOwner.owner || ''}
-                label={formatMessage(information.labels.coOwner.name)}
-                readOnly
-              />
-            </Box>
-            <Box marginTop={2}>
-              <InputController
-                id={`${id}[${index}].nationalId`}
-                name={`${id}[${index}].nationalId`}
-                defaultValue={coOwner.nationalId || ''}
-                label={formatMessage(information.labels.coOwner.nationalId)}
-                readOnly
-              />
-            </Box>
-            <Box marginTop={2}>
-              <InputController
-                id={`${id}[${index}].email`}
-                name={`${id}[${index}].email`}
-                label={formatMessage(information.labels.coOwner.email)}
-                defaultValue={
-                  getValueViaPath(
-                    application.answers,
-                    `${id}[${index}].email`,
-                    '',
-                  ) as string
-                }
-                type="email"
-                backgroundColor="blue"
-                required
-              />
-            </Box>
-            <Box marginTop={2}>
-              <InputController
-                id={`${id}[${index}].phone`}
-                name={`${id}[${index}].phone`}
-                label={formatMessage(information.labels.coOwner.phone)}
-                defaultValue={
-                  getValueViaPath(
-                    application.answers,
-                    `${id}[${index}].phone`,
-                    '',
-                  ) as string
-                }
-                type="tel"
-                backgroundColor="blue"
-                required
-              />
-            </Box>
+            <GridRow>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                <InputController
+                  id={`${id}[${index}].name`}
+                  name={`${id}[${index}].name`}
+                  defaultValue={coOwner.owner || ''}
+                  label={formatMessage(information.labels.coOwner.name)}
+                  error={
+                    errors && getErrorViaPath(errors, `${id}[${index}].name`)
+                  }
+                  readOnly
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                <InputController
+                  id={`${id}[${index}].nationalId`}
+                  name={`${id}[${index}].nationalId`}
+                  defaultValue={coOwner.nationalId || ''}
+                  label={formatMessage(information.labels.coOwner.nationalId)}
+                  error={
+                    errors &&
+                    getErrorViaPath(errors, `${id}[${index}].nationalId`)
+                  }
+                  readOnly
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                <InputController
+                  id={`${id}[${index}].email`}
+                  name={`${id}[${index}].email`}
+                  label={formatMessage(information.labels.coOwner.email)}
+                  defaultValue={
+                    getValueViaPath(
+                      application.answers,
+                      `${id}[${index}].email`,
+                      '',
+                    ) as string
+                  }
+                  type="email"
+                  backgroundColor="blue"
+                  error={
+                    errors && getErrorViaPath(errors, `${id}[${index}].email`)
+                  }
+                  required
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                <InputController
+                  id={`${id}[${index}].phone`}
+                  name={`${id}[${index}].phone`}
+                  label={formatMessage(information.labels.coOwner.phone)}
+                  defaultValue={
+                    getValueViaPath(
+                      application.answers,
+                      `${id}[${index}].phone`,
+                      '',
+                    ) as string
+                  }
+                  type="tel"
+                  backgroundColor="blue"
+                  error={
+                    errors && getErrorViaPath(errors, `${id}[${index}].phone`)
+                  }
+                  required
+                />
+              </GridColumn>
+            </GridRow>
           </Box>
         ))}
       </Box>

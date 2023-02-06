@@ -42,14 +42,13 @@ export const externalData = {
   nationalRegistry: defineMessages({
     title: {
       id: 'ta.ovlp.application:externalData.nationalRegistry.title',
-      defaultMessage: 'Upplýsingar úr Þjóðskrá',
-      description: 'Personal information from the National Registry',
+      defaultMessage: 'Upplýsingar úr Þjóðskrá/Fyrirtækjaskrá',
+      description: 'Information from the National Registry/Company Registry',
     },
     subTitle: {
       id: 'ta.ovlp.application:externalData.nationalRegistry.subTitle',
       defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
-      description:
-        'Information from the National Registry will be used to prefill the data in the application',
+      description: 'We will fetch name, national id and address',
     },
   }),
   currentVehicles: defineMessages({
