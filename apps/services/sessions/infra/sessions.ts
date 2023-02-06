@@ -1,8 +1,8 @@
 import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const namespace = 'services_sessions'
-const serviceName = 'services_sessions'
-const workerName = 'services_sessions_read'
+const namespace = 'services-sessions'
+const serviceName = 'services-sessions'
+const workerName = 'services-sessions-read'
 const imageName = 'services-sessions'
 const dbName = 'services_sessions'
 
