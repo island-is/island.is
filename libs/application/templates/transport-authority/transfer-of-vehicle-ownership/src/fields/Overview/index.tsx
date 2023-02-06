@@ -8,7 +8,7 @@ import {
   AlertMessage,
   InputError,
 } from '@island.is/island-ui/core'
-import { ReviewScreenProps } from '../../types'
+import { ReviewScreenProps } from '../../shared'
 import { useLocale } from '@island.is/localization'
 import {
   applicationCheck,

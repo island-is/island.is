@@ -1,11 +1,8 @@
 import { createIntl } from 'react-intl'
 
-import {
-  CaseDecision,
-  CaseType,
-  Defendant,
-} from '@island.is/judicial-system/types'
+import { CaseDecision, Defendant } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getConclusionAutofill } from './Ruling'
 
@@ -40,7 +37,7 @@ describe('getConclusionAutofill', () => {
     it('should format custody case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
-        type: CaseType.CUSTODY,
+        type: CaseType.Custody,
       } as Case
 
       const result = fn(theCase, decision)
@@ -53,7 +50,7 @@ describe('getConclusionAutofill', () => {
     it('should format extended travel ban case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
-        type: CaseType.TRAVEL_BAN,
+        type: CaseType.TravelBan,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
@@ -72,7 +69,7 @@ describe('getConclusionAutofill', () => {
       }
 
       const theCase = {
-        type: CaseType.ADMISSION_TO_FACILITY,
+        type: CaseType.AdmissionToFacility,
       } as Case
 
       const result = fn(theCase, decision, defendant)
@@ -89,7 +86,7 @@ describe('getConclusionAutofill', () => {
     it('should format custody case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
-        type: CaseType.CUSTODY,
+        type: CaseType.Custody,
       } as Case
 
       const result = fn(theCase, decision)
@@ -106,7 +103,7 @@ describe('getConclusionAutofill', () => {
         nationalId: '0000000000',
       }
       const theCase = {
-        type: CaseType.CUSTODY,
+        type: CaseType.Custody,
       } as Case
 
       const result = fn(theCase, decision, defendant)
@@ -123,7 +120,7 @@ describe('getConclusionAutofill', () => {
         nationalId: '1990-01-01',
       }
       const theCase = {
-        type: CaseType.ADMISSION_TO_FACILITY,
+        type: CaseType.AdmissionToFacility,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
@@ -141,7 +138,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format custody case', () => {
       const theCase = {
-        type: CaseType.CUSTODY,
+        type: CaseType.Custody,
       } as Case
 
       const result = fn(theCase, decision, defendantBase, validToDate)
@@ -155,7 +152,7 @@ describe('getConclusionAutofill', () => {
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:00:00Z'
       const theCase = {
-        type: CaseType.CUSTODY,
+        type: CaseType.Custody,
       } as Case
 
       const result = fn(
@@ -179,7 +176,7 @@ describe('getConclusionAutofill', () => {
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
-        type: CaseType.ADMISSION_TO_FACILITY,
+        type: CaseType.AdmissionToFacility,
       } as Case
 
       const result = fn(
@@ -205,7 +202,7 @@ describe('getConclusionAutofill', () => {
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
-        type: CaseType.ADMISSION_TO_FACILITY,
+        type: CaseType.AdmissionToFacility,
       } as Case
 
       const result = fn(
@@ -230,7 +227,7 @@ describe('getConclusionAutofill', () => {
     it('should format as non extended travel ban case', () => {
       const defendant = { ...defendantBase }
       const theCase = {
-        type: CaseType.CUSTODY,
+        type: CaseType.Custody,
         parentCase: { decision: CaseDecision.ACCEPTING } as Case,
       } as Case
 
@@ -243,7 +240,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format custody case as travel ban case', () => {
       const theCase = {
-        type: CaseType.CUSTODY,
+        type: CaseType.Custody,
       } as Case
 
       const result = fn(theCase, decision, defendantBase, validToDate)
