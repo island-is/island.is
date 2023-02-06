@@ -8,14 +8,14 @@ const servicePostgresInfo = {
   // The service has only read permissions
   username: 'services_sessions',
   name: dbName,
-  passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
+  passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
 }
 
 const workerPostgresInfo = {
   // Worker has write permissions
   username: 'services_sessions_worker',
   name: dbName,
-  passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
+  passwordSecret: '/k8s/services-sessions-worker/DB_PASSWORD',
 }
 
 export const serviceSetup = (): ServiceBuilder<'services-sessions-api'> => {
