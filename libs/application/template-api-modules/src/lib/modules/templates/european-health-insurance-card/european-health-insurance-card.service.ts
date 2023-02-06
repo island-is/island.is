@@ -2,6 +2,9 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+
+import { EhicApi } from '@island.is/clients/ehic-client-v1'
+
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -21,9 +24,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   constructor(
-    // @Inject(EUROPEAN_HEALTH_INSURANCE_CARD_CONFIG)
-    // private ehicConfig: EuropeanHealtInsuranceCardConfig,
-    // private nationalRegistryApi: NationalRegistryClientService,
+    private readonly ehic: EhicApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
@@ -31,6 +32,11 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   }
 
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
+    const resp = await this.ehic.cardStatus({
+      usernationalid: auth.nationalId,
+      applicantnationalids: ['1010101010'],
+    })
+    console.log(resp)
     console.log(auth)
     console.log(application)
     return {

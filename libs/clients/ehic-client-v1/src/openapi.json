@@ -1,20 +1,18 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "EHIC.API",
+    "title": "European Health Insurance card service (EHIC) - Island.is",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "/EHIC"
+      "url": "https://midgardur-test.sjukra.is/ehic"
     }
   ],
   "paths": {
     "/ehic/v1/cardstatus/{usernationalid}/{applicantnationalids}": {
       "get": {
-        "tags": [
-          "EHIC.API"
-        ],
+        "tags": ["Ehic"],
         "operationId": "CardStatus",
         "parameters": [
           {
@@ -97,9 +95,7 @@
     },
     "/ehic/requestcard/v1/{usernationalid}/{applicantnationalid}/{cardtype}": {
       "post": {
-        "tags": [
-          "EHIC.API"
-        ],
+        "tags": ["Ehic"],
         "operationId": "RequestCard",
         "parameters": [
           {
@@ -148,9 +144,7 @@
     },
     "/ehic/fetchtemppdfcard/{usernationalid}/{applicantnationalid}/{cardnumber}": {
       "get": {
-        "tags": [
-          "EHIC.API"
-        ],
+        "tags": ["Ehic"],
         "operationId": "FetchTempPDFCard",
         "parameters": [
           {
@@ -274,15 +268,7 @@
         "additionalProperties": false
       },
       "DayOfWeek": {
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
+        "enum": [0, 1, 2, 3, 4, 5, 6],
         "type": "integer",
         "format": "int32"
       }
