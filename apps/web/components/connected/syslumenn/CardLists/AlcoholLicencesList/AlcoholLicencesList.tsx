@@ -64,7 +64,6 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
     return new Promise<string>((resolve, reject) => {
       if (alcoholLicences) {
         const headerRow = [
-          'Málategund',
           'Tegund',
           'Tegund leyfis',
           'Leyfisnúmer',
@@ -78,7 +77,6 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
         const dataRows = []
         for (const alcoholLicence of alcoholLicences) {
           dataRows.push([
-            alcoholLicence.caseType, // Málategund
             alcoholLicence.licenceType, // Tegund
             alcoholLicence.licenceSubType, // Tegund leyfis
             alcoholLicence.licenseNumber, // Leyfisnúmer
