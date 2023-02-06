@@ -24,6 +24,7 @@ import {
   StraddlingStockCalculator,
   TwoColumnTextSlice,
   AlcoholLicencesList,
+  TemporaryEventLicencesList,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -55,6 +56,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <ShipSearchBoxedInput namespace={data} />
     case 'Áfengisleyfi/AlcoholLicences':
       return <AlcoholLicencesList slice={slice} />
+    case 'Tækifærisleyfi/TemporaryEventLicences':
+        return <TemporaryEventLicencesList slice={slice} />
     default:
       break
   }
