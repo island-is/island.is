@@ -102,7 +102,7 @@ const stepData: Record<
 
 const EditScreen = () => {
   const t = useLocale().formatMessage
-  const { error: errorSate, step: stepState } = useDraftingState()
+  const { draft, error: errorSate, step: stepState } = useDraftingState()
   const step = stepData[stepState.name]
 
   useEffect(() => {
@@ -118,6 +118,11 @@ const EditScreen = () => {
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box marginBottom={[4, 4, 5]}>
+            <Text as="p" marginBottom={[2, 2]}>
+              {draft.type.value === 'base'
+                ? t(editorMsgs.type_base)
+                : t(editorMsgs.type_amending)}
+            </Text>
             <Text as="h1" variant="h1" paddingBottom={3}>
               {t(step.title)}
             </Text>

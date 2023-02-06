@@ -16,12 +16,16 @@ const removeRegPrefix = (title: string) => {
 }
 
 export const formatAmendingRegTitle = (draft: RegDraftForm) => {
-  const impactArray = Object.values(draft.impacts)
+  const impactArray = Object.values(draft.impacts).flat()
 
   if (impactArray.length > 0) {
-    const titleArray = impactArray
-      .flat()
-      .map((item) => `${item.name}${removeRegPrefix(item.regTitle)}`)
+    const titleArray = impactArray.map(
+      (item) => `${item.name}${removeRegPrefix(item.regTitle)}`,
+    )
+
+    if (impactArray.length === 1 && impactArray[0].type === 'repeal') {
+      return PREFIX_REPEALING + titleArray[0]
+    }
 
     return PREFIX_AMENDING + titleArray.join(' og ')
   }
