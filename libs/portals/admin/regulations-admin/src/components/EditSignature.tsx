@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -187,10 +187,7 @@ export const EditSignature = () => {
               draftId={draft.id}
               value={
                 draft.signatureText.value ||
-                getDefaultSignatureText(
-                  formatDateFns,
-                  /* authorNotEditorMinistry */
-                )
+                getDefaultSignatureText(formatDateFns)
               }
               onChange={(text) => updateState('signatureText', text)}
               required={!!draft.signatureText.required}

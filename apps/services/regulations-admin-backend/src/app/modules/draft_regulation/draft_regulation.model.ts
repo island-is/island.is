@@ -1,11 +1,4 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  HasMany,
-  HasOne,
-} from 'sequelize-typescript'
+import { Column, DataType, Model, Table, HasMany } from 'sequelize-typescript'
 
 import {
   RegulationType,

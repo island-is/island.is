@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Box, Button, Checkbox, Divider } from '@island.is/island-ui/core'
 import { buttonsMsgs, reviewMessages } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -10,7 +10,7 @@ export const EditReview = () => {
   const t = useLocale().formatMessage
   const state = useDraftingState()
   const { actions } = state
-  const { ship /* , propose */ } = actions
+  const { ship } = actions
 
   const messages = useCollectMessages(state, t)
   const [confirmed, setConfirmed] = useState(false)

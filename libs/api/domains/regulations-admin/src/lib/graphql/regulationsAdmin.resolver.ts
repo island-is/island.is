@@ -98,7 +98,7 @@ export class RegulationsAdminResolver {
   async createDraftRegulation(
     @Args('input') input: CreateDraftRegulationInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
+  ) {
     return this.regulationsAdminApiService.create(authorization, input)
   }
 
@@ -106,7 +106,7 @@ export class RegulationsAdminResolver {
   async updateDraftRegulationById(
     @Args('input') input: EditDraftRegulationInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
+  ) {
     return this.regulationsAdminApiService.updateById(
       input.id,
       input.body,

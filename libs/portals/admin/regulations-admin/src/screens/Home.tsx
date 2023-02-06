@@ -1,10 +1,7 @@
 import * as s from './Home.css'
 
-import React from 'react'
-
 import {
   Box,
-  Button,
   Text,
   GridColumn,
   GridRow,

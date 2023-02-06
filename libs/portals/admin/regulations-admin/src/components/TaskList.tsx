@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   ActionCard,
   Box,
@@ -71,7 +71,6 @@ export const TaskList = () => {
               authors,
               type,
             } = item
-            // const statusLabel = formatMessage(statusMsgs[draftingStatus])
 
             return (
               <ActionCard

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Box, Button, Inline, Text, Divider } from '@island.is/island-ui/core'
 import { editorMsgs, impactMsgs, reviewMessages } from '../lib/messages'
 import { useDraftingState } from '../state/useDraftingState'
@@ -258,6 +258,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
               clicked={clicked.signatureDate}
               icon="copy"
               onClick={() => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 copyToClipboard(toISODate(draft.signatureDate.value!), {
                   format: 'text/plain',
                   onCopy: () => flagAsClick('signatureDate'),
@@ -271,6 +272,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
                 clicked={clicked.idealPublishDate}
                 icon="copy"
                 onClick={() => {
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                   copyToClipboard(toISODate(draft.idealPublishDate.value!), {
                     format: 'text/plain',
                     onCopy: () => flagAsClick('idealPublishDate'),
@@ -285,6 +287,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
               icon="download"
               onClick={() => {
                 flagAsClick('signedDocument')
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 downloadUrl(draft.signedDocumentUrl.value!)
               }}
             />

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Button, DatePicker } from '@island.is/island-ui/core'
 import { impactMsgs } from '../../lib/messages'
 import { DraftImpactForm } from '../../state/types'

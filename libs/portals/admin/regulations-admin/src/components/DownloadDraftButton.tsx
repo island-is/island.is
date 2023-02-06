@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 

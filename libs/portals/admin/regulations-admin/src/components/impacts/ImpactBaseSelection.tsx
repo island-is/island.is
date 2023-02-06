@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { useDraftingState } from '../../state/useDraftingState'
 import { impactMsgs } from '../../lib/messages'

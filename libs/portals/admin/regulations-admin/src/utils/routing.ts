@@ -32,7 +32,8 @@ export const getEditUrl: GetEditUrlFn = (
 export const getHomeUrl = () => RegulationsAdminPaths.RegulationsAdminRoot
 
 // ---------------------------------------------------------------------------
-/*
+
+/* // TODO: implement urls to impacts?
 export const getImpactUrl = (
   impactId: DraftImpactId,
   draftId?: RegulationDraftId,

@@ -1,6 +1,4 @@
 import * as s from './ButtonBar.css'
-
-import React from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
 import { buttonsMsgs as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'

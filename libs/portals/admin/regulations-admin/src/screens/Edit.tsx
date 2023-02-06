@@ -1,5 +1,5 @@
-import React, { FC, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { FC, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
@@ -35,7 +35,6 @@ import {
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import { DraftingNotes } from '../components/DraftingNotes'
 import { ButtonBar } from '../components/ButtonBar'
-import { RegulationType } from '@island.is/regulations'
 
 // ---------------------------------------------------------------------------
 

@@ -3,7 +3,6 @@ import { makeHighAngstWarnings } from '@island.is/regulations-tools/useTextWarni
 import { errorMsgs } from '../lib/messages'
 import {
   findAffectedRegulationsInText,
-  findRegulationType,
   findSignatureInText,
 } from '../utils/guessers'
 import {
@@ -70,6 +69,7 @@ export const validateState = (state: DraftingState) => {
     validateFieldValue(appendix.title)
     validateFieldValue(appendix.text)
   })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Object.entries(draft.impacts).forEach(([key, impactsList]) => {
     impactsList.forEach((impact) => {
       validateImpact(impact, state)
@@ -93,6 +93,7 @@ export const isDraftErrorFree = (state: DraftingState): boolean => {
 
   let validImpacts = true
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Object.entries(draft.impacts).forEach(([key, impactsList]) => {
     impactsList.forEach((impact) => {
       // skip checking 'repeal' impacts
@@ -164,12 +165,10 @@ export const updateFieldValue = <T extends DraftField<unknown, string>>(
   newValue: T['value'],
   isImpact?: boolean,
 ) => {
-  // if (newValue !== field.value) {
   field.value = newValue
   field.dirty = true
 
   validateFieldValue(field, isImpact)
-  // }
 }
 
 // ---------------------------------------------------------------------------
@@ -178,6 +177,7 @@ export const tidyUp = {
   date: (value: string) => value,
   text: (value: string) => value.trimLeft() as PlainText,
   html: (value: HTMLText) => value.trimLeft() as HTMLText,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   _: <T>(value: T) => value,
 } as const
 
@@ -211,6 +211,7 @@ const updateImpacts = (
     draft.mentioned = newMentions
 
     if (!isAmending) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(impacts).forEach(([key, impactsList]) => {
         impactsList.forEach((impact) => {
           if (impact.name === 'self') return

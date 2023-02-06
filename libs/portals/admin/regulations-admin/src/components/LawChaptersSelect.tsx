@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { Box, Inline, Option, Select } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../lib/messages'

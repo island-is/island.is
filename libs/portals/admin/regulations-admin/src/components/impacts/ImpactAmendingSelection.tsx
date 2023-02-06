@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { useDraftingState } from '../../state/useDraftingState'
 import { impactMsgs } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
@@ -11,11 +10,7 @@ import {
 } from '@island.is/regulations'
 import { DraftImpactName } from '@island.is/regulations/admin'
 
-import {
-  AsyncSearch,
-  AsyncSearchOption,
-  Option,
-} from '@island.is/island-ui/core'
+import { AsyncSearch, Option } from '@island.is/island-ui/core'
 import { RegulationOptionListQuery } from '../../utils/dataHooks'
 import { formatSelRegOptions } from '../../utils/formatSelRegOptions'
 import { useLazyQuery } from '@apollo/client'
@@ -26,13 +21,6 @@ export type SelRegOption = Option & {
   value?: DraftImpactName | ''
   type: RegulationType | ''
   migrated?: boolean
-}
-
-type SearchItem = {
-  label: string
-  value: DraftImpactName | ''
-  component?: AsyncSearchOption['component']
-  disabled?: boolean
 }
 
 type ImpactAmendingSelectionProps = {
@@ -91,6 +79,7 @@ export const ImpactAmendingSelection = ({
     )
 
     setSelRegOptions(relRegOptionsArray)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   return (

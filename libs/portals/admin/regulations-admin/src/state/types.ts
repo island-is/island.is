@@ -24,8 +24,6 @@ export type StepNav = {
   next?: Step
 }
 
-// export type InputType = 'text' | 'html'
-
 export type DraftField<Type, InputType extends string = ''> = {
   value: Type
   required?: boolean | MessageDescriptor

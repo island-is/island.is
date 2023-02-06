@@ -8,7 +8,6 @@ import {
   RegName,
   RegulationType,
 } from '@island.is/regulations'
-// import { ISODate } from '@island.is/regulations'
 
 @ObjectType()
 export class LawChapters {

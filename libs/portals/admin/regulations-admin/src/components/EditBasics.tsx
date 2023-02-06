@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import * as s from './EditBasics.css'
 import {
   Box,
@@ -44,6 +44,7 @@ export const EditBasics = () => {
         updateState('title', formatAmendingRegTitle(draft))
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.type.value])
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export const EditBasics = () => {
 
       updateState('text', additionString)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
 
   return (
@@ -91,6 +93,7 @@ export const EditBasics = () => {
             <Box marginBottom={3}>
               {draft.text.value ? (
                 // Force re-render of TinyMCE editor for inital and empty values
+                // If we display the editor before we generate ammending regulation the editor is empty
                 <EditorInput
                   label={t(msg.text)}
                   hiddenLabel
