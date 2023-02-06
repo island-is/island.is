@@ -7,7 +7,7 @@ import {
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { getShortGender, hasIndictmentSubtype, isDirty } from './stepHelper'
+import { getShortGender, isDirty } from './stepHelper'
 
 import * as formatters from './formatters'
 
@@ -129,38 +129,6 @@ describe('Formatters utils', () => {
     })
   })
 })
-
-describe('Step helper', () => {
-  describe('hasIndictmentSubtype', () => {
-    test('should return true if indictment subtype is in the list of indictment subtypes', () => {
-      // Arrange
-      const indictmentSubtype = IndictmentSubtype.BREAKING_AND_ENTERING
-      const indictmentSubtypes: IndictmentSubtypeMap = {
-        '213': [
-          IndictmentSubtype.BREAKING_AND_ENTERING,
-          IndictmentSubtype.AGGRAVATED_ASSAULT,
-        ],
-      }
-
-      // Act
-      const result = hasIndictmentSubtype(indictmentSubtypes, indictmentSubtype)
-
-      // Assert
-      expect(result).toBe(true)
-    })
-
-    test('should return false if indictment subtypes are undefined', () => {
-      // Arrange
-      const indictmentSubtype = IndictmentSubtype.BREAKING_AND_ENTERING
-      const indictmentSubtypes = undefined
-
-      // Act
-      const result = hasIndictmentSubtype(indictmentSubtypes, indictmentSubtype)
-
-      // Assert
-      expect(result).toBe(false)
-    })
-  })
 
   describe('insertAt', () => {
     test('should insert a string at a certain position into another string', () => {
