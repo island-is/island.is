@@ -13,7 +13,7 @@ export const generateAssignApplicationEmail: AssignmentEmailTemplateGenerator = 
     application,
     options: { email },
   } = props
-  console.log(assignLink)
+
   const employerEmail = get(application.answers, 'assigneeEmail')
 
   const subject = 'Yfirferð á umsókn.'

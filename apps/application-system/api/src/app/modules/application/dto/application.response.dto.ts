@@ -26,6 +26,18 @@ class ActionCardTag {
   variant?: string
 }
 
+class PendingAction {
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  displayStatus?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  content?: string
+}
+
 class ActionCardMetaData {
   @ApiPropertyOptional()
   @Expose()
@@ -46,6 +58,11 @@ class ActionCardMetaData {
   @Expose()
   @IsBoolean()
   deleteButton?: boolean
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsObject()
+  pendingAction?: PendingAction
 }
 
 export class ApplicationResponseDto {
