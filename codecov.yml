@@ -23,3 +23,13 @@ component_management:
       paths:
         - apps/api/**
         - libs/api/domains/**
+    - component_id: application-system-api-graphql # this is an identifier that should not be changed
+      name: Application System API
+      paths:
+        - apps/application-system/api/**
+        - libs/application/api/**
+        - libs/application/core/**
+        - libs/application/graphql/**
+        - libs/application/template-api-modules/**
+        - libs/application/template-loader/**
+        - libs/application/templates/**
