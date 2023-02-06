@@ -1,81 +1,103 @@
 import {
   Box,
   Breadcrumbs,
-  Filter,
   FilterInput,
-  FilterMultiChoice,
   Hidden,
   LoadingDots,
-  Pagination,
   BreadCrumbItem,
   Text,
   Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import HistoryTable from '../../components/HistoryTable/HistoryTable'
 import HistoryTableMobile from '../../components/HistoryTable/HistoryTableMobile'
 
 import { m } from '../../lib/messages'
-import { helperStyles, theme } from '@island.is/island-ui/theme'
 import PersonIcon from '../../components/PersonIcon/PersonIcon'
-import { useGetSessionsListQuery } from './Sessions.generated'
 import {
+  GetSessionsListQuery,
+  useGetSessionsListQuery,
+} from './Sessions.generated'
+import {
+  Exact,
+  SessionsInput,
   SessionsPaginatedSessionResponse,
   SessionsSession,
 } from '@island.is/api/schema'
 import { SessionType } from '../../lib/types/sessionTypes'
-import Link from 'next/link'
+import { useSearchParams } from 'react-router-dom'
+import { QueryHookOptions } from '@apollo/client'
 
 const Sessions = () => {
   const SESSION_LIMIT = 2
+  const QUERY_PARAM_NAME = 'pageNo'
+  const [searchParams] = useSearchParams()
+  console.log(searchParams.get(QUERY_PARAM_NAME))
   const { formatMessage } = useLocale()
-  const [search, setSearch] = useState('')
-  const [page, setPage] = useState<number>(0)
+  const [searchNationalId, setSearchNationalId] = useState('')
+  const [page, setPage] = useState<number>(1)
+  const [
+    paginatedSessions,
+    setPaginatedSessions,
+  ] = useState<SessionsPaginatedSessionResponse>()
 
-  const { data, loading } = useGetSessionsListQuery({
-    fetchPolicy: 'network-only',
-    variables: {
-      input: {
-        limit: SESSION_LIMIT,
-        before: '',
-        after: '',
-        nationalId: '',
-        toDate: '',
-        fromDate: '',
+  const getOptions = (): QueryHookOptions<
+    GetSessionsListQuery,
+    Exact<{ input: SessionsInput }>
+  > => {
+    return {
+      fetchPolicy: 'network-only',
+      variables: {
+        input: {
+          limit: SESSION_LIMIT,
+          before: '',
+          after: page.toString(),
+          nationalId: '',
+          toDate: '',
+          fromDate: '',
+        },
       },
-    },
+    }
+  }
+
+  const { data, loading, error, refetch } = useGetSessionsListQuery({
+    ...getOptions(),
     onCompleted(data) {
-      const session = data?.sessionsList
-        ? (data.sessionsList as SessionsPaginatedSessionResponse)
-        : undefined
-      console.log(session)
-    },
-    onError(error) {
-      console.log(error)
+      console.log('test')
+      setPaginatedSessions(
+        data?.sessionsList as SessionsPaginatedSessionResponse,
+      )
     },
   })
 
-  const handleChange = (value: any) => {
-    setSearch(value)
+  React.useEffect(() => {
+    refetch({
+      ...getOptions().variables,
+    })
+  }, [page])
+
+  const handleChange = (value: string): void => {
+    setSearchNationalId(value)
   }
 
-  const handlePageChange = (action: 'next' | 'prev') => {
-    if (!data) return
-    if (page === 0 && action === 'prev') return
+  const handlePageChange = (action: 'next' | 'prev'): void => {
     if (
-      page * SESSION_LIMIT + SESSION_LIMIT >= data?.sessionsList?.totalCount &&
-      action === 'next'
+      !data ||
+      (page === 1 && action === 'prev') ||
+      (page * SESSION_LIMIT >= data?.sessionsList?.totalCount &&
+        action === 'next')
     )
       return
+    let temp: number = page
+    action === 'next' ? (temp = temp + 1) : (temp = temp - 1)
+    setPage(temp)
+    const path = `/minarsidur/adgangsstyring/innskraningar?${QUERY_PARAM_NAME}=${temp}`
 
-    if (action === 'next') {
-      setPage(page + 1)
-    } else {
-      setPage(page - 1)
-    }
+    window.history.pushState({ path: path }, '', path)
   }
+
   return (
     <>
       <Box paddingBottom={'containerGutter'}>
@@ -110,42 +132,37 @@ const Sessions = () => {
           </Box>
         </Box>
       </Hidden>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="center"
+        paddingBottom={[3, 3, 4, 4]}
+      >
+        <FilterInput
+          placeholder={formatMessage(m.search)}
+          name="filterInput"
+          value={searchNationalId}
+          onChange={handleChange}
+        />
+        <Box columnGap="gutter" display="flex" alignItems="center">
+          <Button
+            circle
+            size="small"
+            colorScheme="light"
+            icon={'arrowBack'}
+            onClick={() => handlePageChange('prev')}
+          />
+          <Button
+            circle
+            size="small"
+            colorScheme="light"
+            icon={'arrowForward'}
+            onClick={() => handlePageChange('next')}
+          />
+        </Box>
+      </Box>
       {data && !loading ? (
         <Fragment>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-            // style={{ maxWidth: '318px' }}
-            // width={'full'}
-            paddingBottom={[3, 3, 4, 4]}
-          >
-            <FilterInput
-              placeholder={formatMessage(m.search)}
-              name="filterInput"
-              value={search}
-              onChange={handleChange}
-            />
-            <Box columnGap="gutter" display="flex" alignItems="center">
-              <Button
-                circle
-                size="small"
-                colorScheme="light"
-                icon={'arrowBack'}
-                onClick={() => handlePageChange('prev')}
-              />
-              <Text variant="eyebrow">
-                {page * SESSION_LIMIT} - {page * SESSION_LIMIT + SESSION_LIMIT}
-              </Text>
-              <Button
-                circle
-                size="small"
-                colorScheme="light"
-                icon={'arrowForward'}
-                onClick={() => handlePageChange('next')}
-              />
-            </Box>
-          </Box>
           <Hidden below={'lg'}>
             <HistoryTable data={data.sessionsList.data as SessionsSession[]} />
           </Hidden>
