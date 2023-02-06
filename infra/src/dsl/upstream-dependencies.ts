@@ -1,5 +1,6 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
 import { HelmOutput } from './output-generators/map-to-helm-values'
+import { KubeOutput } from './output-generators/map-to-kube-manifests'
 import { ReferenceResolver, EnvironmentConfig } from './types/charts'
 import {
   LocalrunOutput,

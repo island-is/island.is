@@ -34,9 +34,7 @@ const serializeService: SerializeMethod<KubeService> = async (
   deployment: ReferenceResolver,
   opsenv: EnvironmentConfig,
 ) => {
-  const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
-    service.name,
-  )
+  const { mergeObjects, getErrors } = checksAndValidations(service.name)
   const serviceDef = service
   const { namespace, securityContext } = serviceDef
   const result: KubeService = {
@@ -140,7 +138,6 @@ const serializeService: SerializeMethod<KubeService> = async (
 
   // secrets
   if (Object.keys(serviceDef.secrets).length > 0) {
-    result.spec.spec.containers.env = serviceDef.secrets
     Object.entries(serviceDef.secrets).forEach(([key, value]) => {
       result.spec.spec.containers.env = {
         [`${key}`]: {
@@ -178,40 +175,61 @@ const serializeService: SerializeMethod<KubeService> = async (
 
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
+    result.spec.spec.initContainers = []
     if (serviceDef.initContainers.containers.length > 0) {
       serviceDef.initContainers.containers.forEach((c) => {
         const legacyCommand = []
         legacyCommand.push(c.command)
-        result.spec.spec.initContainers.push({
-          args: c.args,
-          command: legacyCommand,
-          name: c.name,
-          image: c,
-          env: c.
-        })
+        if (result.spec.spec.initContainers) {
+          result.spec.spec.initContainers.push({
+            args: c.args,
+            command: legacyCommand,
+            name: c.name,
+            image: '',
+            env: serviceDef.initContainers?.envs as { [name: string]: string },
+          })
+        }
       })
-      result.spec.spec.initContainers, serviceDef.initContainers.containers
+    }
+  }
+  const allErrors = getErrors()
+  return allErrors.length === 0
+    ? { type: 'success', serviceDef: [result] }
+    : { type: 'error', errors: allErrors }
+}
 
-      result.initcontainersblah = {
-        containers: serializeContainerRuns(
-          serviceDef.initContainers.containers,
-        ),
-        env: {
-          SERVERSIDE_FEATURES_ON: opsenv.featuresOn.join(','),
-        },
-        secrets: {},
-      }
-      if (typeof serviceDef.initContainers.envs !== 'undefined') {
-        const { envs } = serializeEnvironmentVariables(
-          service,
-          deployment,
-          serviceDef.initContainers.envs,
-          opsenv,
-        )
-        mergeObjects(result.initContainer.env, envs)
-      }
+export const KubeOutput: OutputFormat<KubeService> = {
+  serializeService(
+    service: ServiceDefinitionForEnv,
+    deployment: ReferenceResolver,
+    env: EnvironmentConfig,
+  ): Promise<SerializeSuccess<KubeService> | SerializeErrors> {
+    return serializeService(service, deployment, env)
+  },
+  featureDeployment(options): KubeService {
+    throw new Error('Not used')
+  },
+  serviceMockDef(options): KubeService {
+    throw new Error('Not used')
+  },
+}
+
+/*
       if (typeof serviceDef.initContainers.secrets !== 'undefined') {
-        result.initContainer.secrets = serviceDef.initContainers.secrets
+        Object.entries(serviceDef.initContainers.secrets).forEach(
+          ([key, value]) => {
+            result.spec.spec.initContainers.push({
+              [`${key}`]: {
+                valueFrom: {
+                  secretKeyRef: {
+                    name: key,
+                    key: value,
+                  },
+                },
+              },
+            })
+          },
+        )
       }
       if (serviceDef.initContainers.postgres) {
         const { env, secrets, errors } = serializePostgres(
@@ -523,3 +541,4 @@ export const HelmOutput: OutputFormat<HelmService> = {
     return serviceMockDef(options)
   },
 }
+*/

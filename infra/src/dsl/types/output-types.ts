@@ -97,7 +97,7 @@ export interface KubeService {
       imagePullSecrets?: string
       securityContext?: SecurityContext
       serviceAccountName?: string
-      initContainers: InitContainerKube[]
+      initContainers?: InitContainerKube[]
       containers: {
         name: string
         securityContext?: SecurityContext
