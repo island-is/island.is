@@ -115,6 +115,17 @@ const EstateTemplate: ApplicationTemplate<
               delete: true,
               api: [NationalRegistryUserApi, UserProfileApi],
             },
+            {
+              id: Roles.APPLICANT_PRIVATE_EXCHANGE,
+              formLoader: () =>
+                import('../forms/PrivateExchange/form').then((module) =>
+                  Promise.resolve(module.form),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              write: 'all',
+              delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
+            },
           ],
         },
         on: {
@@ -176,6 +187,8 @@ const EstateTemplate: ApplicationTemplate<
         return Roles.APPLICANT_NO_PROPERTY
       } else if (selectedEstate === EstateTypes.residencePermit) {
         return Roles.APPLICANT_RESIDENCE_PERMIT
+      } else if (selectedEstate === EstateTypes.privateExchange) {
+        return Roles.APPLICANT_PRIVATE_EXCHANGE
       } else return Roles.APPLICANT
     }
   },
