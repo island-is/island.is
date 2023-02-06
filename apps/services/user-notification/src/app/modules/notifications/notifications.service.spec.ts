@@ -118,10 +118,7 @@ describe('NotificationsService', () => {
     //   mockHnippTemplate,
     // )
     expect(() => {
-      service.formatArguments(
-        mockCreateHnippNotificationDto,
-        mockHnippTemplate,
-      )
-    }).toThrow("Argument count mismatch");
+      service.formatArguments(mockCreateHnippNotificationDto, mockHnippTemplate)
+    }).toThrow('Argument count mismatch')
   })
 })

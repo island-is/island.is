@@ -25,7 +25,7 @@ export class MessageProcessorService {
       message.templateId,
       profile.locale,
     )
-    console.log("template******************+", template)
+    console.log('template******************+', template)
     const notification = await this.notificationsService.formatArguments(
       message,
       template,

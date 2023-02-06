@@ -106,8 +106,8 @@ export class NotificationsService {
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
   ): HnippTemplate {
-    if(template.args.length != body.args.length) {
-      throw new BadRequestException("Argument count mismatch")
+    if (template.args.length != body.args.length) {
+      throw new BadRequestException('Argument count mismatch')
     }
     if (template.args.length > 0) {
       const allowedReplaceProperties = [
