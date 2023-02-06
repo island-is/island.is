@@ -62,14 +62,14 @@ describe('MessageProcessorService', () => {
     }).compile()
 
     service = module.get<MessageProcessorService>(MessageProcessorService)
-    notificationsService = module.get<any>(NotificationsService)
+    notificationsService = module.get<NotificationsService>(NotificationsService)
   })
 
   it('should be defined', () => {
     expect(service).toBeDefined()
   })
 
-  it('process message', async () => {
+  it('should process message', async () => {
     jest
       .spyOn(notificationsService, 'getTemplates')
       .mockImplementation(() => Promise.resolve(mockTemplates))

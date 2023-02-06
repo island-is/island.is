@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Notification } from './types'
 import { UserProfile } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
@@ -12,8 +12,6 @@ export interface MessageProcessorServiceConfig {
 @Injectable()
 export class MessageProcessorService {
   constructor(
-    // @Inject(APP_PROTOCOL)
-    // private readonly appProtocol: string,
     private readonly notificationsService: NotificationsService,
   ) {}
 

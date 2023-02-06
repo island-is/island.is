@@ -46,6 +46,7 @@ export const environment = {
         },
       }),
   },
+  contentfulAccessToken: required('CONTENTFUL_ACCESS_TOKEN'),
 }
 
 export type Config = typeof environment

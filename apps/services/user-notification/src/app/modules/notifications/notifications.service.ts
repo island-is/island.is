@@ -9,6 +9,8 @@ import {
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
+import { environment } from '../../../environments/environment'
+
 
 @Injectable()
 export class NotificationsService {
@@ -19,7 +21,6 @@ export class NotificationsService {
   ) {}
 
   async addToCache(key: string, item: any) {
-    // item = JSON.stringify(item)
     const res = await this.cacheManager.set(key, item)
     console.log(res)
   }
@@ -61,13 +62,13 @@ export class NotificationsService {
 
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + process.env.CONTENTFUL_ACCESS_TOKEN,
+          Authorization: 'Bearer ' + environment.contentfulAccessToken,
         },
 
         body: JSON.stringify(contentfulHnippTemplatesQuery),
       })
+      
       const templates = await results.json()
-
       for (const item of templates.data.hnippTemplateCollection.items) {
         //cache check
         item.date = new Date().toISOString()
@@ -76,8 +77,8 @@ export class NotificationsService {
         }
       }
       return templates.data.hnippTemplateCollection.items
-    } catch {
-      throw new BadRequestException('Error fetching templates from Contentful')
+    } catch(e) {
+      throw new Error(e)
     }
   }
 
