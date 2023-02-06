@@ -9,7 +9,7 @@ type MockGQLOptions = {
   deepMockKey?: boolean
 }
 
-type Dict<T=unknown> = Record<string, T>
+type Dict<T = unknown> = Record<string, T>
 /**
  * Return a copy of the `eroginal` object with any sub-objects mocked as `mockData`
  */
@@ -49,7 +49,9 @@ export async function mockQGL<T>(
   if (!responseKey) responseKey = op
   const key = camelCaseResponseKey ? camelCase(responseKey) : responseKey
 
-  console.log(`Setting up mock (key=${key}) for ${pattern} (deepmock=${deepMockKey})`)
+  console.log(
+    `Setting up mock (key=${key}) for ${pattern} (deepmock=${deepMockKey})`,
+  )
   await page.route(pattern, async (route) => {
     // Set mock
     const response = patchResponse ? await (await route.fetch()).json() : {}
@@ -62,10 +64,12 @@ export async function mockQGL<T>(
     ])
 
     // Debug logging
-    console.log(`Got a mock-match for > ${route.request().url()} < (via key ${key})`)
+    console.log(
+      `Got a mock-match for > ${route.request().url()} < (via key ${key})`,
+    )
     console.log('(original):', originalResponse)
 
-    const patchedData = deepMerge({...originalResponse}, mockResponse)
+    const patchedData = deepMerge({ ...originalResponse }, mockResponse)
     const data: Dict<Dict> = { data: {} }
     data.data = patchedData
     data.data.mocked = true
@@ -81,7 +85,12 @@ export async function mockQGL<T>(
 }
 
 export async function disableObjectKey(page: Page, key: string) {
-  return await mockQGL(page, '**', {}, { responseKey: key, deepMockKey: true, patchResponse: true })
+  return await mockQGL(
+    page,
+    '**',
+    {},
+    { responseKey: key, deepMockKey: true, patchResponse: true },
+  )
 }
 
 export async function disablePreviousApplications(page: Page) {
