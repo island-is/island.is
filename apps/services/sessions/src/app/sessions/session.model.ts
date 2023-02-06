@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   CreationOptional,
   InferAttributes,
@@ -20,6 +21,7 @@ export class Session extends Model<
   InferAttributes<Session>,
   InferCreationAttributes<Session>
 > {
+  @ApiProperty()
   @PrimaryKey
   @Column({
     type: DataType.STRING,
@@ -27,36 +29,42 @@ export class Session extends Model<
   })
   id!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   actorNationalId!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   subjectNationalId!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   clientId!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.DATE,
     allowNull: false,
   })
   timestamp!: Date
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   userAgent!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
