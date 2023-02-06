@@ -57,7 +57,7 @@ export const webRenderConnectedComponent = (slice) => {
     case 'Áfengisleyfi/AlcoholLicences':
       return <AlcoholLicencesList slice={slice} />
     case 'Tækifærisleyfi/TemporaryEventLicences':
-        return <TemporaryEventLicencesList slice={slice} />
+      return <TemporaryEventLicencesList slice={slice} />
     default:
       break
   }

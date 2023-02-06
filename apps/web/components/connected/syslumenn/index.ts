@@ -6,6 +6,7 @@ export const AlcoholLicencesList = dynamic(
 )
 
 export const TemporaryEventLicencesList = dynamic(
-  () => import('./CardLists/TemporaryEventLicencesList/TemporaryEventLicencesList'),
+  () =>
+    import('./CardLists/TemporaryEventLicencesList/TemporaryEventLicencesList'),
   { ssr: true },
 )

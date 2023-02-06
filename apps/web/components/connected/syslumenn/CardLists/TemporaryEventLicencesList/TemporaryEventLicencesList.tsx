@@ -29,7 +29,9 @@ interface TemporaryEventLicencesListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({ slice }) => {
+const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
+  slice,
+}) => {
   const t = useLocalization(slice.json)
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
@@ -92,14 +94,15 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({ slice
     })
   }
 
-  const filteredTemporaryEventLicences = temporaryEventLicences.filter((temporaryEventLicence) =>
-    textSearch(searchTerms, [
-      // Fields to search
-      temporaryEventLicence.licenceType,
-      temporaryEventLicence.licenseHolder,
-      temporaryEventLicence.licenseNumber,
-      temporaryEventLicence.licenseResponsible,
-    ]),
+  const filteredTemporaryEventLicences = temporaryEventLicences.filter(
+    (temporaryEventLicence) =>
+      textSearch(searchTerms, [
+        // Fields to search
+        temporaryEventLicence.licenceType,
+        temporaryEventLicence.licenseHolder,
+        temporaryEventLicence.licenseNumber,
+        temporaryEventLicence.licenseResponsible,
+      ]),
   )
 
   return (
@@ -187,7 +190,9 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({ slice
                       </Box>
                     </Box>
                     <Box>
-                      <Text variant="h3">{temporaryEventLicence.licenseHolder}</Text>
+                      <Text variant="h3">
+                        {temporaryEventLicence.licenseHolder}
+                      </Text>
 
                       <Text paddingBottom={2}>
                         {t('licenseNumber', 'Leyfisnúmer')}:{' '}

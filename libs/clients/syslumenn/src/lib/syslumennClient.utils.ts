@@ -211,8 +211,12 @@ export const mapTemporaryEventLicence = (
   year: temporaryEventLicence.skraningarAr
     ? parseInt(temporaryEventLicence.skraningarAr)
     : undefined,
-  validFrom: temporaryEventLicence.gildirFra ? temporaryEventLicence.gildirFra : undefined,
-  validTo: temporaryEventLicence.gildirTil ? temporaryEventLicence.gildirTil : undefined,
+  validFrom: temporaryEventLicence.gildirFra
+    ? temporaryEventLicence.gildirFra
+    : undefined,
+  validTo: temporaryEventLicence.gildirTil
+    ? temporaryEventLicence.gildirTil
+    : undefined,
   licenseHolder: temporaryEventLicence.leyfishafi?.trim() ?? '',
   // TODO: Ask for this to be fixed in Syslumenn API: abyrgdarmaur -> abyrgdarmadur
   licenseResponsible: temporaryEventLicence.abyrgdarmaur?.trim() ?? '',

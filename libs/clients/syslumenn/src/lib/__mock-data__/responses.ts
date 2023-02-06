@@ -147,7 +147,7 @@ export const TEMPORARY_EVENT_LICENCES = [
     leyfishafi: 'string',
     // TODO: Ask for this to be fixed in Syslumenn API: abyrgdarmaur -> abyrgdarmadur
     abyrgdarmaur: 'string',
-  }
+  },
 ] as Taekifaerisleyfi[]
 
 export const DATA_UPLOAD: Skilabod = {
