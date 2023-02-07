@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
 @ObjectType()
 export class PageInfoDto {
