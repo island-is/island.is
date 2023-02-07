@@ -150,18 +150,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
     const relation =
       externalData?.estate.estateMembers?.find(
-        (member) => member.nationalId === answers.applicant.nationalId,
-      )?.relation ?? ''
-
-    console.log('ANSWERS ANSWERS ANSWERS')
-    console.log('ANSWERS ANSWERS ANSWERS')
-    console.log('ANSWERS ANSWERS ANSWERS')
-    console.log(JSON.stringify(answers))
-
-    console.log('EXTERNAL EXTERNAL EXTERNAL')
-    console.log('EXTERNAL EXTERNAL EXTERNAL')
-    console.log('EXTERNAL EXTERNAL EXTERNAL')
-    console.log(JSON.stringify(externalData))
+        (member) => member.nationalId === application.applicant,
+      )?.relation ?? 'Óþekkt'
 
     const processedAssets = filterAndRemoveRepeaterMetadata<
       EstateSchema['estate']['assets']
@@ -181,8 +171,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
     const uploadData: UploadData = {
       applicationType: answers.selectedEstate,
-      applicantHasLegalCustodyOverEstate:
-        answers.applicantHasLegalCustodyOverEstate,
       assets: processedAssets,
       claims: answers.claims ?? [],
       bankAccounts: answers.bankAccounts ?? [],
@@ -202,18 +190,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
       otherAssets: answers.otherAssets ?? '',
       otherAssetsValue: answers.otherAssetsValue ?? '',
       stocks: answers.stocks ?? [],
-      undividedEstateResidencePermission:
-        answers.undividedEstateResidencePermission,
       vehicles: processedVehicles,
     }
 
-    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
-    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
-    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
-    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
-    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
-    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
-    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
     console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
     console.log(this.stringifyObject(uploadData))
     return { success: true }
