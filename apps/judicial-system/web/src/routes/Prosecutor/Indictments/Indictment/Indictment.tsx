@@ -1,7 +1,9 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'framer-motion'
 
+import { Box, Input, Button } from '@island.is/island-ui/core'
 import {
   FormContentContainer,
   FormContext,
@@ -9,20 +11,23 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Box, Input } from '@island.is/island-ui/core'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
+import useIndictmentCounts from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
 
 const Indictment: React.FC = () => {
@@ -31,16 +36,101 @@ const Indictment: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
+
+  const {
+    createIndictmentCount,
+    updateIndictmentCount,
+    deleteIndictmentCount,
+  } = useIndictmentCounts()
+
   const stepIsValid = true
+
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
+  useDeb(workingCase, ['indictmentIntroduction'])
 
-  useDeb(workingCase, 'indictmentIntroduction')
+  const handleCreateIndictmentCount = useCallback(async () => {
+    const indictmentCount = await createIndictmentCount(workingCase.id)
+
+    if (!indictmentCount) {
+      return
+    }
+
+    setWorkingCase((theCase) => ({
+      ...theCase,
+      indictmentCounts: theCase.indictmentCounts
+        ? [...theCase.indictmentCounts, indictmentCount]
+        : [indictmentCount],
+    }))
+  }, [createIndictmentCount, setWorkingCase, workingCase.id])
+
+  useEffect(() => {
+    if (isCaseUpToDate && workingCase.indictmentCounts?.length === 0) {
+      handleCreateIndictmentCount()
+    }
+  }, [
+    isCaseUpToDate,
+    handleCreateIndictmentCount,
+    workingCase.indictmentCounts,
+  ])
+
+  const updateIndictmentCountState = useCallback(
+    (indictmentCountId: string, update: TIndictmentCount) => {
+      setWorkingCase((theCase) => {
+        if (!theCase.indictmentCounts) {
+          return theCase
+        }
+
+        const indictmentCountIndexToUpdate = theCase.indictmentCounts.findIndex(
+          (indictmentCount) => indictmentCount.id === indictmentCountId,
+        )
+
+        const newIndictmentCounts = [...theCase.indictmentCounts]
+
+        newIndictmentCounts[indictmentCountIndexToUpdate] = {
+          ...newIndictmentCounts[indictmentCountIndexToUpdate],
+          ...update,
+        }
+        return { ...theCase, indictmentCounts: newIndictmentCounts }
+      })
+    },
+    [setWorkingCase],
+  )
+
+  const handleUpdateIndictmentCount = useCallback(
+    async (
+      indictmentCountId: string,
+      updatedIndictmentCount: TIndictmentCount,
+    ) => {
+      updateIndictmentCount(workingCase.id, updatedIndictmentCount)
+      updateIndictmentCountState(indictmentCountId, updatedIndictmentCount)
+    },
+    [updateIndictmentCount, updateIndictmentCountState, workingCase.id],
+  )
+
+  const handleDeleteIndictmentCount = async (
+    indictmentCount: TIndictmentCount,
+  ) => {
+    if (
+      workingCase.indictmentCounts &&
+      workingCase.indictmentCounts.length > 1
+    ) {
+      await deleteIndictmentCount(workingCase.id, indictmentCount.id)
+
+      setWorkingCase((theCase) => ({
+        ...theCase,
+        indictmentCounts: theCase.indictmentCounts?.filter(
+          (count) => count.id !== indictmentCount.id,
+        ),
+      }))
+    }
+  }
 
   return (
     <PageLayout
@@ -60,9 +150,9 @@ const Indictment: React.FC = () => {
         <Box marginBottom={5}>
           <Input
             name="indictmentsIntroduction"
-            label={formatMessage(strings.indictmentIntroductionLabel)}
+            label={formatMessage(strings.sections.introduction.label)}
             placeholder={formatMessage(
-              strings.indictmentIntroductionPlaceholder,
+              strings.sections.introduction.placeholder,
             )}
             value={workingCase.indictmentIntroduction || ''}
             onChange={(event) =>
@@ -87,6 +177,45 @@ const Indictment: React.FC = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
           />
+        </Box>
+        {workingCase.indictmentCounts?.map((indictmentCount, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+          >
+            <Box
+              component="section"
+              marginBottom={
+                index - 1 === workingCase.indictmentCounts?.length ? 0 : 3
+              }
+            >
+              <SectionHeading
+                title={formatMessage(strings.sections.indictmentCount.heading, {
+                  count: index + 1,
+                })}
+              />
+              <AnimatePresence>
+                <IndictmentCount
+                  indictmentCount={indictmentCount}
+                  workingCase={workingCase}
+                  onDelete={index > 0 ? handleDeleteIndictmentCount : undefined}
+                  onChange={handleUpdateIndictmentCount}
+                ></IndictmentCount>
+              </AnimatePresence>
+            </Box>
+          </motion.div>
+        ))}
+        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+          <Button
+            variant="ghost"
+            icon="add"
+            onClick={handleCreateIndictmentCount}
+            disabled={false}
+          >
+            {formatMessage(strings.sections.indictmentCount.addCount)}
+          </Button>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
