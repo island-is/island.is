@@ -21,6 +21,11 @@ import {
   Text,
   Input,
   AlertMessage,
+  Select,
+  Option,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { SyslumennListCsvExport } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -108,14 +113,49 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
     })
   }
 
-  const filteredAlcoholLicences = alcoholLicences.filter((alcoholLicence) =>
-    textSearch(searchTerms, [
-      // Fields to search
-      alcoholLicence.licenceType,
-      alcoholLicence.licenseHolder,
-      alcoholLicence.licenseNumber,
-      alcoholLicence.licenseResponsible,
-    ]),
+  // Filter - Office
+  const allOfficesOption = t('filterOfficeAll', 'Öll embætti')
+  const avaibleOfficesOptions = [
+    allOfficesOption,
+    ...Array.from(
+      new Set<string>(alcoholLicences.map((x) => x.issuedBy)).values(),
+    ),
+  ]
+  const [filterOffice, setFilterOffice] = useState<string>(
+    avaibleOfficesOptions[0],
+  )
+
+  // Filter - Type
+  const allLicenceTypeOption = t('filterLicenceTypeAll', 'Allar tegundir')
+  const avaibleLicenceTypeOptions = [
+    allLicenceTypeOption,
+    ...Array.from(
+      new Set<string>(alcoholLicences.map((x) => x.licenceType)).values(),
+    ),
+  ]
+  const [filterLicenceType, setFilterLicenceType] = useState<string>(
+    avaibleLicenceTypeOptions[0],
+  )
+
+  // Filter
+  const filteredAlcoholLicences = alcoholLicences.filter(
+    (alcoholLicence) =>
+      // Filter by Office
+      (filterOffice === allOfficesOption
+        ? true
+        : alcoholLicence.issuedBy === filterOffice) &&
+      // Filter by Licence type
+      (filterLicenceType === allLicenceTypeOption
+        ? true
+        : alcoholLicence.licenceType === filterLicenceType) &&
+      // Filter by search string
+      textSearch(searchTerms, [
+        // Fields to search
+        alcoholLicence.licenceType,
+        alcoholLicence.licenseHolder,
+        alcoholLicence.licenseNumber,
+        alcoholLicence.licenseResponsible,
+      ]),
   )
 
   return (
@@ -138,28 +178,95 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
         />
       )}
       {listState === 'loaded' && (
-        <Box marginBottom={3}>
-          <Input
-            name="alcoholLicencesSearchInput"
-            placeholder={t('searchPlaceholder', 'Leita')}
-            backgroundColor={['blue', 'blue', 'white']}
-            size="sm"
-            icon="search"
-            iconType="outline"
-            onChange={(event) => onSearch(event.target.value)}
-          />
-          <Box textAlign="right" marginRight={1} marginTop={1}>
-            <SyslumennListCsvExport
-              defaultLabel={t('csvButtonLabelDefault', 'Sækja öll leyfi (CSV)')}
-              loadingLabel={t('csvButtonLabelLoading', 'Sæki öll leyfi...')}
-              errorLabel={t(
-                'csvButtonLabelError',
-                'Ekki tókst að sækja leyfi, reyndu aftur',
-              )}
-              csvFilenamePrefix={t('csvFileTitlePrefix', 'Áfengisleyfi')}
-              csvStringProvider={csvStringProvider}
-            />
-          </Box>
+        <Box marginBottom={2}>
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                paddingTop={[0, 0, 0]}
+                paddingBottom={2}
+                span={['12/12', '12/12', '12/12', '6/12', '6/12']}
+              >
+                <Select
+                  backgroundColor="white"
+                  icon="chevronDown"
+                  size="sm"
+                  isSearchable
+                  label={t('alcoholLicencesFilterLicenceType', 'Tegund')}
+                  name="licenceTypeSelect"
+                  options={avaibleLicenceTypeOptions.map((x) => ({
+                    label: x,
+                    value: x,
+                  }))}
+                  value={avaibleLicenceTypeOptions
+                    .map((x) => ({
+                      label: x,
+                      value: x,
+                    }))
+                    .find((x) => x.value === filterLicenceType)}
+                  onChange={({ value }: Option) => {
+                    setFilterLicenceType(String(value))
+                  }}
+                />
+              </GridColumn>
+              <GridColumn
+                paddingBottom={2}
+                span={['12/12', '12/12', '12/12', '6/12', '6/12']}
+              >
+                <Select
+                  backgroundColor="white"
+                  icon="chevronDown"
+                  size="sm"
+                  isSearchable
+                  label={t('alcoholLicencesFilterOffice', 'Embætti')}
+                  name="officeSelect"
+                  options={avaibleOfficesOptions.map((x) => ({
+                    label: x,
+                    value: x,
+                  }))}
+                  value={avaibleOfficesOptions
+                    .map((x) => ({
+                      label: x,
+                      value: x,
+                    }))
+                    .find((x) => x.value === filterOffice)}
+                  onChange={({ value }: Option) => {
+                    setFilterOffice(String(value))
+                  }}
+                />
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
+                <Input
+                  name="alcoholLicencesSearchInput"
+                  placeholder={t('searchPlaceholder', 'Leita')}
+                  backgroundColor={['blue', 'blue', 'white']}
+                  size="sm"
+                  icon="search"
+                  iconType="outline"
+                  onChange={(event) => onSearch(event.target.value)}
+                />
+                <Box textAlign="right" marginRight={1} marginTop={1}>
+                  <SyslumennListCsvExport
+                    defaultLabel={t(
+                      'csvButtonLabelDefault',
+                      'Sækja öll leyfi (CSV)',
+                    )}
+                    loadingLabel={t(
+                      'csvButtonLabelLoading',
+                      'Sæki öll leyfi...',
+                    )}
+                    errorLabel={t(
+                      'csvButtonLabelError',
+                      'Ekki tókst að sækja leyfi, reyndu aftur',
+                    )}
+                    csvFilenamePrefix={t('csvFileTitlePrefix', 'Áfengisleyfi')}
+                    csvStringProvider={csvStringProvider}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Box>
       )}
       {listState === 'loaded' && filteredAlcoholLicences.length === 0 && (
