@@ -88,7 +88,7 @@ export const requestHandlers = [
       `r1/${XROAD_DRIVING_LICENSE_BOOK_PATH}/api/Student/UpdateLicenseBook/:id`,
     ),
     (req, res, ctx) => {
-      const body = req.body as unknown
+      const body = req.body as { teacherSsn: string } | undefined | null
 
       const isFound = req.params.id === MOCK_LICENSE_BOOK_ID
       if (!isFound) {
@@ -101,7 +101,7 @@ export const requestHandlers = [
       const isValidTeacher = [
         MOCK_NATIONAL_ID_TEACHER_OLD,
         MOCK_NATIONAL_ID_TEACHER_NEW,
-      ].includes(body?.teacherSsn)
+      ].includes(body?.teacherSsn || '')
       if (!isValidTeacher) {
         return res(
           ctx.status(400),
