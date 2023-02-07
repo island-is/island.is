@@ -31,12 +31,9 @@ import {
   MessageWithLinkButtonField,
   ExpandableDescriptionField,
   AlertMessageField,
-  Context,
   S3PdfLinkField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
-import { StaticText } from 'static-text'
-import { ApolloClient } from '@apollo/client'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
