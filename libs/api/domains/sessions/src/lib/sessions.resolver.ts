@@ -25,6 +25,8 @@ export class SessionsResolver {
     @CurrentUser() user: User,
     @Args('input') input: SessionsInput,
   ): Promise<PaginatedSessionDto> {
+    console.log(input.nationalId)
+    console.log(user.nationalId)
     return this.sessionsService.getSessions(user, input)
   }
 

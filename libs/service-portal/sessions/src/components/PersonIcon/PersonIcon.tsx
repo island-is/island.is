@@ -16,7 +16,9 @@ const PersonIcon: FC<IProps> = ({ sessionType = SessionType.self }) => {
     <Box
       display="flex"
       style={{ width: 'fit-content' }}
-      background={'blue100'}
+      background={
+        sessionType === SessionType.onBehalf ? 'blue100' : 'purple100'
+      }
       borderRadius="large"
       padding={1}
     >

@@ -3,16 +3,21 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   Button,
+  GridColumn,
   FilterInput,
   Hidden,
   LoadingDots,
   Text,
+  SkeletonLoader,
+  ToastContainer,
+  toast,
+  Input,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import React, { Fragment, useState } from 'react'
-import HistoryTable from '../../components/HistoryTable/HistoryTable'
-import HistoryTableMobile from '../../components/HistoryTable/HistoryTableMobile'
+import React, { Fragment, useRef, useState } from 'react'
+import LogTable from '../../components/LogTable/LogTable'
+import LogTableMobile from '../../components/LogTable/LogTableMobile'
 
 import { m } from '../../lib/messages'
 import PersonIcon from '../../components/PersonIcon/PersonIcon'
@@ -20,16 +25,12 @@ import {
   GetSessionsListQuery,
   useGetSessionsListQuery,
 } from './Sessions.generated'
-import {
-  Exact,
-  SessionsInput,
-  SessionsPaginatedSessionResponse,
-  SessionsSession,
-} from '@island.is/api/schema'
+import { Exact, SessionsInput, SessionsSession } from '@island.is/api/schema'
 import { SessionType } from '../../lib/types/sessionTypes'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { QueryHookOptions } from '@apollo/client'
 import { SessionsPaths } from '../../lib/paths'
+import * as kennitala from 'kennitala'
 
 const enum PaginationNavigation {
   NEXT = 'next',
@@ -39,9 +40,10 @@ const enum PaginationNavigation {
 const Sessions = () => {
   const SESSION_LIMIT = 2
   const QUERY_PARAM_NAME = 'pageNo'
-  const [searchParams] = useSearchParams()
   const { formatMessage } = useLocale()
   const [searchNationalId, setSearchNationalId] = useState('')
+  const [prevSearchNationalId, setPrevSearchNationalId] = useState('')
+  const [sentNationalId, setSentNationalId] = useState('')
   const [page, setPage] = useState<number>(1)
 
   const getOptions = (): QueryHookOptions<
@@ -55,7 +57,7 @@ const Sessions = () => {
           limit: SESSION_LIMIT,
           before: '',
           after: page.toString(),
-          nationalId: '',
+          nationalId: sentNationalId ?? '',
           toDate: '',
           fromDate: '',
         },
@@ -63,18 +65,29 @@ const Sessions = () => {
     }
   }
 
-  const { data, loading, error, refetch } = useGetSessionsListQuery({
+  const { data, loading, error } = useGetSessionsListQuery({
     ...getOptions(),
+    onError: () => {
+      toast.error(formatMessage(m.error))
+    },
   })
 
   React.useEffect(() => {
-    refetch({
-      ...getOptions().variables,
-    })
-  }, [page])
+    if (kennitala.isValid(searchNationalId)) {
+      setSentNationalId(searchNationalId)
+    } else if (
+      kennitala.isValid(prevSearchNationalId) &&
+      !kennitala.isValid(searchNationalId)
+    ) {
+      setSentNationalId('')
+    }
+  }, [searchNationalId])
 
-  const handleChange = (value: string): void => {
-    setSearchNationalId(value)
+  const handleChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+  ): void => {
+    setPrevSearchNationalId(searchNationalId)
+    setSearchNationalId(e.target.value)
   }
 
   const handlePageChange = (action: PaginationNavigation): void => {
@@ -115,65 +128,87 @@ const Sessions = () => {
         title={formatMessage(m.sessions)}
         intro={formatMessage(m.sessionsHeaderIntro)}
       />
-      <Hidden above={'md'}>
-        <Box columnGap="gutter" display="flex" paddingBottom={4}>
-          <Box columnGap="smallGutter" display="flex" alignItems="center">
-            <PersonIcon sessionType={SessionType.onBehalf} />
-            <Text>{formatMessage(m.onBehalfOF)}</Text>
-          </Box>
-          <Box columnGap="smallGutter" display="flex" alignItems="center">
-            <PersonIcon sessionType={SessionType.myBehalf} />
-            <Text>{formatMessage(m.inYourBehalf)}</Text>
-          </Box>
-        </Box>
-      </Hidden>
+      {/*<Hidden above={'md'}>*/}
+      {/*  <Box columnGap="gutter" display="flex" paddingBottom={4}>*/}
+      {/*    <Box columnGap="smallGutter" display="flex" alignItems="center">*/}
+      {/*      <PersonIcon sessionType={SessionType.onBehalf} />*/}
+      {/*      <Text>{formatMessage(m.onBehalfOF)}</Text>*/}
+      {/*    </Box>*/}
+      {/*    <Box columnGap="smallGutter" display="flex" alignItems="center">*/}
+      {/*      <PersonIcon sessionType={SessionType.myBehalf} />*/}
+      {/*      <Text>{formatMessage(m.inYourBehalf)}</Text>*/}
+      {/*    </Box>*/}
+      {/*  </Box>*/}
+      {/*</Hidden>*/}
       <Box
         display="flex"
         justifyContent="spaceBetween"
         alignItems="center"
         paddingBottom={[3, 3, 4, 4]}
       >
-        <FilterInput
-          placeholder={formatMessage(m.search)}
-          name="filterInput"
-          value={searchNationalId}
-          onChange={handleChange}
-        />
-        <Box columnGap="gutter" display="flex" alignItems="center">
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12', '4/12']}>
+          <Input
+            backgroundColor={'blue'}
+            maxLength={10}
+            type={'text'}
+            placeholder={formatMessage(m.search)}
+            name="filterInput"
+            value={searchNationalId}
+            size="sm"
+            icon={'search'}
+            iconType={'outline'}
+            onChange={handleChange}
+          />
+        </GridColumn>
+        {/*<Hidden below={'lg'}>*/}
+        <Box
+          marginLeft={'gutter'}
+          columnGap="gutter"
+          display="flex"
+          alignItems="center"
+        >
           <Button
             circle
-            size="small"
+            size="default"
+            disabled={loading}
             colorScheme="light"
             icon={'arrowBack'}
             onClick={() => handlePageChange(PaginationNavigation.PREV)}
           />
           <Button
             circle
-            size="small"
+            size="default"
+            disabled={loading}
             colorScheme="light"
             icon={'arrowForward'}
             onClick={() => handlePageChange(PaginationNavigation.NEXT)}
           />
         </Box>
+        {/*</Hidden>*/}
       </Box>
-      {data && !loading ? (
+      {data ? (
         <Fragment>
           <Hidden below={'lg'}>
-            <HistoryTable data={data.sessionsList.data as SessionsSession[]} />
+            <LogTable
+              loading={loading}
+              data={data.sessionsList.data as SessionsSession[]}
+            />
           </Hidden>
           <Hidden above={'md'}>
-            <HistoryTableMobile
+            <LogTableMobile
+              loading={loading}
               sessions={data.sessionsList.data as SessionsSession[]}
             />
           </Hidden>
         </Fragment>
-      ) : loading ? (
-        <Box width="full" display="flex" justifyContent="center">
-          <LoadingDots />
+      ) : error ? (
+        <Box display={'flex'} justifyContent={'center'}>
+          <Text>{formatMessage(m.error)}</Text>
         </Box>
       ) : (
-        <Text>Engar niðurstöður</Text>
+        <SkeletonLoader height={40} repeat={6} width={'100%'} />
       )}
+      <ToastContainer />
     </>
   )
 }

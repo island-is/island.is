@@ -1,7 +1,13 @@
 import React, { FC } from 'react'
-import { Box, Divider, Icon, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Divider,
+  Icon,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
 import Person from '../PersonIcon/PersonIcon'
-import * as commonAccessStyles from '../HistoryTable/HistoryTable.css'
+import * as commonAccessStyles from '../LogTable/LogTable.css'
 import { SessionsSession } from '@island.is/api/schema'
 import { formatNationalId, getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
@@ -9,8 +15,9 @@ import { SessionType } from '../../lib/types/sessionTypes'
 import { formatDate, getTime } from '@island.is/shared/utils'
 import { dateFormat } from '@island.is/shared/constants'
 
-interface HistoryTableProps {
+interface LogTableProps {
   sessions: SessionsSession[]
+  loading: boolean
 }
 
 const ExpandedDivider = () => (
@@ -19,9 +26,11 @@ const ExpandedDivider = () => (
   </div>
 )
 
-const HistoryTableMobile: FC<HistoryTableProps> = ({ sessions }) => {
+const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
   const { userInfo } = useAuth()
-  return (
+  return loading ? (
+    <Skeleton />
+  ) : (
     <>
       {sessions.map((session: SessionsSession, index: number) => {
         const type = getSessionType(session, userInfo?.profile.nationalId ?? '')
@@ -81,4 +90,49 @@ const HistoryTableMobile: FC<HistoryTableProps> = ({ sessions }) => {
   )
 }
 
-export default HistoryTableMobile
+const Skeleton = () => (
+  <div style={{ width: '100%' }}>
+    {new Array(10).fill('').map((session: SessionsSession, index: number) => {
+      return (
+        <div style={{ width: '100%' }} key={index}>
+          <ExpandedDivider />
+          <Box
+            paddingY={3}
+            display={'flex'}
+            flexDirection={'column'}
+            rowGap={'gutter'}
+          >
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+            >
+              <SkeletonLoader width={130} />
+              <Box>
+                <SkeletonLoader width={65} />
+
+                <Box
+                  alignItems="center"
+                  display="flex"
+                  columnGap={'smallGutter'}
+                >
+                  <SkeletonLoader width={65} />
+                </Box>
+              </Box>
+            </Box>
+            <Box display="flex" alignItems="center" columnGap="gutter">
+              <Box justifyContent="flexStart">
+                <SkeletonLoader width={48} height={32} />
+              </Box>
+              <Box display={'flex'} flexDirection={'column'}>
+                <SkeletonLoader width={130} repeat={2} />
+              </Box>
+            </Box>
+          </Box>
+        </div>
+      )
+    })}
+  </div>
+)
+
+export default LogTableMobile

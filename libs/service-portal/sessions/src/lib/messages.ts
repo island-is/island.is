@@ -50,4 +50,8 @@ export const m = defineMessages({
     id: 'portals-my-pages.session-history:person',
     defaultMessage: 'Aðili',
   },
+  error: {
+    id: 'portals-my-pages.session-history:error',
+    defaultMessage: 'Villa kom upp, vinsamlegast reyndu aftur síðar',
+  },
 })
