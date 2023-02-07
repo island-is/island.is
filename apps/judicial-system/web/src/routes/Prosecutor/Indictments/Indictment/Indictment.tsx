@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
+import { applyCase } from 'beygla'
 
 import {
   BlueBox,
@@ -24,9 +25,10 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { indictment as strings } from './Indictment.strings'
-import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Indictment: React.FC = () => {
   const {
@@ -56,6 +58,47 @@ const Indictment: React.FC = () => {
       )
     }
   })
+
+  useEffect(() => {
+    if (
+      isCaseUpToDate &&
+      workingCase.defendants &&
+      workingCase.defendants.length > 0
+    ) {
+      const indictmentIntroductionAutofill = [
+        workingCase.prosecutor?.institution?.name.toUpperCase(),
+        `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
+        `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
+          court: workingCase.court?.name?.replace('dómur', 'dómi'),
+        })}`,
+        `\n\n${formatMessage(strings.indictmentIntroductionAutofillDefendant, {
+          defendantName: workingCase.defendants[0].name
+            ? applyCase('þgf', workingCase.defendants[0].name)
+            : 'Ekki skráð',
+          defendantNationalId: workingCase.defendants[0].nationalId
+            ? formatNationalId(workingCase.defendants[0].nationalId)
+            : 'Ekki skráð',
+        })}`,
+        `\n\n${workingCase.defendants[0].address}`,
+      ]
+
+      setAndSendCaseToServer(
+        [
+          {
+            indictmentIntroduction: indictmentIntroductionAutofill.join(''),
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }, [
+    formatMessage,
+    isCaseUpToDate,
+    setAndSendCaseToServer,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
@@ -103,7 +146,7 @@ const Indictment: React.FC = () => {
             }
             textarea
             autoComplete="off"
-            rows={7}
+            rows={10}
             autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
