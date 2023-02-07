@@ -10,6 +10,7 @@ import {
   GenericLicenseType,
   GenericLicenseOrganizationSlug,
   LICENSE_MAPPER_FACTORY,
+  GenericLicenseMapper,
 } from './licenceService.type'
 import { GenericDrivingLicenseModule } from './client/driving-license-client'
 import { AdrLicensePayloadMapper } from './mappers/adrLicenseMapper'
@@ -17,6 +18,7 @@ import { DisabilityLicensePayloadMapper } from './mappers/disabilityLicenseMappe
 import { MachineLicensePayloadMapper } from './mappers/machineLicenseMapper'
 import { FirearmLicensePayloadMapper } from './mappers/firearmLicenseMapper'
 import { LicenseServiceServiceV2 } from './licenseServiceV2.service'
+import { LicenseMapperModule } from './mappers/licenseMapper.module'
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.FirearmLicense,
@@ -74,6 +76,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     CacheModule.register(),
     GenericDrivingLicenseModule,
     LicenseClientModule,
+    LicenseMapperModule,
     CmsModule,
   ],
   providers: [
@@ -83,22 +86,36 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
       provide: LOGGER_PROVIDER,
       useValue: logger,
     },
+
     {
       provide: LICENSE_MAPPER_FACTORY,
-      useFactory: (type: GenericLicenseType) => {
+      useFactory: (
+        adr: AdrLicensePayloadMapper,
+        disability: DisabilityLicensePayloadMapper,
+        machine: MachineLicensePayloadMapper,
+        firearm: FirearmLicensePayloadMapper,
+      ) => async (
+        type: GenericLicenseType,
+      ): Promise<GenericLicenseMapper<any> | null> => {
         switch (type) {
           case GenericLicenseType.AdrLicense:
-            return AdrLicensePayloadMapper
+            return adr
           case GenericLicenseType.DisabilityLicense:
-            return DisabilityLicensePayloadMapper
+            return disability
           case GenericLicenseType.MachineLicense:
-            return MachineLicensePayloadMapper
+            return machine
           case GenericLicenseType.FirearmLicense:
-            return FirearmLicensePayloadMapper
+            return firearm
           default:
             return null
         }
       },
+      inject: [
+        AdrLicensePayloadMapper,
+        DisabilityLicensePayloadMapper,
+        MachineLicensePayloadMapper,
+        FirearmLicensePayloadMapper,
+      ],
     },
   ],
   exports: [LicenseServiceServiceV2],

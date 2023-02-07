@@ -30,7 +30,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private licenseIsValidForPkPass(
+  private checkLicenseValidityForPkPass(
     data: FirearmLicenseDto,
   ): LicensePkPassAvailability {
     if (!data || !data.licenseInfo?.expirationDate) {
@@ -114,6 +114,10 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
       ok: true,
       data,
     }
+  }
+
+  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    return this.checkLicenseValidityForPkPass(payload as FirearmLicenseDto)
   }
 
   async getLicense(user: User): Promise<Result<FirearmLicenseDto | null>> {

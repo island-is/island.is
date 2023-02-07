@@ -115,6 +115,8 @@ export interface LicenseClient<ResultType> {
   // This will never be cached
   getLicenseDetail: (user: User) => Promise<Result<ResultType | null>>
 
+  licenseIsValidForPkPass: (payload: unknown) => LicensePkPassAvailability
+
   getPkPass: (user: User, locale?: Locale) => Promise<Result<Pass>>
 
   verifyPkPass: (

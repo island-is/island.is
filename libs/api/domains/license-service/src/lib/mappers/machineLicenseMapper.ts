@@ -10,12 +10,13 @@ import {
   GenericUserLicensePayload,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
-  GenericLicensePayloadMapper,
+  GenericLicenseMapper,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
-
+import { Injectable } from '@nestjs/common'
+@Injectable()
 export class MachineLicensePayloadMapper
-  implements GenericLicensePayloadMapper<VinnuvelaDto> {
+  implements GenericLicenseMapper<VinnuvelaDto> {
   private checkLicenseExpirationDate(license: VinnuvelaDto) {
     return license.vinnuvelaRettindi
       ? license.vinnuvelaRettindi
@@ -31,7 +32,7 @@ export class MachineLicensePayloadMapper
   }
 
   parsePayload(
-    payload: VinnuvelaDto,
+    payload?: VinnuvelaDto,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null {

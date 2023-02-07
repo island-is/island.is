@@ -1,6 +1,3 @@
-import { AdrDto } from '@island.is/clients/adr-and-machine-license'
-
-import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
@@ -11,15 +8,17 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
-  GenericLicensePayloadMapper,
+  GenericLicenseMapper,
   GenericUserLicensePayload,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class AdrLicensePayloadMapper
-  implements GenericLicensePayloadMapper<FlattenedAdrDto> {
+  implements GenericLicenseMapper<FlattenedAdrDto> {
   parsePayload(
-    payload: FlattenedAdrDto,
+    payload?: FlattenedAdrDto,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null {

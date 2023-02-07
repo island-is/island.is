@@ -34,7 +34,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private licenseIsValidForPkPass(
+  private checkLicenseValidityForPkPass(
     licenseInfo: OrorkuSkirteini,
   ): LicensePkPassAvailability {
     if (!licenseInfo || !licenseInfo.gildirtil) {
@@ -94,6 +94,10 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     }
   }
 
+  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    return this.checkLicenseValidityForPkPass(payload as OrorkuSkirteini)
+  }
+
   async getLicense(user: User): Promise<Result<OrorkuSkirteini | null>> {
     const licenseData = await this.fetchLicense(user)
     if (!licenseData.ok) {
@@ -150,18 +154,6 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
         error: {
           code: 3,
           message: 'No disability license data found',
-        },
-      }
-    }
-
-    const valid = this.licenseIsValidForPkPass(license.data)
-
-    if (!valid) {
-      return {
-        ok: false,
-        error: {
-          code: 5,
-          message: 'Pass is invalid for pkpass generation',
         },
       }
     }

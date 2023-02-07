@@ -1,4 +1,3 @@
-import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { OrorkuSkirteini } from '@island.is/clients/disability-license'
@@ -6,15 +5,17 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
-  GenericLicensePayloadMapper,
+  GenericLicenseMapper,
   GenericUserLicensePayload,
 } from '../licenceService.type'
 import { i18n } from '../utils/translations'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class DisabilityLicensePayloadMapper
-  implements GenericLicensePayloadMapper<OrorkuSkirteini> {
+  implements GenericLicenseMapper<OrorkuSkirteini> {
   parsePayload(
-    payload: OrorkuSkirteini,
+    payload?: OrorkuSkirteini,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null {

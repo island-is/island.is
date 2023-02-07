@@ -1,30 +1,27 @@
-import {
-  FirearmProperty,
-  FirearmPropertyList,
-  LicenseInfo,
-} from '@island.is/clients/firearm-license'
+import { FirearmProperty } from '@island.is/clients/firearm-license'
 import isAfter from 'date-fns/isAfter'
-import format from 'date-fns/format'
-import { format as formatSsn } from 'kennitala'
 import { Locale } from '@island.is/shared/types'
 import {
   ExcludesFalse,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
-  GenericLicensePayloadMapper,
+  GenericLicenseMapper,
   GenericUserLicensePayload,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
-
+import { Injectable } from '@nestjs/common'
+@Injectable()
 export class FirearmLicensePayloadMapper
-  implements GenericLicensePayloadMapper<FirearmLicenseDto> {
-  parsePayload = (
-    payload: FirearmLicenseDto,
+  implements GenericLicenseMapper<FirearmLicenseDto> {
+  public parsePayload = (
+    payload?: FirearmLicenseDto,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null => {
+    if (!payload) return null
+
     const { licenseInfo, properties, categories } = payload
 
     const expired = licenseInfo?.expirationDate
