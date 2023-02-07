@@ -20,27 +20,27 @@ export const ResidenceGrant: Form = buildForm({
   logo: Logo,
   children: [
     buildSection({
-      id: 'residentGrantApplication',
+      id: 'residenceGrant',
       title:
         parentalLeaveFormMessages.residenceGrantMessage
           .residenceGrantApplyTitle,
       children: [
         buildMultiField({
           title: 'DateField',
-          id: 'dvalarstyrk',
+          id: 'residenceGrant',
           description:
             'Add the date form when you wish to apply for Dvalastyrkur',
           space: 2,
           children: [
             buildDateField({
-              id: 'dvalarstyrk.dateFrom',
+              id: 'residenceGrant.dateFrom',
               title: 'From',
               placeholder: '',
               backgroundColor: 'blue',
               width: 'half',
             }),
             buildDateField({
-              id: 'dvalarstyrk.dateTo',
+              id: 'residenceGrant.dateTo',
               title: 'To',
               placeholder: '',
               backgroundColor: 'blue',
@@ -50,6 +50,10 @@ export const ResidenceGrant: Form = buildForm({
         }),
         buildFileUploadField({
           id: 'residenceGrantApplication.fileUpload',
+          condition: (answers) => {
+            console.log(answers)
+            return true
+          },
           title:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantAttachmentTitle,

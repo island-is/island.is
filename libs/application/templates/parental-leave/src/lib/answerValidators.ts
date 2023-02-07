@@ -11,6 +11,8 @@ import { paymentsValidationSection } from './answerValidationSections/paymentsVa
 import { validateLatestPeriodValidationSection } from './answerValidationSections/validateLatestPeriodValidationSection'
 import { validatePeriodsValidationSection } from './answerValidationSections/validatePeriodsValidationSection'
 import { otherParentEmailValidationSection } from './answerValidationSections/otherParentEmailValidationSection'
+import { residenceGrantValidationSection } from './answerValidationSections/residenceGrantValidationSection'
+
 
 const {
   EMPLOYER,
@@ -23,6 +25,7 @@ const {
   PAYMENTS,
   VALIDATE_LATEST_PERIOD,
   VALIDATE_PERIODS,
+  RESIDENCE_GRANT,
 } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
@@ -36,4 +39,5 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PAYMENTS]: paymentsValidationSection,
   [VALIDATE_LATEST_PERIOD]: validateLatestPeriodValidationSection,
   [VALIDATE_PERIODS]: validatePeriodsValidationSection,
+  [RESIDENCE_GRANT]: residenceGrantValidationSection,
 }

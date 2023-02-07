@@ -13,6 +13,8 @@ import { MANUAL, ParentalRelations, YES } from '../constants'
 import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
 import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
+import { validatePeriodResidenceGrant } from './answerValidationSections/residenceGrantValidationSection'
+import { subMonths } from 'date-fns'
 
 const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
@@ -672,3 +674,40 @@ describe('when constructing a new period', () => {
     })
   })
 })
+
+const dynamicBirthDay = (months: number, add: boolean, sub: boolean) => {
+  
+  const date = sub
+    ? subMonths(new Date(), months)
+    : add
+    ? addMonths(new Date(), months)
+    : new Date()
+
+  const year = `${date.getFullYear()}`
+  const month = `${date.getMonth() + 1}`.length > 1 ?
+        `${date.getMonth() + 1}`:
+  `0${date.getMonth() + 1}`
+  
+  const day = `${date.getDate()}`.length > 1 ?
+        `${date.getDate()}` : `0${date.getDate()}`
+  return `${year}${month}${day}`
+}
+
+const dynamicDates = (months: number, days: number) => {
+  const date = addMonths(addDays(new Date(), days), months)
+  const year = `${date.getFullYear()}`
+  const month = `${date.getMonth()}`
+  const day = `${date.getDate()}`
+  return `${year}-${month}-${day}`
+}
+
+test.each([
+  { birthDay: dynamicBirthDay(5, false, true), multipleBirths: 'no', dateFrom: dynamicDates(0, 0), dateTo: dynamicDates(0, 14), expected: true },
+  { birthDay: dynamicBirthDay(6, false, true), multipleBirths: 'no', dateFrom: dynamicDates(0, 0), dateTo: dynamicDates(0, 14), expected: false },
+  { birthDay: dynamicBirthDay(0, false, false), multipleBirths: 'yes', dateFrom: dynamicDates(0, 0), dateTo: dynamicDates(0, 28), expected: true },
+])(
+  'Should return true if a ',
+  ({ birthDay, multipleBirths, dateFrom, dateTo, expected }) => {
+    expect(validatePeriodResidenceGrant(birthDay, multipleBirths, dateFrom, dateTo)).toBe(expected)
+  },
+)

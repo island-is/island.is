@@ -4,6 +4,7 @@ import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
 import {
+  coreMessages,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -566,6 +567,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           actionCard: {
             description: statesMessages.additionalDocumentRequiredDescription,
+            tag: {
+              label: coreMessages.tagsRequiresAction,
+              variant: 'red',
+            }
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -673,8 +678,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
-        entry: 'assignToVMST',
-        exit: 'setBirthDate',
+        entry: ['assignToVMST', 'removeResidenceGrant'],
+        exit: ['setBirthDate', 'removeResidenceGrant'],
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -1442,6 +1447,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
         unset(answers, 'previousState')
+        return context
+      }),
+      removeResidenceGrant: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        unset(answers, 'residenceGrant')
+        unset(answers, 'dateFrom')
+        unset(answers, 'dateTo')
         return context
       }),
       setActionName: assign((context) => {

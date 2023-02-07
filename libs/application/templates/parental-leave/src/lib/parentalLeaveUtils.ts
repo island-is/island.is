@@ -1482,7 +1482,7 @@ export const isParentalGrant = (application: Application) => {
   )
 }
 
-const convertBirthDay = (birthDay: string) => {
+export const convertBirthDay = (birthDay: string) => {
   // Regex check if only decimals are used in the string
   const reg = new RegExp(/^\d+$/)
   const convertedBirthDay = { year: 0, month: 0, date: 0 }

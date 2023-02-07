@@ -2425,6 +2425,13 @@ export const errorMessages = defineMessages({
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
   },
+  residenceGrantPeriodError: {
+    id:
+      'pl.application:errors.residence.grant.period.error',
+    defaultMessage:
+      'Tímabilið sem þú hefur valið er ekki gilt',
+    description: 'The period you requested is not valid',
+  },
 })
 
 export const statesMessages = defineMessages({

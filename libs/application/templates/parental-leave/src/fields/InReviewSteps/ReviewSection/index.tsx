@@ -117,7 +117,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
 
         {state === ReviewSectionState.inProgress && (
           <Box pointerEvents="none">
-            <Tag variant="blue">
+            <Tag variant="blue" truncate>
               {formatText(
                 coreMessages.tagsInProgress,
                 application,
@@ -128,7 +128,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         )}
         {state === ReviewSectionState.requiresAction && (
           <Box pointerEvents="none">
-            <Tag variant="red">
+            <Tag variant="red" truncate>
               {formatText(
                 coreMessages.tagsRequiresAction,
                 application,
