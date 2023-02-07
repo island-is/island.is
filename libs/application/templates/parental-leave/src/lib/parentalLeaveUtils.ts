@@ -170,6 +170,15 @@ export function formatPeriods(
   return timelinePeriods
 }
 
+export const formatBankInfo = (bankInfo: string) => {
+  const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
+  if (formattedBankInfo && formattedBankInfo.length === 12) {
+    return formattedBankInfo
+  }
+
+  return bankInfo
+}
+
 /*
  *  Takes in a number (ex: 119000) and
  *  returns a formatted ISK value "119.000 kr."
@@ -557,11 +566,6 @@ export function getApplicationExternalData(
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
-  const userBankInfo = getValueViaPath(
-    externalData,
-    'userProfile.data.bankInfo',
-  ) as string
-
   const applicantGenderCode = getValueViaPath(
     externalData,
     'person.data.genderCode',
@@ -593,7 +597,6 @@ export function getApplicationExternalData(
     navId,
     userEmail,
     userPhoneNumber,
-    userBankInfo,
   }
 }
 
@@ -1263,20 +1266,6 @@ export const calculatePeriodLengthInMonths = (
   const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
-}
-
-const getMobilePhoneNumber = (application: Application) => {
-  return (application.externalData.userProfile?.data as {
-    mobilePhoneNumber?: string
-  })?.mobilePhoneNumber
-}
-
-export const removeCountryCode = (application: Application) => {
-  return getMobilePhoneNumber(application)?.startsWith('+354')
-    ? getMobilePhoneNumber(application)?.slice(4)
-    : getMobilePhoneNumber(application)?.startsWith('00354')
-    ? getMobilePhoneNumber(application)?.slice(5)
-    : getMobilePhoneNumber(application)
 }
 
 // Functions that determine dynamic text changes in forms based on application type

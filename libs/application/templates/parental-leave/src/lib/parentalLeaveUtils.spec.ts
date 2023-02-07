@@ -31,7 +31,6 @@ import {
   calculatePeriodLengthInMonths,
   applicantIsMale,
   getOtherParentName,
-  removeCountryCode,
   getSpouse,
   isEligibleForParentalLeave,
   getPeriodIndex,
@@ -1476,32 +1475,6 @@ describe('applicantIsMale', () => {
     set(application.externalData, 'person.data.genderCode', '1')
 
     expect(applicantIsMale(application)).toBe(true)
-  })
-})
-
-describe('removeCountryCode', () => {
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '+3541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '003541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it("should return null if phone number wouldn't exist", () => {
-    const application = buildApplication()
-    set(application.externalData, 'userProfile', null)
-    expect(removeCountryCode(application)).toEqual(undefined)
   })
 })
 
