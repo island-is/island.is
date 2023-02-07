@@ -6,7 +6,9 @@ type MockGQLOptions = {
   responseKey?: string
   camelCaseResponseKey?: boolean
   patchResponse?: boolean
-  deepMockKey?: boolean
+  deepMockKey?: string | RegExp
+  useResponseKey?: boolean
+  pattern?: string
 }
 
 type Dict<T = unknown> = Record<string, T>
@@ -17,13 +19,23 @@ function deepMock<T = Dict>(
   original: T,
   mockKey: string | RegExp,
   mockData: unknown = {},
-) {
-  if (typeof original != 'object') throw Error('Not Object')
-  if (typeof mockKey == 'string') mockKey = new RegExp(`^${mockKey}$`)
+  {
+    exactMatch = false,
+    deepPath = 'data',
+  } = {}
+): T | Dict {
+  if (typeof original != 'object')
+    return (String(original).match(mockKey)) ? mockData as T : original
+
+  if (typeof mockKey == 'string') mockKey = new RegExp(exactMatch ? `^${mockKey}$` : `${mockKey}`)
   const mocked: Dict = {}
   for (const key in original) {
-    if (key.match(mockKey)) mocked[key] = mockData
-    else mocked[key] = deepMock(original[key], mockKey, mockData)
+    const updatedDeepPath = `${deepPath}.${key}`
+    if (key.match(mockKey)) {
+      mocked[key] = mockData
+      console.log(`Found deepMock match (mockKey=${mockKey}, key=${key}, deepPath=${updatedDeepPath}, mockData=${mockData})`)
+    }
+    else mocked[key] = deepMock(original[key], mockKey, mockData, {deepPath: updatedDeepPath})
   }
   return mocked
 }
@@ -39,75 +51,84 @@ export async function mockQGL<T>(
   op: string,
   mockData: T,
   {
-    responseKey = '',
+    responseKey = undefined,
     camelCaseResponseKey = !responseKey,
     patchResponse = false,
-    deepMockKey = false,
+    deepMockKey = undefined,
+    pattern = `**/graphql?op=${op}`,
   }: MockGQLOptions = {},
 ) {
-  const pattern = `**/graphql?op=${op}`
-  if (!responseKey) responseKey = op
-  const key = camelCaseResponseKey ? camelCase(responseKey) : responseKey
-
   console.log(
-    `Setting up mock (key=${key}) for ${pattern} (deepmock=${deepMockKey})`,
+    `Setting up mock for ${pattern} (op=${op}, responseKey=${responseKey}, deepMockKey=${deepMockKey})`,
   )
+
   await page.route(pattern, async (route) => {
-    // Set mock
+    // Setup
+    const routeUrl = route.request().url()
+    const routeOp = routeUrl.split('op=')[1]
+    const casedRouteOp = camelCaseResponseKey? camelCase(routeOp) : routeOp
+    console.log(`Got route (routeUrl=${routeUrl}, routeOp=${routeOp}, casedRouteOp=${casedRouteOp})`)
+
+    // Get original
     const response = patchResponse ? await (await route.fetch()).json() : {}
     const originalResponse = { ...response?.data }
-    const mockResponse = Object.fromEntries([
+
+    // Set mock
+    const mockKey = responseKey ?? casedRouteOp
+    if (!mockKey) throw Error(`Invalid key for mock (mockKey=${mockKey}, responseKey=${responseKey}, op=${op})!\nYou probably need to change the 'op' or add 'responseKey'`)
+    const mockResponse: Dict = deepMockKey ? deepMock(originalResponse, deepMockKey, mockData) : Object.fromEntries([
       [
-        key,
-        !deepMockKey ? mockData : deepMock(originalResponse, key, mockData),
+        mockKey,
+        mockData,
       ],
     ])
+    mockResponse.deepMocked = !!deepMockKey
+    mockResponse.mocked = true
 
     // Debug logging
-    console.log(
-      `Got a mock-match for > ${route.request().url()} < (via key ${key})`,
-    )
+    console.log(`Got a mock-match for > ${route.request().url()} < (key=${mockKey}, patchResponse=${patchResponse})`)
     console.log('(original):', originalResponse)
 
     const patchedData = deepMerge({ ...originalResponse }, mockResponse)
     const data: Dict<Dict> = { data: {} }
     data.data = patchedData
-    data.data.mocked = true
 
+    // Debug logging
     console.log('(mocked): ', mockResponse)
     console.log('(merged): ', patchedData)
 
     // Mock injection
     const body = JSON.stringify(data)
-    console.log('Body:', body)
+    //console.log('Body:', body)
     route.fulfill({ body })
   })
 }
 
-export async function disableObjectKey(page: Page, key: string) {
+export async function disableObjectKey(page: Page, key: string | RegExp) {
   return await mockQGL(
     page,
     '**',
-    {},
-    { responseKey: key, deepMockKey: true, patchResponse: true },
+    'DEEP-MOCKED',
+    { deepMockKey: key, patchResponse: true },
   )
 }
 
 export async function disablePreviousApplications(page: Page) {
   await mockQGL(page, 'ApplicationApplications', [])
-  await mockQGL(page, 'UpdateApplication', { patchResponse: true })
   //syslumennOnEntry.data.estates
+  /*
   await mockQGL(
     page,
     'UpdateApplication',
     {
       externalData: {
         existingApplication: { data: [] },
-        syslumennOnEntry: { data: { estate: {} } },
+        syslumennOnEntry: { data: {} },
       },
     },
     { patchResponse: true },
   )
+  */
 }
 
 export async function disableI18n(page: Page) {
