@@ -12,11 +12,15 @@ import {
   import { useState } from 'react'
   import { Layout } from '../../components/Layout/Layout'
 import Cases from '../../utils/dummydata/api/Cases'
+import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
   
   const Subscriptions = () => {
     const [currentTab, setCurrentTab] = useState('Mál')
     const [casesData, setCasesData] = useState(Cases)
     const settingCasesData = (newCasesData) => setCasesData(newCasesData)
+    const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
+    const settingSubscriptionArray = (newSubscriptionArray) => 
+                                      setSubscriptionArray(newSubscriptionArray)
     const paddingYBreadCrumbs = [3, 3, 3, 5] as ResponsiveSpace
     const paddingXContent = [0, 0, 0, 15] as ResponsiveSpace
     const paddingXTable = [0, 0, 0, 15] as ResponsiveSpace
@@ -28,7 +32,9 @@ import Cases from '../../utils/dummydata/api/Cases'
 
     const CasesContent = () => {
         return (
-            <SubscriptionTable data={casesData} setData={settingCasesData} currentTab={currentTab} />
+            <SubscriptionTable data={casesData} setData={settingCasesData}
+                               currentTab={currentTab}subscriptionArray={subscriptionArray}
+                               setSubscriptionArray={settingSubscriptionArray} />
         )
     }
 

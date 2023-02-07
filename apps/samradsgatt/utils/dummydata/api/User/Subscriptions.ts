@@ -1,13 +1,13 @@
-const Subscriptions = {
+const SubscriptionsArray = {
     "caseIds": [
-        0
+        3027
     ],
     "institutionIds": [
-        0
+        
     ],
     "policyAreaIds": [
-        0
+        
     ]
 }
 
-export default Subscriptions
+export default SubscriptionsArray

@@ -9,20 +9,30 @@ const Headers = {
     'Málefnasvið': ['Málefnasvið']
 }
 
-const SubscriptionTable = ({ data, setData, currentTab }) => {
+const MapIsToEn = {
+    'Mál': 'caseIds',
+    'Stofnanir': 'institutionIds',
+    'Málefnasvið': 'policyAreaIds'
+}
+
+const SubscriptionTable = ({ data, setData, currentTab, subscriptionArray, setSubscriptionArray }) => {
     let headerKey = 0
 
-    console.log("data", data)
+    const onCheckboxChange = (id: number, action: boolean) => {
+        const sub = [...subscriptionArray[MapIsToEn[currentTab]]]
+        const subArr = {...subscriptionArray}
+        if(action) {
+            sub.push(id)
+        } else {
+            const idx = sub.indexOf(id)
+            sub.splice(idx, 1)
+        }
+        subArr[MapIsToEn[currentTab]] = sub
+        return setSubscriptionArray(subArr)
+    }
 
-    const onCheckboxChange = (id: number) => {
-        const newData = data.map((item, idx: number) => {
-            if(idx === id) {
-                item.checked = !item.checked
-                return item
-            }
-            return item
-        })
-        setData(newData)
+    const checkboxStatus = (id: number) => {
+        return subscriptionArray[MapIsToEn[currentTab]].includes(id)
     }
 
     return (
@@ -39,7 +49,7 @@ const SubscriptionTable = ({ data, setData, currentTab }) => {
             <T.Body>
                 {data.map((item, idx) => (
                     <T.Row key={item.id }>
-                        <T.Data borderColor="transparent" box={{ className: styles.tableRowLeft, background: tableRowBackgroundColor(idx)}}><Checkbox checked={item.checked} onChange={() => onCheckboxChange(item.id)} /></T.Data>
+                        <T.Data borderColor="transparent" box={{ className: styles.tableRowLeft, background: tableRowBackgroundColor(idx)}}><Checkbox checked={checkboxStatus(item.id)} onChange={(e) => onCheckboxChange(item.id, e.target.checked)} /></T.Data>
                         {currentTab == 'Mál' && (
                             <T.Data borderColor="transparent" box={{ background: tableRowBackgroundColor(idx)}}><Text variant="h5">{item.caseNumber}</Text></T.Data>
                         )}
