@@ -1,13 +1,17 @@
 import { asDiv, HTMLText, RegName } from '@island.is/regulations'
 import qq from '@hugsmidjan/qj/qq'
-import { RegDraftForm } from '../state/types'
+import {
+  DraftImpactForm,
+  GroupedDraftImpactForms,
+  RegDraftForm,
+} from '../state/types'
 import { DraftImpactName } from '@island.is/regulations/admin'
+import flatten from 'lodash/flatten'
 
 // ----------------------------------------------------------------------
-const PREFIX_AMENDING = 'Reglugerð um breytingu á reglugerð nr. '
-
-// TODO: Bæta við brottfellingartitlum.
-const PREFIX_REPEALING = 'Reglugerð um brottfellingu á reglugerð nr. ' // repealingTitleRe
+const PREFIX = 'Reglugerð um '
+const PREFIX_AMENDING = 'breytingu á reglugerð nr. '
+const PREFIX_REPEALING = 'brottfellingu á reglugerð nr. ' // repealingTitleRe
 
 const removeRegPrefix = (title: string) => {
   if (/^Reglugerð/.test(title)) {
@@ -20,14 +24,29 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
   const impactArray = Object.values(draft.impacts)
 
   if (impactArray.length > 0) {
-    const titleArray = impactArray
-      .flat()
-      .map((item) => `${item.name}${removeRegPrefix(item.regTitle)}`)
+    const titleArray = impactArray.flat()
 
-    return PREFIX_AMENDING + titleArray.join(' og ')
+    const amendingArray = titleArray.filter((item) => item.type === 'amend')
+    const repealArray = titleArray.filter((item) => item.type === 'repeal')
+
+    const amendingTitles = amendingArray.map(
+      (item, i) =>
+        `${i === 0 ? `${PREFIX_AMENDING}` : ''} ${item.name}${removeRegPrefix(
+          item.regTitle,
+        )}`,
+    )
+
+    const repealTitles = repealArray.map(
+      (item, i) =>
+        `${i === 0 ? `${PREFIX_REPEALING}` : ''} ${item.name}${removeRegPrefix(
+          item.regTitle,
+        )}`,
+    )
+
+    return PREFIX + [...amendingTitles, ...repealTitles].join(' og ')
   }
 
-  return PREFIX_AMENDING
+  return PREFIX
 }
 
 // ----------------------------------------------------------------------
@@ -104,9 +123,14 @@ const formatListItemDiff = (item: Element) => {
 }
 
 export const formatAmendingRegBody = (
-  diff: HTMLText | string | undefined,
-  regName?: DraftImpactName,
+  regName: string,
+  repeal?: boolean,
+  diff?: HTMLText | string | undefined,
 ) => {
+  if (repeal) {
+    return [`<p>Fellir brott reglugerð nr. ${regName}</p>` as HTMLText]
+  }
+
   if (!diff) {
     return []
   }
@@ -117,7 +141,6 @@ export const formatAmendingRegBody = (
   const diffDiv = asDiv(diffString)
   let grein = 0
   let malsgrein = 0
-  let changeGrein = 0
 
   qq('div > *', diffDiv).forEach((item) => {
     // Increment grein number on every article title
@@ -153,7 +176,6 @@ export const formatAmendingRegBody = (
     const hasInsert = !!item.querySelector('ins')
 
     if (hasDeletion || hasInsert) {
-      changeGrein++
       const oldTextElement = item.cloneNode(true) as Element
       const newTextElement = item.cloneNode(true) as Element
       let oldText = ''
@@ -186,34 +208,34 @@ export const formatAmendingRegBody = (
       if (isDeleted) {
         if (isMalsgrein) {
           // Paragraph was deleted
-          pushHtml = `<h3 class="article__title">${changeGrein}. gr.</h3><p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
+          pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
         } else if (isGreinTitle) {
           // Title was deleted
-          pushHtml = `<h3 class="article__title">${changeGrein}. gr.</h3><p>Titli ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
+          pushHtml = `<p>Titli ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
         } else if (isStaflidur || isTolulidur) {
           // List was deleted
-          pushHtml = `<h3 class="article__title">${changeGrein}. gr.</h3><p>${
+          pushHtml = `<p>${
             isStaflidur ? 'Stafliðum' : 'Töluliðum'
           } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
         } else {
           // We don't know what you deleted, but there was a deletion, and here's the deletelog:
-          pushHtml = `<h3 class="article__title">${changeGrein}. gr.</h3><p>Texta í ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
+          pushHtml = `<p>Texta í ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
         }
       } else {
         if (isGreinTitle) {
           // Title was changed
-          pushHtml = `<h3 class="article__title">${changeGrein}. gr.</h3><p>Eftirfarandi breytingar verða á titli fyrir ${grein}. gr. ${regNameDisplay}:</p><p>Í stað ${oldText} kemur ${newText}</p>` as HTMLText
+          pushHtml = `<p>Eftirfarandi breytingar verða á titli fyrir ${grein}. gr. ${regNameDisplay}:</p><p>Í stað ${oldText} kemur ${newText}</p>` as HTMLText
         } else if (isMalsgrein) {
           // Paragraph was changed
-          pushHtml = `<h3 class="article__title">${changeGrein}. gr.</h3><p>Eftirfarandi breytingar verða á ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay}:</p><p>Málsgreinin verður svohljóðandi: ${newText}</p>` as HTMLText
+          pushHtml = `<p>Eftirfarandi breytingar verða á ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay}:</p><p>Málsgreinin verður svohljóðandi: ${newText}</p>` as HTMLText
         } else if (isStaflidur || isTolulidur) {
           // List was changed
-          pushHtml = `<h3 class="article__title">${changeGrein}. gr.</h3><p>Eftirfarandi breytingar verða á ${
+          pushHtml = `<p>Eftirfarandi breytingar verða á ${
             isStaflidur ? 'Staflið' : 'Tölulið'
           } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay}: ${liHtml}` as HTMLText
         } else {
           // We don't know what you changed, but there was a change, and here's the changelog:
-          pushHtml = `<h3 class="article__title">${changeGrein}. gr.</h3><p>Eftirfarandi breytingar ${regNameDisplay} áttu sér stað:</p<p>${
+          pushHtml = `<p>Eftirfarandi breytingar ${regNameDisplay} áttu sér stað:</p<p>${
             oldText ? `Í stað ${oldText} kemur ` : ''
           }${newText}</p>` as HTMLText
         }
@@ -223,4 +245,33 @@ export const formatAmendingRegBody = (
   })
 
   return additionArray
+}
+
+export const formatAmendingBodyWithArticlePrefix = (
+  impactsArray: GroupedDraftImpactForms,
+) => {
+  const draftImpactLength = Object.entries(impactsArray).length
+
+  const impactAdditionArray = Object.entries(impactsArray).map(
+    ([key, impacts]) => {
+      const impactArray = impacts.map((item, i) =>
+        formatAmendingRegBody(
+          draftImpactLength > 1 ? item.name : '',
+          item.type === 'repeal',
+          item.type === 'amend' ? item.diff?.value : undefined,
+        ),
+      )
+      const flatArray = flatten(impactArray)
+      return flatArray
+    },
+  )
+
+  const additions = flatten(impactAdditionArray)
+
+  const prependString = additions.map(
+    (item, i) =>
+      `<h3 class="article__title">${i + 1}. gr.</h3>${item}` as HTMLText,
+  )
+
+  return prependString
 }

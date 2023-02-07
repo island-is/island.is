@@ -16,7 +16,7 @@ import { useDraftingState } from '../state/useDraftingState'
 import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
 import {
   formatAmendingRegTitle,
-  formatAmendingRegBody,
+  formatAmendingBodyWithArticlePrefix,
 } from '../utils/formatAmendingRegulation'
 import { HTMLText } from '@island.is/regulations'
 
@@ -49,25 +49,11 @@ export const EditBasics = () => {
 
   useEffect(() => {
     if (!text.value && draft.type.value === 'amending') {
-      const draftImpactLength = Object.entries(draft.impacts).length
-      let additionString = ''
-      let repealString = ''
+      const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
 
-      Object.values(draft.impacts).forEach(([impact]) => {
-        if (impact.type === 'amend') {
-          const additions = formatAmendingRegBody(
-            impact.diff?.value,
-            draftImpactLength > 1 ? impact.name : undefined,
-          )
-          additionString += additions.join('')
-        } else {
-          // TODO: Handle repeals
-          repealString += '<p>Fellir brott ' + impact.name + '</p>'
-        }
-      })
-
-      updateState('text', (additionString + repealString) as HTMLText)
-      setEditorKey('redraw')
+      const additionString = additions.join('') as HTMLText
+      updateState('text', additionString)
+      setEditorKey('newKey')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
