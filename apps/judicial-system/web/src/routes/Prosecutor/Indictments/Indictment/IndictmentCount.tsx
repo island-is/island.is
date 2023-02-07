@@ -56,13 +56,13 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       )}
       <Box marginBottom={2}>
         <Select
-          name="policeNumber"
+          name="policeCaseNumber"
           options={workingCase.policeCaseNumbers.map((val) => ({
             value: val,
             label: val,
           }))}
-          label={formatMessage(strings.policeNumber.label)}
-          placeholder={formatMessage(strings.policeNumber.placeholder)}
+          label={formatMessage(strings.policeCaseNumberLabel)}
+          placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
           onChange={(so: ValueType<ReactSelectOption>) => {
             onChange(indictmentCount.id, {
               policeCaseNumber: (so as ReactSelectOption).value as string,
@@ -87,8 +87,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         <Input
           name="vehicleLicensePlate"
           autoComplete="off"
-          label={formatMessage(strings.vehicleLicencePlate.label)}
-          placeholder={formatMessage(strings.vehicleLicencePlate.placeholder)}
+          label={formatMessage(strings.vehicleLicencePlateLabel)}
+          placeholder={formatMessage(strings.vehicleLicencePlatePlaceholder)}
           value={''}
           onChange={() => {
             todoHandle(1)
@@ -97,10 +97,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       </Box>
       <Box marginBottom={2}>
         <Select
-          name="lawBreak"
+          name="incident"
           options={todoOptions}
-          label={formatMessage(strings.lawBreak.label)}
-          placeholder={formatMessage(strings.lawBreak.placeholder)}
+          label={formatMessage(strings.incidentLabel)}
+          placeholder={formatMessage(strings.incidentPlaceholder)}
           onChange={() => {
             todoHandle(1)
           }}
@@ -110,11 +110,11 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       </Box>
       <Box marginBottom={2}>
         <Select
-          name={'lawsBroken'}
+          name="legalArgument"
           icon="search"
           options={todoOptions}
-          label={formatMessage(strings.lawBroken.label)}
-          placeholder={formatMessage(strings.lawBroken.placeholder)}
+          label={formatMessage(strings.legalArgumentLabel)}
+          placeholder={formatMessage(strings.legalArgumentPlaceholder)}
           value={null}
           onChange={() => {
             todoHandle(1)
@@ -126,9 +126,9 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       <Box component="section" marginBottom={2}>
         <Box marginBottom={2}>
           <Input
-            name="lawBreakDescription"
-            label={formatMessage(strings.lawBreakDescription.label)}
-            placeholder={formatMessage(strings.lawBreakDescription.label)}
+            name="incidentDescription"
+            label={formatMessage(strings.incidentDescriptionLabel)}
+            placeholder={formatMessage(strings.incidentDescriptionPlaceholder)}
             errorMessage={''}
             hasError={false}
             value={''}
@@ -144,9 +144,11 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       <Box component="section" marginBottom={2}>
         <Box marginBottom={2}>
           <Input
-            name="lawsBrokenDescription"
-            label={formatMessage(strings.lawsBrokenDescription.label)}
-            placeholder={formatMessage(strings.lawsBrokenDescription.label)}
+            name="legalArgumentDescription"
+            label={formatMessage(strings.legalArgumentDescriptionLabel)}
+            placeholder={formatMessage(
+              strings.legalArgumentDescriptionPlaceholder,
+            )}
             errorMessage={''}
             hasError={false}
             value={''}

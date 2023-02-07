@@ -28,7 +28,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import useIndictmentCounts, {
   UpdateIndictmentCount,
 } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
@@ -155,10 +154,8 @@ const Indictment: React.FC = () => {
         <Box marginBottom={5}>
           <Input
             name="indictmentsIntroduction"
-            label={formatMessage(strings.sections.introduction.label)}
-            placeholder={formatMessage(
-              strings.sections.introduction.placeholder,
-            )}
+            label={formatMessage(strings.introductionLabel)}
+            placeholder={formatMessage(strings.introductionPlaceholder)}
             value={workingCase.indictmentIntroduction || ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
@@ -197,7 +194,7 @@ const Indictment: React.FC = () => {
               }
             >
               <SectionHeading
-                title={formatMessage(strings.sections.indictmentCount.heading, {
+                title={formatMessage(strings.indictmentCountHeading, {
                   count: index + 1,
                 })}
               />
@@ -219,7 +216,7 @@ const Indictment: React.FC = () => {
             onClick={handleCreateIndictmentCount}
             disabled={false}
           >
-            {formatMessage(strings.sections.indictmentCount.addCount)}
+            {formatMessage(strings.addIndictmentCount)}
           </Button>
         </Box>
       </FormContentContainer>
