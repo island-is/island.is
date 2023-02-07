@@ -31,6 +31,24 @@ const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
     : null
 }
 
+const findLatestExpirationDate = (license: VinnuvelaDto) => {
+  if (!license.vinnuvelaRettindi) {
+    return
+  }
+
+  let maxDate = new Date()
+  for (const right of license.vinnuvelaRettindi) {
+    if (right.stjorna && new Date(right.stjorna) > maxDate) {
+      maxDate = new Date(right.stjorna)
+    }
+    if (right.kenna && new Date(right.kenna) > maxDate) {
+      maxDate = new Date(right.kenna)
+    }
+  }
+
+  return maxDate.toISOString()
+}
+
 export const parseMachineLicensePayload = (
   license: VinnuvelaDto,
   locale: Locale = 'is',
@@ -94,6 +112,7 @@ export const parseMachineLicensePayload = (
     metadata: {
       licenseNumber: license.skirteinisNumer?.toString() ?? '',
       expired: expired,
+      expireDate: findLatestExpirationDate(license),
     },
   }
 }
