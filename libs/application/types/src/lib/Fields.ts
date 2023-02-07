@@ -5,13 +5,15 @@ import type {
   BoxProps,
   SpanType,
 } from '@island.is/island-ui/core/types'
+
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormTextArray, FormItem } from './Form'
+import { FormText, FormTextArray, FormItem, StaticText } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
+import React from 'react'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -99,6 +101,9 @@ export enum FieldTypes {
   PAYMENT_PENDING = 'PAYMENT_PENDING',
   COMPANY_SEARCH = 'COMPANY_SEARCH',
   REDIRECT_TO_SERVICE_PORTAL = 'REDIRECT_TO_SERVICE_PORTAL',
+  MESSAGE_WITH_LINK_BUTTON_FIELD = 'MESSAGE_WITH_LINK_BUTTON_FIELD',
+  EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
+  ALERT_MESSAGE = 'ALERT_MESSAGE',
 }
 
 export enum FieldComponents {
@@ -116,6 +121,9 @@ export enum FieldComponents {
   PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
+  MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
+  EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
+  ALERT_MESSAGE = 'AlertMessageFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -266,6 +274,29 @@ export interface RedirectToServicePortalField extends BaseField {
   component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL
 }
 
+export interface MessageWithLinkButtonField extends BaseField {
+  readonly type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD
+  component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD
+  url: string
+  buttonTitle: FormText
+  message: FormText
+}
+
+export interface ExpandableDescriptionField extends BaseField {
+  readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
+  component: FieldComponents.EXPANDABLE_DESCRIPTION
+  introText: FormText
+  description: StaticText
+  startExpanded?: boolean
+}
+
+export interface AlertMessageField extends BaseField {
+  readonly type: FieldTypes.ALERT_MESSAGE
+  component: FieldComponents.ALERT_MESSAGE
+  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
+  message?: FormText
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -281,3 +312,6 @@ export type Field =
   | AsyncSelectField
   | CompanySearchField
   | RedirectToServicePortalField
+  | MessageWithLinkButtonField
+  | ExpandableDescriptionField
+  | AlertMessageField

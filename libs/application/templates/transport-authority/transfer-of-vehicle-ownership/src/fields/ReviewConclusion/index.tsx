@@ -11,7 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { Jobs } from '../../assets/Jobs'
 import { conclusion } from '../../lib/messages'
-import { ReviewScreenProps } from '../../types'
+import { ReviewScreenProps } from '../../shared'
 import { isLastReviewer } from '../../utils'
 import { CopyLink } from '@island.is/application/ui-components'
 

@@ -455,6 +455,7 @@
       "@island.is/clients/rsk/procuring": [
         "libs/clients/rsk/procuring/src/index.ts"
       ],
+      "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],

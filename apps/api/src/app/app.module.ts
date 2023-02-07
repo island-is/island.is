@@ -95,6 +95,8 @@ import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { SessionsModule } from '@island.is/api-domains-sessions'
+import { CommunicationsConfig } from '@island.is/api/domains/communications'
+import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -298,6 +300,8 @@ const autoSchemaFile = environment.production
         DisabilityLicenseClientConfig,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
+        CommunicationsConfig,
+        SessionsApiClientConfig,
       ],
     }),
   ],

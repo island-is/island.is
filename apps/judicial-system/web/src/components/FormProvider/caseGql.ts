@@ -173,6 +173,7 @@ const CaseQuery = gql`
       subpoenaType
       defendantWaivesRightToCounsel
       crimeScenes
+      indictmentIntroduction
     }
   }
 `

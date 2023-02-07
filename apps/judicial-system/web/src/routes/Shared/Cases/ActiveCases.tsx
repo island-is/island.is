@@ -14,7 +14,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
-  CaseListEntry,
   CaseState,
   isExtendedCourtRole,
   isProsecutionRole,
@@ -24,6 +23,7 @@ import {
   directionType,
   sortableTableColumn,
   SortConfig,
+  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import {
   capitalize,

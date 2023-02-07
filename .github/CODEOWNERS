@@ -82,6 +82,7 @@
 /libs/api/domains/disability-license                                                                @island-is/juni
 
 /apps/portals/admin/                                                                                @island-is/aranja
+/libs/api/domains/sessions/                                                                         @island-is/aranja
 /libs/clients/auth/                                                                                 @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
 /libs/portals/shared-modules/delegations                                                            @island-is/aranja
@@ -202,6 +203,7 @@
 /apps/services/auth/admin-api/                                                                      @island-is/fuglar @island-is/aranja
 /apps/services/auth/public-api/                                                                     @island-is/fuglar @island-is/aranja
 /apps/services/auth/delegation-api/                                                                 @island-is/fuglar @island-is/aranja
+/apps/services/sessions/                                                                            @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web/                                                                               @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                              @island-is/fuglar @island-is/aranja
