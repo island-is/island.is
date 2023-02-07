@@ -234,6 +234,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/driving-license-book-update-instructor": [
+        "libs/application/templates/driving-license-book-update-instructor/src/index.ts"
+      ],
       "@island.is/application/templates/driving-license-duplicate": [
         "libs/application/templates/driving-license-duplicate/src/index.ts"
       ],
