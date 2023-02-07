@@ -135,6 +135,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
+    - [API Domains University of Iceland](libs/api/domains/university-of-iceland/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -200,6 +201,7 @@
     - [Procuring](libs/clients/rsk/procuring/README.md)
   - [Smart Solutions](libs/clients/smartsolutions/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)
+  - [Clients University of Iceland](libs/clients/university-of-iceland/README.md)
   - [User Profile](libs/clients/user-profile/README.md)
   - [Driving License](libs/clients/vehicles/README.md)
   - [VMST](libs/clients/vmst/README.md)

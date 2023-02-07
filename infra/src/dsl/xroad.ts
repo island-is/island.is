@@ -244,6 +244,17 @@ export const DisabilityLicense = new XroadConf({
   },
 })
 
+export const UniversityOfIceland = new XroadConf({
+  //TODO: Staging & prod paths
+  env: {
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      prod: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {

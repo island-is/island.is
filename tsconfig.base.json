@@ -164,6 +164,9 @@
       "@island.is/api/domains/transport-authority": [
         "libs/api/domains/transport-authority/src/index.ts"
       ],
+      "@island.is/api/domains/university-of-iceland": [
+        "libs/api/domains/university-of-iceland/src/index.ts"
+      ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
       ],
@@ -476,6 +479,9 @@
       ],
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
+      ],
+      "@island.is/clients/university-of-iceland": [
+        "libs/clients/university-of-iceland/src/index.ts"
       ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"

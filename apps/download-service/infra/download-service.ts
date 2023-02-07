@@ -1,5 +1,11 @@
 import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { Base, Client, Finance, Vehicles } from '../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  Finance,
+  UniversityOfIceland,
+  Vehicles,
+} from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'download-service'> =>
   service('download-service')
@@ -21,7 +27,7 @@ export const serviceSetup = (): ServiceBuilder<'download-service'> =>
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',
       POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH',
     })
-    .xroad(Base, Client, Finance, Vehicles)
+    .xroad(Base, Client, Finance, Vehicles, UniversityOfIceland)
     .ingress({
       primary: {
         host: {

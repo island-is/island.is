@@ -425,6 +425,26 @@ export const m = defineMessages({
     id: 'service.portal:education-description',
     defaultMessage: 'Hér mun birtast námsferill þinn og barnanna þinna',
   },
+  educationGrunnskoli: {
+    id: 'service.portal:education-grunnskoli',
+    defaultMessage: 'Grunnskóli',
+  },
+  educationAssessment: {
+    id: 'service.portal:education-assessment',
+    defaultMessage: 'Námsmat',
+  },
+  educationFramhskoli: {
+    id: 'service.portal:education-framhskoli',
+    defaultMessage: 'Framhaldsskóli',
+  },
+  educationHaskoli: {
+    id: 'service.portal:education-haskoli',
+    defaultMessage: 'Háskóli',
+  },
+  educationGraduation: {
+    id: 'service.portal:education-graduation',
+    defaultMessage: 'Brautskráning',
+  },
   documentProvider: {
     id: 'service.portal:document-provider',
     defaultMessage: 'Skjalaveitur',

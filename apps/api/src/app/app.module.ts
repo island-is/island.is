@@ -72,6 +72,7 @@ import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municip
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
+import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { PowerBiModule } from '@island.is/api/domains/powerbi'
 import { PowerBiConfig } from '@island.is/api/domains/powerbi'
 
@@ -93,6 +94,7 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 import { CommunicationsConfig } from '@island.is/api/domains/communications'
+import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -250,6 +252,7 @@ const autoSchemaFile = environment.production
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
+    UniversityOfIcelandModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -290,6 +293,7 @@ const autoSchemaFile = environment.production
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         CommunicationsConfig,
+        UniversityOfIcelandClientConfig,
       ],
     }),
   ],

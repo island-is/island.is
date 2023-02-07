@@ -22,6 +22,11 @@ import {
   VehiclesClientConfig,
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
+import { EducationController } from './modules/education-documents/education-document.controller'
+import {
+  UniversityOfIcelandClientConfig,
+  UniversityOfIcelandClientModule,
+} from '@island.is/clients/university-of-iceland'
 
 @Module({
   controllers: [
@@ -29,6 +34,7 @@ import {
     DocumentsInfraController,
     FinanceDocumentController,
     VehicleController,
+    EducationController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -41,6 +47,7 @@ import {
     }),
     FinanceClientModule,
     VehiclesClientModule,
+    UniversityOfIcelandClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -48,6 +55,7 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
+        UniversityOfIcelandClientConfig,
       ],
     }),
   ],
