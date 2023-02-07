@@ -15,7 +15,7 @@ const MapIsToEn = {
     'Málefnasvið': 'policyAreaIds'
 }
 
-const SubscriptionTable = ({ data, setData, currentTab, subscriptionArray, setSubscriptionArray }) => {
+const SubscriptionTable = ({ data, currentTab, subscriptionArray, setSubscriptionArray }) => {
     let headerKey = 0
 
     const onCheckboxChange = (id: number, action: boolean) => {

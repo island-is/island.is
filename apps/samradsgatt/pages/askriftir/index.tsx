@@ -17,7 +17,6 @@ import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
   const Subscriptions = () => {
     const [currentTab, setCurrentTab] = useState('Mál')
     const [casesData, setCasesData] = useState(Cases)
-    const settingCasesData = (newCasesData) => setCasesData(newCasesData)
     const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
     const settingSubscriptionArray = (newSubscriptionArray) => 
                                       setSubscriptionArray(newSubscriptionArray)
@@ -32,8 +31,8 @@ import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
 
     const CasesContent = () => {
         return (
-            <SubscriptionTable data={casesData} setData={settingCasesData}
-                               currentTab={currentTab}subscriptionArray={subscriptionArray}
+            <SubscriptionTable data={casesData} currentTab={currentTab} 
+                               subscriptionArray={subscriptionArray}
                                setSubscriptionArray={settingSubscriptionArray} />
         )
     }
