@@ -34,14 +34,10 @@ import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseFileCategory,
-  Feature,
-  IndictmentSubtype,
-} from '@island.is/judicial-system/types'
+import { CaseFileCategory, Feature } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
-import { hasIndictmentSubtype } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -55,12 +51,9 @@ const CaseFiles: React.FC = () => {
   const { formatMessage } = useIntl()
   const { upload, remove } = useS3Upload(workingCase.id)
   const { features } = useContext(FeatureContext)
-  const isTrafficViolationCase =
+  const isTrafficViolationCaseCheck =
     features.includes(Feature.INDICTMENT_ROUTE) &&
-    hasIndictmentSubtype(
-      workingCase.indictmentSubtypes,
-      IndictmentSubtype.TRAFFIC_VIOLATION,
-    )
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -168,7 +161,7 @@ const CaseFiles: React.FC = () => {
       activeSection={Sections.PROSECUTOR}
       activeSubSection={
         IndictmentsProsecutorSubsections.CASE_FILES +
-        (isTrafficViolationCase ? 1 : 0)
+        (isTrafficViolationCaseCheck ? 1 : 0)
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
@@ -283,7 +276,7 @@ const CaseFiles: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${
-            isTrafficViolationCase
+            isTrafficViolationCaseCheck
               ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
               : constants.INDICTMENTS_PROCESSING_ROUTE
           }/${workingCase.id}`}
