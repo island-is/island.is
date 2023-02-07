@@ -7,7 +7,6 @@ import { NotificationsService } from './app/modules/notifications/notifications.
 
 @Module({
   imports: [
-    // NotificationsService,
     CacheModule.register({
       ttl: 60,
       max: 100,
@@ -22,7 +21,6 @@ import { NotificationsService } from './app/modules/notifications/notifications.
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService],
-  // exports: [NotificationsService],
 })
 class BuildModule {}
 
