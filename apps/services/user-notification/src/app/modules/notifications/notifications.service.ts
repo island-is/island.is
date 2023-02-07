@@ -33,7 +33,7 @@ export class NotificationsService {
     return await this.cacheManager.get(key)
   }
 
-  async getTemplates(locale?: string): Promise<HnippTemplate[] | any> {
+  async getTemplates(locale?: string): Promise<HnippTemplate[]> {
     if (locale == 'is' || locale === undefined) {
       locale = 'is-IS'
     }
