@@ -127,6 +127,8 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   staging: [
     appSystemApi,
@@ -152,6 +154,8 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   dev: [
     appSystemApi,
