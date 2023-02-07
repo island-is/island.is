@@ -110,6 +110,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   dataSchema: ExampleSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
+
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -164,6 +165,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
+
           actionCard: {
             description: m.draftDescription,
             pendingAction: testPendingAction,
@@ -175,6 +177,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               },
             }),
           ],
+
           progress: 0.25,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,

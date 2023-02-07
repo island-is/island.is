@@ -22,7 +22,6 @@ import {
   TemplateApi,
   PendingAction,
 } from '@island.is/application/types'
-import { ConsoleLogger } from '@nestjs/common'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -292,5 +291,16 @@ export class ApplicationTemplateHelper<
         ? formatMessage(pendingAction.content)
         : undefined,
     }
+  }
+
+  getHistoryEntry(
+    access: 'exit' | 'entry',
+    stateKey: string = this.application.state,
+  ): StaticText | undefined {
+    const stateInfo = this.getApplicationStateInformation(stateKey)
+
+    return access
+      ? stateInfo?.actionCard?.onEntryHistory
+      : stateInfo?.actionCard?.onExitHistory
   }
 }

@@ -826,6 +826,8 @@ export class ApplicationController {
       }
     }
 
+    const historyOnExitEntry = helper.getHistoryEntry('exit', application.state)
+
     const [
       hasChanged,
       newState,
@@ -847,6 +849,11 @@ export class ApplicationController {
         application: updatedApplication,
       }
     }
+
+    const historyOnEntryEntry = helper.getHistoryEntry(
+      'entry',
+      application.state,
+    )
 
     const onEnterStateAction = new ApplicationTemplateHelper(
       updatedApplication,
