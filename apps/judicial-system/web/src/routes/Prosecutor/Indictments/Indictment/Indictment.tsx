@@ -1,6 +1,7 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
+import { applyCase } from 'beygla'
 
 import {
   FormContentContainer,
@@ -24,6 +25,7 @@ import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { indictment as strings } from './Indictment.strings'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 
 const Indictment: React.FC = () => {
   const {
@@ -31,9 +33,10 @@ const Indictment: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const stepIsValid = true
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -41,6 +44,47 @@ const Indictment: React.FC = () => {
   )
 
   useDeb(workingCase, 'indictmentIntroduction')
+
+  useEffect(() => {
+    if (
+      isCaseUpToDate &&
+      workingCase.defendants &&
+      workingCase.defendants.length > 0
+    ) {
+      const indictmentIntroductionAutofill = [
+        workingCase.prosecutor?.institution?.name.toUpperCase(),
+        `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
+        `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
+          court: workingCase.court?.name?.replace('dómur', 'dómi'),
+        })}`,
+        `\n\n${formatMessage(strings.indictmentIntroductionAutofillDefendant, {
+          defendantName: workingCase.defendants[0].name
+            ? applyCase('þgf', workingCase.defendants[0].name)
+            : 'Ekki skráð',
+          defendantNationalId: workingCase.defendants[0].nationalId
+            ? formatNationalId(workingCase.defendants[0].nationalId)
+            : 'Ekki skráð',
+        })}`,
+        `\n\n${workingCase.defendants[0].address}`,
+      ]
+
+      setAndSendCaseToServer(
+        [
+          {
+            indictmentIntroduction: indictmentIntroductionAutofill.join(''),
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }, [
+    formatMessage,
+    isCaseUpToDate,
+    setAndSendCaseToServer,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
@@ -84,7 +128,7 @@ const Indictment: React.FC = () => {
               )
             }
             textarea
-            rows={7}
+            rows={10}
             autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
