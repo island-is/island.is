@@ -7,9 +7,7 @@ import { SessionsApi, SessionsResultDto } from '@island.is/clients/sessions'
 
 @Injectable()
 export class SessionsService {
-  constructor(private readonly sessionsApi: SessionsApi) {
-    // Intentionally empty until service is ready
-  }
+  constructor(private readonly sessionsApi: SessionsApi) {}
 
   sessionsApiWithAuth(auth: Auth) {
     return this.sessionsApi.withMiddleware(new AuthMiddleware(auth))
