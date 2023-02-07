@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Input, Button } from '@island.is/island-ui/core'
+
 import {
   FormContentContainer,
   FormContext,
@@ -24,7 +25,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
-import useIndictmentCounts from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import useIndictmentCounts, {
+  UpdateIndictmentCount,
+} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { IndictmentCount } from './IndictmentCount'
@@ -81,7 +84,7 @@ const Indictment: React.FC = () => {
   ])
 
   const updateIndictmentCountState = useCallback(
-    (indictmentCountId: string, update: TIndictmentCount) => {
+    (indictmentCountId: string, update: UpdateIndictmentCount) => {
       setWorkingCase((theCase) => {
         if (!theCase.indictmentCounts) {
           return theCase
@@ -106,9 +109,13 @@ const Indictment: React.FC = () => {
   const handleUpdateIndictmentCount = useCallback(
     async (
       indictmentCountId: string,
-      updatedIndictmentCount: TIndictmentCount,
+      updatedIndictmentCount: UpdateIndictmentCount,
     ) => {
-      updateIndictmentCount(workingCase.id, updatedIndictmentCount)
+      updateIndictmentCount(
+        workingCase.id,
+        indictmentCountId,
+        updatedIndictmentCount,
+      )
       updateIndictmentCountState(indictmentCountId, updatedIndictmentCount)
     },
     [updateIndictmentCount, updateIndictmentCountState, workingCase.id],

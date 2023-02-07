@@ -4,7 +4,10 @@ import { useMutation } from '@apollo/client'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { IndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentCount,
+  UpdateIndictmentCountInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UpdateIndictmentCountMutation } from './updateIndictmentCountGql'
 import { CreateIndictmentCountMutation } from './createIndictmentCountGql'
@@ -25,6 +28,11 @@ interface DeleteIndictmentCountMutationResponse {
     deleted: boolean
   }
 }
+
+export type UpdateIndictmentCount = Omit<
+  UpdateIndictmentCountInput,
+  'caseId' | 'indictmentCountId'
+>
 
 const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()
@@ -90,14 +98,18 @@ const useIndictmentCounts = () => {
   )
 
   const updateIndictmentCount = useCallback(
-    async (caseId: string, indictmentCount: IndictmentCount) => {
+    async (
+      caseId: string,
+      indictmentCountId: string,
+      update: UpdateIndictmentCount,
+    ) => {
       try {
         const { data } = await updateIndictmentCountMutation({
           variables: {
             input: {
-              indictmentCountId: indictmentCount.id,
+              indictmentCountId: indictmentCountId,
               caseId,
-              policeCaseNumber: indictmentCount.policeCaseNumber,
+              ...update,
             },
           },
         })

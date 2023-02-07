@@ -8,6 +8,7 @@ import {
   TempCase as Case,
 } from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { indictmentCount as strings } from './IndictmentCount.strings'
@@ -17,7 +18,7 @@ interface Props {
   workingCase: Case
   onChange: (
     indictmentCountId: string,
-    indictmentCount: TIndictmentCount,
+    updatedIndictmentCount: UpdateIndictmentCount,
   ) => void
   onDelete?: (indictmentCountId: string) => Promise<void>
 }
@@ -64,7 +65,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           placeholder={formatMessage(strings.policeNumber.placeholder)}
           onChange={(so: ValueType<ReactSelectOption>) => {
             onChange(indictmentCount.id, {
-              ...indictmentCount,
               policeCaseNumber: (so as ReactSelectOption).value as string,
             })
           }}
