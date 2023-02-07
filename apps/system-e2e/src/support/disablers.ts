@@ -22,7 +22,7 @@ function deepMock<T = Dict>(
   { exactMatch = false, deepPath = 'data' } = {},
 ): T | T[] | Dict | Dict[] {
   if (Array.isArray(original)) {
-    console.log('Deep mocking array:', original)
+    //console.log('Deep mocking array:', original)
     // Should do the typing properly here :/
     return original.map(
       (item: T) => deepMock(item, mockKey, mockData, { exactMatch }) as T,
@@ -41,8 +41,8 @@ function deepMock<T = Dict>(
       console.log(
         `Found deepMock match (mockKey=${mockKey}, key=${key}, deepPath=${updatedDeepPath}, mockData=${mockData})`,
       )
-      console.log(`Deep mocking mocked   data:`, mocked)
-      console.log(`Deep mocking original data:`, original)
+      //console.log(`Deep mocking mocked   data:`, mocked)
+      //console.log(`Deep mocking original data:`, original)
     } else
       mocked[key] = deepMock(original[key], mockKey, mockData, {
         deepPath: updatedDeepPath,
@@ -104,7 +104,7 @@ export async function mockQGL<T>(
         .request()
         .url()} < (key=${mockKey}, patchResponse=${patchResponse})`,
     )
-    console.log('(original):', originalResponse)
+    //console.log('(original):', originalResponse)
 
     const patchedData = mergeWith(
       { ...originalResponse },
@@ -115,8 +115,8 @@ export async function mockQGL<T>(
     data.data = patchedData
 
     // Debug logging
-    console.log('(mocked): ', mockResponse)
-    console.log('(merged): ', patchedData)
+    //console.log('(mocked): ', mockResponse)
+    //console.log('(merged): ', patchedData)
 
     // Mock injection
     const body = JSON.stringify(data)

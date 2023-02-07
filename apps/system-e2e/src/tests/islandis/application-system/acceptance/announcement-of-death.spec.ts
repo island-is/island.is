@@ -66,10 +66,9 @@ applicationTest.describe('Announcement of Death', () => {
     await page.locator(nextButton).click()
 
     // Heirs -> add a new heir
-    await page.locator('text=Bæta við erfingja').click()
-    await page.getByRole('textbox', { name: 'nationalId' }).fill('010130-5069')
-    await page.locator('input[name=nationalId]').fill('010130-5069')
-    await page.locator('input[name=relation"]').click()
+    await page.getByText('Bæta við erfingja').click()
+    await page.getByLabel('Kennitala').last().fill('010130-5069')
+    await page.getByLabel('Tengsl').last().click()
     await page.locator('div:text("Systir")').click()
     await page.locator(nextButton).click()
 
