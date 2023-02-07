@@ -158,6 +158,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/           @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/         @island-is/sendiradid
 /libs/shared/form-fields/                                                                           @island-is/sendiradid @island-is/island-ui
+/libs/admin/application-system/                                                                     @island-is/sendiradid
 
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
 /libs/api/domains/payment/                                                                          @island-is/sendiradid-applications

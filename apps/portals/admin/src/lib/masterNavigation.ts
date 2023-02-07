@@ -1,5 +1,6 @@
 import { icelandicNamesRegistryNavigation } from '@island.is/portals/admin/icelandic-names-registry'
 import { airDiscountSchemeNavigation } from '@island.is/portals/admin/air-discount-scheme'
+import { applicationSystemNavigation } from '@island.is/portals/admin/application-system'
 import {
   PortalNavigationItem,
   m as coreMessages,
@@ -23,6 +24,7 @@ export const TOP_NAVIGATION: PortalNavigationItem = {
     airDiscountSchemeNavigation,
     // Mannanafnaskrá
     icelandicNamesRegistryNavigation,
+    applicationSystemNavigation,
   ],
 }
 export const BOTTOM_NAVIGATION: PortalNavigationItem = {

@@ -235,6 +235,7 @@
     "plausible": "libs/plausible",
     "portals-admin": "apps/portals/admin",
     "portals-admin-air-discount-scheme": "libs/portals/admin/air-discount-scheme",
+    "portals-admin-application-system": "libs/portals/admin/application-system",
     "portals-admin-core": "libs/portals/admin/core",
     "portals-admin-icelandic-names-registry": "libs/portals/admin/icelandic-names-registry",
     "portals-core": "libs/portals/core",
