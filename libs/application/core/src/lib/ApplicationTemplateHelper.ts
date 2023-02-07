@@ -299,7 +299,7 @@ export class ApplicationTemplateHelper<
   ): StaticText | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
-    return access
+    return access === 'entry'
       ? stateInfo?.actionCard?.onEntryHistory
       : stateInfo?.actionCard?.onExitHistory
   }

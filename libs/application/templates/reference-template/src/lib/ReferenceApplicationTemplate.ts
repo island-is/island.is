@@ -169,6 +169,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           actionCard: {
             description: m.draftDescription,
             pendingAction: testPendingAction,
+            onEntryHistory: m.careerHistoryCompanies,
+            onExitHistory: m.careerIndustry,
           },
           onEntry: [
             ApplicationHistoryApi.configure({
@@ -254,6 +256,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: testPendingAction,
+            onEntryHistory: m.career,
+            onExitHistory: m.assignee,
           },
           onExit: [
             defineTemplateApi({

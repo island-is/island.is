@@ -119,5 +119,5 @@ export class ApplicationHistory {
   date!: Date
 
   @Field(() => String, { nullable: true })
-  contentfulId?: string
+  entry?: string
 }

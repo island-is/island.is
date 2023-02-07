@@ -27,7 +27,7 @@ export const ApplicationFragment = gql`
     status
     history {
       id
-      contentfulId
+      entry
       date
     }
   }
