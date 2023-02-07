@@ -52,6 +52,8 @@ const statesMap: StatesMap = {
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
     [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.complete,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   employer: {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
@@ -67,9 +69,13 @@ const statesMap: StatesMap = {
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
     [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.complete,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   vinnumalastofnun: {
     [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.requiresAction,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.requiresAction,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
       ReviewSectionState.inProgress,
@@ -89,12 +95,8 @@ const descKey: { [key: string]: MessageDescriptor } = {
     parentalLeaveFormMessages.editFlow.employerApprovesDesc,
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({
-  application,
-  field,
-  refetch,
-  errors,
-}) => {
+const InReviewSteps: FC<FieldBaseProps> = (props) => {
+  const { application, field, refetch, errors } = props
   const {
     isSelfEmployed,
     applicationType,
@@ -119,13 +121,25 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
   )
+  const isAdditionalDocumentRequiredState =
+    application.state ===
+      ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED ||
+    application.state === ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED
 
   const steps = [
     {
       state: statesMap['vinnumalastofnun'][application.state],
-      title: formatMessage(parentalLeaveFormMessages.reviewScreen.deptTitle),
+      title: formatMessage(
+        isAdditionalDocumentRequiredState
+          ? parentalLeaveFormMessages.reviewScreen
+              .additionalDocumentRequiredTitle
+          : parentalLeaveFormMessages.reviewScreen.deptTitle,
+      ),
       description: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.deptDesc,
+        isAdditionalDocumentRequiredState
+          ? parentalLeaveFormMessages.reviewScreen
+              .additionalDocumentRequiredDesc
+          : parentalLeaveFormMessages.reviewScreen.deptDesc,
       ),
     },
   ]
@@ -294,10 +308,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
               application={application}
               index={index + 1}
               {...step}
-              notifyParentOnClickEvent={() =>
-                handleSubmit('RESIDENCEGRANTAPPLICATION')
-              }
-            />
+              notifyParentOnClickEvent={() => handleSubmit('RESIDENCEGRANTAPPLICATION')}            />
           ))}
         </Box>
       ) : (

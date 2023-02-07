@@ -4,9 +4,9 @@ import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { Box, Button, Icon, Link, Tag, Text } from '@island.is/island-ui/core'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 
 import * as styles from './ReviewSection.css'
-import { parentalLeaveFormMessages } from '../../..'
 
 export enum ReviewSectionState {
   prerequisites = 'Prerequisites',

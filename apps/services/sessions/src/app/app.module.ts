@@ -8,8 +8,8 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
-import { SessionsModule } from './sessions/sessions.module'
 import { SessionsConfig } from './sessions.config'
+import { SessionsModule } from './sessions/sessions.module'
 
 @Module({
   imports: [
