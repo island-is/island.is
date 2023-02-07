@@ -1,8 +1,8 @@
-import { CaseType } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   User,
   UserRole,
+  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { filterCases, FilterOption, filterOptionsForUser } from './useFilter'
@@ -81,7 +81,7 @@ describe('useFilter - filterCases', () => {
     const user = {} as User
     const cases = [
       { id: '1' },
-      { id: '2', type: CaseType.INDICTMENT },
+      { id: '2', type: CaseType.Indictment },
     ] as Case[]
 
     const result = filterCases('INDICTMENT', cases, user)
@@ -94,8 +94,8 @@ describe('useFilter - filterCases', () => {
   test('should return investigation cases', async () => {
     const user = {} as User
     const cases = [
-      { id: '1', type: CaseType.CUSTODY },
-      { id: '2', type: CaseType.INDICTMENT },
+      { id: '1', type: CaseType.Custody },
+      { id: '2', type: CaseType.Indictment },
     ] as Case[]
 
     const result = filterCases('INVESTIGATION', cases, user)

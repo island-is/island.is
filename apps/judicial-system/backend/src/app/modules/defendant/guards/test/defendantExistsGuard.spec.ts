@@ -6,7 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { createTestingDefendantModule } from '../../test/createTestingDefendantModule'
 import { DefendantExistsGuard } from '../defendantExists.guard'
 
 interface Then {
@@ -21,10 +20,8 @@ describe('Defendant Exists Guard', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { defendantService } = await createTestingDefendantModule()
-
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new DefendantExistsGuard(defendantService)
+      const guard = new DefendantExistsGuard()
       const then = {} as Then
 
       try {

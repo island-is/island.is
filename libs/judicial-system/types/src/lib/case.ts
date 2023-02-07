@@ -241,6 +241,7 @@ export interface Case {
   subpoenaType?: SubpoenaType
   defendantWaivesRightToCounsel?: boolean
   crimeScenes?: CrimeSceneMap
+  indictmentIntroduction?: string
 }
 
 export interface CaseListEntry
@@ -350,6 +351,7 @@ export interface UpdateCase
     | 'subpoenaType'
     | 'defendantWaivesRightToCounsel'
     | 'crimeScenes'
+    | 'indictmentIntroduction'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -402,16 +404,19 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
-export function isIndictmentCase(type?: CaseType): boolean {
-  return Boolean(type && indictmentCases.includes(type))
+export function isIndictmentCase(type: string): boolean {
+  const caseType = type as CaseType
+  return indictmentCases.includes(caseType)
 }
 
-export function isRestrictionCase(type?: CaseType): boolean {
-  return Boolean(type && restrictionCases.includes(type))
+export function isRestrictionCase(type: string): boolean {
+  const caseType = type as CaseType
+  return restrictionCases.includes(caseType)
 }
 
-export function isInvestigationCase(type?: CaseType): boolean {
-  return Boolean(type && investigationCases.includes(type))
+export function isInvestigationCase(type: string): boolean {
+  const caseType = type as CaseType
+  return investigationCases.includes(caseType)
 }
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {

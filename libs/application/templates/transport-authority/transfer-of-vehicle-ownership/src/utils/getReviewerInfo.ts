@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { UserInformation, CoOwnerAndOperator } from '../types'
+import { UserInformation, CoOwnerAndOperator } from '../shared'
 
 export const getReviewerInfo = (
   reviewerNationalId: string,

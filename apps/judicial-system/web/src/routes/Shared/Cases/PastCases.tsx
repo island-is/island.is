@@ -7,13 +7,14 @@ import { Box, Text, Tag } from '@island.is/island-ui/core'
 import {
   CaseAppealDecision,
   CaseDecision,
-  CaseListEntry,
   CaseState,
-  CaseType,
   Defendant,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  TempCase as Case,
+  TempCaseListEntry as CaseListEntry,
+} from '@island.is/judicial-system-web/src/types'
 import {
   capitalize,
   displayFirstPlusRemaining,
@@ -26,6 +27,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { core } from '@island.is/judicial-system-web/messages'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   displayCaseType,

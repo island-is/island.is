@@ -10,7 +10,7 @@ import {
   InputError,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 import { error, information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
