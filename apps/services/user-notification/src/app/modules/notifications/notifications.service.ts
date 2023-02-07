@@ -16,7 +16,8 @@ import axios from 'axios'
 // adding a line due to linting - remove me later
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
-const contentfulGqlUrl = 'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
+const contentfulGqlUrl =
+  'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -41,7 +42,7 @@ export class NotificationsService {
     this.logger.info(
       'Fetching templates from Contentful GQL for locale: ' + locale,
     )
-    
+
     const contentfulHnippTemplatesQuery = {
       query: ` {
       hnippTemplateCollection(locale: "${locale}") {
@@ -100,7 +101,6 @@ export class NotificationsService {
       return cachedTemplate as HnippTemplate
     }
 
-    
     try {
       for (const template of await this.getTemplates(locale)) {
         if (template.templateId == templateId) {
