@@ -57,19 +57,10 @@ export class ApplicationService extends BaseTemplateApiService {
 
   async createHistoryEntry({
     application,
-    auth,
     params,
-  }: TemplateApiModuleActionProps<ApplicationHistoryParameters>): Promise<any> {
+  }: TemplateApiModuleActionProps<ApplicationHistoryParameters>): Promise<void> {
     if (params?.contentId) {
-      this.historyService.createHistoryEntry({
-        application_id: application.id,
-        contentful_id: params?.contentId,
-      })
-    } else {
-      this.historyService.createHistoryEntry({
-        application_id: application.id,
-        contentful_id: 'ekkert gerðist',
-      })
+      this.historyService.createHistoryEntry(application, params.contentId)
     }
   }
 }

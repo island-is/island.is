@@ -29,6 +29,9 @@ class PendingAction {
   displayStatus?: string
 
   @Field(() => String, { nullable: true })
+  title?: string
+
+  @Field(() => String, { nullable: true })
   content?: string
 }
 
@@ -119,5 +122,5 @@ export class ApplicationHistory {
   date!: Date
 
   @Field(() => String, { nullable: true })
-  contentfulId?: string
+  entry?: string
 }

@@ -101,7 +101,6 @@ import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { logger as islandis_logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import { HistoryResponseDto } from './dto/history.dto'
@@ -130,7 +129,7 @@ export class ApplicationController {
     private intlService: IntlService,
     private paymentService: PaymentService,
     private applicationChargeService: ApplicationChargeService,
-    private historyService: HistoryService,
+    private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
   ) {}
 
@@ -829,6 +828,14 @@ export class ApplicationController {
       }
     }
 
+    const historyOnExitEntry = helper.getHistoryEntry('exit', application.state)
+    if (historyOnExitEntry) {
+      await this.historyService.createHistoryEntry(
+        application,
+        historyOnExitEntry,
+      )
+    }
+
     const [
       hasChanged,
       newState,
@@ -849,6 +856,18 @@ export class ApplicationController {
         hasError: false,
         application: updatedApplication,
       }
+    }
+
+    const historyOnEntryEntry = helper.getHistoryEntry(
+      'entry',
+      application.state,
+    )
+
+    if (historyOnEntryEntry) {
+      await this.historyService.createHistoryEntry(
+        application,
+        historyOnEntryEntry,
+      )
     }
 
     const onEnterStateAction = new ApplicationTemplateHelper(
@@ -1205,14 +1224,23 @@ export class ApplicationController {
   async getHistory(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<HistoryResponseDto[] | []> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
     )
-    return await this.historyService.getHistoryByApplicationId(
-      existingApplication.id,
+
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
     )
+    const intl = await this.intlService.useIntl(namespaces, locale)
+
+    return (
+      await this.historyService.getHistoryByApplicationId(
+        existingApplication.id,
+      )
+    ).map((history) => new HistoryResponseDto(history, intl.formatMessage))
   }
 
   @Scopes(ApplicationScope.write)
@@ -1251,6 +1279,11 @@ export class ApplicationController {
     await this.paymentService.delete(existingApplication.id, user)
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
+
+    // delete history for application
+    await this.historyService.deleteHistoryByApplicationId(
+      existingApplication.id,
+    )
 
     await this.applicationService.delete(existingApplication.id)
   }

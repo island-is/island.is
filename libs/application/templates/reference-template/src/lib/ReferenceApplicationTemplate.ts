@@ -80,6 +80,7 @@ const testPendingAction = (
 ): PendingAction => {
   if (currentRole === Roles.APPLICANT) {
     return {
+      title: 'Þetta er titill inn á þessu',
       displayStatus: 'actionable',
       content: 'Þú átt þessa umsókn',
     }
@@ -87,12 +88,14 @@ const testPendingAction = (
 
   if (currentRole === Roles.ASSIGNEE) {
     return {
+      title: 'Þetta er líka titill inn á þessu',
       displayStatus: 'inprogress',
       content: 'Þú þarft að bíða eftir öðrum',
     }
   }
 
   return {
+    title: 'Þetta er bara búið',
     displayStatus: 'completed',
     content: 'Þú ert búinn',
   }
@@ -110,6 +113,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   dataSchema: ExampleSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
+
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -164,9 +168,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
+
           actionCard: {
             description: m.draftDescription,
             pendingAction: testPendingAction,
+            onEntryHistory: m.careerHistoryCompanies,
+            onExitHistory: m.careerIndustry,
           },
           onEntry: [
             ApplicationHistoryApi.configure({
@@ -175,6 +182,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               },
             }),
           ],
+
           progress: 0.25,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
@@ -206,6 +214,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: testPendingAction,
+          },
           onEntry: [
             defineTemplateApi({
               action: ApiActions.createApplication,
@@ -251,6 +262,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: testPendingAction,
+            onEntryHistory: m.career,
+            onExitHistory: m.assignee,
           },
           onExit: [
             defineTemplateApi({

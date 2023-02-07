@@ -80,6 +80,7 @@ export type PendingActionDisplayStatus =
 
 export type PendingAction = {
   displayStatus: PendingActionDisplayStatus
+  title?: StaticText
   content?: StaticText
 }
 
@@ -92,7 +93,8 @@ export interface ApplicationStateMeta<
   actionCard?: {
     title?: StaticText
     description?: StaticText
-
+    onExitHistory?: StaticText
+    onEntryHistory?: StaticText
     pendingAction?:
       | PendingAction
       | ((application: Application, role: ApplicationRole) => PendingAction)
@@ -148,6 +150,7 @@ export function createApplicationMachine<
   return Machine(
     { ...config, initial: initialState },
     options ?? {},
+
     context as TContext,
   )
 }
