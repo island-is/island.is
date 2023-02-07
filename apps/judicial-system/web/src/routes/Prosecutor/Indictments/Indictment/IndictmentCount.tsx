@@ -19,7 +19,7 @@ interface Props {
     indictmentCountId: string,
     indictmentCount: TIndictmentCount,
   ) => void
-  onDelete?: (indictmentCount: TIndictmentCount) => Promise<void>
+  onDelete?: (indictmentCountId: string) => Promise<void>
 }
 
 export const IndictmentCount: React.FC<Props> = (props) => {
@@ -44,7 +44,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       {onDelete && (
         <Box marginBottom={2} display="flex" justifyContent="flexEnd">
           <Button
-            onClick={() => onDelete(indictmentCount)}
+            onClick={() => onDelete(indictmentCount.id)}
             colorScheme="destructive"
             variant="text"
             size="small"

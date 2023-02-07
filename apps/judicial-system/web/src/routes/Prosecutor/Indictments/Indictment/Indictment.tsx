@@ -114,19 +114,17 @@ const Indictment: React.FC = () => {
     [updateIndictmentCount, updateIndictmentCountState, workingCase.id],
   )
 
-  const handleDeleteIndictmentCount = async (
-    indictmentCount: TIndictmentCount,
-  ) => {
+  const handleDeleteIndictmentCount = async (indictmentCountId: string) => {
     if (
       workingCase.indictmentCounts &&
       workingCase.indictmentCounts.length > 1
     ) {
-      await deleteIndictmentCount(workingCase.id, indictmentCount.id)
+      await deleteIndictmentCount(workingCase.id, indictmentCountId)
 
       setWorkingCase((theCase) => ({
         ...theCase,
         indictmentCounts: theCase.indictmentCounts?.filter(
-          (count) => count.id !== indictmentCount.id,
+          (count) => count.id !== indictmentCountId,
         ),
       }))
     }
