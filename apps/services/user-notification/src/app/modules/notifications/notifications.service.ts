@@ -83,7 +83,6 @@ export class NotificationsService {
         }
       })
     return res.data.hnippTemplateCollection.items
-    
   }
 
   async getTemplate(
