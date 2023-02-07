@@ -17,7 +17,7 @@ import is from 'date-fns/locale/is'
 import enGB from 'date-fns/locale/en-GB'
 import { format as formatSsn } from 'kennitala'
 
-const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
+export const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
   return license.vinnuvelaRettindi
     ? license.vinnuvelaRettindi
         .filter((field) => field.kenna || field.stjorna)
@@ -31,9 +31,9 @@ const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
     : null
 }
 
-const findLatestExpirationDate = (license: VinnuvelaDto) => {
+export const findLatestExpirationDate = (license: VinnuvelaDto) => {
   if (!license.vinnuvelaRettindi) {
-    return
+    return null
   }
 
   let maxDate = new Date()
@@ -112,7 +112,7 @@ export const parseMachineLicensePayload = (
     metadata: {
       licenseNumber: license.skirteinisNumer?.toString() ?? '',
       expired: expired,
-      expireDate: findLatestExpirationDate(license),
+      expireDate: findLatestExpirationDate(license) ?? undefined,
     },
   }
 }
