@@ -1,2 +1,3 @@
 export * from './lib/clients-sessions.module'
-export { SessionsApi } from '../gen/fetch'
+export * from './lib/sessions-client.config'
+export { SessionsApi, SessionsResultDto, Session } from '../gen/fetch'

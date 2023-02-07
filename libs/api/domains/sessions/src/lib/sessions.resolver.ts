@@ -7,11 +7,14 @@ import { Identity, IdentityLoader } from '@island.is/api/domains/identity'
 import type { IdentityDataLoader } from '@island.is/api/domains/identity'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import {
+  SessionsResultDto,
+  Session as SessionDto,
+} from '@island.is/clients/sessions'
 import { Loader } from '@island.is/nest/dataloader'
 
 import { Session } from './models/session.model'
 import { SessionsService } from './services/sessions.service'
-import { PaginatedSessionDto, SessionDto } from './services/types'
 import { PaginatedSessionResponse } from './dto/paginated-session.response'
 import { SessionsInput } from './dto/sessions.input'
 
@@ -24,7 +27,7 @@ export class SessionsResolver {
   getSessions(
     @CurrentUser() user: User,
     @Args('input') input: SessionsInput,
-  ): Promise<PaginatedSessionDto> {
+  ): Promise<SessionsResultDto> {
     return this.sessionsService.getSessions(user, input)
   }
 
