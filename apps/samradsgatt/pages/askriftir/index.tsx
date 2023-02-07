@@ -151,7 +151,7 @@ import {
     const paddingBottom = [3, 3, 3, 3] as ResponsiveSpace
 
     const onLoadMore = () => {
-
+        console.log("clicked on load more")
     }
   
     return (
