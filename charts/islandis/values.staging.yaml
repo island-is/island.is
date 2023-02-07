@@ -1705,7 +1705,7 @@ services-sessions-api:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
+    DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1771,7 +1771,7 @@ services-sessions-worker:
       NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/services-sessions-worker/DB_PASSWORD'
+      DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
   podSecurityContext:
     fsGroup: 65534
@@ -1789,7 +1789,7 @@ services-sessions-worker:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-sessions-worker/DB_PASSWORD'
+    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
