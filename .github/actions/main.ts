@@ -3,9 +3,7 @@ import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Octokit } from '@octokit/action'
 import { SimpleGit } from './simple-git'
 import { WorkflowID } from './git-action-status'
-import Debug from 'debug'
 ;(async () => {
-  const log = Debug('main')
   const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
 
@@ -30,7 +28,6 @@ import Debug from 'debug'
           process.env.WORKFLOW_ID! as WorkflowID,
         )
 
-  log(`Revision to be used: ${JSON.stringify(rev)}`)
   if (rev === 'rebuild') {
     console.log(`Full rebuild needed`)
   } else {
@@ -38,5 +35,4 @@ import Debug from 'debug'
     rev.ref = rev.ref.replace(/'/g, '')
     console.log(JSON.stringify(rev))
   }
-  log(`We are done here.`)
 })()
