@@ -1,4 +1,6 @@
-# clients-sessions
+<!-- gitbook-ignore -->
+
+# Clients Sessions
 
 This library was generated with [Nx](https://nx.dev).
 
