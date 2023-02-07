@@ -21,7 +21,7 @@ type props = {
   pdfButtonText?: MessageDescriptor
 }
 
-export const formConclusionSection = (type: props) =>
+export const formConclusionSection = (props: props) =>
   buildSection({
     id: 'uiForms.conclusionSection',
     title: conclusion.information.sectionTitle,
@@ -32,25 +32,26 @@ export const formConclusionSection = (type: props) =>
         children: [
           buildAlertMessageField({
             id: 'uiForms.conclusionAlert',
-            title: type.alertTitle,
+            title: props.alertTitle,
             alertType: 'success',
-            message: type.alertMessage,
+            message: props.alertMessage,
           }),
           buildS3PdfLinkField({
             id: 'uiForms.complaintLink',
-            title: type.pdfButtonText ?? '',
-            s3key: type.s3PdfKey ?? '',
+            title: props.pdfButtonText ?? '',
+            s3key: props.s3PdfKey ?? '',
             condition: () => {
               return (
-                type.s3PdfKey !== undefined && type.pdfButtonText !== undefined
+                props.s3PdfKey !== undefined &&
+                props.pdfButtonText !== undefined
               )
             },
           }),
           buildExpandableDescriptionField({
             id: 'uiForms.conclusionBullet',
-            title: type.expandableHeader,
-            introText: type.expandableIntro,
-            description: type.expandableDescription,
+            title: props.expandableHeader,
+            introText: props.expandableIntro,
+            description: props.expandableDescription,
             startExpanded: true,
           }),
           buildMessageWithLinkButtonField({
