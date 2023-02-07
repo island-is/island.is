@@ -1,3 +1,4 @@
+import { BLOCKS } from '@contentful/rich-text-types'
 import {
   Box,
   GridColumn,
@@ -11,64 +12,67 @@ import {
 import { webRichText } from '@island.is/web/utils/richText'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { SliceType } from '@island.is/island-ui/contentful'
-import { BLOCKS } from '@contentful/rich-text-types'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './HeilbrigdisstofnunNordurlandsFooter.css'
 
-interface HeilbrigdisstofnunNordurlandsFooterProps {
-  footerItems: FooterItem[]
-}
-
-export const HeilbrigdisstofnunNordurlandsFooter = ({
-  footerItems,
-}: HeilbrigdisstofnunNordurlandsFooterProps) => {
-  const renderColumn = (
-    column: FooterItem[],
-    span: SpanType = ['4/8', '2/8', '1/8'],
-    offset = false,
-  ) => {
-    if (column.length <= 0) return null
-    return (
-      <GridColumn span={span}>
-        {column.map((item, index) => (
-          <Box
-            key={`${item.id}-${index}`}
-            className={styles.locationBox}
-            marginLeft={offset ? [0, 0, 0, 10] : 0}
-          >
-            {item.link?.url ? (
-              <Link href={item.link.url} color="white">
-                <Text fontWeight="semiBold" color="white" marginBottom={1}>
-                  <Hyphen>{item.title}</Hyphen>
-                </Text>
-              </Link>
-            ) : (
+const renderColumn = (
+  column: FooterItem[],
+  span: SpanType = ['4/8', '2/8', '1/8'],
+  offset = false,
+) => {
+  if (column.length <= 0) return null
+  return (
+    <GridColumn span={span}>
+      {column.map((item, index) => (
+        <Box
+          key={`${item.id}-${index}`}
+          className={styles.locationBox}
+          marginLeft={offset ? [0, 0, 0, 10] : 0}
+        >
+          {item.link?.url ? (
+            <Link href={item.link.url} color="white">
               <Text fontWeight="semiBold" color="white" marginBottom={1}>
                 <Hyphen>{item.title}</Hyphen>
               </Text>
-            )}
+            </Link>
+          ) : (
+            <Text fontWeight="semiBold" color="white" marginBottom={1}>
+              <Hyphen>{item.title}</Hyphen>
+            </Text>
+          )}
 
-            {webRichText(item.content as SliceType[], {
-              renderNode: {
-                [BLOCKS.PARAGRAPH]: (_node, children) => (
-                  <Text
-                    color="white"
-                    variant="eyebrow"
-                    fontWeight="regular"
-                    lineHeight="xl"
-                    marginBottom={2}
-                  >
-                    {children}
-                  </Text>
-                ),
-              },
-            })}
-          </Box>
-        ))}
-      </GridColumn>
-    )
-  }
+          {webRichText(item.content as SliceType[], {
+            renderNode: {
+              [BLOCKS.PARAGRAPH]: (_node, children) => (
+                <Text
+                  color="white"
+                  variant="eyebrow"
+                  fontWeight="regular"
+                  lineHeight="xl"
+                  marginBottom={2}
+                >
+                  {children}
+                </Text>
+              ),
+            },
+          })}
+        </Box>
+      ))}
+    </GridColumn>
+  )
+}
 
+interface HeilbrigdisstofnunNordurlandsFooterProps {
+  footerItems: FooterItem[]
+  namespace: Record<string, string>
+}
+
+const HeilbrigdisstofnunNordurlandsFooter = ({
+  footerItems,
+  namespace,
+}: HeilbrigdisstofnunNordurlandsFooterProps) => {
+  const n = useNamespace(namespace)
   return (
     <footer aria-labelledby="heilbrigdisstofnun-nordurlands-footer">
       <Box className={styles.container}>
@@ -76,7 +80,10 @@ export const HeilbrigdisstofnunNordurlandsFooter = ({
           <GridColumn className={styles.mainColumn}>
             <GridRow>
               <img
-                src="https://images.ctfassets.net/8k0h54kbe6bj/rXPqjnjJYePJHhHvO0UDT/b5aaf2e6dc54abb4b1dc2bd8065217b7/HSN_landscape_hvittGratt.png?h=250"
+                src={n(
+                  'hsnFooterLogo',
+                  'https://images.ctfassets.net/8k0h54kbe6bj/rXPqjnjJYePJHhHvO0UDT/b5aaf2e6dc54abb4b1dc2bd8065217b7/HSN_landscape_hvittGratt.png?h=250',
+                )}
                 alt="heilbrigdisstofnun-nordurlands-logo"
                 width={590}
               />
@@ -95,12 +102,18 @@ export const HeilbrigdisstofnunNordurlandsFooter = ({
               <Box marginRight={[4, 4, 12]}>
                 <Inline alignY="center" align="center" space={5}>
                   <img
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/1igNLuoV9IQAwP1A4bfyXd/0d96a9a057e48b28616832552838c7a5/hsn-jafnlaunavottun.svg"
+                    src={n(
+                      'hsnJafnlaunavottunLogo',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/1igNLuoV9IQAwP1A4bfyXd/0d96a9a057e48b28616832552838c7a5/hsn-jafnlaunavottun.svg',
+                    )}
                     alt="jafnlaunavottun"
                     width={50}
                   />
                   <img
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/2QMl8Mw50Vj0AjlI6jzENH/cc4792e02ff1b152ede7e892da333669/greenSteps.png"
+                    src={n(
+                      'hsnGraenSkrefLogo',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/2QMl8Mw50Vj0AjlI6jzENH/cc4792e02ff1b152ede7e892da333669/greenSteps.png',
+                    )}
                     alt="graen-skref"
                     width={90}
                   />

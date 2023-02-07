@@ -1,0 +1,99 @@
+{
+  "root": "apps/services/sessions",
+  "sourceRoot": "apps/services/sessions/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/sessions",
+        "main": "apps/services/sessions/src/main.ts",
+        "tsConfig": "apps/services/sessions/tsconfig.app.json",
+        "assets": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-sessions:build"
+      }
+    },
+    "serve-worker": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-sessions:build",
+        "args": ["--job", "worker"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/services/sessions/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/services/sessions"],
+      "options": {
+        "jestConfig": "apps/services/sessions/jest.config.js",
+        "passWithNoTests": false
+      }
+    },
+    "worker": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-sessions:build",
+        "args": ["--job", "worker"]
+      }
+    },
+    "dev-services": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "docker-compose up -d",
+        "cwd": "apps/services/sessions"
+      }
+    },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-sessions:dev-services",
+          "yarn nx run services-sessions:migrate"
+        ],
+        "parallel": false
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/sessions/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/sessions/tsconfig.app.json apps/services/sessions/src/buildOpenApi.ts"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate",
+        "cwd": "apps/services/sessions"
+      }
+    },
+    "migrate/generate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli migration:generate",
+        "cwd": "apps/services/sessions"
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": ["scope:nest"]
+}

@@ -944,7 +944,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.FEMALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
@@ -960,7 +959,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -982,7 +980,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.OTHER
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
@@ -998,7 +995,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1020,7 +1016,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
@@ -1036,7 +1031,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1058,7 +1052,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = undefined
@@ -1074,7 +1067,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1096,7 +1088,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
@@ -1112,7 +1103,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1134,7 +1124,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
@@ -1150,7 +1139,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1172,7 +1160,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
@@ -1188,7 +1175,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
