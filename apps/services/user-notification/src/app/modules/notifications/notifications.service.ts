@@ -16,7 +16,7 @@ import axios from 'axios'
 // adding a line due to linting - remove me later
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
-
+const contentfulGqlUrl = 'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -26,13 +26,11 @@ export class NotificationsService {
   ) {}
 
   async addToCache(key: string, item: any) {
-    const res = await this.cacheManager.set(key, item)
-    console.log(res)
+    return await this.cacheManager.set(key, item)
   }
 
   async getFromCache(key: string) {
-    const item = await this.cacheManager.get(key)
-    return item
+    return await this.cacheManager.get(key)
   }
 
   async getTemplates(locale?: string): Promise<HnippTemplate[] | any> {
@@ -43,8 +41,7 @@ export class NotificationsService {
     this.logger.info(
       'Fetching templates from Contentful GQL for locale: ' + locale,
     )
-    const contentfulGqlUrl =
-      'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
+    
     const contentfulHnippTemplatesQuery = {
       query: ` {
       hnippTemplateCollection(locale: "${locale}") {
@@ -70,8 +67,6 @@ export class NotificationsService {
         },
       })
       .then((response) => {
-        console.log(response.data.data.hnippTemplateCollection.items)
-
         for (const item of response.data.data.hnippTemplateCollection.items) {
           // contentful returns null for empty arrays
           if (item.args == null) {
@@ -101,25 +96,21 @@ export class NotificationsService {
     const cacheKey = templateId + '-' + locale
     const cachedTemplate = await this.getFromCache(cacheKey)
     if (cachedTemplate) {
-      console.log('cache hit')
+      console.log('cache hit for: ' + cacheKey)
       return cachedTemplate as HnippTemplate
     }
 
-    const templates = await this.getTemplates(locale)
+    
     try {
-      for (const template of templates) {
+      for (const template of await this.getTemplates(locale)) {
         if (template.templateId == templateId) {
           await this.addToCache(cacheKey, template)
           return template
         }
       }
-      throw new BadRequestException(
-        `Requested template ${templateId} not found`,
-      )
+      throw new BadRequestException(`Template: ${templateId} not found`)
     } catch {
-      throw new BadRequestException(
-        `Requested template ${templateId} not found ***`,
-      )
+      throw new BadRequestException(`Template: ${templateId} not found`)
     }
   }
 
