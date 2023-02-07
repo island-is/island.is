@@ -26,6 +26,10 @@ export class History extends Model {
   @ApiProperty()
   id!: string
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
   @ApiProperty()
   date!: Date
 

@@ -24,7 +24,7 @@ import { assign } from 'xstate'
 import { ApiActions } from '../shared'
 import {
   ReferenceDataApi,
-  EphemiralApi,
+  EphemeralApi,
   MyMockProvider,
 } from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
@@ -150,7 +150,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 }),
                 UserProfileApi,
                 MyMockProvider,
-                EphemiralApi,
+                EphemeralApi,
               ],
               delete: true,
             },

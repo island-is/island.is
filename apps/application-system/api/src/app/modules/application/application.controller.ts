@@ -64,6 +64,7 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from '@island.is/application/api/core'
 import { FileService } from '@island.is/application/api/files'
+import { HistoryService } from '@island.is/application/api/history'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
@@ -103,6 +104,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { logger as islandis_logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
+import { HistoryResponseDto } from './dto/history.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -128,6 +130,7 @@ export class ApplicationController {
     private intlService: IntlService,
     private paymentService: PaymentService,
     private applicationChargeService: ApplicationChargeService,
+    private historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
   ) {}
 
@@ -1188,6 +1191,35 @@ export class ApplicationController {
     } catch (error) {
       throw new NotFoundException('Attachment not found')
     }
+  }
+
+  @Get('applications/:id/history')
+  @Scopes(ApplicationScope.read)
+  @Documentation({
+    description: 'Gets the event history of an application',
+    response: { status: 200, type: [HistoryResponseDto] },
+    request: {
+      query: {},
+      params: {
+        id: {
+          type: 'string',
+          description: 'application id',
+          required: true,
+        },
+      },
+    },
+  })
+  async getHistory(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() user: User,
+  ): Promise<HistoryResponseDto[] | []> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
+    return await this.historyService.getHistoryByApplicationId(
+      existingApplication.id,
+    )
   }
 
   @Scopes(ApplicationScope.write)

@@ -203,4 +203,12 @@ export class ApplicationService {
       attachmentKey,
     })
   }
+
+  async getHistoryquery(id: string, auth: Auth) {
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGetHistory({
+      id,
+    })
+  }
 }
