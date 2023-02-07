@@ -35,7 +35,7 @@ const Subscriptions = () => {
     return (
       <SubscriptionTable
         data={casesData}
-        currentTab={currentTab}
+        currentTab={'Mál'}
         subscriptionArray={subscriptionArray}
         setSubscriptionArray={settingSubscriptionArray}
       />
@@ -100,7 +100,15 @@ const Subscriptions = () => {
         </Box>
 
         <Box paddingX={paddingXTable}>
-          <Tabs label="tabs" tabs={tabTest} />
+          <Tabs
+            selected={currentTab}
+            onlyRenderSelectedTab={true}
+            label="Veldu tegund áskrifta"
+            tabs={tabTest}
+            contentBackground="transparent"
+            onChange={(e) => setCurrentTab(e)}
+            
+          />
         </Box>
         <Box
           paddingX={paddingXContent}
