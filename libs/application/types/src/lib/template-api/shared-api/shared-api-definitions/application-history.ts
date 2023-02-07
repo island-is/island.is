@@ -1,7 +1,8 @@
+import { StaticText } from '@island.is/shared/types'
 import { defineTemplateApi } from '../..'
 
 export interface ApplicationHistoryParameters {
-  contentId: string
+  contentId: StaticText
 }
 
 export const ApplicationHistoryApi = defineTemplateApi<ApplicationHistoryParameters>(

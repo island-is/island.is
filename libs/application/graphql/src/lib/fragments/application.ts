@@ -19,6 +19,7 @@ export const ApplicationFragment = gql`
       pendingAction {
         displayStatus
         content
+        title
       }
       deleteButton
     }
@@ -31,7 +32,7 @@ export const ApplicationFragment = gql`
     status
     history {
       id
-      contentfulId
+      entry
       date
     }
   }
