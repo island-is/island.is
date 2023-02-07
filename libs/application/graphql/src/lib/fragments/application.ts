@@ -32,6 +32,7 @@ export const ApplicationFragment = gql`
     history {
       id
       contentfulId
+      date
     }
   }
 `

@@ -14,7 +14,7 @@ export class HistoryResponseDto {
   date!: Date
 
   @ApiProperty()
-  @Expose()
+  @Expose({ name: 'contentfulId' })
   @IsString()
-  contentfulId?: string
+  contentful_id?: string
 }
