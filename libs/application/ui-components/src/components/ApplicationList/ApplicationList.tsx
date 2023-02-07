@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { ReactNode, useCallback, useState } from 'react'
 import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 
@@ -15,6 +15,7 @@ import {
   ApplicationStatus,
   ActionCardTag,
   ApplicationTypes,
+  PendingActionDisplayStatus,
 } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
@@ -112,12 +113,21 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
 }
 
+type ApplicationFields = Pick<
+  Application,
+  | 'actionCard'
+  | 'id'
+  | 'typeId'
+  | 'status'
+  | 'modified'
+  | 'name'
+  | 'progress'
+  | 'history'
+>
+
 interface Props {
   organizations?: Organization[]
-  applications: Pick<
-    Application,
-    'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
-  >[]
+  applications: ApplicationFields[]
   onClick: (id: string) => void
   refetch?: (() => void) | undefined
   focus?: boolean
@@ -158,6 +168,57 @@ const ApplicationList = ({
       institution?.title ?? 'stafraent-island',
       organizations,
     )
+  }
+
+  const buildHistoryItems = (application: ApplicationFields) => {
+    const history: {
+      title: string
+      date?: string
+      content?: ReactNode
+    }[] = []
+
+    const mapStatusToAlertType = (status?: PendingActionDisplayStatus) => {
+      switch (status) {
+        case 'actionable':
+          return 'warning'
+        case 'completed':
+          return 'success'
+        case 'inprogress':
+          return 'info'
+        case 'rejected':
+          return 'error'
+        default:
+          return 'default'
+      }
+    }
+
+    if (application.actionCard?.pendingAction) {
+      history.push({
+        date: format(new Date(), formattedDate),
+        title: formatMessage(
+          application.actionCard.pendingAction.content ?? '',
+        ),
+        content: (
+          <AlertMessage
+            type={mapStatusToAlertType(
+              application.actionCard?.pendingAction?.displayStatus,
+            )}
+            message={application.actionCard?.pendingAction?.displayStatus}
+          />
+        ),
+      })
+    }
+
+    if (application.history) {
+      history.concat(
+        application.history.map((x) => ({
+          date: format(new Date(x.date), formattedDate),
+          title: x.id,
+        })),
+      )
+    }
+
+    return history
   }
 
   return (
@@ -204,40 +265,7 @@ const ApplicationList = ({
                   progress: application.progress,
                   variant: stateDefaultData.progress.variant,
                 }}
-                history={[
-                  {
-                    date: format(new Date(), formattedDate),
-                    isComplete: true,
-                    title: 'Tilkynning um slys er komið í afgreiðsluferli',
-                    Content: () => (
-                      <AlertMessage
-                        type="info"
-                        message="Tilkynning um slys er komið í afgreiðsluferli hjá Sjúkratryggingum. Ef Sjúkratryggingar telja  þörf á frekari upplýsingum um hann hafa samband. Afgreiðsla Sjúkratrygginga getur tekið allt að tvær vikur."
-                      />
-                    ),
-                  },
-                  {
-                    date: format(new Date(), formattedDate),
-                    isComplete: true,
-                    title: 'Tilkynning um slys er komið í afgreiðsluferli',
-                  },
-                  {
-                    date: format(new Date(), formattedDate),
-                    isComplete: true,
-                    title: 'Tilkynning um slys er komið í afgreiðsluferli',
-                    Content: () => (
-                      <AlertMessage
-                        type="warning"
-                        message="Læknisvottorð vantar í umsókn."
-                      />
-                    ),
-                  },
-                  {
-                    date: format(new Date(), formattedDate),
-                    isComplete: true,
-                    title: 'Tilkynning um slys er komið í afgreiðsluferli',
-                  },
-                ]}
+                history={buildHistoryItems(application)}
                 deleteButton={{
                   visible: actionCard?.deleteButton,
                   onClick: handleDeleteApplication.bind(null, application.id),

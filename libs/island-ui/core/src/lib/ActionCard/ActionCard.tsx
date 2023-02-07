@@ -15,7 +15,6 @@ import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
 import FormStepperV2 from '../FormStepper/FormStepperV2'
-import Section from '../FormStepper/Section'
 import { FormStepperThemes } from '../FormStepper/types'
 import HistorySection from '../FormStepper/HistorySection'
 import AnimateHeight from 'react-animate-height'
@@ -71,10 +70,9 @@ type ActionCardProps = {
     dialogCancelLabel?: string
   }
   history?: {
-    date: string
+    date?: string
     title: string
-    isComplete: boolean
-    Content?: React.FC
+    content?: React.ReactNode
   }[]
 }
 
@@ -130,7 +128,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   logo,
 }) => {
   const [historyState, setHistoryState] = React.useState<'open' | 'closed'>(
-    'closed',
+    history && history.length > 1 ? 'closed' : 'open',
   )
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -439,43 +437,43 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       </Box>
 
       {progressMeter.active && renderProgressMeter()}
-      {history && (
+      {history && history.length > 0 && (
         <Box paddingTop={[2, 2, 5]}>
           <AnimateHeight
             height={historyState === 'open' ? 'auto' : 200}
             duration={300}
           >
             <FormStepperV2
-              sections={history.map(
-                ({ isComplete, date, title, Content }, index) => (
-                  <HistorySection
-                    key={`history-section-${index}`}
-                    section={title}
-                    sectionIndex={index}
-                    theme={FormStepperThemes.PURPLE}
-                    isComplete={isComplete}
-                    date={date}
-                    description={Content ? <Content /> : undefined}
-                  />
-                ),
-              )}
+              sections={history.map(({ date, title, content }, index) => (
+                <HistorySection
+                  key={`history-section-${index}`}
+                  section={title}
+                  sectionIndex={index}
+                  isComplete
+                  theme={FormStepperThemes.PURPLE}
+                  date={date}
+                  description={content}
+                />
+              ))}
             />
           </AnimateHeight>
-          <Box display="flex" justifyContent="flexEnd">
-            <Box>
-              <Button
-                variant="text"
-                onClick={() =>
-                  setHistoryState(historyState === 'open' ? 'closed' : 'open')
-                }
-                icon={historyState === 'open' ? 'arrowUp' : 'arrowDown'}
-              >
-                {historyState === 'open'
-                  ? 'Loka umsóknarsögu'
-                  : 'Opna umsóknarsögu'}
-              </Button>
+          {history.length > 1 && (
+            <Box display="flex" justifyContent="flexEnd">
+              <Box>
+                <Button
+                  variant="text"
+                  onClick={() =>
+                    setHistoryState(historyState === 'open' ? 'closed' : 'open')
+                  }
+                  icon={historyState === 'open' ? 'arrowUp' : 'arrowDown'}
+                >
+                  {historyState === 'open'
+                    ? 'Loka umsóknarsögu'
+                    : 'Opna umsóknarsögu'}
+                </Button>
+              </Box>
             </Box>
-          </Box>
+          )}
         </Box>
       )}
     </Box>

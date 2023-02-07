@@ -60,7 +60,12 @@ export const HistorySection: FC<{
         marginLeft: isSmallScreen && isComplete ? `-${containerWidth}px` : '0',
       }}
     >
-      <Box display="flex" alignItems="flexStart" marginBottom={[0, 0, 1]}>
+      <Box
+        display="flex"
+        alignItems="flexStart"
+        width="full"
+        marginBottom={[0, 0, 1]}
+      >
         {date && (
           <Box paddingTop={2} paddingRight={2}>
             <Text variant="small">{date}</Text>
