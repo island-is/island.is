@@ -26204,6 +26204,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         lastCommitSha,
         baseGoodBuilds.head_commit
       );
+      log(`Retrieved changed components`);
       prBuilds.push({
         distance: diffWeight(affectedComponents),
         hash: baseGoodBuilds.head_commit,
@@ -26212,7 +26213,9 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         ref: baseGoodBuilds.head_commit
       });
     }
+    log(`Sorting`);
     prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
+    log(`Done`);
     if (prBuilds.length > 0)
       return {
         sha: prBuilds[0].hash,

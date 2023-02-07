@@ -172,6 +172,7 @@ export async function findBestGoodRefPR(
       lastCommitSha,
       baseGoodBuilds.head_commit,
     )
+    log(`Retrieved changed components`)
     prBuilds.push({
       distance: diffWeight(affectedComponents),
       hash: baseGoodBuilds.head_commit,
@@ -180,7 +181,9 @@ export async function findBestGoodRefPR(
       ref: baseGoodBuilds.head_commit,
     })
   }
+  log(`Sorting`)
   prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
+  log(`Done`)
   if (prBuilds.length > 0)
     return {
       sha: prBuilds[0].hash,
