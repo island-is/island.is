@@ -12,7 +12,6 @@ import { Cache } from 'cache-manager'
 
 import axios from 'axios'
 
-
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
