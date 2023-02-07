@@ -35,6 +35,11 @@ class PendingAction {
   @ApiPropertyOptional()
   @Expose()
   @IsString()
+  title?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
   content?: string
 }
 

@@ -80,6 +80,7 @@ export type PendingActionDisplayStatus =
 
 export type PendingAction = {
   displayStatus: PendingActionDisplayStatus
+  title?: StaticText
   content?: StaticText
 }
 

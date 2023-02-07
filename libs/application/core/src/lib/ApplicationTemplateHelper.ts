@@ -282,11 +282,15 @@ export class ApplicationTemplateHelper<
       return {
         displayStatus: action.displayStatus,
         content: action.content ? formatMessage(action.content) : undefined,
+        title: action.title ? formatMessage(action.title) : undefined,
       }
     }
 
     return {
       displayStatus: pendingAction.displayStatus,
+      title: pendingAction.title
+        ? formatMessage(pendingAction.title)
+        : undefined,
       content: pendingAction.content
         ? formatMessage(pendingAction.content)
         : undefined,

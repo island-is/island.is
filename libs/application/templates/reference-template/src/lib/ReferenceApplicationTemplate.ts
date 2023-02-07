@@ -80,6 +80,7 @@ const testPendingAction = (
 ): PendingAction => {
   if (currentRole === Roles.APPLICANT) {
     return {
+      title: 'Þetta er titill inn á þessu',
       displayStatus: 'actionable',
       content: 'Þú átt þessa umsókn',
     }
@@ -87,12 +88,14 @@ const testPendingAction = (
 
   if (currentRole === Roles.ASSIGNEE) {
     return {
+      title: 'Þetta er líka titill inn á þessu',
       displayStatus: 'inprogress',
       content: 'Þú þarft að bíða eftir öðrum',
     }
   }
 
   return {
+    title: 'Þetta er bara búið',
     displayStatus: 'completed',
     content: 'Þú ert búinn',
   }
@@ -211,6 +214,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: testPendingAction,
+          },
           onEntry: [
             defineTemplateApi({
               action: ApiActions.createApplication,

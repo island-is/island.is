@@ -19,6 +19,7 @@ export const ApplicationFragment = gql`
       pendingAction {
         displayStatus
         content
+        title
       }
       deleteButton
     }

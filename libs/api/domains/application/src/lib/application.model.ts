@@ -29,6 +29,9 @@ class PendingAction {
   displayStatus?: string
 
   @Field(() => String, { nullable: true })
+  title?: string
+
+  @Field(() => String, { nullable: true })
   content?: string
 }
 
