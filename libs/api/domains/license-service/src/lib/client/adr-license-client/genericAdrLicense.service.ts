@@ -40,7 +40,9 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     this.adrApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async fetchLicense(user: User) {
-    const license = await this.adrApiWithAuth(user).getAdr().catch(handle404)
+    const license = await this.adrApiWithAuth(user)
+      .getAdr({ kennitala: user.nationalId })
+      .catch(handle404)
     return license
   }
 

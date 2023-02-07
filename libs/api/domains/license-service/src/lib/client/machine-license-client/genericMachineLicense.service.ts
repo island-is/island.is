@@ -44,7 +44,7 @@ export class GenericMachineLicenseService
 
   async fetchLicense(user: User) {
     const license = await this.machineApiWithAuth(user)
-      .getVinnuvela()
+      .getVinnuvela({ kennitala: user.nationalId })
       .catch(handle404)
     return license
   }
