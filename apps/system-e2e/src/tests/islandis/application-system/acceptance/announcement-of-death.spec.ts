@@ -42,7 +42,9 @@ applicationTest.describe('Announcement of Death', () => {
     await page.locator('data-testid=agree-to-data-providers').click()
     await page.locator(submitButton).click()
 
-    await expect(page.locator('label[for=approveExternalData]')).not.toBeVisible()
+    await expect(
+      page.locator('label[for=approveExternalData]'),
+    ).not.toBeVisible()
     await expect(
       page.locator('h2:text("Fyrri umsóknir um andlátstilkynningu")'),
     ).not.toBeVisible()
@@ -55,14 +57,17 @@ applicationTest.describe('Announcement of Death', () => {
     // TODO improve selectability in this screen
     await page.locator('text=Veldu tengsl').click()
     await page.locator('div:text("Systir")').click()
+    await page.locator('input[name=applicantPhone]').fill('500-5000')
+    await page.locator('input[name=applicantEmail]').fill('e@mail.com')
     await page.locator(nextButton).click()
 
     // Other wills and prenup screen
-    await page.locator('input[name=knowledgeOfOtherWills][value=no]').click()
+    await page.locator('label[for=knowledgeOfOtherWills-1]').click()
     await page.locator(nextButton).click()
 
     // Heirs -> add a new heir
     await page.locator('text=Bæta við erfingja').click()
+    await page.getByRole('textbox', { name: 'nationalId' }).fill('010130-5069')
     await page.locator('input[name=nationalId]').fill('010130-5069')
     await page.locator('input[name=relation"]').click()
     await page.locator('div:text("Systir")').click()
