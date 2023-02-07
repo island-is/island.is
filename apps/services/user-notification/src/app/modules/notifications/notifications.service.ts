@@ -9,9 +9,9 @@ import {
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
-import { environment } from '../../../environments/environment'
 
 import axios from 'axios'
+// adding a line due to linting - remove me later
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 
