@@ -1,3 +1,5 @@
+import type { CONTENT_TYPE } from '../generated/contentfulTypes'
+
 export default {
   production: false,
   bypassCacheKey: process.env.BYPASS_CACHE_KEY,
@@ -19,11 +21,11 @@ export default {
     'link',
     'frontpage',
     'enhancedAsset',
-  ],
+    'organization',
+  ] as CONTENT_TYPE[],
   nestedContentTypes: [
     'alertBanner',
     'organizationPage',
-    'organization',
     'subArticle',
     'step',
     'stepper',
@@ -67,7 +69,9 @@ export default {
     'tabContent',
     'footerItem',
     'featuredSupportQNAs',
-  ],
+    'uiConfiguration',
+    'organizationTag',
+  ] as CONTENT_TYPE[],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'test',

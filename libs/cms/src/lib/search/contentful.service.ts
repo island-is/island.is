@@ -18,6 +18,7 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
+import { CONTENT_TYPE } from '../generated/contentfulTypes'
 
 interface SyncerResult {
   items: Entry<unknown>[]
@@ -66,7 +67,11 @@ export class ContentfulService {
   private getFilteredIds(chunkToProcess: Entry<unknown>[]): string[] {
     return chunkToProcess.reduce((csvIds: string[], entry) => {
       // contentful sync api does not support limiting the sync to a single content type we filter here to reduce subsequent calls to Contentful
-      if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
+      if (
+        environment.indexableTypes.includes(
+          entry.sys.contentType.sys.id as CONTENT_TYPE,
+        )
+      ) {
         csvIds.push(entry.sys.id)
       }
       return csvIds
@@ -227,16 +232,18 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
-    const nestedEntries = entries
+    const nestedEntryIds = entries
       .filter((entry) =>
-        environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
+        environment.nestedContentTypes.includes(
+          entry.sys.contentType.sys.id as CONTENT_TYPE,
+        ),
       )
       .map((entry) => entry.sys.id)
 
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
-      nestedEntries: nestedEntries.length,
+      nestedEntries: nestedEntryIds.length,
     })
 
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
@@ -251,7 +258,7 @@ export class ContentfulService {
 
     return {
       items,
-      nestedEntries,
+      nestedEntryIds,
       newNextSyncToken,
       deletedItems,
     }
@@ -279,15 +286,23 @@ export class ContentfulService {
     )
 
     const { items, newNextSyncToken, deletedItems } = populatedSyncEntriesResult
-    let { nestedEntries } = populatedSyncEntriesResult
+    let { nestedEntryIds } = populatedSyncEntriesResult
 
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (syncType !== 'full' && nestedEntries) {
+    if (syncType !== 'full' && nestedEntryIds?.length > 0) {
       logger.info('Finding root entries from nestedEntries')
+
+      const visitedEntryIds = new Set<string>()
 
       for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
         const linkedEntries = []
-        for (const entryId of nestedEntries) {
+        for (const entryId of nestedEntryIds) {
+          if (visitedEntryIds.has(entryId)) {
+            continue
+          }
+
+          visitedEntryIds.add(entryId)
+
           // We fetch the entries that are linking to our nested entries
           linkedEntries.push(
             ...(
@@ -303,11 +318,13 @@ export class ContentfulService {
         }
         items.push(
           ...linkedEntries.filter((entry) =>
-            environment.indexableTypes.includes(entry.sys.contentType.sys.id),
+            environment.indexableTypes.includes(
+              entry.sys.contentType.sys.id as CONTENT_TYPE,
+            ),
           ),
         )
         // Next round of the loop will only find linked entries to these entries
-        nestedEntries = linkedEntries.map((entry) => entry.sys.id)
+        nestedEntryIds = linkedEntries.map((entry) => entry.sys.id)
         logger.info(
           `Found ${linkedEntries.length} nested entries at depth ${i + 1}`,
         )

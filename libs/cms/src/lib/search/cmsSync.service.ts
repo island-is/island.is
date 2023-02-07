@@ -27,6 +27,7 @@ import { SupportQNASyncService } from './importers/supportQNA.service'
 import { LinkSyncService } from './importers/link.service'
 import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
+import { OrganizationSyncService } from './importers/organization.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -66,6 +67,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly linkSyncService: LinkSyncService,
     private readonly enhancedAssetService: EnhancedAssetSyncService,
     private readonly elasticService: ElasticService,
+    private readonly organizationService: OrganizationSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -83,6 +85,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.supportQNASyncService,
       this.linkSyncService,
       this.enhancedAssetService,
+      this.organizationService,
     ]
   }
 

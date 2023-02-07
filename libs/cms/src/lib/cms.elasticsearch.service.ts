@@ -357,6 +357,45 @@ export class CmsElasticsearchService {
       JSON.parse(response._source.response ?? '[]'),
     )
   }
+
+  async getSingleOrganization(index: string, id: string) {
+    const organizationResponse = await this.elasticService.findById(index, id)
+    const response = organizationResponse?.body?._source?.response
+    return response ? JSON.parse(response) : null
+  }
+
+  async getOrganizations(
+    index: string,
+    organizationIds: string[],
+    from = 0,
+    size = 1000,
+  ) {
+    const organizationsResponse: ApiResponse<
+      SearchResponse<MappedData>
+    > = await this.elasticService.findByQuery(index, {
+      from,
+      size,
+      query: {
+        bool: {
+          should: [
+            {
+              ids: {
+                type: 'webOrganization',
+                values: organizationIds,
+              },
+            },
+          ],
+        },
+      },
+    })
+
+    return {
+      total: organizationsResponse.body.hits.total.value,
+      items: organizationsResponse.body.hits.hits.map((item) =>
+        JSON.parse(item._source.response ?? '{}'),
+      ),
+    }
+  }
 }
 
 const generateGenericTagGroupQueries = (

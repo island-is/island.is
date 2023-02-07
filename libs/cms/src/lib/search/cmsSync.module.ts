@@ -17,6 +17,7 @@ import { SupportQNASyncService } from './importers/supportQNA.service'
 import { LinkSyncService } from './importers/link.service'
 import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
+import { OrganizationSyncService } from './importers/organization.service'
 
 @Module({
   providers: [
@@ -38,6 +39,7 @@ import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
     SupportQNASyncService,
     LinkSyncService,
     EnhancedAssetSyncService,
+    OrganizationSyncService,
   ],
   exports: [CmsSyncService],
 })

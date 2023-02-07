@@ -208,13 +208,19 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => OrganizationPage, { nullable: true })
-  getOrganizationPage(
+  async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
-  ): Promise<OrganizationPage | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+  ): Promise<(OrganizationPage & { lang?: Locale }) | null> {
+    const organizationPage: OrganizationPage | null = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
       getElasticsearchIndex(input.lang),
       { type: 'webOrganizationPage', slug: input.slug },
     )
+
+    if (!organizationPage) return null
+    return {
+      ...organizationPage,
+      lang: input.lang,
+    }
   }
 
   @Directive(cacheControlDirective())
@@ -556,7 +562,10 @@ export class LatestNewsSliceResolver {
 @Resolver(() => Article)
 @Directive(cacheControlDirective())
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(
+    private cmsContentfulService: CmsContentfulService,
+    private cmsElasticsearchService: CmsElasticsearchService,
+  ) {}
 
   @Directive(cacheControlDirective())
   @ResolveField(() => [Article])
@@ -569,6 +578,48 @@ export class ArticleResolver {
       article.slug,
       article?.lang ?? 'is',
     )
+  }
+
+  @ResolveField(() => [Organization])
+  async organization(
+    @Parent() { organization, lang }: Article & { lang?: Locale },
+  ): Promise<Organization[]> {
+    if (!organization?.length) return []
+
+    const response = await this.cmsElasticsearchService.getOrganizations(
+      getElasticsearchIndex(lang ?? 'is'),
+      organization.map((o) => o.id),
+    )
+
+    return response.items
+  }
+
+  @ResolveField(() => [Organization])
+  async relatedOrganization(
+    @Parent() { relatedOrganization, lang }: Article & { lang?: Locale },
+  ): Promise<Organization[]> {
+    if (!relatedOrganization?.length) return []
+
+    const response = await this.cmsElasticsearchService.getOrganizations(
+      getElasticsearchIndex(lang ?? 'is'),
+      relatedOrganization.map((o) => o.id),
+    )
+
+    return response.items
+  }
+
+  @ResolveField(() => [Organization])
+  async responsibleParty(
+    @Parent() { responsibleParty, lang }: Article & { lang?: Locale },
+  ): Promise<Organization[]> {
+    if (!responsibleParty?.length) return []
+
+    const response = await this.cmsElasticsearchService.getOrganizations(
+      getElasticsearchIndex(lang ?? 'is'),
+      responsibleParty.map((o) => o.id),
+    )
+
+    return response.items
   }
 }
 
@@ -606,6 +657,23 @@ export class FeaturedSupportQNAsResolver {
     return this.cmsElasticsearchService.getFeaturedSupportQNAs(
       getElasticsearchIndex(input.lang),
       input,
+    )
+  }
+}
+
+@Resolver(() => OrganizationPage)
+@Directive(cacheControlDirective())
+export class OrganizationPageResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => Organization)
+  async organization(
+    @Parent() { organization, lang }: OrganizationPage & { lang?: Locale },
+  ): Promise<Organization | null> {
+    if (!organization?.id) return null
+    return this.cmsElasticsearchService.getSingleOrganization(
+      getElasticsearchIndex(lang ?? 'is'),
+      organization?.id,
     )
   }
 }
