@@ -14,6 +14,11 @@ import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
+import FormStepperV2 from '../FormStepper/FormStepperV2'
+import Section from '../FormStepper/Section'
+import { FormStepperThemes } from '../FormStepper/types'
+import HistorySection from '../FormStepper/HistorySection'
+import AnimateHeight from 'react-animate-height'
 
 type ActionCardProps = {
   date?: string
@@ -65,6 +70,12 @@ type ActionCardProps = {
     dialogConfirmLabel?: string
     dialogCancelLabel?: string
   }
+  history?: {
+    date: string
+    title: string
+    isComplete: boolean
+    Content?: React.FC
+  }[]
 }
 
 const defaultCta = {
@@ -114,9 +125,13 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   unavailable: _unavailable,
   progressMeter: _progressMeter,
   deleteButton: _delete,
+  history,
   avatar,
   logo,
 }) => {
+  const [historyState, setHistoryState] = React.useState<'open' | 'closed'>(
+    'closed',
+  )
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
@@ -424,6 +439,45 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       </Box>
 
       {progressMeter.active && renderProgressMeter()}
+      {history && (
+        <Box paddingTop={[2, 2, 5]}>
+          <AnimateHeight
+            height={historyState === 'open' ? 'auto' : 200}
+            duration={300}
+          >
+            <FormStepperV2
+              sections={history.map(
+                ({ isComplete, date, title, Content }, index) => (
+                  <HistorySection
+                    key={`history-section-${index}`}
+                    section={title}
+                    sectionIndex={index}
+                    theme={FormStepperThemes.PURPLE}
+                    isComplete={isComplete}
+                    date={date}
+                    description={Content ? <Content /> : undefined}
+                  />
+                ),
+              )}
+            />
+          </AnimateHeight>
+          <Box display="flex" justifyContent="flexEnd">
+            <Box>
+              <Button
+                variant="text"
+                onClick={() =>
+                  setHistoryState(historyState === 'open' ? 'closed' : 'open')
+                }
+                icon={historyState === 'open' ? 'arrowUp' : 'arrowDown'}
+              >
+                {historyState === 'open'
+                  ? 'Loka umsóknarsögu'
+                  : 'Opna umsóknarsögu'}
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      )}
     </Box>
   )
 }

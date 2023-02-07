@@ -2,7 +2,13 @@ import React, { useCallback, useState } from 'react'
 import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 
-import { ActionCard, Box, Pagination, Stack } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  AlertMessage,
+  Box,
+  Pagination,
+  Stack,
+} from '@island.is/island-ui/core'
 import { coreMessages, getSlugFromType } from '@island.is/application/core'
 import {
   Application,
@@ -198,6 +204,40 @@ const ApplicationList = ({
                   progress: application.progress,
                   variant: stateDefaultData.progress.variant,
                 }}
+                history={[
+                  {
+                    date: format(new Date(), formattedDate),
+                    isComplete: true,
+                    title: 'Tilkynning um slys er komið í afgreiðsluferli',
+                    Content: () => (
+                      <AlertMessage
+                        type="info"
+                        message="Tilkynning um slys er komið í afgreiðsluferli hjá Sjúkratryggingum. Ef Sjúkratryggingar telja  þörf á frekari upplýsingum um hann hafa samband. Afgreiðsla Sjúkratrygginga getur tekið allt að tvær vikur."
+                      />
+                    ),
+                  },
+                  {
+                    date: format(new Date(), formattedDate),
+                    isComplete: true,
+                    title: 'Tilkynning um slys er komið í afgreiðsluferli',
+                  },
+                  {
+                    date: format(new Date(), formattedDate),
+                    isComplete: true,
+                    title: 'Tilkynning um slys er komið í afgreiðsluferli',
+                    Content: () => (
+                      <AlertMessage
+                        type="warning"
+                        message="Læknisvottorð vantar í umsókn."
+                      />
+                    ),
+                  },
+                  {
+                    date: format(new Date(), formattedDate),
+                    isComplete: true,
+                    title: 'Tilkynning um slys er komið í afgreiðsluferli',
+                  },
+                ]}
                 deleteButton={{
                   visible: actionCard?.deleteButton,
                   onClick: handleDeleteApplication.bind(null, application.id),
