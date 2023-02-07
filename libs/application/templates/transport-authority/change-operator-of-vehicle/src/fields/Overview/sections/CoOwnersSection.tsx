@@ -7,6 +7,7 @@ import { overview } from '../../../lib/messages'
 import { UserInformation } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '../../../utils'
 
 export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -34,7 +35,7 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
                 <Text>{name}</Text>
                 <Text>{nationalId}</Text>
                 <Text>{email}</Text>
-                <Text>{phone}</Text>
+                <Text>{formatPhoneNumber(phone)}</Text>
               </Box>
             </GridColumn>
           )

@@ -149,7 +149,8 @@ export const Review: FC<ReviewScreenProps> = ({
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  const hasSelectedOtherParent = otherParent !== NO && otherParent !== SINGLE
+  const hasSelectedOtherParent =
+    otherParent !== NO && otherParent !== SINGLE && otherParent !== MANUAL
 
   const otherParentWillApprove = requiresOtherParentApproval(
     application.answers,
@@ -326,87 +327,91 @@ export const Review: FC<ReviewScreenProps> = ({
         </GridRow>
       </ReviewGroup>
 
-      <ReviewGroup
-        isEditable={editable && isPrimaryParent}
-        editAction={() => goToScreen?.('otherParentObj')}
-      >
-        {(otherParent === NO || otherParent === SINGLE) && (
-          <RadioValue
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.otherParentTitle,
-            )}
-            value={NO}
-          />
-        )}
+      {otherParent && (
+        <ReviewGroup
+          isEditable={editable && isPrimaryParent}
+          editAction={() => goToScreen?.('otherParentObj')}
+        >
+          {(otherParent === NO || otherParent === SINGLE) && (
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.otherParentTitle,
+              )}
+              value={NO}
+            />
+          )}
 
-        {otherParent === SPOUSE && (
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentName,
-                )}
-                value={otherParentName}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentID,
-                )}
-                value={formatKennitala(otherParentId!)}
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-
-        {otherParent === MANUAL && (
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentName,
-                )}
-                value={otherParentName}
-              />
-            </GridColumn>
-
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentID,
-                )}
-                value={
-                  otherParentId ? formatKennitala(otherParentId) : otherParentId
-                }
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-        {otherParentWillApprove && (
-          <GridRow marginTop={3}>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-                )}
-                value={otherParentEmail}
-              />
-            </GridColumn>
-            {otherParentPhoneNumber && (
+          {otherParent === SPOUSE && (
+            <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    parentalLeaveFormMessages.shared
-                      .otherParentPhoneNumberSubSection,
+                    parentalLeaveFormMessages.shared.otherParentName,
                   )}
-                  value={formatPhoneNumber(otherParentPhoneNumber)}
+                  value={otherParentName}
                 />
               </GridColumn>
-            )}
-          </GridRow>
-        )}
-      </ReviewGroup>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentID,
+                  )}
+                  value={formatKennitala(otherParentId!)}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
+
+          {otherParent === MANUAL && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentName,
+                  )}
+                  value={otherParentName}
+                />
+              </GridColumn>
+
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentID,
+                  )}
+                  value={
+                    otherParentId
+                      ? formatKennitala(otherParentId)
+                      : otherParentId
+                  }
+                />
+              </GridColumn>
+            </GridRow>
+          )}
+          {otherParentWillApprove && (
+            <GridRow marginTop={3}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentEmailSubSection,
+                  )}
+                  value={otherParentEmail}
+                />
+              </GridColumn>
+              {otherParentPhoneNumber && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared
+                        .otherParentPhoneNumberSubSection,
+                    )}
+                    value={formatPhoneNumber(otherParentPhoneNumber)}
+                  />
+                </GridColumn>
+              )}
+            </GridRow>
+          )}
+        </ReviewGroup>
+      )}
 
       <ReviewGroup
         saveAction={saveApplication}

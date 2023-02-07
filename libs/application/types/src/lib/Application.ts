@@ -57,3 +57,8 @@ export interface Application<TAnswers = FormValue> {
 export interface ApplicationWithAttachments extends Application {
   attachments: object
 }
+
+export interface ApplicationAnswerFile {
+  key: string
+  name: string
+}

@@ -77,6 +77,17 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
     description: '',
   },
+  financialInformationProviderTitle: {
+    id: 'ir.application:financialInformationProviderTitle',
+    defaultMessage: 'Fjárhagsupplýsingar hins látna',
+    description: '',
+  },
+  financialInformationProviderSubtitle: {
+    id: 'ir.application:financialInformationProviderSubtitle',
+    defaultMessage:
+      'Upplýsingar um eignir og skuldir frá fjármálafyrirtækjum, húsnæðis- og mannvirkjastofnun, samgöngustofu, lífeyrissjóðum, innheimstustofnun sveitarfélaga, ríkissjóði og skattinum.',
+    description: '',
+  },
   settingsInfoProviderTitle: {
     id: 'ir.application:settingsInfoProviderTitle',
     defaultMessage: 'Stillingar frá Ísland.is',
@@ -84,17 +95,8 @@ export const m = defineMessages({
   },
   settingsInfoProviderSubtitle: {
     id: 'ir.application:settingsInfoProviderSubtitle',
-    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
-    description: '',
-  },
-  financialInformationProviderTitle: {
-    id: 'ir.application:financialInformationProviderTitle',
-    defaultMessage: 'Fjárhagsupplýsingar úr skattaskýrslu hins látna',
-    description: '',
-  },
-  financialInformationProviderSubtitle: {
-    id: 'ir.application:financialInformationProviderSubtitle',
-    defaultMessage: 'vantar hér',
+    defaultMessage:
+      'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
     description: '',
   },
 
@@ -107,7 +109,7 @@ export const m = defineMessages({
   applicantsInfoSubtitle: {
     id: 'ir.application:applicantsInfoSubtitle',
     defaultMessage:
-      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
   name: {
@@ -139,13 +141,13 @@ export const m = defineMessages({
   // Inheritance report submit
   irSubmitTitle: {
     id: 'ir.application:irSubmitTitle',
-    defaultMessage: 'Skil á erfðafjárskýrslu',
+    defaultMessage: 'Erfðafjárskýrsla',
     description: '',
   },
   irSubmitSubtitle: {
     id: 'ir.application:irSubmitSubtitle',
     defaultMessage:
-      'Við uppgjör dánarbús þurfa erfingjarnir að fylla út erfðafjárskýrslu og skila til sýslumanns. Þú hefur valið að skila inn erfðafjárskýrslu fyrir:',
+      'Við lok einkaskipta á dánarbú þurfa erfingjarnir eða umboðsmaður/menn þeirra að fylla út erfðafjárskýrslu og skila til sýslumanns. Við lok opinberra skipta á dánarbú þarf skiptastjóri að skila inn erfðafjárskýrslu reynist skilyrði til þess. Þú ert að skila inn erfðafjárskýrslu fyrir:',
     description: '',
   },
 
@@ -172,15 +174,68 @@ export const m = defineMessages({
   },
 
   // Estate Properties
+  properties: {
+    id: 'ir.application:properties',
+    defaultMessage: 'Eignir',
+    description: '',
+  },
   propertiesTitle: {
     id: 'ir.application:propertiesTitle',
-    defaultMessage: 'Eignir',
+    defaultMessage: 'Innlendar og erlendar eignir á dánardegi hins látna',
     description: '',
   },
   propertiesDescription: {
     id: 'ir.application:propertiesDescription',
     defaultMessage:
-      'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna.',
+    description: '',
+  },
+  continueWithoutAssests: {
+    id: 'ir.application:continueWithoutAssests',
+    defaultMessage:
+      'Ef hinn látni átti ekki fasteign vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  continueWithoutVehicles: {
+    id: 'ir.application:continueWithoutAssests',
+    defaultMessage:
+      'Ef hinn látni átti ekki farartæki vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  continueWithoutInnventory: {
+    id: 'ir.application:continueWithoutInnventory',
+    defaultMessage:
+      'Ef hinn látni átti ekki innbú vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  continueWithoutBankAccounts: {
+    id: 'ir.application:continueWithoutInnventory',
+    defaultMessage:
+      'Ef hinn látni átti ekki innstæður í bönkum vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  continueWithoutClaims: {
+    id: 'ir.application:continueWithoutClaims',
+    defaultMessage:
+      'Ef hinn látni átti ekki verðbréf eða kröfur vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  continueWithoutStocks: {
+    id: 'ir.application:continueWithoutStocks',
+    defaultMessage:
+      'Ef hinn látni átti ekki hlutabréf vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  continueWithoutMoney: {
+    id: 'ir.application:continueWithoutMoney',
+    defaultMessage:
+      'Ef hinn látni átti ekki peninga sem varðveittir eru utan fjármálastofnana vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  continueWithoutOtherAssets: {
+    id: 'ir.application:continueWithoutOtherAssets',
+    defaultMessage:
+      'Ef hinn látni átti ekki aðrar eignir vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
   realEstate: {
@@ -195,7 +250,27 @@ export const m = defineMessages({
   },
   realEstateDescription: {
     id: 'ir.application:realEstateDescription',
-    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
+    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
+    description: '',
+  },
+  addRealEstate: {
+    id: 'ir.application:addRealEstate',
+    defaultMessage: 'Bæta við fasteign',
+    description: '',
+  },
+  assetNumber: {
+    id: 'ir.application:assetNumber',
+    defaultMessage: 'Fasteignanúmer',
+    description: '',
+  },
+  assetAddress: {
+    id: 'ir.application:assetAddress',
+    defaultMessage: 'Lögheimili',
+    description: '',
+  },
+  propertyValuation: {
+    id: 'ir.application:propertyValuation',
+    defaultMessage: 'Fasteignamat á dánardegi',
     description: '',
   },
   inventoryTitle: {
@@ -205,7 +280,7 @@ export const m = defineMessages({
   },
   inventoryDescription: {
     id: 'ir.application:inventoryDescription',
-    defaultMessage: 'Til dæmis bækur og málverk',
+    defaultMessage: 'Til dæmis bækur og málverk.',
     description: '',
   },
   inventoryTextField: {
@@ -215,7 +290,7 @@ export const m = defineMessages({
   },
   inventoryValueTitle: {
     id: 'ir.application:inventoryValueTitle',
-    defaultMessage: 'Matsverð samtals',
+    defaultMessage: 'Matsverðmæti á dánardegi',
     description: '',
   },
   inventoryTextFieldPlaceholder: {
@@ -235,13 +310,18 @@ export const m = defineMessages({
   },
   vehiclesDescription: {
     id: 'ir.application:vehiclesDescription',
-    defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
+    defaultMessage: 'Til dæmis ökutæki, flugvélar og skip/bátar.',
     description: '',
   },
-  propertyNumber: {
-    id: 'ir.application:propertyNumber',
-    defaultMessage: 'Fastanúmer',
-    description: 'Property number label',
+  vehicleType: {
+    id: 'ir.application:vehicleType',
+    defaultMessage: 'Tegund',
+    description: '',
+  },
+  vehicleValuation: {
+    id: 'ir.application:vehicleValuation',
+    defaultMessage: 'Markaðsverðmæti á dánardegi',
+    description: '',
   },
   propertyShare: {
     id: 'ir.application:propertyShare',
@@ -275,7 +355,7 @@ export const m = defineMessages({
   },
   addVehicle: {
     id: 'ir.application:addVehicle',
-    defaultMessage: 'Bæta við ökutæki',
+    defaultMessage: 'Bæta við farartæki',
     description: 'Add vehicle',
   },
   vehicleNumberLabel: {
@@ -298,17 +378,17 @@ export const m = defineMessages({
   estateBankInfoDescription: {
     id: 'ir.application:estateBankInfoDescription',
     defaultMessage:
-      'Innstæður í bæði innlendum og erlendum bönkum og sparisjóðum',
+      'Innstæður í bæði innlendum og erlendum bönkum og sparisjóðum.',
     description: '',
   },
   bankAccount: {
     id: 'ir.application:bankAccount',
-    defaultMessage: 'Innistæða',
+    defaultMessage: 'Bankareikningur',
     description: '',
   },
   bankAccountBalance: {
     id: 'ir.application:bankAccountBalance',
-    defaultMessage: 'Innistæða með vöxtum á dánardegi',
+    defaultMessage: 'Innstæða með vöxtum á dánardegi',
     description: '',
   },
   bankAccountPlaceholder: {
@@ -330,11 +410,11 @@ export const m = defineMessages({
   },
   claimsDescription: {
     id: 'ir.application:claimsDescription',
-    defaultMessage: 'Útgefandi og fjárhæð með vöxtum',
+    defaultMessage: 'Útgefandi og fjárhæð með vöxtum.',
     description: '',
   },
-  claimsPublisher: {
-    id: 'ir.application:claimsPublisher',
+  claimsIssuer: {
+    id: 'ir.application:claimsIssuer',
     defaultMessage: 'Útgefandi',
     description: '',
   },
@@ -345,7 +425,7 @@ export const m = defineMessages({
   },
   claimsRepeaterButton: {
     id: 'ir.application:claimsRepeaterButton',
-    defaultMessage: 'Bæta við verðbréfum',
+    defaultMessage: 'Bæta við verðbréfi og/eða kröfu',
     description: '',
   },
 
@@ -382,24 +462,24 @@ export const m = defineMessages({
   },
   stocksValue: {
     id: 'ir.application:stocksValue',
-    defaultMessage: 'Verðmæti á dánardegi',
+    defaultMessage: 'Markaðsverðmæti á dánardegi',
     description: '',
   },
   stocksRepeaterButton: {
     id: 'ir.application:stocksRepeaterButton',
-    defaultMessage: 'Bæta við hlutabréfum',
+    defaultMessage: 'Bæta við hlutabréfi',
     description: '',
   },
 
   // Money & deposit
   moneyTitle: {
     id: 'ir.application:moneyTitle',
-    defaultMessage: 'Peningar',
+    defaultMessage: 'Peningar og bankahólf',
     description: '',
   },
   moneyDescription: {
     id: 'ir.application:moneyDescription',
-    defaultMessage: 'Samtals fjárhæð peninga',
+    defaultMessage: 'Peningar sem varðveittir eru utan fjármálastofnanna.',
     description: '',
   },
   moneyText: {
@@ -419,7 +499,7 @@ export const m = defineMessages({
   },
   addMoney: {
     id: 'ir.application:addMoney',
-    defaultMessage: 'Bæta við peningum',
+    defaultMessage: 'Bæta við peningum og/eða bankahólfi',
     description: '',
   },
 
@@ -431,12 +511,12 @@ export const m = defineMessages({
   },
   otherAssetsDescription: {
     id: 'ir.application:otherAssetsDescription',
-    defaultMessage: 'Til dæmis hugverkaréttindi, búseturéttur o.fl.',
+    defaultMessage: 'Til dæmis verkfæri, hugverkaréttindi, búseturéttur o.fl.',
     description: '',
   },
   otherAssetsText: {
     id: 'ir.application:otherAssetsText',
-    defaultMessage: 'Upplýsingar um aðrar eignir',
+    defaultMessage: 'Hvaða eign',
     description: '',
   },
   otherAssetsPlaceholder: {
@@ -446,12 +526,12 @@ export const m = defineMessages({
   },
   otherAssetsValue: {
     id: 'ir.application:otherAssetsValue',
-    defaultMessage: 'Fjárhæð á dánardegi',
+    defaultMessage: 'Markaðsverðmæti á dánardegi',
     description: '',
   },
   addAsset: {
     id: 'ir.application:addAsset',
-    defaultMessage: 'Bæta við öðrum eignum',
+    defaultMessage: 'Bæta við annari eign',
     description: '',
   },
   assetHeaderText: {
@@ -465,10 +545,16 @@ export const m = defineMessages({
     description: '',
   },
 
-  // AssetsOverview
+  // Assets overview
   overview: {
     id: 'ir.application:overview',
     defaultMessage: 'Yfirlit',
+    description: '',
+  },
+  overviewDescription: {
+    id: 'ir.application:overviewDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
   assetOverview: {
@@ -499,7 +585,7 @@ export const m = defineMessages({
   },
   banksBalance: {
     id: 'ir.application:banksBalance',
-    defaultMessage: 'Innistæða í bönkum með vöxtum á dánardegi',
+    defaultMessage: 'Innstæða í bönkum með vöxtum á dánardegi',
     description: '',
   },
   totalValueOfAssets: {
@@ -513,34 +599,45 @@ export const m = defineMessages({
     description: '',
   },
 
-  // Debts
+  // Debts and funeral cost
   debtsAndFuneralCost: {
     id: 'ir.application:debtsAndFuneralCost',
-    defaultMessage: 'Skuldir og útfararkostnaður',
+    defaultMessage: 'Innlendar og erlendar skuldir á dánardegi hins látna',
+    description: '',
+  },
+  debtsAndFuneralCostDescription: {
+    id: 'ir.application:debtsAndFuneralCostDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar skuldir beggja hjóna utan einstaklingsatvinnurekstrar. Ef hinn látni átti ekki neinar skuldir vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
   domesticAndForeignDebts: {
-    id: 'es.application:debtsDescription',
-    defaultMessage: 'Innlendar og erlendar skuldir',
+    id: 'ir.application:debtsDescription',
+    defaultMessage: 'Skuldir',
     description: '',
   },
   domesticAndForeignDebtsDescription: {
-    id: 'es.application:domesticAndForeignDebtsDescription',
-    defaultMessage: 'Tilgreinið kennitölu ef um einstakling er að ræða',
+    id: 'ir.application:domesticAndForeignDebtsDescription',
+    defaultMessage: 'Tilgreindu kennitölu ef um einstakling er að ræða.',
     description: '',
   },
   funeralCostTitle: {
-    id: 'es.application:funeralCostTitle',
+    id: 'ir.application:funeralCostTitle',
     defaultMessage: 'Útfarakostnaður',
     description: '',
   },
+  funeralCostDescription: {
+    id: 'ir.application:funeralCostDescription',
+    defaultMessage: 'Útfarakostnaður samkvæmt yfirlit um útfarakostnað.',
+    description: '',
+  },
   amount: {
-    id: 'es.application:funeralCostAmount',
+    id: 'ir.application:funeralCostAmount',
     defaultMessage: 'Fjárhæð',
     description: '',
   },
   debtsTitle: {
-    id: 'es.application:debtsTitle',
+    id: 'ir.application:debtsTitle',
     defaultMessage: 'Skuldir',
     description: '',
   },
@@ -576,7 +673,7 @@ export const m = defineMessages({
   },
   publicChargesDescription: {
     id: 'ir.application:publicChargesDescription',
-    defaultMessage: 'Skuld við opinberar stofnanir',
+    defaultMessage: 'Skuld við opinberar stofnanir.',
     description: '',
   },
   publicChargesRepeaterButton: {
@@ -595,7 +692,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  // DebtsOverview
+  // Debts overview
   totalAmount: {
     id: 'ir.application:totalAmount',
     defaultMessage: 'Samtals fjárhæð',
@@ -610,24 +707,24 @@ export const m = defineMessages({
   },
   businessTitle: {
     id: 'ir.application:businessTitle',
-    defaultMessage: 'Eignir og skuldir í atvinnurekstri',
+    defaultMessage: 'Eignir og skuldir í einstaklingsatvinnurekstri',
     description: '',
   },
   businessDescription: {
     id: 'ir.application:businessDescription',
     defaultMessage:
-      'Vinsamlegast tilgreindu allar eignir og skuldir arfláta í atvinnurekstri',
+      'Vinsamlegast tilgreindu allar eignir og skuldir arfleifanda í einstaklingsatvinnurekstri.',
     description: '',
   },
   businessAssets: {
     id: 'ir.application:businessAssets',
-    defaultMessage: 'Eignir í atvinnurekstri',
+    defaultMessage: 'Eignir í einstaklingsatvinnurekstri',
     description: '',
   },
   businessAssetsDescription: {
     id: 'ir.application:businessAssetsDescription',
     defaultMessage:
-      'Aðrar eignir en fasteignir, t.d. vélar og tæki í landbúnaði. Færast á markaðsverði.',
+      'Aðrar eignir en fasteignir, t.d. vélar og tæki í landbúnaði. Færast á markaðsverðmæti á dánardegi.',
     description: '',
   },
   businessAsset: {
@@ -637,7 +734,7 @@ export const m = defineMessages({
   },
   businessAssetAmount: {
     id: 'ir.application:businessAssetAmount',
-    defaultMessage: 'Fjárhæð á dánardegi',
+    defaultMessage: 'Markaðsvirði á dánardegi',
     description: '',
   },
   businessAssetRepeaterButton: {
@@ -657,12 +754,12 @@ export const m = defineMessages({
   },
   businessDebts: {
     id: 'ir.application:businessDebts',
-    defaultMessage: 'Skuldir í atvinnurekstri',
+    defaultMessage: 'Skuldir í einstaklingsatvinnurekstri',
     description: '',
   },
   businessDebtsDescription: {
     id: 'ir.application:businessDebtsDescription',
-    defaultMessage: 'Tilgreinið kennitölu ef um einstakling er að ræða',
+    defaultMessage: 'Tilgreindu kennitölu ef um einstakling er að ræða.',
     description: '',
   },
   businessOverview: {
@@ -670,15 +767,9 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit eigna og skulda í atvinnurekstri',
     description: '',
   },
-  businessOverviewDescription: {
-    id: 'ir.application:businessOverviewDescription',
-    defaultMessage:
-      'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
-    description: '',
-  },
   businessEquity: {
     id: 'ir.application:businessEquity',
-    defaultMessage: 'Eigið fé í atvinnurekstri',
+    defaultMessage: 'Hrein eign í atvinnurekstri',
     description: '',
   },
 
@@ -690,7 +781,7 @@ export const m = defineMessages({
   },
   propertyForExchange: {
     id: 'ir.application:propertyForExchange',
-    defaultMessage: 'Eign til skipta',
+    defaultMessage: 'Hrein eign dánarbús til skipta milli erfingja',
     description: '',
   },
   propertyForExchangeDescription: {
@@ -711,12 +802,12 @@ export const m = defineMessages({
   },
   netProperty: {
     id: 'ir.application:netProperty',
-    defaultMessage: 'Hrein eign (eignir - skuldir + eigið fé í atvinnurekstri)',
+    defaultMessage: 'Hrein eign',
     description: '',
   },
   netPropertyForExchange: {
     id: 'ir.application:netPropertyForExchange',
-    defaultMessage: 'Hrein eign til skiptis',
+    defaultMessage: 'Hrein eign til skipta',
     description: '',
   },
   heirsAndPartition: {
@@ -727,7 +818,7 @@ export const m = defineMessages({
   heirsAndPartitionDescription: {
     id: 'ir.application:heirsAndPartitionDescription',
     defaultMessage:
-      'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004',
+      'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004.',
     description: '',
   },
   heirsName: {
@@ -752,7 +843,7 @@ export const m = defineMessages({
   },
   heirsRelation: {
     id: 'ir.application:heirsRelation',
-    defaultMessage: 'Tengsl við arfláta',
+    defaultMessage: 'Tengsl við arfleifanda',
     description: '',
   },
   heirsInheritanceRate: {
@@ -790,6 +881,11 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
+  heirs: {
+    id: 'ir.application:heirs',
+    defaultMessage: 'Erfingjar',
+    description: '',
+  },
   heirAdditionalInfo: {
     id: 'ir.application:heirAdditionalInfo',
     defaultMessage: 'Athugasemdir erfingja',
@@ -798,7 +894,7 @@ export const m = defineMessages({
   heirAdditionalInfoDescription: {
     id: 'ir.application:heirAdditionalInfoDescription',
     defaultMessage:
-      'Skýringar og athugasemdir erfingja og/eða þeirra sem afhenda fyrirframgreiddan arf',
+      'Skýringar og athugasemdir erfingja og/eða þess sem skilar inn erfðafjárskýrslu.',
     description: '',
   },
   info: {
@@ -811,15 +907,29 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu inn athugasemdir hér',
     description: '',
   },
-  heirsOverviewDescription: {
-    id: 'ir.application:heirsOverviewDescription',
-    defaultMessage:
-      'Vinsamlegast tilgreindu allar eignir arfleifanda utan atvinnurekstrar. Ef ekkert á við vinsamlegast haltu áfram í ferlinu.',
-    description: '',
-  },
   totalPercentage: {
     id: 'ir.application:totalPercentage',
     defaultMessage: 'Samtals arfshlutfall',
+    description: '',
+  },
+  totalPercentageError: {
+    id: 'ir.application:totalPercentageError',
+    defaultMessage: 'Samtals arfshlutfall þarf að vera 100%',
+    description: '',
+  },
+  overviewTotal: {
+    id: 'ir.application:overviewTotal',
+    defaultMessage: 'Samtals alls',
+    description: '',
+  },
+  overviewTotalInheritance: {
+    id: 'ir.application:overviewTotalInheritance',
+    defaultMessage: 'Samtals erfðafjárskattur',
+    description: '',
+  },
+  overviewPrint: {
+    id: 'ir.application:overviewPrint',
+    defaultMessage: 'Prenta yfirlit',
     description: '',
   },
 
@@ -832,6 +942,12 @@ export const m = defineMessages({
   doneTitle: {
     id: 'ir.application:doneTitle',
     defaultMessage: 'Erfðafjárskýrsla móttekin',
+    description: '',
+  },
+  doneDescription: {
+    id: 'ir.application:doneDescription',
+    defaultMessage:
+      'Sýslumaður hefur móttekið erfðafjárskýrslu. Hún verður nú yfirfarin. Ef sýslumaður staðfestir skýrsluna að þá fá erfingjar/umboðsmaður senda tilkynningu um álagningu erfðafjárskatts í pósthólf á Íslands.is. Ef sýslumaður hefur athugasemdir við innsenda skýrslu mun sýslumaður senda bréf í pósthólf erfingja inn á Ísland.is',
     description: '',
   },
 })

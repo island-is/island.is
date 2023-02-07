@@ -6,7 +6,7 @@ import {
   ConclusionDraft,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {

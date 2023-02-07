@@ -28,12 +28,7 @@ import {
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  core,
-  icRuling as m,
-  ruling,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   Accordion,
@@ -50,6 +45,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { icRuling as m } from './Ruling.strings'
 
 const Ruling = () => {
   const {
@@ -100,8 +97,16 @@ const Ruling = () => {
               date: formatDate(workingCase.courtDate, 'PPP'),
             }),
             prosecutorDemands: workingCase.demands,
-            courtCaseFacts: workingCase.caseFacts,
-            courtLegalArguments: workingCase.legalArguments,
+            courtCaseFacts: formatMessage(
+              ruling.sections.courtCaseFacts.prefill,
+              {
+                caseFacts: workingCase.caseFacts,
+              },
+            ),
+            courtLegalArguments: formatMessage(
+              ruling.sections.courtLegalArguments.prefill,
+              { legalArguments: workingCase.legalArguments },
+            ),
             ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
@@ -396,12 +401,19 @@ const Ruling = () => {
           <Box marginBottom={5}>
             <Decision
               workingCase={workingCase}
-              acceptedLabelText={formatMessage(m.sections.decision.acceptLabel)}
-              rejectedLabelText={formatMessage(m.sections.decision.rejectLabel)}
-              partiallyAcceptedLabelText={formatMessage(
-                m.sections.decision.partiallyAcceptLabel,
+              acceptedLabelText={formatMessage(
+                ruling.investigationCases.sections.decision.acceptLabel,
               )}
-              dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
+              rejectedLabelText={formatMessage(
+                ruling.investigationCases.sections.decision.rejectLabel,
+              )}
+              partiallyAcceptedLabelText={formatMessage(
+                ruling.investigationCases.sections.decision
+                  .partiallyAcceptLabel,
+              )}
+              dismissLabelText={formatMessage(
+                ruling.investigationCases.sections.decision.dismissLabel,
+              )}
               disabled={isModifyingRuling}
               onChange={(decision) => {
                 setAndSendCaseToServer(

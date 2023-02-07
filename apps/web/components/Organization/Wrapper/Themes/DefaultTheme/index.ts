@@ -1,1 +1,3 @@
-export * from './DefaultHeader'
+import dynamic from 'next/dynamic'
+
+export const DefaultHeader = dynamic(() => import('./DefaultHeader'))

@@ -25,6 +25,9 @@ export class FormField {
     | 'acceptTerms'
     | 'email'
     | 'checkboxes'
+    | 'file'
+    | 'nationalId (kennitala)'
+    | 'information'
 
   @Field()
   required!: boolean
@@ -34,6 +37,9 @@ export class FormField {
 
   @Field(() => graphqlTypeJson, { nullable: true })
   emailConfig?: Record<string, string>
+
+  @Field(() => String, { nullable: true })
+  informationText?: string
 }
 
 export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
@@ -45,4 +51,5 @@ export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
   required: fields.required ?? false,
   options: fields.options ?? [],
   emailConfig: fields.emailConfig ?? {},
+  informationText: fields.informationText ?? '',
 })

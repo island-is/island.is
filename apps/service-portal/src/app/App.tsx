@@ -1,5 +1,4 @@
-import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Authenticator } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
@@ -26,7 +25,7 @@ export const App = () => {
       <ApolloProvider client={client}>
         <LocaleProvider locale={defaultLanguage} messages={{}}>
           <ApplicationErrorBoundary>
-            <Router basename={ServicePortalPaths.Base}>
+            <BrowserRouter basename={ServicePortalPaths.Base}>
               <Authenticator>
                 <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
                   <PortalProvider
@@ -38,19 +37,18 @@ export const App = () => {
                   >
                     <UserProfileLocale />
                     <Layout>
-                      <Switch>
-                        <Route exact path={ServicePortalPaths.Root}>
-                          <Dashboard />
-                        </Route>
-                        <Route>
-                          <Modules />
-                        </Route>
-                      </Switch>
+                      <Routes>
+                        <Route
+                          path={ServicePortalPaths.Root}
+                          element={<Dashboard />}
+                        />
+                        <Route path="*" element={<Modules />} />
+                      </Routes>
                     </Layout>
                   </PortalProvider>
                 </FeatureFlagProvider>
               </Authenticator>
-            </Router>
+            </BrowserRouter>
           </ApplicationErrorBoundary>
         </LocaleProvider>
       </ApolloProvider>

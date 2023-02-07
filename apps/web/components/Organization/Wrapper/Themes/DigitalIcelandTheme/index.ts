@@ -1,1 +1,5 @@
-export * from './DigitalIcelandHeader'
+import dynamic from 'next/dynamic'
+
+export const DigitalIcelandHeader = dynamic(() =>
+  import('./DigitalIcelandHeader'),
+)

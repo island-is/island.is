@@ -10,7 +10,6 @@ export type {
 
 export { InstitutionType } from './lib/institution'
 export type { Institution } from './lib/institution'
-
 export { NotificationType } from './lib/notification'
 export type {
   Recipient,
@@ -37,12 +36,11 @@ export type {
 
 export {
   UserRole,
-  prosecutionRoles,
-  isProsecutionRole,
-  courtRoles,
-  isCourtRole,
-  extendedCourtRoles,
   isExtendedCourtRole,
+  isCourtRole,
+  courtRoles,
+  isProsecutionRole,
+  prosecutionRoles,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 

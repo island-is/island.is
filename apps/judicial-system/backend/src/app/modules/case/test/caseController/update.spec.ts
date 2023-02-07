@@ -213,24 +213,25 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_REQUEST_TO_COURT,
+            userId,
             caseId,
           },
           {
             type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            userId,
             caseId,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId1,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId2,
-            userId: user.id,
           },
         ])
       })
@@ -255,15 +256,15 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId1,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId2,
-            userId: user.id,
           },
         ])
       })
@@ -291,8 +292,8 @@ describe('CaseController - Update', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+          userId,
           caseId,
-          userId: user.id,
         },
       ])
     })
@@ -366,41 +367,48 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            userId,
             caseId,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+            userId,
             caseId,
             policeCaseNumber: policeCaseNumber1,
           },
           {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+            userId,
             caseId,
             policeCaseNumber: policeCaseNumber2,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: coverLetterId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: indictmentId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: criminalRecordId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: costBreakdownId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: uncategorisedId,
           },
@@ -409,15 +417,43 @@ describe('CaseController - Update', () => {
     },
   )
 
-  describe('neither court case number nor defender email nor prosecutorId updated', () => {
-    const caseToUpdate = { courtCaseNumber }
+  describe.each(restrictionCases)(
+    'case modified explanation is updated for %s case',
+    (type) => {
+      const originalCase = { ...theCase, type } as Case
+      const caseToUdate = { caseModifiedExplanation: 'some explanation' }
+      const updatedCase = {
+        ...theCase,
+        type,
+        caseModifiedExplanation: 'some explanation',
+      }
 
+      beforeEach(async () => {
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUdate)
+      })
+
+      it('should post modified notification to queue', async () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.SEND_MODIFIED_NOTIFICATION,
+            userId,
+            caseId,
+          },
+        ])
+      })
+    },
+  )
+
+  describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation updated', () => {
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(caseId, user, theCase, {})
     })
 
     it('should not post to queue', () => {
-      expect(mockMessageService.sendMessageToQueue).not.toHaveBeenCalled()
+      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 })

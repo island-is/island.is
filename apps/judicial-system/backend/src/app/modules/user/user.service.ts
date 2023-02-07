@@ -33,10 +33,14 @@ export class UserService {
     })
   }
 
-  async findById(userId: string): Promise<User> {
-    const user = await this.userModel.findByPk(userId, {
+  async getById(userId: string): Promise<User | null> {
+    return this.userModel.findByPk(userId, {
       include: [{ model: Institution, as: 'institution' }],
     })
+  }
+
+  async findById(userId: string): Promise<User> {
+    const user = await this.getById(userId)
 
     if (!user) {
       throw new NotFoundException(`User ${userId} does not exist`)

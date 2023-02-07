@@ -6,7 +6,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Patch,
   ForbiddenException,
   Query,
   Res,
@@ -28,7 +28,6 @@ import {
 } from '@island.is/dokobit-signing'
 import {
   CaseState,
-  CaseTransition,
   CaseType,
   completedCaseStates,
   indictmentCases,
@@ -79,9 +78,9 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
-import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 
 @Controller('api')
 @ApiTags('cases')
@@ -139,7 +138,7 @@ export class CaseController {
     assistantUpdateRule,
     staffUpdateRule,
   )
-  @Put('case/:caseId')
+  @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
@@ -185,7 +184,7 @@ export class CaseController {
     return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
     representativeTransitionRule,
@@ -193,7 +192,7 @@ export class CaseController {
     registrarTransitionRule,
     assistantTransitionRule,
   )
-  @Put('case/:caseId/state')
+  @Patch('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
     description: 'Transitions an existing case to a new state',
@@ -229,24 +228,6 @@ export class CaseController {
       user,
       state !== CaseState.DELETED,
     )
-
-    if (isIndictmentCase(theCase.type)) {
-      if (state === CaseState.SUBMITTED) {
-        await this.caseService.addMessagesForSubmittedIndicitmentCaseToQueue(
-          theCase,
-        )
-      } else if (completedCaseStates.includes(state)) {
-        // Indictment cases are not signed
-        await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
-          theCase,
-        )
-      } else if (state === CaseState.DELETED) {
-        // Indictment cases need some case file cleanup
-        await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
-          theCase,
-        )
-      }
-    }
 
     // No need to wait
     this.eventService.postEvent(

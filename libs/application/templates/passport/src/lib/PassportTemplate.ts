@@ -8,24 +8,24 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  MockProviderApi,
   NationalRegistryUserApi,
-  PaymentCatalogApi,
   UserProfileApi,
   DistrictsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
-import { IdentityDocumentApi } from '../dataProviders'
+import {
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { m } from '../lib/messages'
 import {
   ApiActions,
   Events,
-  IdentityDocumentProviderMock,
   Roles,
+  sevenDays,
   sixtyDays,
   States,
-  SYSLUMADUR_NATIONAL_ID,
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -83,10 +83,7 @@ const PassportTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                PaymentCatalogApi.configure({
-                  externalDataId: 'payment',
-                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
-                }),
+                SyslumadurPaymentCatalogApi,
                 IdentityDocumentApi,
                 DistrictsApi,
               ],
@@ -137,7 +134,7 @@ const PassportTemplate: ApplicationTemplate<
           name: 'ParentB',
           status: 'inprogress',
           progress: 0.9,
-          lifecycle: pruneAfter(sixtyDays),
+          lifecycle: pruneAfter(sevenDays),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),
@@ -166,10 +163,7 @@ const PassportTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                PaymentCatalogApi.configure({
-                  externalDataId: 'payment',
-                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
-                }),
+                SyslumadurPaymentCatalogApi,
                 IdentityDocumentApi,
                 DistrictsApi,
               ],

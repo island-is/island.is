@@ -15,7 +15,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { courtRecordAccordion as m } from './CourtRecordAccordion.strings'
