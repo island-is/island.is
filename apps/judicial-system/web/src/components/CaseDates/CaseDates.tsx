@@ -1,11 +1,12 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import { CaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { caseDates } from '@island.is/judicial-system-web/messages'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import * as styles from './CaseDates.css'
@@ -25,7 +26,7 @@ const CaseDates: React.FC<Props> = (props) => {
 
   const isTravelBan =
     workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    workingCase.type === CaseType.TRAVEL_BAN
+    workingCase.type === CaseType.TravelBan
 
   return (
     <Box data-testid="caseDates">
@@ -33,7 +34,7 @@ const CaseDates: React.FC<Props> = (props) => {
         {workingCase.isValidToDateInThePast ? (
           <Text variant="h5">
             {formatMessage(caseDates.restrictionExpired, {
-              caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
+              caseType: isTravelBan ? CaseType.TravelBan : workingCase.type,
               date: `${formatDate(
                 workingCase.validToDate,
                 'PPP',
@@ -49,9 +50,7 @@ const CaseDates: React.FC<Props> = (props) => {
             <Box>
               <Text variant="h5">
                 {formatMessage(caseDates.restrictionValidTo, {
-                  caseType: isTravelBan
-                    ? CaseType.TRAVEL_BAN
-                    : workingCase.type,
+                  caseType: isTravelBan ? CaseType.TravelBan : workingCase.type,
                   date: `${formatDate(
                     workingCase.validToDate,
                     'PPP',
