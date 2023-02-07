@@ -29,4 +29,12 @@ export class HistoryService {
       contentful_id: entry.contentful_id,
     })
   }
+
+  async deleteHistoryByApplicationId(applicationId: string): Promise<void> {
+    await this.historyModel.destroy({
+      where: {
+        application_id: applicationId,
+      },
+    })
+  }
 }
