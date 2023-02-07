@@ -11,6 +11,7 @@ import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
 import { environment } from '../../../environments/environment'
 
+import axios from 'axios'
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -29,7 +30,7 @@ export class NotificationsService {
     return item
   }
 
-  async getTemplates(locale?: string): Promise<HnippTemplate[]> {
+  async getTemplates(locale?: string): Promise<HnippTemplate[] | any> {
     if (locale == 'is' || locale === undefined) {
       locale = 'is-IS'
     }
@@ -55,31 +56,34 @@ export class NotificationsService {
     }
     `,
     }
-    try {
-      const results = await fetch(contentfulGqlUrl, {
-        method: 'POST',
 
+    const res = await axios
+      .post(contentfulGqlUrl, contentfulHnippTemplatesQuery, {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + environment.contentfulAccessToken,
+          'content-type': 'application/json',
+          authorization: 'Bearer ' + environment.contentfulAccessToken,
         },
-
-        body: JSON.stringify(contentfulHnippTemplatesQuery),
       })
-      console.log('RESULTS')
-      console.log(results.json())
-      const templates = await results.json()
-      for (const item of templates.data.hnippTemplateCollection.items) {
-        //cache check
-        item.date = new Date().toISOString()
-        if (item.args == null) {
-          item.args = []
+      .then((response) => {
+        console.log(response.data)
+        // for (const item of response.data.hnippTemplateCollection.items) {
+        //   //cache check
+        //   item.date = new Date().toISOString()
+        //   if (item.args == null) {
+        //     item.args = []
+        //   }
+        // }
+        return response.data
+      })
+      .catch((error) => {
+        if (error.response) {
+          throw new BadRequestException(error.response.data)
+        } else {
+          throw new BadRequestException('Bad Request')
         }
-      }
-      return templates.data.hnippTemplateCollection.items
-    } catch (e) {
-      throw new Error(e)
-    }
+      })
+    return res.data.hnippTemplateCollection.items
+    
   }
 
   async getTemplate(
