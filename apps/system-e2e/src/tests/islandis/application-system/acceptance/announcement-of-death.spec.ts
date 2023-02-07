@@ -2,6 +2,7 @@ import { expect, test as base, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
+  disableObjectKey,
 } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 
@@ -17,6 +18,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     })
 
     const applicationPage = await applicationContext.newPage()
+    await disableObjectKey(applicationPage, 'existing')
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
@@ -40,6 +42,7 @@ applicationTest.describe('Announcement of Death', () => {
     await page.locator('data-testid=agree-to-data-providers').click()
     await page.locator(submitButton).click()
 
+    await expect(page.locator('label[for=approveExternalData]')).not.toBeVisible()
     await expect(
       page.locator('h2:text("Fyrri umsóknir um andlátstilkynningu")'),
     ).not.toBeVisible()

@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test'
-import deepMerge from 'lodash/merge'
+import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
 
 type MockGQLOptions = {
@@ -16,14 +16,19 @@ type Dict<T = unknown> = Record<string, T>
  * Return a copy of the `eroginal` object with any sub-objects mocked as `mockData`
  */
 function deepMock<T = Dict>(
-  original: T,
+  original: T | T[],
   mockKey: string | RegExp,
   mockData: unknown = {},
   {
     exactMatch = false,
     deepPath = 'data',
   } = {}
-): T | Dict {
+): T | T[] | Dict | Dict[] {
+  if (Array.isArray(original)) {
+    console.log("Deep mocking array:", original)
+    // Should do the typing properly here :/
+    return original.map((item: T) => deepMock(item, mockKey, mockData, {exactMatch}) as T)
+  }
   if (typeof original != 'object')
     return (String(original).match(mockKey)) ? mockData as T : original
 
@@ -34,6 +39,8 @@ function deepMock<T = Dict>(
     if (key.match(mockKey)) {
       mocked[key] = mockData
       console.log(`Found deepMock match (mockKey=${mockKey}, key=${key}, deepPath=${updatedDeepPath}, mockData=${mockData})`)
+      console.log(`Deep mocking mocked   data:`, mocked)
+      console.log(`Deep mocking original data:`, original)
     }
     else mocked[key] = deepMock(original[key], mockKey, mockData, {deepPath: updatedDeepPath})
   }
@@ -89,7 +96,7 @@ export async function mockQGL<T>(
     console.log(`Got a mock-match for > ${route.request().url()} < (key=${mockKey}, patchResponse=${patchResponse})`)
     console.log('(original):', originalResponse)
 
-    const patchedData = deepMerge({ ...originalResponse }, mockResponse)
+    const patchedData = mergeWith({ ...originalResponse }, mockResponse, (_: unknown, source: unknown) => source)
     const data: Dict<Dict> = { data: {} }
     data.data = patchedData
 
@@ -108,7 +115,7 @@ export async function disableObjectKey(page: Page, key: string | RegExp) {
   return await mockQGL(
     page,
     '**',
-    'DEEP-MOCKED',
+    {},
     { deepMockKey: key, patchResponse: true },
   )
 }
