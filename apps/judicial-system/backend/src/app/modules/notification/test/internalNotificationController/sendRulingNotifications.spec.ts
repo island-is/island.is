@@ -13,28 +13,33 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import { User } from '../../../user'
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
-import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
-import { SendNotificationDto } from '../../dto/sendNotification.dto'
+import { DeliverResponse } from '../../models/deliver.response'
+import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { notificationModuleConfig } from '../../notification.config'
 import { Notification } from '../../models/notification.model'
 
 jest.mock('../../../factories')
 
 interface Then {
-  result: SendNotificationResponse
+  result: DeliverResponse
   error: Error
 }
 
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notification: SendNotificationDto,
+  notification: SendInternalNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send ruling notifications', () => {
-  const notification: SendNotificationDto = { type: NotificationType.RULING }
+  const userId = uuid()
+  const notification: SendInternalNotificationDto = {
+    userId,
+    type: NotificationType.RULING,
+  }
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
@@ -66,6 +71,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       try {
         then.result = await internalNotificationController.sendCaseNotification(
           caseId,
+          { id: userId } as User,
           theCase,
           notification,
         )
@@ -99,7 +105,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Dómur í máli 007-2022-07',
-          html: `Dómari hefur staðfestur dóm í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Dómari hefur staðfest dóm í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -329,55 +335,6 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, theCase, notification)
-    })
-
-    it('should send email to prison', () => {
-      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
-      expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
-        3,
-        expect.objectContaining({
-          to: [
-            {
-              name: 'Gæsluvarðhaldsfangelsi',
-              address: mockConfig.email.prisonEmail,
-            },
-          ],
-          attachments: [
-            {
-              filename: 'Vistunarseðill 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-            {
-              filename: 'Þingbók 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-          ],
-          subject: 'Úrskurður um vistun á viðeigandi stofnun',
-          html: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 1. júlí 2021, auk þingbókar þar sem úrskurðarorðin koma fram.`,
-        }),
-      )
-    })
-  })
-
-  describe('Admission to facility - when checking if defendant is in custody failes', () => {
-    const caseId = uuid()
-    const theCase = {
-      id: caseId,
-      type: CaseType.ADMISSION_TO_FACILITY,
-      decision: CaseDecision.ACCEPTING,
-      courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
-      defendants: [{ nationalId: '0000000000' }] as Defendant[],
-    } as Case
-
-    beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
-      mockGetDefendantsActiveCases.mockRejectedValue(new Error('Error'))
       await givenWhenThen(caseId, theCase, notification)
     })
 

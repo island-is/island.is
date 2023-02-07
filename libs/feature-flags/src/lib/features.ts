@@ -1,4 +1,5 @@
 export enum Features {
+  testing = 'do-not-remove-for-testing-only',
   // Integrate auth-api with user-profile-api.
   userProfileClaims = 'shouldAuthApiReturnUserProfileClaims',
 
@@ -20,6 +21,7 @@ export enum Features {
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
   passportApplication = 'isPassportApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
+  inheritanceReport = 'isInheritanceReportApplicationEnabled',
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
   estateApplication = 'isEstateApplicationEnabled',
@@ -34,9 +36,6 @@ export enum Features {
   transportAuthorityOrderVehicleRegistrationCertificate = 'isTransportAuthorityOrderVehicleRegistrationCertificateEnabled',
   transportAuthorityTransferOfVehicleOwnership = 'isTransportAuthorityTransferOfVehicleOwnershipEnabled',
 
-  // Application delegation flags
-  noDebtCertificateCompanyDelegations = 'applicationNoDebtCertificateCompanyDelegations',
-
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -45,9 +44,16 @@ export enum Features {
   servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
-  outgoingDelegationsV1 = 'outgoingdelegationsv1',
-  outgoingDelegationsV2 = 'outgoingdelegationsv2',
-  incomingDelegationsV2 = 'incomingdelegationsv2',
+  sessionHistory = 'sessionHistory',
+
+  // Application delegation flags
+  applicationTemplatePublicDeptPaymentPlanAllowDelegation = 'applicationTemplatePublicDeptPaymentPlanAllowDelegation',
+  transportAuthorityTransferOfVehicleOwnershipDelegations = 'applicationTransportAuthorityTransferOfVehicleOwnershipDelegations',
+  transportAuthorityChangeCoOwnerOfVehicleDelegations = 'applicationTransportAuthorityChangeCoOwnerOfVehicleDelegations',
+  transportAuthorityChangeOperatorOfVehicleDelegations = 'applicationTransportAuthorityChangeOperatorOfVehicleDelegations',
+  transportAuthorityOrderVehicleLicensePlateDelegations = 'applicationTransportAuthorityOrderVehicleLicensePlateDelegations',
+  transportAuthorityOrderVehicleRegistrationCertificateDelegations = 'applicationTransportAuthorityOrderVehicleRegistrationCertificateDelegations',
+  mortgageCertificateDelegations = 'applicationMortgageCertificateDelegations',
 }
 
 export enum ServerSideFeature {

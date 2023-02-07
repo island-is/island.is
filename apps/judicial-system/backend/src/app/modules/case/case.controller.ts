@@ -6,7 +6,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Patch,
   ForbiddenException,
   Query,
   Res,
@@ -16,6 +16,7 @@ import {
   HttpException,
   Inject,
   ParseBoolPipe,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -51,6 +52,7 @@ import {
   staffRule,
   assistantRule,
 } from '../../guards'
+import { nowFactory } from '../../factories'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import { CaseExistsGuard } from './guards/caseExists.guard'
@@ -76,6 +78,7 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 
@@ -135,10 +138,11 @@ export class CaseController {
     assistantUpdateRule,
     staffUpdateRule,
   )
-  @Put('case/:caseId')
+  @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case> {
@@ -177,24 +181,10 @@ export class CaseController {
       )
     }
 
-    const updatedCase = (await this.caseService.update(
-      theCase,
-      caseToUpdate,
-    )) as Case
-
-    if (
-      updatedCase.courtCaseNumber &&
-      updatedCase.courtCaseNumber !== theCase.courtCaseNumber
-    ) {
-      // The court case number has changed, so the request must be uploaded to the new court case
-      // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseConnectedToCourtCaseMessagesToQueue(updatedCase)
-    }
-
-    return updatedCase
+    return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
     representativeTransitionRule,
@@ -202,13 +192,14 @@ export class CaseController {
     registrarTransitionRule,
     assistantTransitionRule,
   )
-  @Put('case/:caseId/state')
+  @Patch('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
     description: 'Transitions an existing case to a new state',
   })
   async transition(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
@@ -217,23 +208,26 @@ export class CaseController {
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
-    const update: { state: CaseState; parentCaseId?: null } = { state }
+    const update: {
+      state: CaseState
+      parentCaseId?: null
+      rulingDate?: Date
+    } = { state }
 
     if (state === CaseState.DELETED) {
       update.parentCaseId = null
     }
 
+    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
+      update.rulingDate = nowFactory()
+    }
+
     const updatedCase = await this.caseService.update(
       theCase,
       update as UpdateCaseDto,
+      user,
       state !== CaseState.DELETED,
     )
-
-    // Indictment cases are not signed
-    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCompletedIndictmentCaseMessagesToQueue(theCase)
-    }
 
     // No need to wait
     this.eventService.postEvent(
@@ -259,6 +253,7 @@ export class CaseController {
     isArray: true,
     description: 'Gets all existing cases',
   })
+  @UseInterceptors(CaseListInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 

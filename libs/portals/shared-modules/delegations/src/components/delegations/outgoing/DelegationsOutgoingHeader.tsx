@@ -1,8 +1,8 @@
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { DomainOption } from '../../../hooks/useDomains'
+import { DomainOption } from '../../../hooks/useDomains/useDomains'
 import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
 import * as styles from './DelegationsOutgoingHeader.css'
 import { DelegationPaths } from '../../../lib/paths'
@@ -18,7 +18,7 @@ export const DelegationsOutgoingHeader = ({
   onSearchChange,
 }: DelegationsOutgoingHeaderProps) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return (
     <Box className={styles.container}>
@@ -41,7 +41,7 @@ export const DelegationsOutgoingHeader = ({
       </Box>
       <Box className={styles.buttonContainer}>
         <Button
-          onClick={() => history.push(DelegationPaths.DelegationsGrant)}
+          onClick={() => navigate(DelegationPaths.DelegationsGrant)}
           size="small"
           fluid
         >

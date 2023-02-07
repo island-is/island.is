@@ -18,8 +18,8 @@ import {
   FormModes,
   Application,
   DefaultEvents,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
-import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import { Individual } from '../types'
 import { m } from '../lib/messages'
@@ -28,12 +28,12 @@ import {
   NO,
   YES,
   CeremonyPlaces,
+  Religion,
 } from '../lib/constants'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
-import { Religions } from '../dataProviders/ReligionsProvider'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -113,7 +113,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
+                        .nationalRegistry.data as NationalRegistryIndividual
                       return nationalRegistry.fullName ?? ''
                     },
                   }),
@@ -199,8 +199,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.address.streetAddress
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry.address?.streetAddress
                     },
                   }),
                   buildTextField({
@@ -211,8 +211,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.citizenship.code
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry?.citizenship?.code
                     },
                   }),
                   buildTextField({
@@ -351,7 +351,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                         religions: { data },
                       },
                     }) => {
-                      return (data as Religions[]).map((society) => ({
+                      return (data as Religion[]).map((society) => ({
                         value: society.name,
                         label: society.name,
                       }))

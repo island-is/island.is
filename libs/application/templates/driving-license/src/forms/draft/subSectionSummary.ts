@@ -107,15 +107,19 @@ export const subSectionSummary = buildSubSection({
           condition: isApplicationForCondition(B_TEMP),
           value: ({
             externalData: {
+              drivingAssessment,
               teachers: { data },
             },
             answers,
           }) => {
-            const teacher = (data as Teacher[]).find(
-              ({ nationalId }) =>
-                getValueViaPath(answers, 'drivingInstructor') === nationalId,
-            )
-            return teacher?.name
+            if (answers.applicationFor === B_TEMP) {
+              const teacher = (data as Teacher[]).find(
+                ({ nationalId }) =>
+                  getValueViaPath(answers, 'drivingInstructor') === nationalId,
+              )
+              return teacher?.name
+            }
+            return (drivingAssessment.data as StudentAssessment).teacherName
           },
         }),
         buildDividerField({

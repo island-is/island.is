@@ -2,7 +2,7 @@
   "root": "libs/application/templates/transport-authority/order-vehicle-registration-certificate",
   "sourceRoot": "libs/application/templates/transport-authority/order-vehicle-registration-certificate/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -21,12 +21,6 @@
       "options": {
         "jestConfig": "libs/application/templates/transport-authority/order-vehicle-registration-certificate/jest.config.js",
         "passWithNoTests": true
-      }
-    },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "graphql-codegen --config libs/application/templates/transport-authority/order-vehicle-registration-certificate/codegen.yml"
       }
     },
     "extract-strings": {

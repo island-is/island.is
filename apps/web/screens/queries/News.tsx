@@ -39,6 +39,7 @@ export const GET_NEWS_WITH_CONTENT_QUERY = gql`
         date
         slug
         intro
+        fullWidthImageInContent
         content {
           ...AllSlices
         }
@@ -74,6 +75,7 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
       date
       slug
       intro
+      fullWidthImageInContent
       content {
         ...AllSlices
       }

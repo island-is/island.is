@@ -5,8 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { insurance, review, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
-import { ReviewScreenProps } from '../../types'
-import { InsuranceCompany } from '@island.is/api/schema'
+import { InsuranceCompany, ReviewScreenProps } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
@@ -72,7 +71,7 @@ export const Insurance: FC<FieldBaseProps & ReviewScreenProps> = ({
       if (!res.data) {
         setErrorMessage(formatMessage(error.couldNotUpdateApplication))
       } else {
-        setInsurance(selectedValue.label as string)
+        setInsurance(selectedValue.value as string)
         setErrorMessage(undefined)
         setStep && setStep('overview')
       }

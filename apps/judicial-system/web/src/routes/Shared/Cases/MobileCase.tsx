@@ -1,11 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Case } from '@island.is/judicial-system/types'
 import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { Box, Text, FocusableBox, Tag } from '@island.is/island-ui/core'
 
 import * as styles from './MobileCase.css'
@@ -43,7 +43,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 }
 
 interface Props {
-  theCase: Case
+  theCase: CaseListEntry
   onClick: () => void
   isCourtRole: boolean
 }

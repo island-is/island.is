@@ -8,9 +8,15 @@ import {
   ApplicationTypes,
   DefaultEvents,
   ApplicationConfigurations,
+  defineTemplateApi,
+  UserProfileApi,
+  IdentityApi,
 } from '@island.is/application/types'
+import { PaymentPlanPrerequisitesApi } from '../dataProviders'
+import { Features } from '@island.is/feature-flags'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
+import { AuthDelegationType } from 'delegation'
 
 const States = {
   draft: 'draft',
@@ -40,6 +46,13 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   readyForProduction: true,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.applicationTemplatePublicDeptPaymentPlanAllowDelegation,
+    },
+  ],
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
@@ -72,6 +85,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [IdentityApi, UserProfileApi, PaymentPlanPrerequisitesApi],
               delete: true,
             },
           ],
@@ -143,9 +157,9 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             title: application.name,
             description: application.description,
           },
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.sendApplication,
+          }),
           progress: 1,
           lifecycle: {
             shouldBeListed: true,

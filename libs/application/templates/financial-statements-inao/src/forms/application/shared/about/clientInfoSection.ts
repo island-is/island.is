@@ -5,12 +5,12 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../../../../types/schema'
 import { m } from '../../../../lib/messages'
 import { ABOUTIDS } from '../../../../lib/constants'
 import { getCurrentUserType } from '../../../../lib/utils/helpers'
 import { FSIUSERTYPE } from '../../../../types'
+import { Identity } from '@island.is/clients/identity'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -19,7 +19,14 @@ export const clientInfoSection = buildSection({
     buildMultiField({
       id: 'about',
       title: m.info,
-      description: m.reviewContact,
+      description: (application: Application) => {
+        const answers = application.answers
+        const externalData = application.externalData
+        const userType = getCurrentUserType(answers, externalData)
+        return userType === FSIUSERTYPE.INDIVIDUAL
+          ? m.reviewInfo
+          : m.reviewContact
+      },
       children: [
         buildCustomField({
           id: 'OperatingYear',
@@ -61,8 +68,8 @@ export const clientInfoSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
-              .data as User
+            const nationalRegistry = application.externalData.identity
+              .data as Identity
             return nationalRegistry.name
           },
         }),

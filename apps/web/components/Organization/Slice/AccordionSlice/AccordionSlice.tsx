@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import {
   Accordion,
   AccordionCard,
@@ -8,6 +9,7 @@ import {
   BoxProps,
   Text,
 } from '@island.is/island-ui/core'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import {
   AccordionSlice as AccordionSliceSchema,
   Html,
@@ -36,6 +38,7 @@ interface SliceProps {
 }
 
 export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
+  const router = useRouter()
   const labelId = 'sliceTitle-' + slice.id
 
   const borderProps: BoxProps = slice.hasBorderAbove
@@ -104,12 +107,17 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                 cta={{
                   label: item.link?.text ?? 'Default',
                   icon: 'arrowForward',
-                  onClick: () =>
-                    !!item.link?.url &&
-                    window.open(
+                  onClick: () => {
+                    if (!item.link?.url) return
+                    const openInNewWindow = shouldLinkOpenInNewWindow(
                       item.link.url,
-                      item.link.url.includes('://') ? '_blank' : '_self',
-                    ),
+                    )
+                    if (openInNewWindow) {
+                      window.open(item.link.url, '_blank')
+                    } else {
+                      router.push(item.link.url)
+                    }
+                  },
                 }}
               />
             </Box>

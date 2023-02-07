@@ -13,7 +13,7 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
-
+import { serviceSetup as samradsgattSetup } from '../../../apps/samradsgatt/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
@@ -40,6 +40,11 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
+import {
+  serviceSetup as sessionsServiceSetup,
+  workerSetup as sessionsWorkerSetup,
+} from '../../../apps/services/sessions/infra/sessions'
+
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
@@ -53,8 +58,8 @@ const appSystemApi = appSystemApiSetup({
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
-const servicePortal = servicePortalSetup({})
 const adminPortal = adminPortalSetup()
+const samradsgatt = samradsgattSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
@@ -69,6 +74,7 @@ const api = apiSetup({
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
 })
+const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
@@ -93,12 +99,16 @@ const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
 
+const sessionsService = sessionsServiceSetup()
+const sessionsWorker = sessionsWorkerSetup()
+
 export const Services: EnvironmentServices = {
   prod: [
     appSystemApi,
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     searchIndexer,
@@ -117,12 +127,15 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   staging: [
     appSystemApi,
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     skilavottordWeb,
@@ -141,6 +154,8 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   dev: [
     appSystemApi,
@@ -148,6 +163,7 @@ export const Services: EnvironmentServices = {
     servicePortal,
     servicePortalApi,
     adminPortal,
+    samradsgatt,
     api,
     web,
     searchIndexer,
@@ -169,6 +185,8 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    sessionsService,
+    sessionsWorker,
   ],
 }
 

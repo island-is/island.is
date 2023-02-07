@@ -20,8 +20,15 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  Feature,
+  IndictmentSubtype,
+} from '@island.is/judicial-system/types'
 import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import { hasIndictmentSubtype } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
@@ -37,18 +44,28 @@ const Overview: React.FC = () => {
     'noModal',
   )
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
   const { transitionCase } = useCase()
+  const isTrafficViolationCase =
+    features.includes(Feature.INDICTMENT_ROUTE) &&
+    hasIndictmentSubtype(
+      workingCase.indictmentSubtypes,
+      IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
 
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
 
-  const caseHasBeenSentToCourt =
-    workingCase.state !== CaseState.NEW && workingCase.state !== CaseState.DRAFT
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
-      await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      await transitionCase(
+        workingCase.id,
+        CaseTransition.SUBMIT,
+        setWorkingCase,
+      )
     }
 
     setModal('caseSubmittedModal')
@@ -57,13 +74,12 @@ const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
+      activeSection={Sections.PROSECUTOR}
       activeSubSection={
-        caseHasBeenSentToCourt
+        caseHasBeenReceivedByCourt
           ? undefined
-          : IndictmentsProsecutorSubsections.OVERVIEW
+          : IndictmentsProsecutorSubsections.OVERVIEW +
+            (isTrafficViolationCase ? 1 : 0)
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
@@ -86,16 +102,16 @@ const Overview: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={
-            caseHasBeenSentToCourt
+            caseHasBeenReceivedByCourt
               ? constants.CASES_ROUTE
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,
           })}
-          hideNextButton={caseHasBeenSentToCourt}
+          hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
-            caseHasBeenSentToCourt
+            caseHasBeenReceivedByCourt
               ? formatMessage(strings.overview.caseSendToCourt)
               : undefined
           }

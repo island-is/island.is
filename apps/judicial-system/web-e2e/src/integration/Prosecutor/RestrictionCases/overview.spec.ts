@@ -6,7 +6,10 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
-import { RESTRICTION_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_ROUTE,
+  RESTRICTION_CASE_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import {
   makeCourt,
@@ -32,6 +35,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       } as Defendant,
     ],
     requestedCourtDate: '2020-09-16T19:50:08.033Z',
+    courtDate: '2020-09-16T19:50:08.033Z',
     arrestDate: '2020-09-16T19:50:08.033Z',
     demands:
       'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
@@ -58,6 +62,18 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
 
       it('should have a info panel about how to resend a case', () => {
         cy.getByTestid('rc-overview-info-panel').should('exist')
+      })
+
+      it('should have a button that copies link to case for defender', () => {
+        cy.getByTestid('copyLinkToCase').click()
+        cy.window()
+          .its('navigator.clipboard')
+          .invoke('readText')
+          .then((data) => data)
+          .should(
+            'equal',
+            `${window.location.origin}${DEFENDER_ROUTE}/${caseData.id}`,
+          )
       })
     })
 
@@ -100,15 +116,6 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
 
       it('should have a button that links to a pdf of the case', () => {
         cy.contains('button', 'Krafa - PDF')
-      })
-
-      it('should have a button that copies link to case for defender', () => {
-        cy.getByTestid('copyLinkToCase').click()
-        cy.window()
-          .its('navigator.clipboard')
-          .invoke('readText')
-          .then((data) => data)
-          .should('equal', `${window.location.origin}/verjandi/${caseData.id}`)
       })
 
       it('should navigate to /krofur on successful confirmation', () => {

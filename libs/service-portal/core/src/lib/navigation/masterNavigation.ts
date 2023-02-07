@@ -107,6 +107,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.detailInfo,
             path: ServicePortalPath.LicensesDetail,
           },
+          {
+            navHide: true,
+            name: m.passport,
+            path: ServicePortalPath.LicensesPassportDetail,
+          },
         ],
         description: m.licensesDescription,
       },
@@ -187,15 +192,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         //     path: ServicePortalPath.DocumentProviderStatistics,
         //   },
         // ],
-      },
-
-      // Mannanafnaskrá
-      {
-        name: m.icelandicNamesRegistry,
-        path: ServicePortalPath.IcelandicNamesRegistryRoot,
-        icon: {
-          icon: 'fileTrayFull',
-        },
       },
 
       // Fasteignir

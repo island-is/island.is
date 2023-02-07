@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -25,7 +25,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
@@ -46,6 +45,7 @@ import {
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -74,13 +74,13 @@ export const CourtRecord: React.FC = () => {
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  const id = router.query.id
-
-  useDeb(workingCase, 'courtAttendees')
-  useDeb(workingCase, 'sessionBookings')
-  useDeb(workingCase, 'accusedAppealAnnouncement')
-  useDeb(workingCase, 'prosecutorAppealAnnouncement')
-  useDeb(workingCase, 'endOfSessionBookings')
+  useDeb(workingCase, [
+    'courtAttendees',
+    'sessionBookings',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealAnnouncement',
+    'endOfSessionBookings',
+  ])
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -147,8 +147,8 @@ export const CourtRecord: React.FC = () => {
       )
 
       if (
-        workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.ADMISSION_TO_FACILITY
+        workingCase.type === CaseType.Custody ||
+        workingCase.type === CaseType.AdmissionToFacility
       ) {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
@@ -178,12 +178,12 @@ export const CourtRecord: React.FC = () => {
               caseType:
                 workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? CaseType.TRAVEL_BAN
+                  ? CaseType.TravelBan
                   : workingCase.type,
             }),
           )
         }
-      } else if (workingCase.type === CaseType.TRAVEL_BAN) {
+      } else if (workingCase.type === CaseType.TravelBan) {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
             m.sections.sessionBookings.autofillPresentationsTravelBan,
@@ -245,6 +245,12 @@ export const CourtRecord: React.FC = () => {
     workingCase,
   ])
 
+  const stepIsValid = isCourtRecordStepValidRC(workingCase)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -254,6 +260,8 @@ export const CourtRecord: React.FC = () => {
       activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.restrictionCases.courtRecord)}
@@ -538,8 +546,10 @@ export const CourtRecord: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`}
-          nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.RESTRICTION_CASE_CONFIRMATION_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           hideNextButton={
             !workingCase.decision ||
             !workingCase.conclusion ||

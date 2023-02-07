@@ -1,5 +1,7 @@
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
+import { airDiscountSchemeAdminModule } from '@island.is/portals/admin/air-discount-scheme'
 import { PortalModule } from '@island.is/portals/core'
+import { icelandicNamesRegistryModule } from '@island.is/portals/admin/icelandic-names-registry'
 
 /**
  * NOTE:
@@ -8,4 +10,8 @@ import { PortalModule } from '@island.is/portals/core'
  * for beta testing should be feature flagged.
  */
 
-export const modules: PortalModule[] = [delegationsModule]
+export const modules: PortalModule[] = [
+  delegationsModule,
+  airDiscountSchemeAdminModule,
+  icelandicNamesRegistryModule,
+]

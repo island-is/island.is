@@ -1,17 +1,18 @@
 import {
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildCheckboxField,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { NO, ResturantCategories, YES } from '../../lib/constants'
 import {
   APPLICATION_TYPES,
   ResturantTypes,
   HotelTypes,
   Operation,
   OPERATION_CATEGORY,
+  HotelCategories,
 } from '../../lib/constants'
 
 export const applicationInfo = buildMultiField({
@@ -32,83 +33,75 @@ export const applicationInfo = buildMultiField({
       width: 'half',
       largeButtons: true,
     }),
-    buildCheckboxField({
-      id: 'applicationInfo.hotel.category',
+    buildRadioField({
+      id: 'applicationInfo.category',
       title: m.operationCategoryHotelTitle,
       doesNotRequireAnswer: true,
-      large: true,
-      options: [
-        {
-          value: OPERATION_CATEGORY.ONE,
-          label: m.operationCategoryHotelOne,
-        },
-        {
-          value: OPERATION_CATEGORY.TWO,
-          label: m.operationCategoryHotelTwo,
-        },
-      ],
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
-    }),
-    buildRadioField({
-      id: 'applicationInfo.resturant.category',
-      title: m.operationCategoryResturantTitle,
-      options: [
-        {
-          value: OPERATION_CATEGORY.ONE,
-          label: m.operationCategoryResturantOne,
-        },
-        {
-          value: OPERATION_CATEGORY.TWO,
-          label: m.operationCategoryResturantTwo,
-        },
-      ],
-      width: 'half',
       largeButtons: true,
       space: 'none',
       defaultValue: '',
-      condition: (answers) =>
+      options: ({ answers }) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.RESTURANT,
-    }),
-    buildDescriptionField({
-      id: 'applicationInfo.hotelTitle',
-      title: m.operationTypeHotelDescription,
-      titleVariant: 'h4',
-      description: '',
-      space: 'gutter',
+        APPLICATION_TYPES.HOTEL
+          ? HotelCategories
+          : ResturantCategories,
       condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
+        !!(answers.applicationInfo as Operation)?.operation,
     }),
-    buildSelectField({
-      id: 'applicationInfo.hotel.type',
+    buildRadioField({
+      id: 'applicationInfo.typeHotel',
       title: m.operationTypeHotelTitle,
-      options: HotelTypes,
+      options: ({ answers }) => {
+        return (answers.applicationInfo as Operation).category !==
+          OPERATION_CATEGORY.TWO
+          ? [
+              {
+                value: 'A Hótel',
+                label: 'Hótel',
+                subLabel:
+                  'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
+              },
+              ...HotelTypes,
+            ]
+          : HotelTypes
+      },
       backgroundColor: 'blue',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.HOTEL,
     }),
+    //fake field to trigger rerender on category switch
     buildDescriptionField({
-      id: 'applicationInfo.resturantTitle',
-      title: m.operationTypeResturantDescription,
-      titleVariant: 'h4',
-      description: '',
-      space: 'gutter',
+      id: 'fake_helper_field',
+      title: '',
+      condition: (answers) =>
+        (answers.applicationInfo as Operation)?.operation ===
+          APPLICATION_TYPES.HOTEL &&
+        (answers.applicationInfo as Operation)?.category ===
+          OPERATION_CATEGORY.TWO,
+    }),
+    buildCheckboxField({
+      id: 'applicationInfo.typeResturant',
+      title: m.operationTypeResturantTitle,
+      defaultValue: [],
+      options: ResturantTypes,
+      backgroundColor: 'blue',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.RESTURANT,
     }),
-    buildSelectField({
-      id: 'applicationInfo.resturant.type',
-      title: m.operationTypeResturantTitle,
-      backgroundColor: 'blue',
-      options: ResturantTypes,
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.RESTURANT,
+    buildCheckboxField({
+      id: 'applicationInfo.willServe',
+      title: m.openingHoursOutside,
+      options: [{ value: YES, label: m.openingHoursOutsideCheck }],
+      defaultValue: [NO],
+      condition: (answers) => {
+        const applicationInfo = answers.applicationInfo as Operation
+        return (
+          applicationInfo?.operation === APPLICATION_TYPES.RESTURANT ||
+          applicationInfo?.category === OPERATION_CATEGORY.FOUR
+        )
+      },
     }),
   ],
 })

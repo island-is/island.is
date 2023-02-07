@@ -5,7 +5,6 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import {
   EphemeralStateLifeCycle,
-  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -17,6 +16,8 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 
 import {
@@ -29,14 +30,14 @@ import {
   SPOUSE,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
   TransferRightsOption,
+  SINGLE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
+  findActionName,
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
@@ -47,7 +48,10 @@ import {
   getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
+  isParentalGrant,
+  isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -57,7 +61,7 @@ type Events =
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
-  | { type: 'ADDITIONALDOCUMENTREQUIRED' } // Ex: VMST ask for more documents
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
   | { type: 'CLOSED' } // Ex: Close application
 
 enum Roles {
@@ -67,16 +71,7 @@ enum Roles {
 }
 
 const determineNameFromApplicationAnswers = (application: Application) => {
-  const applicationType = getValueViaPath(
-    application.answers,
-    'applicationType.option',
-    undefined,
-  ) as string | undefined
-
-  if (
-    applicationType === PARENTAL_GRANT ||
-    applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.nameGrant
   }
 
@@ -108,6 +103,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
+            externalDataId: 'noPrimaryChildren',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -124,6 +124,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [UserProfileApi, GetPersonInformation, ChildrenApi],
             },
           ],
         },
@@ -134,6 +135,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         entry: 'clearAssignees',
         exit: [
+          'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
           'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
           'setUnionValuesIfUseUnionIsNO',
@@ -153,10 +155,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.25,
-          onExit: {
-            apiModuleAction: ApiModuleActions.validateApplication,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -190,7 +192,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_APPROVAL]: {
-        entry: 'assignToOtherParent',
+        entry: ['assignToOtherParent'],
         exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
@@ -200,10 +202,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignOtherParent,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignOtherParent,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -272,11 +274,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -304,10 +305,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -352,7 +353,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -402,11 +408,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -426,7 +431,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setNavId'],
+        exit: ['clearAssignees', 'setNavId', 'resetAdditionalDocumentsArray'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           status: 'inprogress',
@@ -435,11 +440,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.sendApplication,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -462,15 +467,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
-          ADDITIONALDOCUMENTREQUIRED: {
-            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
-        entry: 'assignToVMST',
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
           status: 'inprogress',
@@ -503,11 +507,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      [States.ADDITIONAL_DOCUMENT_REQUIRED]: {
+      [States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]: {
         entry: 'assignToVMST',
         meta: {
           status: 'inprogress',
-          name: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          name: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
           actionCard: {
             description: statesMessages.additionalDocumentRequiredDescription,
           },
@@ -517,8 +521,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DraftRequiresAction').then((val) =>
-                  Promise.resolve(val.DraftRequiresAction),
+                import(
+                  '../forms/InReviewAdditionalDocumentsRequired'
+                ).then((val) =>
+                  Promise.resolve(val.InReviewAdditionalDocumentsRequired),
                 ),
               read: 'all',
               write: 'all',
@@ -534,7 +540,46 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+        },
+      },
+      [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        entry: 'assignToVMST',
+        exit: 'setActionName',
+        meta: {
+          status: 'inprogress',
+          name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          actionCard: {
+            description: statesMessages.additionalDocumentRequiredDescription,
+          },
+          lifecycle: pruneAfterDays(970),
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AdditionalDocumentsRequired').then((val) =>
+                  Promise.resolve(val.AdditionalDocumentsRequired),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
         },
       },
       // [States.RECEIVED]: {
@@ -565,7 +610,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //     ],
       //   },
       //   on: {
-      //     ADDITIONALDOCUMENTREQUIRED: { target: States.ADDITIONAL_DOCUMENT_REQUIRED },
+      //     ADDITIONALDOCUMENTSREQUIRED: { target: States.ADDITIONAL_DOCUMENTS_REQUIRED },
       //     [DefaultEvents.APPROVE]: { target: States.APPROVED },
       //     [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
       //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
@@ -630,13 +675,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: [
-          'createTempPeriods',
-          'assignToVMST',
+        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
+        exit: [
+          'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
+          'setActionName',
         ],
-        exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           status: 'inprogress',
@@ -645,10 +690,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
-          onExit: {
-            apiModuleAction: ApiModuleActions.validateApplication,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -697,10 +742,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.assignEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.assignEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -728,7 +773,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: 'removeNullPeriod',
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -752,7 +797,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: ['children', 'navId', 'sendApplication'],
+                externalData: [
+                  'children',
+                  'noPrimaryChildren',
+                  'navId',
+                  'sendApplication',
+                ],
               },
               write: {
                 answers: [
@@ -801,7 +851,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
-        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
@@ -811,11 +860,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
-          onEntry: {
-            apiModuleAction:
-              ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -845,7 +893,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: 'clearTemp',
+        exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -854,11 +902,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.sendApplication,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -881,8 +929,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
-          ADDITIONALDOCUMENTREQUIRED: {
-            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           [DefaultEvents.REJECT]: {
@@ -891,7 +939,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
-        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
@@ -980,6 +1027,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      clearOtherParentDataIfSelectedNo: assign((context) => {
+        const { application } = context
+        const { otherParent } = getApplicationAnswers(application.answers)
+        if (otherParent === NO || otherParent === SINGLE) {
+          unset(application.answers, 'otherParentEmail')
+          unset(application.answers, 'otherParentPhoneNumber')
+          unset(application.answers, 'requestRights')
+          unset(application.answers, 'giveRights')
+          unset(application.answers, 'transferRights')
+          unset(application.answers, 'personalAllowanceFromSpouse')
+          unset(application.answers, 'otherParentRightOfAccess')
+        }
+        return context
+      }),
       setOtherParentIdIfSelectedSpouse: assign((context) => {
         const { application } = context
 
@@ -1001,12 +1062,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
         const { application } = context
+        const { usePersonalAllowance } = getApplicationAnswers(
+          application.answers,
+        )
 
-        const answers = getApplicationAnswers(application.answers)
-
-        if (answers.usePersonalAllowance === NO) {
+        if (usePersonalAllowance === NO) {
           if (application.answers.personalAllowance) {
-            unset(application.answers, 'personalAllowance')
+            unset(application.answers, 'personalAllowance.useAsMuchAsPossible')
+            unset(application.answers, 'personalAllowance.usage')
           }
         }
 
@@ -1014,12 +1077,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
         const { application } = context
+        const { usePersonalAllowanceFromSpouse } = getApplicationAnswers(
+          application.answers,
+        )
 
-        const answers = getApplicationAnswers(application.answers)
-
-        if (answers.usePersonalAllowanceFromSpouse === NO) {
+        if (usePersonalAllowanceFromSpouse === NO) {
           if (application.answers.personalAllowanceFromSpouse) {
-            unset(application.answers, 'personalAllowanceFromSpouse')
+            unset(
+              application.answers,
+              'personalAllowanceFromSpouse.useAsMuchAsPossible',
+            )
+            unset(application.answers, 'personalAllowanceFromSpouse.usage')
           }
         }
 
@@ -1036,6 +1104,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(answers, 'periods')
           set(answers, 'periods', tempPeriods)
         }
+
+        return context
+      }),
+      resetAdditionalDocumentsArray: assign((context) => {
+        const { application } = context
+        unset(application.answers, 'fileUpload.additionalDocuments')
 
         return context
       }),
@@ -1174,7 +1248,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers, externalData } = application
         const selectedChild = getSelectedChild(answers, externalData)
 
-        if (!selectedChild) {
+        if (!selectedChild || isParentWithoutBirthParent(application.answers)) {
           return context
         }
 
@@ -1282,6 +1356,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      setActionName: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const actionName = findActionName(context)
+        set(answers, 'actionName', actionName)
+        return context
+      }),
     },
   },
   mapUserToRole(

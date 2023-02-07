@@ -10,9 +10,11 @@ import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { MANUAL, ParentalRelations, YES } from '../constants'
-import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
+import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
-import { NO, StartDateOptions } from '../constants'
+import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
+
+const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
 const dateFormat = 'yyyy-MM-dd'
 const DEFAULT_DOB = '2021-01-15'
@@ -190,7 +192,7 @@ describe('answerValidators', () => {
         answerValidators['requestRights'](newAnswer, newApplication),
       ).toStrictEqual({
         message: errorMessages.notAllowedToRequestRights,
-        path: 'requestRights',
+        path: 'transferRights',
         values: undefined,
       })
     })
@@ -246,7 +248,7 @@ describe('answerValidators', () => {
         answerValidators['giveRights'](newAnswer, newApplication),
       ).toStrictEqual({
         message: errorMessages.notAllowedToGiveRights,
-        path: 'giveRights',
+        path: 'transferRights',
         values: undefined,
       })
     })
@@ -263,6 +265,62 @@ describe('answerValidators', () => {
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
+    })
+
+    it('should return error if other parent MANUAL, not otherParentRightOfAccess and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        otherParentRightOfAccess: NO,
+        otherParentObj: {
+          chooseOtherParent: MANUAL,
+          otherParentName: 'Spouse Spousson',
+          otherParentId: '',
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual({
+        message: errorMessages.notAllowedToGiveRightsOtherParentNotAllowed,
+        path: 'transferRights',
+        values: undefined,
+      })
+    })
+
+    it('should return not error if other parent MANUAL, otherParentRightOfAccess and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        otherParentRightOfAccess: YES,
+        otherParentObj: {
+          chooseOtherParent: MANUAL,
+          otherParentName: 'Spouse Spousson',
+          otherParentId: '',
         },
       }
 
@@ -402,6 +460,60 @@ describe('when constructing a new period', () => {
     expect(answerValidators[VALIDATE_LATEST_PERIOD]([], application)).toEqual(
       undefined,
     )
+  })
+
+  it('should not be allowed to pass without providing a start date', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsStartMissing,
+      path: 'periods[0].startDate',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing a use length option', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsUseLengthMissing,
+      path: 'periods[0].useLength',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing an end date', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: NO,
+        endDate: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsEndDateRequired,
+      path: 'periods[0].endDate',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing a ratio', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        ratio: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsRatioMissing,
+      path: 'periods[0].ratio',
+      values: undefined,
+    })
   })
 
   it('should not be allowed to pass in a start date before dob but not further back than minimum', () => {

@@ -1,7 +1,15 @@
 import faker from 'faker'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
-import { INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import {
+  DEFENDER_ROUTE,
+  INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import {
   mockCase,
@@ -35,6 +43,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   }
 
   beforeEach(() => {
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/test_id`)
@@ -69,18 +78,9 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     cy.getByTestid('requestPDFButton').should('exist')
   })
 
-  it('should have a button that copies link to case for defender', () => {
-    cy.getByTestid('copyLinkToCase').click()
-    cy.window()
-      .its('navigator.clipboard')
-      .invoke('readText')
-      .then((data) => data)
-      .should('equal', `${window.location.origin}/verjandi/${caseData.id}`)
-  })
-
   it('should navigate to /krofur on successful confirmation', () => {
     cy.intercept('POST', '**/api/graphql', (req) => {
-      if (hasOperationName(req, Operation.CasesQuery)) {
+      if (hasOperationName(req, Operation.CaseListQuery)) {
         req.reply({
           fixture: 'cases',
         })
@@ -97,5 +97,47 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
      * way presents itself.
      */
     cy.getByTestid('tdTag').should('contain', 'Móttekið')
+  })
+})
+
+describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id - copy link`, () => {
+  const demands = faker.lorem.paragraph()
+  const defenderName = faker.name.findName()
+  const defenderEmail = faker.internet.email()
+  const defenderPhoneNumber = faker.phone.phoneNumber()
+  const caseData = mockCase(CaseType.INTERNET_USAGE)
+
+  const caseDataAddition: Case = {
+    ...caseData,
+    defenderNationalId: '0000000000',
+    defenderName,
+    defenderEmail,
+    defenderPhoneNumber,
+    demands,
+    seenByDefender: '2020-09-16T19:50:08.033Z',
+    state: CaseState.RECEIVED,
+    prosecutor: makeProsecutor(),
+    creatingProsecutor: makeProsecutor(),
+    requestedCourtDate: '2020-09-20T19:50:08.033Z',
+    courtDate: '2020-09-20T19:50:08.033Z',
+  }
+
+  beforeEach(() => {
+    cy.login(UserRole.PROSECUTOR)
+    cy.stubAPIResponses()
+    intercept(caseDataAddition)
+    cy.visit(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/test_id`)
+  })
+
+  it('should have a button that copies link to case for defender', () => {
+    cy.getByTestid('copyLinkToCase').click()
+    cy.window()
+      .its('navigator.clipboard')
+      .invoke('readText')
+      .then((data) => data)
+      .should(
+        'equal',
+        `${window.location.origin}${DEFENDER_ROUTE}/${caseData.id}`,
+      )
   })
 })

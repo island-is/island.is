@@ -102,6 +102,7 @@ export interface LayoutProps {
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   customAlertBanners?: GetAlertBannerQuery['getAlertBanner'][]
+  languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
@@ -144,6 +145,7 @@ const Layout: NextComponentType<
   organizationAlertBannerContent,
   articleAlertBannerContent,
   customAlertBanners,
+  languageToggleQueryParams,
   footerVersion = 'default',
   respOrigin,
   children,
@@ -352,6 +354,7 @@ const Layout: NextComponentType<
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
                 megaMenuData={megaMenuData}
+                languageToggleQueryParams={languageToggleQueryParams}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -383,6 +386,10 @@ const Layout: NextComponentType<
                       'privacyPolicyHref',
                       '/personuverndarstefna-stafraent-islands',
                     ),
+                  }}
+                  termsLink={{
+                    title: n('termsTitle', 'Skilmálar'),
+                    href: n('termsHref', '/skilmalar-island-is'),
                   }}
                   showMiddleLinks
                 />
@@ -646,6 +653,11 @@ export const withMainLayout = <T,>(
         ? componentProps['customAlertBanners']
         : []
 
+    const languageToggleQueryParams =
+      'languageToggleQueryParams' in componentProps
+        ? componentProps['languageToggleQueryParams']
+        : undefined
+
     return {
       layoutProps: {
         ...layoutProps,
@@ -654,6 +666,7 @@ export const withMainLayout = <T,>(
         organizationAlertBannerContent,
         articleAlertBannerContent,
         customAlertBanners,
+        languageToggleQueryParams,
       },
       componentProps,
     }

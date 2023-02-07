@@ -42,14 +42,13 @@ export const externalData = {
   nationalRegistry: defineMessages({
     title: {
       id: 'ta.tvo.application:externalData.nationalRegistry.title',
-      defaultMessage: 'Upplýsingar úr Þjóðskrá',
-      description: 'Personal information from the National Registry',
+      defaultMessage: 'Upplýsingar úr Þjóðskrá/Fyrirtækjaskrá',
+      description: 'Information from the National Registry/Company Registry',
     },
     subTitle: {
       id: 'ta.tvo.application:externalData.nationalRegistry.subTitle',
       defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
-      description:
-        'Information from the National Registry will be used to prefill the data in the application',
+      description: 'We will fetch name, national id and address',
     },
   }),
   userProfile: defineMessages({
@@ -78,11 +77,6 @@ export const externalData = {
         'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar bifreiðar og stöðu þeirra.',
       description: 'To make stuff easier',
     },
-    empty: {
-      id: 'ta.tvo.application:externalData.currentVehicles.empty',
-      defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
-      description: 'You do not have any vehicles where you are the main owner',
-    },
   }),
   payment: defineMessages({
     title: {
@@ -94,11 +88,6 @@ export const externalData = {
       id: 'ta.tvo.application:externalData.payment.subTitle',
       defaultMessage: 'Um stöðu bifreiðagjalda',
       description: 'To make stuff easier',
-    },
-    empty: {
-      id: 'ta.tvo.application:externalData.payment.empty',
-      defaultMessage: 'Ekki tókst að sækja upplýsingar frá Fjársýslunni',
-      description: 'You do not have any vehicles where you are the main owner',
     },
   }),
 }

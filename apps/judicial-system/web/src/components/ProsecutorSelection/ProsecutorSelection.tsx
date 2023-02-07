@@ -1,18 +1,22 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
+import { OptionsType, ValueType } from 'react-select'
 
 import { Select, Option } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  isIndictmentCase,
+  UserContext,
+  FormContext,
+} from '@island.is/judicial-system-web/src/components'
+import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
   User,
   UserRole,
-} from '@island.is/judicial-system/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { strings } from './ProsecutorSelection.strings'
-import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
-import { OptionsType, ValueType } from 'react-select'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   onChange: (prosecutorId: string) => boolean
@@ -21,6 +25,7 @@ interface Props {
 const ProsecutorSelection: React.FC<Props> = (props) => {
   const { onChange } = props
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
 
   const selectedProsecutor = useMemo(() => {
@@ -41,16 +46,18 @@ const ProsecutorSelection: React.FC<Props> = (props) => {
     return data?.users
       .filter(
         (aUser: User) =>
-          aUser.role === UserRole.PROSECUTOR &&
-          (!workingCase.creatingProsecutor ||
-            aUser.institution?.id ===
-              workingCase.creatingProsecutor?.institution?.id),
+          aUser.role === UserRole.Prosecutor &&
+          ((!workingCase.creatingProsecutor &&
+            aUser.institution?.id === user?.institution?.id) ||
+            (workingCase.creatingProsecutor &&
+              aUser.institution?.id ===
+                workingCase.creatingProsecutor?.institution?.id)),
       )
       .map((prosecutor: User) => ({
         label: prosecutor.name,
         value: prosecutor.id,
       }))
-  }, [data?.users, workingCase.creatingProsecutor])
+  }, [data?.users, user?.institution?.id, workingCase.creatingProsecutor])
 
   return (
     <Select

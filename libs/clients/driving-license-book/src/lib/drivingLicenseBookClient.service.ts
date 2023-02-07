@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { AuthHeaderMiddleware, User } from '@island.is/auth-nest-tools'
 import {
+  AllowedPractieDrivingInput,
   CreateDrivingSchoolTestResultInput,
   CreatePracticalDrivingLessonInput,
   DeletePracticalDrivingLessonInput,
@@ -74,7 +75,9 @@ export class DrivingLicenseBookClientApiFactory {
     if (token) {
       return api.withMiddleware(new AuthHeaderMiddleware(`Bearer ${token}`))
     } else {
-      throw new Error('Syslumenn client configuration and login went wrong')
+      throw new Error(
+        'Driving license book client configuration and login went wrong',
+      )
     }
   }
 
@@ -207,7 +210,9 @@ export class DrivingLicenseBookClientApiFactory {
     const activeBook = await this.getActiveBookId(nationalId)
 
     const book = data?.books?.filter((b) => b.id === activeBook && !!b.id)[0]
-
+    const hasPracticeDriving = activeBook
+      ? await this.hasPracticeDriving(activeBook)
+      : false
     if (!book) {
       this.logger.error(
         `${LOGTAG} Error fetching student, student has no active book`,
@@ -216,7 +221,7 @@ export class DrivingLicenseBookClientApiFactory {
         `driving-license-book-client: Student has no active book`,
       )
     }
-    return getStudentAndBookMapper(data, book)
+    return getStudentAndBookMapper(data, book, hasPracticeDriving)
   }
 
   async getMostRecentStudentBook({
@@ -332,5 +337,29 @@ export class DrivingLicenseBookClientApiFactory {
       licenseCategory: LICENSE_CATEGORY_B,
     })
     return data?.bookId || null
+  }
+
+  private async hasPracticeDriving(id: string): Promise<boolean> {
+    const api = await this.create()
+    const { data } = await api.apiStudentGetLicenseBookIdGet({ id })
+    return data?.practiceDriving || false
+  }
+
+  async allowPracticeDriving({
+    teacherNationalId,
+    studentNationalId,
+  }: AllowedPractieDrivingInput) {
+    const api = await this.create()
+    try {
+      await api.apiTeacherCreateAllowedPracticeDrivingPost({
+        createAllowedPractieDrivingRequestBody: {
+          teacherSsn: teacherNationalId,
+          studentSsn: studentNationalId,
+        },
+      })
+      return { success: true }
+    } catch (e) {
+      return { success: false }
+    }
   }
 }

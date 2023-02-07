@@ -48,8 +48,15 @@ import {
 import { DiscountService } from '../discount'
 import { Discount } from '../discount/discount.model'
 import { AuthGuard } from '../common'
-import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -328,7 +335,7 @@ export class PublicFlightController {
       throw new NotFoundException(`Flight<${params.flightId}> not found`)
     }
 
-    const flightLeg = await flight.flightLegs.find(
+    const flightLeg = await flight.flightLegs?.find(
       (flightLeg) => flightLeg.id === params.flightLegId,
     )
     if (!flightLeg) {
@@ -340,37 +347,61 @@ export class PublicFlightController {
   }
 }
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AirDiscountSchemeScope.admin)
 @Controller('api/private')
-export class PrivateFlightController {
+@ApiTags('Admin')
+@ApiBearerAuth()
+export class PrivateFlightAdminController {
   constructor(private readonly flightService: FlightService) {}
 
   @Get('flights')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
   }
 
   @Post('flightLegs')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
-  getFlightLegs(@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
+  @ApiOkResponse({ type: [FlightLeg] })
+  getFlightLegs(@Body() body: GetFlightLegsBody): Promise<FlightLeg[]> {
     return this.flightService.findAllLegsByFilter(body)
   }
 
   @Post('flightLegs/confirmInvoice')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
-  async confirmInvoice(
-    @Body() body: ConfirmInvoiceBody | {},
-  ): Promise<FlightLeg[]> {
+  @ApiOkResponse({ type: [FlightLeg] })
+  async confirmInvoice(@Body() body: ConfirmInvoiceBody): Promise<FlightLeg[]> {
     let flightLegs = await this.flightService.findAllLegsByFilter(body)
     flightLegs = await this.flightService.finalizeCreditsAndDebits(flightLegs)
     return flightLegs
   }
+}
+
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AirDiscountSchemeScope.default)
+@Controller('api/private')
+@ApiTags('Users')
+@ApiBearerAuth()
+export class PrivateFlightUserController {
+  constructor(private readonly flightService: FlightService) {}
 
   @Get('users/:nationalId/flights')
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
   getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
     return this.flightService.findThisYearsFlightsByNationalId(
       params.nationalId,
     )
+  }
+
+  @Get('users/userAndRelationsFlights')
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
+  async getUserAndRelationsFlights(
+    @CurrentUser() authUser: AuthUser,
+  ): Promise<Flight[]> {
+    return this.flightService.findThisYearsFlightsForUserAndRelations(authUser)
   }
 }

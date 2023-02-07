@@ -43,14 +43,14 @@ export const information = {
         description: 'Pick vehicle label',
       },
       placeholder: {
-        id: 'ta.ovrc.application:information.labels.pickVehicle.placeholder',
+        id: 'ta.tvo.application:information.labels.pickVehicle.placeholder',
         defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle placeholder',
       },
-      isStolenTag: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.isStolenTag',
-        defaultMessage: 'Bifreið stolin',
-        description: 'Pick vehicle is stolen tag',
+      hasErrorTitle: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.hasErrorTitle',
+        defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
+        description: 'Pick vehicle has an error title',
       },
       isNotDebtLessTag: {
         id:
@@ -186,6 +186,11 @@ export const information = {
         id: 'ta.tvo.application:information.labels.coOwner.add',
         defaultMessage: 'Bæta við meðeiganda',
         description: 'Co-owner add label',
+      },
+      error: {
+        id: 'ta.tvo.application:information.labels.coOwner.error',
+        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
+        description: 'Co-owner error message',
       },
     }),
     operator: defineMessages({

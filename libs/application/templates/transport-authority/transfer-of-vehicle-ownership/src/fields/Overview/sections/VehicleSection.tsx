@@ -8,7 +8,8 @@ import parseISO from 'date-fns/parseISO'
 import { useLocale } from '@island.is/localization'
 import { information, overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
-import { CoOwnerAndOperator, ReviewScreenProps } from '../../../types'
+import { CoOwnerAndOperator, ReviewScreenProps } from '../../../shared'
+import { formatIsk } from '../../../utils'
 
 export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   application,
@@ -27,7 +28,7 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   const carColor = getValueViaPath(answers, 'pickVehicle.color', undefined) as
     | string
     | undefined
-  const carPlate = getValueViaPath(answers, 'vehicle.plate', '') as string
+  const carPlate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
   const salePrice = getValueViaPath(answers, 'vehicle.salePrice', '') as string
   const buyerCoOwnerAndOperator = getValueViaPath(
     answers,
@@ -58,9 +59,9 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           {!isOperator && salePrice.length > 0 && (
             <Text>
-              {`${formatMessage(overview.labels.salePrice)} ${
-                getValueViaPath(answers, 'vehicle.salePrice', '') as string
-              } kr.`}
+              {`${formatMessage(overview.labels.salePrice)} ${formatIsk(
+                parseInt(salePrice, 10),
+              )}`}
             </Text>
           )}
           <Text>{`${formatMessage(

@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { GraphQLError } from 'graphql'
 import { Locale } from '@island.is/shared/types'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { User } from '@island.is/auth-nest-tools'
 
 import { Application } from './Application'

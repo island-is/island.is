@@ -1,5 +1,4 @@
 import { DefaultStateLifeCycle } from '@island.is/application/core'
-import type { User } from '@island.is/api/domains/national-registry'
 
 import {
   ApplicationTemplate,
@@ -9,6 +8,8 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { Events, States, Roles, ApiActions } from './constants'
@@ -19,6 +20,12 @@ import { getCurrentUserType } from './utils/helpers'
 
 import { AuthDelegationType } from '../types/schema'
 import { FSIUSERTYPE } from '../types'
+import {
+  CurrentUserTypeProvider,
+  IndentityApiProvider,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
@@ -31,17 +38,17 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
     const userType = getCurrentUserType(answers, externalData)
     const hasApprovedExternalData = application.answers?.approveExternalData
     const currentUser = hasApprovedExternalData
-      ? (externalData?.nationalRegistry?.data as User)
+      ? (externalData?.nationalRegistry?.data as NationalRegistryIndividual)
       : undefined
 
     if (userType === FSIUSERTYPE.INDIVIDUAL) {
       return currentUser
-        ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.name}`
+        ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.fullName}`
         : m.applicationTitleAlt
     }
 
-    return currentUser?.name
-      ? `${m.applicationTitle.defaultMessage} - ${currentUser.name}`
+    return currentUser?.fullName
+      ? `${m.applicationTitle.defaultMessage} - ${currentUser.fullName}`
       : m.applicationTitle
   },
   institution: m.institutionName,
@@ -54,11 +61,14 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
-          status: 'draft',
-          onEntry: {
-            apiModuleAction: ApiActions.getUserType,
-            shouldPersistToExternalData: true,
+          actionCard: {
+            title: m.applicationTitle,
           },
+          status: 'draft',
+          onEntry: defineTemplateApi({
+            action: ApiActions.getUserType,
+            shouldPersistToExternalData: true,
+          }),
 
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
@@ -74,6 +84,12 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                CurrentUserTypeProvider,
+                IndentityApiProvider,
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
             },
           ],
         },
@@ -87,10 +103,10 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

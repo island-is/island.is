@@ -6,7 +6,7 @@ import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
 import { Insurance } from '../Insurance'
 import { ReviewCoOwnerAndOperatorRepeater } from '../ReviewCoOwnerAndOperatorRepeater'
-import { ReviewCoOwnerAndOperatorField, ReviewState } from '../../types'
+import { ReviewCoOwnerAndOperatorField, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 
@@ -15,7 +15,7 @@ export const Review: FC<FieldBaseProps> = (props) => {
   const { userInfo } = useAuth()
   const [step, setStep] = useState<ReviewState>('states')
   const [insurance, setInsurance] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'insurance.name', undefined),
+    getValueViaPath(application.answers, 'insurance.value', undefined),
   )
   const [coOwnersAndOperators, setCoOwnersAndOperators] = useState<
     ReviewCoOwnerAndOperatorField[]

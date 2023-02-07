@@ -14,8 +14,9 @@ import { useFormContext } from 'react-hook-form'
 
 export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title } = field
-  const { formatMessage } = useLocale()
   const { errors, setValue } = useFormContext()
+  const { formatMessage } = useLocale()
+
   return (
     <Box>
       <Text variant="h4" as="h4">
@@ -31,7 +32,7 @@ export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
           children: undefined,
           options: (application) =>
             getOtherParentOptions(application, formatMessage),
-          onSelect: (s: string) => {
+          onSelect: async (s: string) => {
             if (s === SPOUSE || s === NO || s === SINGLE) {
               setValue('otherParentObj.otherParentName', '')
               setValue('otherParentObj.otherParentId', '')

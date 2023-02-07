@@ -40,28 +40,6 @@ export const slices = gql`
     hasBorderAbove
   }
 
-  fragment MailingListSignupFields on MailingListSignupSlice {
-    __typename
-    id
-    title
-    variant
-    description
-    inputLabel
-    fullNameLabel
-    questionLabel
-    yesLabel
-    noLabel
-    disclaimerLabel
-    categoryLabel
-    categories
-    inputs
-    buttonText
-    signupUrl
-    image {
-      ...ImageFields
-    }
-  }
-
   fragment StoryFields on StorySlice {
     __typename
     id
@@ -506,7 +484,6 @@ export const slices = gql`
     id
     title
     intro
-    recipient
     fields {
       title
       name
@@ -514,6 +491,7 @@ export const slices = gql`
       type
       required
       options
+      informationText
     }
     successText
     aboutYouHeadingText
@@ -629,13 +607,69 @@ export const slices = gql`
       type
       required
       options
+      informationText
     }
     translations
   }
 
+  fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
+    __typename
+    id
+    renderedTitle
+    resolvedSupportQNAs {
+      id
+      title
+      slug
+      answer {
+        ...BaseSlices
+      }
+      organization {
+        id
+        title
+        slug
+      }
+      category {
+        title
+        description
+        slug
+      }
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
+    link {
+      text
+      url
+    }
+    supportQNAs {
+      id
+      title
+      slug
+      answer {
+        ...BaseSlices
+      }
+      organization {
+        id
+        title
+        slug
+      }
+      category {
+        title
+        description
+        slug
+      }
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
-    ...MailingListSignupFields
     ...StoryFields
     ...LatestNewsFields
     ...LinkCardFields
@@ -675,6 +709,7 @@ export const slices = gql`
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+    ...FeaturedSupportQNAsFields
   }
 `
 
@@ -687,7 +722,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-export const nestedFields = `
+const nestedContainerFields = `
   ... on AccordionSlice {
     ...AccordionSliceFields
     accordionItems {
@@ -723,4 +758,15 @@ export const nestedFields = `
       }
     }
   }
+`
+
+export const nestedFields = `
+  ... on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+      ${nestedContainerFields}
+    }
+  }
+  ${nestedContainerFields}
 `

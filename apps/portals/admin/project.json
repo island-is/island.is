@@ -33,22 +33,26 @@
           "extractLicenses": true,
           "vendorChunk": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
-    "serve": {
+    "generateDevIndexHTML": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src",
-          "yarn nx run portals-admin:serveReal"
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src"
         ]
       }
     },
-    "serveReal": {
+    "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "portals-admin:build",
-        "port": 4201,
         "hmr": true
       },
       "configurations": {
@@ -56,7 +60,13 @@
           "buildTarget": "portals-admin:build:production",
           "hmr": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -77,6 +87,20 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/portals/admin/src/{screens,components}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn get-secrets portals-admin"],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn start portals-admin"],
+        "parallel": true
       }
     },
     "docker-static": {}

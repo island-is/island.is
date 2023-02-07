@@ -11,7 +11,6 @@ import {
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
-  AccessDeniedLegal,
   ServicePortalModuleComponent,
   IntroHeader,
   EmptyState,
@@ -26,7 +25,6 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation } from 'react-router-dom'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { messages } from '../../utils/messages'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
@@ -42,6 +40,7 @@ import {
 } from '../../utils/types'
 import TableHeading from '../../components/TableHeading/TableHeading'
 import * as styles from './Overview.css'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -82,6 +81,16 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [page, setPage] = useState(1)
   const [isEmpty, setEmpty] = useState(false)
 
+  const isLegal = userInfo.profile.delegationType?.includes(
+    AuthDelegationType.LegalGuardian,
+  )
+  const dateOfBirth = userInfo?.profile.dateOfBirth
+  let isOver15 = false
+  if (dateOfBirth) {
+    isOver15 = differenceInYears(new Date(), dateOfBirth) > 15
+  }
+  const hideHealthData = isOver15 && isLegal
+
   const [sortState, setSortState] = useState<SortType>({
     direction: 'Descending',
     key: 'Date',
@@ -90,7 +99,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     false,
   )
   const { scrollToRef } = useScrollToRefOnUpdate([page])
-  const { pathname } = useLocation()
 
   const [filterValue, setFilterValue] = useState<FilterValuesType>(
     defaultFilterValues,
@@ -107,6 +115,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     opened: filterValue.showUnread ? false : null,
     page: page,
     pageSize: pageSize,
+    isLegalGuardian: hideHealthData,
   })
 
   const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
@@ -157,13 +166,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
       setCategoriesAvailable(categoriesData.getDocumentCategories)
     }
   }, [categoriesLoading])
-
-  const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
-  const dateOfBirth = userInfo?.profile.dateOfBirth
-  let isOver15 = false
-  if (dateOfBirth) {
-    isOver15 = differenceInYears(new Date(), dateOfBirth) > 15
-  }
 
   const filteredDocuments = data.documents
 
@@ -268,10 +270,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     return debounce(handleSearchChange, 500)
   }, [])
 
-  if (isLegal && isOver15) {
-    return <AccessDeniedLegal userInfo={userInfo} client={client} />
-  }
-
   if (isEmpty) {
     return (
       <Box marginBottom={[4, 4, 6, 10]}>
@@ -367,6 +365,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       )}
                       documentLine={doc}
                       documentCategories={categoriesAvailable}
+                      userInfo={userInfo}
                     />
                   </Box>
                 ))}

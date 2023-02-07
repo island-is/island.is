@@ -2,15 +2,22 @@ import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { PropertyDetail } from '../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
 
-  const item = externalData.payment.data as {
+  const items = externalData.payment.data as {
     priceAmount: number
+    chargeItemCode: string
     chargeItemName: string
-  }
+  }[]
+
+  const item = items?.find(
+    ({ chargeItemCode }) =>
+      chargeItemCode === ChargeItemCode.MORTGAGE_CERTIFICATE,
+  )
 
   const { propertyDetails } = externalData.validateMortgageCertificate
     ?.data as {

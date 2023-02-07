@@ -1,5 +1,9 @@
-import { FieldBaseProps, FormText } from '@island.is/application/types'
-import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
+import {
+  FieldBaseProps,
+  FormText,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
+import { UserProfile } from '@island.is/api/schema'
 import { StatusTypes } from './shared'
 
 export interface Status {
@@ -58,7 +62,7 @@ export interface ContentType {
 }
 
 export interface ExternalDataNationalRegistry {
-  data: NationalRegistryUser
+  data: NationalRegistryIndividual
 }
 
 export interface ExternalDataUserProfile {
