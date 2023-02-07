@@ -168,7 +168,7 @@ You can see a simple example from the reference-template [here](https://github.c
 
 We have a few different statuses that an application can be in. They are:
 
-- `notstarted` The user has opened the application / it is saved in the database, but is not listed yet (etc still in prerequisites)
+- `notstarted` The user has opened the application / it is saved in the database, but is not listed yet (eg. still in prerequisites)
 - `draft` - The application has been created but not submitted.
 - `inprogress` - The application has been submitted to another entity other than the applicant and has yet to receive some information from that party in order to be completed.
 - `completed` - The application has been submitted and requires no further action and is finished.
