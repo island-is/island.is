@@ -98,4 +98,21 @@ export const errors = defineMessages({
     description:
       'Notaður sem titill fyrir popup glugga sem segir að skjal sé ekki lengur aðgengilegt í RVG þegar reynt er að opna það',
   },
+  createIndictmentCount: {
+    id: 'judicial.system.core:errors.create_indictment_count',
+    defaultMessage: 'Upp kom villa við að stofna nýjan ákærulið',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að stofna nýjan ákærulíð',
+  },
+  updateIndictmentCount: {
+    id: 'judicial.system.core:errors.update_indictment_count',
+    defaultMessage: 'Upp kom villa við að uppfæra ákærulið',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að uppfæra ákærulíð',
+  },
+  deleteIndictmentCount: {
+    id: 'judicial.system.core:errors.delete_indictment_count',
+    defaultMessage: 'Upp kom villa við að eyða ákærulið',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða ákærulíð',
+  },
 })
