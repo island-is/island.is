@@ -1210,14 +1210,9 @@ export class ApplicationController {
       id,
       user,
     )
-
-    try {
-      return await this.historyService.getHistoryByApplicationId(
-        existingApplication.id,
-      )
-    } catch (error) {
-      throw new NotFoundException('History not found')
-    }
+    return await this.historyService.getHistoryByApplicationId(
+      existingApplication.id,
+    )
   }
 
   @Scopes(ApplicationScope.write)

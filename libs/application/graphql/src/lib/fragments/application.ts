@@ -23,8 +23,6 @@ export const ApplicationFragment = gql`
       deleteButton
     }
     typeId
-    answers
-    externalData
     progress
     name
     institution
@@ -32,6 +30,7 @@ export const ApplicationFragment = gql`
     history {
       id
       contentfulId
+      date
     }
   }
 `
