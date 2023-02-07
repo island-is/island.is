@@ -15,7 +15,6 @@ import axios from 'axios'
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 
-
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -70,7 +69,7 @@ export class NotificationsService {
       })
       .then((response) => {
         console.log(response.data.data.hnippTemplateCollection.items)
-        
+
         for (const item of response.data.data.hnippTemplateCollection.items) {
           // contentful returns null for empty arrays
           if (item.args == null) {
