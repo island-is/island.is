@@ -297,6 +297,7 @@ api:
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SESSIONS_API_URL: 'http://web-services-sessions-api.services-sessions.svc.cluster.local'
     SOFFIA_SOAP_URL: 'https://soffiaprufa.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
