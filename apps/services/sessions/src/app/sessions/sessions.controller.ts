@@ -47,6 +47,55 @@ export class SessionsController {
   @Documentation({
     description: 'Get all sessions for the authenticated user.',
     response: { status: 200, type: SessionsResultDto },
+    request: {
+      query: {
+        from: {
+          description: 'Only return sessions from this date.',
+          required: false,
+          type: 'date',
+        },
+        to: {
+          description: 'Only return sessions to this date.',
+          required: false,
+          type: 'date',
+        },
+        limit: {
+          description: 'Limits the number of results in a request.',
+          required: false,
+          schema: { type: 'number', default: '10' },
+        },
+        before: {
+          description:
+            'The value of `startCursor` from the previous response pageInfo to query the previous page of `limit` number of data items.',
+          required: false,
+          type: 'string',
+        },
+        after: {
+          description:
+            'The value of `endCursor` from the response to query the next page of `limit` number of data items.',
+          required: false,
+          type: 'string',
+        },
+        order: {
+          description: 'Ordering of the results by timestamp.',
+          required: false,
+          schema: {
+            enum: ['ASC', 'DESC'],
+            default: 'DESC',
+          },
+        },
+      },
+      header: {
+        'X-Query-OtherUser': {
+          description: 'The identifier of a user associated with a session.',
+          required: false,
+          schema: {
+            type: 'string',
+            pattern: '^\\d{10}$',
+          },
+        },
+      },
+    },
   })
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Audit<SessionsResultDto>({
@@ -54,10 +103,10 @@ export class SessionsController {
   })
   findAll(
     @CurrentUser() user: User,
-    @Headers('X-Query-OtherUser') otherUser: string,
     @Query() query: SessionsQueryDto,
+    @Headers('X-Query-OtherUser') otherUser?: string,
   ): Promise<SessionsResultDto> {
-    return this.sessionsService.findAll(user, otherUser, query)
+    return this.sessionsService.findAll(user, query, otherUser)
   }
 
   @Post()
