@@ -1,20 +1,27 @@
-import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import React, { useMemo } from 'react'
+import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { theme } from '@island.is/island-ui/theme'
+import { useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
-import { useMemo } from 'react'
+import * as styles from './TryggingastofnunHeader.css'
 
-import * as styles from './FjarsyslaRikisinsHeader.css'
-
-const getDefaultStyle = () => {
+const getDefaultStyle = (width: number) => {
+  if (width >= theme.breakpoints.lg) {
+    return {
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/43iXK31NyP2Uv2Unxn9teW/b2b246e15c0b7f055c8c33782620b02e/TR-Header.jpg')",
+    }
+  }
   return {
-    backgroundBlendMode: 'saturation',
-    backgroundImage:
-      'url(https://images.ctfassets.net/8k0h54kbe6bj/GNOgfSn6O7XL9KC7Ma7P7/4f258a424ee5533913044e40255c8792/fjs-header-mynd.png)',
+    backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat !important',
+    backgroundColor: '#c5e9ac',
   }
 }
 
@@ -22,7 +29,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
+const TryggingastofnunHeader: React.FC<HeaderProps> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
@@ -34,11 +43,11 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
   const screenWidth = getScreenWidthString(width)
 
   return (
-    <div
-      style={n(`fjarsyslanHeader-${screenWidth}`, getDefaultStyle())}
+    <Box
+      style={n(`tryggingastofnunHeader-${screenWidth}`, getDefaultStyle(width))}
       className={styles.headerBg}
     >
-      <div className={styles.headerWrapper}>
+      <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization.logo && (
@@ -51,7 +60,7 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt="tryggingastofnun-logo"
                 />
               </Link>
             )
@@ -79,22 +88,15 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Hidden above="sm">
-                <Text variant="h1" as="h1" color="white">
-                  {organizationPage.title}
-                </Text>
-              </Hidden>
-              <Hidden below="md">
-                <Text fontWeight="semiBold" variant="h1" as="h1" color="white">
-                  {organizationPage.title}
-                </Text>
-              </Hidden>
+              <Text variant="h1" as="h1" fontWeight="semiBold">
+                {organizationPage.title}
+              </Text>
             </Link>
           </Box>
         </SidebarLayout>
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 
-export default FjarsyslaRikisinsHeader
+export default TryggingastofnunHeader
