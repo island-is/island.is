@@ -1,16 +1,16 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select'
 
 import { Box, Input, Select, Button } from '@island.is/island-ui/core'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
-
-import { indictmentCount as strings } from './IndictmentCount.strings'
-import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   ReactSelectOption,
   TempCase as Case,
 } from '@island.is/judicial-system-web/src/types'
-import { ValueType } from 'react-select'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { indictmentCount as strings } from './IndictmentCount.strings'
 
 interface Props {
   indictmentCount: TIndictmentCount

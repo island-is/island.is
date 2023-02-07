@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
+import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 
 import { toast } from '@island.is/island-ui/core'
@@ -8,11 +9,11 @@ import { IndictmentCount } from '@island.is/judicial-system-web/src/graphql/sche
 import { UpdateIndictmentCountMutation } from './updateIndictmentCountGql'
 import { CreateIndictmentCountMutation } from './createIndictmentCountGql'
 import { DeleteIndictmentCountMutation } from './deleteIndictmentCountGql'
-import { useIntl } from 'react-intl'
 
 interface CreateIndictmentCountMutationResponse {
   createIndictmentCount: IndictmentCount
 }
+
 interface UpdateIndictmentCountMutationResponse {
   updateIndictmentCount: {
     id: string
