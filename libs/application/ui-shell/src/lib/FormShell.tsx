@@ -3,6 +3,7 @@ import cn from 'classnames'
 
 import {
   Application,
+  ApplicationConfigurations,
   Form,
   FormModes,
   Schema,
@@ -25,6 +26,7 @@ import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
+import { useNavigate } from 'react-router-dom'
 
 export const FormShell: FC<{
   application: Application
@@ -33,6 +35,7 @@ export const FormShell: FC<{
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
   const { setInfo } = useHeaderInfo()
+  const navigate = useNavigate()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
@@ -71,6 +74,13 @@ export const FormShell: FC<{
       institutionName: application?.institution,
     })
   }, [setInfo, application])
+
+  useEffect(() => {
+    if (application.pruned) {
+      const slug = ApplicationConfigurations[application.typeId].slug
+      navigate(`/${slug}`)
+    }
+  }, [application.pruned, navigate, application.typeId])
 
   return (
     <Box className={styles.root}>

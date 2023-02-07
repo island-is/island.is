@@ -48,6 +48,7 @@ export interface Application<TAnswers = FormValue> {
   institution?: string
   progress?: number
   status: ApplicationStatus
+  pruned: boolean
 }
 
 export interface ApplicationWithAttachments extends Application {

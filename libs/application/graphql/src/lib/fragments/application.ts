@@ -25,5 +25,6 @@ export const ApplicationFragment = gql`
     name
     institution
     status
+    pruned
   }
 `

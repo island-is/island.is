@@ -347,6 +347,7 @@ export class ApplicationController {
       created: createdApplication.created,
       answers: updatedApplication.answers as FormValue,
       externalData: updatedApplication.externalData as ExternalData,
+      pruned: updatedApplication.pruned,
       attachments: {},
     }
 
@@ -500,6 +501,11 @@ export class ApplicationController {
       id,
       user,
     )
+
+    if (existingApplication.pruned === true) {
+      return existingApplication
+    }
+
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
     )

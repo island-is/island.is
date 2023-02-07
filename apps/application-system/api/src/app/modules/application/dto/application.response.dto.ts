@@ -129,6 +129,11 @@ export class ApplicationResponseDto {
   @IsEnum(ApplicationStatus)
   status!: ApplicationStatus
 
+  @ApiPropertyOptional()
+  @Expose()
+  @IsBoolean()
+  pruned?: boolean
+
   constructor(partial: Partial<ApplicationResponseDto>) {
     Object.assign(this, partial)
   }
