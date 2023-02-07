@@ -88,7 +88,7 @@ export const requestHandlers = [
       `r1/${XROAD_DRIVING_LICENSE_BOOK_PATH}/api/Student/UpdateLicenseBook/:id`,
     ),
     (req, res, ctx) => {
-      const body = req.body as any
+      const body = req.body as unknown
 
       const isFound = req.params.id === MOCK_LICENSE_BOOK_ID
       if (!isFound) {
