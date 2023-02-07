@@ -202,6 +202,7 @@
 /apps/services/auth/admin-api/                                                                      @island-is/fuglar @island-is/aranja
 /apps/services/auth/public-api/                                                                     @island-is/fuglar @island-is/aranja
 /apps/services/auth/delegation-api/                                                                 @island-is/fuglar @island-is/aranja
+/apps/services/sessions/                                                                            @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web/                                                                               @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                              @island-is/fuglar @island-is/aranja
