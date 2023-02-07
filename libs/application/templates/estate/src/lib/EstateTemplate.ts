@@ -167,6 +167,14 @@ const EstateTemplate: ApplicationTemplate<
                 ),
               read: 'all',
             },
+            {
+              id: Roles.APPLICANT_PRIVATE_EXCHANGE,
+              formLoader: () =>
+                import('../forms/PrivateExchange/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              read: 'all',
+            },
           ],
         },
       },
