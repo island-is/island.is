@@ -115,7 +115,7 @@ export async function disableObjectKey(page: Page, key: string | RegExp) {
   return await mockQGL(
     page,
     '**',
-    {},
+    `MOCKED-${key}`,
     { deepMockKey: key, patchResponse: true },
   )
 }
