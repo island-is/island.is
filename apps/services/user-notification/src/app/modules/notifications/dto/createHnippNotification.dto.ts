@@ -8,7 +8,7 @@ export class CreateHnippNotificationDto {
   recipient!: string
 
   @IsString()
-  @ApiProperty({ example: 'HNIPP.FJARSYSLAN.NEW_STATUS_MESSAGE' })
+  @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })
   templateId!: string
 
   @IsArray()

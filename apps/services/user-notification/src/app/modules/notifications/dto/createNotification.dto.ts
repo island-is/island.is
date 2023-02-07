@@ -4,6 +4,7 @@ import { IsNationalId } from '@island.is/nest/validators'
 
 export class CreateNotificationDto {
   @IsString()
+  @ApiProperty({ example: 'newDocumentMessage' })
   type!: string
 
   @IsNationalId()

@@ -30,7 +30,7 @@ import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-// @UseInterceptors(CacheInterceptor) // auto-caching GET responses
+@UseInterceptors(CacheInterceptor) // auto-caching GET responses
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -115,7 +115,7 @@ export class NotificationsController {
   @Post('/create-notification')
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
-  ): Promise<any | CreateNotificationResponse> {
+  ): Promise<CreateNotificationResponse> {
     const template = await this.notificationsService.getTemplate(
       body.templateId,
     )

@@ -12,8 +12,6 @@ import { Cache } from 'cache-manager'
 
 import axios from 'axios'
 
-// djdjdj dkdkd kkkkddd
-// adding a line due to linting - remove me later
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
