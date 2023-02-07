@@ -1,5 +1,3 @@
-// TRIGGER LINE FOR FEATURE DEPLOY WORKAROUND - REMOVE BEFORE MERGE
-
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
