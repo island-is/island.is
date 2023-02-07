@@ -62,14 +62,15 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApiWithAuth(user).applicationControllerFindAll(
-      {
-        nationalId: user.nationalId,
-        locale,
-        typeId: input?.typeId?.join(','),
-        status: input?.status?.join(','),
-      },
-    )
+    const sall = await this.applicationApiWithAuth(
+      user,
+    ).applicationControllerFindAll({
+      nationalId: user.nationalId,
+      locale,
+      typeId: input?.typeId?.join(','),
+      status: input?.status?.join(','),
+    })
+    return sall
   }
 
   async create(input: CreateApplicationInput, auth: Auth) {
@@ -200,6 +201,14 @@ export class ApplicationService {
     ).applicationControllerGetAttachmentPresignedURL({
       id,
       attachmentKey,
+    })
+  }
+
+  async getHistoryquery(id: string, auth: Auth) {
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGetHistory({
+      id,
     })
   }
 }

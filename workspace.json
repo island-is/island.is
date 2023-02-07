@@ -56,6 +56,7 @@
     "api-schema": "libs/api/schema",
     "application-api-core": "libs/application/api/core",
     "application-api-files": "libs/application/api/files",
+    "application-api-history": "libs/application/api/history",
     "application-api-payment": "libs/application/api/payment",
     "application-core": "libs/application/core",
     "application-graphql": "libs/application/graphql",

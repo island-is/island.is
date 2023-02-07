@@ -14,6 +14,8 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
+  ApplicationHistoryApi,
+  PendingAction,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
@@ -22,7 +24,7 @@ import { assign } from 'xstate'
 import { ApiActions } from '../shared'
 import {
   ReferenceDataApi,
-  EphemiralApi,
+  EphemeralApi,
   MyMockProvider,
 } from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
@@ -70,6 +72,30 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     }
   }
   return m.name
+}
+
+const testPendingAction = (
+  application: Application,
+  currentRole: ApplicationRole,
+): PendingAction => {
+  if (currentRole === Roles.APPLICANT) {
+    return {
+      displayStatus: 'actionable',
+      content: 'Þú átt þessa umsókn',
+    }
+  }
+
+  if (currentRole === Roles.ASSIGNEE) {
+    return {
+      displayStatus: 'inprogress',
+      content: 'Þú þarft að bíða eftir öðrum',
+    }
+  }
+
+  return {
+    displayStatus: 'completed',
+    content: 'Þú ert búinn',
+  }
 }
 
 const ReferenceApplicationTemplate: ApplicationTemplate<
@@ -123,7 +149,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 }),
                 UserProfileApi,
                 MyMockProvider,
-                EphemiralApi,
+                EphemeralApi,
               ],
               delete: true,
             },
@@ -140,7 +166,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Umsókn um ökunám',
           actionCard: {
             description: m.draftDescription,
+            pendingAction: testPendingAction,
           },
+          onEntry: [
+            ApplicationHistoryApi.configure({
+              params: {
+                contentId: m.career.id,
+              },
+            }),
+          ],
           progress: 0.25,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
@@ -215,6 +249,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: testPendingAction,
+          },
           onExit: [
             defineTemplateApi({
               action: ApiActions.completeApplication,
@@ -235,7 +272,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 answers: ['careerHistoryDetails', 'approvedByReviewer'],
               },
               read: 'all',
-              shouldBeListedForRole: false,
+              shouldBeListedForRole: true,
             },
             {
               id: Roles.APPLICANT,

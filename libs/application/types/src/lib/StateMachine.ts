@@ -12,6 +12,7 @@ import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { TemplateApi } from './template-api/TemplateApi'
+import { VariableStatement } from 'ts-morph'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -71,6 +72,17 @@ export type StateLifeCycle =
       shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 
+export type PendingActionDisplayStatus =
+  | 'inprogress'
+  | 'rejected'
+  | 'actionable'
+  | 'completed'
+
+export type PendingAction = {
+  displayStatus: PendingActionDisplayStatus
+  content?: StaticText
+}
+
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
   R = unknown
@@ -80,8 +92,13 @@ export interface ApplicationStateMeta<
   actionCard?: {
     title?: StaticText
     description?: StaticText
+
+    pendingAction?:
+      | PendingAction
+      | ((application: Application, role: ApplicationRole) => PendingAction)
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
+
   progress?: number
   /**
    * Represents the current status of the application in the state, defaults to draft

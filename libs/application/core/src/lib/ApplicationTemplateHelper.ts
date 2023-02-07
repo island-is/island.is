@@ -20,7 +20,9 @@ import {
   ReadWriteValues,
   RoleInState,
   TemplateApi,
+  PendingAction,
 } from '@island.is/application/types'
+import { ConsoleLogger } from '@nestjs/common'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -257,5 +259,38 @@ export class ApplicationTemplateHelper<
   getApisFromRoleInState(role: ApplicationRole): TemplateApi[] {
     const roleInState = this.getRoleInState(role)
     return roleInState?.api ?? []
+  }
+
+  getCurrentStatePendingAction(
+    application: Application,
+    currentRole: ApplicationRole,
+    formatMessage: FormatMessage,
+    stateKey: string = this.application.state,
+  ): PendingAction {
+    const stateInfo = this.getApplicationStateInformation(stateKey)
+
+    const pendingAction = stateInfo?.actionCard?.pendingAction
+
+    if (!pendingAction) {
+      return {
+        displayStatus: 'inprogress',
+      }
+    }
+
+    if (typeof pendingAction === 'function') {
+      const action = pendingAction(application, currentRole)
+
+      return {
+        displayStatus: action.displayStatus,
+        content: action.content ? formatMessage(action.content) : undefined,
+      }
+    }
+
+    return {
+      displayStatus: pendingAction.displayStatus,
+      content: pendingAction.content
+        ? formatMessage(pendingAction.content)
+        : undefined,
+    }
   }
 }

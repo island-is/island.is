@@ -22,6 +22,16 @@ class ActionCardTag {
   @Field(() => String, { nullable: true })
   variant?: string
 }
+
+@ObjectType()
+class PendingAction {
+  @Field(() => String, { nullable: true })
+  displayStatus?: string
+
+  @Field(() => String, { nullable: true })
+  content?: string
+}
+
 @ObjectType()
 class ActionCardMetaData {
   @Field(() => String, { nullable: true })
@@ -35,6 +45,9 @@ class ActionCardMetaData {
 
   @Field(() => Boolean, { nullable: true })
   deleteButton?: boolean
+
+  @Field(() => PendingAction, { nullable: true })
+  pendingAction?: PendingAction
 }
 
 @ObjectType()
@@ -83,6 +96,9 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+
+  @Field(() => [ApplicationHistory], { nullable: true })
+  history?: ApplicationHistory[] | []
 }
 
 @ObjectType()
@@ -92,4 +108,16 @@ export class ApplicationPayment {
 
   @Field()
   paymentUrl!: string
+}
+
+@ObjectType()
+export class ApplicationHistory {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => Date)
+  date!: Date
+
+  @Field(() => String, { nullable: true })
+  contentfulId?: string
 }

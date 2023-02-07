@@ -179,6 +179,9 @@
       "@island.is/application/api/files": [
         "libs/application/api/files/src/index.ts"
       ],
+      "@island.is/application/api/history": [
+        "libs/application/api/history/src/index.ts"
+      ],
       "@island.is/application/api/payment": [
         "libs/application/api/payment/src/index.ts"
       ],

@@ -21,5 +21,9 @@ export const ApplicationFragment = gql`
     name
     progress
     status
+    history {
+      id
+      contentfulId
+    }
   }
 `
