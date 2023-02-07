@@ -23,8 +23,6 @@ export const ApplicationFragment = gql`
       deleteButton
     }
     typeId
-    answers
-    externalData
     progress
     name
     institution

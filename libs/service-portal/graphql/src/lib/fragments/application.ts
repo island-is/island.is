@@ -15,6 +15,10 @@ export const ApplicationFragment = gql`
         label
         variant
       }
+      pendingAction {
+        displayStatus
+        content
+      }
       deleteButton
     }
     typeId
@@ -24,6 +28,7 @@ export const ApplicationFragment = gql`
     history {
       id
       contentfulId
+      date
     }
   }
 `
