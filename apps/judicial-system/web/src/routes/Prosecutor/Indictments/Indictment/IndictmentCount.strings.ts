@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const indictmentCount = defineMessages({
   delete: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count_delete',
+    id: 'judicial.system.core:indictments_indictment.indictment_count.delete',
     defaultMessage: 'Eyða',
     description: 'Notaður sem texti á Eyða hnappi á ákæruliða skrefi í ákærum.',
   },

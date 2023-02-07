@@ -178,6 +178,11 @@ const CaseQuery = gql`
         id
         caseId
         policeCaseNumber
+        created
+        modified
+        vehicleRegistrationNumber
+        incidentDescription
+        legalArguments
       }
     }
   }

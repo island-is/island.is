@@ -112,12 +112,16 @@ const Indictment: React.FC = () => {
       indictmentCountId: string,
       updatedIndictmentCount: UpdateIndictmentCount,
     ) => {
-      updateIndictmentCount(
+      const returnedIndictmentCount = await updateIndictmentCount(
         workingCase.id,
         indictmentCountId,
         updatedIndictmentCount,
       )
-      updateIndictmentCountState(indictmentCountId, updatedIndictmentCount)
+
+      if (!returnedIndictmentCount) {
+        return
+      }
+      updateIndictmentCountState(indictmentCountId, returnedIndictmentCount)
     },
     [updateIndictmentCount, updateIndictmentCountState, workingCase.id],
   )

@@ -18,9 +18,7 @@ interface CreateIndictmentCountMutationResponse {
 }
 
 interface UpdateIndictmentCountMutationResponse {
-  updateIndictmentCount: {
-    id: string
-  }
+  updateIndictmentCount: IndictmentCount
 }
 
 interface DeleteIndictmentCountMutationResponse {
@@ -114,7 +112,10 @@ const useIndictmentCounts = () => {
           },
         })
 
-        return data?.updateIndictmentCount.id
+        if (!data) {
+          toast.error(formatMessage(errors.updateIndictmentCount))
+        }
+        return data?.updateIndictmentCount
       } catch (e) {
         toast.error(formatMessage(errors.updateIndictmentCount))
       }
