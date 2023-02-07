@@ -21,6 +21,9 @@ const Subscriptions = () => {
   const [institutionsData, setInstitutionsData] = useState(
     Object.entries(Types.institutions).map(([id, name]) => ({ id, name })),
   )
+  const [policyAreasData, setPolicyAreasData] = useState(
+    Object.entries(Types.policyAreas).map(([id, name]) => ({ id, name })),
+  )
   const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
   const settingSubscriptionArray = (newSubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
@@ -53,7 +56,18 @@ const Subscriptions = () => {
     )
   }
 
-  const tabTest = [
+  const PolicyAreasContent = () => {
+    return (
+      <SubscriptionTable
+        data={policyAreasData}
+        currentTab={'Málefnasvið'}
+        subscriptionArray={subscriptionArray}
+        setSubscriptionArray={settingSubscriptionArray}
+      />
+    )
+  }
+
+  const tabs = [
     {
       id: 'Mál',
       label: 'Mál',
@@ -64,6 +78,12 @@ const Subscriptions = () => {
       id: 'Stofnanir',
       label: 'Stofnanir',
       content: <InstitutionsContent />,
+      disabled: false,
+    },
+    {
+      id: 'Málefnasvið',
+      label: 'Málefnasvið',
+      content: <PolicyAreasContent />,
       disabled: false,
     },
   ]
@@ -104,10 +124,9 @@ const Subscriptions = () => {
             selected={currentTab}
             onlyRenderSelectedTab={true}
             label="Veldu tegund áskrifta"
-            tabs={tabTest}
+            tabs={tabs}
             contentBackground="transparent"
             onChange={(e) => setCurrentTab(e)}
-            
           />
         </Box>
         <Box
