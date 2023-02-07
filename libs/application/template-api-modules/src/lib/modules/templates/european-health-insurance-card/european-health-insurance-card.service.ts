@@ -63,12 +63,25 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
     this.logger.info('EHIC: Getting response from service')
 
-    const resp = await this.ehic.cardStatus({
-      usernationalid: '0000000000',
-      applicantnationalids: ['0000000000'],
-    })
+    try {
+      const resp = await this.ehic.cardStatus({
+        usernationalid: '0000000000',
+        applicantnationalids: ['0000000000'],
+      })
+      // const resp = await this.ehic.requestCard({
+      //   applicantnationalid: '0000000000',
+      //   cardtype: 'plastic',
+      //   usernationalid: '0000000000',
+      // })
 
-    return resp
+      this.logger.info('RESPINSE; ' + resp)
+      this.logger.info('RESPINSE; ' + resp[0].applicantNationalId)
+
+      return resp
+    } catch (e) {
+      this.logger.error(e)
+    }
+    return null
   }
 
   async applyForPhysicalCard({

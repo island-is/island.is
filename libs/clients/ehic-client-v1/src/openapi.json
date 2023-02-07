@@ -12,7 +12,7 @@
   "paths": {
     "/ehic/v1/cardstatus/{usernationalid}/{applicantnationalids}": {
       "get": {
-        "tags": ["Ehic"],
+        "tags": ["ehic"],
         "operationId": "CardStatus",
         "parameters": [
           {
@@ -95,7 +95,7 @@
     },
     "/ehic/requestcard/v1/{usernationalid}/{applicantnationalid}/{cardtype}": {
       "post": {
-        "tags": ["Ehic"],
+        "tags": ["ehic"],
         "operationId": "RequestCard",
         "parameters": [
           {
@@ -144,7 +144,7 @@
     },
     "/ehic/fetchtemppdfcard/{usernationalid}/{applicantnationalid}/{cardnumber}": {
       "get": {
-        "tags": ["Ehic"],
+        "tags": ["ehic"],
         "operationId": "FetchTempPDFCard",
         "parameters": [
           {
