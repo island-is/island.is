@@ -12,6 +12,10 @@ import { Cache } from 'cache-manager'
 import { environment } from '../../../environments/environment'
 
 import axios from 'axios'
+
+const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
+
+
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -61,18 +65,18 @@ export class NotificationsService {
       .post(contentfulGqlUrl, contentfulHnippTemplatesQuery, {
         headers: {
           'content-type': 'application/json',
-          authorization: 'Bearer ' + environment.contentfulAccessToken,
+          authorization: 'Bearer ' + accessToken,
         },
       })
       .then((response) => {
-        console.log(response.data)
-        // for (const item of response.data.hnippTemplateCollection.items) {
-        //   //cache check
-        //   item.date = new Date().toISOString()
-        //   if (item.args == null) {
-        //     item.args = []
-        //   }
-        // }
+        console.log(response.data.data.hnippTemplateCollection.items)
+        
+        for (const item of response.data.data.hnippTemplateCollection.items) {
+          // contentful returns null for empty arrays
+          if (item.args == null) {
+            item.args = []
+          }
+        }
         return response.data
       })
       .catch((error) => {
