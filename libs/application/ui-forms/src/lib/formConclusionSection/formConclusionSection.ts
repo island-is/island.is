@@ -21,6 +21,18 @@ type props = {
   pdfButtonText?: MessageDescriptor
 }
 
+/**
+ * Creates a form conclusion section for applications
+ * so the developer doesn't have to write the same code over and over again.
+ *
+ * @param  alertTitle  Title of the green alert message.
+ * @param  alertMessage The message inside the green alert box.
+ * @param  expandableHeader Header of the expandable description section.
+ * @param  expandableIntro Intro text of the expandable description section.
+ * @param  expandableDescription Markdown code for the expandable description section, most applications use bulletpoints.
+ * @param  s3PdfKey The key of the pdf file in s3.
+ * @param  pdfButtonText The text of the button that links to a pdf file in s3.
+ */
 export const formConclusionSection = (props: props) =>
   buildSection({
     id: 'uiForms.conclusionSection',
