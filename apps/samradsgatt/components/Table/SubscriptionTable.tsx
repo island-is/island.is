@@ -13,10 +13,17 @@ const SubscriptionTable = ({ data, setData }) => {
     const chosenTab = "cases"
     let headerKey = 0
 
-    const onCheckboxChange = () => {
-        
+    const onCheckboxChange = (id: number) => {
+        const newData = data.map((item, idx: number) => {
+            if(idx === id) {
+                item.checked = !item.checked
+                return item
+            }
+            return item
+        })
+        setData(newData)
     }
-
+    
     return (
         <T.Table>
             <T.Head>
@@ -31,7 +38,7 @@ const SubscriptionTable = ({ data, setData }) => {
             <T.Body>
                 {data.map((item, idx) => (
                     <T.Row key={item.id }>
-                        <T.Data borderColor="transparent" box={{ className: styles.tableRowLeft, background: tableRowBackgroundColor(idx)}}><Checkbox checked={item.checked} onChange={onCheckboxChange} /></T.Data>
+                        <T.Data borderColor="transparent" box={{ className: styles.tableRowLeft, background: tableRowBackgroundColor(idx)}}><Checkbox checked={item.checked} onChange={() => onCheckboxChange(item.id)} /></T.Data>
                         <T.Data borderColor="transparent" box={{ background: tableRowBackgroundColor(idx)}}><Text variant="h5">{item.caseNumber}</Text></T.Data>
                         <T.Data borderColor="transparent" box={{ className: styles.tableRowRight, background: tableRowBackgroundColor(idx)}}><Text variant="medium">{item.caseTitle}</Text></T.Data>
                     </T.Row>
