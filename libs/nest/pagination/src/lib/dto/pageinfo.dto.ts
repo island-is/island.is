@@ -8,17 +8,17 @@ export class PageInfoDto {
   hasNextPage!: boolean
 
   @Field({ nullable: true })
-  @ApiPropertyOptional({ example: false })
+  @ApiProperty({ example: false })
   hasPreviousPage?: boolean
 
   @Field({ nullable: true })
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: 'WyIwM2JmMWUwOS1hNWEwLTQyNDMtOTAxOC1mY2FhYjg4NTVkMTYiXQ==',
   })
   startCursor?: string
 
   @Field({ nullable: true })
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: 'WyJmODY1MDAzMS03YTFkLTRhOTAtOWI2OC00ODg1YjlkZDZjZDgiXQ==',
   })
   endCursor?: string
