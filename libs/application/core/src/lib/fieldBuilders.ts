@@ -28,8 +28,12 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
+  MessageWithLinkButtonField,
+  ExpandableDescriptionField,
+  AlertMessageField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { StaticText } from 'static-text'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -410,5 +414,63 @@ export function buildRedirectToServicePortalField(data: {
     title,
     type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL,
     component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL,
+  }
+}
+
+export function buildMessageWithLinkButtonField(data: {
+  id: string
+  title: FormText
+  url: string
+  buttonTitle: FormText
+  message: FormText
+}): MessageWithLinkButtonField {
+  const { id, title, url, message, buttonTitle } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    url,
+    message,
+    buttonTitle,
+    type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+    component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+  }
+}
+
+export function buildExpandableDescriptionField(data: {
+  id: string
+  title: FormText
+  description: StaticText
+  introText: FormText
+  startExpanded?: boolean
+}): ExpandableDescriptionField {
+  const { id, title, description, introText, startExpanded } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    description,
+    introText,
+    startExpanded,
+    type: FieldTypes.EXPANDABLE_DESCRIPTION,
+    component: FieldComponents.EXPANDABLE_DESCRIPTION,
+  }
+}
+
+export function buildAlertMessageField(data: {
+  id: string
+  title: FormText
+  message?: FormText
+  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
+}): AlertMessageField {
+  const { id, title, message, alertType } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    message,
+    alertType,
+    type: FieldTypes.ALERT_MESSAGE,
+    component: FieldComponents.ALERT_MESSAGE,
   }
 }

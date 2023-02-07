@@ -3,11 +3,11 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
 import { Box, Select, Option, Tooltip } from '@island.is/island-ui/core'
-import { indictmentCases } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   User,
   UserRole,
+  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
@@ -30,7 +30,7 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
     .filter(
       (user: User) =>
         (user.role === UserRole.Judge ||
-          (indictmentCases.includes(workingCase.type) &&
+          (workingCase.type === CaseType.Indictment &&
             user.role === UserRole.Assistant)) &&
         user.institution?.id === workingCase.court?.id,
     )

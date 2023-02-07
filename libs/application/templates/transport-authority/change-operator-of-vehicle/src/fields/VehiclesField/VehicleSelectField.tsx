@@ -10,7 +10,7 @@ import {
   BulletList,
   InputError,
 } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
@@ -104,7 +104,6 @@ export const VehicleSelectField: FC<
             !!response?.vehicleOperatorChangeChecksByPermno
               ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
-          setPlate(currentVehicle.permno || '')
           setColor(currentVehicle.color || undefined)
           setType(currentVehicle.make || undefined)
           setIsLoading(false)

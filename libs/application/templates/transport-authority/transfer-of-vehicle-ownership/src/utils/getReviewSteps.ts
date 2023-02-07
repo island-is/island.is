@@ -2,7 +2,7 @@ import {
   ReviewCoOwnerAndOperatorField,
   ReviewSectionProps,
   UserInformation,
-} from '../types'
+} from '../shared'
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { review } from '../lib/messages'
