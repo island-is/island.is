@@ -13,14 +13,15 @@ export const ModuleErrorScreen = ({ name }: ModuleErrorScreenProps) => {
   const { formatMessage } = useLocale()
   const error = useRouteError()
 
-  // TODO - Should we do something with error
   console.error(error)
 
   return (
     <Box padding={8}>
       <Text variant="h2" as="h2">
-        {formatMessage(m.couldNotFetch)} {formatMessage(name)},
         {formatMessage(m.somethingWrong)}
+      </Text>
+      <Text>
+        {formatMessage(m.couldNotFetch)} <i>{formatMessage(name)}</i>
       </Text>
     </Box>
   )

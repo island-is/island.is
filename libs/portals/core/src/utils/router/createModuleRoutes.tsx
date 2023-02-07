@@ -8,10 +8,15 @@ import {
 } from '../..'
 import { ModuleErrorScreen } from '../../screens/ModuleErrorScreen'
 
+type CreateRoutes = {
+  childRoute?: boolean
+} & Pick<PrepareRouterDataReturnType, 'routes' | 'userInfo'>
+
 const createRoutes = ({
   routes,
   userInfo,
-}: Pick<PrepareRouterDataReturnType, 'routes' | 'userInfo'>): RouteObject[] => {
+  childRoute,
+}: CreateRoutes): RouteObject[] => {
   return routes.map((route) =>
     route.enabled === false
       ? {
@@ -26,11 +31,18 @@ const createRoutes = ({
           path: route.path,
           element: <ModuleRoute route={route} />,
           loader: route.loader,
-          errorElement: route.errorElement || (
+          action: route.action,
+          errorElement: childRoute ? (
+            route.errorElement
+          ) : (
             <ModuleErrorScreen name={route.name} />
           ),
           ...(route.children && {
-            children: createRoutes({ routes: route.children, userInfo }),
+            children: createRoutes({
+              routes: route.children,
+              userInfo,
+              childRoute: true,
+            }),
           }),
         },
   )

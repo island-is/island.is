@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
 
@@ -318,7 +318,6 @@ const GrantAccess: PortalModuleComponent = ({ userInfo }) => {
           </form>
         </FormProvider>
       </div>
-      <Outlet />
     </>
   )
 }

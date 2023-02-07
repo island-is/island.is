@@ -8,12 +8,13 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.css'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
 import { RemoveScroll } from 'react-remove-scroll'
@@ -22,6 +23,7 @@ import { useAlertBanners } from '@island.is/service-portal/graphql'
 import { useMeasure } from 'react-use'
 
 export const Layout: FC = ({ children }) => {
+  const navigation = useNavigation()
   useNamespaces(['service.portal', 'global'])
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
@@ -70,7 +72,20 @@ export const Layout: FC = ({ children }) => {
                 <Hidden print>
                   <ContentBreadcrumbs />
                 </Hidden>
-                <div>{children}</div>
+                <div>
+                  {navigation.state === 'loading' && (
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      role="progressbar"
+                      aria-valuetext="Er að sækja gögn"
+                    >
+                      <LoadingDots large />
+                    </Box>
+                  )}
+                  {children}
+                </div>
               </GridColumn>
             </GridRow>
           </GridContainer>

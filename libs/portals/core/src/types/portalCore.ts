@@ -1,3 +1,4 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FC, LazyExoticComponent } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { RouteObject } from 'react-router-dom'
@@ -62,6 +63,10 @@ export interface PortalNavigationItem {
  */
 export interface PortalModuleProps {
   userInfo: User
+}
+
+export interface PortalModuleRoutesProps extends PortalModuleProps {
+  client: ApolloClient<NormalizedCacheObject>
 }
 
 /**
@@ -137,7 +142,7 @@ export interface PortalModule {
    * The  portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (props: PortalModuleProps) => PortalRoute[]
+  routes: (props: PortalModuleRoutesProps) => PortalRoute[]
 
   /**
    * Works the same way as routes.

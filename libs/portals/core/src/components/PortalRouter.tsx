@@ -10,6 +10,11 @@ import { createModuleRoutes } from '../utils/router/createModuleRoutes'
 import { PortalModule, PortalRoute } from '../types/portalCore'
 import { PortalMeta, PortalProvider } from './PortalProvider'
 import { prepareRouterData } from '../utils/router/prepareRouterData'
+import {
+  useApolloClient,
+  ApolloClient,
+  NormalizedCacheObject,
+} from '@apollo/client'
 
 type PortalRouterProps = {
   modules: PortalModule[]
@@ -22,6 +27,7 @@ export const PortalRouter = ({
   portalMeta,
   createRoutes,
 }: PortalRouterProps) => {
+  const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
   const [error, setError] = useState<Error | null>(null)
   const { userInfo } = useAuth()
   const featureFlagClient = useFeatureFlagClient()
@@ -36,6 +42,7 @@ export const PortalRouter = ({
         userInfo,
         featureFlagClient,
         modules,
+        client,
       })
         .then((data) => setRouterData(data))
         .catch((err) => setError(err))

@@ -18,12 +18,9 @@ import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteMo
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { DelegationsOutgoingHeader } from './DelegationsOutgoingHeader'
 import { DomainOption, useDomains } from '../../../hooks/useDomains/useDomains'
-import { ALL_DOMAINS } from '../../../constants/domain'
 import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
-
-const prepareDomainName = (domainName: string | null) =>
-  domainName === ALL_DOMAINS ? null : domainName
+import { prepareDomainName } from '../../../lib/loaders'
 
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -42,8 +39,8 @@ export const DelegationsOutgoing = () => {
         direction: AuthDelegationDirection.outgoing,
       },
     },
-    skip: !domainName || !lang,
-    fetchPolicy: 'cache-and-network',
+    // skip: !domainName || !lang,
+    //fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })
 
