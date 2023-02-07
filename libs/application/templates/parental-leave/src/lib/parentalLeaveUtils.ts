@@ -736,14 +736,14 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
-  let employers = getValueViaPath(answers, 'employers') as EmployerRow[]
+  let employers = getValueViaPath(answers, 'employers', []) as EmployerRow[]
   // old employer object
   if (!employers || employers.length === 0) {
     const employerEmailObj = getValueViaPath(answers, 'employer.email')
     if (employerEmailObj) {
       employers.push({
         email: employerEmailObj,
-        ratio: '100%',
+        ratio: '100',
         phoneNumber: getValueViaPath(answers, 'employerPhoneNumber'),
         reviewerNationalRegistryId: getValueViaPath(
           answers,
