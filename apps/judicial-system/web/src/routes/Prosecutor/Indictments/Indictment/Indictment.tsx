@@ -45,7 +45,7 @@ const Indictment: React.FC = () => {
   )
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
 
-  useDeb(workingCase, 'indictmentIntroduction')
+  useDeb(workingCase, ['indictmentIntroduction', 'demands'])
 
   useEffect(() => {
     if (isCaseUpToDate && !workingCase.demands) {
@@ -102,6 +102,7 @@ const Indictment: React.FC = () => {
               )
             }
             textarea
+            autoComplete="off"
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
           />
@@ -138,6 +139,7 @@ const Indictment: React.FC = () => {
                 )
               }
               textarea
+              autoComplete="off"
               required
               rows={7}
               autoExpand={{ on: true, maxHeight: 300 }}
