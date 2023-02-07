@@ -38,7 +38,6 @@ export type YesOrNo = typeof NO | typeof YES
 export interface Files {
   name: string
   key: string
-  isSend?: boolean
 }
 
 export interface VMSTPeriod {
