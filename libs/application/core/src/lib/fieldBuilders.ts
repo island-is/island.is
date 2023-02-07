@@ -31,9 +31,12 @@ import {
   MessageWithLinkButtonField,
   ExpandableDescriptionField,
   AlertMessageField,
+  Context,
+  S3PdfLinkField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
 import { StaticText } from 'static-text'
+import { ApolloClient } from '@apollo/client'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -417,13 +420,9 @@ export function buildRedirectToServicePortalField(data: {
   }
 }
 
-export function buildMessageWithLinkButtonField(data: {
-  id: string
-  title: FormText
-  url: string
-  buttonTitle: FormText
-  message: FormText
-}): MessageWithLinkButtonField {
+export function buildMessageWithLinkButtonField(
+  data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
+): MessageWithLinkButtonField {
   const { id, title, url, message, buttonTitle } = data
   return {
     children: undefined,
@@ -437,13 +436,9 @@ export function buildMessageWithLinkButtonField(data: {
   }
 }
 
-export function buildExpandableDescriptionField(data: {
-  id: string
-  title: FormText
-  description: StaticText
-  introText?: FormText
-  startExpanded?: boolean
-}): ExpandableDescriptionField {
+export function buildExpandableDescriptionField(
+  data: Omit<ExpandableDescriptionField, 'type' | 'component' | 'children'>,
+): ExpandableDescriptionField {
   const { id, title, description, introText, startExpanded } = data
   return {
     children: undefined,
@@ -456,13 +451,9 @@ export function buildExpandableDescriptionField(data: {
     component: FieldComponents.EXPANDABLE_DESCRIPTION,
   }
 }
-
-export function buildAlertMessageField(data: {
-  id: string
-  title: FormText
-  message?: FormText
-  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
-}): AlertMessageField {
+export function buildAlertMessageField(
+  data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
+): AlertMessageField {
   const { id, title, message, alertType } = data
   return {
     children: undefined,
@@ -472,5 +463,18 @@ export function buildAlertMessageField(data: {
     alertType,
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
+  }
+}
+
+export function buildS3PdfLinkField(
+  data: Omit<S3PdfLinkField, 'type' | 'component' | 'children'>,
+): S3PdfLinkField {
+  const { s3key } = data
+  return {
+    ...extractCommonFields(data),
+    s3key,
+    children: undefined,
+    type: FieldTypes.S3_PDF_LINK,
+    component: FieldComponents.S3_PDF_LINK,
   }
 }

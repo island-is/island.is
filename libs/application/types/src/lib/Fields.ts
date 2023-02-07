@@ -104,6 +104,7 @@ export enum FieldTypes {
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MESSAGE_WITH_LINK_BUTTON_FIELD',
   EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
+  S3_PDF_LINK = 'S3_PDF_LINK',
 }
 
 export enum FieldComponents {
@@ -124,6 +125,7 @@ export enum FieldComponents {
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
+  S3_PDF_LINK = 'S3PdfLinkFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -297,6 +299,12 @@ export interface AlertMessageField extends BaseField {
   message?: FormText
 }
 
+export interface S3PdfLinkField extends BaseField {
+  readonly type: FieldTypes.S3_PDF_LINK
+  component: FieldComponents.S3_PDF_LINK
+  s3key: FormText
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -315,3 +323,4 @@ export type Field =
   | MessageWithLinkButtonField
   | ExpandableDescriptionField
   | AlertMessageField
+  | S3PdfLinkField

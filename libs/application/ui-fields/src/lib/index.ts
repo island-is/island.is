@@ -14,3 +14,4 @@ export { RedirectToServicePortalFormField } from './RedirectToServicePortalFormF
 export { MessageWithLinkButtonFormField } from './MessageWithLinkButtonFormField/MessageWithLinkButtonFormField'
 export { AlertMessageFormField } from './AlertMessageFormField/AlertMessageFormField'
 export { ExpandableDescriptionFormField } from './ExpandableDescriptionFormField/ExpandableDescriptionFormField'
+export { S3PdfLinkFormField } from './S3PdfLinkFormField/S3PdfLinkFormField'
