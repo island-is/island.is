@@ -6,14 +6,14 @@ const dbName = 'services_sessions'
 
 const servicePostgresInfo = {
   // The service has only read permissions
-  username: 'services_sessions',
+  username: 'services_sessions_read',
   name: dbName,
   passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
 }
 
 const workerPostgresInfo = {
   // Worker has write permissions
-  username: 'services_sessions_worker',
+  username: 'services_sessions',
   name: dbName,
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
 }
