@@ -11,7 +11,10 @@ import {
   EuropeanHealtInsuranceCardConfig,
   EUROPEAN_HEALTH_INSURANCE_CARD_CONFIG,
 } from './config/europeanHealthInsuranceCardConfig'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   CardResponse,
@@ -21,6 +24,7 @@ import {
 } from './dto/european-health-insurance-card.dtos'
 import { TemplateApiModuleActionProps } from '../../../types'
 
+// TODO: move to shared location
 export interface NationalRegistry {
   address: any
   nationalId: string
@@ -34,7 +38,7 @@ export interface NationalRegistry {
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   constructor(
-    private readonly ehic: EhicApi,
+    private readonly ehicApi: EhicApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
@@ -45,37 +49,70 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     return Object.keys(obj).filter((key) => obj[key] === value)
   }
 
+  getApplicants(
+    application: ApplicationWithAttachments,
+    cardType: string | null = null,
+  ): string[] {
+    this.logger.info('getApplicants')
+    const nridArr: string[] = []
+    this.logger.info(application.externalData)
+    this.logger.info(application.externalData.nationalRegistry?.data)
+    const userData = application.externalData.nationalRegistry
+      ?.data as NationalRegistry
+
+    this.logger.info('userdata' + userData)
+    if (userData?.nationalId) {
+      this.logger.info('adding to arr')
+      nridArr.push(userData.nationalId)
+    }
+
+    const spouseData = application?.externalData?.nationalRegistrySpouse
+      ?.data as NationalRegistry
+    if (spouseData?.nationalId) {
+      nridArr.push(spouseData.nationalId)
+    }
+
+    const custodyData = (application?.externalData
+      ?.childrenCustodyInformation as unknown) as NationalRegistry[]
+    for (let i = 0; i < custodyData?.length; i++) {
+      nridArr.push(custodyData[i].nationalId)
+    }
+
+    if (!cardType) {
+      this.logger.info(nridArr)
+      return nridArr
+    }
+
+    const applicants = this.getObjectKey(application.answers, true)
+    const apply: string[] = []
+
+    if (applicants.includes(`${cardType}-${userData?.nationalId}`)) {
+      apply.push(userData?.nationalId)
+    }
+
+    if (applicants.includes(`${cardType}-${spouseData?.nationalId}`)) {
+      apply.push(userData?.nationalId)
+    }
+
+    for (let i = 0; i < custodyData?.length; i++) {
+      if (applicants.includes(`${cardType}-${custodyData[i].nationalId}`)) {
+        apply.push(custodyData[i].nationalId)
+      }
+    }
+
+    this.logger.info(apply)
+
+    return apply
+  }
+
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
-    // const nridArr = []
-    // const nationalRegistryData = application.externalData.nationalRegistry
-    //   ?.data as NationalRegistry
-    // nridArr.push(nationalRegistryData.nationalId)
-
-    // const nationalRegistryDataSpouse = application?.externalData
-    //   ?.nationalRegistrySpouse?.data as NationalRegistry
-    // nridArr.push(nationalRegistryDataSpouse.nationalId)
-
-    // const nationalRegistryDataChildren = (application?.externalData
-    //   ?.childrenCustodyInformation as unknown) as NationalRegistry[]
-    // for (let i = 0; i < nationalRegistryDataChildren.length; i++) {
-    //   nridArr.push(nationalRegistryDataChildren[i].nationalId)
-    // }
-
-    this.logger.info('EHIC: Getting response from service')
+    const nridArr = this.getApplicants(application)
 
     try {
-      const resp = await this.ehic.cardStatus({
-        usernationalid: '0000000000',
-        applicantnationalids: ['0000000000'],
+      const resp = await this.ehicApi.cardStatus({
+        usernationalid: auth.nationalId,
+        applicantnationalids: nridArr,
       })
-      // const resp = await this.ehic.requestCard({
-      //   applicantnationalid: '0000000000',
-      //   cardtype: 'plastic',
-      //   usernationalid: '0000000000',
-      // })
-
-      this.logger.info('RESPINSE; ' + resp)
-      this.logger.info('RESPINSE; ' + resp[0].applicantNationalId)
 
       return resp
     } catch (e) {
@@ -88,44 +125,37 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const applicants = this.getObjectKey(application.answers, true)
-    console.log(auth)
-    console.log(application)
-    return {
-      id: '5123459',
-      expires: new Date(),
-      reSent: new Date(),
-      issued: new Date(),
-      sentStatus: SentStatus.WAITING,
-      type: CardType.PHYSICAL,
-      nrid: '0000765589',
-    } as CardInfo
-  }
+    const applicants = this.getApplicants(application, 'apply')
 
-  async resendPhysicalCard({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    return {
-      id: '5123459',
-      nrid: '0000765589',
-      expires: new Date(),
-      reSent: new Date(),
-      issued: new Date(),
-      sentStatus: SentStatus.WAITING,
-      type: CardType.PHYSICAL,
-    } as CardInfo
+    for (let i = 0; i < applicants.length; i++) {
+      await this.ehicApi.requestCard({
+        applicantnationalid: applicants[i],
+        cardtype: 'plastic',
+        usernationalid: auth.nationalId,
+      })
+    }
   }
 
   async applyForTemporaryCard({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    return 'applied for temp card'
+    const applicants = this.getApplicants(application, 'temp')
+
+    for (let i = 0; i < applicants.length; i++) {
+      await this.ehicApi.requestCard({
+        applicantnationalid: applicants[i],
+        cardtype: 'pdf',
+        usernationalid: auth.nationalId,
+      })
+    }
   }
 
   async getTemporaryCard({ auth, application }: TemplateApiModuleActionProps) {
-    const byteArray = new Uint8Array(20)
-    return byteArray
+    return this.ehicApi.fetchTempPDFCard({
+      applicantnationalid: auth.nationalId,
+      cardnumber: '00',
+      usernationalid: auth.nationalId,
+    })
   }
 }
