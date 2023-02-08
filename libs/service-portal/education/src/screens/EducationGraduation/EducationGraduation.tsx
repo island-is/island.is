@@ -7,6 +7,7 @@ import {
   ActionCard,
   CardLoader,
   EmptyState,
+  ErrorScreen,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
@@ -40,7 +41,7 @@ const GetStudentInfoQuery = gql`
 
 export const EducationGraduation: PortalModuleComponent = () => {
   useNamespaces('sp.education-graduation')
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
 
   const { loading, error, data } = useQuery<Query>(GetStudentInfoQuery, {
     variables: {
@@ -54,6 +55,19 @@ export const EducationGraduation: PortalModuleComponent = () => {
   const organizations = orgData?.getOrganizations?.items || {}
 
   const studentInfo = data?.getStudentInfo.transcripts || []
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.education).toLowerCase(),
+        })}
+      />
+    )
+  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>

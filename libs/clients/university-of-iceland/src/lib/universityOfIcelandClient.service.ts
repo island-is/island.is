@@ -2,9 +2,9 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   DefaultApi,
-  NemandiKtFerillFerillFileTranscriptGetLocaleEnum,
-  NemandiKtGetLocaleEnum,
-  NemandiKtFerillFerillGetLocaleEnum,
+  NemandiFerillFerillFileTranscriptGetLocaleEnum,
+  NemandiFerillFerillGetLocaleEnum,
+  NemandiGetLocaleEnum,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -16,23 +16,21 @@ export class UniversityOfIcelandService {
 
   async studentInfo(
     user: User,
-    locale?: NemandiKtGetLocaleEnum,
+    locale?: NemandiGetLocaleEnum,
   ): Promise<object> {
-    return await this.universityOfIcelandApiWithAuth(user).nemandiKtGet({
-      kt: user.nationalId,
+    return await this.universityOfIcelandApiWithAuth(user).nemandiGet({
       locale: locale,
     })
   }
   async studentCareer(
     user: User,
     trackNumber: number,
-    locale?: NemandiKtFerillFerillGetLocaleEnum,
+    locale?: NemandiFerillFerillGetLocaleEnum,
   ): Promise<object> {
     return await this.universityOfIcelandApiWithAuth(
       user,
-    ).nemandiKtFerillFerillGet({
+    ).nemandiFerillFerillGet({
       ferill: trackNumber,
-      kt: user.nationalId,
       locale: locale,
     })
   }
@@ -40,13 +38,12 @@ export class UniversityOfIcelandService {
   async studentCareerPDF(
     user: User,
     trackNumber: number,
-    locale?: NemandiKtFerillFerillFileTranscriptGetLocaleEnum,
+    locale?: NemandiFerillFerillFileTranscriptGetLocaleEnum,
   ): Promise<Blob> {
     return await this.universityOfIcelandApiWithAuth(
       user,
-    ).nemandiKtFerillFerillFileTranscriptGet({
+    ).nemandiFerillFerillFileTranscriptGet({
       ferill: trackNumber,
-      kt: user.nationalId,
       locale: locale,
     })
   }

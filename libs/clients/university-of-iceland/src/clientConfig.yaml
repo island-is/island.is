@@ -16,11 +16,10 @@ servers:
           - lbhi
   - url: https://nokkvith.throun.hi.is/api/vottord/brautskraning
 paths:
-  /nemandi/{kt}:
+  /nemandi:
     get:
       summary: Listi yfir ferla sem nemandi hefur brauskrást af
       parameters:
-        - $ref: '#/components/parameters/kt'
         - $ref: '#/components/parameters/locale'
       responses:
         200:
@@ -39,11 +38,10 @@ paths:
           description: Nemandi hefur enga brautskráða ferla
         '5XX':
           description: Unexpected error.
-  /nemandi/{kt}/ferill/{ferill}:
+  /nemandi/ferill/{ferill}:
     get:
       summary: Ferill nemanda með brautskráningu, ásamt listi af fælum tengt brauskráningaryfirliti
       parameters:
-        - $ref: '#/components/parameters/kt'
         - $ref: '#/components/parameters/ferill'
         - $ref: '#/components/parameters/locale'
       responses:
@@ -77,11 +75,10 @@ paths:
           description: Nemandi hefur enga brautskráða ferla, ferill ekki til, er ekki brautskráður fyrir feril.
         '5XX':
           description: Unexpected error.
-  /nemandi/{kt}/ferill/{ferill}/file/transcript:
+  /nemandi/ferill/{ferill}/file/transcript:
     get:
       summary: Skilar útskriftargögnum á pdf formi
       parameters:
-        - $ref: '#/components/parameters/kt'
         - $ref: '#/components/parameters/ferill'
         - $ref: '#/components/parameters/locale'
       responses:
@@ -164,13 +161,6 @@ components:
         type: string
         enum: ['is', 'en']
         default: 'is'
-    kt:
-      name: kt
-      in: path
-      schema:
-        type: string
-      required: true
-      description: Kennitala nemenda
     ferill:
       in: path
       name: ferill

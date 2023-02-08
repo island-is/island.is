@@ -12,8 +12,8 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import {
   UniversityOfIcelandService,
-  NemandiKtGetLocaleEnum,
-  NemandiKtFerillFerillGetLocaleEnum,
+  NemandiGetLocaleEnum,
+  NemandiFerillFerillGetLocaleEnum,
 } from '@island.is/clients/university-of-iceland'
 import { ApiScope } from '@island.is/auth/scopes'
 import { StudentInfoModel } from './models/studentInfo.model'
@@ -41,7 +41,7 @@ export class UniversityOfIcelandResolver {
   ): Promise<object> {
     const data = await this.universityOfIcelandApi.studentInfo(
       user,
-      input.locale as NemandiKtGetLocaleEnum,
+      input.locale as NemandiGetLocaleEnum,
     )
     return data
   }
@@ -54,7 +54,7 @@ export class UniversityOfIcelandResolver {
     const data = await this.universityOfIcelandApi.studentCareer(
       user,
       input.trackNumber,
-      input.locale as NemandiKtFerillFerillGetLocaleEnum,
+      input.locale as NemandiFerillFerillGetLocaleEnum,
     )
     return {
       ...data,
