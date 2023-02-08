@@ -8,7 +8,7 @@ import { modules } from '../lib/modules'
 import { client } from '../graphql'
 import environment from '../environments/environment'
 import { AdminPortalPaths } from '../lib/paths'
-import { createRoutes } from '../lib/createRoutes'
+import { createRoutes } from '../lib/routes'
 
 export const App = () => (
   <ApolloProvider client={client}>

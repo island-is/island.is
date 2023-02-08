@@ -12,8 +12,6 @@ import { createModuleRoutes } from '../utils/router/createModuleRoutes'
 import { PortalModule, PortalRoute } from '../types/portalCore'
 import { PortalMeta, PortalProvider } from './PortalProvider'
 import { prepareRouterData } from '../utils/router/prepareRouterData'
-import { useLocale } from '@island.is/localization'
-import { m } from '../lib/messages'
 
 type PortalRouterProps = {
   modules: PortalModule[]
@@ -28,7 +26,6 @@ export const PortalRouter = ({
   createRoutes,
   fallbackElement,
 }: PortalRouterProps) => {
-  const { formatMessage } = useLocale()
   const router = useRef<ReturnType<typeof createBrowserRouter>>()
   const [error, setError] = useState<Error | null>(null)
   const { userInfo } = useAuth()

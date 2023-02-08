@@ -8,7 +8,7 @@ import { AuthProvider } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 
 import { environment } from '../environments'
-import { createRoutes } from '../lib/createRoutes'
+import { createRoutes } from '../lib/routes'
 
 const BASE_PATH = '/umsoknir'
 
