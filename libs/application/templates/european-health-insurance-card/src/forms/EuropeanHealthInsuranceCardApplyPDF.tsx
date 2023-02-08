@@ -54,22 +54,37 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
       title: e.temp.sectionLabel,
       children: [
         buildMultiField({
-          id: 'temp',
+          id: 'temp-mf',
           title: e.temp.sectionTitle,
           description: e.temp.sectionDescription,
           children: [
+            buildCustomField({
+              id: 'temp-cn',
+              title: '',
+              component: 'TempScreen',
+            }),
+            buildDescriptionField({
+              id: 'unused',
+              title: 'adsg',
+              description: 'asdgasdgasdg',
+            }),
             buildSubmitField({
-              id: 'submit',
+              id: 'submit-23',
               title: e.review.submitButtonLabel,
               refetchApplicationAfterSubmit: true,
               placement: 'footer',
               actions: [
                 {
-                  event: DefaultEvents.APPROVE,
+                  event: DefaultEvents.SUBMIT,
                   name: 'pdf-button',
                   type: 'primary',
                 },
               ],
+            }),
+            buildDescriptionField({
+              id: 'unused2',
+              title: 'no way',
+              description: 'fyrir neðan',
             }),
           ],
         }),
