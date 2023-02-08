@@ -1,4 +1,4 @@
 export * from './lib/identityClient.module'
-export { Identity } from './lib/types/identity'
 export { IdentityClientService } from './lib/identityClient.service'
+export { Identity } from './lib/types/identity'
 export { IdentityType } from './lib/types/identityType'

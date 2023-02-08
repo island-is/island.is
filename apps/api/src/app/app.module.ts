@@ -94,7 +94,7 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
-import { SessionsModule } from '@island.is/api-domains-sessions'
+import { SessionsModule } from '@island.is/api/domains/sessions'
 import { CommunicationsConfig } from '@island.is/api/domains/communications'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 

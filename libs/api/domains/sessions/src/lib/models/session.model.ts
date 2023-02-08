@@ -26,6 +26,6 @@ export class Session {
   @Field(() => String)
   ip!: string
 
-  @Field(() => String)
-  ipLocation!: string
+  @Field(() => String, { nullable: true })
+  ipLocation?: string
 }

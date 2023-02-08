@@ -51,7 +51,9 @@ export class SessionsResolver {
   resolveClient(
     @Loader(ClientLoader) clientLoader: ClientDataLoader,
     @Parent() session: SessionDto,
+    @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
+    lang: string,
   ) {
-    return clientLoader.load(session.clientId)
+    return clientLoader.load({ lang, clientId: session.clientId })
   }
 }
