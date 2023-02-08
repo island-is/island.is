@@ -48,4 +48,25 @@ export class IndictmentCount extends Model {
   })
   @ApiPropertyOptional()
   policeCaseNumber?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  vehicleRegistrationNumber?: string
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  incidentDescription?: string
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  legal_arguments?: string
 }

@@ -5,19 +5,6 @@ export const headerBg = style({
   height: 385,
   marginTop: -130,
   paddingTop: 130,
-  backgroundRepeat: 'no-repeat',
-  backgroundPositionX: '52%',
-  backgroundPositionY: '30%',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      backgroundImage:
-        'linear-gradient(180deg, #E6F2FB 21.56%, #90D9E3 239.74%)',
-    },
-    md: {
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/7otUOlYNXerZwr0fRxkQA8/580fa8074fdb790a21e34c203658aad1/Fiskistofa-header-image.png'), linear-gradient(180deg, #E6F2FB 21.56%, #90D9E3 239.74%)",
-    },
-  }),
 })
 
 export const iconCircle = style({
