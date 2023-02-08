@@ -1,3 +1,3 @@
-export * from './revokeLicense.dto'
+export * from './revokeLicense.input'
 export * from './updateLicense.dto'
-export * from './verifyLicense.dto'
+export * from './verifyLicense.input'
