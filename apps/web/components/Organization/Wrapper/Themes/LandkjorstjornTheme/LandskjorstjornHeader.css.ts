@@ -4,10 +4,6 @@ import { themeUtils } from '@island.is/island-ui/theme'
 export const headerBg = style({
   height: 385,
   marginTop: -130,
-  background:
-    'url(https://images.ctfassets.net/8k0h54kbe6bj/5ublWANmR5UGrUFXQ1YGh2/4a1e3d7cc8adebf072ef41d0390e299b/Haus_-_Landskjorstjorn.png)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
 })
 
 export const headerContainer = style({
