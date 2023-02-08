@@ -14,7 +14,6 @@ import {
   useCreateHelpDesk,
   CreateHelpDeskInput,
 } from '../../shared/useCreateHelpDesk'
-import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
 import { DocumentProviderPaths } from '../../lib/paths'
 
 interface Props {

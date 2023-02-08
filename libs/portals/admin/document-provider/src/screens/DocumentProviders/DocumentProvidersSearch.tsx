@@ -4,7 +4,6 @@ import { Box, Input, ActionCard, Pagination } from '@island.is/island-ui/core'
 import { OrganisationPreview } from './DocumentProviders'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
 import { DocumentProviderPaths } from '../../lib/paths'
 
 interface Props {
