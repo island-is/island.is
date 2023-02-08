@@ -93,7 +93,6 @@ const SubscriptionTable = ({
                 <Checkbox
                   checked={checkboxStatus(item.id)}
                   onChange={(e) => onCheckboxChange(item.id, e.target.checked)}
-                  
                 />
               </T.Data>
               {currentTab === 'Mál' && (

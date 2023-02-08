@@ -2,7 +2,6 @@ import {
   Box,
   Breadcrumbs,
   Button,
-  ContentBlock,
   GridContainer,
   ResponsiveSpace,
   Tabs,
@@ -33,7 +32,7 @@ const Subscriptions = () => {
   const paddingBottom = [3, 3, 3, 3] as ResponsiveSpace
 
   const onLoadMore = () => {
-    console.log("clicked on load more")
+    console.log('clicked on load more')
   }
 
   const CasesContent = () => {
