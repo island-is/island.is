@@ -50,18 +50,23 @@ export const PortalRouter = ({
     return null
   }
 
-  const moduleRoutes = createModuleRoutes({ ...routerData, userInfo })
-  const router = createBrowserRouter(
-    [
+  // up top:
+  const router = useRef()
+  // here:
+  if (!router.current) {
+    const moduleRoutes = createModuleRoutes({ ...routerData, userInfo })
+    router.current = createBrowserRouter(
+      [
+        {
+          element: <PortalProvider meta={portalMeta} {...routerData} />,
+          children: createRoutes(moduleRoutes),
+        },
+      ],
       {
-        element: <PortalProvider meta={portalMeta} {...routerData} />,
-        children: createRoutes(moduleRoutes),
+        basename: portalMeta.basePath,
       },
-    ],
-    {
-      basename: portalMeta.basePath,
-    },
-  )
-
-  return <RouterProvider router={router} />
+    )
+  }
+  
+  return <RouterProvider router={router.current} />
 }
