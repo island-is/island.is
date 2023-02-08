@@ -2,6 +2,10 @@ import { Page } from '@playwright/test'
 import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
 
+function debug(...args: unknown[]) {
+  if (process.env.SYSTEM_E2E_DEBUG) console.log(...args)
+}
+
 type MockGQLOptions = {
   responseKey?: string
   camelCaseResponseKey?: boolean
@@ -22,7 +26,7 @@ function deepMock<T = Dict>(
   { exactMatch = false, deepPath = 'data' } = {},
 ): T | T[] | Dict | Dict[] {
   if (Array.isArray(original)) {
-    //console.log('Deep mocking array:', original)
+    debug('Deep mocking array:', original)
     // Should do the typing properly here :/
     return original.map(
       (item: T) => deepMock(item, mockKey, mockData, { exactMatch }) as T,
@@ -38,11 +42,14 @@ function deepMock<T = Dict>(
     const updatedDeepPath = `${deepPath}.${key}`
     if (key.match(mockKey)) {
       mocked[key] = mockData
-      console.log(
-        `Found deepMock match (mockKey=${mockKey}, key=${key}, deepPath=${updatedDeepPath}, mockData=${mockData})`,
-      )
-      //console.log(`Deep mocking mocked   data:`, mocked)
-      //console.log(`Deep mocking original data:`, original)
+      debug(`Found deepMock match `, {
+        mockKey,
+        key,
+        updatedDeepPath,
+        mockData,
+      })
+      debug(`Deep mocking mocked   data:`, mocked)
+      debug(`Deep mocking original data:`, original)
     } else
       mocked[key] = deepMock(original[key], mockKey, mockData, {
         deepPath: updatedDeepPath,
@@ -69,18 +76,18 @@ export async function mockQGL<T>(
     pattern = `**/graphql?op=${op}`,
   }: MockGQLOptions = {},
 ) {
-  console.log(
-    `Setting up mock for ${pattern} (op=${op}, responseKey=${responseKey}, deepMockKey=${deepMockKey})`,
-  )
+  debug(`Setting up mock for ${pattern} `, {
+    op,
+    responseKey,
+    deepMockKey,
+  })
 
   await page.route(pattern, async (route) => {
     // Setup
     const routeUrl = route.request().url()
     const routeOp = routeUrl.split('op=')[1]
     const casedRouteOp = camelCaseResponseKey ? camelCase(routeOp) : routeOp
-    console.log(
-      `Got route (routeUrl=${routeUrl}, routeOp=${routeOp}, casedRouteOp=${casedRouteOp})`,
-    )
+    debug(`Got route `, { routeUrl, routeOp, casedRouteOp })
 
     // Get original
     const response = patchResponse ? await (await route.fetch()).json() : {}
@@ -99,12 +106,11 @@ export async function mockQGL<T>(
     mockResponse.mocked = true
 
     // Debug logging
-    console.log(
-      `Got a mock-match for > ${route
-        .request()
-        .url()} < (key=${mockKey}, patchResponse=${patchResponse})`,
-    )
-    //console.log('(original):', originalResponse)
+    debug(`Got a mock-match for > ${route.request().url()} < `, {
+      mockKey,
+      patchResponse,
+    })
+    debug('(original):', originalResponse)
 
     const patchedData = mergeWith(
       { ...originalResponse },
@@ -115,12 +121,12 @@ export async function mockQGL<T>(
     data.data = patchedData
 
     // Debug logging
-    //console.log('(mocked): ', mockResponse)
-    //console.log('(merged): ', patchedData)
+    debug('(mocked): ', mockResponse)
+    debug('(merged): ', patchedData)
 
     // Mock injection
     const body = JSON.stringify(data)
-    //console.log('Body:', body)
+    debug('Body:', body)
     route.fulfill({ body })
   })
 }
