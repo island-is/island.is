@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useReducer } from 'react'
-import cn from 'classnames'
 
 import {
   Application,
