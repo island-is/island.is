@@ -125,7 +125,10 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
+    this.logger.info('applyForPhysicalCard')
     const applicants = this.getApplicants(application, 'apply')
+
+    this.logger.info(applicants)
 
     for (let i = 0; i < applicants.length; i++) {
       await this.ehicApi.requestCard({
