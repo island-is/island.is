@@ -87,7 +87,9 @@ applicationTest.describe('Announcement of Death', () => {
 
     // Overview screen
     await page.getByLabel('Upplýsingar').fill('test test þæö')
-    await page.getByRole('button', {name: 'Staðfesta andlátstilkynningu'}).click()
+    await page
+      .getByRole('button', { name: 'Staðfesta andlátstilkynningu' })
+      .click()
     await page.locator(submitButton).click()
 
     // Confirmation screen
