@@ -16,3 +16,10 @@ export const divider = style({
     },
   }),
 })
+
+export const textEllipsis = style({
+  maxWidth: '200px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})

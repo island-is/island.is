@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import Person from '../PersonIcon/PersonIcon'
-import * as commonAccessStyles from '../LogTable/LogTable.css'
+import * as styles from '../LogTable/LogTable.css'
 import { SessionsSession } from '@island.is/api/schema'
 import { formatNationalId, getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
@@ -21,7 +21,7 @@ interface LogTableProps {
 }
 
 const ExpandedDivider = () => (
-  <div className={commonAccessStyles.divider}>
+  <div className={styles.divider}>
     <Divider />
   </div>
 )
@@ -34,6 +34,7 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
     <>
       {sessions.map((session: SessionsSession, index: number) => {
         const type = getSessionType(session, userInfo?.profile.nationalId ?? '')
+        const formatedDate = new Date(+session.timestamp).toUTCString()
         return (
           <div style={{ width: '100%' }} key={index}>
             <ExpandedDivider />
@@ -53,7 +54,7 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
                 </Text>
                 <Box>
                   <Text variant="small">
-                    {formatDate(session.timestamp, dateFormat.is)}
+                    {formatDate(formatedDate, dateFormat.is)}
                   </Text>
                   <Box
                     alignItems="center"
@@ -66,7 +67,7 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
                       type="outline"
                       color="blue400"
                     />
-                    <Text variant="small">{getTime(session.timestamp)}</Text>
+                    <Text variant="small">{getTime(formatedDate)}</Text>
                   </Box>
                 </Box>
               </Box>
@@ -76,8 +77,8 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
                     <Person sessionType={type} />
                   </Box>
                   <Box>
-                    <Text variant="h5">{session.actor.name}</Text>
-                    <Text>{formatNationalId(session.actor.nationalId)}</Text>
+                    <Text variant="h5">{session.subject.name}</Text>
+                    <Text>{formatNationalId(session.subject.nationalId)}</Text>
                   </Box>
                 </Box>
               )}

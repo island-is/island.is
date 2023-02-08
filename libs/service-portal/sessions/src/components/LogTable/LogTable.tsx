@@ -1,9 +1,9 @@
 import {
   Box,
   Icon,
-  Text,
-  Table,
   SkeletonLoader,
+  Table,
+  Text,
 } from '@island.is/island-ui/core'
 import React from 'react'
 import Person from '../PersonIcon/PersonIcon'
@@ -14,6 +14,8 @@ import { dateFormat } from '@island.is/shared/constants'
 import { formatDate, getTime } from '@island.is/shared/utils'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { SessionType } from '../../lib/types/sessionTypes'
+import * as styles from '../LogTable/LogTable.css'
 
 interface LogTableProps {
   data: SessionsSession[]
@@ -35,17 +37,19 @@ const LogTable: React.FC<LogTableProps> = ({ data, loading }) => {
       </Table.Head>
       {!loading ? (
         <Table.Body>
-          {[...data, ...data].map((session: SessionsSession, index: number) => {
+          {data.map((session: SessionsSession, index: number) => {
             const type = getSessionType(
               session,
               userInfo?.profile.nationalId ?? '',
             )
 
+            const formatedDate = new Date(+session.timestamp).toUTCString()
+
             return (
               <Table.Row key={index}>
                 <Table.Data>
                   <div>
-                    {formatDate(session.timestamp, dateFormat.is).toString()}
+                    {formatDate(formatedDate, dateFormat.is).toString()}
                   </div>
                   <Box
                     alignItems="center"
@@ -58,11 +62,11 @@ const LogTable: React.FC<LogTableProps> = ({ data, loading }) => {
                       type="outline"
                       color="blue400"
                     />
-                    {getTime(session.timestamp)}
+                    {getTime(new Date(formatedDate).toString())}
                   </Box>
                 </Table.Data>
                 <Table.Data>
-                  <div>{session.userAgent.split(';')[0] + ')'}</div>
+                  <div className={styles.textEllipsis}>{session.userAgent}</div>
                   <div>{session.ipLocation}</div>
                 </Table.Data>
                 <Table.Data>
@@ -72,13 +76,20 @@ const LogTable: React.FC<LogTableProps> = ({ data, loading }) => {
                 </Table.Data>
                 <Table.Data>
                   <Box display="flex" alignItems="center" columnGap="gutter">
-                    <Box justifyContent={'flexStart'}>
-                      <Person sessionType={type} />
-                    </Box>
+                    <Person sessionType={type} />
+
                     <Box style={{ minWidth: 'fit-content' }}>
-                      <Text variant="eyebrow">{session.actor.name}</Text>
+                      <Text variant="eyebrow">
+                        {type === SessionType.myBehalf
+                          ? session.actor.name
+                          : session.subject.name}
+                      </Text>
                       <Text variant="small">
-                        {formatNationalId(session.actor.nationalId)}
+                        {formatNationalId(
+                          type === SessionType.myBehalf
+                            ? session.actor.nationalId
+                            : session.subject.nationalId,
+                        )}
                       </Text>
                     </Box>
                   </Box>

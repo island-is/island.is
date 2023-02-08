@@ -37,36 +37,39 @@ const enum PaginationNavigation {
   PREV = 'prev',
 }
 
+interface CursorState {
+  before: string
+  after: string
+}
+
 const Sessions = () => {
-  const SESSION_LIMIT = 2
-  const QUERY_PARAM_NAME = 'pageNo'
+  const SESSION_LIMIT = 10
+  const QUERY_PARAM_NAME = 'cursor'
   const { formatMessage } = useLocale()
   const [searchNationalId, setSearchNationalId] = useState('')
   const [prevSearchNationalId, setPrevSearchNationalId] = useState('')
   const [sentNationalId, setSentNationalId] = useState('')
-  const [page, setPage] = useState<number>(1)
+  const [page, setPage] = useState<CursorState>({ before: '', after: '' })
 
   const getOptions = (): QueryHookOptions<
     GetSessionsListQuery,
     Exact<{ input: SessionsInput }>
   > => {
-    return {
-      fetchPolicy: 'network-only',
-      variables: {
-        input: {
-          limit: SESSION_LIMIT,
-          before: '',
-          after: page.toString(),
-          nationalId: sentNationalId ?? '',
-          toDate: '',
-          fromDate: '',
-        },
-      },
-    }
+    return {}
   }
 
   const { data, loading, error } = useGetSessionsListQuery({
-    ...getOptions(),
+    fetchPolicy: 'network-only',
+    variables: {
+      input: {
+        limit: SESSION_LIMIT,
+        before: page.before,
+        after: page.after,
+        nationalId: sentNationalId ?? '',
+        toDate: '',
+        fromDate: '',
+      },
+    },
     onError: () => {
       toast.error(formatMessage(m.error))
     },
@@ -91,18 +94,32 @@ const Sessions = () => {
   }
 
   const handlePageChange = (action: PaginationNavigation): void => {
+    // If there is no data or if there is no previous page and we are trying to go back or if there is no next page and we are trying to go forward, return
     if (
       !data ||
-      (page === 1 && action === 'prev') ||
-      (page * SESSION_LIMIT >= data?.sessionsList?.totalCount &&
-        action === 'next')
+      (!data.sessionsList.pageInfo.hasPreviousPage && action === 'prev') ||
+      (!data.sessionsList.pageInfo.hasNextPage && action === 'next')
     )
       return
-    let temp: number = page
-    action === 'next' ? (temp = temp + 1) : (temp = temp - 1)
-    setPage(temp)
-    const path = `${SessionsPaths.LoginHistory}?${QUERY_PARAM_NAME}=${temp}`
+    let temp = ''
+    // If we are going forward, set the cursor to the end of the current page, otherwise set it to the start of the current page
+    if (action === 'next') {
+      temp = data.sessionsList.pageInfo.endCursor ?? ''
+      setPage({
+        after: data?.sessionsList.pageInfo.endCursor ?? '',
+        before: '',
+      })
+    }
+    // If we are going back, set the cursor to the start of the current page, otherwise set it to the end of the current page
+    if (action === 'prev') {
+      temp = data.sessionsList.pageInfo.startCursor ?? ''
+      setPage({
+        after: '',
+        before: data?.sessionsList.pageInfo.startCursor ?? '',
+      })
+    }
 
+    const path = `${SessionsPaths.LoginHistory}?${QUERY_PARAM_NAME}=${temp}`
     window.history.pushState({ path: path }, '', path)
   }
 
@@ -128,18 +145,6 @@ const Sessions = () => {
         title={formatMessage(m.sessions)}
         intro={formatMessage(m.sessionsHeaderIntro)}
       />
-      {/*<Hidden above={'md'}>*/}
-      {/*  <Box columnGap="gutter" display="flex" paddingBottom={4}>*/}
-      {/*    <Box columnGap="smallGutter" display="flex" alignItems="center">*/}
-      {/*      <PersonIcon sessionType={SessionType.onBehalf} />*/}
-      {/*      <Text>{formatMessage(m.onBehalfOF)}</Text>*/}
-      {/*    </Box>*/}
-      {/*    <Box columnGap="smallGutter" display="flex" alignItems="center">*/}
-      {/*      <PersonIcon sessionType={SessionType.myBehalf} />*/}
-      {/*      <Text>{formatMessage(m.inYourBehalf)}</Text>*/}
-      {/*    </Box>*/}
-      {/*  </Box>*/}
-      {/*</Hidden>*/}
       <Box
         display="flex"
         justifyContent="spaceBetween"
@@ -168,17 +173,17 @@ const Sessions = () => {
           alignItems="center"
         >
           <Button
+            disabled={!data?.sessionsList.pageInfo.hasPreviousPage || loading}
             circle
             size="default"
-            disabled={loading}
             colorScheme="light"
             icon={'arrowBack'}
             onClick={() => handlePageChange(PaginationNavigation.PREV)}
           />
           <Button
+            disabled={!data?.sessionsList.pageInfo.hasNextPage || loading}
             circle
             size="default"
-            disabled={loading}
             colorScheme="light"
             icon={'arrowForward'}
             onClick={() => handlePageChange(PaginationNavigation.NEXT)}
