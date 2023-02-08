@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import { ClientsService, ResourcesService } from '@island.is/auth-api-lib'
@@ -27,12 +27,21 @@ export class ClientsController {
   @Get()
   @Documentation({
     response: { status: 200, type: [ClientDto] },
+    request: {
+      query: {
+        lang: {
+          description: 'The language to return the client name in.',
+          required: false,
+          type: 'string',
+        },
+      },
+    },
   })
   @Audit<ClientDto[]>({
-    resources: (clients) => clients.map((client) => client.id),
+    resources: (clients) => clients.map((client) => client.clientId),
   })
-  async findAll(): Promise<ClientDto[]> {
-    const clients = await this.clientsService.findAll()
+  async findAll(@Query('lang') lang?: string): Promise<ClientDto[]> {
+    const clients = await this.clientsService.findAllWithTranslation(lang)
 
     if (!clients) {
       return []
@@ -45,8 +54,8 @@ export class ClientsController {
         const domain = await this.resourcesService.findDomainByPk(clientDomain)
 
         return {
-          id: client.clientId,
-          name: client.clientName ?? client.clientId,
+          clientId: client.clientId,
+          clientName: client.clientName ?? client.clientId,
           organisationLogoKey: domain?.organisationLogoKey,
         }
       }),

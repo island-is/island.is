@@ -23,8 +23,8 @@ interface TestCase {
     clientName: string
   }[]
   expected: {
-    id: string
-    name: string
+    clientId: string
+    clientName: string
     organisationLogoKey: string
   }[]
 }
@@ -55,13 +55,13 @@ const getTestCases: Record<string, TestCase> = {
     ],
     expected: [
       {
-        id: 'test-domain-1/test-client-1',
-        name: 'Test client 1',
+        clientId: 'test-domain-1/test-client-1',
+        clientName: 'Test client 1',
         organisationLogoKey: 'test-logo-key-1',
       },
       {
-        id: 'test-domain-2/test-client-2',
-        name: 'Test client 2',
+        clientId: 'test-domain-2/test-client-2',
+        clientName: 'Test client 2',
         organisationLogoKey: 'test-logo-key-2',
       },
     ],
@@ -121,6 +121,41 @@ describe('ClientsController', () => {
         })
       },
     )
+
+    describe('with translations', () => {
+      let app: TestApp
+      let server: request.SuperTest<request.Test>
+
+      const domainName = 'd1'
+      const clientTranslations = {
+        clientName: 'Translated client name',
+      }
+
+      beforeAll(async () => {
+        // Arrange
+        app = await setupWithAuth({
+          user: createCurrentUser({ scope: [AuthScope.delegations] }),
+        })
+        server = request(app.getHttpServer())
+
+        const factory = new FixtureFactory(app)
+        const domain = await factory.createDomain({ name: domainName })
+        const client = await factory.createClient({
+          clientId: `${domainName}/c1`,
+        })
+
+        await factory.createTranslations(client, 'en', clientTranslations)
+      })
+
+      it('GET /clients?lang=en should return translated domains', async () => {
+        // Act
+        const res = await server.get('/v1/clients?lang=en')
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toMatchObject([clientTranslations])
+      })
+    })
   })
 
   describe('without auth and permissions', () => {

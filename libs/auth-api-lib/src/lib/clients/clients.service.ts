@@ -25,6 +25,7 @@ import { ClientAllowedScopeDTO } from './dto/client-allowed-scope.dto'
 import { ClientClaimDTO } from './dto/client-claim.dto'
 import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirect-uri.dto'
 import { ClientSecretDTO } from './dto/client-secret.dto'
+import { ClientsTranslationService } from './clients-translation.service'
 
 @Injectable()
 export class ClientsService {
@@ -47,6 +48,9 @@ export class ClientsService {
     private clientClaim: typeof ClientClaim,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
+
+    private readonly clientsTranslationService: ClientsTranslationService,
+
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -65,6 +69,16 @@ export class ClientsService {
         ClientClaim,
       ],
     })
+  }
+
+  async findAllWithTranslation(lang?: string): Promise<Client[]> {
+    const clients = await this.clientModel.findAll()
+
+    if (lang) {
+      return this.clientsTranslationService.translateClients(clients, lang)
+    }
+
+    return clients
   }
 
   /** Gets all clients with paging */

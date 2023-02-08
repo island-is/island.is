@@ -5,14 +5,14 @@ export class ClientDto {
     example: '@island.is/web',
     description: 'This is the client id that is used to identify the client.',
   })
-  id!: string
+  clientId!: string
 
   @ApiProperty({
     example: 'Mínar síður Ísland.is',
     description:
       'This is the name of the client that is displayed to the user.',
   })
-  name!: string
+  clientName!: string
 
   @ApiProperty({
     example: 'Stafrænt Ísland',
