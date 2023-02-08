@@ -2,7 +2,6 @@ import {
   Box,
   Breadcrumbs,
   Button,
-  ContentBlock,
   GridContainer,
   ResponsiveSpace,
   Tabs,
