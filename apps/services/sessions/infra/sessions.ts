@@ -107,5 +107,3 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       },
       REDIS_USE_SSL: 'true',
     })
-    .liveness('/liveness')
-    .readiness('/liveness')
