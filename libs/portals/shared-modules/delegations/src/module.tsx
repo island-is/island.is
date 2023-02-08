@@ -3,7 +3,6 @@ import { lazy } from 'react'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
-import { delegationsOutgoingLoader } from './lib/loaders'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
@@ -32,7 +31,6 @@ export const delegationsModule: PortalModule = {
       {
         ...commonProps,
         path: DelegationPaths.Delegations,
-        loader: delegationsOutgoingLoader(props),
       },
       {
         ...commonProps,

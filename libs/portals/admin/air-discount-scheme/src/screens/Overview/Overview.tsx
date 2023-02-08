@@ -23,40 +23,30 @@ import {
 import { FlightLegsFilters } from './types'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 import Modal from '../../components/Modal/Modal'
-
-const TODAY = new Date()
+import { prepareFlightLegsQuery } from '../../lib/loaders'
 
 const Overview = () => {
   const [showModal, setModal] = useState(false)
-  const [filters, setFilters] = useState<FlightLegsFilters>({
-    nationalId: '',
-    state: [],
-    period: {
-      from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),
-      to: new Date(
-        TODAY.getFullYear(),
-        TODAY.getMonth(),
-        TODAY.getDate(),
-        23,
-        59,
-        59,
-        999,
-      ),
-    },
-  })
+  const queryData = prepareFlightLegsQuery()
+  const [filters, setFilters] = useState<FlightLegsFilters>(queryData.filters)
+
   const input: AirDiscountSchemeFlightLegsInput = {
-    ...filters,
+    ...queryData.input,
     airline: filters.airline?.value,
     gender: filters.gender?.value || undefined,
     age: {
-      from: parseInt(Number(filters.age?.from).toString()) || -1,
-      to: parseInt(Number(filters.age?.to).toString()) || 1000,
+      from:
+        parseInt(Number(filters.age?.from).toString()) ||
+        queryData.input.age.from,
+      to:
+        parseInt(Number(filters.age?.to).toString()) || queryData.input.age.to,
     },
     postalCode: filters.postalCode
       ? parseInt(filters.postalCode.toString())
       : undefined,
     isExplicit: Boolean(filters.isExplicit),
   }
+
   const [
     confirmInvoice,
     { loading: confirmInvoiceLoading },
@@ -64,7 +54,6 @@ const Overview = () => {
 
   const { data, loading: queryLoading, refetch } = useFlightLegsQuery({
     ssr: false,
-    fetchPolicy: 'network-only',
     variables: {
       input,
     },
@@ -78,7 +67,7 @@ const Overview = () => {
     setFilters(data)
     refetch()
   }
-
+  console.log(flightLegs)
   return (
     <GridContainer>
       <Hidden above="md">

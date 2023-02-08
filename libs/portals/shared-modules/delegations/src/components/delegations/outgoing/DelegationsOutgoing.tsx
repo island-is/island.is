@@ -39,8 +39,8 @@ export const DelegationsOutgoing = () => {
         direction: AuthDelegationDirection.outgoing,
       },
     },
-    // skip: !domainName || !lang,
-    //fetchPolicy: 'cache-and-network',
+    skip: !domainName || !lang,
+    fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })
 
