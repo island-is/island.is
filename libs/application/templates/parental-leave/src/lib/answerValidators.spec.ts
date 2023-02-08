@@ -678,25 +678,39 @@ describe('when constructing a new period', () => {
 
 test.each([
   {
-    birthDay: setTestBirthDay(5, false, true),
+    birthDay: setTestBirthDay(),
     multipleBirths: 'no',
-    dateFrom: setTestDates(0, 0),
+    dateFrom: setTestDates(),
     dateTo: setTestDates(0, 14),
     expected: true,
   },
   {
-    birthDay: setTestBirthDay(6, false, true),
-    multipleBirths: 'no',
-    dateFrom: setTestDates(0, 0),
-    dateTo: setTestDates(0, 14),
-    expected: true,
-  },
-  {
-    birthDay: setTestBirthDay(0),
+    birthDay: setTestBirthDay(),
     multipleBirths: 'yes',
-    dateFrom: setTestDates(0, 0),
+    dateFrom: setTestDates(),
     dateTo: setTestDates(0, 28),
     expected: true,
+  },
+  {
+    birthDay: setTestBirthDay(),
+    multipleBirths: 'yes',
+    dateFrom: setTestDates(0, 0),
+    dateTo: setTestDates(0, 14),
+    expected: true,
+  },
+  {
+    birthDay: setTestBirthDay(),
+    multipleBirths: 'no',
+    dateFrom: setTestDates(0, 0),
+    dateTo: setTestDates(0, 28),
+    expected: false,
+  },
+  {
+    birthDay: setTestBirthDay(1, true),
+    multipleBirths: 'no',
+    dateFrom: setTestDates(),
+    dateTo: setTestDates(0, 14),
+    expected: false,
   },
   {
     birthDay: setTestBirthDay(7, false, true),
@@ -704,13 +718,6 @@ test.each([
     dateFrom: setTestDates(0, 0),
     dateTo: setTestDates(0, 14),
     expected: false,
-  },
-  {
-    birthDay: setTestBirthDay(12),
-    multipleBirths: 'no',
-    dateFrom: setTestDates(0, 0),
-    dateTo: setTestDates(0, 14),
-    expected: true,
   },
 ])(
   'Should return true if a period is within the allowed range of days and within the allowed 6 months application time from the brth of the child/children ',

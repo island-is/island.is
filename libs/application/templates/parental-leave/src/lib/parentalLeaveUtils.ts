@@ -1563,7 +1563,7 @@ export const actionsResidenceGrant = (
   return mergedActions
 }
 
-export const setTestBirthDay = (months: number, add = false, sub = false) => {
+export const setTestBirthDay = (months = 0, add = false, sub = false) => {
   // Set a date that is today we can either add or substract months
   const date = sub
     ? subMonths(new Date(), months)
@@ -1585,8 +1585,8 @@ export const setTestBirthDay = (months: number, add = false, sub = false) => {
 }
 
 export const setTestDates = (
-  months: number,
-  days: number,
+  months = 0,
+  days = 0,
   add = false,
   sub = false,
 ) => {

@@ -1,7 +1,8 @@
 import { Application } from '@island.is/application/types'
-import { differenceInDays } from 'date-fns'
+import { addDays, isAfter, isBefore } from 'date-fns'
 import { errorMessages } from '../messages'
 import {
+  convertBirthDay,
   getApplicationAnswers,
   residentGrantIsOpenForApplication,
 } from '../parentalLeaveUtils'
@@ -43,6 +44,16 @@ export const validatePeriodResidenceGrant = (
   dateTo: string,
 ) => {
   if (!residentGrantIsOpenForApplication(childBirthDay)) return false
+
+  const convertedBirthDay = convertBirthDay(childBirthDay)
+  const birthDate = new Date(
+    convertedBirthDay.year,
+    convertedBirthDay.month,
+    convertedBirthDay.date,
+  ).setHours(0, 0, 0, 0)
+  const birthDatePlus =
+    multipleBirths === 'yes' ? addDays(birthDate, 28) : addDays(birthDate, 14)
+
   const from = dateFrom.split('-').map((item) => Number(item))
   const to = dateTo.split('-').map((item) => Number(item))
 
@@ -50,8 +61,9 @@ export const validatePeriodResidenceGrant = (
   const toDate = new Date(to[0], to[1], to[2])
   const fromDate = new Date(from[0], from[1], from[2])
 
-  const result = differenceInDays(toDate, fromDate)
-  if (result < 15) return true
-  if (result < 29 && multipleBirths === 'yes') return true
-  return false
+  if (isAfter(fromDate, toDate)) return false
+  if (isBefore(fromDate, birthDate)) return false
+  if (isAfter(toDate, birthDatePlus)) return false
+
+  return true
 }
