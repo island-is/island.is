@@ -98,6 +98,7 @@ export const PoliceDemands: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -113,6 +114,7 @@ export const PoliceDemands: React.FC = () => {
 
   useEffect(() => {
     if (
+      isCaseUpToDate &&
       !workingCase.requestedOtherRestrictions &&
       workingCase.requestedCustodyRestrictions &&
       workingCase.requestedCustodyRestrictions.indexOf(
@@ -134,7 +136,13 @@ export const PoliceDemands: React.FC = () => {
         setWorkingCase,
       )
     }
-  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+  }, [
+    setAndSendCaseToServer,
+    formatMessage,
+    setWorkingCase,
+    workingCase,
+    isCaseUpToDate,
+  ])
 
   const onDemandsChange = React.useCallback(
     (
