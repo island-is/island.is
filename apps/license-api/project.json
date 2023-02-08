@@ -16,16 +16,6 @@
             "glob": "*",
             "input": "apps/license-api",
             "output": "./"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/license-api",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/license-api",
-            "output": "./"
           }
         ],
         "maxWorkers": 2
@@ -72,20 +62,6 @@
       "options": {
         "outputPath": "apps/license-api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/license-api/tsconfig.app.json apps/license-api/src/buildOpenApi.ts"
-      }
-    },
-    "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "../../node_modules/.bin/sequelize-cli db:migrate",
-        "cwd": "apps/license-api"
-      }
-    },
-    "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
-        "cwd": "apps/license-api"
       }
     }
   },
