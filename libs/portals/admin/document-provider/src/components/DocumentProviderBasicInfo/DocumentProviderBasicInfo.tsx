@@ -11,6 +11,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
+import { DocumentProviderPaths } from '../../lib/paths'
 
 //Interface will be deleted, when graphql is ready.
 interface Applicant {
@@ -623,7 +624,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
           marginTop={4}
         >
           <Box marginTop={[1, 0]}>
-            <Link to={AdminPortalCorePaths.DocumentProviderRoot}>
+            <Link to={DocumentProviderPaths.DocumentProviderRoot}>
               <Button variant="ghost">
                 {formatMessage(m.SingleProviderBackButton)}
               </Button>

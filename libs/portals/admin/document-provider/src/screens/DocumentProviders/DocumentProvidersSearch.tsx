@@ -5,6 +5,7 @@ import { OrganisationPreview } from './DocumentProviders'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
+import { DocumentProviderPaths } from '../../lib/paths'
 
 interface Props {
   organisationsPreview: OrganisationPreview[]
@@ -69,7 +70,7 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
                     variant: 'text',
                     onClick: () => {
                       navigate(
-                        AdminPortalCorePaths.DocumentProviderDocumentProvidersSingle.replace(
+                        DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
                           ':nationalId',
                           nationalId,
                         ),

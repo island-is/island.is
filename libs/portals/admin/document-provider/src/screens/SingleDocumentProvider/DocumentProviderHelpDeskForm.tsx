@@ -15,6 +15,7 @@ import {
   CreateHelpDeskInput,
 } from '../../shared/useCreateHelpDesk'
 import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
+import { DocumentProviderPaths } from '../../lib/paths'
 
 interface Props {
   helpDesk?: Helpdesk | null
@@ -127,7 +128,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
           >
             <Box marginTop={[1, 0]}>
               {/* Breytt úr DocumentProviderDocumentProviders -> DocumentProviderRoot tímabundið*/}
-              <Link to={AdminPortalCorePaths.DocumentProviderRoot}>
+              <Link to={DocumentProviderPaths.DocumentProviderRoot}>
                 <Button variant="ghost">
                   {formatMessage(m.SingleProviderBackButton)}
                 </Button>
