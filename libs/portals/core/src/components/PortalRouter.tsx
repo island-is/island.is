@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   createBrowserRouter,
   RouteObject,
   RouterProvider,
 } from 'react-router-dom'
+
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useAuth } from '@island.is/auth/react'
+import { LoadingScreen } from '@island.is/react/components'
 import { createModuleRoutes } from '../utils/router/createModuleRoutes'
 import { PortalModule, PortalRoute } from '../types/portalCore'
 import { PortalMeta, PortalProvider } from './PortalProvider'
@@ -20,14 +22,17 @@ type PortalRouterProps = {
   modules: PortalModule[]
   portalMeta: PortalMeta
   createRoutes(moduleRoutes: RouteObject[]): RouteObject[]
+  fallbackElement?: React.ReactNode
 }
 
 export const PortalRouter = ({
   modules,
   portalMeta,
   createRoutes,
+  fallbackElement,
 }: PortalRouterProps) => {
   const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
+  const router = useRef<ReturnType<typeof createBrowserRouter>>()
   const [error, setError] = useState<Error | null>(null)
   const { userInfo } = useAuth()
   const featureFlagClient = useFeatureFlagClient()
@@ -54,21 +59,25 @@ export const PortalRouter = ({
   }
 
   if (!(userInfo && routerData)) {
-    return null
+    return <LoadingScreen />
   }
 
-  const moduleRoutes = createModuleRoutes({ ...routerData, userInfo })
-  const router = createBrowserRouter(
-    [
+  if (!router.current) {
+    const moduleRoutes = createModuleRoutes({ ...routerData, userInfo })
+    router.current = createBrowserRouter(
+      [
+        {
+          element: <PortalProvider meta={portalMeta} {...routerData} />,
+          children: createRoutes(moduleRoutes),
+        },
+      ],
       {
-        element: <PortalProvider meta={portalMeta} {...routerData} />,
-        children: createRoutes(moduleRoutes),
+        basename: portalMeta.basePath,
       },
-    ],
-    {
-      basename: portalMeta.basePath,
-    },
-  )
+    )
+  }
 
-  return <RouterProvider router={router} />
+  return (
+    <RouterProvider router={router.current} fallbackElement={fallbackElement} />
+  )
 }

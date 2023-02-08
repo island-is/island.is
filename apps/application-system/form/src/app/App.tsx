@@ -8,16 +8,14 @@ import { AuthProvider } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 
 import { environment } from '../environments'
-import { createRoutes } from '../lib/createRoutes'
-
-const BASE_PATH = '/umsoknir'
+import { router, BASE_PATH } from '../lib/routes'
 
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
       <AuthProvider basePath={BASE_PATH}>
         <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-          <RouterProvider router={createRoutes(BASE_PATH)} />
+          <RouterProvider router={router} />
         </FeatureFlagProvider>
       </AuthProvider>
     </LocaleProvider>

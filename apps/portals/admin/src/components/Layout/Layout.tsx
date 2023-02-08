@@ -13,9 +13,7 @@ import Header from '../Header/Header'
 import * as styles from './Layout.css'
 import {
   AccessDenied,
-  useModuleProps,
   PortalModule,
-  usePortalMeta,
   useActiveModule,
   useModules,
 } from '@island.is/portals/core'
@@ -82,12 +80,9 @@ const LayoutOuterContainer: FC = ({ children }) => (
 
 export const Layout: FC = ({ children }) => {
   useNamespaces(['admin.portal', 'global'])
-  const { portalType } = usePortalMeta()
   const activeModule = useActiveModule()
   const modules = useModules()
-  const moduleProps = useModuleProps()
-  const { layout = 'default', moduleLayoutWrapper: ModuleLayoutWrapper } =
-    activeModule || {}
+  const { layout = 'default' } = activeModule || {}
 
   if (modules.length === 0) {
     return (
@@ -99,26 +94,9 @@ export const Layout: FC = ({ children }) => {
     )
   }
 
-  const moduleLayout = !activeModule ? 'none' : layout
-
-  if (ModuleLayoutWrapper && moduleProps.userInfo) {
-    return (
-      <LayoutOuterContainer>
-        <ModuleLayoutWrapper
-          userInfo={moduleProps.userInfo}
-          portalType={portalType}
-        >
-          <LayoutModuleContainer layout={moduleLayout}>
-            {children}
-          </LayoutModuleContainer>
-        </ModuleLayoutWrapper>
-      </LayoutOuterContainer>
-    )
-  }
-
   return (
     <LayoutOuterContainer>
-      <LayoutModuleContainer layout={moduleLayout}>
+      <LayoutModuleContainer layout={!activeModule ? 'none' : layout}>
         {children}
       </LayoutModuleContainer>
     </LayoutOuterContainer>
