@@ -1644,7 +1644,7 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-api:
+services-sessions:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -1730,11 +1730,11 @@ services-sessions-worker:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
   hpa:
     scaling:
