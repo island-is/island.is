@@ -10,7 +10,6 @@ const TabContent = ({
   searchValue,
   setSearchValue,
   searchPlaceholder,
-  initialSearchInputValue = '',
 }) => {
     const onLoadMore = () => {
         console.log('clicked on load more')
@@ -21,7 +20,7 @@ const TabContent = ({
       <AsyncSearch
         options={searchOptions}
         placeholder={searchPlaceholder}
-        initialInputValue={initialSearchInputValue}
+        initialInputValue={searchValue}
         inputValue={searchValue}
         onInputValueChange={(val) => setSearchValue(val)}
       />

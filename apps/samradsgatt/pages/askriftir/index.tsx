@@ -1,15 +1,12 @@
 import {
-  AsyncSearch,
   AsyncSearchOption,
   Box,
   Breadcrumbs,
-  Button,
   GridContainer,
   ResponsiveSpace,
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import SubscriptionTable from '../../components/Table/SubscriptionTable'
 import TabContent from '../../components/Tab/TabContent'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
@@ -20,29 +17,22 @@ import Types from '../../utils/dummydata/api/Types'
 const Subscriptions = () => {
   const [currentTab, setCurrentTab] = useState('Mál')
 
-  useEffect(() => {
-    console.log('currentTab', currentTab)
-    if (currentTab === 'Mál') {
-      console.log('Mál')
-    } else if (currentTab === 'Stofnanir') {
-      console.log('Stofnanir')
-    } else if (currentTab === 'Málefnasvið') {
-      console.log('Málefnasvið')
-    }
-  }, [currentTab])
-
   const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
   const [searchValue, setSearchValue] = useState('')
   const settingSearchValue = (val) => setSearchValue(val)
   const [prevSearchValue, setPrevSearchValue] = useState('')
 
   const [casesData, setCasesData] = useState(Cases)
-  const [institutionsData, setInstitutionsData] = useState(
-    Object.entries(Types.institutions).map(([id, name]) => ({ id, name })),
-  )
-  const [policyAreasData, setPolicyAreasData] = useState(
-    Object.entries(Types.policyAreas).map(([id, name]) => ({ id, name })),
-  )
+  const Institutions = Object.entries(Types.institutions).map(([id, name]) => ({
+    id,
+    name,
+  }))
+  const [institutionsData, setInstitutionsData] = useState(Institutions)
+  const PolicyAreas = Object.entries(Types.policyAreas).map(([id, name]) => ({
+    id,
+    name,
+  }))
+  const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
   const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
   const settingSubscriptionArray = (newSubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
@@ -50,45 +40,40 @@ const Subscriptions = () => {
   const paddingYBreadCrumbs = [3, 3, 3, 5] as ResponsiveSpace
   const paddingXContent = [0, 0, 0, 15] as ResponsiveSpace
   const paddingXTable = [0, 0, 0, 15] as ResponsiveSpace
-  const paddingBottom = [3, 3, 3, 3] as ResponsiveSpace
-
-
 
   const clearAll = () => {
-    // setOptions([])
-    // setData
+    setSearchOptions([])
+    setCasesData(Cases)
+    setInstitutionsData(Institutions)
+    setPolicyAreasData(PolicyAreas)
   }
 
-  // useEffect(() => {
-  //   console.log("searchValue", searchValue)
-  //   if(!searchValue) {
-  //     clearAll()
-  //   } else if (searchValue != prevSearchValue) {
-  //     console.log("not the same")
-  //   }
-  // }, [searchValue, currentTab])
-
-  const InstitutionsContent = () => {
-    return (
-      <SubscriptionTable
-        data={institutionsData}
-        currentTab={'Stofnanir'}
-        subscriptionArray={subscriptionArray}
-        setSubscriptionArray={settingSubscriptionArray}
-      />
-    )
-  }
-
-  const PolicyAreasContent = () => {
-    return (
-      <SubscriptionTable
-        data={policyAreasData}
-        currentTab={'Málefnasvið'}
-        subscriptionArray={subscriptionArray}
-        setSubscriptionArray={settingSubscriptionArray}
-      />
-    )
-  }
+  useEffect(() => {
+    if (searchValue == prevSearchValue) {
+      return
+    }
+    if (!searchValue) {
+      clearAll()
+    } else {
+      const filteredCases = Cases.filter(
+        (item) =>
+          item.name.includes(searchValue) ||
+          item.caseNumber.includes(searchValue) ||
+          item.institutionName.includes(searchValue) ||
+          item.policyAreaName.includes(searchValue),
+      )
+      setCasesData(filteredCases)
+      const filteredInstitutions = Institutions.filter((item) =>
+        item.name.includes(searchValue),
+      )
+      setInstitutionsData(filteredInstitutions)
+      const filteredPolicyAreas = PolicyAreas.filter((item) =>
+        item.name.includes(searchValue),
+      )
+      setPolicyAreasData(filteredPolicyAreas)
+      setPrevSearchValue(searchValue)
+    }
+  }, [searchValue])
 
   const tabs = [
     {
@@ -143,8 +128,6 @@ const Subscriptions = () => {
       disabled: false,
     },
   ]
-
-  console.log('searchValue', searchValue)
 
   return (
     <Layout>
