@@ -1,4 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
@@ -78,7 +82,7 @@ export class LicenseServiceServiceV2 {
     let data = null
 
     if (!licenseClient) {
-      throw new Error('License service failed')
+      throw new InternalServerErrorException('License service failed')
     }
 
     const licenseRes = await licenseClient.getLicenseDetail(user)
@@ -127,7 +131,6 @@ export class LicenseServiceServiceV2 {
         }
       }
     }
-    this.logger.debug(JSON.stringify(licenses))
     return licenses
   }
 
@@ -203,22 +206,28 @@ export class LicenseServiceServiceV2 {
     locale: Locale,
     licenseType: GenericLicenseType,
   ) {
-    const licenseService = await this.licenseClient.getClientByLicenseType(
+    const client = await this.licenseClient.getClientByLicenseType(
       (licenseType as unknown) as LicenseType,
     )
 
-    if (!licenseService) {
+    if (!client) {
       this.logger.warn(`Invalid license type. type: ${licenseType}`)
       return null
     }
 
-    const pkPassRes = await licenseService.getPkPass(user)
+    const pkPassRes = await client.getPkPass(user)
 
     if (pkPassRes.ok) {
-      return pkPassRes.data
+      const { distributionQRCode, distributionUrl } = pkPassRes.data
+      return {
+        distributionQRCode,
+        distributionUrl,
+      }
     }
 
-    throw new Error(`Unable to get pkpass for ${licenseType} for user`)
+    throw new InternalServerErrorException(
+      `Unable to get pkpass for ${licenseType} for user`,
+    )
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification> {

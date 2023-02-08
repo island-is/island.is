@@ -136,7 +136,7 @@ export class MainResolver {
     }
 
     return {
-      pkpassUrl: pass.deliveryPageUrl,
+      pkpassUrl: pass.distributionUrl,
     }
   }
 

@@ -14,7 +14,6 @@ import {
   SmartSolutionsApi,
   VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { format } from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
 import compareAsc from 'date-fns/compareAsc'
 import {
@@ -171,10 +170,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload, user.nationalId)
 
     return pass
   }
