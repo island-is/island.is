@@ -21,3 +21,11 @@ export interface NationalRegistry {
   length: number
   data: any
 }
+
+export enum States {
+  PREREQUISITES = 'prerequisites',
+  DRAFT = 'draft',
+  APPROVED = 'approved',
+  SUBMITTED = 'submitted',
+  DECLINED = 'declined',
+}

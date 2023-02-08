@@ -15,14 +15,14 @@ import {
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
-import { EhicCardResponseApi } from '../dataProviders'
+import {
+  EhicApplyForPhysicalCardApi,
+  EhicCardResponseApi,
+} from '../dataProviders'
+import { ApiActions } from '../dataProviders/apiActions'
+import { States } from './types'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
-
-enum States {
-  DRAFT = 'draft',
-  APPROVED = 'approved',
-}
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -44,14 +44,63 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'Umsókn um Umsokn',
+          status: 'draft',
+          progress: 0.43,
+          lifecycle: DefaultStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.applyForPhysicalCard,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import(
+                  './../forms/EuropeanHealthInsurancePrerequisitiesForm'
+                ).then((val) =>
+                  Promise.resolve(
+                    val.EuropeanHealthInsurancePrerequisitiesForm,
+                  ),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              api: [
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                ChildrenCustodyInformationApi,
+                EhicCardResponseApi,
+                EhicApplyForPhysicalCardApi,
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um Umsokn',
-          status: States.DRAFT,
+          status: 'draft',
           progress: 0.43,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.applyForPhysicalCard,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -68,12 +117,7 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
-                ChildrenCustodyInformationApi,
-                EhicCardResponseApi,
-              ],
+              api: [EhicApplyForPhysicalCardApi],
               write: 'all',
               read: 'all',
               delete: true,
@@ -82,10 +126,11 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.APPROVED,
+            target: States.DRAFT,
           },
         },
       },
+
       [States.APPROVED]: {
         meta: {
           name: 'Approved',
@@ -98,14 +143,14 @@ const template: ApplicationTemplate<
               read: 'all',
               formLoader: () =>
                 import(
-                  './../forms/european-health-insurance-card'
+                  './../forms/european-health-insurance-review-card'
                 ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCard),
+                  Promise.resolve(val.EuropeanHealthInsuranceReviewCard),
                 ),
             },
           ],
           onEntry: defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication,
+            action: ApiActions.applyForPhysicalCard,
           }),
         },
       },

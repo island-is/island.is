@@ -21,12 +21,6 @@ const ApplicantsController: FC<Props> = ({
   const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
 
-  function clearTextArea(value: boolean) {
-    if (!value) {
-      setValue(id as string, '')
-    }
-  }
-
   return (
     <Stack space={2}>
       <Box background="white">
@@ -40,7 +34,6 @@ const ApplicantsController: FC<Props> = ({
                   onChange(e.target.checked)
                   setValue(checkboxId as string, e.target.checked)
                   setIsChecked(e.target.checked)
-                  clearTextArea(e.target.checked)
                 }}
                 checked={value}
                 name={checkboxId}
@@ -51,21 +44,6 @@ const ApplicantsController: FC<Props> = ({
           }}
         />
       </Box>
-      {isChecked && extraText && (
-        <Input
-          placeholder={placeholder}
-          backgroundColor="blue"
-          required={isChecked}
-          type="text"
-          name={id}
-          id={id}
-          label={label}
-          textarea
-          rows={5}
-          maxLength={250}
-          ref={register}
-        />
-      )}
     </Stack>
   )
 }
