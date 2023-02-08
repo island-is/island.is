@@ -73,28 +73,24 @@ applicationTest.describe('Announcement of Death', () => {
     await page.locator(nextButton).click()
 
     // Assets
-    await page.locator('input[name=otherProperties]').first().check()
-    await page.locator('input[name=otherProperties]').first().uncheck()
-    await page.locator('p + div > [role=button]').click()
+    await page.getByLabel('Eignir erlendis').check()
+    await page.getByLabel('Eignir erlendis').uncheck()
     await page.locator(nextButton).click()
 
     // Recipients of documents
-    await page.locator('label[for=certificateOfDeathAnnouncement]').click()
-    await page.locator('#react-select').first().click()
-    await page.locator('label[for=authorizationForFuneralExpenses]').click()
-    await page.locator('#react-select').first().click()
-    await page
-      .locator('[data-testid=select-financesDataCollectionPermission]')
-      .click()
-    await page.locator('#react-select').first().click()
+    const dropdowns = page.getByLabel('Enginn viðtakandi') //locator('label[for=certificateOfDeathAnnouncement]')
+    for (const dropdown of await dropdowns.all()) {
+      await dropdown.click()
+      await dropdown.getByText('Gervimaður').first().click()
+    }
     await page.locator(nextButton).click()
 
     // Overview screen
-    await page.locator('textarea[name=additionalInfo]').fill('test test þæö')
-    await page.locator('text=Staðfesta andlátstilkynningu').click()
-    await page.locator(submitButton).fill('test test þæö')
+    await page.getByLabel('Upplýsingar').fill('test test þæö')
+    await page.getByRole('button', {name: 'Staðfesta andlátstilkynningu'}).click()
+    await page.locator(submitButton).click()
 
     // Confirmation screen
-    await page.locator('h2:has-text("Tilkynning móttekin")').dblclick()
+    await expect(page.getByText('Tilkynning móttekin')).toBeVisible()
   })
 })
