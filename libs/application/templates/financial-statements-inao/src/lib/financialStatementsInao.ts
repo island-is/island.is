@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle, pruneAfterDays } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 
 import {
   ApplicationTemplate,
