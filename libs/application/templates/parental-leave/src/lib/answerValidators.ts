@@ -13,7 +13,6 @@ import { validatePeriodsValidationSection } from './answerValidationSections/val
 import { otherParentEmailValidationSection } from './answerValidationSections/otherParentEmailValidationSection'
 import { residenceGrantValidationSection } from './answerValidationSections/residenceGrantValidationSection'
 
-
 const {
   EMPLOYER,
   FILEUPLOAD,

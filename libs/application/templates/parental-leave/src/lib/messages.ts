@@ -2426,10 +2426,8 @@ export const errorMessages = defineMessages({
     description: 'Unable to transfer days!',
   },
   residenceGrantPeriodError: {
-    id:
-      'pl.application:errors.residence.grant.period.error',
-    defaultMessage:
-      'Tímabilið sem þú hefur valið er ekki gilt',
+    id: 'pl.application:errors.residence.grant.period.error',
+    defaultMessage: 'Tímabilið sem þú hefur valið er ekki gilt',
     description: 'The period you requested is not valid',
   },
 })

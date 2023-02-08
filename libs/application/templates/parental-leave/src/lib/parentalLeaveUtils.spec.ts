@@ -50,6 +50,7 @@ import {
   isParentWithoutBirthParent,
   isNotEligibleForParentWithoutBirthParent,
   residentGrantIsOpenForApplication,
+  setTestBirthDay,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -1498,10 +1499,13 @@ test.each([
     )
   },
 )
-
 test.each([
-  { date: '20230102', expected: true },
-  { date: '19800102', expected: false },
+  { date: setTestBirthDay(6, false, true), expected: true },
+  { date: setTestBirthDay(7, false, true), expected: false },
+  { date: setTestBirthDay(1, true, false), expected: false },
+  { date: setTestBirthDay(0, true, false), expected: true },
+  { date: setTestBirthDay(0, false, true), expected: true },
+  { date: setTestBirthDay(10), expected: true },
 ])(
   'should return true if today is after the date and within 6 months of the date',
   ({ date, expected }) => {

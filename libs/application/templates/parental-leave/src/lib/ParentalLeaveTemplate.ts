@@ -570,7 +570,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             tag: {
               label: coreMessages.tagsRequiresAction,
               variant: 'red',
-            }
+            },
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -599,7 +599,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION]: {
-        entry: ['setPreviousState', 'assignToVMST'],
+        entry: ['setPreviousState', 'assignToVMST', 'removeResidenceGrant'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
@@ -1453,8 +1453,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
         unset(answers, 'residenceGrant')
-        unset(answers, 'dateFrom')
-        unset(answers, 'dateTo')
+        unset(answers, 'residentGrantApplication')
+        unset(answers, 'child')
+
         return context
       }),
       setActionName: assign((context) => {

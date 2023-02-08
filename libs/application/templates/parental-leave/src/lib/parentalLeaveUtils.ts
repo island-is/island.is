@@ -62,7 +62,7 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { isAfter, isBefore } from 'date-fns'
+import { isAfter, isBefore, isEqual, subMonths } from 'date-fns'
 import { AnyEventObject } from 'xstate'
 
 export function getExpectedDateOfBirth(
@@ -1485,7 +1485,9 @@ export const isParentalGrant = (application: Application) => {
 export const convertBirthDay = (birthDay: string) => {
   // Regex check if only decimals are used in the string
   const reg = new RegExp(/^\d+$/)
+  // Default
   const convertedBirthDay = { year: 0, month: 0, date: 0 }
+  // Checks on length and only contain decimal or we return default
   if (birthDay.length !== 8) return convertedBirthDay
   if (!birthDay.match(reg)) return convertedBirthDay
   // The string is expected to be yyyymmdd
@@ -1496,6 +1498,7 @@ export const convertBirthDay = (birthDay: string) => {
   return { year, month, date }
 }
 export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
+  // We expect the childBirthDay to be yyyymmdd
   const convertedBirthDay = convertBirthDay(childBirthDay)
   // Guard that the method used above did not return 0 0 0
   if (
@@ -1509,10 +1512,12 @@ export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
     convertedBirthDay.month,
     convertedBirthDay.date,
   )
-  const dateToday = new Date()
+  const dateToday = new Date().setHours(0, 0, 0, 0)
+  if (isEqual(dateToday, birthDay)) return true
   if (!isAfter(dateToday, birthDay)) return false
   // Adds 6 months to the birthday
   const fullPeriod = addMonths(birthDay, 6)
+  if (isEqual(dateToday, fullPeriod)) return true
   if (!isBefore(dateToday, fullPeriod)) return false
   return true
 }
@@ -1552,4 +1557,46 @@ export const actionsResidenceGrant = (
   const mergedActions: CallToAction<AnyEventObject>[] =
     [...actions, ...buttons] || []
   return mergedActions
+}
+
+export const setTestBirthDay = (months: number, add = false, sub = false) => {
+  // Set a date that is today we can either add or substract months
+  const date = sub
+    ? subMonths(new Date(), months)
+    : add
+    ? addMonths(new Date(), months)
+    : new Date()
+
+  const year = `${date.getFullYear()}`
+  const month =
+    `${date.getMonth() + 1}`.length > 1
+      ? `${date.getMonth() + 1}`
+      : `0${date.getMonth() + 1}`
+
+  const day =
+    `${date.getDate()}`.length > 1 ? `${date.getDate()}` : `0${date.getDate()}`
+  console.log(`${year}${month}${day}`)
+  // returns a  string in yyyymmdd
+  return `${year}${month}${day}`
+}
+
+export const setTestDates = (
+  months: number,
+  days: number,
+  add = false,
+  sub = false,
+) => {
+  // Set a date that is today we can either add or substract months
+  const newDate = sub
+    ? subMonths(new Date(), months)
+    : add
+    ? addMonths(new Date(), months)
+    : new Date()
+  // Set the number of days we want to check
+  const date = addDays(newDate, days)
+  const year = `${date.getFullYear()}`
+  const month = `${date.getMonth()}`
+  const day = `${date.getDate()}`
+
+  return `${year}-${month}-${day}`
 }

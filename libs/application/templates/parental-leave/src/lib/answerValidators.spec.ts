@@ -15,6 +15,7 @@ import { errorMessages } from './messages'
 import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
 import { validatePeriodResidenceGrant } from './answerValidationSections/residenceGrantValidationSection'
 import { subMonths } from 'date-fns'
+import { setTestBirthDay, setTestDates } from './parentalLeaveUtils'
 
 const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
@@ -675,39 +676,47 @@ describe('when constructing a new period', () => {
   })
 })
 
-const dynamicBirthDay = (months: number, add: boolean, sub: boolean) => {
-  
-  const date = sub
-    ? subMonths(new Date(), months)
-    : add
-    ? addMonths(new Date(), months)
-    : new Date()
-
-  const year = `${date.getFullYear()}`
-  const month = `${date.getMonth() + 1}`.length > 1 ?
-        `${date.getMonth() + 1}`:
-  `0${date.getMonth() + 1}`
-  
-  const day = `${date.getDate()}`.length > 1 ?
-        `${date.getDate()}` : `0${date.getDate()}`
-  return `${year}${month}${day}`
-}
-
-const dynamicDates = (months: number, days: number) => {
-  const date = addMonths(addDays(new Date(), days), months)
-  const year = `${date.getFullYear()}`
-  const month = `${date.getMonth()}`
-  const day = `${date.getDate()}`
-  return `${year}-${month}-${day}`
-}
-
 test.each([
-  { birthDay: dynamicBirthDay(5, false, true), multipleBirths: 'no', dateFrom: dynamicDates(0, 0), dateTo: dynamicDates(0, 14), expected: true },
-  { birthDay: dynamicBirthDay(6, false, true), multipleBirths: 'no', dateFrom: dynamicDates(0, 0), dateTo: dynamicDates(0, 14), expected: false },
-  { birthDay: dynamicBirthDay(0, false, false), multipleBirths: 'yes', dateFrom: dynamicDates(0, 0), dateTo: dynamicDates(0, 28), expected: true },
+  {
+    birthDay: setTestBirthDay(5, false, true),
+    multipleBirths: 'no',
+    dateFrom: setTestDates(0, 0),
+    dateTo: setTestDates(0, 14),
+    expected: true,
+  },
+  {
+    birthDay: setTestBirthDay(6, false, true),
+    multipleBirths: 'no',
+    dateFrom: setTestDates(0, 0),
+    dateTo: setTestDates(0, 14),
+    expected: true,
+  },
+  {
+    birthDay: setTestBirthDay(0),
+    multipleBirths: 'yes',
+    dateFrom: setTestDates(0, 0),
+    dateTo: setTestDates(0, 28),
+    expected: true,
+  },
+  {
+    birthDay: setTestBirthDay(7, false, true),
+    multipleBirths: 'no',
+    dateFrom: setTestDates(0, 0),
+    dateTo: setTestDates(0, 14),
+    expected: false,
+  },
+  {
+    birthDay: setTestBirthDay(12),
+    multipleBirths: 'no',
+    dateFrom: setTestDates(0, 0),
+    dateTo: setTestDates(0, 14),
+    expected: true,
+  },
 ])(
-  'Should return true if a ',
+  'Should return true if a period is within the allowed range of days and within the allowed 6 months application time from the brth of the child/children ',
   ({ birthDay, multipleBirths, dateFrom, dateTo, expected }) => {
-    expect(validatePeriodResidenceGrant(birthDay, multipleBirths, dateFrom, dateTo)).toBe(expected)
+    expect(
+      validatePeriodResidenceGrant(birthDay, multipleBirths, dateFrom, dateTo),
+    ).toBe(expected)
   },
 )
