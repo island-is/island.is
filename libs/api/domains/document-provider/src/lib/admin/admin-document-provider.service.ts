@@ -14,15 +14,6 @@ import {
   UpdateOrganisationInput,
 } from '../dto'
 
-const handleError = (error: any) => {
-  logger.error(JSON.stringify(error))
-  if (error.response?.data) {
-    throw new ApolloError(error.response.data, error.status)
-  } else {
-    throw new ApolloError('Failed to resolve request', error.status)
-  }
-}
-
 @Injectable()
 export class AdminDocumentProviderService {
   constructor(
@@ -39,18 +30,18 @@ export class AdminDocumentProviderService {
   }
 
   async getOrganisations(authorization: Auth): Promise<Organisation[]> {
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerGetOrganisations({})
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerGetOrganisations({})
   }
 
   async getOrganisation(
     nationalId: string,
     authorization: Auth,
   ): Promise<Organisation> {
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerFindByNationalId({ nationalId })
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerFindByNationalId({ nationalId })
   }
 
   async updateOrganisation(
@@ -63,9 +54,9 @@ export class AdminDocumentProviderService {
       updateOrganisationDto: { ...organisation },
     }
 
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerUpdateOrganisation(dto)
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerUpdateOrganisation(dto)
   }
 
   async createAdministrativeContact(
@@ -78,9 +69,9 @@ export class AdminDocumentProviderService {
       createContactDto: { ...input },
     }
 
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerCreateAdministrativeContact(dto)
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerCreateAdministrativeContact(dto)
   }
 
   async updateAdministrativeContact(
@@ -95,9 +86,9 @@ export class AdminDocumentProviderService {
       updateContactDto: { ...contact },
     }
 
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerUpdateAdministrativeContact(dto)
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerUpdateAdministrativeContact(dto)
   }
 
   async createTechnicalContact(
@@ -110,9 +101,9 @@ export class AdminDocumentProviderService {
       createContactDto: { ...input },
     }
 
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerCreateTechnicalContact(dto)
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerCreateTechnicalContact(dto)
   }
 
   async updateTechnicalContact(
@@ -127,9 +118,9 @@ export class AdminDocumentProviderService {
       updateContactDto: { ...contact },
     }
 
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerUpdateTechnicalContact(dto)
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerUpdateTechnicalContact(dto)
   }
 
   async createHelpdesk(
@@ -142,9 +133,9 @@ export class AdminDocumentProviderService {
       createHelpdeskDto: { ...input },
     }
 
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerCreateHelpdesk(dto)
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerCreateHelpdesk(dto)
   }
 
   async updateHelpdesk(
@@ -159,9 +150,9 @@ export class AdminDocumentProviderService {
       updateHelpdeskDto: { ...helpdesk },
     }
 
-    return await this.organisationsApiWithAuth(authorization)
-      .organisationControllerUpdateHelpdesk(dto)
-      .catch(handleError)
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerUpdateHelpdesk(dto)
   }
 
   //-------------------- STATISTICS --------------------------
@@ -200,9 +191,11 @@ export class AdminDocumentProviderService {
       }
     }
 
-    const result = await this.documentProviderClientProd
-      .statisticsTotal(providers, fromDate, toDate)
-      .catch(handleError)
+    const result = await this.documentProviderClientProd.statisticsTotal(
+      providers,
+      fromDate,
+      toDate,
+    )
 
     return new ProviderStatistics(
       result.published,

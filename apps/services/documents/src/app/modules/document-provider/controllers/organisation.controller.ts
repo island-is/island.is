@@ -88,7 +88,7 @@ export class OrganisationController {
   }
 
   @Post()
-  @Scopes(AdminPortalScope.documentProvider)
+  @Scopes(AdminPortalScope.documentProvider, ApiScope.internal)
   @ApiCreatedResponse({ type: Organisation })
   @Audit<Organisation>({
     resources: (organisation) => organisation.id,
