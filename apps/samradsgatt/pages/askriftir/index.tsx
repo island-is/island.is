@@ -1,5 +1,4 @@
 import {
-  ActionCard,
   AsyncSearchOption,
   Box,
   Breadcrumbs,
@@ -52,7 +51,7 @@ const Subscriptions = () => {
 
   useEffect(() => {
     if (searchValue == prevSearchValue) {
-      return;
+      return
     }
     if (!searchValue) {
       clearAll()

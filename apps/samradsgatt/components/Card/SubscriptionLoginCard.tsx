@@ -1,7 +1,5 @@
 const SubscriptionLoginCard = () => {
-    return (
-        <p>obj</p>
-    )
+  return <p>obj</p>
 }
 
 export default SubscriptionLoginCard
