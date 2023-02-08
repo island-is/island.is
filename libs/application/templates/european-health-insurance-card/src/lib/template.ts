@@ -17,6 +17,7 @@ import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import {
   EhicApplyForPhysicalCardApi,
+  EhicApplyForTemporaryCardApi,
   EhicCardResponseApi,
 } from '../dataProviders'
 import { ApiActions } from '../dataProviders/apiActions'
@@ -44,13 +45,13 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.PREREQUISITES,
+    initial: States.DRAFT,
     states: {
-      [States.PREREQUISITES]: {
+      [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um Umsokn',
-          status: 'draft',
-          progress: 0.43,
+          name: 'EHIC-Plastic',
+          status: States.DRAFT,
+          progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
           onExit: defineTemplateApi({
             action: ApiActions.applyForPhysicalCard,
@@ -60,16 +61,14 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  './../forms/EuropeanHealthInsurancePrerequisitiesForm'
+                  '../forms/EuropeanHealthInsuranceCardApplyPlastic'
                 ).then((val) =>
-                  Promise.resolve(
-                    val.EuropeanHealthInsurancePrerequisitiesForm,
-                  ),
+                  Promise.resolve(val.EuropeanHealthInsuranceCardApplyPlastic),
                 ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: 'EHIC-Plastic-submit',
                   type: 'primary',
                 },
               ],
@@ -88,15 +87,15 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
+            target: States.APPROVED,
           },
         },
       },
-      [States.DRAFT]: {
+      [States.APPROVED]: {
         meta: {
-          name: 'Umsókn um Umsokn',
-          status: 'draft',
-          progress: 0.43,
+          name: 'Ehic-PDF',
+          status: States.APPROVED,
+          progress: 0.66,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.applyForPhysicalCard,
@@ -106,14 +105,14 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  './../forms/european-health-insurance-card'
+                  '../forms/EuropeanHealthInsuranceCardApplyPDF'
                 ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCard),
+                  Promise.resolve(val.EuropeanHealthInsuranceCardApplyPDF),
                 ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: 'Ehic-PDF-submit',
                   type: 'primary',
                 },
               ],
@@ -126,32 +125,43 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
+            target: States.COMPLETED,
           },
         },
       },
 
-      [States.APPROVED]: {
+      [States.COMPLETED]: {
         meta: {
-          name: 'Approved',
-          status: 'approved',
+          name: 'EHIC-Approved',
+          status: States.COMPLETED,
           progress: 1,
+          onEntry: defineTemplateApi({
+            action: ApiActions.applyForTemporaryCard,
+          }),
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
-              read: 'all',
+
               formLoader: () =>
                 import(
-                  './../forms/european-health-insurance-review-card'
+                  '../forms/EuropeanHealthInsuranceCardReview'
                 ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceReviewCard),
+                  Promise.resolve(val.EuropeanHealthInsuranceCardReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'EHIC-Approved-Submit',
+                  type: 'primary',
+                },
+              ],
+              api: [EhicApplyForTemporaryCardApi],
+              write: 'all',
+              read: 'all',
+              delete: true,
             },
           ],
-          onEntry: defineTemplateApi({
-            action: ApiActions.applyForPhysicalCard,
-          }),
         },
       },
     },

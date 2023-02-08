@@ -23,7 +23,7 @@ import {
 } from '../dataProviders'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
-export const EuropeanHealthInsurancePrerequisitiesForm: Form = buildForm({
+export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
   id: 'EuropeanHealthInsurancePrerequisitiesForm',
   title: '',
   mode: FormModes.DRAFT,
@@ -98,7 +98,7 @@ export const EuropeanHealthInsurancePrerequisitiesForm: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Ná í gögn',
+                  name: 'Sækja um plast',
                   type: 'primary',
                 },
               ],
@@ -120,19 +120,6 @@ export const EuropeanHealthInsurancePrerequisitiesForm: Form = buildForm({
       id: 'applicants',
       title: e.applicants.sectionLabel,
       children: [
-        buildExternalDataProvider({
-          title: e.data.sectionTitle,
-          checkboxLabel: e.data.dataCollectionCheckboxLabel,
-          id: 'dataScreen',
-          description: '',
-          dataProviders: [
-            buildDataProviderItem({
-              provider: EhicApplyForPhysicalCardApi,
-              title: 'Card Api',
-              subTitle: '',
-            }),
-          ],
-        }),
         buildMultiField({
           id: 'applicants',
           title: e.applicants.sectionTitle,

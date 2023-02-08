@@ -8,6 +8,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
@@ -25,7 +26,7 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/mess
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
 
-export const EuropeanHealthInsuranceCard: Form = buildForm({
+export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
   mode: FormModes.DRAFT,
@@ -57,10 +58,18 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
           title: e.temp.sectionTitle,
           description: e.temp.sectionDescription,
           children: [
-            buildCustomField({
-              id: 'temp',
-              title: '',
-              component: 'TempScreen',
+            buildSubmitField({
+              id: 'submit',
+              title: e.review.submitButtonLabel,
+              refetchApplicationAfterSubmit: true,
+              placement: 'footer',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'pdf-button',
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),
@@ -70,34 +79,9 @@ export const EuropeanHealthInsuranceCard: Form = buildForm({
     buildSection({
       id: 'applicationReviewSection',
       title: e.review.sectionLabel,
-      children: [
-        buildMultiField({
-          id: 'applicationReviewSection.applicationReview',
-          title: e.review.sectionReviewTitle,
-          description: e.review.sectionReviewDescription,
-          children: [
-            buildCustomField({
-              id: 'reviewScreen',
-              title: '',
-              component: 'ReviewScreen',
-            }),
-            buildSubmitField({
-              id: 'submit22',
-              title: e.review.submitButtonLabel,
-              placement: 'footer',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta umsókn',
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
+      children: [],
     }),
   ],
 })
 
-export default EuropeanHealthInsuranceCard
+export default EuropeanHealthInsuranceCardApplyPDF

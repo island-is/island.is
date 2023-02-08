@@ -128,7 +128,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     this.logger.info('applyForPhysicalCard')
     const applicants = this.getApplicants(application, 'apply')
 
-    this.logger.info(applicants)
+    this.logger.info(applicants.toString())
 
     for (let i = 0; i < applicants.length; i++) {
       await this.ehicApi.requestCard({
@@ -143,7 +143,10 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
+    this.logger.info('applyForTemporaryCard')
+
     const applicants = this.getApplicants(application, 'temp')
+    this.logger.info(applicants.toString())
 
     for (let i = 0; i < applicants.length; i++) {
       await this.ehicApi.requestCard({
@@ -155,6 +158,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   }
 
   async getTemporaryCard({ auth, application }: TemplateApiModuleActionProps) {
+    this.logger.info('getTemporaryCard')
     return this.ehicApi.fetchTempPDFCard({
       applicantnationalid: auth.nationalId,
       cardnumber: '00',

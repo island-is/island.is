@@ -23,9 +23,8 @@ export interface NationalRegistry {
 }
 
 export enum States {
-  PREREQUISITES = 'prerequisites',
+  COMPLETED = 'completed',
   DRAFT = 'draft',
   APPROVED = 'approved',
   SUBMITTED = 'submitted',
-  DECLINED = 'declined',
 }
