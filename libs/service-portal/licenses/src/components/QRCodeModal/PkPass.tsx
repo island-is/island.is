@@ -48,7 +48,6 @@ export const PkPass = ({
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const timeFetched = new Date() // Used to compare if license is expired
-
   const isDriversLicense = licenseType === GenericLicenseType.DriversLicense
 
   const toggleModal = () => {
@@ -88,9 +87,10 @@ export const PkPass = ({
       variables: { locale, input: { licenseType } },
     })
       .then((response) => {
-        if (window && typeof window !== 'undefined') {
+        const windowReference = window.open()
+        if (windowReference && typeof windowReference !== 'undefined') {
           setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
-          window.open(response?.data?.generatePkPass?.pkpassUrl)
+          windowReference.location = response?.data?.generatePkPass?.pkpassUrl
           setFetched(true)
           setDisplayLoader(false)
         }
@@ -188,6 +188,7 @@ export const PkPass = ({
               </span>
             )}
           </Button>
+
           {linkError && (
             <Box marginTop={2}>
               <AlertMessage
