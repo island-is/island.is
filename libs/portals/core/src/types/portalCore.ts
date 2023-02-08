@@ -159,19 +159,4 @@ export interface PortalModule {
     | 'none' // Full screen
     | 'full' // Full grid, i.e 12 cols
     | 'default' // Narrow grid, i.e. 8 cols
-
-  /**
-   * Module layout wrapper component,that wraps all the module content.
-   * This can be convenient to keep state between module routes.
-   * @example
-    moduleLayoutWrapper({ children }) {
-      return (
-        <SomeProvider>
-          <h1>I am module wrapper</h1>
-          {children}
-        </SomeProvider>
-      )
-    },
-   */
-  moduleLayoutWrapper?: React.FC<PortalModuleProps & { portalType: PortalType }>
 }
