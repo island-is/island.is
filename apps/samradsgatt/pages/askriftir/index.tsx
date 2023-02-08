@@ -1,5 +1,4 @@
 import {
-  ActionCard,
   AsyncSearchOption,
   Box,
   Breadcrumbs,
@@ -166,7 +165,7 @@ const Subscriptions = () => {
           <SubscriptionActionBox
             heading="Skrá áskrift"
             text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
-            cta={{ label: "Skrá mig inn", onClick: () => null}}
+            cta={{ label: 'Skrá mig inn', onClick: () => null }}
           />
         </Box>
 
