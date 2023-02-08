@@ -20,11 +20,6 @@ export const dataCollection = [
     subTitle: m.dataCollectionUserProfileSubtitle,
   }),
   buildDataProviderItem({
-    provider: undefined,
-    title: m.dataCollectionUserProfileTitle,
-    subTitle: m.dataCollectionUserProfileSubtitle,
-  }),
-  buildDataProviderItem({
     provider: MaritalStatusApi,
     title: m.dataCollectionMaritalStatusTitle,
     subTitle: m.dataCollectionMaritalStatusDescription,
