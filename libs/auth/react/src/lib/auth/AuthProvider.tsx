@@ -3,12 +3,10 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
-  useRef,
   ReactNode,
   useState,
 } from 'react'
 import type { User } from 'oidc-client-ts'
-import { Location } from 'react-router-dom'
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Auth.state'
 import { AuthSettings } from '../AuthSettings'
@@ -32,13 +30,21 @@ interface AuthProviderProps {
   children: ReactNode
 }
 
-const getReturnUrl = (returnUrl: string, { redirectPath }: AuthSettings) => {
+type GetReturnUrl = {
+  basePath: string
+  returnUrl: string
+} & Pick<AuthSettings, 'redirectPath'>
+
+const getReturnUrl = ({ redirectPath, basePath, returnUrl }: GetReturnUrl) => {
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
-    return '/'
+    return basePath
   }
 
   return returnUrl
 }
+
+const getCurrentUrl = () =>
+  `${window.location.pathname}${window.location.search}`
 
 export const AuthProvider = ({
   children,
@@ -50,42 +56,47 @@ export const AuthProvider = ({
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
-  const urlRef = useRef<string>()
-  urlRef.current = `${window.location.pathname}${window.location.search}`
+  const url = getCurrentUrl()
 
-  const signIn = useCallback(async () => {
-    dispatch({
-      type: ActionType.SIGNIN_START,
-    })
+  const signIn = useCallback(
+    async function signIn() {
+      dispatch({
+        type: ActionType.SIGNIN_START,
+      })
 
-    return userManager.signinRedirect({
-      state: getReturnUrl(urlRef.current as string, authSettings),
-    })
-    // Nothing more happens here since browser will redirect to IDS.
-  }, [dispatch, userManager, authSettings, urlRef])
+      return userManager.signinRedirect({
+        state: getReturnUrl({
+          returnUrl: url,
+          basePath,
+          redirectPath: authSettings.redirectPath,
+        }),
+      })
+      // Nothing more happens here since browser will redirect to IDS.
+    },
+    [dispatch, userManager, authSettings, url],
+  )
 
-  const signInSilent = useCallback(async () => {
-    let user = null
-    dispatch({
-      type: ActionType.SIGNIN_START,
-    })
-    try {
-      user = await userManager.signinSilent()
-      dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
-    } catch (error) {
-      console.error('AuthProvider: Silent signin failed', error)
-      dispatch({ type: ActionType.SIGNIN_FAILURE })
-    }
-
-    return user
-  }, [userManager, dispatch])
-
-  const switchUser = useCallback(
-    async function switchUser(nationalId?: string, newLocation?: Location) {
-      if (newLocation) {
-        urlRef.current = `${newLocation.pathname}${newLocation.search}`
+  const signInSilent = useCallback(
+    async function signInSilent() {
+      let user = null
+      dispatch({
+        type: ActionType.SIGNIN_START,
+      })
+      try {
+        user = await userManager.signinSilent()
+        dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
+      } catch (error) {
+        console.error('AuthProvider: Silent signin failed', error)
+        dispatch({ type: ActionType.SIGNIN_FAILURE })
       }
 
+      return user
+    },
+    [userManager, dispatch],
+  )
+
+  const switchUser = useCallback(
+    async function switchUser(nationalId?: string) {
       const args =
         nationalId !== undefined
           ? {
@@ -105,15 +116,20 @@ export const AuthProvider = ({
       dispatch({
         type: ActionType.SWITCH_USER,
       })
+
       return userManager.signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
-          getReturnUrl(urlRef.current as string, authSettings),
+          getReturnUrl({
+            returnUrl: getCurrentUrl(),
+            basePath,
+            redirectPath: authSettings.redirectPath,
+          }),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch, authSettings, urlRef],
+    [userManager, dispatch, authSettings, url],
   )
 
   const signOut = useCallback(
@@ -126,32 +142,35 @@ export const AuthProvider = ({
     [userManager, dispatch],
   )
 
-  const checkLogin = useCallback(async () => {
-    dispatch({
-      type: ActionType.SIGNIN_START,
-    })
-    const storedUser = await userManager.getUser()
-
-    // Check expiry.
-    if (storedUser && !storedUser.expired) {
+  const checkLogin = useCallback(
+    async function checkLogin() {
       dispatch({
-        type: ActionType.SIGNIN_SUCCESS,
-        payload: storedUser,
+        type: ActionType.SIGNIN_START,
       })
-    } else if (autoLogin) {
-      // If we find a user in SessionStorage, there's a fine chance that
-      // it's just an expired token, and we can silently log in.
-      if (storedUser && (await signInSilent())) {
-        return
-      }
+      const storedUser = await userManager.getUser()
 
-      // If all else fails, redirect to the login page.
-      await signIn()
-    } else {
-      // When not performing autologin, silently check if there's an IDP session.
-      await signInSilent()
-    }
-  }, [userManager, dispatch, signIn, signInSilent, autoLogin])
+      // Check expiry.
+      if (storedUser && !storedUser.expired) {
+        dispatch({
+          type: ActionType.SIGNIN_SUCCESS,
+          payload: storedUser,
+        })
+      } else if (autoLogin) {
+        // If we find a user in SessionStorage, there's a fine chance that
+        // it's just an expired token, and we can silently log in.
+        if (storedUser && (await signInSilent())) {
+          return
+        }
+
+        // If all else fails, redirect to the login page.
+        await signIn()
+      } else {
+        // When not performing autologin, silently check if there's an IDP session.
+        await signInSilent()
+      }
+    },
+    [userManager, dispatch, signIn, signInSilent, autoLogin],
+  )
 
   useEffect(() => {
     // Only add events when we have userInfo, to avoid race conditions with
@@ -189,7 +208,7 @@ export const AuthProvider = ({
   }, [dispatch, userManager, signIn, autoLogin, state.userInfo === null])
 
   const isCurrentRoute = (path?: string) =>
-    isDefined(path) && urlRef.current?.includes(basePath + path)
+    isDefined(path) && url.includes(basePath + path)
 
   const init = async () => {
     if (isCurrentRoute(authSettings?.redirectPath)) {
@@ -198,10 +217,13 @@ export const AuthProvider = ({
           window.location.href,
         )
 
-        dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
-
         const url = typeof user.state === 'string' ? user.state : '/'
-        window.location.replace(url)
+        window.history.replaceState(null, '', url)
+
+        dispatch({
+          type: ActionType.SIGNIN_SUCCESS,
+          payload: user,
+        })
       } catch (error) {
         if (error.error === 'login_required') {
           // If trying to switch delegations and the IDS session is expired, we'll
