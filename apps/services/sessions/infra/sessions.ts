@@ -89,7 +89,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       },
     })
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/liveness')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
