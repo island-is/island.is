@@ -1,4 +1,5 @@
 import {
+  ActionCard,
   AsyncSearchOption,
   Box,
   Breadcrumbs,
@@ -13,6 +14,7 @@ import { Layout } from '../../components/Layout/Layout'
 import Cases from '../../utils/dummydata/api/Cases'
 import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
 import Types from '../../utils/dummydata/api/Types'
+import SubscriptionLoginCard from '../../components/Card/SubscriptionLoginCard'
 
 const Subscriptions = () => {
   const [currentTab, setCurrentTab] = useState('Mál')
@@ -158,6 +160,9 @@ const Subscriptions = () => {
           <Text variant="default" paddingTop={2}>
             {'Kerfið er uppfært einu sinni á sólarhring.'}
           </Text>
+        </Box>
+        <Box paddingX={paddingXTable}>
+          <SubscriptionLoginCard />
         </Box>
 
         <Box paddingX={paddingXTable}>
