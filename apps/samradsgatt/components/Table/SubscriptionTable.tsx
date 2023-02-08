@@ -47,10 +47,10 @@ const SubscriptionTable = ({
     return subscriptionArray[MapIsToEn[currentTab]].includes(id)
   }
 
-  const paddingY = [3, 3, 3, 9] as ResponsiveSpace
+  const paddingTop = [3, 3, 3, 9] as ResponsiveSpace
 
   return (
-    <Box paddingY={paddingY}>
+    <Box paddingTop={paddingTop}>
       <T.Table>
         <T.Head>
           <T.Row>

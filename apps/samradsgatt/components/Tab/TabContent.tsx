@@ -1,4 +1,9 @@
-import { AsyncSearch, Box, Button } from '@island.is/island-ui/core'
+import {
+  AsyncSearch,
+  Box,
+  Button,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import SubscriptionTable from '../Table/SubscriptionTable'
 
 const TabContent = ({
@@ -10,14 +15,19 @@ const TabContent = ({
   searchValue,
   setSearchValue,
   searchPlaceholder,
+  label = 'Leit',
 }) => {
-    const onLoadMore = () => {
-        console.log('clicked on load more')
-      }
+  const onLoadMore = () => {
+    console.log('clicked on load more')
+  }
+
+  const paddingTop = [3, 3, 3, 9] as ResponsiveSpace
 
   return (
-    <Box paddingTop={3} paddingY={3}>
+    <Box paddingTop={paddingTop}>
       <AsyncSearch
+        label={label}
+        colored={true}
         options={searchOptions}
         placeholder={searchPlaceholder}
         initialInputValue={searchValue}
@@ -30,7 +40,11 @@ const TabContent = ({
         subscriptionArray={subscriptionArray}
         setSubscriptionArray={setSubscriptionArray}
       />
-      <Button icon="eye" variant="text" onClick={onLoadMore}>Sýna fleiri mál</Button>
+      <Box paddingY={3}>
+        <Button icon="eye" variant="text" onClick={onLoadMore}>
+          Sýna fleiri mál
+        </Button>
+      </Box>
     </Box>
   )
 }
