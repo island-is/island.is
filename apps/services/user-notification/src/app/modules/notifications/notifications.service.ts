@@ -5,16 +5,17 @@ import {
   CACHE_MANAGER,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
-
 import axios from 'axios'
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
+
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -23,7 +24,7 @@ export class NotificationsService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async addToCache(key: string, item: any) {
+  async addToCache(key: string, item: object) {
     return await this.cacheManager.set(key, item)
   }
 
@@ -67,9 +68,7 @@ export class NotificationsService {
       .then((response) => {
         for (const item of response.data.data.hnippTemplateCollection.items) {
           // contentful returns null for empty arrays
-          if (item.args == null) {
-            item.args = []
-          }
+          if (item.args == null) item.args = []
         }
         return response.data
       })
@@ -94,7 +93,7 @@ export class NotificationsService {
     const cacheKey = templateId + '-' + locale
     const cachedTemplate = await this.getFromCache(cacheKey)
     if (cachedTemplate) {
-      console.log('cache hit for: ' + cacheKey)
+      this.logger.info('cache hit for: ' + cacheKey)
       return cachedTemplate as HnippTemplate
     }
 
@@ -105,9 +104,9 @@ export class NotificationsService {
           return template
         }
       }
-      throw new BadRequestException(`Template: ${templateId} not found`)
+      throw new NotFoundException(`Template: ${templateId} not found`)
     } catch {
-      throw new BadRequestException(`Template: ${templateId} not found`)
+      throw new NotFoundException(`Template: ${templateId} not found`)
     }
   }
 
